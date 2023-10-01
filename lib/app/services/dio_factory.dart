@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../exports.dart';
+import '../constants/local_storage_key.dart';
 
 const String applicationJson = "application/json";
 const String contentType = "content-type";
@@ -11,27 +12,33 @@ const String authorization = "authorization";
 const String defaultLanguage = "Accept-Language";
 
 class DioFactory {
-  DioFactory();
+  DioFactory({required this.getStorageLib});
+  GetStorageLib getStorageLib;
+  String? token;
 
   Future<Dio> getDio() async {
     Dio dio = Dio();
+    // token = await getStorageLib.getString(AppLocalStrings.keyToken);
     Map<String, String> headers = {
       contentType: applicationJson,
       accept: applicationJson,
+
       // xtent: xtentValue,
     };
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        // String token = await _appPreferences.getUserToken();
+        token = await getStorageLib.getString(AppLocalStrings.keyToken) ?? '';
         options.headers = headers;
-        // options.headers[authorization] = 'Bearer $token';
+        options.headers[authorization] = 'Bearer $token';
         options.baseUrl = ApiEndPoint.baseUrl;
         options.contentType = applicationJson;
+
         options.sendTimeout =
             const Duration(milliseconds: AppStrings.apiTimeOut);
         options.receiveTimeout =
             const Duration(milliseconds: AppStrings.apiTimeOut);
+
         return handler.next(options);
       },
       onError: (e, handler) {

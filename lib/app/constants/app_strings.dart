@@ -23,4 +23,6 @@ class AppStrings {
       'Access thousands of trusted Doctors\ninstantly !';
   static const String createAccount = 'Create Account';
   static const String signIn = 'Sign In';
+  static const String error = 'Error';
+  static const String noInternetConnection = 'Error';
 }

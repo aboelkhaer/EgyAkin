@@ -67,18 +67,24 @@ class OnbordingScreen extends GetView<OnboardingController> {
                 SizedBox(
                   height: size.height * 0.07,
                 ),
-                CustomElevatedButton(
-                  size: size,
-                  onPressed: () {},
-                  title: AppStrings.createAccount,
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomElevatedButton(
+                    size: size,
+                    onPressed: () => Get.offNamed(AppRoutes.register),
+                    title: AppStrings.createAccount,
+                  ),
                 ),
                 const SizedBox(
                   height: 16,
                 ),
-                CustomOutlineBotton(
-                  onPressed: () => Get.offNamed(AppRoutes.signIn),
-                  title: AppStrings.signIn,
-                  size: size,
+                SizedBox(
+                  width: double.infinity,
+                  child: CustomOutlineBotton(
+                    onPressed: () => Get.offNamed(AppRoutes.signIn),
+                    title: AppStrings.signIn,
+                    size: size,
+                  ),
                 ),
                 const SizedBox(
                   height: 20,

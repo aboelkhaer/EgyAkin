@@ -1,0 +1,12 @@
+import 'package:egyakin/exports.dart';
+
+abstract class NetworkInfo {
+  Future<bool> get isConnected;
+}
+
+class NetworkInfoImpl extends NetworkInfo {
+  final InternetConnectionChecker _connectionChecker;
+  NetworkInfoImpl(this._connectionChecker);
+  @override
+  Future<bool> get isConnected => _connectionChecker.hasConnection;
+}

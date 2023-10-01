@@ -1,9 +1,10 @@
-import 'injection_container.dart' as di;
 import 'exports.dart';
+import 'injection_container.dart' as di;
 
 void main() async {
-  await GetStorage.init();
-  await di.setupLocator();
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.diInit();
+  GetStorage.init();
   runApp(const MyApp());
 }
 
@@ -16,7 +17,11 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'EgyAkin',
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData(useMaterial3: true),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSwatch().copyWith(
+          secondary: AppColors.primary,
+        ),
+      ),
       getPages: AppRoutes.routes,
     );
   }
