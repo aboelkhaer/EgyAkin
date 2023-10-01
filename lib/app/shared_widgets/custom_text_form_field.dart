@@ -5,36 +5,55 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController textFormFieldController;
   final TextInputType textInputType;
   final VoidCallback? showPasswordFunction;
-  final AuthController authController;
   final FormFieldValidator<String> validator;
+  final bool? showPasswordInSignIn;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onFieldSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final bool enableSuggestions;
+  final bool? isSignInPasswordField;
+  final TextInputAction textInputAction;
+  final FocusNode? focusNode;
 
   final bool isPassword;
   const CustomTextFormField(
       {super.key,
       required this.title,
       required this.textFormFieldController,
+      this.onFieldSubmitted,
       this.isPassword = false,
       required this.textInputType,
+      this.focusNode,
+      this.enableSuggestions = false,
       this.showPasswordFunction,
-      required this.authController,
+      required this.textInputAction,
+      this.showPasswordInSignIn = false,
       required this.validator,
-      this.onChanged});
+      this.isSignInPasswordField = false,
+      this.onChanged,
+      this.inputFormatters});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 77,
+      height: 60,
       child: TextFormField(
         controller: textFormFieldController,
         keyboardType: textInputType,
+        inputFormatters: inputFormatters,
+        enableSuggestions: enableSuggestions,
+        onFieldSubmitted: onFieldSubmitted,
+        focusNode: focusNode,
         onChanged: onChanged,
-        autofocus: false,
         maxLines: 1,
         obscureText: isPassword ? true : false,
+        textInputAction: textInputAction,
         decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.only(left: 11, right: 3, top: 14, bottom: 14),
           hintText: title,
           hintStyle: const TextStyle(color: Colors.grey),
+          errorStyle: const TextStyle(fontSize: 9, height: 0.3),
           filled: true,
           fillColor: AppColors.subBG,
           enabledBorder: OutlineInputBorder(
@@ -53,10 +72,10 @@ class CustomTextFormField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: AppColors.primary),
           ),
-          suffixIcon: title == 'Password'
+          suffixIcon: isSignInPasswordField == true && isPassword == true
               ? GestureDetector(
                   onTap: showPasswordFunction,
-                  child: authController.showPassword.value
+                  child: showPasswordInSignIn!
                       ? const Icon(
                           Icons.visibility_off,
                         )

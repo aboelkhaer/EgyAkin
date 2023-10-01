@@ -6,6 +6,7 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    Get.lazyPut(() => WelcomeController());
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -46,10 +47,13 @@ class WelcomeScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CustomElevatedButton(
-                    size: size,
-                    onPressed: () => Get.offAllNamed(AppRoutes.onboarding),
-                    title: AppStrings.getStarted,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: CustomElevatedButton(
+                      size: size,
+                      onPressed: () => Get.offAllNamed(AppRoutes.onboarding),
+                      title: AppStrings.getStarted,
+                    ),
                   ),
                 ),
                 SizedBox(height: size.height * 0.02),

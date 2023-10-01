@@ -10,17 +10,23 @@ class DoctorModelResponse {
   DoctorModel? doctorModel;
   @JsonKey(name: 'token')
   String? token;
-  DoctorModelResponse(this.doctorModel);
+
+  DoctorModelResponse({
+    this.value,
+    this.doctorModel,
+    this.token,
+  });
+
   factory DoctorModelResponse.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelResponseFromJson(json);
   Map<String, dynamic> toJson() => _$DoctorModelResponseToJson(this);
 }
 
-@JsonSerializable(includeIfNull: false)
+@JsonSerializable(includeIfNull: true)
 class DoctorModel {
   @JsonKey(name: 'id')
   int? id;
-  @JsonKey(name: 'fname')
+  @JsonKey(name: 'name')
   String? firstName;
   @JsonKey(name: 'lname')
   String? lastName;
@@ -32,6 +38,8 @@ class DoctorModel {
   int? age;
   @JsonKey(name: 'specialty')
   String? specialty;
+  @JsonKey(name: 'password_confirmation')
+  String? passwordConfirmation;
   @JsonKey(name: 'workingplace')
   String? workingPlace;
   @JsonKey(name: 'phone')
@@ -48,10 +56,35 @@ class DoctorModel {
   DoctorModel({
     this.id,
     this.firstName,
+    this.lastName,
+    this.email,
+    this.emailVerifiedAt,
+    this.age,
+    this.specialty,
+    this.passwordConfirmation,
+    this.workingPlace,
+    this.phone,
+    this.job,
+    this.highestDegree,
+    this.createdAt,
+    this.updatedAt,
   });
 
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DoctorModelToJson(this);
+}
+
+@JsonSerializable()
+class LogoutModel {
+  @JsonKey(name: 'value')
+  bool? value;
+  @JsonKey(name: 'message')
+  String? message;
+  LogoutModel({required this.value, required this.message});
+  factory LogoutModel.fromJson(Map<String, dynamic> json) =>
+      _$LogoutModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LogoutModelToJson(this);
 }

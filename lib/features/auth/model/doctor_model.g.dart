@@ -8,12 +8,12 @@ part of 'doctor_model.dart';
 
 DoctorModelResponse _$DoctorModelResponseFromJson(Map<String, dynamic> json) =>
     DoctorModelResponse(
-      json['data'] == null
+      value: json['value'] as bool?,
+      doctorModel: json['data'] == null
           ? null
           : DoctorModel.fromJson(json['data'] as Map<String, dynamic>),
-    )
-      ..value = json['value'] as bool?
-      ..token = json['token'] as String?;
+      token: json['token'] as String?,
+    );
 
 Map<String, dynamic> _$DoctorModelResponseToJson(
         DoctorModelResponse instance) =>
@@ -25,41 +25,46 @@ Map<String, dynamic> _$DoctorModelResponseToJson(
 
 DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) => DoctorModel(
       id: json['id'] as int?,
-      firstName: json['fname'] as String?,
-    )
-      ..lastName = json['lname'] as String?
-      ..email = json['email'] as String?
-      ..emailVerifiedAt = json['emailVerifiedAt'] as String?
-      ..age = json['age'] as int?
-      ..specialty = json['specialty'] as String?
-      ..workingPlace = json['workingplace'] as String?
-      ..phone = json['phone'] as String?
-      ..job = json['job'] as String?
-      ..highestDegree = json['highestdegree'] as String?
-      ..createdAt = json['created_at'] as String?
-      ..updatedAt = json['updated_at'] as String?;
+      firstName: json['name'] as String?,
+      lastName: json['lname'] as String?,
+      email: json['email'] as String?,
+      emailVerifiedAt: json['emailVerifiedAt'] as String?,
+      age: json['age'] as int?,
+      specialty: json['specialty'] as String?,
+      passwordConfirmation: json['password_confirmation'] as String?,
+      workingPlace: json['workingplace'] as String?,
+      phone: json['phone'] as String?,
+      job: json['job'] as String?,
+      highestDegree: json['highestdegree'] as String?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+    );
 
-Map<String, dynamic> _$DoctorModelToJson(DoctorModel instance) {
-  final val = <String, dynamic>{};
+Map<String, dynamic> _$DoctorModelToJson(DoctorModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.firstName,
+      'lname': instance.lastName,
+      'email': instance.email,
+      'emailVerifiedAt': instance.emailVerifiedAt,
+      'age': instance.age,
+      'specialty': instance.specialty,
+      'password_confirmation': instance.passwordConfirmation,
+      'workingplace': instance.workingPlace,
+      'phone': instance.phone,
+      'job': instance.job,
+      'highestdegree': instance.highestDegree,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+    };
 
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
+LogoutModel _$LogoutModelFromJson(Map<String, dynamic> json) => LogoutModel(
+      value: json['value'] as bool?,
+      message: json['message'] as String?,
+    );
 
-  writeNotNull('id', instance.id);
-  writeNotNull('fname', instance.firstName);
-  writeNotNull('lname', instance.lastName);
-  writeNotNull('email', instance.email);
-  writeNotNull('emailVerifiedAt', instance.emailVerifiedAt);
-  writeNotNull('age', instance.age);
-  writeNotNull('specialty', instance.specialty);
-  writeNotNull('workingplace', instance.workingPlace);
-  writeNotNull('phone', instance.phone);
-  writeNotNull('job', instance.job);
-  writeNotNull('highestdegree', instance.highestDegree);
-  writeNotNull('created_at', instance.createdAt);
-  writeNotNull('updated_at', instance.updatedAt);
-  return val;
-}
+Map<String, dynamic> _$LogoutModelToJson(LogoutModel instance) =>
+    <String, dynamic>{
+      'value': instance.value,
+      'message': instance.message,
+    };

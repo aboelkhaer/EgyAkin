@@ -1,4 +1,4 @@
-import 'package:get_storage/get_storage.dart';
+import '../../exports.dart';
 
 abstract class LocalStorageProcess {
   Future<void> setData(String key, dynamic value);
@@ -6,43 +6,54 @@ abstract class LocalStorageProcess {
   Future<String>? getString(String key);
   Future<bool>? getBool(String key);
   Future<double>? getDouble(String key);
-  Future<dynamic> getData(String key);
-  Future<void> clearData();
+  Future<dynamic> getDynamicData(String key);
+  Future<void> clearAllData();
+  Future<void> removeData(String key);
 }
 
 class GetStorageLib extends LocalStorageProcess {
+  GetStorage getStorage = Get.find<GetStorage>();
   @override
-  Future<void> clearData() async {
-    return await GetStorage().erase();
+  Future<void> clearAllData() async {
+    return await getStorage.erase();
   }
 
   @override
   Future<bool>? getBool(String key) async {
-    return await GetStorage().read(key);
+    return await getStorage.read(key);
   }
 
   @override
-  Future<dynamic> getData(String key) async {
-    return await GetStorage().read(key);
+  Future<dynamic> getDynamicData(String key) async {
+    return await getStorage.read(key);
   }
 
   @override
   Future<double>? getDouble(String key) async {
-    return await GetStorage().read(key);
+    return await getStorage.read(key);
   }
 
   @override
   Future<int>? getInt(String key) async {
-    return await GetStorage().read(key);
+    return await getStorage.read(key);
   }
 
   @override
   Future<String>? getString(String key) async {
-    return await GetStorage().read(key);
+    var val = await getStorage.read(key);
+    if (val != null) {
+      return val;
+    }
+    return '';
   }
 
   @override
   Future<void> setData(String key, dynamic value) async {
-    return await GetStorage().write(key, value);
+    return await getStorage.write(key, value);
+  }
+
+  @override
+  Future<void> removeData(String key) async {
+    return await getStorage.remove(key);
   }
 }

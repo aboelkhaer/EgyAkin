@@ -14,7 +14,7 @@ class CustomOutlineBotton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: double.infinity,
+      // width: double.infinity,
       height: size.height * 0.06,
       child: OutlinedButton(
         onPressed: onPressed,
@@ -23,8 +23,8 @@ class CustomOutlineBotton extends StatelessWidget {
               width: 2.0,
               color: AppColors.primary,
             ),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10))),
         child: Text(
           title,
           style: const TextStyle(color: AppColors.primary),
