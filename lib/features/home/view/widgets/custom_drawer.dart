@@ -1,25 +1,33 @@
 import '../../../../exports.dart';
 
 class CustomDrawerWidget extends GetView<LogoutController> {
-  const CustomDrawerWidget({super.key});
+  final int currentDoctorPatientsCount;
+  const CustomDrawerWidget({
+    super.key,
+    required this.currentDoctorPatientsCount,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
+        physics: const BouncingScrollPhysics(),
         children: [
-          DrawerHeader(
-            child: GetBuilder<HomeController>(
-              init: HomeController(),
-              builder: (homeController) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Get.toNamed(AppRoutes.doctorProfile),
-                      child: CircleAvatar(
+          GestureDetector(
+            onTap: () {
+              Get.back();
+              Get.toNamed(AppRoutes.doctorProfile);
+            },
+            child: DrawerHeader(
+              child: GetBuilder<HomeController>(
+                init: HomeController(),
+                builder: (homeController) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
                         backgroundColor: AppColors.subBG,
                         radius: 25,
                         child: Text(
@@ -38,38 +46,41 @@ class CustomDrawerWidget extends GetView<LogoutController> {
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      homeController.currentDoctorFirstName == null ||
-                              homeController.currentDoctorLastName == null
-                          ? ''
-                          : 'Dr.${homeController.currentDoctorFirstName.toString().capitalizeFirst} ${homeController.currentDoctorLastName.toString().capitalizeFirst}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      homeController.currentDoctorJob == null
-                          ? ''
-                          : homeController.currentDoctorJob!.toString(),
-                      style: const TextStyle(color: AppColors.description),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                );
-              },
+                      const SizedBox(height: 10),
+                      Text(
+                        homeController.currentDoctorFirstName == null ||
+                                homeController.currentDoctorLastName == null
+                            ? ''
+                            : 'Dr.${homeController.currentDoctorFirstName.toString().capitalizeFirst} ${homeController.currentDoctorLastName.toString().capitalizeFirst}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        homeController.currentDoctorJob == null
+                            ? ''
+                            : homeController.currentDoctorJob!.toString(),
+                        style: const TextStyle(color: AppColors.description),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
           ),
           ListTile(
-            title: const Text('Logout'),
-            // selected: _selectedIndex == 2,
+            title: const Text('Contact us'),
             onTap: () {
-              // Update the state of the app
-              // _onItemTapped(2);
-              // Then close the drawer
-              Navigator.pop(context);
+              Get.back();
+              Get.toNamed(AppRoutes.contactUs);
+            },
+          ),
+          ListTile(
+            title: const Text('Logout'),
+            onTap: () {
+              Get.back();
               controller.logout();
             },
           ),

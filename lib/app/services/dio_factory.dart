@@ -1,7 +1,5 @@
 import 'package:dio/dio.dart';
-
 import '../../exports.dart';
-import '../constants/local_storage_key.dart';
 
 const String applicationJson = "application/json";
 const String contentType = "content-type";

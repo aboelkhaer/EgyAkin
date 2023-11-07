@@ -1,7 +1,13 @@
 import 'package:dio/dio.dart';
 
 import 'exports.dart';
-import 'features/home/controller/home_repo.dart';
+import 'features/comments/controller/comments_controller.dart';
+import 'features/contact_us/controller/contact_us_controller.dart';
+import 'features/contact_us/controller/contact_us_repo.dart';
+import 'features/notification/controller/notification_controller.dart';
+import 'features/outcome/controller/outcome_controller.dart';
+import 'features/outcome/controller/outcome_repo.dart';
+import 'features/posts/controller/posts_controller.dart';
 
 Future<void> diInit() async {
   // Core
@@ -22,6 +28,19 @@ Future<void> diInit() async {
   // Get.lazyPut(() => LanguageRepo());
   Get.lazyPut(() => AuthRepository(apiServices: Get.find()), fenix: true);
   Get.lazyPut(() => HomeRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => SearchRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => ProfileRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => SectionDetailsRepository(apiServices: Get.find()),
+      fenix: true);
+  Get.lazyPut(() => PatientSectionRepository(apiServices: Get.find()),
+      fenix: true);
+  Get.lazyPut(() => AddPatientRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => OutcomeRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => CommentRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => ContactUsRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => PostsRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => NotificationRepository(apiServices: Get.find()),
+      fenix: true);
 
   // Controller
   // Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
@@ -33,6 +52,19 @@ Future<void> diInit() async {
   Get.lazyPut(() => RegisterController());
   Get.lazyPut(() => HomeController());
   Get.lazyPut(() => LogoutController());
+  Get.lazyPut(() => DoctroProfileController());
+  Get.lazyPut(() => SectionDetailsController());
+  Get.lazyPut(() => SearchHomeController());
+  Get.lazyPut(() => CurrentPatientsController());
+  Get.lazyPut(() => AllPatientsController());
+  Get.lazyPut(() => SectionDetailsController());
+  Get.lazyPut(() => AddPatientController());
+  Get.lazyPut(() => PatientSectionController());
+  Get.lazyPut(() => OutcomeController());
+  Get.lazyPut(() => CommentsController());
+  Get.lazyPut(() => ContactUsController());
+  Get.lazyPut(() => PostsController());
+  Get.lazyPut(() => NotificationController());
 }
 
 initNetworking() async {

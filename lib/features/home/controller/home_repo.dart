@@ -1,20 +1,17 @@
 import 'package:dio/dio.dart';
 
-import '../../../app/constants/local_storage_key.dart';
 import '../../../exports.dart';
-import '../model/all_patients_home_model.dart';
 
 class HomeRepository {
   ApiServices apiServices;
   NetworkInfoImpl networkInfo = Get.find<NetworkInfoImpl>();
   GetStorageLib getStorageLib = Get.find<GetStorageLib>();
-  List<PatientHomeModel>? currentPatientList = [];
 
   HomeRepository({
     required this.apiServices,
   });
 
-  Future<List<PatientHomeModel>>? getCurrentPatients(
+  Future<List<BasePatientModel>>? getCurrentPatients(
       RxBool isCurrentPatientsLoading) async {
     isCurrentPatientsLoading.value = true;
     await Future.delayed(const Duration(milliseconds: 300));
@@ -24,8 +21,11 @@ class HomeRepository {
       try {
         var response = await apiServices.getCurrentPatients(getTokenFromLocal!);
         if (response.value == true) {
-          if (response.patientHomeModel != null) {
-            return response.patientHomeModel!;
+          Get.find<HomeController>().currentDoctorScoreValue!.value =
+              response.scoreValue.toString();
+
+          if (response.basePatientList != null) {
+            return response.basePatientList!;
           }
           return [];
         } else {
@@ -34,12 +34,12 @@ class HomeRepository {
       } catch (e) {
         isCurrentPatientsLoading.value = false;
         if (e is DioException) {
-          final result = e.response!.data as Map<String, dynamic>;
-          customSnackBar(
-            isError: true,
-            title: AppStrings.error,
-            body: result['message'],
-          );
+          // final result = e.response!.data as Map<String, dynamic>;
+          // customSnackBar(
+          //   isError: true,
+          //   title: AppStrings.error,
+          //   body: result['message'],
+          // );
 
           DioExceptions.fromDioError(
               dioError: e, errorFrom: 'home_Repo/getCurrentPatients');
@@ -57,7 +57,7 @@ class HomeRepository {
     }
   }
 
-  Future<List<AllPatientHomeModel>>? getAllPatients(
+  Future<List<BasePatientModel>>? getAllPatients(
       RxBool isAllPatientsLoading) async {
     isAllPatientsLoading.value = true;
     await Future.delayed(const Duration(milliseconds: 300));
@@ -67,8 +67,8 @@ class HomeRepository {
       try {
         var response = await apiServices.getAllPatients(getTokenFromLocal!);
         if (response.value == true) {
-          if (response.allPatientHomeModel != null) {
-            return response.allPatientHomeModel!;
+          if (response.basePatientList != null) {
+            return response.basePatientList!;
           }
           return [];
         } else {
@@ -77,12 +77,12 @@ class HomeRepository {
       } catch (e) {
         isAllPatientsLoading.value = false;
         if (e is DioException) {
-          final result = e.response!.data as Map<String, dynamic>;
-          customSnackBar(
-            isError: true,
-            title: AppStrings.error,
-            body: result['message'],
-          );
+          // final result = e.response!.data as Map<String, dynamic>;
+          // customSnackBar(
+          //   isError: true,
+          //   title: AppStrings.error,
+          //   body: result['message'],
+          // );
 
           DioExceptions.fromDioError(
               dioError: e, errorFrom: 'home_Repo/getAllPatients');
@@ -96,6 +96,53 @@ class HomeRepository {
         title: AppStrings.error,
         body: AppStrings.noInternetConnection,
       );
+      return [];
+    }
+  }
+
+  Future<List<BasePostModel>>? getPosts(
+      {required RxBool isPostsLoading}) async {
+    if (!Get.isSnackbarOpen) {
+      isPostsLoading.value = true;
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (await networkInfo.isConnected) {
+        try {
+          var response = await apiServices.getHomePosts();
+          if (response.value == true) {
+            //  isCommentsLoading.value = false;
+
+            if (response.basePostModel != null) {
+              return response.basePostModel!;
+            }
+            return [];
+          } else {
+            // isCommentsLoading.value = false;
+            return [];
+          }
+        } catch (e) {
+          isPostsLoading.value = false;
+          if (e is DioException) {
+            // final result = e.response!.data as Map<String, dynamic>;
+            // customSnackBar(
+            //   isError: true,
+            //   title: AppStrings.error,
+            //   body: result['message'],
+            // );
+
+            DioExceptions.fromDioError(
+                dioError: e, errorFrom: 'comment_repo/getComments');
+          }
+        }
+      } else {
+        isPostsLoading.value = false;
+        customSnackBar(
+          isError: true,
+          title: AppStrings.error,
+          body: AppStrings.noInternetConnection,
+        );
+      }
+      return [];
+    } else {
       return [];
     }
   }

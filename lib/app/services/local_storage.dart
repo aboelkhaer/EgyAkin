@@ -35,7 +35,11 @@ class GetStorageLib extends LocalStorageProcess {
 
   @override
   Future<int>? getInt(String key) async {
-    return await getStorage.read(key);
+    var val = await getStorage.read(key);
+    if (val != null) {
+      return val;
+    }
+    return 0;
   }
 
   @override

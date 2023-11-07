@@ -1,7 +1,51 @@
 import '../../../exports.dart';
 
-class SignInScreen extends GetView<SignInController> {
+class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
+  final SignInController controller = Get.put(SignInController());
+  late TextEditingController signInEmailController;
+  late TextEditingController signInPasswordController;
+  GlobalKey<FormState>? signInFormKey;
+  final FocusNode passwordFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    initTextFieldController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    disposeControllers();
+    super.dispose();
+  }
+
+  initTextFieldController() {
+    signInFormKey = GlobalKey<FormState>();
+
+    signInEmailController = TextEditingController(text: 'moatz@moatz.com');
+    signInPasswordController = TextEditingController(text: '12345678');
+  }
+
+  disposeControllers() {
+    signInEmailController.dispose();
+    signInPasswordController.dispose();
+    passwordFocusNode.dispose();
+  }
+
+  resetLoginForm() {
+    if (signInFormKey?.currentState != null) {
+      signInFormKey?.currentState!.reset();
+    }
+    signInEmailController.clear();
+    signInPasswordController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +68,7 @@ class SignInScreen extends GetView<SignInController> {
                     height: size.height * 0.45,
                   ),
                   Form(
-                    key: controller.signInFormKey,
+                    key: signInFormKey,
                     autovalidateMode: controller.signInErrorValidCounter == 0
                         ? AutovalidateMode.disabled
                         : AutovalidateMode.onUserInteraction,
@@ -32,12 +76,11 @@ class SignInScreen extends GetView<SignInController> {
                       children: [
                         CustomTextFormField(
                           title: 'Email',
-                          textFormFieldController:
-                              controller.signInEmailController,
+                          textFormFieldController: signInEmailController,
                           enableSuggestions: true,
                           textInputType: TextInputType.emailAddress,
                           onFieldSubmitted: (v) => FocusScope.of(context)
-                              .requestFocus(controller.passwordFocusNode),
+                              .requestFocus(passwordFocusNode),
                           validator: (value) =>
                               controller.emailValidate(value!),
                           textInputAction: TextInputAction.next,
@@ -46,9 +89,8 @@ class SignInScreen extends GetView<SignInController> {
                         Obx(
                           () => CustomTextFormField(
                             title: 'Password',
-                            textFormFieldController:
-                                controller.signInPasswordController,
-                            focusNode: controller.passwordFocusNode,
+                            textFormFieldController: signInPasswordController,
+                            focusNode: passwordFocusNode,
                             textInputType: TextInputType.visiblePassword,
                             isSignInPasswordField: true,
                             textInputAction: TextInputAction.done,
@@ -99,9 +141,11 @@ class SignInScreen extends GetView<SignInController> {
                             child: CustomElevatedButton(
                               size: size,
                               onPressed: () {
-                                if (controller.signInFormKey.currentState!
-                                    .validate()) {
-                                  controller.signIn();
+                                if (signInFormKey!.currentState!.validate()) {
+                                  controller.signIn(
+                                    email: signInEmailController.text,
+                                    password: signInPasswordController.text,
+                                  );
                                 }
                               },
                               title: AppStrings.signIn,
@@ -123,6 +167,7 @@ class SignInScreen extends GetView<SignInController> {
                       GestureDetector(
                         onTap: () {
                           Get.offNamed(AppRoutes.register);
+                          resetLoginForm();
                         },
                         child: Container(
                           padding: const EdgeInsets.only(

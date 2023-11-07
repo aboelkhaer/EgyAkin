@@ -12,4 +12,6 @@ class AppLocalStrings {
   static const String currentDoctorId = 'currentDoctorId';
   static const String currentDoctorHighestDegree = 'currentDoctorHighestDegree';
   static const String currentDoctorCreatedAt = 'currentDoctorCreatedAt';
+  static const String currentDoctorUpdatedAt = 'currentDoctorUpdatedAt';
+  static const String currentDoctorScoreValue = 'currentDoctorScoreValue';
 }

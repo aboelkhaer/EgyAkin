@@ -44,7 +44,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<DoctorModelResponse> login(
+  Future<GetDoctorWithTokenModelResponse> login(
     email,
     password,
   ) async {
@@ -56,7 +56,7 @@ class _ApiServices implements ApiServices {
       'password': password,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DoctorModelResponse>(Options(
+        _setStreamType<GetDoctorWithTokenModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -68,12 +68,12 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DoctorModelResponse.fromJson(_result.data!);
+    final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DoctorModelResponse> register(
+  Future<GetDoctorWithTokenModelResponse> register(
     firstName,
     lastName,
     email,
@@ -103,7 +103,7 @@ class _ApiServices implements ApiServices {
       'highestdegree': highestDegree,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DoctorModelResponse>(Options(
+        _setStreamType<GetDoctorWithTokenModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -115,18 +115,18 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = DoctorModelResponse.fromJson(_result.data!);
+    final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<AllPatientHomeModelResponse> getAllPatients(token) async {
+  Future<GetAllBasPatientstModelResponse> getAllPatients(token) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': token};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AllPatientHomeModelResponse>(Options(
+        _setStreamType<GetAllBasPatientstModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -138,18 +138,18 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = AllPatientHomeModelResponse.fromJson(_result.data!);
+    final value = GetAllBasPatientstModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<PatientHomeModelResponse> getCurrentPatients(token) async {
+  Future<GetCurrentPatientstModelResponse> getCurrentPatients(token) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': token};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PatientHomeModelResponse>(Options(
+        _setStreamType<GetCurrentPatientstModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -161,7 +161,424 @@ class _ApiServices implements ApiServices {
               data: _data,
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = PatientHomeModelResponse.fromJson(_result.data!);
+    final value = GetCurrentPatientstModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetAllBasPatientstModelResponse> searchHome(searchContent) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetAllBasPatientstModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/patient/search/${searchContent}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetAllBasPatientstModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetDoctorModelResponse> updateProfile(
+    doctorID,
+    firstName,
+    lastName,
+    email,
+    age,
+    specialty,
+    workingPlace,
+    phone,
+    job,
+    highestDegree,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'name': firstName,
+      'lname': lastName,
+      'email': email,
+      'age': age,
+      'specialty': specialty,
+      'workingplace': workingPlace,
+      'phone': phone,
+      'job': job,
+      'highestdegree': highestDegree,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetDoctorModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/users/${doctorID}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetDoctorModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetBaseSectionsModelResponse> getPatientSections(patientId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetBaseSectionsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/section/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetBaseSectionsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetQuestionsModelResponse> getSectionDetails(
+    sectionId,
+    patientId,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetQuestionsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/questions/${sectionId}/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetQuestionsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DeletePatientModelResponse> deletePatient(patientId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DeletePatientModelResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/patientHistory/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DeletePatientModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UpdateSectionDetailsModelResponse> updateSectionDetails(
+    sectionId,
+    patientId,
+    map,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(map);
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UpdateSectionDetailsModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/section/${sectionId}/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UpdateSectionDetailsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
+      sectionId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetQuestionsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/questions/${sectionId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetQuestionsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SemiPatientModel> addPatientForFirstTime(map) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(map);
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<SemiPatientModel>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/patientHistory',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SemiPatientModel.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<AddOutcometModelResponse> submitOutcome(
+    patientId,
+    outcomeOfThePatient,
+    creatinineOnDischarge,
+    finalStatus,
+    other,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'patient_id': patientId,
+      'outcome_of_the_patient': outcomeOfThePatient,
+      'creatinine_on_discharge': creatinineOnDischarge,
+      'final_status': finalStatus,
+      'other': other,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<AddOutcometModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/outcome',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = AddOutcometModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetOutcomeModelResponse> getOutcome(patientId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetOutcomeModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/outcome/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetOutcomeModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UpdateSectionDetailsModelResponse> finalSubmit(patientId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UpdateSectionDetailsModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/section/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UpdateSectionDetailsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetCommentstModelResponse> getComments(patientId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetCommentstModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/comment/${patientId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetCommentstModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<AddCommentModelResponse> addComment(
+    patientId,
+    content,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'patient_id': patientId,
+      'content': content,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<AddCommentModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/comment',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = AddCommentModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DeleteCommentModelResponse> deleteComment(commentId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DeleteCommentModelResponse>(Options(
+      method: 'DELETE',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/comment/${commentId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DeleteCommentModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<AddContactUsModelResponse> addContactUs(message) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'message': message};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<AddContactUsModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/contact',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = AddContactUsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetPostsModelResponse> getHomePosts() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetPostsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/post',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetPostsModelResponse.fromJson(_result.data!);
     return value;
   }
 

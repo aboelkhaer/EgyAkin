@@ -5,4 +5,17 @@ class ApiEndPoint {
   static const logout = '$baseUrl/api/logout';
   static const allPatients = '$baseUrl/api/allPatients';
   static const currentPatientsHome = '$baseUrl/api/currentPatients';
+  static const search = '$baseUrl/api/patient/search';
+  static const updateProfile = '$baseUrl/api/users';
+  static const sections = '$baseUrl/api/section';
+  static const question = '$baseUrl/api/questions';
+  static const deletePatient = '$baseUrl/api/patientHistory';
+  static const updateSectionDetails = '$baseUrl/api/section';
+  static const getAddPatientsQuestions = '$baseUrl/api/questions';
+  static const addPatientForFirstTime = '$baseUrl/api/patientHistory';
+  static const outcome = '$baseUrl/api/outcome';
+  static const finalSubmit = '$baseUrl/api/section';
+  static const comment = '$baseUrl/api/comment';
+  static const contactUs = '$baseUrl/api/contact';
+  static const post = '$baseUrl/api/post';
 }

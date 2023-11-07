@@ -1,37 +1,39 @@
 import '../../../exports.dart';
 
 class SignInController extends GetxController {
-  late TextEditingController signInEmailController;
-  late TextEditingController signInPasswordController;
   RxBool showPasswordInSignIn = false.obs;
   RxBool isSignInLoading = false.obs;
   int signInErrorValidCounter = 0;
   AuthRepository authRepository = Get.find<AuthRepository>();
-  late GlobalKey<FormState> signInFormKey;
-  final FocusNode passwordFocusNode = FocusNode();
 
-  @override
-  void onInit() {
-    signInEmailController = TextEditingController(text: 'moatz@moatz.com');
-    signInPasswordController = TextEditingController(text: '12345678');
-    signInFormKey = GlobalKey<FormState>();
-    super.onInit();
-  }
+  // @override
+  // void onInit() {
+  //   // resetTextFieldController();
+  //   signInFormKey = GlobalKey<FormState>();
+  //   super.onInit();
+  // }
 
-  void loginDispose() {
-    signInEmailController.dispose();
-    signInPasswordController.dispose();
-    passwordFocusNode.dispose();
-    if (signInFormKey.currentState != null) {
-      signInFormKey.currentState!.reset();
-    }
-  }
+  // void resetTextFieldController() {
+  //   signInEmailController?.dispose();
+  //   signInPasswordController?.dispose();
+  //   signInEmailController = TextEditingController(text: 'moatz@moatz.com');
+  //   signInPasswordController = TextEditingController(text: '12345678');
+  // }
 
-  @override
-  void onClose() {
-    loginDispose();
-    super.onClose();
-  }
+  // void loginDispose() {
+  //   signInEmailController?.dispose();
+  //   signInPasswordController?.dispose();
+  //   passwordFocusNode.dispose();
+  //   if (signInFormKey.currentState != null) {
+  //     signInFormKey.currentState!.reset();
+  //   }
+  // }
+
+  // @override
+  // void onClose() {
+  //   loginDispose();
+  //   super.onClose();
+  // }
 
   String? emailValidate(String value) {
     if (!GetUtils.isEmail(value)) {
@@ -47,12 +49,15 @@ class SignInController extends GetxController {
     return null;
   }
 
-  signIn() {
+  signIn({
+    required String email,
+    required String password,
+  }) {
     signInErrorValidCounter += 1;
 
     authRepository.login(
-      email: signInEmailController.text,
-      password: signInPasswordController.text,
+      email: email,
+      password: password,
       isSignInLoading: isSignInLoading,
     );
   }

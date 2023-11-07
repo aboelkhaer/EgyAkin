@@ -1,7 +1,7 @@
 import '../../../exports.dart';
 
 class CurrentPatientsController extends GetxController {
-  List<PatientHomeModel>? currentPatientsList =
+  List<BasePatientModel>? currentPatientsList =
       Get.find<HomeController>().currentPatinetList;
   HomeController homeController = Get.find<HomeController>();
   ScrollController currentPatientsScrollController = ScrollController();
