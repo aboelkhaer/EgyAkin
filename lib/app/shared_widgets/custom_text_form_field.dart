@@ -2,15 +2,17 @@ import '../../exports.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String title;
-  final TextEditingController textFormFieldController;
+  final TextEditingController? textFormFieldController;
   final TextInputType textInputType;
   final VoidCallback? showPasswordFunction;
-  final FormFieldValidator<String> validator;
+  final String? Function(String?)? validator;
   final bool? showPasswordInSignIn;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
   final List<TextInputFormatter>? inputFormatters;
   final bool enableSuggestions;
+  final String? initialValue;
+  final int? maxLines;
   final bool? isSignInPasswordField;
   final TextInputAction textInputAction;
   final FocusNode? focusNode;
@@ -19,9 +21,11 @@ class CustomTextFormField extends StatelessWidget {
   const CustomTextFormField(
       {super.key,
       required this.title,
-      required this.textFormFieldController,
+      this.textFormFieldController,
+      this.initialValue,
       this.onFieldSubmitted,
       this.isPassword = false,
+      this.maxLines = 1,
       required this.textInputType,
       this.focusNode,
       this.enableSuggestions = false,
@@ -39,13 +43,14 @@ class CustomTextFormField extends StatelessWidget {
       height: 60,
       child: TextFormField(
         controller: textFormFieldController,
+        initialValue: initialValue,
         keyboardType: textInputType,
         inputFormatters: inputFormatters,
         enableSuggestions: enableSuggestions,
         onFieldSubmitted: onFieldSubmitted,
         focusNode: focusNode,
         onChanged: onChanged,
-        maxLines: 1,
+        maxLines: maxLines,
         obscureText: isPassword ? true : false,
         textInputAction: textInputAction,
         decoration: InputDecoration(

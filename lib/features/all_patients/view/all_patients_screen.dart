@@ -1,7 +1,4 @@
-import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../exports.dart';
-import '../controller/all_patients_controller.dart';
 
 class AllPatientsScreen extends StatelessWidget {
   const AllPatientsScreen({super.key});
@@ -32,149 +29,48 @@ class AllPatientsScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(
                     left: 20,
                     top: 20,
-                    right: 20,
+                    right: 30,
                     bottom: 50,
                   ),
                   itemCount: allPatientsController.allPatientsList!.length,
                   itemBuilder: (BuildContext context, int index) {
                     var patient = allPatientsController.allPatientsList![index];
 
-                    return Stack(
-                      children: [
-                        Card(
-                          color: Colors.white, // Backgrond color
-                          elevation: 0.8,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(10),
-                            splashColor: AppColors.subBG, // Splash color
-                            onTap: () {},
-                            child: Container(
-                              width: size.width * 0.85,
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor: AppColors.subBG,
-                                        radius: 20,
-                                        child: Text(
-                                          patient.name == null
-                                              ? ''
-                                              : patient.name![0],
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: AppColors.primary,
-                                              fontSize: 14),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const SizedBox(width: 15),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Flexible(
-                                                        child: Text(
-                                                          patient.name == null
-                                                              ? ''
-                                                              : patient.name!,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color:
-                                                                AppColors.title,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        patient.createdAt ==
-                                                                null
-                                                            ? ''
-                                                            : timeago
-                                                                .format(DateTime
-                                                                    .parse(patient
-                                                                        .createdAt!))
-                                                                .toString(),
-                                                        style: const TextStyle(
-                                                          color: AppColors
-                                                              .description,
-                                                          fontSize: 10,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Dr.${patient.ownerModel!.name!.capitalizeFirst} ${patient.ownerModel!.lastName!.capitalizeFirst}',
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.description,
-                                                      fontSize: 13,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    patient.hospital == null
-                                                        ? ''
-                                                        : patient.hospital!,
-                                                    style: const TextStyle(
-                                                      color:
-                                                          AppColors.description,
-                                                      fontSize: 13,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: Icon(
-                            Icons.language_rounded,
-                            color: AppColors.primary.withOpacity(0.7),
-                          ),
-                        ),
-                      ],
+                    return VerticalPatientCard(
+                      patientName: patient.name ?? '',
+                      drFirstName: patient.doctorModel!.firstName ?? '',
+                      drLastName: patient.doctorModel!.lastName ?? '',
+                      updatedAt: patient.updatedAt ?? '',
+                      hospital: patient.hospital ?? '',
+                      submitStatus: patient.sections == null
+                          ? false
+                          : patient.sections!.submitStatus ?? false,
+                      isOutcomeStatus: patient.sections!.outcomeStatus!,
+                      onOutcomeTap: () => Get.toNamed(
+                        AppRoutes.outcome,
+                        arguments: [
+                          patient.sections!.outcomeStatus,
+                          patient.id,
+                          patient.name
+                        ],
+                      ),
+                      onAddCommentTap: () {
+                        Get.toNamed(
+                          AppRoutes.comments,
+                          arguments: [
+                            patient.id,
+                            patient.name,
+                          ],
+                        );
+                      },
+                      onTap: () {
+                        Get.toNamed(AppRoutes.patientSections, arguments: [
+                          patient.id,
+                          patient.doctorModel!.id,
+                          patient.name,
+                          patient.sections!.submitStatus,
+                        ]);
+                      },
                     );
                   },
                 ),

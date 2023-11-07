@@ -1,31 +1,49 @@
-import '../../../app/constants/local_storage_key.dart';
 import '../../../exports.dart';
-import '../model/all_patients_home_model.dart';
-import 'home_repo.dart';
 
 class HomeController extends GetxController {
   GetStorageLib getStorageLib = Get.find<GetStorageLib>();
   HomeRepository homeRepository = Get.find<HomeRepository>();
-  late TextEditingController searchController;
+  TextEditingController? searchController;
 
   String? currentDoctorFirstName;
   String? currentDoctorLastName;
+  String? currentDoctorEmail;
+  RxString? currentDoctorScoreValue = ''.obs;
+  String? currentDoctorPhone;
+  int? currentDoctorId;
+  String? currentDoctorAge;
   String? currentDoctorJob;
-  List<PatientHomeModel>? currentPatinetList = [];
-  List<AllPatientHomeModel>? allPatinetList = [];
+  String? currentDoctorWorkPlace;
+  String? currentDoctorSpecialty;
+  String? currentDoctorHighestDegree;
+  String? currentDoctorCreatedAt;
+  String? currentDoctorUpdatedAt;
+  RxList<BasePatientModel>? currentPatinetList = RxList();
+  RxList<BasePatientModel>? allPatinetList = RxList();
+  RxList<BasePostModel>? postsList = RxList();
+
+  void resetTextFieldController() {
+    searchController?.dispose();
+    searchController = TextEditingController();
+  }
 
   @override
   void onInit() {
-    searchController = TextEditingController();
+    resetTextFieldController();
+    homeInit();
+    super.onInit();
+  }
+
+  homeInit() {
     getCurrentDoctorData();
     getCurrentPatientsToList();
     getAllPatientsToList();
-    super.onInit();
+    getPosts();
   }
 
   @override
   void onClose() {
-    // searchController.dispose();
+    searchController?.dispose();
     super.onClose();
   }
 
@@ -38,8 +56,27 @@ class HomeController extends GetxController {
         await getStorageLib.getString(AppLocalStrings.currnetDoctorFirstName);
     currentDoctorLastName =
         await getStorageLib.getString(AppLocalStrings.currentDoctorLastName);
+    currentDoctorEmail =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorEmail);
+    currentDoctorPhone =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorPhone);
+    currentDoctorAge =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorAge);
     currentDoctorJob =
         await getStorageLib.getString(AppLocalStrings.currentDoctorJob);
+    currentDoctorWorkPlace = await getStorageLib
+        .getString(AppLocalStrings.currentDoctorWorkingPlace);
+    currentDoctorSpecialty =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorSpecialty);
+    currentDoctorHighestDegree = await getStorageLib
+        .getString(AppLocalStrings.currentDoctorHighestDegree);
+    currentDoctorId =
+        await getStorageLib.getInt(AppLocalStrings.currentDoctorId);
+    currentDoctorCreatedAt =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorCreatedAt);
+    currentDoctorUpdatedAt =
+        await getStorageLib.getString(AppLocalStrings.currentDoctorUpdatedAt);
+
     isGettingFromLocal = true;
     update();
   }
@@ -49,19 +86,33 @@ class HomeController extends GetxController {
 
   getCurrentPatientsToList() async {
     isCurrentPatientsLoading.value = true;
-    List<PatientHomeModel>? tessst =
+    List<BasePatientModel>? tessst =
         await homeRepository.getCurrentPatients(isCurrentPatientsLoading);
-    currentPatinetList = tessst;
+    currentPatinetList!.value = tessst!;
     isCurrentPatientsLoading.value = false;
     update();
   }
 
   getAllPatientsToList() async {
     isAllPatientsLoading.value = true;
-    List<AllPatientHomeModel>? getAllPatientsResponse =
+    List<BasePatientModel>? getAllPatientsResponse =
         await homeRepository.getAllPatients(isAllPatientsLoading);
-    allPatinetList = getAllPatientsResponse;
+    allPatinetList!.value = getAllPatientsResponse!;
     isAllPatientsLoading.value = false;
+    update();
+  }
+
+  RxBool isPostsLoading = false.obs;
+
+  getPosts() async {
+    isPostsLoading(true);
+    List<BasePostModel>? containList = await homeRepository.getPosts(
+      isPostsLoading: isPostsLoading,
+    );
+
+    postsList!.value = containList!;
+
+    isPostsLoading(false);
     update();
   }
 }

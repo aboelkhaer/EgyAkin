@@ -3,20 +3,34 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class PatientCard extends GetView<HomeController> {
-  final String? patientName;
-  final String? createdAt;
-  final String? drName;
-  final String? hospital;
+  final String patientName;
+  final String createdAt;
+  final String drName;
+  final String updatedAt;
+  final String hospital;
+  final bool submitStatus;
   final Size size;
+  final bool isOutcomeStatus;
+  final VoidCallback onTap;
+  final VoidCallback onOutcomeTap;
+  final VoidCallback onAddCommentTap;
+  final VoidCallback onLongPress;
 
   final bool isCurrentDoctorPatients;
   const PatientCard({
     super.key,
     required this.size,
-    this.patientName,
-    this.createdAt,
-    this.drName,
-    this.hospital,
+    required this.updatedAt,
+    required this.patientName,
+    required this.createdAt,
+    required this.onOutcomeTap,
+    required this.isOutcomeStatus,
+    required this.onAddCommentTap,
+    required this.onLongPress,
+    required this.drName,
+    required this.submitStatus,
+    required this.onTap,
+    required this.hospital,
     required this.isCurrentDoctorPatients,
   });
 
@@ -33,10 +47,12 @@ class PatientCard extends GetView<HomeController> {
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
             splashColor: AppColors.subBG, // Splash color
-            onTap: () {},
+            onTap: onTap,
+            onLongPress: onLongPress,
             child: Container(
               width: size.width * 0.85,
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.only(
+                  top: 20, left: 20, bottom: 10, right: 20),
               child: Column(
                 children: [
                   Row(
@@ -46,7 +62,7 @@ class PatientCard extends GetView<HomeController> {
                         backgroundColor: AppColors.subBG,
                         radius: 20,
                         child: Text(
-                          patientName == null ? '' : patientName![0],
+                          patientName[0],
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
@@ -68,7 +84,7 @@ class PatientCard extends GetView<HomeController> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        patientName == null ? '' : patientName!,
+                                        patientName,
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: AppColors.title,
@@ -77,12 +93,12 @@ class PatientCard extends GetView<HomeController> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
-                                        createdAt == null
-                                            ? ''
-                                            : timeago
-                                                .format(
-                                                    DateTime.parse(createdAt!))
-                                                .toString(),
+                                        timeago
+                                            .format(DateTime.parse(
+                                                createdAt == updatedAt
+                                                    ? createdAt
+                                                    : updatedAt))
+                                            .toString(),
                                         style: const TextStyle(
                                           color: AppColors.description,
                                           fontSize: 10,
@@ -94,7 +110,7 @@ class PatientCard extends GetView<HomeController> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    drName == null ? '' : drName!,
+                                    drName,
                                     style: const TextStyle(
                                       color: AppColors.description,
                                       fontSize: 13,
@@ -104,7 +120,7 @@ class PatientCard extends GetView<HomeController> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    hospital == null ? '' : hospital!,
+                                    hospital,
                                     style: const TextStyle(
                                       color: AppColors.description,
                                       fontSize: 13,
@@ -129,11 +145,24 @@ class PatientCard extends GetView<HomeController> {
                         Expanded(
                           child: SizedBox(
                             height: 40,
-                            child: CustomElevatedButton(
-                              size: size,
-                              onPressed: () {},
-                              title: 'Outcome',
-                            ),
+                            child: isOutcomeStatus
+                                ? TextButton(
+                                    onPressed: onOutcomeTap,
+                                    style: ButtonStyle(
+                                      overlayColor: MaterialStateProperty.all(
+                                          Colors.transparent),
+                                    ),
+                                    child: const Text('Outcome'),
+                                  )
+                                : CustomElevatedButton(
+                                    size: size,
+                                    onPressed: onOutcomeTap,
+                                    title: 'Outcome',
+                                    isDisable: !submitStatus,
+                                    // isDisable: isOutcomeStatus && !submitStatus
+                                    //     ? false
+                                    //     : true,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -142,10 +171,8 @@ class PatientCard extends GetView<HomeController> {
                             height: 40,
                             child: CustomElevatedButton(
                               size: size,
-                              onPressed: () {
-                                // controller.getAllPatients();
-                              },
-                              title: 'Add Note',
+                              onPressed: onAddCommentTap,
+                              title: 'Add Comment',
                             ),
                           ),
                         ),
@@ -159,10 +186,7 @@ class PatientCard extends GetView<HomeController> {
         ),
         Positioned(
           right: 0,
-          child: Icon(
-            Icons.language_rounded,
-            color: AppColors.primary.withOpacity(0.7),
-          ),
+          child: SectionStatusIcon(submitStatus: submitStatus),
         ),
       ],
     );

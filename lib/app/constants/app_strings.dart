@@ -24,5 +24,6 @@ class AppStrings {
   static const String createAccount = 'Create Account';
   static const String signIn = 'Sign In';
   static const String error = 'Error';
-  static const String noInternetConnection = 'Error';
+  static const String message = 'Message';
+  static const String noInternetConnection = 'Something went wrong';
 }

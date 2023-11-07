@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 
-import '../../../app/constants/local_storage_key.dart';
 import '../../../exports.dart';
 
 class AuthRepository {
@@ -20,13 +19,13 @@ class AuthRepository {
     if (!Get.isSnackbarOpen) {
       isSignInLoading.value = true;
       await Future.delayed(const Duration(milliseconds: 300));
+
       if (await networkInfo.isConnected) {
         try {
           var response = await apiServices.login(
             email,
             password,
           );
-
           if (response.value == true) {
             await getStorageLib.setData(
                 AppLocalStrings.keyToken, response.token);
@@ -51,6 +50,7 @@ class AuthRepository {
 
             await getStorageLib.setData(
                 AppLocalStrings.currentDoctorAge, response.doctorModel!.age);
+
             await getStorageLib.setData(
                 AppLocalStrings.currentDoctorWorkingPlace,
                 response.doctorModel!.workingPlace);
@@ -63,6 +63,8 @@ class AuthRepository {
                 response.doctorModel!.highestDegree);
             await getStorageLib.setData(AppLocalStrings.currentDoctorCreatedAt,
                 response.doctorModel!.createdAt);
+            await getStorageLib.setData(AppLocalStrings.currentDoctorUpdatedAt,
+                response.doctorModel!.updatedAt);
 
             isSignInLoading.value = false;
             Get.offNamed(AppRoutes.home);
@@ -101,7 +103,7 @@ class AuthRepository {
     required String firstName,
     required String lastName,
     required String email,
-    required int age,
+    required String age,
     required String specialty,
     required String password,
     required String workingPlace,
@@ -145,6 +147,7 @@ class AuthRepository {
 
           await getStorageLib.setData(
               AppLocalStrings.currentDoctorAge, response.doctorModel!.age);
+
           await getStorageLib.setData(AppLocalStrings.currentDoctorWorkingPlace,
               response.doctorModel!.workingPlace);
           await getStorageLib.setData(
@@ -156,6 +159,8 @@ class AuthRepository {
               response.doctorModel!.highestDegree);
           await getStorageLib.setData(AppLocalStrings.currentDoctorCreatedAt,
               response.doctorModel!.createdAt);
+          await getStorageLib.setData(AppLocalStrings.currentDoctorUpdatedAt,
+              response.doctorModel!.updatedAt);
 
           isRegisterLoading.value = false;
           Get.offNamed(AppRoutes.home);

@@ -1,14 +1,14 @@
+import 'package:egyakin/app/bindings/notification_binding.dart';
+import 'package:egyakin/features/notification/view/notification_screen.dart';
+
+import '../bindings/posts_binding.dart';
+import '../../features/posts/view/posts_screen.dart';
+
 import '../../exports.dart';
-import '../../features/all_patients/view/all_patients_screen.dart';
-import '../../features/doctor_profile/view/doctor_profile_screen.dart';
-import '../../features/home/view/home_screen.dart';
-import '../bindings/all_patients_binding.dart';
-import '../bindings/home_binding.dart';
-import '../bindings/onboarding_binding.dart';
-import '../bindings/profile_binding.dart';
-import '../bindings/register_binding.dart';
-import '../bindings/sign_in_biniding.dart';
-import '../bindings/welcome_binding.dart';
+import '../../features/comments/view/comments_screen.dart';
+import '../../features/outcome/view/outcome_screen.dart';
+import '../bindings/comments_binding.dart';
+import '../bindings/outcome_binding.dart';
 
 class AppRoutes {
   // static const String splash = '/';
@@ -21,6 +21,15 @@ class AppRoutes {
   static const String currentPatients = '/currentPatients';
   static const String allPatients = '/allPatients';
   static const String doctorProfile = '/doctorProfile';
+  static const String search = '/search';
+  static const String patientSections = '/patientSection';
+  static const String sectionDetails = '/sectionDetails';
+  static const String contactUs = '/contactUs';
+  static const String addPatient = '/addPatient';
+  static const String outcome = '/outcome';
+  static const String comments = '/comments';
+  static const String posts = '/posts';
+  static const String notification = '/notification';
 
   static List<GetPage> routes = [
     // GetPage(
@@ -72,6 +81,53 @@ class AppRoutes {
       name: doctorProfile,
       page: () => const DoctorProfileScreen(),
       binding: DoctorProfileBinding(),
+    ),
+    GetPage(
+      name: search,
+      page: () => const SearchScreen(),
+      binding: SearchBinding(),
+      transition: Transition.fadeIn,
+    ),
+    GetPage(
+      name: patientSections,
+      page: () => const PatienSectionScreen(),
+      binding: PatientSectionBinding(),
+    ),
+    GetPage(
+      name: sectionDetails,
+      page: () => const SectionDetailsScreen(),
+      binding: SectionDetailsBinding(),
+    ),
+
+    GetPage(
+      name: contactUs,
+      page: () => ContactUsScreen(),
+      binding: ContactUsBinding(),
+    ),
+    GetPage(
+      name: addPatient,
+      page: () => const AddPatientScreen(),
+      binding: AddPatientBinding(),
+    ),
+    GetPage(
+      name: outcome,
+      page: () => const OutcomeScreen(),
+      binding: OutcomeBinding(),
+    ),
+    GetPage(
+      name: comments,
+      page: () => const CommentsScreen(),
+      binding: CommentsBinding(),
+    ),
+    GetPage(
+      name: comments,
+      page: () => const PostsScreen(),
+      binding: PostsBinding(),
+    ),
+    GetPage(
+      name: notification,
+      page: () => const NotificationScreen(),
+      binding: NotificationBinding(),
     ),
   ];
 }

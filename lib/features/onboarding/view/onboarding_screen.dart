@@ -1,4 +1,3 @@
-import '../../../app/shared_widgets/custom_outline_botton.dart';
 import '../../../exports.dart';
 
 class OnbordingScreen extends GetView<OnboardingController> {

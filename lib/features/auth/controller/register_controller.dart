@@ -2,77 +2,19 @@ import '../../../exports.dart';
 
 class RegisterController extends GetxController {
   AuthRepository authRepository = Get.find<AuthRepository>();
-  late TextEditingController registerFirstNameController;
-  late TextEditingController registerLastNameController;
-  late TextEditingController registerEmailController;
-  late TextEditingController registerPasswordController;
-  late TextEditingController registerConfirmPasswordController;
-  late TextEditingController registerPhoneController;
-  late TextEditingController registerJopController;
-  late TextEditingController registerSpecialtyController;
-  late TextEditingController registerWorkingPlaceController;
-  late TextEditingController registerHighestDegreeController;
-  late TextEditingController registerAgeController;
-  late GlobalKey<FormState> registerFormKey;
+
   RxBool isRegisterLoading = false.obs;
-  final FocusNode lastNameFocusNode = FocusNode();
-  final FocusNode emailFocusNode = FocusNode();
-  final FocusNode passwordFocusNode = FocusNode();
-  final FocusNode confirmPasswordFocusNode = FocusNode();
-  final FocusNode phoneFocusNode = FocusNode();
-  final FocusNode ageFocusNode = FocusNode();
-  final FocusNode specialtyFocusNode = FocusNode();
-  final FocusNode highestDegreeFocusNode = FocusNode();
-  final FocusNode jobFocusNode = FocusNode();
-  final FocusNode workPlaceFocusNode = FocusNode();
 
-  @override
-  void onInit() {
-    registerFirstNameController = TextEditingController();
-    registerLastNameController = TextEditingController();
-    registerEmailController = TextEditingController();
-    registerPasswordController = TextEditingController();
-    registerConfirmPasswordController = TextEditingController();
-    registerPhoneController = TextEditingController();
-    registerJopController = TextEditingController();
-    registerSpecialtyController = TextEditingController();
-    registerWorkingPlaceController = TextEditingController();
-    registerHighestDegreeController = TextEditingController();
-    registerAgeController = TextEditingController();
-    registerFormKey = GlobalKey<FormState>();
-    super.onInit();
-  }
-
-  void registerDispose() {
-    registerFirstNameController.dispose();
-    registerLastNameController.dispose();
-    registerEmailController.dispose();
-    registerPasswordController.dispose();
-    registerConfirmPasswordController.dispose();
-    registerPhoneController.dispose();
-    registerJopController.dispose();
-    registerSpecialtyController.dispose();
-    registerWorkingPlaceController.dispose();
-    registerHighestDegreeController.dispose();
-    registerAgeController.dispose();
-    if (registerFormKey.currentState != null) {
-      registerFormKey.currentState!.reset();
-    }
-    lastNameFocusNode.dispose();
-    emailFocusNode.dispose();
-    passwordFocusNode.dispose();
-    confirmPasswordFocusNode.dispose();
-    phoneFocusNode.dispose();
-    ageFocusNode.dispose();
-    specialtyFocusNode.dispose();
-    highestDegreeFocusNode.dispose();
-    jobFocusNode.dispose();
-    workPlaceFocusNode.dispose();
-  }
+  // @override
+  // void onInit() {
+  //   registerFormKey = GlobalKey<FormState>();
+  //   resetTextFieldController();
+  //   super.onInit();
+  // }
 
   @override
   void onClose() {
-    registerDispose();
+    // registerDispose();
     super.onClose();
   }
 
@@ -102,11 +44,11 @@ class RegisterController extends GetxController {
     return null;
   }
 
-  String? confirmPassword(String value) {
+  String? confirmPassword(String value, String textController) {
     if (value.isEmpty) {
       return 'Confirm your passowrd, please';
     }
-    if (value != registerPasswordController.text) {
+    if (value != textController) {
       return 'Password not match';
     }
     return null;
@@ -121,20 +63,32 @@ class RegisterController extends GetxController {
 
   int registerErrorValid = 0;
 
-  register() async {
+  register({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String specialty,
+    required String age,
+    required String password,
+    required String passwordConfirmation,
+    required String workingPlace,
+    required String phone,
+    required String job,
+    required String highestDegree,
+  }) async {
     registerErrorValid += 1;
     await authRepository.register(
-      firstName: registerFirstNameController.text,
-      lastName: registerLastNameController.text,
-      email: registerEmailController.text,
-      age: int.parse(registerAgeController.text),
-      specialty: registerSpecialtyController.text,
-      password: registerPasswordController.text,
-      passwordConfirmation: registerConfirmPasswordController.text,
-      workingPlace: registerWorkingPlaceController.text,
-      phone: registerPhoneController.text,
-      job: registerJopController.text,
-      highestDegree: registerHighestDegreeController.text,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      age: age,
+      specialty: specialty,
+      password: password,
+      passwordConfirmation: passwordConfirmation,
+      workingPlace: workingPlace,
+      phone: phone,
+      job: job,
+      highestDegree: highestDegree,
       isRegisterLoading: isRegisterLoading,
     );
   }

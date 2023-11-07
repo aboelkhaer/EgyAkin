@@ -7,9 +7,11 @@ customSnackBar({required bool isError, required String title, dynamic body}) {
     Get.snackbar(
       title,
       body,
+      overlayBlur: 2,
       snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(milliseconds: 1000),
       margin: const EdgeInsets.only(bottom: 30, left: 20, right: 20),
-      colorText: Colors.red,
+      colorText: isError ? Colors.red : Colors.green,
     );
   }
 }
