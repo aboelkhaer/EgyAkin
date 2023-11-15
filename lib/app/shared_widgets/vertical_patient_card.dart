@@ -42,9 +42,10 @@ class VerticalPatientCard extends StatelessWidget {
             splashColor: AppColors.subBG, // Splash color
             onTap: onTap,
             child: Container(
-              width: size.width * 0.85,
+              width: size.width * 0.90,
               padding: const EdgeInsets.all(16),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,40 +135,51 @@ class VerticalPatientCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   const Divider(),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: isOutcomeStatus
-                              ? TextButton(
-                                  onPressed: onOutcomeTap,
-                                  style: ButtonStyle(
-                                    overlayColor: MaterialStateProperty.all(
-                                        Colors.transparent),
-                                  ),
-                                  child: const Text('Outcome'),
-                                )
-                              : CustomElevatedButton(
+                      Container(
+                        margin:
+                            EdgeInsets.symmetric(vertical: size.height * 0.01),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 40,
+                                child: isOutcomeStatus
+                                    ? TextButton(
+                                        onPressed: onOutcomeTap,
+                                        style: ButtonStyle(
+                                          overlayColor:
+                                              MaterialStateProperty.all(
+                                                  Colors.transparent),
+                                        ),
+                                        child: const Text('Outcome'),
+                                      )
+                                    : CustomElevatedButton(
+                                        size: size,
+                                        onPressed: onOutcomeTap,
+                                        title: 'Outcome',
+                                        isDisable: !submitStatus,
+                                        // isDisable:
+                                        //     isOutcomeStatus && !submitStatus ? false : true,
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: SizedBox(
+                                height: 40,
+                                child: CustomElevatedButton(
                                   size: size,
-                                  onPressed: onOutcomeTap,
-                                  title: 'Outcome',
-                                  isDisable: !submitStatus,
-                                  // isDisable:
-                                  //     isOutcomeStatus && !submitStatus ? false : true,
+                                  onPressed: onAddCommentTap,
+                                  title: 'Add Comment',
                                 ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: CustomElevatedButton(
-                            size: size,
-                            onPressed: onAddCommentTap,
-                            title: 'Add Comment',
-                          ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],

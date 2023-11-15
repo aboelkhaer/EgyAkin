@@ -26,7 +26,18 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Patient'),
+        title: GestureDetector(
+            onTap: () {
+              if (_controller.scrollController.hasClients) {
+                _controller.scrollController.animateTo(
+                  0, // Scroll position to jump to (top of the list)
+                  duration:
+                      const Duration(milliseconds: 500), // Animation duration
+                  curve: Curves.easeInOut, // Animation curve
+                );
+              }
+            },
+            child: const Text('Add Patient')),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
@@ -174,50 +185,107 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                             size: size,
                             onPressed: () {
                               bool isValid = true;
-                              if (_controller.addPatientKeyForm.currentState!
-                                  .validate()) {
-                                for (var question
-                                    in _controller.questionModelList!) {
-                                  if (question.type == 'multiple' &&
-                                      question.answer.isEmpty) {
-                                    // _controller.scrollController.jumpTo(
-                                    //   _controller.scrollController.position
-                                    //           .minScrollExtent +
-                                    //       question.id! * 56,
-                                    // );
-                                    customSnackBar(
-                                        isError: true,
-                                        title: 'Required',
-                                        body:
-                                            'Enter all required fields, please \n{${question.question}}');
 
-                                    isValid = false;
-                                    break;
-                                  }
-                                  if (question.mandatory == true &&
-                                      (question.answer == null ||
-                                          question.answer == '')) {
-                                    // _controller.scrollController.jumpTo(
-                                    //   _controller.scrollController.position
-                                    //           .minScrollExtent +
-                                    //       question.id! * 56,
-                                    // );
-                                    customSnackBar(
+                              for (var question
+                                  in _controller.questionModelList!) {
+                                if (question.mandatory == true) {
+                                  if (question.type == 'multiple') {
+                                    Map myMap = _controller
+                                        .formData[question.id.toString()];
+
+                                    // Check if "answers" key is either null or an empty list
+                                    if (myMap.containsKey('answers')) {
+                                      dynamic answersValue = myMap['answers'];
+
+                                      if (answersValue == null ||
+                                          (answersValue is List &&
+                                              answersValue.isEmpty)) {
+                                        debugPrint(
+                                            '"answers" key is either null or an empty list.');
+                                        customSnackBar(
+                                          isError: true,
+                                          title: 'Required',
+                                          body:
+                                              'You must select at least one choice. \n{${question.question}}',
+                                        );
+
+                                        isValid = false;
+                                        break;
+                                      } else {
+                                        debugPrint(
+                                            '"answers" key is present and has a non-empty list value: $answersValue');
+                                      }
+                                    } else {
+                                      debugPrint(
+                                          '"answers" key is not present in the map.');
+                                      customSnackBar(
+                                        isError: true,
+                                        title: AppStrings.error,
+                                        body: 'Something went wrong.',
+                                      );
+
+                                      isValid = false;
+                                      break;
+                                    }
+
+                                    // Check if "other_field" key is either null or empty
+                                    if (myMap.containsKey('other_field')) {
+                                      dynamic otherFieldValue =
+                                          myMap['other_field'];
+
+                                      // Corrected condition to check if "other_field" key is empty or null
+                                      if (otherFieldValue == null ||
+                                          otherFieldValue.toString().isEmpty) {
+                                        debugPrint(
+                                            '"other_field" key is either null or empty.');
+                                      } else {
+                                        debugPrint(
+                                            '"other_field" key is present and has a non-empty value: $otherFieldValue');
+                                      }
+                                    } else {
+                                      debugPrint(
+                                          '"other_field" key is not present in the map.');
+                                      customSnackBar(
+                                        isError: true,
+                                        title: AppStrings.error,
+                                        body: 'Something went wrong.',
+                                      );
+
+                                      isValid = false;
+                                      break;
+                                    }
+
+                                    if (myMap['other_field'] == null ||
+                                        myMap['other_field']
+                                                .toString()
+                                                .isEmpty &&
+                                            (myMap['answers'] as List)
+                                                .contains('Others')) {
+                                      customSnackBar(
                                         isError: true,
                                         title: 'Required',
                                         body:
-                                            'This question is required \n{${question.question}}');
+                                            'You must add "Others" field in \n{${question.question}}',
+                                      );
+
+                                      isValid = false;
+                                      break;
+                                    }
+                                  }
+
+                                  if (question.answer == null ||
+                                      question.answer == '') {
+                                    customSnackBar(
+                                      isError: true,
+                                      title: 'Required',
+                                      body:
+                                          'This question is required \n{${question.question}}',
+                                    );
 
                                     isValid = false;
                                     break;
                                   }
                                 }
-                              } else {
-                                isValid = false;
-                                customSnackBar(
-                                    isError: true,
-                                    title: 'Required',
-                                    body: 'Enter all required fields, please ');
                               }
 
                               if (isValid) {
@@ -248,7 +316,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           questionList: questionList,
           index: index,
           onChanged: (val) {
-            // _controller.formData[questionList[index].id.toString()] = val;
             if (questionList[index].answer != val) {
               questionList[index].answer = val;
               formDataMap[questionList[index].id.toString()] = val;
@@ -258,10 +325,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             }
           },
           validator: (val) {
-            if (questionList[index].mandatory == true &&
-                (val == null || val.isEmpty)) {
-              return 'This field is required';
-            }
+            // if (questionList[index].mandatory == true &&
+            //     (val == null || val.isEmpty)) {
+            //   return 'This field is required';
+            // }
 
             return null;
           },
@@ -294,15 +361,81 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             setState(() {});
           },
         );
+      // case 'multiple':
+      //   List<dynamic> answers = [];
+
+      //   return BuildMultipleValueQuestion(
+      //     index: index,
+      //     questionList: questionList,
+      //     initialValue: '',
+      //     onChanged: (val) {
+      //       setState(() {});
+      //       _controller.formData[questionList[index].id.toString()] = {
+      //         "other_field": val
+      //       };
+      //     },
+      //     validator: (val) {
+      //       if (questionList[index].mandatory == true) {
+      //         if (val == null || val.isEmpty) {
+      //           return 'This field is required';
+      //         }
+      //       }
+      //       return null;
+      //     },
+      //     listContainOther: answers,
+      //     children: questionList[index].values!.map((value) {
+      //       return ChoiceChip(
+      //         label: Text(
+      //           value.toString(),
+      //           style: const TextStyle(
+      //               color: Colors.white, fontWeight: FontWeight.bold),
+      //         ),
+      //         backgroundColor: Colors.grey.shade400,
+      //         selected: answers.contains(value),
+      //         selectedColor: AppColors.primary.withOpacity(0.7),
+      //         onSelected: (selected) {
+      //           setState(() {
+      //             if (selected) {
+      //               answers.add(value);
+      //             } else {
+      //               answers.remove(value);
+      //             }
+      //             _controller.formData[questionList[index].id.toString()] = {
+      //               "answer": [answers]
+      //             };
+      //             // _controller.formData[questionList[index].id.toString()] ={"answer":};
+      //             log('map ${_controller.formData}');
+      //             log('list answer $answers');
+      //           });
+      //         },
+      //       );
+      //     }).toList(),
+      //   );
       case 'multiple':
-        List<dynamic> answers = questionList[index].answer ??= [];
+        Map<String, dynamic> answerMap =
+            questionList[index].answer ??= {"answers": [], "other_field": ''};
+        List<dynamic> answers = questionList[index].answer['answers'];
+        // String otherValue = '';
 
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
-          onChanged: (val) {},
+          initialValue: answerMap['other_field'] ?? '',
+          onChanged: (val) {
+            setState(() {
+              // _controller.otherValue[questionList[index].id.toString()] = val;
+              answerMap['other_field'] = val;
+              _controller.formData[questionList[index].id.toString()] = {
+                "answers": answers,
+                "other_field": answers.contains('Others') ? val : '',
+              };
+            });
+
+            log('map ${_controller.formData}');
+          },
           validator: (val) {
-            if (questionList[index].mandatory == true) {
+            if (questionList[index].mandatory == true &&
+                (answers.contains('Others') || answers.contains('others'))) {
               if (val == null || val.isEmpty) {
                 return 'This field is required';
               }
@@ -327,11 +460,18 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   } else {
                     answers.remove(value);
                   }
-                  _controller.formData[questionList[index].id.toString()] =
-                      answers;
-                  log('map ${_controller.formData}');
-                  log('list answer ${questionList[index].answer}');
                 });
+                _controller.formData[questionList[index].id.toString()] = {
+                  "answers": answers,
+                  // "other_field":
+                  //     _controller.otherValue[questionList[index].id.toString()],
+                  "other_field": answers.contains('Others')
+                      ? answerMap['other_field']
+                      : '',
+                };
+
+                log('map ${_controller.formData}');
+                // log('list answer ${questionList[index].answer}');
               },
             );
           }).toList(),
@@ -393,4 +533,100 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       lastDate: DateTime(2100),
     );
   }
+
+  Future processItems({
+    required List<BaseQuestionModel> questionList,
+    required bool isValid,
+  }) async {
+    Future.forEach(questionList, (BaseQuestionModel questionModel) async {
+      // Perform some asynchronous operation for each item
+
+      if (questionModel.type == 'multiple' && questionModel.mandatory == true) {
+        log('multiple    mendatory    moatz123');
+        // _controller.scrollController.jumpTo(
+        //   _controller.scrollController.position
+        //           .minScrollExtent +
+        //       question.id! * 56,
+        // );
+
+        if (questionModel.answer == [] ||
+            questionModel.answer['other_field'] == null ||
+            questionModel.answer['other_field'] == '') {
+          customSnackBar(
+              isError: true,
+              title: 'Required',
+              body:
+                  'Enter all required fields, please \n{${questionModel.question}}');
+
+          isValid = false;
+          return;
+        }
+      }
+      if (questionModel.mandatory == true &&
+          (questionModel.answer == null || questionModel.answer == '')) {
+        // _controller.scrollController.jumpTo(
+        //   _controller.scrollController.position
+        //           .minScrollExtent +
+        //       question.id! * 56,
+        // );
+        customSnackBar(
+            isError: true,
+            title: 'Required',
+            body: 'This question is required \n{${questionModel.question}}');
+
+        isValid = false;
+        return;
+      }
+    });
+  }
+
+  // Future<void> validateForm({
+  //   required List<BaseQuestionModel> questionList,
+  //   required bool isValid,
+  // }) async {
+  //   for (var questionModel in questionList) {
+  //     // if (questionModel.mandatory == true &&
+  //     //         (questionModel.answer == null ||
+  //     //             questionModel.answer.toString().isEmpty) ||
+  //     //     (questionModel.type == 'multiple' &&
+  //     //         questionModel.mandatory == true)) {
+  //     //   customSnackBar(
+  //     //       isError: true,
+  //     //       title: 'Required',
+  //     //       body:
+  //     //           'Enter all required fields, please \n{${questionModel.question}}');
+  //     // }
+  //     if (questionModel.mandatory == true && questionModel.answer == null ||
+  //         questionModel.answer.toString().isEmpty) {
+  //       customSnackBar(
+  //           isError: true,
+  //           title: 'Required',
+  //           body:
+  //               'Enter all required fields, please \n{${questionModel.question}}');
+  //       return;
+  //     } else if (questionModel.mandatory == true &&
+  //         questionModel.type == 'multiple') {
+  //       // log(_controller.formData[questionModel.id.toString()]['answers']
+  //       //     .toString());
+  //       log('map ${_controller.formData}');
+
+  //       // for (var item in _controller.formData.entries) {
+  //       //   if (item.key == questionModel.id.toString()) {
+  //       //     List<dynamic>? targetList = _controller.formData[questionModel.id];
+  //       //     String targetString = _controller.formData[questionModel.id];
+  //       //     log(targetList.toString());
+  //       //   }
+  //       // }
+  //       if (_controller.formData.containsKey(questionModel.id.toString()) &&
+  //           _controller.formData[questionModel.id.toString()]['answer']
+  //               is List) {
+  //         if (_controller.formData[questionModel.id.toString()]['answer'] ==
+  //             []) {
+  //           log('yes');
+  //         }
+  //       }
+  //     }
+  //     // You can add additional validation rules here based on your requirements
+  //   }
+  // }
 }

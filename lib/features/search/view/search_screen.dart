@@ -156,10 +156,10 @@ class _SearchScreenState extends State<SearchScreen> {
                             physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             scrollDirection: Axis.vertical,
-                            padding: const EdgeInsets.only(
+                            padding: EdgeInsets.only(
                               left: 30,
                               top: 8,
-                              right: 30,
+                              right: size.width * 0.09,
                               bottom: 50,
                             ),
                             itemBuilder: (context, index) {

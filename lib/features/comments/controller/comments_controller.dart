@@ -3,6 +3,7 @@ import '../../../exports.dart';
 class CommentsController extends GetxController {
   CommentRepository commentRepository = Get.find<CommentRepository>();
   HomeController homeController = Get.find<HomeController>();
+  ScrollController scrollController = ScrollController();
 
   RxString newComment = ''.obs;
 
@@ -32,9 +33,17 @@ class CommentsController extends GetxController {
         isCommentsLoading: isCommentsLoading,
         patientId: patientId,
         content: newComment.value);
+    newComment.value = '';
 
     isCommentsLoading(false);
     update();
+    Future.delayed(const Duration(milliseconds: 300)).then((_) async {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.fastOutSlowIn,
+      );
+    });
   }
 
   deleteComment({required String commentId, required String patientId}) async {

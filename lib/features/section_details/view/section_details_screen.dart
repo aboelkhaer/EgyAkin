@@ -33,7 +33,18 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(sectionName),
+        title: GestureDetector(
+            onTap: () {
+              if (_controller.scrollController.hasClients) {
+                _controller.scrollController.animateTo(
+                  0, // Scroll position to jump to (top of the list)
+                  duration:
+                      const Duration(milliseconds: 500), // Animation duration
+                  curve: Curves.easeInOut, // Animation curve
+                );
+              }
+            },
+            child: Text(sectionName)),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
@@ -236,7 +247,8 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                                           for (var question in _controller
                                               .questionModelList!) {
                                             if (question.type == 'multiple' &&
-                                                question.answer.isEmpty) {
+                                                question.answer == null &&
+                                                question.mandatory == true) {
                                               // _controller.scrollController
                                               //     .jumpTo(
                                               //   _controller
@@ -390,14 +402,31 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
           },
         );
       case 'multiple':
-        List<dynamic> answers = questionList[index].answer ??= [];
+        List<dynamic> answers = questionList[index].answer['answers'] ??= [];
+        String otherValue = '';
 
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
+          initialValue: questionList[index].answer['other_field'] ?? '',
           listContainOther: answers,
           onChanged: (val) {
-            setState(() {});
+            setState(() {
+              // _controller.formData[questionList[index].id.toString()] = {
+              //   "answer": {
+              //     "answer": answers,
+              //     "other_field": val,
+              //   },
+              // };
+              otherValue = val;
+              questionList[index].answer['other_field'] = val;
+              _controller.formData[questionList[index].id.toString()] = {
+                "answers": answers,
+                "other_field": val,
+              };
+            });
+
+            log('map ${_controller.formData}');
           },
           validator: (val) {
             if (questionList[index].mandatory == true) {
@@ -424,10 +453,14 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                   } else {
                     answers.remove(value);
                   }
-                  _controller.formData[questionList[index].id.toString()] =
-                      answers;
+                  // _controller.formData[questionList[index].id.toString()] =
+                  //     answers;
+                  _controller.formData[questionList[index].id.toString()] = {
+                    "answers": answers,
+                    "other_field": otherValue,
+                  };
                   log('map ${_controller.formData}');
-                  log('list answer ${questionList[index].answer}');
+                  // log('list answer ${questionList[index].answer}');
                 });
               },
             );

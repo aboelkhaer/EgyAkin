@@ -10,6 +10,8 @@ class BaseDoctorModel {
   String? firstName;
   @JsonKey(name: 'lname')
   String? lastName;
+  @JsonKey(name: 'workingplace')
+  String? workingPlace;
 
   BaseDoctorModel({
     this.id,

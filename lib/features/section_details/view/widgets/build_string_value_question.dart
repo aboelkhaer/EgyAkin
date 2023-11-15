@@ -26,7 +26,7 @@ class BuildStringValueQuestions extends StatelessWidget {
                   ? TextInputType.datetime
                   : TextInputType.text,
       textInputAction: TextInputAction.next,
-      initialValue: questionList[index].answer,
+      initialValue: questionList[index].answer ?? '',
       validator: validator,
       onChanged: onChanged,
     );

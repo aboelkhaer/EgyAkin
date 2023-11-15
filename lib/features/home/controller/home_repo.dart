@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 
+import '../../../app/app_models/notification/base_notification_model.dart';
 import '../../../exports.dart';
 
 class HomeRepository {
@@ -130,11 +131,61 @@ class HomeRepository {
             // );
 
             DioExceptions.fromDioError(
-                dioError: e, errorFrom: 'comment_repo/getComments');
+                dioError: e, errorFrom: 'home_Repo/getPosts');
           }
         }
       } else {
         isPostsLoading.value = false;
+        customSnackBar(
+          isError: true,
+          title: AppStrings.error,
+          body: AppStrings.noInternetConnection,
+        );
+      }
+      return [];
+    } else {
+      return [];
+    }
+  }
+
+  Future<List<BaseNotificationModel>>? getNotifications({
+    required RxBool isNotificationsLoading,
+  }) async {
+    if (!Get.isSnackbarOpen) {
+      isNotificationsLoading.value = true;
+      await Future.delayed(const Duration(milliseconds: 300));
+      if (await networkInfo.isConnected) {
+        var response = await apiServices.getNotifications();
+        try {
+          if (response.value == true) {
+            //  isCommentsLoading.value = false;
+            Get.find<HomeController>().unreadNotificationCount =
+                response.unreadCount!;
+
+            if (response.baseNotificationModel != null) {
+              return response.baseNotificationModel!;
+            }
+            return [];
+          } else {
+            // isCommentsLoading.value = false;
+            return [];
+          }
+        } catch (e) {
+          isNotificationsLoading.value = false;
+          if (e is DioException) {
+            // final result = e.response!.data as Map<String, dynamic>;
+            // customSnackBar(
+            //   isError: true,
+            //   title: AppStrings.error,
+            //   body: result['message'],
+            // );
+
+            DioExceptions.fromDioError(
+                dioError: e, errorFrom: 'home_Repo/getNotifications');
+          }
+        }
+      } else {
+        isNotificationsLoading.value = false;
         customSnackBar(
           isError: true,
           title: AppStrings.error,

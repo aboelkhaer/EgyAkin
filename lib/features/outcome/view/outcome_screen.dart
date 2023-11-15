@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import '../controller/outcome_controller.dart';
 
 class OutcomeScreen extends StatefulWidget {
   const OutcomeScreen({super.key});
@@ -12,9 +11,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
   final OutcomeController controller = Get.put(OutcomeController());
 
   bool outcomeStatus = Get.arguments[0];
-
   String patientId = Get.arguments[1].toString();
-
   String patientname = Get.arguments[2];
 
   @override

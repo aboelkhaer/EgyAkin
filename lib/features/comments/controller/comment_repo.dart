@@ -94,11 +94,11 @@ class CommentRepository {
               }
             });
             isCommentsLoading.value = false;
-            customSnackBar(
-              isError: false,
-              title: 'Successfully',
-              body: response.message,
-            );
+            // customSnackBar(
+            //   isError: false,
+            //   title: 'Successfully',
+            //   body: response.message,
+            // );
 
             // showCustomDialog(
             //     context: context,
@@ -232,8 +232,4 @@ class CommentRepository {
       }
     }
   }
-  // deleteComment(String commentId)async{
-  //    var response = await apiServices.deleteComment(commentId);
-
-  // }
 }

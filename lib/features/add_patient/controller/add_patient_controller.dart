@@ -10,10 +10,12 @@ class AddPatientController extends GetxController {
   AddPatientRepository addPatientRepository = Get.find<AddPatientRepository>();
   GlobalKey<FormState> addPatientKeyForm = GlobalKey<FormState>();
   HomeController homeController = Get.find<HomeController>();
-  final ScrollController scrollController = ScrollController();
+  ScrollController scrollController = ScrollController();
+  Map otherValue = {};
 
   List<BaseQuestionModel>? questionModelList = [];
   Map<String, dynamic> formData = {};
+  Map<String, bool> formValidate = {};
 
   RxBool isAddPatientLoading = false.obs;
 

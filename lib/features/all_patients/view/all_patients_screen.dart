@@ -1,6 +1,6 @@
 import '../../../exports.dart';
 
-class AllPatientsScreen extends StatelessWidget {
+class AllPatientsScreen extends GetView<AllPatientsController> {
   const AllPatientsScreen({super.key});
 
   @override
@@ -10,9 +10,21 @@ class AllPatientsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text(
-          'All Patients',
-          style: TextStyle(),
+        title: GestureDetector(
+          onTap: () {
+            if (controller.scrollController.hasClients) {
+              controller.scrollController.animateTo(
+                0, // Scroll position to jump to (top of the list)
+                duration:
+                    const Duration(milliseconds: 500), // Animation duration
+                curve: Curves.easeInOut, // Animation curve
+              );
+            }
+          },
+          child: const Text(
+            'All Patients',
+            style: TextStyle(),
+          ),
         ),
         // elevation: 0,
       ),
@@ -24,12 +36,13 @@ class AllPatientsScreen extends StatelessWidget {
               return Expanded(
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
+                  controller: allPatientsController.scrollController,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     left: 20,
                     top: 20,
-                    right: 30,
+                    right: size.width * 0.09,
                     bottom: 50,
                   ),
                   itemCount: allPatientsController.allPatientsList!.length,

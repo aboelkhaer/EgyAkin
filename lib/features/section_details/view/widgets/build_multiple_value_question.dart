@@ -5,6 +5,7 @@ class BuildMultipleValueQuestion extends StatelessWidget {
   final int index;
   final List<Widget> children;
   final String? Function(String?)? validator;
+  final String initialValue;
   final Function(String)? onChanged;
   final List<dynamic> listContainOther;
 
@@ -13,6 +14,7 @@ class BuildMultipleValueQuestion extends StatelessWidget {
     required this.questionList,
     required this.index,
     required this.onChanged,
+    required this.initialValue,
     required this.validator,
     required this.children,
     required this.listContainOther,
@@ -32,6 +34,7 @@ class BuildMultipleValueQuestion extends StatelessWidget {
                 listContainOther.contains('Other')
             ? CustomTextFormField(
                 title: 'Answer here',
+                initialValue: initialValue,
                 textInputType: TextInputType.text,
                 textInputAction: TextInputAction.next,
                 validator: validator,

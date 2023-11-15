@@ -10,9 +10,21 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: const Text(
-          'Your Patients',
-          style: TextStyle(),
+        title: GestureDetector(
+          onTap: () {
+            if (controller.currentPatientsScrollController.hasClients) {
+              controller.currentPatientsScrollController.animateTo(
+                0, // Scroll position to jump to (top of the list)
+                duration:
+                    const Duration(milliseconds: 500), // Animation duration
+                curve: Curves.easeInOut, // Animation curve
+              );
+            }
+          },
+          child: const Text(
+            'Your Patients',
+            style: TextStyle(),
+          ),
         ),
         // elevation: 0,
       ),
@@ -25,11 +37,13 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,
+                  controller:
+                      currentPatientsController.currentPatientsScrollController,
                   scrollDirection: Axis.vertical,
-                  padding: const EdgeInsets.only(
+                  padding: EdgeInsets.only(
                     left: 20,
                     top: 20,
-                    right: 30,
+                    right: size.width * 0.09,
                     bottom: 50,
                   ),
                   itemCount:

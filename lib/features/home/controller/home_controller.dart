@@ -1,9 +1,15 @@
+import '../../../app/app_models/notification/base_notification_model.dart';
 import '../../../exports.dart';
 
 class HomeController extends GetxController {
   GetStorageLib getStorageLib = Get.find<GetStorageLib>();
   HomeRepository homeRepository = Get.find<HomeRepository>();
   TextEditingController? searchController;
+  PageController dotsController = PageController();
+  PageController homeScrollController = PageController();
+  CarouselController carouselController = CarouselController();
+  RxInt dotsPosition = 0.obs;
+  int unreadNotificationCount = 0;
 
   String? currentDoctorFirstName;
   String? currentDoctorLastName;
@@ -21,6 +27,8 @@ class HomeController extends GetxController {
   RxList<BasePatientModel>? currentPatinetList = RxList();
   RxList<BasePatientModel>? allPatinetList = RxList();
   RxList<BasePostModel>? postsList = RxList();
+  RxList<BaseNotificationModel>? notificationsList = RxList();
+  NetworkInfoImpl networkInfo = Get.find<NetworkInfoImpl>();
 
   void resetTextFieldController() {
     searchController?.dispose();
@@ -34,11 +42,22 @@ class HomeController extends GetxController {
     super.onInit();
   }
 
-  homeInit() {
-    getCurrentDoctorData();
-    getCurrentPatientsToList();
-    getAllPatientsToList();
-    getPosts();
+  RxBool isNetworkConnected = true.obs;
+  RxBool isNetworkConnectedLoading = false.obs;
+
+  homeInit() async {
+    isNetworkConnectedLoading(true);
+    if (await networkInfo.isConnected) {
+      isNetworkConnected(true);
+      getCurrentDoctorData();
+      getCurrentPatientsToList();
+      getAllPatientsToList();
+      getPosts();
+      getNotifications();
+    } else {
+      isNetworkConnected(false);
+    }
+    isNetworkConnectedLoading(false);
   }
 
   @override
@@ -113,6 +132,21 @@ class HomeController extends GetxController {
     postsList!.value = containList!;
 
     isPostsLoading(false);
+    update();
+  }
+
+  RxBool isNotificationsLoading = false.obs;
+
+  getNotifications() async {
+    isNotificationsLoading(true);
+    List<BaseNotificationModel>? containList =
+        await homeRepository.getNotifications(
+      isNotificationsLoading: isNotificationsLoading,
+    );
+
+    notificationsList!.value = containList!;
+
+    isNotificationsLoading(false);
     update();
   }
 }

@@ -34,362 +34,310 @@ class _CommentsScreenState extends State<CommentsScreen> {
       body: Obx(
         () => controller.isCommentsLoading.value
             ? const ShimmerLoadingPatientsCards(ishorizontal: false)
-            : Column(
+            : Stack(
+                fit: StackFit.expand,
                 children: [
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        controller.getComments(patientId.toString());
-                      },
-                      color: AppColors.primary,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: size.height * 0.03,
+                  RefreshIndicator(
+                    onRefresh: () async {
+                      controller.getComments(patientId.toString());
+                    },
+                    color: AppColors.primary,
+                    child: SingleChildScrollView(
+                      controller: controller.scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        // mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(
+                            height: size.height * 0.03,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              children: [
+                                const Text(
+                                  'Comments:',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                GetBuilder(
+                                  init: CommentsController(),
+                                  builder: (commentsController) {
+                                    return Text(
+                                      '(${commentsController.commentsList!.length})',
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                children: [
-                                  const Text(
-                                    'Comments:',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
+                          ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ListView.builder(
+                              itemCount: controller.commentsList!.length,
+                              shrinkWrap: true,
+                              padding: const EdgeInsets.all(20),
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  color: Colors.white, // Backgrond color
+                                  elevation: 0.8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  const SizedBox(
-                                    width: 5,
-                                  ),
-                                  GetBuilder(
-                                    init: CommentsController(),
-                                    builder: (commentsController) {
-                                      return Text(
-                                        '(${commentsController.commentsList!.length})',
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      );
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(10),
+                                    splashColor:
+                                        AppColors.subBG, // Splash color
+                                    onLongPress: () {
+                                      if (controller.commentsList![index]
+                                              .baseDoctorModel!.id
+                                              .toString() ==
+                                          controller
+                                              .homeController.currentDoctorId
+                                              .toString()) {
+                                        showCustomDialog(
+                                            context: context,
+                                            title: 'Delete',
+                                            description:
+                                                'Are you sure to delete comment?',
+                                            noColoredBottonOnTap: () {
+                                              Get.back();
+                                              controller.deleteComment(
+                                                  commentId: controller
+                                                      .commentsList![index].id
+                                                      .toString(),
+                                                  patientId:
+                                                      patientId.toString());
+                                            },
+                                            coloredBottonText: 'Cancel',
+                                            noColoredBottonText: 'Delete',
+                                            isNoColorShow: true,
+                                            coloredBottonOnTap: () =>
+                                                Get.back());
+                                      }
                                     },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // controller.commentsList!.isEmpty
-                            //     ? Column(
-                            //         children: [
-                            //           SizedBox(
-                            //             height: size.height * 0.15,
-                            //           ),
-                            //           SizedBox(
-                            //             height: size.height * 0.26,
-                            //             child: Image.asset(
-                            //               AppImages.notFound,
-                            //               height: size.height * 0.2,
-                            //               width: size.width * 0.45,
-                            //               fit: BoxFit.fill,
-                            //             ),
-                            //           ),
-                            //         ],
-                            //       )
-                            // :
-
-                            SizedBox(
-                              width: double.infinity,
-                              height: double.maxFinite,
-                              child: ListView.builder(
-                                itemCount: controller.commentsList!.length,
-                                shrinkWrap: true,
-                                padding: const EdgeInsets.all(20),
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return Card(
-                                    color: Colors.white, // Backgrond color
-                                    elevation: 0.8,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: InkWell(
-                                      borderRadius: BorderRadius.circular(10),
-                                      splashColor:
-                                          AppColors.subBG, // Splash color
-                                      onLongPress: () {
-                                        if (controller.commentsList![index]
-                                                .baseDoctorModel!.id
-                                                .toString() ==
-                                            controller
-                                                .homeController.currentDoctorId
-                                                .toString()) {
-                                          showCustomDialog(
-                                              context: context,
-                                              title: 'Delete',
-                                              description:
-                                                  'Are you sure to delete comment?',
-                                              noColoredBottonOnTap: () {
-                                                Get.back();
-                                                controller.deleteComment(
-                                                    commentId: controller
-                                                        .commentsList![index].id
-                                                        .toString(),
-                                                    patientId:
-                                                        patientId.toString());
-                                              },
-                                              coloredBottonText: 'Cancel',
-                                              noColoredBottonText: 'Delete',
-                                              isNoColorShow: true,
-                                              coloredBottonOnTap: () =>
-                                                  Get.back());
-                                        }
-                                      },
-                                      onTap: () {},
-                                      child: Container(
-                                        width: size.width * 0.85,
-                                        padding: const EdgeInsets.all(16),
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                CircleAvatar(
-                                                  backgroundColor:
-                                                      AppColors.subBG,
-                                                  radius: 20,
-                                                  child: Text(
-                                                    controller
-                                                                .commentsList![
-                                                                    index]
-                                                                .baseDoctorModel!
-                                                                .firstName ==
-                                                            null
-                                                        ? ''
-                                                        : '${controller.commentsList![index].baseDoctorModel!.firstName![0].capitalizeFirst}${controller.commentsList![index].baseDoctorModel!.lastName![0].capitalizeFirst}',
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color:
-                                                            AppColors.primary,
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      const SizedBox(width: 15),
-                                                      Expanded(
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  controller.commentsList![index].baseDoctorModel!
-                                                                              .firstName ==
-                                                                          null
-                                                                      ? ''
-                                                                      : 'Dr.${controller.commentsList![index].baseDoctorModel!.firstName!.capitalizeFirst} ${controller.commentsList![index].baseDoctorModel!.lastName!.capitalizeFirst}',
-                                                                  style: const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      color: AppColors
-                                                                          .title,
-                                                                      fontSize:
-                                                                          16),
-                                                                  maxLines: 1,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                                // Text(
-                                                                //   homeController
-                                                                //               .currentDoctorCreatedAt ==
-                                                                //           null
-                                                                //       ? ''
-                                                                //       : timeago
-                                                                //           .format(DateTime.parse(
-                                                                //               homeController
-                                                                //                   .currentDoctorCreatedAt!))
-                                                                //           .toString(),
-                                                                //   style:
-                                                                //       const TextStyle(
-                                                                //     color: AppColors
-                                                                //         .description,
-                                                                //     fontSize: 10,
-                                                                //   ),
-                                                                //   maxLines: 1,
-                                                                //   overflow: TextOverflow
-                                                                //       .ellipsis,
-                                                                // ),
-                                                              ],
-                                                            ),
-                                                            const SizedBox(
-                                                                height: 4),
-                                                            // Text(
-                                                            //   homeController
-                                                            //               .currentDoctorJob ==
-                                                            //           null
-                                                            //       ? ''
-                                                            //       : homeController
-                                                            //           .currentDoctorJob!,
-                                                            //   style: const TextStyle(
-                                                            //     color: AppColors
-                                                            //         .description,
-                                                            //     fontSize: 13,
-                                                            //   ),
-                                                            //   maxLines: 1,
-                                                            //   overflow:
-                                                            //       TextOverflow.ellipsis,
-
-                                                            // ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 20,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Flexible(
-                                                  child: Text(
-                                                    controller
-                                                        .commentsList![index]
-                                                        .content!
-                                                        .capitalizeFirst!,
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 16,
-                                                      height: 1.6,
-                                                      wordSpacing: 2,
-                                                      letterSpacing: 1,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                                height: size.height * 0.02),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
+                                    onTap: () {},
+                                    child: Container(
+                                      width: size.width * 0.85,
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CircleAvatar(
+                                                backgroundColor:
+                                                    AppColors.subBG,
+                                                radius: 20,
+                                                child: Text(
                                                   controller
                                                               .commentsList![
                                                                   index]
-                                                              .updatedAt ==
+                                                              .baseDoctorModel!
+                                                              .firstName ==
                                                           null
                                                       ? ''
-                                                      : timeago.format(DateTime
-                                                          .parse(controller
-                                                              .commentsList![
-                                                                  index]
-                                                              .updatedAt
-                                                              .toString())),
+                                                      : '${controller.commentsList![index].baseDoctorModel!.firstName![0].capitalizeFirst}${controller.commentsList![index].baseDoctorModel!.lastName![0].capitalizeFirst}',
                                                   style: const TextStyle(
-                                                    color:
-                                                        AppColors.description,
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: AppColors.primary,
+                                                      fontSize: 14),
                                                 ),
-                                                // IconButton(
-                                                //   highlightColor:
-                                                //       Colors.transparent,
-                                                //   splashColor:
-                                                //       Colors.transparent,
-                                                //   onPressed: () {},
-                                                //   icon: const Icon(
-                                                //     Icons.favorite_border,
-                                                //     size: 30,
-                                                //     color: Colors.black45,
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
+                                              ),
+                                              Expanded(
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    const SizedBox(width: 15),
+                                                    Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                controller
+                                                                            .commentsList![index]
+                                                                            .baseDoctorModel!
+                                                                            .firstName ==
+                                                                        null
+                                                                    ? ''
+                                                                    : 'Dr.${controller.commentsList![index].baseDoctorModel!.firstName!.capitalizeFirst} ${controller.commentsList![index].baseDoctorModel!.lastName!.capitalizeFirst}',
+                                                                style: const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: AppColors
+                                                                        .title,
+                                                                    fontSize:
+                                                                        16),
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 4),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  controller
+                                                      .commentsList![index]
+                                                      .content!
+                                                      .capitalizeFirst!,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                    height: 1.6,
+                                                    wordSpacing: 2,
+                                                    letterSpacing: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: size.height * 0.02),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                controller.commentsList![index]
+                                                            .updatedAt ==
+                                                        null
+                                                    ? ''
+                                                    : timeago.format(
+                                                        DateTime.parse(
+                                                            controller
+                                                                .commentsList![
+                                                                    index]
+                                                                .updatedAt
+                                                                .toString())),
+                                                style: const TextStyle(
+                                                  color: AppColors.description,
+                                                  fontSize: 14,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              // IconButton(
+                                              //   highlightColor:
+                                              //       Colors.transparent,
+                                              //   splashColor:
+                                              //       Colors.transparent,
+                                              //   onPressed: () {},
+                                              //   icon: const Icon(
+                                              //     Icons.favorite_border,
+                                              //     size: 30,
+                                              //     color: Colors.black45,
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  );
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: size.height * 0.13),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      height: size.height * 0.13,
+                      width: double.infinity,
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0) +
+                            const EdgeInsets.only(left: 10, right: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: CustomTextFormField(
+                                title: 'Write comment',
+                                textInputType: TextInputType.text,
+                                enableSuggestions: true,
+                                onChanged: (val) {
+                                  controller.newComment.value = val;
+                                },
+                                onFieldSubmitted: (val) {
+                                  controller.addComment(
+                                      patientId: patientId.toString());
+                                },
+                                textInputAction: TextInputAction.done,
+                                validator: (val) {
+                                  return null;
                                 },
                               ),
                             ),
+                            controller.newComment.value.trim() == ''
+                                ? const SizedBox.shrink()
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          controller.addComment(
+                                              patientId: patientId.toString());
+                                        },
+                                        icon: Icon(
+                                          Icons.send_outlined,
+                                          size: 30,
+                                          color: AppColors.primary
+                                              .withOpacity(0.7),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 0.012,
+                                      )
+                                    ],
+                                  ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  Container(
-                    height: size.height * 0.13,
-                    width: double.infinity,
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0) +
-                          const EdgeInsets.only(left: 10, right: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: CustomTextFormField(
-                              title: 'Write comment',
-                              textInputType: TextInputType.text,
-                              enableSuggestions: true,
-                              onChanged: (val) {
-                                controller.newComment.value = val;
-                              },
-                              textInputAction: TextInputAction.done,
-                              validator: (val) {
-                                return null;
-                              },
-                            ),
-                          ),
-                          controller.newComment.value.trim() == ''
-                              ? const SizedBox.shrink()
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        controller.addComment(
-                                            patientId: patientId.toString());
-                                      },
-                                      icon: Icon(
-                                        Icons.send_outlined,
-                                        size: 30,
-                                        color:
-                                            AppColors.primary.withOpacity(0.7),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: size.height * 0.012,
-                                    )
-                                  ],
-                                ),
-                        ],
-                      ),
-                    ),
-                  )
                 ],
               ),
       ),

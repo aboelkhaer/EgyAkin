@@ -7,6 +7,7 @@ class AddPatientRepository {
   AddPatientRepository({required this.apiServices});
   NetworkInfoImpl networkInfo = Get.find<NetworkInfoImpl>();
 
+//! getPatientSectionDetails
   Future<List<BaseQuestionModel>>? getPatientSectionDetails(
       {required String sectionId, required RxBool isAddPatientLoading}) async {
     if (!Get.isSnackbarOpen) {
@@ -55,6 +56,7 @@ class AddPatientRepository {
     }
   }
 
+//! addPatientForFirstTime
   addPatientForFirstTime({
     required RxBool isAddPatientForFirstTimeLoading,
     required String doctorId,
