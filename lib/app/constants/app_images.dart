@@ -9,4 +9,6 @@ class AppImages {
   static const String signIn = '$imagePath/signin.png';
   static const String register = '$imagePath/register.png';
   static const String notFound = '$imagePath/notFound.png';
+  static const String imageLoader = '$imagePath/image_loader.json';
+  static const String noNetwork = '$imagePath/noNetwork.PNG';
 }

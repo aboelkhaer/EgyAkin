@@ -18,4 +18,6 @@ class ApiEndPoint {
   static const comment = '$baseUrl/api/comment';
   static const contactUs = '$baseUrl/api/contact';
   static const post = '$baseUrl/api/post';
+  static const postComments = '$baseUrl/api/Postcomments';
+  static const notification = '$baseUrl/api/notification';
 }

@@ -1,14 +1,4 @@
-import 'package:egyakin/app/bindings/notification_binding.dart';
-import 'package:egyakin/features/notification/view/notification_screen.dart';
-
-import '../bindings/posts_binding.dart';
-import '../../features/posts/view/posts_screen.dart';
-
 import '../../exports.dart';
-import '../../features/comments/view/comments_screen.dart';
-import '../../features/outcome/view/outcome_screen.dart';
-import '../bindings/comments_binding.dart';
-import '../bindings/outcome_binding.dart';
 
 class AppRoutes {
   // static const String splash = '/';
@@ -28,7 +18,7 @@ class AppRoutes {
   static const String addPatient = '/addPatient';
   static const String outcome = '/outcome';
   static const String comments = '/comments';
-  static const String posts = '/posts';
+  static const String postDetails = '/postDetails';
   static const String notification = '/notification';
 
   static List<GetPage> routes = [
@@ -120,9 +110,9 @@ class AppRoutes {
       binding: CommentsBinding(),
     ),
     GetPage(
-      name: comments,
-      page: () => const PostsScreen(),
-      binding: PostsBinding(),
+      name: postDetails,
+      page: () => const PostDetailsScreen(),
+      binding: PostDetailsBinding(),
     ),
     GetPage(
       name: notification,

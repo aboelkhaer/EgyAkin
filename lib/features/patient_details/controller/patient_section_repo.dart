@@ -119,7 +119,7 @@ class PatientSectionRepository {
           var response = await apiServices.finalSubmit(patientId);
           if (response.value == true) {
             isPatientSectionLoading.value = false;
-            Get.offAllNamed(AppRoutes.home);
+            Get.offNamed(AppRoutes.home);
             customSnackBar(
               isError: false,
               title: 'Successfully',

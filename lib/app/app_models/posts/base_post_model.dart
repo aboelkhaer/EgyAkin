@@ -10,8 +10,10 @@ class BasePostModel {
   String? title;
   @JsonKey(name: 'content')
   String? content;
+  @JsonKey(name: 'image')
+  String? image;
   @JsonKey(name: 'hidden')
-  String? hidden;
+  bool? hidden;
   @JsonKey(name: 'doctor_id')
   int? doctorId;
   @JsonKey(name: 'updated_at')

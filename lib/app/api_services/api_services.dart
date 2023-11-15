@@ -2,8 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 
 import '../../exports.dart';
-import '../app_models/responses/add_contact_us_model.dart';
-import '../app_models/responses/get_post_model.dart';
 
 part 'api_services.g.dart';
 
@@ -133,4 +131,25 @@ abstract class ApiServices {
 
   @GET(ApiEndPoint.post)
   Future<GetPostsModelResponse> getHomePosts();
+
+  @GET('${ApiEndPoint.postComments}/{postId}')
+  Future<GetPostCommentsModelResponse> getHomePostComments(
+    @Path("postId") String postId,
+  );
+  @DELETE('${ApiEndPoint.postComments}/{commentId}')
+  Future<DeletePostCommentModelResponse> deletePostComment(
+    @Path("commentId") String postId,
+  );
+
+  @GET(ApiEndPoint.notification)
+  Future<GetNotificationModelResponse> getNotifications();
+
+  @PUT(ApiEndPoint.notification)
+  Future<UpdateNotificationsModelResponse> updateNotifications();
+
+  @POST(ApiEndPoint.postComments)
+  Future<AddCommentOnPostModelResponse> addCommentOnPost(
+    @Field("post_id") String postId,
+    @Field("content") String content,
+  );
 }
