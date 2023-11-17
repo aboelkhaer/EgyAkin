@@ -57,12 +57,12 @@ class SectionDetailsRepository {
     }
   }
 
-  updateSectionDetails(
-      {required String patientId,
-      required RxBool isSectionDetailsUpdateLoading,
-      required String sectionId,
-      required Map<String, dynamic> map,
-      required context}) async {
+  updateSectionDetails({
+    required String patientId,
+    required RxBool isSectionDetailsUpdateLoading,
+    required String sectionId,
+    required Map<String, dynamic> map,
+  }) async {
     if (!Get.isSnackbarOpen) {
       await Future.delayed(const Duration(milliseconds: 300));
       if (await networkInfo.isConnected) {

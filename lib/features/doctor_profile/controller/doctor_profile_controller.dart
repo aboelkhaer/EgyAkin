@@ -127,6 +127,10 @@ class DoctroProfileController extends GetxController {
       highestDegree: profileHighestDegreeController.text,
       isUpdateLoading: isUpdateLoading,
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.homeInit();
+    });
+
     isUpdateLoading.value = false;
     update();
   }

@@ -46,4 +46,102 @@ class AddPatientController extends GetxController {
     isAddPatientForFirstTimeLoading(false);
     update();
   }
+
+  submitBotton() {
+    bool isValid = true;
+
+    for (var question in questionModelList!) {
+      if (question.mandatory == true) {
+        if (question.type == 'multiple') {
+          Map myMap = formData[question.id.toString()] ??= {
+            "answers": [],
+            "other_field": ''
+          };
+
+          // Check if "answers" key is either null or an empty list
+          if (myMap.containsKey('answers')) {
+            dynamic answersValue = myMap['answers'];
+
+            if (answersValue == null ||
+                (answersValue is List && answersValue.isEmpty)) {
+              debugPrint('"answers" key is either null or an empty list.');
+              customSnackBar(
+                isError: true,
+                title: 'Required',
+                body:
+                    'You must select at least one choice. \n{${question.question}}',
+              );
+
+              isValid = false;
+              break;
+            } else {
+              debugPrint(
+                  '"answers" key is present and has a non-empty list value: $answersValue');
+            }
+          } else {
+            debugPrint('"answers" key is not present in the map.');
+            customSnackBar(
+              isError: true,
+              title: AppStrings.error,
+              body: 'Something went wrong.',
+            );
+
+            isValid = false;
+            break;
+          }
+
+          // // Check if "other_field" key is either null or empty
+          // if (myMap.containsKey('other_field')) {
+          //   dynamic otherFieldValue = myMap['other_field'];
+
+          //   // Corrected condition to check if "other_field" key is empty or null
+          //   if (otherFieldValue == null || otherFieldValue.toString().isEmpty) {
+          //     debugPrint('"other_field" key is either null or empty.');
+          //   } else {
+          //     debugPrint(
+          //         '"other_field" key is present and has a non-empty value: $otherFieldValue');
+          //   }
+          // } else {
+          //   debugPrint('"other_field" key is not present in the map.');
+          //   customSnackBar(
+          //     isError: true,
+          //     title: AppStrings.error,
+          //     body: 'Something went wrong.',
+          //   );
+
+          //   isValid = false;
+          //   break;
+          // }
+
+          if ((myMap['other_field'] == null ||
+                  myMap['other_field'].toString().isEmpty) &&
+              (myMap['answers'] as List).contains('Others')) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'You must add "Others" field in \n{${question.question}}',
+            );
+
+            isValid = false;
+            break;
+          }
+        }
+
+        if (question.answer == null || question.answer == '') {
+          customSnackBar(
+            isError: true,
+            title: 'Required',
+            body: 'This question is required \n{${question.question}}',
+          );
+
+          isValid = false;
+          break;
+        }
+      }
+    }
+
+    if (isValid) {
+      addPatientForFirstTime();
+    }
+  }
 }

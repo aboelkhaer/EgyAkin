@@ -4,7 +4,6 @@ import 'package:lottie/lottie.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../exports.dart';
-import '../controller/post_details_controller.dart';
 
 class PostDetailsScreen extends StatefulWidget {
   const PostDetailsScreen({super.key});
@@ -66,7 +65,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                   // ),
                   // SizedBox(height: size.height * 0.01),
                   Hero(
-                    tag: 'postImage$index',
+                    tag:
+                        Get.arguments[2] <= 1 ? 'postImage' : 'postImage$index',
                     child: CachedNetworkImage(
                       imageUrl: postModel.image.toString(),
                       width: double.infinity,
@@ -78,6 +78,13 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                       errorWidget: (context, url, error) {
                         return Container(
                           color: AppColors.primary,
+                          child: const Center(
+                            child: Icon(
+                              Icons.error_outline,
+                              color: Colors.white,
+                              size: 40.0,
+                            ),
+                          ),
                         );
                       },
                     ),

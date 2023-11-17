@@ -69,8 +69,8 @@ class PatientSectionRepository {
         try {
           var response = await apiServices.deletePatient(patientId);
           if (response.value == true) {
-            isPatientSectionLoading.value = false;
-            Get.offAllNamed(AppRoutes.home);
+            Get.offNamed(AppRoutes.home);
+
             customSnackBar(
               isError: false,
               title: 'Successfully',

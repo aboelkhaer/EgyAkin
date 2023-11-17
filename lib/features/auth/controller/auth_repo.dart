@@ -68,6 +68,7 @@ class AuthRepository {
 
             isSignInLoading.value = false;
             Get.offNamed(AppRoutes.home);
+            Get.find<HomeController>().homeInit();
           } else {
             isSignInLoading.value = false;
           }

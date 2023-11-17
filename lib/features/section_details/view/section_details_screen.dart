@@ -97,47 +97,24 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                                                 ),
                                               )
                                             : const SizedBox.shrink(),
-                                        // TextButton(
-                                        //   onPressed: () {
-                                        //     showCustomDialog(
-                                        //       context: context,
-                                        //       title:
-                                        //           question.question.toString(),
-                                        //       description: _checkAnswerType(
-                                        //         type: question.type!,
-                                        //         answer: question.answer,
-                                        //       ),
-                                        //       coloredBottonOnTap: () {
-                                        //         Clipboard.setData(ClipboardData(
-                                        //             text: question.answer));
-                                        //       },
-                                        //       isColoredBottonDisable:
-                                        //           question.type == 'string'
-                                        //               ? false
-                                        //               : true,
-                                        //       noColoredBottonOnTap: () {
-                                        //         Get.back();
-                                        //       },
-                                        //       coloredBottonText: 'Copy',
-                                        //       noColoredBottonText: 'Cancel',
-                                        //     );
-                                        //   },
-                                        //   style: ButtonStyle(
-                                        //     overlayColor:
-                                        //         MaterialStateColor.resolveWith(
-                                        //       (states) => Colors.transparent,
-                                        //     ),
-                                        //   ),
-                                        //   child: const Text(
-                                        //     'Show answer',
-                                        //     style: TextStyle(
-                                        //         color: Colors.blue,
-                                        //         fontSize: 12),
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                     const SizedBox(height: 16),
+                                    question.type ==
+                                            AppStrings.questionTypeMultiple
+                                        ? const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Press and hold to view all text.',
+                                                style: TextStyle(
+                                                  color: AppColors.description,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : const SizedBox.shrink(),
                                     buildQuestionWidget(
                                         _controller.questionModelList!,
                                         index,
@@ -200,110 +177,10 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                                         horizontal: 20),
                                     child: CustomElevatedButton(
                                       size: size,
-                                      // onPressed: () {
-                                      //   bool isValid = true;
-                                      //   if (_controller
-                                      //       .sectionDetailsKeyForm.currentState!
-                                      //       .validate()) {
-                                      //     for (var question in _controller
-                                      //         .questionModelList!) {
-                                      //       if (question.mandatory == true) {
-                                      //         if (question.answer == null ||
-                                      //             question.answer == '') {
-                                      //           customSnackBar(
-                                      //               isError: true,
-                                      //               title: 'Error',
-                                      //               body:
-                                      //                   'Enter all required fields, please');
-                                      //           isValid = false;
-                                      //           break;
-                                      //         }
-                                      //       }
-                                      //     }
-                                      //   } else {
-                                      //     isValid = false;
-                                      //     customSnackBar(
-                                      //         isError: true,
-                                      //         title: 'Error',
-                                      //         body:
-                                      //             'Enter all required fields, please');
-                                      //   }
-
-                                      //   log(isValid.toString());
-
-                                      //   if (isValid) {
-                                      //     setState(() {
-                                      //       _controller.updateSectionDetails(
-                                      //           sectionId, patientId, context);
-                                      //     });
-                                      //   }
-                                      // },
-                                      onPressed: () {
-                                        bool isValid = true;
-                                        if (_controller
-                                            .sectionDetailsKeyForm.currentState!
-                                            .validate()) {
-                                          int index = 0;
-                                          for (var question in _controller
-                                              .questionModelList!) {
-                                            if (question.type == 'multiple' &&
-                                                question.answer == null &&
-                                                question.mandatory == true) {
-                                              // _controller.scrollController
-                                              //     .jumpTo(
-                                              //   _controller
-                                              //           .scrollController
-                                              //           .position
-                                              //           .minScrollExtent +
-                                              //       index * 56,
-                                              // );
-                                              customSnackBar(
-                                                  isError: true,
-                                                  title: 'Required',
-                                                  body:
-                                                      'Enter all required fields, please \n{${question.question}}');
-
-                                              isValid = false;
-                                              break;
-                                            }
-                                            if (question.mandatory == true &&
-                                                (question.answer == null ||
-                                                    question.answer == '')) {
-                                              // _controller.scrollController
-                                              //     .jumpTo(
-                                              //   _controller
-                                              //           .scrollController
-                                              //           .position
-                                              //           .minScrollExtent +
-                                              //       index * 56,
-                                              // );
-                                              customSnackBar(
-                                                  isError: true,
-                                                  title: 'Required',
-                                                  body:
-                                                      'This question is required \n{${question.question}}');
-
-                                              isValid = false;
-                                              break;
-                                            }
-                                            index = index + 1;
-                                          }
-                                        } else {
-                                          isValid = false;
-                                          customSnackBar(
-                                              isError: true,
-                                              title: 'Required',
-                                              body:
-                                                  'Enter all required fields, please');
-                                        }
-
-                                        if (isValid) {
-                                          setState(() {
-                                            _controller.updateSectionDetails(
-                                                sectionId, patientId, context);
-                                          });
-                                        }
-                                      },
+                                      onPressed: () => _controller.submitBotton(
+                                        sectionId: sectionId,
+                                        patientId: patientId,
+                                      ),
                                       title: 'Submit',
                                       isDisable: doctorId.toString() ==
                                                   _controller.homeController
@@ -323,46 +200,26 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
     );
   }
 
-  // checkSubmit() {
-  //   if (doctorId.toString() ==
-  //           _controller.homeController.currentDoctorId.toString() &&
-  //       _controller.formData.isNotEmpty) {
-  //     _controller.isSubmit(true);
-  //   } else {
-  //     _controller.isSubmit(false);
-  //   }
-  // }
-
-  // _checkAnswerType({required String type, var answer}) {
-  //   if (answer != null) {
-  //     if (type == 'string' || type == 'select') {
-  //       return answer as String;
-  //     }
-  //     if (type == 'multiple') {
-  //       return answer as List<dynamic>;
-  //     }
-  //     return answer as String;
-  //   }
-  // }
-
   Widget buildQuestionWidget(
       List<BaseQuestionModel> questionList, int index, Size size) {
     Map<String, dynamic> formDataMap = _controller.formData;
 
     switch (questionList[index].type) {
-      case 'string':
+      case AppStrings.questionTypeString:
         return BuildStringValueQuestions(
           questionList: questionList,
           index: index,
           onChanged: (val) {
             // _controller.formData[questionList[index].id.toString()] = val;
-            if (questionList[index].answer != val) {
-              questionList[index].answer = val;
-              formDataMap[questionList[index].id.toString()] = val;
-            } else {
-              questionList[index].answer = null;
-              formDataMap.remove(questionList[index].id.toString());
-            }
+            setState(() {
+              if (questionList[index].answer != val) {
+                questionList[index].answer = val;
+                formDataMap[questionList[index].id.toString()] = val;
+              } else {
+                questionList[index].answer = null;
+                formDataMap.remove(questionList[index].id.toString());
+              }
+            });
           },
           validator: (val) {
             if (questionList[index].mandatory == true &&
@@ -373,7 +230,7 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
             return null;
           },
         );
-      case 'select':
+      case AppStrings.questionTypeSelect:
         dynamic selectedValue;
         return BuildSelectValueQuestion(
           questionList: questionList,
@@ -401,14 +258,17 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
             setState(() {});
           },
         );
-      case 'multiple':
+      case AppStrings.questionTypeMultiple:
+        // List<dynamic> answers = questionList[index].answer['answers'] ??= [];
+        // String otherValue = '';
+        Map<String, dynamic> answerMap =
+            questionList[index].answer ??= {"answers": [], "other_field": ''};
         List<dynamic> answers = questionList[index].answer['answers'] ??= [];
-        String otherValue = '';
 
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
-          initialValue: questionList[index].answer['other_field'] ?? '',
+          initialValue: answerMap['other_field'] ?? '',
           listContainOther: answers,
           onChanged: (val) {
             setState(() {
@@ -418,11 +278,10 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
               //     "other_field": val,
               //   },
               // };
-              otherValue = val;
-              questionList[index].answer['other_field'] = val;
+              answerMap['other_field'] = val;
               _controller.formData[questionList[index].id.toString()] = {
                 "answers": answers,
-                "other_field": val,
+                "other_field": answers.contains('Others') ? val : '',
               };
             });
 
@@ -437,36 +296,43 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
             return null;
           },
           children: questionList[index].values!.map((value) {
-            return ChoiceChip(
-              label: Text(
-                value.toString(),
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+            return Tooltip(
+              message: value.toString(),
+              child: ChoiceChip(
+                label: Text(
+                  value.toString(),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                  maxLines: 2,
+                  overflow: TextOverflow.visible,
+                ),
+                backgroundColor: Colors.grey.shade400,
+                selected: answers.contains(value),
+                selectedColor: AppColors.primary.withOpacity(0.7),
+                onSelected: (selected) {
+                  setState(() {
+                    if (selected) {
+                      answers.add(value);
+                    } else {
+                      answers.remove(value);
+                    }
+                    // _controller.formData[questionList[index].id.toString()] =
+                    //     answers;
+                    _controller.formData[questionList[index].id.toString()] = {
+                      "answers": answers,
+                      "other_field": answers.contains('Others')
+                          ? answerMap['other_field']
+                          : '',
+                    };
+                    log('map ${_controller.formData}');
+                    // log('list answer ${questionList[index].answer}');
+                  });
+                },
               ),
-              backgroundColor: Colors.grey.shade400,
-              selected: answers.contains(value),
-              selectedColor: AppColors.primary.withOpacity(0.7),
-              onSelected: (selected) {
-                setState(() {
-                  if (selected) {
-                    answers.add(value);
-                  } else {
-                    answers.remove(value);
-                  }
-                  // _controller.formData[questionList[index].id.toString()] =
-                  //     answers;
-                  _controller.formData[questionList[index].id.toString()] = {
-                    "answers": answers,
-                    "other_field": otherValue,
-                  };
-                  log('map ${_controller.formData}');
-                  // log('list answer ${questionList[index].answer}');
-                });
-              },
             );
           }).toList(),
         );
-      case 'date':
+      case AppStrings.questionTypeDate:
         // String? questionAnswer = questionList[index].answer;
         questionList[index].answer ??= DateTime.now().toString();
 

@@ -83,7 +83,12 @@ class AddPatientRepository {
                 response.name,
                 response.submitStatus,
               ],
-            );
+            )
+                // !
+                //     .then((value) {
+                //   Get.find<HomeController>().homeInit();
+                // })
+                ;
             Get.find<PatientSectionController>()
                 .getPatientSections(response.id.toString());
 

@@ -7,6 +7,10 @@ class AppStrings {
   static const int splashDelay = 2;
   static const String appName = 'EgyAkin';
   static const String noInternetConnection = 'Something went wrong';
+  static const String questionTypeMultiple = 'multiple';
+  static const String questionTypeString = 'string';
+  static const String questionTypeSelect = 'select';
+  static const String questionTypeDate = 'date';
 
   //! welcome
   static const String getStarted = 'Get Started';

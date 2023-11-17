@@ -5,12 +5,14 @@ class BuildStringValueQuestions extends StatelessWidget {
   final int index;
   final ValueChanged<String> onChanged;
   final String? Function(String?)? validator;
+  final List<TextInputFormatter>? textInputFormatter;
   const BuildStringValueQuestions({
     super.key,
     required this.questionList,
     required this.index,
     required this.onChanged,
     required this.validator,
+    this.textInputFormatter,
   });
 
   @override
@@ -26,6 +28,7 @@ class BuildStringValueQuestions extends StatelessWidget {
                   ? TextInputType.datetime
                   : TextInputType.text,
       textInputAction: TextInputAction.next,
+      inputFormatters: textInputFormatter,
       initialValue: questionList[index].answer ?? '',
       validator: validator,
       onChanged: onChanged,

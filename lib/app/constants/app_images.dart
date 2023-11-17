@@ -11,4 +11,5 @@ class AppImages {
   static const String notFound = '$imagePath/notFound.png';
   static const String imageLoader = '$imagePath/image_loader.json';
   static const String noNetwork = '$imagePath/noNetwork.PNG';
+  static const String postError = '$imagePath/post_error.avif';
 }

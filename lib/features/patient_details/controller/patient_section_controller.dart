@@ -52,6 +52,7 @@ class PatientSectionController extends GetxController {
       await patientSectionRepository.finalSubmit(
           patientId: patientId,
           isPatientSectionLoading: isPatientSectionLoading);
+      homeController.homeInit();
       isPatientSectionLoading(false);
       log('all completed');
     } else {
@@ -70,6 +71,7 @@ class PatientSectionController extends GetxController {
             await patientSectionRepository.finalSubmit(
                 patientId: patientId,
                 isPatientSectionLoading: isPatientSectionLoading);
+            homeController.homeInit();
             isPatientSectionLoading(false);
           });
     }

@@ -14,7 +14,7 @@ class OnboardingDots extends GetView<OnboardingController> {
             width: 15,
             height: 2,
             margin: const EdgeInsets.symmetric(horizontal: 4),
-            decoration: (controller.selectedIndex.value == index)
+            decoration: (controller.dotsPosition.value == index)
                 ? const BoxDecoration(
                     shape: BoxShape.rectangle,
                     color: AppColors.primary,

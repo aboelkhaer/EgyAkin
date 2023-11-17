@@ -8,54 +8,78 @@ class OnbordingScreen extends GetView<OnboardingController> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.transparent,
-        elevation: 0,
-      ),
       body: Stack(
+        alignment: Alignment.center,
         children: [
-          ScrollConfiguration(
-            behavior: NoGlow(),
-            child: PageView.builder(
-              itemCount: controller.onboardingList.length,
-              controller: controller.pageController,
-              onPageChanged: controller.selectedIndex,
-              itemBuilder: (context, index) {
-                return Column(
+          CarouselSlider.builder(
+            itemCount: controller.onboardingList.length,
+            carouselController: controller.carouselController,
+            itemBuilder: (BuildContext context, int index, int pageViewIndex) {
+              return Container(
+                // color: Colors.amber,
+                width: double.infinity,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Image.asset(
                       controller.onboardingList[index].image,
-                      fit: BoxFit.fill,
-                      width: double.infinity,
-                      height: size.height * 0.45,
+                      width: size.width,
+                      height: size.height * 0.35,
+                      fit: BoxFit.contain,
                     ),
+                    SizedBox(height: size.height * 0.03),
                     Text(
                       controller.onboardingList[index].title,
                       style: const TextStyle(
-                        fontSize: 20,
                         fontWeight: FontWeight.bold,
+                        fontSize: 22,
                         color: AppColors.title,
                       ),
                     ),
                     SizedBox(height: size.height * 0.01),
                     Text(
                       controller.onboardingList[index].description,
-                      textAlign: TextAlign.center,
                       style: const TextStyle(
-                        fontSize: 15,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 18,
                         color: AppColors.description,
                       ),
+                      textAlign: TextAlign.center,
                     ),
+                    SizedBox(height: size.height * 0.16),
                   ],
-                );
+                ),
+              );
+            },
+            options: CarouselOptions(
+              height: size.height,
+              aspectRatio: 16 / 9,
+              viewportFraction: 1,
+              initialPage: 0,
+              enableInfiniteScroll: true,
+              reverse: false,
+              onPageChanged: (index, reason) {
+                controller.dotsPosition.value = index;
+                if (controller.dotsController.hasClients) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (controller.dotsController.hasClients) {
+                      controller.dotsController.jumpToPage(index);
+                    }
+                  });
+                }
               },
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 2),
+              autoPlayAnimationDuration: const Duration(milliseconds: 600),
+              autoPlayCurve: Curves.fastOutSlowIn,
+              enlargeCenterPage: false,
+              // scrollPhysics: const BouncingScrollPhysics(),
+              enlargeFactor: 0.3,
+              scrollDirection: Axis.horizontal,
             ),
           ),
-          // Positioned(
-          //     bottom: size.height * 0.27,
-          //     left: 0,
-          //     right: 0,
-          //     child: const ),
+          // SizedBox(height: size.height * 0.01),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20) +
                 EdgeInsets.only(bottom: size.height * 0.05),

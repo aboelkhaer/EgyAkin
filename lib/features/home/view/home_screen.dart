@@ -40,56 +40,62 @@ class HomeScreen extends GetView<HomeController> {
             alignment: Alignment.center,
             margin: const EdgeInsets.only(right: 16),
             child: Obx(
-              () => Text(
-                controller.currentDoctorScoreValue == null
-                    ? ''
-                    : controller.currentDoctorScoreValue!.value,
-                style: TextStyle(
-                    color: Colors.orange.shade300,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
+              () => Tooltip(
+                message: 'Score',
+                child: Text(
+                  controller.currentDoctorScoreValue == null
+                      ? ''
+                      : controller.currentDoctorScoreValue!.value,
+                  style: TextStyle(
+                      color: Colors.orange.shade300,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
               ),
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              Get.toNamed(AppRoutes.notification,
-                      arguments: controller.notificationsList)!
-                  .then((value) {
-                if (controller.unreadNotificationCount > 0) {
-                  controller.getNotifications();
-                }
-              });
-            },
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                IconButton(
-                  onPressed: null,
-                  icon: Icon(
-                    Icons.notifications,
-                    color: Colors.grey.shade500,
+          Tooltip(
+            message: 'Notification',
+            child: GestureDetector(
+              onTap: () {
+                Get.toNamed(AppRoutes.notification,
+                        arguments: controller.notificationsList)!
+                    .then((value) {
+                  if (controller.unreadNotificationCount > 0) {
+                    controller.getNotifications();
+                  }
+                });
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    onPressed: null,
+                    icon: Icon(
+                      Icons.notifications,
+                      color: Colors.grey.shade500,
+                    ),
                   ),
-                ),
-                Positioned(
-                  left: 12,
-                  bottom: 14,
-                  child: Obx(
-                    () => controller.isNotificationsLoading.value ||
-                            controller.unreadNotificationCount == 0
-                        ? const SizedBox.shrink()
-                        : CircleAvatar(
-                            radius: 7,
-                            backgroundColor: Colors.red,
-                            child: Text(
-                              controller.unreadNotificationCount.toString(),
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 10),
+                  Positioned(
+                    left: 12,
+                    bottom: 14,
+                    child: Obx(
+                      () => controller.isNotificationsLoading.value ||
+                              controller.unreadNotificationCount == 0
+                          ? const SizedBox.shrink()
+                          : CircleAvatar(
+                              radius: 7,
+                              backgroundColor: Colors.red,
+                              child: Text(
+                                controller.unreadNotificationCount.toString(),
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 10),
+                              ),
                             ),
-                          ),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -178,231 +184,234 @@ class HomeScreen extends GetView<HomeController> {
                             ),
                           ),
                           SizedBox(height: size.height * 0.01),
-                          GetBuilder(
-                            init: HomeController(),
-                            builder: (homeController) {
-                              return homeController.isPostsLoading.value ==
-                                          true ||
-                                      homeController.postsList == null
-                                  ? SizedBox(
-                                      height: size.height * 0.2,
-                                      child:
-                                          Lottie.asset(AppImages.imageLoader),
-                                    )
-                                  : homeController.postsList!.isEmpty
-                                      ? SizedBox(
-                                          height: size.height * 0.2,
-                                          child:
-                                              Image.asset(AppImages.noNetwork),
-                                        )
-                                      : CarouselSlider.builder(
-                                          itemCount:
-                                              homeController.postsList!.length,
-                                          carouselController:
-                                              controller.carouselController,
-                                          itemBuilder: (BuildContext context,
-                                              int index, int pageViewIndex) {
-                                            return Card(
-                                              color: Colors
-                                                  .white, // Backgrond color
-                                              elevation: 0.8,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: InkWell(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                splashColor: AppColors
-                                                    .subBG, // Splash color
-                                                onTap: () {
-                                                  Get.toNamed(
-                                                    AppRoutes.postDetails,
-                                                    arguments: [
-                                                      index,
-                                                      homeController
-                                                          .postsList![index]
-                                                    ],
-                                                  );
-                                                },
-                                                child: SizedBox(
-                                                  width: size.width * 0.9,
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .stretch,
-                                                          children: [
-                                                            ClipRRect(
-                                                              borderRadius: const BorderRadius
-                                                                      .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          8),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          8)),
-                                                              child: Hero(
-                                                                tag:
-                                                                    'postImage$index',
-                                                                child:
-                                                                    CachedNetworkImage(
-                                                                  imageUrl: homeController
-                                                                      .postsList![
-                                                                          index]
-                                                                      .image
-                                                                      .toString(),
-                                                                  width:
-                                                                      size.width *
-                                                                          0.3,
-                                                                  fadeInCurve:
-                                                                      Curves
-                                                                          .easeIn,
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  placeholder: (context,
-                                                                          url) =>
-                                                                      Lottie.asset(
-                                                                          AppImages
-                                                                              .imageLoader),
-                                                                  errorWidget:
-                                                                      (context,
-                                                                          url,
-                                                                          error) {
-                                                                    return Container(
-                                                                      color: AppColors
-                                                                          .primary,
-                                                                    );
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(8),
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    // const SizedBox(height: 10),
-                                                                    Row(
-                                                                      children: [
-                                                                        Flexible(
+                          Obx(
+                            () =>
+                                controller.isPostsLoading.value == true ||
+                                        controller.postsList == null
+                                    ? SizedBox(
+                                        height: size.height * 0.2,
+                                        child:
+                                            Lottie.asset(AppImages.imageLoader),
+                                      )
+                                    : controller.postsList!.isEmpty
+                                        ? SizedBox(
+                                            height: size.height * 0.2,
+                                            child: Image.asset(
+                                                AppImages.noNetwork),
+                                          )
+                                        : CarouselSlider.builder(
+                                            itemCount:
+                                                controller.postsList!.length,
+                                            carouselController:
+                                                controller.carouselController,
+                                            itemBuilder: (BuildContext context,
+                                                int index, int pageViewIndex) {
+                                              return Card(
+                                                color: Colors
+                                                    .white, // Backgrond color
+                                                elevation: 0.8,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: InkWell(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  splashColor: AppColors
+                                                      .subBG, // Splash color
+                                                  onTap: () {
+                                                    Get.toNamed(
+                                                      AppRoutes.postDetails,
+                                                      arguments: [
+                                                        index,
+                                                        controller
+                                                            .postsList![index],
+                                                        controller
+                                                            .postsList!.length,
+                                                      ],
+                                                    );
+                                                  },
+                                                  child: SizedBox(
+                                                    width: size.width * 0.9,
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .stretch,
+                                                            children: [
+                                                              ClipRRect(
+                                                                borderRadius: const BorderRadius
+                                                                        .only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            8),
+                                                                    bottomLeft:
+                                                                        Radius.circular(
+                                                                            8)),
+                                                                child: Hero(
+                                                                  tag: controller
+                                                                              .postsList!
+                                                                              .length <=
+                                                                          1
+                                                                      ? 'postImage'
+                                                                      : 'postImage$index',
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    imageUrl: controller
+                                                                        .postsList![
+                                                                            index]
+                                                                        .image
+                                                                        .toString(),
+                                                                    width:
+                                                                        size.width *
+                                                                            0.3,
+                                                                    fadeInCurve:
+                                                                        Curves
+                                                                            .easeIn,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    placeholder: (context,
+                                                                            url) =>
+                                                                        Lottie.asset(
+                                                                            AppImages.imageLoader),
+                                                                    errorWidget:
+                                                                        (context,
+                                                                            url,
+                                                                            error) {
+                                                                      return Container(
+                                                                        color: AppColors
+                                                                            .primary,
+                                                                        child:
+                                                                            const Center(
                                                                           child:
-                                                                              Text(
-                                                                            homeController.postsList![index].title.toString().capitalizeFirst!,
-                                                                            style: const TextStyle(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: AppColors.title,
-                                                                                fontSize: 16),
-                                                                            maxLines:
-                                                                                2,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    SizedBox(
-                                                                        height: size.height *
-                                                                            0.01),
-                                                                    Row(
-                                                                      children: [
-                                                                        Flexible(
-                                                                          child:
-                                                                              Text(
-                                                                            homeController.postsList![index].content.toString().capitalizeFirst!,
-                                                                            style: const TextStyle(
-                                                                                fontWeight: FontWeight.bold,
-                                                                                color: AppColors.description,
-                                                                                fontSize: 13),
-                                                                            maxLines:
-                                                                                5,
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    const Spacer(),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .end,
-                                                                      children: [
-                                                                        Text(
-                                                                          timeago
-                                                                              .format(DateTime.parse(
-                                                                                homeController.postsList![index].updatedAt.toString(),
-                                                                              ))
-                                                                              .toString(),
-                                                                          style:
-                                                                              const TextStyle(
+                                                                              Icon(
+                                                                            Icons.error_outline,
                                                                             color:
-                                                                                AppColors.description,
-                                                                            fontSize:
-                                                                                10,
+                                                                                Colors.white,
+                                                                            size:
+                                                                                40.0,
                                                                           ),
                                                                         ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
+                                                                      );
+                                                                    },
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(8),
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      // const SizedBox(height: 10),
+                                                                      Row(
+                                                                        children: [
+                                                                          Flexible(
+                                                                            child:
+                                                                                Text(
+                                                                              controller.postsList![index].title.toString().capitalizeFirst!,
+                                                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.title, fontSize: 16),
+                                                                              maxLines: 2,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
+                                                                          height:
+                                                                              size.height * 0.01),
+                                                                      Row(
+                                                                        children: [
+                                                                          Flexible(
+                                                                            child:
+                                                                                Text(
+                                                                              controller.postsList![index].content.toString().capitalizeFirst!,
+                                                                              style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.description, fontSize: 13),
+                                                                              maxLines: 5,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                      const Spacer(),
+                                                                      Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.end,
+                                                                        children: [
+                                                                          Text(
+                                                                            timeago
+                                                                                .format(DateTime.parse(
+                                                                                  controller.postsList![index].updatedAt.toString(),
+                                                                                ))
+                                                                                .toString(),
+                                                                            style:
+                                                                                const TextStyle(
+                                                                              color: AppColors.description,
+                                                                              fontSize: 10,
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                          options: CarouselOptions(
-                                            height: size.height * 0.2,
-                                            aspectRatio: 16 / 9,
-                                            viewportFraction: 1,
-                                            initialPage: 0,
-                                            enableInfiniteScroll: true,
-                                            reverse: false,
-                                            onPageChanged: (index, reason) {
-                                              controller.dotsPosition.value =
-                                                  index;
-                                              if (controller
-                                                  .dotsController.hasClients) {
-                                                WidgetsBinding.instance
-                                                    .addPostFrameCallback((_) {
-                                                  if (controller.dotsController
-                                                      .hasClients) {
-                                                    controller.dotsController
-                                                        .jumpToPage(index);
-                                                  }
-                                                });
-                                              }
+                                              );
                                             },
-                                            autoPlay: true,
-                                            autoPlayInterval:
-                                                const Duration(seconds: 3),
-                                            autoPlayAnimationDuration:
-                                                const Duration(
-                                                    milliseconds: 800),
-                                            autoPlayCurve: Curves.fastOutSlowIn,
-                                            enlargeCenterPage: false,
-                                            // scrollPhysics: const BouncingScrollPhysics(),
-                                            enlargeFactor: 0.3,
-                                            scrollDirection: Axis.horizontal,
+                                            options: CarouselOptions(
+                                              height: size.height * 0.23,
+                                              aspectRatio: 16 / 9,
+                                              viewportFraction: 1,
+                                              initialPage: 0,
+                                              enableInfiniteScroll: true,
+                                              reverse: false,
+                                              onPageChanged: (index, reason) {
+                                                controller.dotsPosition.value =
+                                                    index;
+                                                if (controller.dotsController
+                                                    .hasClients) {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    if (controller
+                                                        .dotsController
+                                                        .hasClients) {
+                                                      controller.dotsController
+                                                          .jumpToPage(index);
+                                                    }
+                                                  });
+                                                }
+                                              },
+                                              autoPlay: true,
+                                              autoPlayInterval:
+                                                  const Duration(seconds: 3),
+                                              autoPlayAnimationDuration:
+                                                  const Duration(
+                                                      milliseconds: 800),
+                                              autoPlayCurve:
+                                                  Curves.fastOutSlowIn,
+                                              enlargeCenterPage: false,
+                                              // scrollPhysics: const BouncingScrollPhysics(),
+                                              enlargeFactor: 0.3,
+                                              scrollDirection: Axis.horizontal,
+                                            ),
                                           ),
-                                        );
-                            },
                           ),
                           SizedBox(height: size.height * 0.01),
                           // todo moatz123
@@ -498,7 +507,7 @@ class HomeScreen extends GetView<HomeController> {
                                             ),
                                           )
                                         : SizedBox(
-                                            height: size.height * 0.21,
+                                            height: size.height * 0.24,
                                             child: ListView.builder(
                                               physics:
                                                   const BouncingScrollPhysics(),
@@ -719,7 +728,7 @@ class HomeScreen extends GetView<HomeController> {
                                           ),
                                         )
                                       : SizedBox(
-                                          height: size.height * 0.22,
+                                          height: size.height * 0.24,
                                           child: ListView.builder(
                                             physics:
                                                 const BouncingScrollPhysics(),
