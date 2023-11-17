@@ -35,7 +35,7 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
             builder: (currentPatientsController) {
               return Expanded(
                 child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   shrinkWrap: true,
                   controller:
                       currentPatientsController.currentPatientsScrollController,

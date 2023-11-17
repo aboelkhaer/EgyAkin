@@ -29,7 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
   initTextFieldController() {
     signInFormKey = GlobalKey<FormState>();
 
-    signInEmailController = TextEditingController(text: 'moatz@moatz.com');
+    signInEmailController = TextEditingController(text: 'admin@egyakin.com');
     signInPasswordController = TextEditingController(text: '12345678');
   }
 

@@ -110,8 +110,6 @@ class HomeRepository {
         try {
           var response = await apiServices.getHomePosts();
           if (response.value == true) {
-            //  isCommentsLoading.value = false;
-
             if (response.basePostModel != null) {
               return response.basePostModel!;
             }

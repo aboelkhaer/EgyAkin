@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../exports.dart';
 
 class SectionDetailsController extends GetxController {
@@ -35,17 +37,93 @@ class SectionDetailsController extends GetxController {
 
   RxBool isSectionDetailsUpdateLoading = false.obs;
 
-  updateSectionDetails(String sectionId, String patientId, context) async {
+  updateSectionDetails(String sectionId, String patientId) async {
     isSectionDetailsUpdateLoading(true);
     await sectionDetailsRepository.updateSectionDetails(
-        sectionId: sectionId,
-        patientId: patientId,
-        isSectionDetailsUpdateLoading: isSectionDetailsUpdateLoading,
-        map: formData,
-        context: context);
+      sectionId: sectionId,
+      patientId: patientId,
+      isSectionDetailsUpdateLoading: isSectionDetailsUpdateLoading,
+      map: formData,
+    );
     formData = {};
     isSectionDetailsUpdateLoading(false);
 
     update();
+  }
+
+  submitBotton({required String sectionId, required String patientId}) {
+    bool isValid = true;
+
+    for (var question in questionModelList!) {
+      if (question.mandatory == true) {
+        if (question.type == 'multiple') {
+          Map myMap = question.answer;
+          log(myMap.toString());
+
+          // Check if "answers" key is either null or an empty list
+          if (myMap.containsKey('answers')) {
+            dynamic answersValue = myMap['answers'];
+
+            if (answersValue == null ||
+                (answersValue is List && answersValue.isEmpty)) {
+              debugPrint('"answers" key is either null or an empty list.');
+              customSnackBar(
+                isError: true,
+                title: 'Required',
+                body:
+                    'You must select at least one choice. \n{${question.question}}',
+              );
+
+              isValid = false;
+              break;
+            } else {
+              debugPrint(
+                  '"answers" key is present and has a non-empty list value: $answersValue');
+            }
+          } else {
+            debugPrint('"answers" key is not present in the map.');
+            customSnackBar(
+              isError: true,
+              title: AppStrings.error,
+              body: 'Something went wrong.',
+            );
+
+            isValid = false;
+            break;
+          }
+
+          if ((myMap['other_field'] == null ||
+                  myMap['other_field'].toString().isEmpty) &&
+              (myMap['answers'] as List).contains('Others')) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'You must add "Others" field in \n{${question.question}}',
+            );
+
+            isValid = false;
+            break;
+          }
+        }
+
+        if (question.answer == null || question.answer == '') {
+          customSnackBar(
+            isError: true,
+            title: 'Required',
+            body: 'This question is required \n{${question.question}}',
+          );
+
+          isValid = false;
+          break;
+        }
+      }
+    }
+
+    if (isValid) {
+      updateSectionDetails(
+        sectionId,
+        patientId,
+      );
+    }
   }
 }

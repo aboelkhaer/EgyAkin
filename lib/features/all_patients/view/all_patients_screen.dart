@@ -35,7 +35,7 @@ class AllPatientsScreen extends GetView<AllPatientsController> {
             builder: (allPatientsController) {
               return Expanded(
                 child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
+                  physics: const AlwaysScrollableScrollPhysics(),
                   controller: allPatientsController.scrollController,
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../exports.dart';
 
 class PatienSectionScreen extends StatefulWidget {
@@ -23,7 +21,6 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
           Get.find<HomeController>().homeInit();
         }));
-    log('moatz111');
 
     super.initState();
   }
@@ -115,6 +112,13 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
                                               noColoredBottonOnTap: () {
                                                 _controller.deletePatient(
                                                     patientId.toString());
+                                                WidgetsBinding.instance
+                                                    .addPostFrameCallback(
+                                                        (_) => setState(() {
+                                                              Get.find<
+                                                                      HomeController>()
+                                                                  .homeInit();
+                                                            }));
                                               });
                                         },
                                         title: 'Delete',

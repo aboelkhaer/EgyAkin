@@ -302,8 +302,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         .fieldsIsEmptyValidation(value!),
                                     focusNode: workPlaceFocusNode,
                                     textInputAction: TextInputAction.next,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(11),
+                                    inputFormatters: const [
+                                      // LengthLimitingTextInputFormatter(11),
                                     ],
                                   ),
                                 ),

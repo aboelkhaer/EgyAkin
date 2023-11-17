@@ -96,7 +96,7 @@ class HomeController extends GetxController {
     currentDoctorUpdatedAt =
         await getStorageLib.getString(AppLocalStrings.currentDoctorUpdatedAt);
 
-    isGettingFromLocal = true;
+    isGettingFromLocal = false;
     update();
   }
 
@@ -130,7 +130,6 @@ class HomeController extends GetxController {
     );
 
     postsList!.value = containList!;
-
     isPostsLoading(false);
     update();
   }

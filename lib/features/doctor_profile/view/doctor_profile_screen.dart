@@ -30,7 +30,10 @@ class DoctorProfileScreen extends GetView<DoctroProfileController> {
                         radius: 35,
                         child: Text(
                           controller.homeController.currentDoctorFirstName![0]
-                              .toUpperCase(),
+                                  .toUpperCase() +
+                              controller
+                                  .homeController.currentDoctorLastName![0]
+                                  .toUpperCase(),
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,

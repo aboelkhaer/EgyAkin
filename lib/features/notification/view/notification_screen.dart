@@ -86,42 +86,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             ? Colors.white
                             : Colors.grey.shade300,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text:
-                                  'Dr. ${notifications![index].basePatientModel!.doctorModel!.firstName!.capitalizeFirst} ${notifications![index].basePatientModel!.doctorModel!.lastName!.capitalizeFirst}',
-                              style: const TextStyle(color: AppColors.title),
-                              children: <TextSpan>[
-                                const TextSpan(
-                                  text: ' creates ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                                const TextSpan(text: 'a new patient '),
-                                TextSpan(
-                                    text:
-                                        'at ${notifications![index].basePatientModel!.hospital}'),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            timeago
-                                .format(DateTime.parse(
-                                    notifications![index].createdAt.toString()))
-                                .toString(),
-                            style: const TextStyle(
-                              color: AppColors.title,
-                              fontSize: 10,
-                            ),
-                          ),
-                        ],
-                      ),
+                      child:
+                          checkNotificationType(notifications![index], index),
                     ),
                   );
                 }),
@@ -129,5 +95,117 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ],
       ),
     );
+  }
+
+  Widget checkNotificationType(BaseNotificationModel notificationModel, index) {
+    switch (notificationModel.type) {
+      case 'New Patient':
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: TextSpan(
+                text:
+                    'Dr. ${notifications![index].basePatientModel!.doctorModel!.firstName!.capitalizeFirst} ${notifications![index].basePatientModel!.doctorModel!.lastName!.capitalizeFirst}',
+                style: const TextStyle(color: AppColors.title),
+                children: <TextSpan>[
+                  const TextSpan(
+                    text: ' creates ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                  const TextSpan(text: 'a new patient '),
+                  const TextSpan(
+                      text: ' at ',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text:
+                          '${notifications![index].basePatientModel!.hospital}'),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              timeago
+                  .format(DateTime.parse(
+                      notifications![index].createdAt.toString()))
+                  .toString(),
+              style: const TextStyle(
+                color: AppColors.title,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        );
+      case 'Comment':
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: const TextSpan(
+                text: 'On the linked patient, someone has made a ',
+                style: TextStyle(color: AppColors.title),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'comment.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              timeago
+                  .format(DateTime.parse(
+                      notifications![index].createdAt.toString()))
+                  .toString(),
+              style: const TextStyle(
+                color: AppColors.title,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        );
+      case 'Outcome':
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            RichText(
+              text: const TextSpan(
+                text: 'On the linked patient, someone has made an ',
+                style: TextStyle(color: AppColors.title),
+                children: <TextSpan>[
+                  TextSpan(
+                    text: 'outcome.',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              timeago
+                  .format(DateTime.parse(
+                      notifications![index].createdAt.toString()))
+                  .toString(),
+              style: const TextStyle(
+                color: AppColors.title,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        );
+
+      default:
+        return Container();
+    }
   }
 }
