@@ -10,6 +10,7 @@ class HomeController extends GetxController {
   CarouselController carouselController = CarouselController();
   RxInt dotsPosition = 0.obs;
   int unreadNotificationCount = 0;
+  // RxBool hideAnimation = true.obs;
 
   String? currentDoctorFirstName;
   String? currentDoctorLastName;
@@ -43,10 +44,8 @@ class HomeController extends GetxController {
   }
 
   RxBool isNetworkConnected = true.obs;
-  RxBool isNetworkConnectedLoading = false.obs;
 
   homeInit() async {
-    isNetworkConnectedLoading(true);
     if (await networkInfo.isConnected) {
       isNetworkConnected(true);
       getCurrentDoctorData();
@@ -57,7 +56,6 @@ class HomeController extends GetxController {
     } else {
       isNetworkConnected(false);
     }
-    isNetworkConnectedLoading(false);
   }
 
   @override

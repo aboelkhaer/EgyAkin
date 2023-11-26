@@ -1,10 +1,11 @@
 import '../../exports.dart';
+import '../bindings/splash_biniding.dart';
 
 class AppRoutes {
-  // static const String splash = '/';
+  static const String splash = '/';
 
   static const String onboarding = '/onboarding';
-  static const String welcome = '/';
+  static const String welcome = '/welcome';
   static const String signIn = '/signIn';
   static const String register = '/register';
   static const String home = '/home';
@@ -22,14 +23,14 @@ class AppRoutes {
   static const String notification = '/notification';
 
   static List<GetPage> routes = [
-    // GetPage(
-    //   name: splash,
-    //   page: () => const SplashScreen(),
-    //   // binding: BindingsBuilder(() async {
-    //   //   Get.find<SplashController>();
-    //   // }),
-    //   binding: SplashBinding(),
-    // ),
+    GetPage(
+      name: splash,
+      page: () => const SplashScreen(),
+      // binding: BindingsBuilder(() async {
+      //   Get.find<SplashController>();
+      // }),
+      binding: SplashBinding(),
+    ),
     GetPage(
       name: onboarding,
       page: () => const OnbordingScreen(),
@@ -88,7 +89,6 @@ class AppRoutes {
       page: () => const SectionDetailsScreen(),
       binding: SectionDetailsBinding(),
     ),
-
     GetPage(
       name: contactUs,
       page: () => ContactUsScreen(),

@@ -304,7 +304,7 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                   style: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                   maxLines: 2,
-                  overflow: TextOverflow.visible,
+                  // overflow: TextOverflow.visible,
                 ),
                 backgroundColor: Colors.grey.shade400,
                 selected: answers.contains(value),

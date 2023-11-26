@@ -12,4 +12,7 @@ class AppImages {
   static const String imageLoader = '$imagePath/image_loader.json';
   static const String noNetwork = '$imagePath/noNetwork.PNG';
   static const String postError = '$imagePath/post_error.avif';
+  static const String logoForSplash = '$imagePath/logo_for_splash.png';
+  static const String shortLogo = '$imagePath/short_logo.png';
+  static const String logoForAndroid12 = '$imagePath/logo_for_android12.JPG';
 }
