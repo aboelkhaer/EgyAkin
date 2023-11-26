@@ -44,7 +44,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
             color: AppColors.primary,
             child: SingleChildScrollView(
               controller: controller.scrollController,
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const BouncingScrollPhysics(),
               child: Column(
                 children: [
                   // SizedBox(height: size.height * 0.05),
@@ -157,7 +157,9 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                 ),
                                 Obx(
                                   () => Text(
-                                    '(${controller.postCommentsList!.length.toString()})',
+                                    controller.isCommentsLoading.value
+                                        ? ''
+                                        : '(${controller.postCommentsList!.length.toString()})',
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,

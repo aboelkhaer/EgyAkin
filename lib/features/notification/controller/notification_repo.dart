@@ -38,11 +38,11 @@ class NotificationRepository {
       }
     } else {
       isUpdateNotificationsLoading.value = false;
-      customSnackBar(
-        isError: true,
-        title: AppStrings.error,
-        body: AppStrings.noInternetConnection,
-      );
+      // customSnackBar(
+      //   isError: true,
+      //   title: AppStrings.error,
+      //   body: AppStrings.noInternetConnection,
+      // );
     }
   }
 }
