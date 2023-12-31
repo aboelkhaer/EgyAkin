@@ -1,3 +1,4 @@
+import 'app/utilities/app_theme.dart';
 import 'exports.dart';
 import 'injection_container.dart' as di;
 
@@ -20,11 +21,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'EgyAkin',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          secondary: AppColors.primary,
-        ),
-      ),
+      theme: Themes().lightTheme,
       getPages: AppRoutes.routes,
     );
   }

@@ -44,7 +44,9 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                 );
               }
             },
-            child: Text(sectionName)),
+            child: Text(
+              sectionName,
+            )),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),

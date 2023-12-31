@@ -1,4 +1,4 @@
-import 'package:egyakin/features/outcome/controller/outcome_controller.dart';
+import 'package:egy_akin_app/features/outcome/controller/outcome_controller.dart';
 
 import '../../exports.dart';
 

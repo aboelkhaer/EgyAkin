@@ -1,7 +1,6 @@
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../exports.dart';
-import '../controller/comments_controller.dart';
 
 class CommentsScreen extends StatefulWidget {
   const CommentsScreen({super.key});
@@ -27,9 +26,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
         title: Text(patientName),
-        centerTitle: true,
       ),
       body: Obx(
         () => controller.isCommentsLoading.value

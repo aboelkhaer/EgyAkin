@@ -58,6 +58,7 @@ class HomeRepository {
     }
   }
 
+//! getAllPatients
   Future<List<BasePatientModel>>? getAllPatients(
       RxBool isAllPatientsLoading) async {
     isAllPatientsLoading.value = true;
@@ -101,6 +102,7 @@ class HomeRepository {
     }
   }
 
+//! getPosts
   Future<List<BasePostModel>>? getPosts(
       {required RxBool isPostsLoading}) async {
     if (!Get.isSnackbarOpen) {
@@ -146,6 +148,7 @@ class HomeRepository {
     }
   }
 
+//! getNotifications
   Future<List<BaseNotificationModel>>? getNotifications({
     required RxBool isNotificationsLoading,
   }) async {

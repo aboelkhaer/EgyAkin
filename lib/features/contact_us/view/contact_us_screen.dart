@@ -13,7 +13,6 @@ class ContactUsScreen extends GetView<ContactUsController> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
         title: const Text('Contact us'),
       ),
       body: Center(

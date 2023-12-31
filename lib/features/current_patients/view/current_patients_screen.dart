@@ -9,7 +9,6 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
         title: GestureDetector(
           onTap: () {
             if (controller.currentPatientsScrollController.hasClients) {

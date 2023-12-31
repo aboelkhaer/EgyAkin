@@ -15,7 +15,7 @@ class BasePostModel {
   @JsonKey(name: 'hidden')
   bool? hidden;
   @JsonKey(name: 'doctor_id')
-  int? doctorId;
+  String? doctorId;
   @JsonKey(name: 'updated_at')
   String? updatedAt;
   @JsonKey(name: 'doctor')

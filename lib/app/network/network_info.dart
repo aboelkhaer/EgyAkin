@@ -1,4 +1,4 @@
-import 'package:egyakin/exports.dart';
+import '../../exports.dart';
 
 abstract class NetworkInfo {
   Future<bool> get isConnected;
