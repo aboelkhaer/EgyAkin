@@ -21,7 +21,7 @@ class _ApiServices implements ApiServices {
   String? baseUrl;
 
   @override
-  Future<LogoutModel> logout(token) async {
+  Future<LogoutModel> logout(String token) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -38,15 +38,19 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = LogoutModel.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetDoctorWithTokenModelResponse> login(
-    email,
-    password,
+    String email,
+    String password,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -67,24 +71,28 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetDoctorWithTokenModelResponse> register(
-    firstName,
-    lastName,
-    email,
-    password,
-    passwordConfirmation,
-    age,
-    specialty,
-    workingPlace,
-    phone,
-    job,
-    highestDegree,
+    String firstName,
+    String lastName,
+    String email,
+    String password,
+    String passwordConfirmation,
+    String age,
+    String specialty,
+    String workingPlace,
+    String phone,
+    String job,
+    String highestDegree,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -114,13 +122,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetAllBasPatientstModelResponse> getAllPatients(token) async {
+  Future<GetAllBasPatientstModelResponse> getAllPatients(String token) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -137,13 +149,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetAllBasPatientstModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetCurrentPatientstModelResponse> getCurrentPatients(token) async {
+  Future<GetCurrentPatientstModelResponse> getCurrentPatients(
+      String token) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -160,13 +177,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetCurrentPatientstModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetAllBasPatientstModelResponse> searchHome(searchContent) async {
+  Future<GetAllBasPatientstModelResponse> searchHome(
+      String searchContent) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -183,23 +205,27 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetAllBasPatientstModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetDoctorModelResponse> updateProfile(
-    doctorID,
-    firstName,
-    lastName,
-    email,
-    age,
-    specialty,
-    workingPlace,
-    phone,
-    job,
-    highestDegree,
+    int doctorID,
+    String firstName,
+    String lastName,
+    String email,
+    String age,
+    String specialty,
+    String workingPlace,
+    String phone,
+    String job,
+    String highestDegree,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -227,13 +253,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetDoctorModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetBaseSectionsModelResponse> getPatientSections(patientId) async {
+  Future<GetBaseSectionsModelResponse> getPatientSections(
+      String patientId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -250,15 +281,19 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetBaseSectionsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetQuestionsModelResponse> getSectionDetails(
-    sectionId,
-    patientId,
+    String sectionId,
+    String patientId,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -276,13 +311,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetQuestionsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DeletePatientModelResponse> deletePatient(patientId) async {
+  Future<DeletePatientModelResponse> deletePatient(String patientId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -299,16 +338,20 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = DeletePatientModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<UpdateSectionDetailsModelResponse> updateSectionDetails(
-    sectionId,
-    patientId,
-    map,
+    String sectionId,
+    String patientId,
+    Map<String, dynamic> map,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -327,14 +370,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = UpdateSectionDetailsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
-      sectionId) async {
+      String sectionId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -351,13 +398,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetQuestionsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<SemiPatientModel> addPatientForFirstTime(map) async {
+  Future<SemiPatientModel> addPatientForFirstTime(
+      Map<String, dynamic> map) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -375,18 +427,22 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = SemiPatientModel.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<AddOutcometModelResponse> submitOutcome(
-    patientId,
-    outcomeOfThePatient,
-    creatinineOnDischarge,
-    finalStatus,
-    other,
+    String patientId,
+    String outcomeOfThePatient,
+    String creatinineOnDischarge,
+    String finalStatus,
+    String other,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -410,13 +466,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = AddOutcometModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetOutcomeModelResponse> getOutcome(patientId) async {
+  Future<GetOutcomeModelResponse> getOutcome(String patientId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -433,13 +493,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetOutcomeModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<UpdateSectionDetailsModelResponse> finalSubmit(patientId) async {
+  Future<UpdateSectionDetailsModelResponse> finalSubmit(
+      String patientId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -456,13 +521,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = UpdateSectionDetailsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetCommentstModelResponse> getComments(patientId) async {
+  Future<GetCommentstModelResponse> getComments(String patientId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -479,15 +548,19 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetCommentstModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<AddCommentModelResponse> addComment(
-    patientId,
-    content,
+    String patientId,
+    String content,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -508,13 +581,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = AddCommentModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DeleteCommentModelResponse> deleteComment(commentId) async {
+  Future<DeleteCommentModelResponse> deleteComment(String commentId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -531,13 +608,17 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = DeleteCommentModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<AddContactUsModelResponse> addContactUs(message) async {
+  Future<AddContactUsModelResponse> addContactUs(String message) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -554,7 +635,11 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = AddContactUsModelResponse.fromJson(_result.data!);
     return value;
   }
@@ -577,13 +662,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetPostsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetPostCommentsModelResponse> getHomePostComments(postId) async {
+  Future<GetPostCommentsModelResponse> getHomePostComments(
+      String postId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -600,13 +690,18 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetPostCommentsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<DeletePostCommentModelResponse> deletePostComment(postId) async {
+  Future<DeletePostCommentModelResponse> deletePostComment(
+      String postId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -623,7 +718,11 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = DeletePostCommentModelResponse.fromJson(_result.data!);
     return value;
   }
@@ -646,7 +745,11 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = GetNotificationModelResponse.fromJson(_result.data!);
     return value;
   }
@@ -669,15 +772,19 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = UpdateNotificationsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<AddCommentOnPostModelResponse> addCommentOnPost(
-    postId,
-    content,
+    String postId,
+    String content,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -698,7 +805,11 @@ class _ApiServices implements ApiServices {
               queryParameters: queryParameters,
               data: _data,
             )
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
     final value = AddCommentOnPostModelResponse.fromJson(_result.data!);
     return value;
   }
@@ -714,5 +825,22 @@ class _ApiServices implements ApiServices {
       }
     }
     return requestOptions;
+  }
+
+  String _combineBaseUrls(
+    String dioBaseUrl,
+    String? baseUrl,
+  ) {
+    if (baseUrl == null || baseUrl.trim().isEmpty) {
+      return dioBaseUrl;
+    }
+
+    final url = Uri.parse(baseUrl);
+
+    if (url.isAbsolute) {
+      return url.toString();
+    }
+
+    return Uri.parse(dioBaseUrl).resolveUri(url).toString();
   }
 }

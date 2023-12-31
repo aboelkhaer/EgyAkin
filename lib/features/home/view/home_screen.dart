@@ -61,8 +61,7 @@ class _HomeScreenState extends State<HomeScreen>
           ),
         ),
         iconTheme: const IconThemeData(color: AppColors.black),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.scaffoldBG,
         actions: [
           Container(
             alignment: Alignment.center,
@@ -271,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                         ClipRRect(
                                                           borderRadius:
                                                               const BorderRadius
-                                                                      .only(
+                                                                  .only(
                                                                   topLeft: Radius
                                                                       .circular(
                                                                           8),

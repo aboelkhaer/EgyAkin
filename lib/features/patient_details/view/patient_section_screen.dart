@@ -38,7 +38,8 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
         backgroundColor: AppColors.primary,
         title: Text(
           patientName,
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          style:
+              const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
       ),

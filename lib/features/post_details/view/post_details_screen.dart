@@ -1,8 +1,12 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../app/utilities/lunch_url.dart';
 import '../../../exports.dart';
 
 class PostDetailsScreen extends StatefulWidget {
@@ -31,9 +35,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-      ),
+      appBar: AppBar(),
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -128,16 +130,22 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         Row(
                           children: [
                             Flexible(
-                              child: Text(
-                                postModel.content.toString(),
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  wordSpacing: 1,
-                                  letterSpacing: 1,
-                                  height: 1.5,
-                                  color: Colors.grey.shade900,
-                                ),
-                              ),
+                              // child: Text(
+                              //   postModel.content.toString(),
+                              //   style: TextStyle(
+                              //     fontSize: 15,
+                              //     wordSpacing: 1,
+                              //     letterSpacing: 1,
+                              //     height: 1.5,
+                              //     color: Colors.grey.shade900,
+                              //   ),
+                              // ),
+                              child: HtmlWidget(postModel.content.toString(),
+                                  onTapUrl: (url) {
+                                log(url.toString());
+                                launchURL(url);
+                                return true;
+                              }),
                             ),
                           ],
                         ),

@@ -47,7 +47,11 @@ class CustomElevatedButton extends StatelessWidget {
                 : const SizedBox.shrink(),
             Text(
               title,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: isDisable ? Colors.grey.shade600 : Colors.white,
+              ),
             ),
           ],
         ),

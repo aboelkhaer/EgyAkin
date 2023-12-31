@@ -1,4 +1,4 @@
-import 'package:egyakin/features/comments/controller/comments_controller.dart';
+import 'package:egy_akin_app/features/comments/controller/comments_controller.dart';
 
 import '../../exports.dart';
 

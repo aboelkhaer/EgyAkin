@@ -1,6 +1,6 @@
-# egyakin
+# egy_akin_app
 
-Medical Application
+A new Flutter project.
 
 ## Getting Started
 

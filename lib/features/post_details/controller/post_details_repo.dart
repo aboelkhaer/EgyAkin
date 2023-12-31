@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../../../exports.dart';
-import 'post_details_controller.dart';
 
 class PostDetailsRepository {
   ApiServices apiServices;

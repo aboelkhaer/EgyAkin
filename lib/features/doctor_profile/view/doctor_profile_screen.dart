@@ -10,7 +10,6 @@ class DoctorProfileScreen extends GetView<DoctroProfileController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: AppColors.primary,
       ),
       body: Obx(
         () => controller.isUpdateLoading.value

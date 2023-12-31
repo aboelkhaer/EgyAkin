@@ -12,7 +12,7 @@ BasePostModel _$BasePostModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String?,
       content: json['content'] as String?,
       hidden: json['hidden'] as bool?,
-      doctorId: json['doctor_id'] as int?,
+      doctorId: json['doctor_id'] as String?,
       updatedAt: json['updated_at'] as String?,
       baseDoctorModel: json['doctor'] == null
           ? null

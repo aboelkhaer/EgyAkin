@@ -1,4 +1,4 @@
-import 'package:egyakin/features/section_details/controller/section_details_controller.dart';
+import 'package:egy_akin_app/features/section_details/controller/section_details_controller.dart';
 
 import '../../exports.dart';
 

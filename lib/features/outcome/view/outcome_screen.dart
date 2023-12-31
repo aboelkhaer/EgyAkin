@@ -27,9 +27,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
         title: Text(patientname),
-        centerTitle: true,
       ),
       body: Obx(
         () => controller.isAddOutcomeLoading.value ||

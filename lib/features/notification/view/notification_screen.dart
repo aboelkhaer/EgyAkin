@@ -27,7 +27,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notifications'),
-        backgroundColor: AppColors.primary,
       ),
       body: Column(
         children: [

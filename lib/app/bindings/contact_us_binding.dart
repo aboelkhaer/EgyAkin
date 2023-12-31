@@ -1,4 +1,4 @@
-import 'package:egyakin/features/contact_us/controller/contact_us_controller.dart';
+import 'package:egy_akin_app/features/contact_us/controller/contact_us_controller.dart';
 
 import '../../exports.dart';
 
