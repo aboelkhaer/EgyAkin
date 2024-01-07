@@ -11,7 +11,7 @@ class BaseNotificationModel {
   @JsonKey(name: 'type')
   String? type;
   @JsonKey(name: 'patient_id')
-  int? patientId;
+  String? patientId;
   @JsonKey(name: 'created_at')
   String? createdAt;
   @JsonKey(name: 'patient')

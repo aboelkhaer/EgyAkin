@@ -16,6 +16,8 @@ class Themes {
         fontSize: 20,
       ),
     ),
+    progressIndicatorTheme:
+        const ProgressIndicatorThemeData(color: AppColors.primary),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: AppColors.primary.withOpacity(0.8),
     ),

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
 import 'exports.dart';
+import 'features/email_verification/controller/email_verification_controller.dart';
+import 'features/reset_password/controller/reset_password_repo.dart';
 
 Future<void> diInit() async {
   // Core
@@ -31,10 +33,13 @@ Future<void> diInit() async {
   Get.lazyPut(() => OutcomeRepository(apiServices: Get.find()), fenix: true);
   Get.lazyPut(() => CommentRepository(apiServices: Get.find()), fenix: true);
   Get.lazyPut(() => ContactUsRepository(apiServices: Get.find()), fenix: true);
+  Get.lazyPut(() => ResetPasswordRepository(apiServices: Get.find()),
+      fenix: true);
   Get.lazyPut(() => PostDetailsRepository(apiServices: Get.find()),
       fenix: true);
   Get.lazyPut(() => NotificationRepository(apiServices: Get.find()),
       fenix: true);
+  Get.lazyPut(() => EmailVerificationRepository(apiServices: Get.find()));
 
   // Controller
   // Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
@@ -59,6 +64,8 @@ Future<void> diInit() async {
   Get.lazyPut(() => ContactUsController());
   Get.lazyPut(() => PostDetailsController());
   Get.lazyPut(() => NotificationController());
+  Get.lazyPut(() => ResetPasswordController());
+  Get.lazyPut(() => EmailVerificationController());
 }
 
 initNetworking() async {

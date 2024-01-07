@@ -90,29 +90,6 @@ class AddPatientController extends GetxController {
             break;
           }
 
-          // // Check if "other_field" key is either null or empty
-          // if (myMap.containsKey('other_field')) {
-          //   dynamic otherFieldValue = myMap['other_field'];
-
-          //   // Corrected condition to check if "other_field" key is empty or null
-          //   if (otherFieldValue == null || otherFieldValue.toString().isEmpty) {
-          //     debugPrint('"other_field" key is either null or empty.');
-          //   } else {
-          //     debugPrint(
-          //         '"other_field" key is present and has a non-empty value: $otherFieldValue');
-          //   }
-          // } else {
-          //   debugPrint('"other_field" key is not present in the map.');
-          //   customSnackBar(
-          //     isError: true,
-          //     title: AppStrings.error,
-          //     body: 'Something went wrong.',
-          //   );
-
-          //   isValid = false;
-          //   break;
-          // }
-
           if ((myMap['other_field'] == null ||
                   myMap['other_field'].toString().isEmpty) &&
               (myMap['answers'] as List).contains('Others')) {
@@ -136,6 +113,50 @@ class AddPatientController extends GetxController {
 
           isValid = false;
           break;
+        }
+        if (question.question == 'National ID') {
+          String nationalID = formData[question.id.toString()];
+
+          if (nationalID.length != 14) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'National ID should have 14 digits',
+            );
+            isValid = false;
+            break;
+          }
+          if (int.tryParse(nationalID) == null) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'National ID should have 14 digits',
+            );
+            isValid = false;
+            break;
+          }
+        }
+        if (question.question == 'Phone') {
+          String phoneNumber = formData[question.id.toString()];
+
+          if (phoneNumber.length != 11) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'phone should have 11 digits',
+            );
+            isValid = false;
+            break;
+          }
+          if (int.tryParse(phoneNumber) == null) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'Phone should have 11 digits',
+            );
+            isValid = false;
+            break;
+          }
         }
       }
     }

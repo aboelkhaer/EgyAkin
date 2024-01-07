@@ -1,6 +1,6 @@
 {
-    "name": "egy_akin_app",
-    "short_name": "egy_akin_app",
+    "name": "EgyAkin",
+    "short_name": "EgyAkin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

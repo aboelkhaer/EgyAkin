@@ -15,4 +15,6 @@ class AppImages {
   static const String logoForSplash = '$imagePath/logo_for_splash.png';
   static const String shortLogo = '$imagePath/short_logo.png';
   static const String logoForAndroid12 = '$imagePath/logo_for_android12.JPG';
+  static const String reset1 = '$imagePath/reset1.png';
+  static const String reset2 = '$imagePath/reset2.png';
 }

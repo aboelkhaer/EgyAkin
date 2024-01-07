@@ -1,5 +1,3 @@
-import 'package:egy_akin_app/features/outcome/controller/outcome_controller.dart';
-
 import '../../exports.dart';
 
 class OutcomeBinding extends Bindings {

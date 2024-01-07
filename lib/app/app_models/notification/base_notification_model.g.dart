@@ -11,7 +11,7 @@ BaseNotificationModel _$BaseNotificationModelFromJson(
     BaseNotificationModel(
       id: json['id'] as int?,
       read: json['read'] as bool?,
-      patientId: json['patient_id'] as int?,
+      patientId: json['patient_id'] as String?,
       createdAt: json['created_at'] as String?,
       basePatientModel: json['patient'] == null
           ? null

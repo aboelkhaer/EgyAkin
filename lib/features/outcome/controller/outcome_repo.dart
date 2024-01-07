@@ -12,6 +12,7 @@ class OutcomeRepository {
     required String patientId,
     required RxBool isAddOutcomeLoading,
     required String outcomeOfThePatient,
+    required String duration,
     required String creatinineOnDischarge,
     required String finalStatus,
     required String other,
@@ -24,6 +25,7 @@ class OutcomeRepository {
             patientId,
             outcomeOfThePatient,
             creatinineOnDischarge,
+            duration,
             finalStatus,
             other,
           );
@@ -82,9 +84,7 @@ class OutcomeRepository {
     }
   }
 
-  GetOutcomeDataModelResponse getOutcomeDataModelResponse =
-      GetOutcomeDataModelResponse();
-  Future<GetOutcomeDataModelResponse>? getOutcome(
+  Future getOutcome(
       {required String patientId, required RxBool isGetOutcomeLoading}) async {
     if (!Get.isSnackbarOpen) {
       isGetOutcomeLoading.value = true;
@@ -97,10 +97,18 @@ class OutcomeRepository {
             if (response.getOutcomeDataModelResponse != null) {
               return response.getOutcomeDataModelResponse!;
             }
-            return getOutcomeDataModelResponse;
+            customSnackBar(
+              isError: true,
+              title: AppStrings.error,
+              body: 'Something went wrong!',
+            );
           } else {
             isGetOutcomeLoading.value = false;
-            return getOutcomeDataModelResponse;
+            customSnackBar(
+              isError: true,
+              title: AppStrings.error,
+              body: 'Something went wrong!',
+            );
           }
         } catch (e) {
           isGetOutcomeLoading.value = false;
@@ -125,9 +133,17 @@ class OutcomeRepository {
           body: AppStrings.noInternetConnection,
         );
       }
-      return getOutcomeDataModelResponse;
+      customSnackBar(
+        isError: true,
+        title: AppStrings.error,
+        body: 'Something went wrong!',
+      );
     } else {
-      return getOutcomeDataModelResponse;
+      customSnackBar(
+        isError: true,
+        title: AppStrings.error,
+        body: 'Something went wrong!',
+      );
     }
   }
 }

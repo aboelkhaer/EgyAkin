@@ -12,6 +12,7 @@ class HomeRepository {
     required this.apiServices,
   });
 
+//! getCurrentPatients
   Future<List<BasePatientModel>>? getCurrentPatients(
       RxBool isCurrentPatientsLoading) async {
     isCurrentPatientsLoading.value = true;
@@ -24,6 +25,8 @@ class HomeRepository {
         if (response.value == true) {
           Get.find<HomeController>().currentDoctorScoreValue!.value =
               response.scoreValue.toString();
+          Get.find<HomeController>().currentDoctorVerification.value =
+              response.verified!;
 
           if (response.basePatientList != null) {
             return response.basePatientList!;
@@ -121,7 +124,7 @@ class HomeRepository {
             return [];
           }
         } catch (e) {
-          isPostsLoading.value = false;
+          // isPostsLoading.value = false;
           if (e is DioException) {
             // final result = e.response!.data as Map<String, dynamic>;
             // customSnackBar(
@@ -132,6 +135,7 @@ class HomeRepository {
 
             DioExceptions.fromDioError(
                 dioError: e, errorFrom: 'home_Repo/getPosts');
+            return [];
           }
         }
       } else {
@@ -172,7 +176,7 @@ class HomeRepository {
             return [];
           }
         } catch (e) {
-          isNotificationsLoading.value = false;
+          // isNotificationsLoading.value = false;
           if (e is DioException) {
             // final result = e.response!.data as Map<String, dynamic>;
             // customSnackBar(
@@ -183,7 +187,9 @@ class HomeRepository {
 
             DioExceptions.fromDioError(
                 dioError: e, errorFrom: 'home_Repo/getNotifications');
+            return [];
           }
+          return [];
         }
       } else {
         isNotificationsLoading.value = false;

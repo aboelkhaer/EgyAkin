@@ -5,11 +5,13 @@ class BuildStringValueQuestions extends StatelessWidget {
   final int index;
   final ValueChanged<String> onChanged;
   final String? Function(String?)? validator;
+  final String? initialValue;
   final List<TextInputFormatter>? textInputFormatter;
   const BuildStringValueQuestions({
     super.key,
     required this.questionList,
     required this.index,
+    this.initialValue,
     required this.onChanged,
     required this.validator,
     this.textInputFormatter,
@@ -29,7 +31,7 @@ class BuildStringValueQuestions extends StatelessWidget {
                   : TextInputType.text,
       textInputAction: TextInputAction.next,
       inputFormatters: textInputFormatter,
-      initialValue: questionList[index].answer ?? '',
+      initialValue: initialValue,
       validator: validator,
       onChanged: onChanged,
     );

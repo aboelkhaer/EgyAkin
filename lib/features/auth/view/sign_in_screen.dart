@@ -110,7 +110,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () {
+                                Get.toNamed(AppRoutes.resetPassword);
+                              },
                               child: SizedBox(
                                 child: Text(
                                   'Forget Password ?',

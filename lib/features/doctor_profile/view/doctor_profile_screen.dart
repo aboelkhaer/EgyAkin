@@ -1,7 +1,48 @@
 import '../../../exports.dart';
 
-class DoctorProfileScreen extends GetView<DoctroProfileController> {
+class DoctorProfileScreen extends StatefulWidget {
   const DoctorProfileScreen({super.key});
+
+  @override
+  State<DoctorProfileScreen> createState() => _DoctorProfileScreenState();
+}
+
+class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
+  final DoctroProfileController controller = Get.put(DoctroProfileController());
+  @override
+  void initState() {
+    controller.highestDegree =
+        controller.homeController.currentDoctorHighestDegree.obs;
+    controller.profileFirstNameController = TextEditingController(
+        text: controller.homeController.currentDoctorFirstName);
+    controller.profileLastNameController = TextEditingController(
+        text: controller.homeController.currentDoctorLastName);
+    controller.profileEmailController = TextEditingController(
+        text: controller.homeController.currentDoctorEmail);
+    controller.profilePhoneController = TextEditingController(
+        text: controller.homeController.currentDoctorPhone);
+    controller.profileAgeController =
+        TextEditingController(text: controller.homeController.currentDoctorAge);
+    controller.profileRegistrationNumberController = TextEditingController(
+        text: controller.homeController.currentDoctorRegistrationNumber);
+    controller.profileJobController =
+        TextEditingController(text: controller.homeController.currentDoctorJob);
+    controller.profileWorkingPlaceController = TextEditingController(
+        text: controller.homeController.currentDoctorWorkPlace);
+    controller.profileSpecialtyController = TextEditingController(
+        text: controller.homeController.currentDoctorSpecialty);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.doctorProfileDispose();
+    // if (controller.isProfileHasChanged.value) {
+    //   controller.homeController.homeInit();
+    // }
+    controller.isProfileHasChanged(false);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -357,6 +398,39 @@ class DoctorProfileScreen extends GetView<DoctroProfileController> {
                               children: [
                                 Expanded(
                                   child: Text(
+                                    'Registeration Number (رقم القيد الخاص بالنقابة)',
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomTextFormField(
+                                    title:
+                                        'Registeration Number (رقم القيد الخاص بالنقابة)',
+                                    enabled: false,
+
+                                    textFormFieldController: controller
+                                        .profileRegistrationNumberController,
+                                    // focusNode: registerationNumberFocusNode,
+                                    textInputType: TextInputType.number,
+                                    // onFieldSubmitted: (v) =>
+                                    // FocusScope.of(context)
+                                    //     .requestFocus(specialtyFocusNode),
+                                    validator: (value) => controller
+                                        .fieldsIsEmptyValidation(value!),
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: size.height * 0.01),
+                            const Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
                                     'Specialty',
                                   ),
                                 ),
@@ -377,9 +451,6 @@ class DoctorProfileScreen extends GetView<DoctroProfileController> {
                                     textFormFieldController:
                                         controller.profileSpecialtyController,
                                     textInputType: TextInputType.text,
-                                    onFieldSubmitted: (v) =>
-                                        FocusScope.of(context).requestFocus(
-                                            controller.highestDegreeFocusNode),
                                     validator: (value) => controller
                                         .fieldsIsEmptyValidation(value!),
                                     onChanged: (value) {
@@ -398,29 +469,80 @@ class DoctorProfileScreen extends GetView<DoctroProfileController> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
+                                // Expanded(
+                                //   child: CustomTextFormField(
+                                //     title: 'Highest Degree',
+                                //     textFormFieldController: controller
+                                //         .profileHighestDegreeController,
+                                //     enableSuggestions: true,
+                                //     textInputType: TextInputType.text,
+                                //     focusNode:
+                                //         controller.highestDegreeFocusNode,
+                                //     onChanged: (value) {
+                                //       if (value !=
+                                //           controller.homeController
+                                //               .currentDoctorHighestDegree) {
+                                //         controller.isProfileHasChanged.value =
+                                //             true;
+                                //       } else {
+                                //         controller.isProfileHasChanged.value =
+                                //             false;
+                                //       }
+                                //     },
+                                //     validator: (value) => controller
+                                //         .fieldsIsEmptyValidation(value!),
+                                //     textInputAction: TextInputAction.done,
+                                //   ),
+                                // ),
                                 Expanded(
-                                  child: CustomTextFormField(
-                                    title: 'Highest Degree',
-                                    textFormFieldController: controller
-                                        .profileHighestDegreeController,
-                                    enableSuggestions: true,
-                                    textInputType: TextInputType.text,
-                                    focusNode:
-                                        controller.highestDegreeFocusNode,
-                                    onChanged: (value) {
-                                      if (value !=
-                                          controller.homeController
-                                              .currentDoctorHighestDegree) {
+                                  // child: CustomTextFormField(
+                                  //   title: 'Highest Degree',
+                                  //   textFormFieldController:
+                                  //       registerHighestDegreeController,
+                                  //   enableSuggestions: true,
+                                  //   textInputType: TextInputType.text,
+                                  //   focusNode: highestDegreeFocusNode,
+                                  //   validator: (value) => controller
+                                  //       .fieldsIsEmptyValidation(value!),
+                                  //   textInputAction: TextInputAction.done,
+                                  // ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppColors.primary.withOpacity(0.06),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: DropdownButtonFormField<dynamic>(
+                                      hint: Text(
+                                          controller.highestDegree.value ??
+                                              'Choose'),
+
+                                      items: controller.highestDegreeList
+                                          .map((value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value.toString()),
+                                        );
+                                      }).toList(),
+
+                                      onChanged: (val) {
+                                        controller.highestDegree.value = val;
                                         controller.isProfileHasChanged.value =
                                             true;
-                                      } else {
-                                        controller.isProfileHasChanged.value =
-                                            false;
-                                      }
-                                    },
-                                    validator: (value) => controller
-                                        .fieldsIsEmptyValidation(value!),
-                                    textInputAction: TextInputAction.done,
+                                      },
+                                      validator: (val) {
+                                        if ((val == null || val == '')) {
+                                          return 'This field is required';
+                                        }
+
+                                        return null;
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                      ),
+                                      // decoration: const InputDecoration(label: Text('Choose')),
+                                    ),
                                   ),
                                 ),
                               ],

@@ -3,10 +3,14 @@ import '../../exports.dart';
 class CustomOutlineBotton extends StatelessWidget {
   final VoidCallback onPressed;
   final String title;
+  final bool isFlatBotton;
+  final bool isDisable;
   final Size size;
   const CustomOutlineBotton({
     super.key,
     required this.onPressed,
+    this.isFlatBotton = false,
+    this.isDisable = false,
     required this.title,
     required this.size,
   });
@@ -19,15 +23,17 @@ class CustomOutlineBotton extends StatelessWidget {
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-            side: const BorderSide(
+            foregroundColor: isFlatBotton ? Colors.grey.shade200 : null,
+            side: BorderSide(
               width: 2.0,
-              color: AppColors.primary,
+              color: isFlatBotton ? AppColors.subBG : AppColors.primary,
             ),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10))),
         child: Text(
           title,
-          style: const TextStyle(color: AppColors.primary),
+          style: TextStyle(
+              color: isFlatBotton ? Colors.grey.shade600 : AppColors.primary),
         ),
       ),
     );

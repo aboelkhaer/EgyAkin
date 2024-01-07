@@ -1,4 +1,4 @@
-package com.example.egy_akin_app
+package com.example.EgyAkin
 
 import io.flutter.embedding.android.FlutterActivity
 

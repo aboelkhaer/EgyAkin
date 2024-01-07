@@ -204,6 +204,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       case 'string':
         return BuildStringValueQuestions(
           questionList: questionList,
+          initialValue: formDataMap[questionList[index].id.toString()] ?? '',
           index: index,
           textInputFormatter: questionList[index].question == 'Phone'
               ? [

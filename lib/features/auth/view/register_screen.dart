@@ -1,3 +1,5 @@
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
+
 import '../../../exports.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -18,7 +20,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController registerJopController;
   late TextEditingController registerSpecialtyController;
   late TextEditingController registerWorkingPlaceController;
-  late TextEditingController registerHighestDegreeController;
+  late TextEditingController registerRegisterationNumberController;
+  // late TextEditingController registerHighestDegreeController;
+  String highestDegree = '';
   late TextEditingController registerAgeController;
   GlobalKey<FormState>? registerFormKey;
 
@@ -41,8 +45,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerSpecialtyController = TextEditingController();
 
     registerWorkingPlaceController = TextEditingController();
+    registerRegisterationNumberController = TextEditingController();
 
-    registerHighestDegreeController = TextEditingController();
+    // registerHighestDegreeController = TextEditingController();
 
     registerAgeController = TextEditingController();
   }
@@ -60,7 +65,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerJopController.clear();
     registerSpecialtyController.clear();
     registerWorkingPlaceController.clear();
-    registerHighestDegreeController.clear();
+    registerRegisterationNumberController.clear();
+    // registerHighestDegreeController.clear();
     registerAgeController.clear();
   }
 
@@ -74,7 +80,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerJopController.dispose();
     registerSpecialtyController.dispose();
     registerWorkingPlaceController.dispose();
-    registerHighestDegreeController.dispose();
+    registerRegisterationNumberController.dispose();
+    // registerHighestDegreeController.dispose();
     registerAgeController.dispose();
     lastNameFocusNode.dispose();
     emailFocusNode.dispose();
@@ -83,8 +90,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     phoneFocusNode.dispose();
     ageFocusNode.dispose();
     specialtyFocusNode.dispose();
-    highestDegreeFocusNode.dispose();
     jobFocusNode.dispose();
+    registerationNumberFocusNode.dispose();
     workPlaceFocusNode.dispose();
   }
 
@@ -95,8 +102,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   FocusNode phoneFocusNode = FocusNode();
   FocusNode ageFocusNode = FocusNode();
   FocusNode specialtyFocusNode = FocusNode();
-  FocusNode highestDegreeFocusNode = FocusNode();
   FocusNode jobFocusNode = FocusNode();
+  FocusNode registerationNumberFocusNode = FocusNode();
   FocusNode workPlaceFocusNode = FocusNode();
 
   @override
@@ -224,7 +231,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     validator: (value) =>
                                         controller.confirmPassword(
                                       value!,
-                                      registerConfirmPasswordController.text,
+                                      registerPasswordController.text,
                                     ),
                                     textInputAction: TextInputAction.next,
                                   ),
@@ -232,6 +239,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ],
                             ),
                             SizedBox(height: size.height * 0.01),
+                            FlutterPwValidator(
+                                controller: registerPasswordController,
+                                minLength: 6,
+                                uppercaseCharCount: 1,
+                                numericCharCount: 2,
+                                specialCharCount: 1,
+                                width: 400,
+                                height: 150,
+                                onSuccess: () {
+                                  // controller.isPassowordValidation = true;
+                                },
+                                onFail: () {
+                                  // controller.isPassowordValidation = false;
+                                }),
+                            SizedBox(height: size.height * 0.04),
                             Row(
                               children: [
                                 Expanded(
@@ -244,8 +266,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         FocusScope.of(context)
                                             .requestFocus(ageFocusNode),
                                     textInputType: TextInputType.phone,
-                                    validator: (value) => controller
-                                        .fieldsIsEmptyValidation(value!),
+                                    validator: (value) =>
+                                        controller.validatePhoneNumber(value!),
                                     textInputAction: TextInputAction.next,
                                     inputFormatters: [
                                       LengthLimitingTextInputFormatter(11),
@@ -263,8 +285,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         FocusScope.of(context)
                                             .requestFocus(jobFocusNode),
                                     textInputType: TextInputType.number,
-                                    validator: (value) => controller
-                                        .fieldsIsEmptyValidation(value!),
+                                    validator: (value) =>
+                                        controller.validateAge(value!),
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -314,31 +336,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Specialty',
+                                    title:
+                                        'Registeration Number (رقم القيد الخاص بالنقابة)',
                                     textFormFieldController:
-                                        registerSpecialtyController,
-                                    textInputType: TextInputType.text,
+                                        registerRegisterationNumberController,
+                                    focusNode: registerationNumberFocusNode,
+                                    textInputType: TextInputType.number,
                                     onFieldSubmitted: (v) =>
-                                        FocusScope.of(context).requestFocus(
-                                            highestDegreeFocusNode),
+                                        FocusScope.of(context)
+                                            .requestFocus(specialtyFocusNode),
                                     validator: (value) => controller
                                         .fieldsIsEmptyValidation(value!),
-                                    focusNode: specialtyFocusNode,
                                     textInputAction: TextInputAction.next,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: size.height * 0.01),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 10),
+                                      CustomTextFormField(
+                                        title: 'Specialty',
+                                        textFormFieldController:
+                                            registerSpecialtyController,
+                                        textInputType: TextInputType.text,
+                                        // onFieldSubmitted: (v) =>
+                                        //     FocusScope.of(context).requestFocus(
+                                        //         highestDegreeFocusNode),
+                                        validator: (value) => controller
+                                            .fieldsIsEmptyValidation(value!),
+                                        focusNode: specialtyFocusNode,
+                                        textInputAction: TextInputAction.next,
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 10),
                                 Expanded(
-                                  child: CustomTextFormField(
-                                    title: 'Highest Degree',
-                                    textFormFieldController:
-                                        registerHighestDegreeController,
-                                    enableSuggestions: true,
-                                    textInputType: TextInputType.text,
-                                    focusNode: highestDegreeFocusNode,
-                                    validator: (value) => controller
-                                        .fieldsIsEmptyValidation(value!),
-                                    textInputAction: TextInputAction.done,
+                                  // child: CustomTextFormField(
+                                  //   title: 'Highest Degree',
+                                  //   textFormFieldController:
+                                  //       registerHighestDegreeController,
+                                  //   enableSuggestions: true,
+                                  //   textInputType: TextInputType.text,
+                                  //   focusNode: highestDegreeFocusNode,
+                                  //   validator: (value) => controller
+                                  //       .fieldsIsEmptyValidation(value!),
+                                  //   textInputAction: TextInputAction.done,
+                                  // ),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color:
+                                          AppColors.primary.withOpacity(0.06),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: DropdownButtonFormField<dynamic>(
+                                      hint: const Text('Choose'),
+
+                                      items: controller.highestDegreeList
+                                          .map((value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value,
+                                          child: Text(value.toString()),
+                                        );
+                                      }).toList(),
+
+                                      onChanged: (val) {
+                                        if (val != null) {
+                                          highestDegree = val;
+                                        }
+                                        setState(() {});
+                                      },
+                                      validator: (val) {
+                                        if ((val == null || val == '')) {
+                                          return 'This field is required';
+                                        }
+
+                                        return null;
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(
+                                            borderSide: BorderSide.none),
+                                      ),
+                                      // decoration: const InputDecoration(label: Text('Choose')),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -379,9 +465,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 age: registerAgeController.text,
                                                 email: registerEmailController
                                                     .text,
-                                                highestDegree:
-                                                    registerHighestDegreeController
-                                                        .text,
+                                                highestDegree: highestDegree,
                                                 job: registerJopController.text,
                                                 password:
                                                     registerPasswordController
@@ -391,6 +475,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                         .text,
                                                 phone: registerPhoneController
                                                     .text,
+                                                registrationNumber:
+                                                    registerRegisterationNumberController
+                                                        .text,
                                                 specialty:
                                                     registerSpecialtyController
                                                         .text,

@@ -299,6 +299,27 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   controller.newComment.value = val;
                                 },
                                 onFieldSubmitted: (val) {
+                                  if (controller.homeController
+                                      .currentDoctorVerification.value) {
+                                    controller.addComment(
+                                        patientId: patientId.toString());
+                                  } else {
+                                    showCustomDialog(
+                                      context: context,
+                                      title: 'Email verification',
+                                      description:
+                                          'To add comment you must verify your email address',
+                                      noColoredBottonOnTap: () {
+                                        Get.back();
+                                      },
+                                      coloredBottonText: 'Verify',
+                                      noColoredBottonText: 'Cancel',
+                                      coloredBottonOnTap: () {
+                                        Get.offAndToNamed(
+                                            AppRoutes.emailVerification);
+                                      },
+                                    );
+                                  }
                                   controller.addComment(
                                       patientId: patientId.toString());
                                 },
@@ -315,8 +336,30 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                     children: [
                                       IconButton(
                                         onPressed: () {
-                                          controller.addComment(
-                                              patientId: patientId.toString());
+                                          if (controller
+                                              .homeController
+                                              .currentDoctorVerification
+                                              .value) {
+                                            controller.addComment(
+                                                patientId:
+                                                    patientId.toString());
+                                          } else {
+                                            showCustomDialog(
+                                              context: context,
+                                              title: 'Email verification',
+                                              description:
+                                                  'To add comment you must verify your email address',
+                                              noColoredBottonOnTap: () {
+                                                Get.back();
+                                              },
+                                              coloredBottonText: 'Verify',
+                                              noColoredBottonText: 'Cancel',
+                                              coloredBottonOnTap: () {
+                                                Get.offAndToNamed(AppRoutes
+                                                    .emailVerification);
+                                              },
+                                            );
+                                          }
                                         },
                                         icon: Icon(
                                           Icons.send_outlined,

@@ -16,6 +16,7 @@ class HomeController extends GetxController {
   String? currentDoctorLastName;
   String? currentDoctorEmail;
   RxString? currentDoctorScoreValue = ''.obs;
+  RxBool currentDoctorVerification = false.obs;
   String? currentDoctorPhone;
   int? currentDoctorId;
   String? currentDoctorAge;
@@ -23,6 +24,7 @@ class HomeController extends GetxController {
   String? currentDoctorWorkPlace;
   String? currentDoctorSpecialty;
   String? currentDoctorHighestDegree;
+  String? currentDoctorRegistrationNumber;
   String? currentDoctorCreatedAt;
   String? currentDoctorUpdatedAt;
   RxList<BasePatientModel>? currentPatinetList = RxList();
@@ -85,6 +87,8 @@ class HomeController extends GetxController {
         .getString(AppLocalStrings.currentDoctorWorkingPlace);
     currentDoctorSpecialty =
         await getStorageLib.getString(AppLocalStrings.currentDoctorSpecialty);
+    currentDoctorRegistrationNumber = await getStorageLib
+        .getString(AppLocalStrings.currentDoctorRegistrationNumber);
     currentDoctorHighestDegree = await getStorageLib
         .getString(AppLocalStrings.currentDoctorHighestDegree);
     currentDoctorId =
@@ -103,9 +107,9 @@ class HomeController extends GetxController {
 
   getCurrentPatientsToList() async {
     isCurrentPatientsLoading.value = true;
-    List<BasePatientModel>? tessst =
+    List<BasePatientModel>? containList =
         await homeRepository.getCurrentPatients(isCurrentPatientsLoading);
-    currentPatinetList!.value = tessst!;
+    currentPatinetList!.value = containList!;
     isCurrentPatientsLoading.value = false;
     update();
   }
@@ -126,7 +130,6 @@ class HomeController extends GetxController {
     List<BasePostModel>? containList = await homeRepository.getPosts(
       isPostsLoading: isPostsLoading,
     );
-
     postsList!.value = containList!;
     isPostsLoading(false);
     update();

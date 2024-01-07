@@ -26,6 +26,8 @@ class DoctorModel {
   String? phone;
   @JsonKey(name: 'job')
   String? job;
+  @JsonKey(name: 'registration_number')
+  String? registrationNumber;
   @JsonKey(name: 'highestdegree')
   String? highestDegree;
   @JsonKey(name: 'created_at')

@@ -25,6 +25,7 @@ class BasePostModel {
     this.id,
     this.title,
     this.content,
+    this.image,
     this.hidden,
     this.doctorId,
     this.updatedAt,
