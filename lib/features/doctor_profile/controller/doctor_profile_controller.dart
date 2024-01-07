@@ -4,73 +4,42 @@ class DoctroProfileController extends GetxController {
   HomeController homeController = Get.find<HomeController>();
   ProfileRepository profileRepository = Get.find<ProfileRepository>();
   GlobalKey<FormState> profileFormKey = GlobalKey<FormState>();
+  List<String> highestDegreeList =
+      Get.find<RegisterController>().highestDegreeList;
+  Rx<String?> highestDegree = ''.obs;
+
   late TextEditingController profileFirstNameController;
-  String? profileFirstName;
   late TextEditingController profileLastNameController;
-  String? profileLastName;
   late TextEditingController profileEmailController;
-  String? profileEmail;
   late TextEditingController profilePhoneController;
-  String? profilePhone;
   late TextEditingController profileAgeController;
-  String? profileAge;
   late TextEditingController profileJobController;
-  String? profileJob;
+  late TextEditingController profileRegistrationNumberController;
   late TextEditingController profileWorkingPlaceController;
-  String? profileWorkingPlace;
   late TextEditingController profileSpecialtyController;
-  String? profileSpecialty;
-  late TextEditingController profileHighestDegreeController;
-  String? profileHighestDegree;
+
   RxBool isProfileHasChanged = false.obs;
   FocusNode lastNameFocusNode = FocusNode();
   FocusNode phoneFocusNode = FocusNode();
   FocusNode emailFocusNode = FocusNode();
+  FocusNode registrationNumberFocusNode = FocusNode();
   FocusNode ageFocusNode = FocusNode();
   FocusNode jobFocusNode = FocusNode();
   FocusNode workPlaceFocusNode = FocusNode();
   FocusNode specialtyFocusNode = FocusNode();
-  FocusNode highestDegreeFocusNode = FocusNode();
-  @override
-  void onInit() {
-    super.onInit();
-    // isProfileChanged();
-    profileFirstNameController =
-        TextEditingController(text: homeController.currentDoctorFirstName);
-    profileLastNameController =
-        TextEditingController(text: homeController.currentDoctorLastName);
-    profileEmailController =
-        TextEditingController(text: homeController.currentDoctorEmail);
-    profilePhoneController =
-        TextEditingController(text: homeController.currentDoctorPhone);
-    profileAgeController =
-        TextEditingController(text: homeController.currentDoctorAge);
-    profileJobController =
-        TextEditingController(text: homeController.currentDoctorJob);
-    profileWorkingPlaceController =
-        TextEditingController(text: homeController.currentDoctorWorkPlace);
-    profileSpecialtyController =
-        TextEditingController(text: homeController.currentDoctorSpecialty);
-    profileHighestDegreeController =
-        TextEditingController(text: homeController.currentDoctorHighestDegree);
-  }
 
-  @override
-  void onClose() {
-    doctorProfileDispose();
-    super.onClose();
-  }
+  // TODO zawed el registration number
 
   doctorProfileDispose() {
     profileFirstNameController.dispose();
     profileLastNameController.dispose();
     profileEmailController.dispose();
     profilePhoneController.dispose();
+    profileRegistrationNumberController.dispose();
     profileAgeController.dispose();
     profileJobController.dispose();
     profileWorkingPlaceController.dispose();
     profileSpecialtyController.dispose();
-    profileHighestDegreeController.dispose();
     if (profileFormKey.currentState != null) {
       profileFormKey.currentState!.reset();
     }
@@ -104,13 +73,6 @@ class DoctroProfileController extends GetxController {
 
   int profileErrorValid = 0;
 
-  // isProfileChanged(RxBool isProfileHasChanged) {
-  //   if (profileFirstNameController.text !=
-  //       homeController.currentDoctorFirstName) {
-  //     isProfileHasChanged(false);
-  //   }
-  //   isProfileHasChanged(true);
-  // }
   RxBool isUpdateLoading = false.obs;
   updateProfile() async {
     isUpdateLoading.value = true;
@@ -124,13 +86,13 @@ class DoctroProfileController extends GetxController {
       workingPlace: profileWorkingPlaceController.text,
       phone: profilePhoneController.text,
       job: profileJobController.text,
-      highestDegree: profileHighestDegreeController.text,
+      highestDegree: highestDegree.value!,
       isUpdateLoading: isUpdateLoading,
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      homeController.homeInit();
-    });
 
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   homeController.homeInit();
+    // });
     isUpdateLoading.value = false;
     update();
   }

@@ -1,3 +1,3 @@
-import 'package:egy_akin_app/exports.dart';
+import 'package:EgyAkin/exports.dart';
 
 class WelcomeController extends GetxController {}

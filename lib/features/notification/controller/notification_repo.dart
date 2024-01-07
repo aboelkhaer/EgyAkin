@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import '../../../exports.dart';
@@ -20,10 +22,10 @@ class NotificationRepository {
           // isUpdateNotificationsLoading.value = false;
           // Get.offNamed(AppRoutes.signIn);
         } else {
-          isUpdateNotificationsLoading.value = false;
+          // isUpdateNotificationsLoading.value = false;
         }
       } catch (e) {
-        isUpdateNotificationsLoading.value = false;
+        // isUpdateNotificationsLoading.value = false;
         if (e is DioException) {
           // final result = e.response!.data as Map<String, dynamic>;
           // customSnackBar(
@@ -31,13 +33,14 @@ class NotificationRepository {
           //   title: AppStrings.error,
           //   body: result['message'],
           // );
+          log(e.message.toString());
 
           DioExceptions.fromDioError(
               dioError: e, errorFrom: 'home_Repo/updateNotification');
         }
       }
     } else {
-      isUpdateNotificationsLoading.value = false;
+      // isUpdateNotificationsLoading.value = false;
       // customSnackBar(
       //   isError: true,
       //   title: AppStrings.error,

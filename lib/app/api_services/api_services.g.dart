@@ -90,6 +90,7 @@ class _ApiServices implements ApiServices {
     String age,
     String specialty,
     String workingPlace,
+    String registrationNumber,
     String phone,
     String job,
     String highestDegree,
@@ -106,6 +107,7 @@ class _ApiServices implements ApiServices {
       'age': age,
       'specialty': specialty,
       'workingplace': workingPlace,
+      'registration_number': registrationNumber,
       'phone': phone,
       'job': job,
       'highestdegree': highestDegree,
@@ -441,6 +443,7 @@ class _ApiServices implements ApiServices {
     String patientId,
     String outcomeOfThePatient,
     String creatinineOnDischarge,
+    String durationField,
     String finalStatus,
     String other,
   ) async {
@@ -451,6 +454,7 @@ class _ApiServices implements ApiServices {
       'patient_id': patientId,
       'outcome_of_the_patient': outcomeOfThePatient,
       'creatinine_on_discharge': creatinineOnDischarge,
+      'duration_of_admission': durationField,
       'final_status': finalStatus,
       'other': other,
     };
@@ -811,6 +815,156 @@ class _ApiServices implements ApiServices {
               baseUrl,
             ))));
     final value = AddCommentOnPostModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SendEmailForForgetPasswordModelResponse> sendEmailForForgetPassword(
+      String email) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'email': email};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SendEmailForForgetPasswordModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/forgotpassword',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value =
+        SendEmailForForgetPasswordModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<VerifyOTPModelResponse> verifyOTP(
+    String email,
+    String otp,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'email': email,
+      'otp': otp,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<VerifyOTPModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/resetpasswordverification',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = VerifyOTPModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ChangePasswordModelResponse> changePassword(
+    String email,
+    String newPassword,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'email': email,
+      'password': newPassword,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ChangePasswordModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/resetpassword',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ChangePasswordModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SendEmailVerificationModelResponse> sendEmailVerification() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SendEmailVerificationModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/sendverificationmail',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = SendEmailVerificationModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
+      String otp) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'otp': otp};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<EmailVerificationOTPModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/emailverification',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = EmailVerificationOTPModelResponse.fromJson(_result.data!);
     return value;
   }
 

@@ -20,11 +20,13 @@ class GetOutcomeModelResponse extends BaseResponse {
 @JsonSerializable()
 class GetOutcomeDataModelResponse {
   @JsonKey(name: 'doctor_id')
-  int? doctorId;
+  String? doctorId;
   @JsonKey(name: 'outcome_of_the_patient')
   String? outcomeOfThePatient;
   @JsonKey(name: 'creatinine_on_discharge')
   String? creatinineOnDischarge;
+  @JsonKey(name: 'duration_of_admission')
+  String? duration;
   @JsonKey(name: 'final_status')
   String? finalStatus;
   @JsonKey(name: 'other')
@@ -40,6 +42,7 @@ class GetOutcomeDataModelResponse {
     this.creatinineOnDischarge,
     this.finalStatus,
     this.other,
+    this.duration,
     this.updateAt,
     this.baseDoctorModel,
   });

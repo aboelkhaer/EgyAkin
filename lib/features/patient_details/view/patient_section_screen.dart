@@ -18,9 +18,9 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
   @override
   void initState() {
     _controller.getPatientSections(patientId.toString());
-    WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
-          Get.find<HomeController>().homeInit();
-        }));
+    // WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
+    //       Get.find<HomeController>().homeInit();
+    //     }));
 
     super.initState();
   }

@@ -118,15 +118,17 @@ class PatientSectionRepository {
         try {
           var response = await apiServices.finalSubmit(patientId);
           if (response.value == true) {
-            isPatientSectionLoading.value = false;
+            // isPatientSectionLoading.value = false;
+            await Get.find<HomeController>().homeInit();
             Get.offNamed(AppRoutes.home);
+
             customSnackBar(
               isError: false,
               title: 'Successfully',
               body: response.message,
             );
           } else {
-            isPatientSectionLoading.value = false;
+            // isPatientSectionLoading.value = false;
             customSnackBar(
               isError: true,
               title: 'Error!',
@@ -134,7 +136,7 @@ class PatientSectionRepository {
             );
           }
         } catch (e) {
-          isPatientSectionLoading.value = false;
+          // isPatientSectionLoading.value = false;
           if (e is DioException) {
             final result = e.response!.data as Map<String, dynamic>;
             customSnackBar(
@@ -148,7 +150,7 @@ class PatientSectionRepository {
           }
         }
       } else {
-        isPatientSectionLoading.value = false;
+        // isPatientSectionLoading.value = false;
         customSnackBar(
           isError: true,
           title: AppStrings.error,

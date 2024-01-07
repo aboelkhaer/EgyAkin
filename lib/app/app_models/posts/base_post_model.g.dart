@@ -11,13 +11,14 @@ BasePostModel _$BasePostModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int?,
       title: json['title'] as String?,
       content: json['content'] as String?,
+      image: json['image'] as String?,
       hidden: json['hidden'] as bool?,
       doctorId: json['doctor_id'] as String?,
       updatedAt: json['updated_at'] as String?,
       baseDoctorModel: json['doctor'] == null
           ? null
           : BaseDoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
-    )..image = json['image'] as String?;
+    );
 
 Map<String, dynamic> _$BasePostModelToJson(BasePostModel instance) =>
     <String, dynamic>{

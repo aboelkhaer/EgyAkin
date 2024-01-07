@@ -1,4 +1,9 @@
+import '../bindings/email_verification_binding.dart';
+import '../../features/email_verification/view/email_verification_screen.dart';
+
 import '../../exports.dart';
+import '../../features/reset_password/view/reset_password_screen.dart';
+import '../bindings/reset_password_binding.dart';
 import '../bindings/splash_biniding.dart';
 
 class AppRoutes {
@@ -21,6 +26,8 @@ class AppRoutes {
   static const String comments = '/comments';
   static const String postDetails = '/postDetails';
   static const String notification = '/notification';
+  static const String resetPassword = '/resetPassword';
+  static const String emailVerification = '/emailVerification';
 
   static List<GetPage> routes = [
     GetPage(
@@ -118,6 +125,16 @@ class AppRoutes {
       name: notification,
       page: () => const NotificationScreen(),
       binding: NotificationBinding(),
+    ),
+    GetPage(
+      name: resetPassword,
+      page: () => const ResetPasswordScreen(),
+      binding: ResetPasswordBinding(),
+    ),
+    GetPage(
+      name: emailVerification,
+      page: () => const EmailVerificationScreen(),
+      binding: EmailVerificationBinding(),
     ),
   ];
 }

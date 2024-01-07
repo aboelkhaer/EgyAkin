@@ -1,4 +1,4 @@
-# egy_akin_app
+# EgyAkin
 
 A new Flutter project.
 

@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import 'outcome_repo.dart';
 
 class OutcomeController extends GetxController {
   GlobalKey<FormState> outcomeFormKey = GlobalKey<FormState>();
@@ -7,6 +6,7 @@ class OutcomeController extends GetxController {
 
   String? outcomeOfThePatientField;
   String? creatinineOnDischargeField;
+  String? durationField;
   String? finalStatusField;
   String? otherField;
   RxBool isAddOutcomeLoading = false.obs;
@@ -21,6 +21,7 @@ class OutcomeController extends GetxController {
       isAddOutcomeLoading: isAddOutcomeLoading,
       outcomeOfThePatient: outcomeOfThePatientField!,
       creatinineOnDischarge: creatinineOnDischargeField!,
+      duration: durationField!,
       finalStatus: finalStatusField!,
       other: otherField!,
     );
@@ -32,10 +33,10 @@ class OutcomeController extends GetxController {
   getOutcome(String patientId) async {
     isGetOutcomeLoading(true);
 
-    getOutcomeModel = (await outcomeRepository.getOutcome(
+    getOutcomeModel = await outcomeRepository.getOutcome(
       patientId: patientId,
       isGetOutcomeLoading: isGetOutcomeLoading,
-    ))!;
+    );
 
     isGetOutcomeLoading(false);
     update();

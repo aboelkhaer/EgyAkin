@@ -73,6 +73,7 @@ class AddPatientRepository {
             //   title: 'Successfully',
             //   body: response.message,
             // );
+            await Get.find<HomeController>().homeInit();
             isAddPatientForFirstTimeLoading.value = false;
 
             Get.offNamed(

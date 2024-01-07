@@ -24,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen>
         String? token =
             await GetStorageLib().getString(AppLocalStrings.keyToken);
         if (token != null && token != '') {
-          Get.toNamed(AppRoutes.home);
+          Get.offNamed(AppRoutes.home);
         } else {
-          Get.toNamed(AppRoutes.welcome);
+          Get.offNamed(AppRoutes.welcome);
         }
       });
     });

@@ -21,7 +21,7 @@ DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) => DoctorModel(
       highestDegree: json['highestdegree'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-    );
+    )..registrationNumber = json['registration_number'] as String?;
 
 Map<String, dynamic> _$DoctorModelToJson(DoctorModel instance) =>
     <String, dynamic>{
@@ -36,6 +36,7 @@ Map<String, dynamic> _$DoctorModelToJson(DoctorModel instance) =>
       'workingplace': instance.workingPlace,
       'phone': instance.phone,
       'job': instance.job,
+      'registration_number': instance.registrationNumber,
       'highestdegree': instance.highestDegree,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,

@@ -20,4 +20,10 @@ class ApiEndPoint {
   static const post = '$baseUrl/api/post';
   static const postComments = '$baseUrl/api/Postcomments';
   static const notification = '$baseUrl/api/notification';
+  static const forgetPassword = '$baseUrl/api/forgotpassword';
+  static const resetPasswordVerification =
+      '$baseUrl/api/resetpasswordverification';
+  static const changePassword = '$baseUrl/api/resetpassword';
+  static const sendEmailVerification = '$baseUrl/api/sendverificationmail';
+  static const emailVerificationOTP = '$baseUrl/api/emailverification';
 }

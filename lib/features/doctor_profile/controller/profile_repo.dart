@@ -25,7 +25,6 @@ class ProfileRepository {
     required String highestDegree,
     required RxBool isUpdateLoading,
   }) async {
-    isUpdateLoading.value = true;
     await Future.delayed(const Duration(milliseconds: 300));
     if (await networkInfo.isConnected) {
       try {
@@ -72,18 +71,15 @@ class ProfileRepository {
           await getStorageLib.setData(AppLocalStrings.currentDoctorUpdatedAt,
               response.doctorModel!.updatedAt);
 
-          isUpdateLoading.value = false;
+          await Get.find<HomeController>().homeInit();
+
           customSnackBar(
             isError: false,
             title: AppStrings.message,
             body: 'Profile updated successfully',
           );
-        } else {
-          isUpdateLoading.value = false;
-        }
+        } else {}
       } catch (e) {
-        isUpdateLoading.value = false;
-
         if (e is DioException) {
           final result = e.response!.data as Map<String, dynamic>;
           customSnackBar(
@@ -97,7 +93,6 @@ class ProfileRepository {
         }
       }
     } else {
-      isUpdateLoading.value = false;
       customSnackBar(
         isError: true,
         title: AppStrings.error,

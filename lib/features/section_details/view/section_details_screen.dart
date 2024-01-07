@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
+import '../../../app/utilities/hide_national_id.dart';
 import '../../../exports.dart';
 
 class SectionDetailsScreen extends StatefulWidget {
@@ -26,6 +27,12 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
 
     super.initState();
   }
+
+  // @override
+  // void dispose() {
+  //   _controller.homeController.homeInit();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -211,6 +218,12 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
         return BuildStringValueQuestions(
           questionList: questionList,
           index: index,
+          initialValue: questionList[index].question == 'National ID'
+              ? doctorId.toString() ==
+                      _controller.homeController.currentDoctorId.toString()
+                  ? questionList[index].answer ?? ''
+                  : hideNationalId(questionList[index].answer)
+              : questionList[index].answer ?? '',
           onChanged: (val) {
             // _controller.formData[questionList[index].id.toString()] = val;
             setState(() {

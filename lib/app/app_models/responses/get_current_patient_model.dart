@@ -6,6 +6,8 @@ part 'get_current_patient_model.g.dart';
 class GetCurrentPatientstModelResponse extends BaseResponse {
   @JsonKey(name: 'score_value')
   String? scoreValue;
+  @JsonKey(name: 'verified')
+  bool? verified;
   @JsonKey(name: 'data')
   List<BasePatientModel>? basePatientList;
 

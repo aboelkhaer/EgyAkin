@@ -2,6 +2,11 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/http.dart';
 
 import '../../exports.dart';
+import '../app_models/responses/change_password_model.dart';
+import '../app_models/responses/email_verification_otp_model.dart';
+import '../app_models/responses/send_email_for_forget_password_model.dart';
+import '../app_models/responses/send_email_verification_model.dart';
+import '../app_models/responses/verify_otp_model.dart';
 
 part 'api_services.g.dart';
 
@@ -29,6 +34,7 @@ abstract class ApiServices {
     @Field("age") String age,
     @Field("specialty") String specialty,
     @Field("workingplace") String workingPlace,
+    @Field("registration_number") String registrationNumber,
     @Field("phone") String phone,
     @Field("job") String job,
     @Field("highestdegree") String highestDegree,
@@ -99,6 +105,7 @@ abstract class ApiServices {
     @Field("patient_id") String patientId,
     @Field("outcome_of_the_patient") String outcomeOfThePatient,
     @Field("creatinine_on_discharge") String creatinineOnDischarge,
+    @Field("duration_of_admission") String durationField,
     @Field("final_status") String finalStatus,
     @Field("other") String other,
   );
@@ -151,5 +158,25 @@ abstract class ApiServices {
   Future<AddCommentOnPostModelResponse> addCommentOnPost(
     @Field("post_id") String postId,
     @Field("content") String content,
+  );
+  @POST(ApiEndPoint.forgetPassword)
+  Future<SendEmailForForgetPasswordModelResponse> sendEmailForForgetPassword(
+    @Field("email") String email,
+  );
+  @POST(ApiEndPoint.resetPasswordVerification)
+  Future<VerifyOTPModelResponse> verifyOTP(
+    @Field("email") String email,
+    @Field("otp") String otp,
+  );
+  @POST(ApiEndPoint.changePassword)
+  Future<ChangePasswordModelResponse> changePassword(
+    @Field("email") String email,
+    @Field("password") String newPassword,
+  );
+  @POST(ApiEndPoint.sendEmailVerification)
+  Future<SendEmailVerificationModelResponse> sendEmailVerification();
+  @POST(ApiEndPoint.emailVerificationOTP)
+  Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
+    @Field("otp") String otp,
   );
 }

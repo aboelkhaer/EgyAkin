@@ -50,6 +50,9 @@ class AuthRepository {
 
             await getStorageLib.setData(
                 AppLocalStrings.currentDoctorAge, response.doctorModel!.age);
+            await getStorageLib.setData(
+                AppLocalStrings.currentDoctorRegistrationNumber,
+                response.doctorModel!.registrationNumber);
 
             await getStorageLib.setData(
                 AppLocalStrings.currentDoctorWorkingPlace,
@@ -68,7 +71,7 @@ class AuthRepository {
 
             isSignInLoading.value = false;
             Get.offNamed(AppRoutes.home);
-            Get.find<HomeController>().homeInit();
+            // Get.find<HomeController>().homeInit();
           } else {
             isSignInLoading.value = false;
           }
@@ -110,6 +113,7 @@ class AuthRepository {
     required String workingPlace,
     required String passwordConfirmation,
     required String phone,
+    required String registrationNumber,
     required String job,
     required String highestDegree,
     required RxBool isRegisterLoading,
@@ -127,6 +131,7 @@ class AuthRepository {
           age,
           specialty,
           workingPlace,
+          registrationNumber,
           phone,
           job,
           highestDegree,
@@ -148,6 +153,9 @@ class AuthRepository {
 
           await getStorageLib.setData(
               AppLocalStrings.currentDoctorAge, response.doctorModel!.age);
+          await getStorageLib.setData(
+              AppLocalStrings.currentDoctorRegistrationNumber,
+              response.doctorModel!.registrationNumber);
 
           await getStorageLib.setData(AppLocalStrings.currentDoctorWorkingPlace,
               response.doctorModel!.workingPlace);
@@ -163,7 +171,6 @@ class AuthRepository {
           await getStorageLib.setData(AppLocalStrings.currentDoctorUpdatedAt,
               response.doctorModel!.updatedAt);
 
-          isRegisterLoading.value = false;
           Get.offNamed(AppRoutes.home);
           log(response.token.toString());
         } else {

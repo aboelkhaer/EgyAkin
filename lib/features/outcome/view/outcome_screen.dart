@@ -27,7 +27,9 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.primary,
         title: Text(patientname),
+        centerTitle: true,
       ),
       body: Obx(
         () => controller.isAddOutcomeLoading.value ||
@@ -43,6 +45,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                   Form(
                     key: controller.outcomeFormKey,
                     child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
                       child: Column(
                         children: [
                           outcomeStatus
@@ -178,10 +181,58 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                     initialValue: controller.getOutcomeModel
                                             .creatinineOnDischarge ??
                                         '',
-                                    textInputAction: TextInputAction.done,
+                                    textInputAction: TextInputAction.next,
                                     onChanged: (val) {
                                       controller.creatinineOnDischargeField =
                                           val;
+                                    },
+                                    validator: (val) {
+                                      if (val == null || val.isEmpty) {
+                                        return 'This field is required';
+                                      }
+                                      return null;
+                                    }),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                                top: 10, bottom: 10, left: 16, right: 16),
+                            padding: const EdgeInsets.all(16),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.primary,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                const Row(
+                                  children: [
+                                    Text(
+                                      '3- Duration of admission/days',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      '*',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                CustomTextFormField(
+                                    title: 'Answer here',
+                                    textInputType: TextInputType.text,
+                                    initialValue:
+                                        controller.getOutcomeModel.duration ??
+                                            '',
+                                    textInputAction: TextInputAction.done,
+                                    onChanged: (val) {
+                                      controller.durationField = val;
                                     },
                                     validator: (val) {
                                       if (val == null || val.isEmpty) {
@@ -207,7 +258,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 const Row(
                                   children: [
                                     Text(
-                                      '3- Final status',
+                                      '4- Final status',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -260,9 +311,9 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                       ),
                                       DropdownMenuItem<dynamic>(
                                         value:
-                                            'Complete improvement (normal serum creatinine)',
+                                            'Complete improvement (90% improvement of serum creatinine)',
                                         child: Text(
-                                          'Complete improvement (normal serum creatinine)',
+                                          'Complete improvement (90% improvement of serum creatinine)',
                                           // overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
@@ -296,7 +347,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 const Row(
                                   children: [
                                     Text(
-                                      '4- Other',
+                                      '5- Other',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -329,6 +380,9 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                               ],
                             ),
                           ),
+                          const SizedBox(
+                            height: 200,
+                          )
                         ],
                       ),
                     ),
@@ -361,12 +415,33 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 child: CustomElevatedButton(
                                   size: size,
                                   onPressed: () {
-                                    if (controller.outcomeFormKey.currentState!
-                                            .validate() &&
-                                        controller.outcomeOfThePatientField !=
-                                            null &&
-                                        controller.finalStatusField != null) {
-                                      controller.submitOutcome(patientId);
+                                    if (Get.find<HomeController>()
+                                        .currentDoctorVerification
+                                        .value) {
+                                      if (controller
+                                              .outcomeFormKey.currentState!
+                                              .validate() &&
+                                          controller.outcomeOfThePatientField !=
+                                              null &&
+                                          controller.finalStatusField != null) {
+                                        controller.submitOutcome(patientId);
+                                      }
+                                    } else {
+                                      showCustomDialog(
+                                        context: context,
+                                        title: 'Email verification',
+                                        description:
+                                            'To add outcome you must verify your email address',
+                                        noColoredBottonOnTap: () {
+                                          Get.back();
+                                        },
+                                        coloredBottonText: 'Verify',
+                                        noColoredBottonText: 'Cancel',
+                                        coloredBottonOnTap: () {
+                                          Get.offAndToNamed(
+                                              AppRoutes.emailVerification);
+                                        },
+                                      );
                                     }
                                   },
                                   title: 'Submit',

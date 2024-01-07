@@ -79,11 +79,11 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           Lottie.asset(AppImages.imageLoader),
                       errorWidget: (context, url, error) {
                         return Container(
-                          color: AppColors.primary,
+                          color: Colors.transparent,
                           child: const Center(
                             child: Icon(
                               Icons.error_outline,
-                              color: Colors.white,
+                              color: AppColors.primary,
                               size: 40.0,
                             ),
                           ),
@@ -459,9 +459,28 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                   controller.newComment.value = val;
                                 },
                                 onFieldSubmitted: (val) {
-                                  controller.addCommentOnPost(
-                                    postId: postModel.id.toString(),
-                                  );
+                                  if (controller.homeController
+                                      .currentDoctorVerification.value) {
+                                    controller.addCommentOnPost(
+                                      postId: postModel.id.toString(),
+                                    );
+                                  } else {
+                                    showCustomDialog(
+                                      context: context,
+                                      title: 'Email verification',
+                                      description:
+                                          'To add comment you must verify your email address',
+                                      noColoredBottonOnTap: () {
+                                        Get.back();
+                                      },
+                                      coloredBottonText: 'Verify',
+                                      noColoredBottonText: 'Cancel',
+                                      coloredBottonOnTap: () {
+                                        Get.offAndToNamed(
+                                            AppRoutes.emailVerification);
+                                      },
+                                    );
+                                  }
                                 },
                                 textInputAction: TextInputAction.done,
                                 validator: (val) {
@@ -476,9 +495,30 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                     children: [
                                       IconButton(
                                         onPressed: () {
-                                          controller.addCommentOnPost(
-                                            postId: postModel.id.toString(),
-                                          );
+                                          if (controller
+                                              .homeController
+                                              .currentDoctorVerification
+                                              .value) {
+                                            controller.addCommentOnPost(
+                                              postId: postModel.id.toString(),
+                                            );
+                                          } else {
+                                            showCustomDialog(
+                                              context: context,
+                                              title: 'Email verification',
+                                              description:
+                                                  'To add comment you must verify your email address',
+                                              noColoredBottonOnTap: () {
+                                                Get.back();
+                                              },
+                                              coloredBottonText: 'Verify',
+                                              noColoredBottonText: 'Cancel',
+                                              coloredBottonOnTap: () {
+                                                Get.offAndToNamed(AppRoutes
+                                                    .emailVerification);
+                                              },
+                                            );
+                                          }
                                         },
                                         icon: Icon(
                                           Icons.send_outlined,

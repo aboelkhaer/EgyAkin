@@ -1,9 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dots_indicator/dots_indicator.dart';
+import 'package:html/parser.dart' show parse;
 import 'package:lottie/lottie.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../exports.dart';
+import 'widgets/check_if_verified.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen>
       begin: 0.0,
       end: 1.0,
     ).animate(animationController);
+
     super.initState();
   }
 
@@ -136,7 +139,24 @@ class _HomeScreenState extends State<HomeScreen>
       floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
             if (controller.isNetworkConnected.value) {
-              Get.toNamed(AppRoutes.addPatient);
+              if (controller.currentDoctorVerification.value) {
+                Get.toNamed(AppRoutes.addPatient);
+              } else {
+                showCustomDialog(
+                  context: context,
+                  title: 'Email verification',
+                  description:
+                      'To add patients you must verify your email address',
+                  noColoredBottonOnTap: () {
+                    Get.back();
+                  },
+                  coloredBottonText: 'Verify',
+                  noColoredBottonText: 'Cancel',
+                  coloredBottonOnTap: () {
+                    Get.offAndToNamed(AppRoutes.emailVerification);
+                  },
+                );
+              }
             } else {
               return;
             }
@@ -160,6 +180,9 @@ class _HomeScreenState extends State<HomeScreen>
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      CheckIfVerified(
+                        verified: controller.currentDoctorVerification.value,
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: GestureDetector(
@@ -211,250 +234,251 @@ class _HomeScreenState extends State<HomeScreen>
                       SizedBox(height: size.height * 0.01),
                       Obx(
                         () => controller.isPostsLoading.value == true ||
-                                controller.postsList == null
+                                controller.postsList == null ||
+                                controller.postsList!.isEmpty
                             ? SizedBox(
                                 height: size.height * 0.2,
                                 child: Lottie.asset(AppImages.imageLoader),
                               )
-                            : controller.postsList!.isEmpty
-                                ? FadeTransition(
-                                    opacity: animation,
-                                    child: SizedBox(
-                                      height: size.height * 0.2,
-                                      child: Image.asset(AppImages.noNetwork),
-                                    ),
-                                  )
-                                : FadeTransition(
-                                    opacity: animation,
-                                    child: CarouselSlider.builder(
-                                      itemCount: controller.postsList!.length,
-                                      carouselController:
-                                          controller.carouselController,
-                                      itemBuilder: (BuildContext context,
-                                          int index, int pageViewIndex) {
-                                        return Card(
-                                          color:
-                                              Colors.white, // Backgrond color
-                                          elevation: 0.8,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: InkWell(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            splashColor:
-                                                AppColors.subBG, // Splash color
-                                            onTap: () {
-                                              Get.toNamed(
-                                                AppRoutes.postDetails,
-                                                arguments: [
-                                                  index,
-                                                  controller.postsList![index],
-                                                  controller.postsList!.length,
-                                                ],
-                                              );
-                                            },
-                                            child: SizedBox(
-                                              width: size.width * 0.9,
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: Row(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .stretch,
-                                                      children: [
-                                                        ClipRRect(
-                                                          borderRadius:
-                                                              const BorderRadius
-                                                                  .only(
-                                                                  topLeft: Radius
-                                                                      .circular(
-                                                                          8),
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          8)),
-                                                          child: Hero(
-                                                            tag: controller
-                                                                        .postsList!
-                                                                        .length <=
-                                                                    1
-                                                                ? 'postImage'
-                                                                : 'postImage$index',
-                                                            child:
-                                                                CachedNetworkImage(
-                                                              imageUrl: controller
-                                                                  .postsList![
-                                                                      index]
-                                                                  .image
-                                                                  .toString(),
-                                                              width:
-                                                                  size.width *
-                                                                      0.3,
-                                                              fadeInCurve:
-                                                                  Curves.easeIn,
-                                                              fit: BoxFit.cover,
-                                                              placeholder: (context,
-                                                                      url) =>
-                                                                  Lottie.asset(
-                                                                      AppImages
-                                                                          .imageLoader),
-                                                              errorWidget:
-                                                                  (context, url,
-                                                                      error) {
-                                                                return Container(
+                            // : controller.postsList!.isEmpty
+                            //     ? FadeTransition(
+                            //         opacity: animation,
+                            //         child: SizedBox(
+                            //           height: size.height * 0.2,
+                            //           child: Image.asset(AppImages.noNetwork),
+                            //         ),
+                            //       )
+                            : FadeTransition(
+                                opacity: animation,
+                                child: CarouselSlider.builder(
+                                  itemCount: controller.postsList!.length,
+                                  carouselController:
+                                      controller.carouselController,
+                                  itemBuilder: (BuildContext context, int index,
+                                      int pageViewIndex) {
+                                    return Card(
+                                      color: Colors.white, // Backgrond color
+                                      elevation: 0.8,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(8),
+                                        splashColor:
+                                            AppColors.subBG, // Splash color
+                                        onTap: () {
+                                          Get.toNamed(
+                                            AppRoutes.postDetails,
+                                            arguments: [
+                                              index,
+                                              controller.postsList![index],
+                                              controller.postsList!.length,
+                                            ],
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          width: size.width * 0.9,
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    ClipRRect(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                              topLeft: Radius
+                                                                  .circular(8),
+                                                              bottomLeft: Radius
+                                                                  .circular(8)),
+                                                      child: Hero(
+                                                        tag: controller
+                                                                    .postsList!
+                                                                    .length <=
+                                                                1
+                                                            ? 'postImage'
+                                                            : 'postImage$index',
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageUrl: controller
+                                                              .postsList![index]
+                                                              .image
+                                                              .toString(),
+                                                          width:
+                                                              size.width * 0.3,
+                                                          fadeInCurve:
+                                                              Curves.easeIn,
+                                                          fit: BoxFit.cover,
+                                                          placeholder: (context,
+                                                                  url) =>
+                                                              Lottie.asset(AppImages
+                                                                  .imageLoader),
+                                                          errorWidget: (context,
+                                                              url, error) {
+                                                            return Container(
+                                                              color: Colors
+                                                                  .transparent,
+                                                              child:
+                                                                  const Center(
+                                                                child: Icon(
+                                                                  Icons
+                                                                      .error_outline,
                                                                   color: AppColors
                                                                       .primary,
-                                                                  child:
-                                                                      const Center(
-                                                                    child: Icon(
-                                                                      Icons
-                                                                          .error_outline,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      size:
-                                                                          40.0,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
+                                                                  size: 40.0,
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
                                                         ),
-                                                        Expanded(
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8),
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .start,
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            // const SizedBox(height: 10),
+                                                            Row(
                                                               children: [
-                                                                // const SizedBox(height: 10),
-                                                                Row(
-                                                                  children: [
-                                                                    Flexible(
-                                                                      child:
-                                                                          Text(
-                                                                        controller
-                                                                            .postsList![index]
-                                                                            .title
-                                                                            .toString()
-                                                                            .capitalizeFirst!,
-                                                                        style: const TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: AppColors.title,
-                                                                            fontSize: 16),
-                                                                        maxLines:
-                                                                            2,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                SizedBox(
-                                                                    height: size
-                                                                            .height *
-                                                                        0.01),
-                                                                Row(
-                                                                  children: [
-                                                                    Flexible(
-                                                                      child:
-                                                                          Text(
-                                                                        controller
-                                                                            .postsList![index]
-                                                                            .content
-                                                                            .toString()
-                                                                            .capitalizeFirst!,
-                                                                        style: const TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.bold,
-                                                                            color: AppColors.description,
-                                                                            fontSize: 13),
-                                                                        maxLines:
-                                                                            5,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                const Spacer(),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .end,
-                                                                  children: [
-                                                                    Text(
-                                                                      timeago
-                                                                          .format(
-                                                                              DateTime.parse(
-                                                                            controller.postsList![index].updatedAt.toString(),
-                                                                          ))
-                                                                          .toString(),
-                                                                      style:
-                                                                          const TextStyle(
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    controller
+                                                                        .postsList![
+                                                                            index]
+                                                                        .title
+                                                                        .toString()
+                                                                        .capitalizeFirst!,
+                                                                    style: const TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
                                                                         color: AppColors
-                                                                            .description,
+                                                                            .title,
                                                                         fontSize:
-                                                                            10,
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                                                            16),
+                                                                    maxLines: 2,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
+                                                            SizedBox(
+                                                                height:
+                                                                    size.height *
+                                                                        0.01),
+                                                            Row(
+                                                              children: [
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    parse(controller
+                                                                            .postsList![index]
+                                                                            .content
+                                                                            .toString()
+                                                                            .capitalizeFirst!)
+                                                                        .documentElement!
+                                                                        .text,
+                                                                    style: const TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .bold,
+                                                                        color: AppColors
+                                                                            .description,
+                                                                        fontSize:
+                                                                            13),
+                                                                    maxLines: 4,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            const Spacer(),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .end,
+                                                              children: [
+                                                                Text(
+                                                                  timeago
+                                                                      .format(DateTime
+                                                                          .parse(
+                                                                        controller
+                                                                            .postsList![index]
+                                                                            .updatedAt
+                                                                            .toString(),
+                                                                      ))
+                                                                      .toString(),
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    color: AppColors
+                                                                        .description,
+                                                                    fontSize:
+                                                                        10,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
                                                         ),
-                                                      ],
+                                                      ),
                                                     ),
-                                                  ),
-                                                ],
+                                                  ],
+                                                ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                        );
-                                      },
-                                      options: CarouselOptions(
-                                        height: size.height * 0.23,
-                                        aspectRatio: 16 / 9,
-                                        viewportFraction: 1,
-                                        initialPage: 0,
-                                        enableInfiniteScroll: true,
-                                        reverse: false,
-                                        onPageChanged: (index, reason) {
-                                          controller.dotsPosition.value = index;
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  options: CarouselOptions(
+                                    height: size.height * 0.23,
+                                    aspectRatio: 16 / 9,
+                                    viewportFraction: 1,
+                                    initialPage: 0,
+                                    enableInfiniteScroll: true,
+                                    reverse: false,
+                                    onPageChanged: (index, reason) {
+                                      controller.dotsPosition.value = index;
+                                      if (controller
+                                          .dotsController.hasClients) {
+                                        WidgetsBinding.instance
+                                            .addPostFrameCallback((_) {
                                           if (controller
                                               .dotsController.hasClients) {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) {
-                                              if (controller
-                                                  .dotsController.hasClients) {
-                                                controller.dotsController
-                                                    .jumpToPage(index);
-                                              }
-                                            });
+                                            controller.dotsController
+                                                .jumpToPage(index);
                                           }
-                                        },
-                                        autoPlay: true,
-                                        autoPlayInterval:
-                                            const Duration(seconds: 3),
-                                        autoPlayAnimationDuration:
-                                            const Duration(milliseconds: 800),
-                                        autoPlayCurve: Curves.fastOutSlowIn,
-                                        enlargeCenterPage: false,
-                                        // scrollPhysics: const BouncingScrollPhysics(),
-                                        enlargeFactor: 0.3,
-                                        scrollDirection: Axis.horizontal,
-                                      ),
-                                    ),
+                                        });
+                                      }
+                                    },
+                                    autoPlay: true,
+                                    autoPlayInterval:
+                                        const Duration(seconds: 3),
+                                    autoPlayAnimationDuration:
+                                        const Duration(milliseconds: 800),
+                                    autoPlayCurve: Curves.fastOutSlowIn,
+                                    enlargeCenterPage: false,
+                                    // scrollPhysics: const BouncingScrollPhysics(),
+                                    enlargeFactor: 0.3,
+                                    scrollDirection: Axis.horizontal,
                                   ),
+                                ),
+                              ),
                       ),
                       SizedBox(height: size.height * 0.01),
                       // todo moatz123
