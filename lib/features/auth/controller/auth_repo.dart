@@ -172,6 +172,8 @@ class AuthRepository {
               response.doctorModel!.updatedAt);
 
           Get.offNamed(AppRoutes.home);
+          // Get.offAndToNamed(AppRoutes.home);
+
           log(response.token.toString());
         } else {
           isRegisterLoading.value = false;

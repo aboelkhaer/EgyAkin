@@ -60,7 +60,7 @@ class SecondStep extends GetView<ResetPasswordController> {
       },
       fourthOTPOnChanged: (value) {
         if (value.length == 1) {
-          controller.pin2 = value;
+          controller.pin4 = value;
           if ((controller.pin1 != null && controller.pin1!.isNotEmpty) &&
               (controller.pin2 != null && controller.pin2!.isNotEmpty) &&
               (controller.pin3 != null && controller.pin3!.isNotEmpty) &&
@@ -85,6 +85,14 @@ class SecondStep extends GetView<ResetPasswordController> {
       fourthOTPValidator: (value) {
         return controller.registerController.fieldsIsEmptyValidation(value!);
       },
+      timerWidget: Obx(
+        () => Text(
+          Get.find<ResetPasswordController>().getFormattedTime(),
+          style: TextStyle(
+            color: Colors.blue.shade600,
+          ),
+        ),
+      ),
     );
   }
 }

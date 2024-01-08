@@ -3,8 +3,9 @@ import 'otp_row.dart';
 
 class OTPAllContent extends StatelessWidget {
   final RxString emailAddress;
-  final Function() changeEmailFunction;
+  final Function()? changeEmailFunction;
   final Key formKey;
+  final Widget timerWidget;
   final FocusNode firstOTPFocusNode;
   final Function(String) firstOTPOnChanged;
   final Function(String) secondOTPOnChanged;
@@ -17,8 +18,9 @@ class OTPAllContent extends StatelessWidget {
 
   const OTPAllContent({
     super.key,
+    required this.timerWidget,
     required this.emailAddress,
-    required this.changeEmailFunction,
+    this.changeEmailFunction,
     required this.formKey,
     required this.firstOTPFocusNode,
     required this.firstOTPOnChanged,
@@ -104,14 +106,7 @@ class OTPAllContent extends StatelessWidget {
               style: TextStyle(color: AppColors.description),
             ),
             const SizedBox(width: 5),
-            Obx(
-              () => Text(
-                Get.find<ResetPasswordController>().getFormattedTime(),
-                style: TextStyle(
-                  color: Colors.blue.shade600,
-                ),
-              ),
-            ),
+            timerWidget,
           ],
         ),
       ],

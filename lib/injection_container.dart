@@ -39,7 +39,8 @@ Future<void> diInit() async {
       fenix: true);
   Get.lazyPut(() => NotificationRepository(apiServices: Get.find()),
       fenix: true);
-  Get.lazyPut(() => EmailVerificationRepository(apiServices: Get.find()));
+  Get.lazyPut(() => EmailVerificationRepository(apiServices: Get.find()),
+      fenix: true);
 
   // Controller
   // Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
