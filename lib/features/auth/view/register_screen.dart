@@ -318,8 +318,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         registerWorkingPlaceController,
                                     textInputType: TextInputType.text,
                                     onFieldSubmitted: (v) =>
-                                        FocusScope.of(context)
-                                            .requestFocus(specialtyFocusNode),
+                                        FocusScope.of(context).requestFocus(
+                                            registerationNumberFocusNode),
                                     validator: (value) => controller
                                         .fieldsIsEmptyValidation(value!),
                                     focusNode: workPlaceFocusNode,

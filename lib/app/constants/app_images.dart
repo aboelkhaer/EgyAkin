@@ -17,4 +17,5 @@ class AppImages {
   static const String logoForAndroid12 = '$imagePath/logo_for_android12.JPG';
   static const String reset1 = '$imagePath/reset1.png';
   static const String reset2 = '$imagePath/reset2.png';
+  static const String emailVerification = '$imagePath/email_verification.png';
 }

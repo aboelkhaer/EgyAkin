@@ -1,6 +1,7 @@
 class AppStrings {
   //! General
   static const int apiTimeOut = 60000;
+  static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
   static const String accept = "accept";

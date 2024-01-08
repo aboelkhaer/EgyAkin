@@ -16,8 +16,8 @@ class ResetPasswordController extends GetxController {
   TextEditingController newPasswordController = TextEditingController();
   // String newPassword = '';
   // String confirmPassword = '';
-  final RxInt countdown = 5.obs; // 10 minutes in seconds
-  late Timer _timer;
+  final RxInt countdown = AppStrings.resendTimer.obs;
+  Timer? _timer;
 
   void startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -30,7 +30,7 @@ class ResetPasswordController extends GetxController {
         isResendBottonShow(true);
 
         // Cancel the timer
-        _timer.cancel();
+        _timer!.cancel();
       }
     });
   }
@@ -43,7 +43,7 @@ class ResetPasswordController extends GetxController {
     );
 
     // Reset the countdown timer
-    countdown.value = 5; // 10 minutes in seconds
+    countdown.value = AppStrings.resendTimer;
     startTimer();
     update();
   }
@@ -58,7 +58,9 @@ class ResetPasswordController extends GetxController {
   @override
   void onClose() {
     firstOTPFocusNode.dispose();
-    _timer.cancel();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
     newPasswordController.dispose();
     super.onClose();
   }
