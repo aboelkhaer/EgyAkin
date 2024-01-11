@@ -1,5 +1,3 @@
-import 'package:EgyAkin/features/contact_us/controller/contact_us_controller.dart';
-
 import '../../exports.dart';
 
 class ContactUsBinding extends Bindings {

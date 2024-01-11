@@ -1,8 +1,7 @@
-import '../bindings/email_verification_binding.dart';
-import '../../features/email_verification/view/email_verification_screen.dart';
-
 import '../../exports.dart';
+import '../../features/email_verification/view/email_verification_screen.dart';
 import '../../features/reset_password/view/reset_password_screen.dart';
+import '../bindings/email_verification_binding.dart';
 import '../bindings/reset_password_binding.dart';
 import '../bindings/splash_biniding.dart';
 

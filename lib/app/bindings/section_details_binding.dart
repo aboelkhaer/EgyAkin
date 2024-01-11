@@ -1,5 +1,3 @@
-import 'package:EgyAkin/features/section_details/controller/section_details_controller.dart';
-
 import '../../exports.dart';
 
 class SectionDetailsBinding extends Bindings {

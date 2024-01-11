@@ -46,11 +46,12 @@ class EmailVerificationController extends GetxController {
   }
 
   void resendOtp(context) async {
+    isResendBottonShow(false);
     // Implement the logic to resend OTP here
-    // await resetPasswordRepository.sendEmailForResetPassword(
-    //   email: email.value,
-    //   context: context,
-    // );
+    await emailVerificationRepository.sendEmailVerification(
+      context: context,
+      email: homeController.currentDoctorEmail!,
+    );
 
     countdown.value = AppStrings.resendTimer;
     startTimer();

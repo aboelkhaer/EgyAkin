@@ -98,7 +98,9 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                                             ),
                                           ),
                                         ),
-                                        question.mandatory!
+                                        question.mandatory! ||
+                                                question.question ==
+                                                    'National ID'
                                             ? const Text(
                                                 '*',
                                                 style: TextStyle(
@@ -224,6 +226,15 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                   ? questionList[index].answer ?? ''
                   : hideNationalId(questionList[index].answer)
               : questionList[index].answer ?? '',
+          textInputFormatter: questionList[index].question == 'Phone'
+              ? [
+                  LengthLimitingTextInputFormatter(11),
+                ]
+              : questionList[index].question == 'National ID'
+                  ? [
+                      LengthLimitingTextInputFormatter(14),
+                    ]
+                  : [],
           onChanged: (val) {
             // _controller.formData[questionList[index].id.toString()] = val;
             setState(() {

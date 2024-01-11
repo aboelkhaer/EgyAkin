@@ -1,6 +1,6 @@
 {
-    "name": "EgyAkin",
-    "short_name": "EgyAkin",
+    "name": "egy_akin",
+    "short_name": "egy_akin",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

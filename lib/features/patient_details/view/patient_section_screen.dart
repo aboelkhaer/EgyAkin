@@ -18,10 +18,6 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
   @override
   void initState() {
     _controller.getPatientSections(patientId.toString());
-    // WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
-    //       Get.find<HomeController>().homeInit();
-    //     }));
-
     super.initState();
   }
 
@@ -87,17 +83,16 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
                   submitStatus ||
                           doctorId != _controller.homeController.currentDoctorId
                       ? const SizedBox.shrink()
-                      : Center(
-                          child: SizedBox(
-                            height: 90,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 5),
+                      : Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Center(
+                            child: SizedBox(
+                              height: 90,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 50,
                                       child: CustomElevatedButton(
                                         size: size,
                                         onPressed: () {
@@ -132,15 +127,12 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  child: SizedBox(
-                                    height: 50,
-                                    child: Padding(
-                                      padding: EdgeInsets.only(
-                                        right: 10,
-                                        left: submitStatus ? 10 : 5,
-                                      ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: SizedBox(
+                                      height: 50,
                                       child: CustomElevatedButton(
                                         size: size,
                                         onPressed: () {
@@ -156,8 +148,8 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),

@@ -14,9 +14,8 @@
             <data android:mimeType="*/*" />
         </intent>
     </queries>
-
     <application
-        android:label="EgyAkin"
+        android:label="egy_akin"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
