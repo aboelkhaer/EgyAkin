@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import '../patient_model/patient_model.dart';
 
 part 'get_patient_data_model.g.dart';
 

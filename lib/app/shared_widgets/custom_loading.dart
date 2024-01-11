@@ -3,9 +3,9 @@ import '../../exports.dart';
 class ShimmerLoadingPatientsCards extends StatelessWidget {
   final bool ishorizontal;
   const ShimmerLoadingPatientsCards({
-    Key? key,
+    super.key,
     required this.ishorizontal,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

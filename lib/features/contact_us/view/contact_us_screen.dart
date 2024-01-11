@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import '../controller/contact_us_controller.dart';
 
 class ContactUsScreen extends GetView<ContactUsController> {
   ContactUsScreen({super.key});

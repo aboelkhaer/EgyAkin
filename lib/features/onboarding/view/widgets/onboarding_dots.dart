@@ -1,7 +1,7 @@
 import '../../../../exports.dart';
 
 class OnboardingDots extends GetView<OnboardingController> {
-  const OnboardingDots({Key? key}) : super(key: key);
+  const OnboardingDots({super.key});
 
   @override
   Widget build(BuildContext context) {
