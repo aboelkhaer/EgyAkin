@@ -8,12 +8,6 @@ class PatientSectionController extends GetxController {
   HomeController homeController = Get.find<HomeController>();
 
   RxList<BaseSectionModel>? sectionModelList = RxList();
-  //  RxList<VocabularyModel> vocabs = RxList();
-  // @override
-  // void onInit() {
-  //   // TODO: implement onInit
-  //   super.onInit();
-  // }
 
   RxBool isPatientSectionLoading = false.obs;
 
@@ -38,7 +32,6 @@ class PatientSectionController extends GetxController {
   }
 
   finalSubmit(String patientId, context) async {
-    bool allSectionsSubmitted = true;
     List<String> sectionsNotCompleted = [];
 
     await Future.forEach(sectionModelList!, (element) async {

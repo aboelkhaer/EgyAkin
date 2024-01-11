@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 
 import '../../../exports.dart';
-import 'comments_controller.dart';
 
 class CommentRepository {
   ApiServices apiServices;

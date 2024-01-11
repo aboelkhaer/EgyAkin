@@ -34,7 +34,7 @@ class EmailVerificationController extends GetxController {
         countdown.value--;
       } else {
         // Timer has ended, perform your action here
-        print('Timer has ended. Perform your action.');
+        debugPrint('Timer has ended. Perform your action.');
         isResendBottonShow(true);
 
         // Cancel the timer

@@ -28,8 +28,6 @@ class DoctroProfileController extends GetxController {
   FocusNode workPlaceFocusNode = FocusNode();
   FocusNode specialtyFocusNode = FocusNode();
 
-  // TODO zawed el registration number
-
   doctorProfileDispose() {
     profileFirstNameController.dispose();
     profileLastNameController.dispose();

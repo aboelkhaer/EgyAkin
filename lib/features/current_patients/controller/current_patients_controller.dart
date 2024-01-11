@@ -13,11 +13,10 @@ class CurrentPatientsController extends GetxController {
     super.onInit();
   }
 
-  @override
-  void onClose() {
-    // TODO: implement onClose
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   super.onClose();
+  // }
 
   addItems() async {
     currentPatientsScrollController.addListener(() {

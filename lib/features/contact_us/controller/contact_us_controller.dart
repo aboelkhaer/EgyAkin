@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import 'contact_us_repo.dart';
 
 class ContactUsController extends GetxController {
   GlobalKey<FormState> feedbackFormKey = GlobalKey<FormState>();
