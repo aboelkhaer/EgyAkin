@@ -179,7 +179,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                   height: 50,
                                   child: controller.isResendBottonShow.value
                                       ? CustomOutlineBotton(
-                                          onPressed: () {},
+                                          onPressed: () {
+                                            controller.resendOtp(context);
+                                          },
                                           title: 'Resend',
                                           isFlatBotton: true,
                                           size: size,

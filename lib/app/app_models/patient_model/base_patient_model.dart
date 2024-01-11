@@ -10,6 +10,8 @@ class BasePatientModel {
   String? name;
   @JsonKey(name: 'hospital')
   String? hospital;
+  @JsonKey(name: 'governorate')
+  String? governorate;
 
   @JsonKey(name: 'updated_at')
   String? updatedAt;

@@ -1,5 +1,3 @@
-import 'package:EgyAkin/features/comments/controller/comments_controller.dart';
-
 import '../../exports.dart';
 
 class CommentsBinding extends Bindings {

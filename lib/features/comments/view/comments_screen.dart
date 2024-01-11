@@ -282,7 +282,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     child: Container(
                       height: size.height * 0.13,
                       width: double.infinity,
-                      color: Colors.white,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        border: Border(
+                            top: BorderSide(
+                          color: Colors.black12,
+                        )),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0) +
                             const EdgeInsets.only(left: 10, right: 10),

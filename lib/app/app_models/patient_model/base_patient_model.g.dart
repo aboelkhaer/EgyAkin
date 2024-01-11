@@ -15,15 +15,19 @@ BasePatientModel _$BasePatientModelFromJson(Map<String, dynamic> json) =>
       doctorModel: json['doctor'] == null
           ? null
           : BaseDoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
-    )..sections = json['sections'] == null
-        ? null
-        : SimpleSectionModel.fromJson(json['sections'] as Map<String, dynamic>);
+    )
+      ..governorate = json['governorate'] as String?
+      ..sections = json['sections'] == null
+          ? null
+          : SimpleSectionModel.fromJson(
+              json['sections'] as Map<String, dynamic>);
 
 Map<String, dynamic> _$BasePatientModelToJson(BasePatientModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'hospital': instance.hospital,
+      'governorate': instance.governorate,
       'updated_at': instance.updatedAt,
       'doctor': instance.doctorModel,
       'sections': instance.sections,

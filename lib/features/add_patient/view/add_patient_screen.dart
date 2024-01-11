@@ -83,7 +83,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                             ),
                                           ),
                                         ),
-                                        question.mandatory!
+                                        question.mandatory! ||
+                                                question.question ==
+                                                    'National ID'
                                             ? const Text(
                                                 '*',
                                                 style: TextStyle(
@@ -261,56 +263,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             setState(() {});
           },
         );
-      // case 'multiple':
-      //   List<dynamic> answers = [];
 
-      //   return BuildMultipleValueQuestion(
-      //     index: index,
-      //     questionList: questionList,
-      //     initialValue: '',
-      //     onChanged: (val) {
-      //       setState(() {});
-      //       _controller.formData[questionList[index].id.toString()] = {
-      //         "other_field": val
-      //       };
-      //     },
-      //     validator: (val) {
-      //       if (questionList[index].mandatory == true) {
-      //         if (val == null || val.isEmpty) {
-      //           return 'This field is required';
-      //         }
-      //       }
-      //       return null;
-      //     },
-      //     listContainOther: answers,
-      //     children: questionList[index].values!.map((value) {
-      //       return ChoiceChip(
-      //         label: Text(
-      //           value.toString(),
-      //           style: const TextStyle(
-      //               color: Colors.white, fontWeight: FontWeight.bold),
-      //         ),
-      //         backgroundColor: Colors.grey.shade400,
-      //         selected: answers.contains(value),
-      //         selectedColor: AppColors.primary.withOpacity(0.7),
-      //         onSelected: (selected) {
-      //           setState(() {
-      //             if (selected) {
-      //               answers.add(value);
-      //             } else {
-      //               answers.remove(value);
-      //             }
-      //             _controller.formData[questionList[index].id.toString()] = {
-      //               "answer": [answers]
-      //             };
-      //             // _controller.formData[questionList[index].id.toString()] ={"answer":};
-      //             log('map ${_controller.formData}');
-      //             log('list answer $answers');
-      //           });
-      //         },
-      //       );
-      //     }).toList(),
-      //   );
       case 'multiple':
         Map<String, dynamic> answerMap =
             questionList[index].answer ??= {"answers": [], "other_field": ''};

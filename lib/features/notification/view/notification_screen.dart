@@ -41,7 +41,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     onTap: () {
                       if (notifications![index].type == 'New Patient') {
                         Get.toNamed(AppRoutes.patientSections, arguments: [
-                          notifications![index].id,
+                          // notifications![index].id,
+                          notifications![index].basePatientModel!.id,
                           notifications![index]
                               .basePatientModel!
                               .doctorModel!

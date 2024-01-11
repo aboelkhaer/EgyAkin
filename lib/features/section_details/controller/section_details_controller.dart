@@ -55,6 +55,29 @@ class SectionDetailsController extends GetxController {
     bool isValid = true;
 
     for (var question in questionModelList!) {
+      if (question.question == 'National ID') {
+        if (formData.containsKey(question.id.toString())) {
+          String nationalID = formData[question.id.toString()];
+          if (nationalID.length != 14) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'National ID should have 14 digits',
+            );
+            isValid = false;
+            break;
+          }
+          if (int.tryParse(nationalID) == null) {
+            customSnackBar(
+              isError: true,
+              title: 'Required',
+              body: 'National ID should have 14 digits',
+            );
+            isValid = false;
+            break;
+          }
+        }
+      }
       if (question.mandatory == true) {
         if (question.type == 'multiple') {
           Map myMap = question.answer;

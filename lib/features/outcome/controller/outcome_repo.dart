@@ -30,7 +30,7 @@ class OutcomeRepository {
             other,
           );
           if (response.value == true) {
-            Get.find<HomeController>().homeInit();
+            await Get.find<HomeController>().homeInit();
             isAddOutcomeLoading.value = false;
             Get.offNamed(AppRoutes.home);
 

@@ -30,6 +30,12 @@ class CheckIfVerified extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Icon(
+                Icons.error_outline,
+                color: Colors.blue.shade600,
+                size: 16,
+              ),
+              const SizedBox(width: 2),
               Text(
                 'To add patients, you must verify your email address',
                 style: TextStyle(

@@ -36,6 +36,7 @@ class ResetPasswordController extends GetxController {
   }
 
   void resendOtp(context) async {
+    isResendBottonShow(false);
     // Implement the logic to resend OTP here
     await resetPasswordRepository.sendEmailForResetPassword(
       email: email.value,

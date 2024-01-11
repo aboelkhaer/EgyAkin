@@ -194,7 +194,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetAllBasPatientstModelResponse>(Options(
       method: 'GET',
@@ -270,7 +270,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetBaseSectionsModelResponse>(Options(
       method: 'GET',
@@ -300,7 +300,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetQuestionsModelResponse>(Options(
       method: 'GET',
@@ -327,7 +327,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeletePatientModelResponse>(Options(
       method: 'DELETE',
@@ -387,7 +387,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetQuestionsModelResponse>(Options(
       method: 'GET',
@@ -484,7 +484,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetOutcomeModelResponse>(Options(
       method: 'GET',
@@ -512,7 +512,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<UpdateSectionDetailsModelResponse>(Options(
       method: 'PUT',
@@ -539,7 +539,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetCommentstModelResponse>(Options(
       method: 'GET',
@@ -599,7 +599,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeleteCommentModelResponse>(Options(
       method: 'DELETE',
@@ -653,7 +653,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetPostsModelResponse>(Options(
       method: 'GET',
@@ -681,7 +681,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetPostCommentsModelResponse>(Options(
       method: 'GET',
@@ -709,7 +709,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeletePostCommentModelResponse>(Options(
       method: 'DELETE',
@@ -736,7 +736,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetNotificationModelResponse>(Options(
       method: 'GET',
@@ -763,7 +763,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<UpdateNotificationsModelResponse>(Options(
       method: 'PUT',
@@ -918,7 +918,7 @@ class _ApiServices implements ApiServices {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<SendEmailVerificationModelResponse>(Options(
       method: 'POST',
