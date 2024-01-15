@@ -94,7 +94,7 @@ class AuthRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     } else {
@@ -198,7 +198,7 @@ class AuthRepository {
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: AppStrings.noInternetConnection,
+        body: AppStrings.somethingWentWrong,
       );
     }
   }
@@ -241,7 +241,7 @@ class AuthRepository {
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: AppStrings.noInternetConnection,
+        body: AppStrings.somethingWentWrong,
       );
     }
   }

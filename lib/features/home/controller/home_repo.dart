@@ -55,7 +55,7 @@ class HomeRepository {
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: AppStrings.noInternetConnection,
+        body: AppStrings.somethingWentWrong,
       );
       return [];
     }
@@ -99,7 +99,7 @@ class HomeRepository {
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: AppStrings.noInternetConnection,
+        body: AppStrings.somethingWentWrong,
       );
       return [];
     }
@@ -143,7 +143,7 @@ class HomeRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];
@@ -196,7 +196,7 @@ class HomeRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];

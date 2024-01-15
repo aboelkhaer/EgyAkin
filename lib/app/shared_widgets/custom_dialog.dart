@@ -6,9 +6,9 @@ showCustomDialog(
     {required BuildContext context,
     required String title,
     required var description,
-    required VoidCallback noColoredBottonOnTap,
+    VoidCallback? noColoredBottonOnTap,
     required String coloredBottonText,
-    required String noColoredBottonText,
+    String? noColoredBottonText,
     bool isNoColorShow = true,
     bool isColoredBottonDisable = false,
     required VoidCallback coloredBottonOnTap}) {
@@ -36,7 +36,7 @@ showCustomDialog(
                           ),
                         ),
                         child: Text(
-                          noColoredBottonText,
+                          noColoredBottonText!,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                           ),

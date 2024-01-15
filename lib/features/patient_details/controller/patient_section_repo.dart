@@ -38,7 +38,7 @@ class PatientSectionRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -51,7 +51,7 @@ class PatientSectionRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];
@@ -73,15 +73,15 @@ class PatientSectionRepository {
 
             customSnackBar(
               isError: false,
-              title: 'Successfully',
+              title: AppStrings.successfully,
               body: response.message,
             );
           } else {
             isPatientSectionLoading.value = false;
             customSnackBar(
               isError: true,
-              title: 'Error!',
-              body: 'Something went wrong.',
+              title: '${AppStrings.error}',
+              body: '${AppStrings.somethingWentWrong}',
             );
           }
         } catch (e) {
@@ -91,7 +91,7 @@ class PatientSectionRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -103,7 +103,7 @@ class PatientSectionRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }
@@ -124,15 +124,15 @@ class PatientSectionRepository {
 
             customSnackBar(
               isError: false,
-              title: 'Successfully',
+              title: AppStrings.successfully,
               body: response.message,
             );
           } else {
             // isPatientSectionLoading.value = false;
             customSnackBar(
               isError: true,
-              title: 'Error!',
-              body: 'Something went wrong.',
+              title: '${AppStrings.error}',
+              body: '${AppStrings.somethingWentWrong}',
             );
           }
         } catch (e) {
@@ -142,7 +142,7 @@ class PatientSectionRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -154,7 +154,7 @@ class PatientSectionRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }

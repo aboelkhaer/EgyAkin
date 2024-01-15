@@ -8,7 +8,7 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reset Password'),
+        title: const Text(AppStrings.resetPassword),
       ),
       body: Theme(
         data: Theme.of(context).copyWith(
@@ -64,10 +64,10 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                                     }
                                   },
                                   title: controller.currentStep.value == 0
-                                      ? 'Continue'
+                                      ? AppStrings.continueText
                                       : controller.currentStep.value == 1
-                                          ? 'Confirm'
-                                          : 'Save'),
+                                          ? AppStrings.confirm
+                                          : AppStrings.save),
                             ),
                             const SizedBox(height: 5),
                             controller.currentStep.value == 0
@@ -77,13 +77,6 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                                     child: controller.isResendBottonShow.value
                                         ? CustomOutlineBotton(
                                             onPressed: () {
-                                              // if (controller.currentStep.value > 0) {
-                                              //   controller.currentStep.value -= 1;
-                                              //   log(controller.currentStep.value
-                                              //       .toString());
-                                              // } else {
-                                              //   Get.back();
-                                              // }
                                               if (controller
                                                       .currentStep.value ==
                                                   0) {
@@ -103,12 +96,12 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
                                             title:
                                                 controller.currentStep.value ==
                                                         0
-                                                    ? 'Cancel'
+                                                    ? AppStrings.cancel
                                                     : controller.currentStep
                                                                 .value ==
                                                             1
-                                                        ? 'Resend'
-                                                        : 'Back',
+                                                        ? AppStrings.resend
+                                                        : AppStrings.back,
                                             isFlatBotton: true,
                                             size: size,
                                           )
@@ -132,20 +125,20 @@ class ResetPasswordScreen extends GetView<ResetPasswordController> {
         state:
             controller.currentStep > 0 ? StepState.complete : StepState.indexed,
         isActive: controller.currentStep >= 0,
-        title: const Text('Email'),
+        title: const Text(AppStrings.email),
         content: const FirstStep(),
       ),
       Step(
         state:
             controller.currentStep > 1 ? StepState.complete : StepState.indexed,
         isActive: controller.currentStep >= 1,
-        title: const Text('Verity'),
+        title: const Text(AppStrings.verify),
         content: const SecondStep(),
       ),
       Step(
         state: StepState.complete,
         isActive: controller.currentStep >= 2,
-        title: const Text('Password'),
+        title: const Text(AppStrings.password),
         content: const ThirdStep(),
       ),
     ];

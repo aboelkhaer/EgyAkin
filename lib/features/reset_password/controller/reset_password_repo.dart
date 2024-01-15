@@ -26,18 +26,17 @@ class ResetPasswordRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: 'Something went wrong!',
+              body: AppStrings.somethingWentWrong,
             );
             return false;
           }
         } catch (e) {
-          // isCommentsLoading.value = false;
           if (e is DioException) {
             final result = e.response!.data as Map<String, dynamic>;
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
             DioExceptions.fromDioError(
                 dioError: e,
@@ -47,11 +46,10 @@ class ResetPasswordRepository {
           return false;
         }
       } else {
-        // isCommentsLoading.value = false;
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
         return false;
       }
@@ -103,7 +101,7 @@ class ResetPasswordRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
         return false;
       }
@@ -153,7 +151,7 @@ class ResetPasswordRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
         return false;
       }

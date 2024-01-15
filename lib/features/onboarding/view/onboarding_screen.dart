@@ -16,7 +16,6 @@ class OnbordingScreen extends GetView<OnboardingController> {
             carouselController: controller.carouselController,
             itemBuilder: (BuildContext context, int index, int pageViewIndex) {
               return Container(
-                // color: Colors.amber,
                 width: double.infinity,
                 alignment: Alignment.center,
                 child: Column(
@@ -74,12 +73,10 @@ class OnbordingScreen extends GetView<OnboardingController> {
               autoPlayAnimationDuration: const Duration(milliseconds: 600),
               autoPlayCurve: Curves.fastOutSlowIn,
               enlargeCenterPage: false,
-              // scrollPhysics: const BouncingScrollPhysics(),
               enlargeFactor: 0.3,
               scrollDirection: Axis.horizontal,
             ),
           ),
-          // SizedBox(height: size.height * 0.01),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20) +
                 EdgeInsets.only(bottom: size.height * 0.05),
@@ -113,7 +110,7 @@ class OnbordingScreen extends GetView<OnboardingController> {
                   height: 20,
                 ),
                 const Text(
-                  'Join us',
+                  AppStrings.joinUs,
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColors.description,

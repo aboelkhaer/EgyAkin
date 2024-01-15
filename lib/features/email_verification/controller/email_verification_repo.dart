@@ -48,7 +48,7 @@ class EmailVerificationRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
         Get.back();
       }
@@ -144,7 +144,7 @@ class EmailVerificationRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
         return false;
       }

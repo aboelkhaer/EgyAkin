@@ -51,33 +51,13 @@ class SectionDetailsController extends GetxController {
     update();
   }
 
-  submitBotton({required String sectionId, required String patientId}) {
+  submitBotton(
+      {required String sectionId,
+      required String patientId,
+      required BuildContext context}) {
     bool isValid = true;
 
     for (var question in questionModelList!) {
-      if (question.question == 'National ID') {
-        if (formData.containsKey(question.id.toString())) {
-          String nationalID = formData[question.id.toString()];
-          if (nationalID.length != 14) {
-            customSnackBar(
-              isError: true,
-              title: 'Required',
-              body: 'National ID should have 14 digits',
-            );
-            isValid = false;
-            break;
-          }
-          if (int.tryParse(nationalID) == null) {
-            customSnackBar(
-              isError: true,
-              title: 'Required',
-              body: 'National ID should have 14 digits',
-            );
-            isValid = false;
-            break;
-          }
-        }
-      }
       if (question.mandatory == true) {
         if (question.type == 'multiple') {
           Map myMap = question.answer;
@@ -90,11 +70,22 @@ class SectionDetailsController extends GetxController {
             if (answersValue == null ||
                 (answersValue is List && answersValue.isEmpty)) {
               debugPrint('"answers" key is either null or an empty list.');
-              customSnackBar(
-                isError: true,
+              // customSnackBar(
+              //   isError: true,
+              //   title: 'Required',
+              //   body:
+              //       'You must select at least one choice. \n{${question.question}}',
+              // );
+              showCustomDialog(
+                context: context,
                 title: 'Required',
-                body:
+                description:
                     'You must select at least one choice. \n{${question.question}}',
+                coloredBottonText: 'Cancel',
+                isNoColorShow: false,
+                coloredBottonOnTap: () {
+                  Get.back();
+                },
               );
 
               isValid = false;
@@ -118,22 +109,77 @@ class SectionDetailsController extends GetxController {
           if ((myMap['other_field'] == null ||
                   myMap['other_field'].toString().isEmpty) &&
               (myMap['answers'] as List).contains('Others')) {
-            customSnackBar(
-              isError: true,
+            // customSnackBar(
+            //   isError: true,
+            //   title: 'Required',
+            //   body: 'You must add "Others" field in \n{${question.question}}',
+            // );
+            showCustomDialog(
+              context: context,
               title: 'Required',
-              body: 'You must add "Others" field in \n{${question.question}}',
+              description:
+                  'You must add "Others" field in \n{${question.question}}',
+              coloredBottonText: 'Cancel',
+              isNoColorShow: false,
+              coloredBottonOnTap: () {
+                Get.back();
+              },
             );
 
             isValid = false;
             break;
           }
         }
+        if (question.question == 'National ID') {
+          if (formData.containsKey(question.id.toString())) {
+            String nationalID = formData[question.id.toString()];
+            if (nationalID.length != 14) {
+              // customSnackBar(
+              //   isError: true,
+              //   title: 'Required',
+              //   body: 'National ID should have 14 digits',
+              // );
+              showCustomDialog(
+                context: context,
+                title: 'Required',
+                description: 'National ID should have 14 digits',
+                coloredBottonText: 'Cancel',
+                isNoColorShow: false,
+                coloredBottonOnTap: () {
+                  Get.back();
+                },
+              );
+              isValid = false;
+              break;
+            }
+            if (int.tryParse(nationalID) == null) {
+              showCustomDialog(
+                context: context,
+                title: AppStrings.required,
+                description: AppStrings.nationalIDShouldHave14Digits,
+                coloredBottonText: AppStrings.cancel,
+                isNoColorShow: false,
+                coloredBottonOnTap: () {
+                  Get.back();
+                },
+              );
+              isValid = false;
+              break;
+            }
+          }
+        }
 
-        if (question.answer == null || question.answer == '') {
-          customSnackBar(
-            isError: true,
-            title: 'Required',
-            body: 'This question is required \n{${question.question}}',
+        if (question.answer == null || question.answer == AppStrings.empty) {
+          showCustomDialog(
+            context: context,
+            title: AppStrings.required,
+            description:
+                '${AppStrings.youMustSelectAtLeastOneChoice} \n{${question.question}}',
+            coloredBottonText: AppStrings.cancel,
+            isNoColorShow: false,
+            coloredBottonOnTap: () {
+              Get.back();
+            },
           );
 
           isValid = false;

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-
 import '../../../exports.dart';
 
 class SearchRepository {
@@ -32,7 +31,7 @@ class SearchRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -44,7 +43,7 @@ class SearchRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];

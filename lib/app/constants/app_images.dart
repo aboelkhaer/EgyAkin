@@ -18,4 +18,14 @@ class AppImages {
   static const String reset1 = '$imagePath/reset1.png';
   static const String reset2 = '$imagePath/reset2.png';
   static const String emailVerification = '$imagePath/email_verification.png';
+  static const String fullWhiteLogo = '$imagePath/full_white_logo.png';
+  static const String fullBlackLogo = '$imagePath/full_black_logo.png';
+  static const String blackLogo = '$imagePath/black_logo.png';
+  static const String whiteLogo = '$imagePath/white_logo.png';
+  static const String whiteEgyAkin = '$imagePath/white_egyakin.png';
+  static const String blackEgyAkin = '$imagePath/black_egyakin.png';
+  static const String whiteLogoWithoutDes =
+      '$imagePath/white_logo_without_des.png';
+  static const String blackLogoWithoutDes =
+      '$imagePath/black_logo_without_des.png';
 }

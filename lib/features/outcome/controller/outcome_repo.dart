@@ -6,7 +6,6 @@ class OutcomeRepository {
   ApiServices apiServices;
   OutcomeRepository({required this.apiServices});
   NetworkInfoImpl networkInfo = Get.find<NetworkInfoImpl>();
-  // HomeController homeController = Get.find<HomeController>();
 
   submitOutcome({
     required String patientId,
@@ -36,26 +35,15 @@ class OutcomeRepository {
 
             customSnackBar(
               isError: false,
-              title: 'Successfully',
+              title: AppStrings.successfully,
               body: response.message,
             );
-
-            // showCustomDialog(
-            //     context: context,
-            //     title: 'Successfully',
-            //     description:
-            //         '${response.message}\nYour updates:\n${map.toString()}',
-            //     noColoredBottonOnTap: () {},
-            //     coloredBottonText: 'Cancel',
-            //     noColoredBottonText: '',
-            //     isNoColorShow: false,
-            //     coloredBottonOnTap: () => Get.back());
           } else {
             isAddOutcomeLoading.value = false;
             customSnackBar(
               isError: true,
-              title: 'Error!',
-              body: 'Something went wrong.',
+              title: AppStrings.error,
+              body: AppStrings.somethingWentWrong,
             );
           }
         } catch (e) {
@@ -65,7 +53,7 @@ class OutcomeRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -78,7 +66,7 @@ class OutcomeRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }
@@ -100,14 +88,14 @@ class OutcomeRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: 'Something went wrong!',
+              body: AppStrings.somethingWentWrong,
             );
           } else {
             isGetOutcomeLoading.value = false;
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: 'Something went wrong!',
+              body: AppStrings.somethingWentWrong,
             );
           }
         } catch (e) {
@@ -117,7 +105,7 @@ class OutcomeRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -130,19 +118,19 @@ class OutcomeRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: 'Something went wrong!',
+        body: AppStrings.somethingWentWrong,
       );
     } else {
       customSnackBar(
         isError: true,
         title: AppStrings.error,
-        body: 'Something went wrong!',
+        body: AppStrings.somethingWentWrong,
       );
     }
   }

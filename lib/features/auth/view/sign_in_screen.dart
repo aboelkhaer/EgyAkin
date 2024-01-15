@@ -29,8 +29,10 @@ class _SignInScreenState extends State<SignInScreen> {
   initTextFieldController() {
     signInFormKey = GlobalKey<FormState>();
 
-    signInEmailController = TextEditingController(text: 'admin@egyakin.com');
-    signInPasswordController = TextEditingController(text: '12345678');
+    signInEmailController =
+        TextEditingController(text: AppStrings.initialEmail);
+    signInPasswordController =
+        TextEditingController(text: AppStrings.initialPassword);
   }
 
   disposeControllers() {
@@ -75,7 +77,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Column(
                       children: [
                         CustomTextFormField(
-                          title: 'Email',
+                          title: AppStrings.email,
                           textFormFieldController: signInEmailController,
                           enableSuggestions: true,
                           textInputType: TextInputType.emailAddress,
@@ -88,7 +90,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         SizedBox(height: size.height * 0.01),
                         Obx(
                           () => CustomTextFormField(
-                            title: 'Password',
+                            title: AppStrings.password,
                             textFormFieldController: signInPasswordController,
                             focusNode: passwordFocusNode,
                             textInputType: TextInputType.visiblePassword,
@@ -115,7 +117,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               },
                               child: SizedBox(
                                 child: Text(
-                                  'Forget Password ?',
+                                  AppStrings.forgotPassword,
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontWeight: FontWeight.w500,
@@ -159,7 +161,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Don\'t have an account?',
+                        AppStrings.dontHaveAnAccount,
                         style: TextStyle(
                           color: Colors.grey.shade500,
                           fontWeight: FontWeight.w500,
@@ -182,7 +184,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             width: 1.0, // Underline thickness
                           ))),
                           child: const Text(
-                            "Register now!",
+                            AppStrings.registerNow,
                             style: TextStyle(
                               color: Colors.blue,
                             ),

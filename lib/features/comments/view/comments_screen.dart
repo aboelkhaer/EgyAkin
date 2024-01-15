@@ -43,7 +43,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       controller: controller.scrollController,
                       physics: const BouncingScrollPhysics(),
                       child: Column(
-                        // mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(
                             height: size.height * 0.03,
@@ -53,7 +52,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                             child: Row(
                               children: [
                                 const Text(
-                                  'Comments:',
+                                  '${AppStrings.comments}:',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),
@@ -103,9 +102,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                               .toString()) {
                                         showCustomDialog(
                                             context: context,
-                                            title: 'Delete',
-                                            description:
-                                                'Are you sure to delete comment?',
+                                            title: AppStrings.delete,
+                                            description: AppStrings
+                                                .areYouSureToDeleteComment,
                                             noColoredBottonOnTap: () {
                                               Get.back();
                                               controller.deleteComment(
@@ -115,8 +114,10 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                   patientId:
                                                       patientId.toString());
                                             },
-                                            coloredBottonText: 'Cancel',
-                                            noColoredBottonText: 'Delete',
+                                            coloredBottonText:
+                                                AppStrings.cancel,
+                                            noColoredBottonText:
+                                                AppStrings.delete,
                                             isNoColorShow: true,
                                             coloredBottonOnTap: () =>
                                                 Get.back());
@@ -141,7 +142,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                               .baseDoctorModel!
                                                               .firstName ==
                                                           null
-                                                      ? ''
+                                                      ? AppStrings.empty
                                                       : '${controller.commentsList![index].baseDoctorModel!.firstName![0].capitalizeFirst}${controller.commentsList![index].baseDoctorModel!.lastName![0].capitalizeFirst}',
                                                   style: const TextStyle(
                                                       fontWeight:
@@ -248,18 +249,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
-                                              // IconButton(
-                                              //   highlightColor:
-                                              //       Colors.transparent,
-                                              //   splashColor:
-                                              //       Colors.transparent,
-                                              //   onPressed: () {},
-                                              //   icon: const Icon(
-                                              //     Icons.favorite_border,
-                                              //     size: 30,
-                                              //     color: Colors.black45,
-                                              //   ),
-                                              // ),
                                             ],
                                           ),
                                         ],
@@ -298,7 +287,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           children: [
                             Expanded(
                               child: CustomTextFormField(
-                                title: 'Write comment',
+                                title: AppStrings.writeComment,
                                 textInputType: TextInputType.text,
                                 enableSuggestions: true,
                                 onChanged: (val) {
@@ -312,14 +301,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                   } else {
                                     showCustomDialog(
                                       context: context,
-                                      title: 'Email verification',
-                                      description:
-                                          'To add comment you must verify your email address',
+                                      title: AppStrings.emailVerification,
+                                      description: AppStrings
+                                          .toAddCommentYouMustVerifyYourEmailAddress,
                                       noColoredBottonOnTap: () {
                                         Get.back();
                                       },
-                                      coloredBottonText: 'Verify',
-                                      noColoredBottonText: 'Cancel',
+                                      coloredBottonText: AppStrings.verify,
+                                      noColoredBottonText: AppStrings.cancel,
                                       coloredBottonOnTap: () {
                                         Get.offAndToNamed(
                                             AppRoutes.emailVerification);
@@ -335,7 +324,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 },
                               ),
                             ),
-                            controller.newComment.value.trim() == ''
+                            controller.newComment.value.trim() ==
+                                    AppStrings.empty
                                 ? const SizedBox.shrink()
                                 : Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -352,14 +342,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                           } else {
                                             showCustomDialog(
                                               context: context,
-                                              title: 'Email verification',
-                                              description:
-                                                  'To add comment you must verify your email address',
+                                              title:
+                                                  AppStrings.emailVerification,
+                                              description: AppStrings
+                                                  .toAddCommentYouMustVerifyYourEmailAddress,
                                               noColoredBottonOnTap: () {
                                                 Get.back();
                                               },
-                                              coloredBottonText: 'Verify',
-                                              noColoredBottonText: 'Cancel',
+                                              coloredBottonText:
+                                                  AppStrings.verify,
+                                              noColoredBottonText:
+                                                  AppStrings.cancel,
                                               coloredBottonOnTap: () {
                                                 Get.offAndToNamed(AppRoutes
                                                     .emailVerification);

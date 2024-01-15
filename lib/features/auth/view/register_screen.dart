@@ -11,44 +11,33 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final RegisterController controller = Get.put(RegisterController());
-  late TextEditingController registerFirstNameController;
-  late TextEditingController registerLastNameController;
-  late TextEditingController registerEmailController;
-  late TextEditingController registerPasswordController;
-  late TextEditingController registerConfirmPasswordController;
-  late TextEditingController registerPhoneController;
-  late TextEditingController registerJopController;
-  late TextEditingController registerSpecialtyController;
-  late TextEditingController registerWorkingPlaceController;
-  late TextEditingController registerRegisterationNumberController;
-  // late TextEditingController registerHighestDegreeController;
+  late TextEditingController registerFirstNameController,
+      registerLastNameController,
+      registerEmailController,
+      registerPasswordController,
+      registerConfirmPasswordController,
+      registerPhoneController,
+      registerJopController,
+      registerSpecialtyController,
+      registerWorkingPlaceController,
+      registerRegisterationNumberController,
+      registerAgeController;
+
   String highestDegree = '';
-  late TextEditingController registerAgeController;
   GlobalKey<FormState>? registerFormKey;
 
   initTextFieldController() {
     registerFormKey = GlobalKey<FormState>();
     registerFirstNameController = TextEditingController();
-
     registerLastNameController = TextEditingController();
-
     registerEmailController = TextEditingController();
-
     registerPasswordController = TextEditingController();
-
     registerConfirmPasswordController = TextEditingController();
-
     registerPhoneController = TextEditingController();
-
     registerJopController = TextEditingController();
-
     registerSpecialtyController = TextEditingController();
-
     registerWorkingPlaceController = TextEditingController();
     registerRegisterationNumberController = TextEditingController();
-
-    // registerHighestDegreeController = TextEditingController();
-
     registerAgeController = TextEditingController();
   }
 
@@ -66,7 +55,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerSpecialtyController.clear();
     registerWorkingPlaceController.clear();
     registerRegisterationNumberController.clear();
-    // registerHighestDegreeController.clear();
     registerAgeController.clear();
   }
 
@@ -81,7 +69,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     registerSpecialtyController.dispose();
     registerWorkingPlaceController.dispose();
     registerRegisterationNumberController.dispose();
-    // registerHighestDegreeController.dispose();
     registerAgeController.dispose();
     lastNameFocusNode.dispose();
     emailFocusNode.dispose();
@@ -135,7 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   child: Column(
                     children: [
                       Image.asset(
-                        AppImages.signIn,
+                        AppImages.register,
                         width: double.infinity,
                         height: size.height * 0.45,
                       ),
@@ -150,7 +137,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'First name',
+                                    title: AppStrings.firstName,
                                     textFormFieldController:
                                         registerFirstNameController,
                                     textInputType: TextInputType.text,
@@ -166,7 +153,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Last name',
+                                    title: AppStrings.lastName,
                                     textFormFieldController:
                                         registerLastNameController,
                                     onFieldSubmitted: (v) =>
@@ -184,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             SizedBox(height: size.height * 0.01),
                             CustomTextFormField(
-                              title: 'Email',
+                              title: AppStrings.email,
                               textFormFieldController: registerEmailController,
                               onFieldSubmitted: (v) => FocusScope.of(context)
                                   .requestFocus(passwordFocusNode),
@@ -200,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Password ',
+                                    title: AppStrings.password,
                                     textFormFieldController:
                                         registerPasswordController,
                                     focusNode: passwordFocusNode,
@@ -218,7 +205,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Confirm password',
+                                    title: AppStrings.confirmPassword,
                                     textFormFieldController:
                                         registerConfirmPasswordController,
                                     focusNode: confirmPasswordFocusNode,
@@ -247,18 +234,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 specialCharCount: 1,
                                 width: 400,
                                 height: 150,
-                                onSuccess: () {
-                                  // controller.isPassowordValidation = true;
-                                },
-                                onFail: () {
-                                  // controller.isPassowordValidation = false;
-                                }),
+                                onSuccess: () {},
+                                onFail: () {}),
                             SizedBox(height: size.height * 0.04),
                             Row(
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Phone',
+                                    title: AppStrings.phone,
                                     textFormFieldController:
                                         registerPhoneController,
                                     focusNode: phoneFocusNode,
@@ -277,7 +260,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Age',
+                                    title: AppStrings.age,
                                     textFormFieldController:
                                         registerAgeController,
                                     focusNode: ageFocusNode,
@@ -297,7 +280,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Job',
+                                    title: AppStrings.job,
                                     textFormFieldController:
                                         registerJopController,
                                     focusNode: jobFocusNode,
@@ -313,7 +296,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Workplace',
+                                    title: AppStrings.workplace,
                                     textFormFieldController:
                                         registerWorkingPlaceController,
                                     textInputType: TextInputType.text,
@@ -336,8 +319,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title:
-                                        'Registeration Number (رقم القيد الخاص بالنقابة)',
+                                    title: AppStrings.fullRegisterationNumber,
                                     textFormFieldController:
                                         registerRegisterationNumberController,
                                     focusNode: registerationNumberFocusNode,
@@ -361,7 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     children: [
                                       const SizedBox(height: 10),
                                       CustomTextFormField(
-                                        title: 'Specialty',
+                                        title: AppStrings.specialty,
                                         textFormFieldController:
                                             registerSpecialtyController,
                                         textInputType: TextInputType.text,
@@ -396,7 +378,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: DropdownButtonFormField<dynamic>(
-                                      hint: const Text('Choose'),
+                                      hint: const Text(AppStrings.choose),
 
                                       items: controller.highestDegreeList
                                           .map((value) {
@@ -414,7 +396,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       },
                                       validator: (val) {
                                         if ((val == null || val == '')) {
-                                          return 'This field is required';
+                                          return AppStrings.thisFieldIsRequired;
                                         }
 
                                         return null;
@@ -451,43 +433,44 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   : SizedBox(
                                       width: double.infinity,
                                       child: CustomElevatedButton(
-                                          size: size,
-                                          onPressed: () {
-                                            if (registerFormKey!.currentState!
-                                                .validate()) {
-                                              controller.register(
-                                                firstName:
-                                                    registerFirstNameController
-                                                        .text,
-                                                lastName:
-                                                    registerLastNameController
-                                                        .text,
-                                                age: registerAgeController.text,
-                                                email: registerEmailController
-                                                    .text,
-                                                highestDegree: highestDegree,
-                                                job: registerJopController.text,
-                                                password:
-                                                    registerPasswordController
-                                                        .text,
-                                                passwordConfirmation:
-                                                    registerConfirmPasswordController
-                                                        .text,
-                                                phone: registerPhoneController
-                                                    .text,
-                                                registrationNumber:
-                                                    registerRegisterationNumberController
-                                                        .text,
-                                                specialty:
-                                                    registerSpecialtyController
-                                                        .text,
-                                                workingPlace:
-                                                    registerWorkingPlaceController
-                                                        .text,
-                                              );
-                                            }
-                                          },
-                                          title: 'Register'),
+                                        size: size,
+                                        onPressed: () {
+                                          if (registerFormKey!.currentState!
+                                              .validate()) {
+                                            controller.register(
+                                              firstName:
+                                                  registerFirstNameController
+                                                      .text,
+                                              lastName:
+                                                  registerLastNameController
+                                                      .text,
+                                              age: registerAgeController.text,
+                                              email:
+                                                  registerEmailController.text,
+                                              highestDegree: highestDegree,
+                                              job: registerJopController.text,
+                                              password:
+                                                  registerPasswordController
+                                                      .text,
+                                              passwordConfirmation:
+                                                  registerConfirmPasswordController
+                                                      .text,
+                                              phone:
+                                                  registerPhoneController.text,
+                                              registrationNumber:
+                                                  registerRegisterationNumberController
+                                                      .text,
+                                              specialty:
+                                                  registerSpecialtyController
+                                                      .text,
+                                              workingPlace:
+                                                  registerWorkingPlaceController
+                                                      .text,
+                                            );
+                                          }
+                                        },
+                                        title: AppStrings.register,
+                                      ),
                                     ),
                             ),
                             SizedBox(height: size.height * 0.015),
@@ -495,7 +478,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  'Already have an account?',
+                                  AppStrings.alreadyHaveAnAccount,
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontWeight: FontWeight.w500,
@@ -519,7 +502,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       width: 1.0, // Underline thickness
                                     ))),
                                     child: const Text(
-                                      "Sign in now!",
+                                      AppStrings.signInNow,
                                       style: TextStyle(
                                         color: Colors.blue,
                                       ),

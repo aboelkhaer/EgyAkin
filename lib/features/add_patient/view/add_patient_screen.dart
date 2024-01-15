@@ -1,7 +1,5 @@
 import 'dart:developer';
-
 import 'package:intl/intl.dart';
-
 import '../../../exports.dart';
 
 class AddPatientScreen extends StatefulWidget {
@@ -37,7 +35,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 );
               }
             },
-            child: const Text('Add Patient')),
+            child: const Text(AppStrings.addPatient)),
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
@@ -85,52 +83,14 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                         ),
                                         question.mandatory! ||
                                                 question.question ==
-                                                    'National ID'
+                                                    AppStrings.nationalID
                                             ? const Text(
-                                                '*',
+                                                AppStrings.asteriskMark,
                                                 style: TextStyle(
                                                   color: Colors.red,
                                                 ),
                                               )
                                             : const SizedBox.shrink(),
-                                        // TextButton(
-                                        //   onPressed: () {
-                                        //     showCustomDialog(
-                                        //       context: context,
-                                        //       title:
-                                        //           question.question.toString(),
-                                        //       description: _checkAnswerType(
-                                        //         type: question.type!,
-                                        //         answer: question.answer,
-                                        //       ),
-                                        //       coloredBottonOnTap: () {
-                                        //         Clipboard.setData(ClipboardData(
-                                        //             text: question.answer));
-                                        //       },
-                                        //       isColoredBottonDisable:
-                                        //           question.type == 'string'
-                                        //               ? false
-                                        //               : true,
-                                        //       noColoredBottonOnTap: () {
-                                        //         Get.back();
-                                        //       },
-                                        //       coloredBottonText: 'Copy',
-                                        //       noColoredBottonText: 'Cancel',
-                                        //     );
-                                        //   },
-                                        //   style: ButtonStyle(
-                                        //     overlayColor:
-                                        //         MaterialStateColor.resolveWith(
-                                        //       (states) => Colors.transparent,
-                                        //     ),
-                                        //   ),
-                                        //   child: const Text(
-                                        //     'Show answer',
-                                        //     style: TextStyle(
-                                        //         color: Colors.blue,
-                                        //         fontSize: 12),
-                                        //   ),
-                                        // ),
                                       ],
                                     ),
                                     const SizedBox(height: 16),
@@ -185,8 +145,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: CustomElevatedButton(
                             size: size,
-                            onPressed: () => _controller.submitBotton(),
-                            title: 'Submit',
+                            onPressed: () =>
+                                _controller.submitBotton(context: context),
+                            title: AppStrings.submit,
                           ),
                         ),
                       ),
@@ -203,20 +164,25 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     Map<String, dynamic> formDataMap = _controller.formData;
 
     switch (questionList[index].type) {
-      case 'string':
+      case AppStrings.string:
         return BuildStringValueQuestions(
           questionList: questionList,
-          initialValue: formDataMap[questionList[index].id.toString()] ?? '',
+          initialValue: formDataMap[questionList[index].id.toString()] ??
+              AppStrings.empty,
           index: index,
-          textInputFormatter: questionList[index].question == 'Phone'
-              ? [
-                  LengthLimitingTextInputFormatter(11),
-                ]
-              : questionList[index].question == 'National ID'
+          textInputFormatter:
+              questionList[index].question == AppStrings.phone ||
+                      questionList[index].question == AppStrings.mobile
                   ? [
-                      LengthLimitingTextInputFormatter(14),
+                      LengthLimitingTextInputFormatter(11),
                     ]
-                  : [],
+                  : questionList[index].question == AppStrings.nationalID
+                      ? [
+                          LengthLimitingTextInputFormatter(14),
+                        ]
+                      : [
+                          LengthLimitingTextInputFormatter(200),
+                        ],
           onChanged: (val) {
             if (questionList[index].answer != val) {
               questionList[index].answer = val;
@@ -227,15 +193,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             }
           },
           validator: (val) {
-            // if (questionList[index].mandatory == true &&
-            //     (val == null || val.isEmpty)) {
-            //   return 'This field is required';
-            // }
-
             return null;
           },
         );
-      case 'select':
+      case AppStrings.selectType:
         dynamic selectedValue;
         return BuildSelectValueQuestion(
           questionList: questionList,
@@ -243,8 +204,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           selected: questionList[index].answer ?? selectedValue,
           validator: (val) {
             if (questionList[index].mandatory == true &&
-                (val == null || val == '')) {
-              return 'This field is required';
+                (val == null || val == AppStrings.empty)) {
+              return AppStrings.thisFieldIsRequired;
             }
 
             return null;
@@ -264,22 +225,26 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
         );
 
-      case 'multiple':
-        Map<String, dynamic> answerMap =
-            questionList[index].answer ??= {"answers": [], "other_field": ''};
-        List<dynamic> answers = questionList[index].answer['answers'] ??= [];
+      case AppStrings.multipleType:
+        Map<String, dynamic> answerMap = questionList[index].answer ??= {
+          AppStrings.answers: [],
+          AppStrings.otherField: AppStrings.empty
+        };
+        List<dynamic> answers =
+            questionList[index].answer[AppStrings.answers] ??= [];
 
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
-          initialValue: answerMap['other_field'] ?? '',
+          initialValue: answerMap[AppStrings.otherField] ?? AppStrings.empty,
           onChanged: (val) {
             setState(() {
-              // _controller.otherValue[questionList[index].id.toString()] = val;
-              answerMap['other_field'] = val;
+              answerMap[AppStrings.otherField] = val;
               _controller.formData[questionList[index].id.toString()] = {
-                "answers": answers,
-                "other_field": answers.contains('Others') ? val : '',
+                AppStrings.answers: answers,
+                AppStrings.otherField: answers.contains(AppStrings.others)
+                    ? val
+                    : AppStrings.empty,
               };
             });
 
@@ -287,9 +252,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
           validator: (val) {
             if (questionList[index].mandatory == true &&
-                (answers.contains('Others') || answers.contains('others'))) {
+                (answers.contains(AppStrings.others) ||
+                    answers.contains(AppStrings.others))) {
               if (val == null || val.isEmpty) {
-                return 'This field is required';
+                return AppStrings.thisFieldIsRequired;
               }
             }
             return null;
@@ -314,42 +280,27 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   }
                 });
                 _controller.formData[questionList[index].id.toString()] = {
-                  "answers": answers,
-                  "other_field": answers.contains('Others')
-                      ? answerMap['other_field']
-                      : '',
+                  AppStrings.answers: answers,
+                  AppStrings.otherField: answers.contains(AppStrings.others)
+                      ? answerMap[AppStrings.otherField]
+                      : AppStrings.empty,
                 };
 
-                log('map ${_controller.formData}');
-                // log('list answer ${questionList[index].answer}');
+                // log('map ${_controller.formData}');
               },
             );
           }).toList(),
         );
-      case 'date':
+      case AppStrings.date:
         String? questionAnswer = questionList[index].answer;
 
         return SizedBox(
           width: size.width * 0.4,
           child: CustomElevatedButton(
             size: size,
-            onPressed: () async {
-              // final selectedDate = await showDatePicker(
-              //   context: context,
-              //   initialDate: DateTime.now(),
-              //   firstDate: DateTime(2000),
-              //   lastDate: DateTime(2100),
-              // );
-              // if (selectedDate != null) {
-              //   setState(() {
-              //     questionAnswer = selectedDate.toString();
-              //     formDataMap[questionList[index].id.toString()] = selectedDate;
-              //     log(formDataMap.toString());
-              //   });
-              // }
-            },
+            onPressed: () async {},
             title: questionAnswer == null
-                ? 'Add date'
+                ? AppStrings.addDate
                 : stringDateTostring(questionAnswer),
             hasIcon: true,
           ),
@@ -389,94 +340,33 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     required bool isValid,
   }) async {
     Future.forEach(questionList, (BaseQuestionModel questionModel) async {
-      // Perform some asynchronous operation for each item
-
-      if (questionModel.type == 'multiple' && questionModel.mandatory == true) {
-        log('multiple    mendatory    moatz123');
-        // _controller.scrollController.jumpTo(
-        //   _controller.scrollController.position
-        //           .minScrollExtent +
-        //       question.id! * 56,
-        // );
-
+      if (questionModel.type == AppStrings.multipleType &&
+          questionModel.mandatory == true) {
         if (questionModel.answer == [] ||
-            questionModel.answer['other_field'] == null ||
-            questionModel.answer['other_field'] == '') {
+            questionModel.answer[AppStrings.otherField] == null ||
+            questionModel.answer[AppStrings.otherField] == AppStrings.empty) {
           customSnackBar(
               isError: true,
-              title: 'Required',
+              title: AppStrings.required,
               body:
-                  'Enter all required fields, please \n{${questionModel.question}}');
+                  '${AppStrings.enterAllRequiredFieldsPlease} \n{${questionModel.question}}');
 
           isValid = false;
           return;
         }
       }
       if (questionModel.mandatory == true &&
-          (questionModel.answer == null || questionModel.answer == '')) {
-        // _controller.scrollController.jumpTo(
-        //   _controller.scrollController.position
-        //           .minScrollExtent +
-        //       question.id! * 56,
-        // );
+          (questionModel.answer == null ||
+              questionModel.answer == AppStrings.empty)) {
         customSnackBar(
             isError: true,
-            title: 'Required',
-            body: 'This question is required \n{${questionModel.question}}');
+            title: AppStrings.required,
+            body:
+                '${AppStrings.thisQuestionIsRequired} \n{${questionModel.question}}');
 
         isValid = false;
         return;
       }
     });
   }
-
-  // Future<void> validateForm({
-  //   required List<BaseQuestionModel> questionList,
-  //   required bool isValid,
-  // }) async {
-  //   for (var questionModel in questionList) {
-  //     // if (questionModel.mandatory == true &&
-  //     //         (questionModel.answer == null ||
-  //     //             questionModel.answer.toString().isEmpty) ||
-  //     //     (questionModel.type == 'multiple' &&
-  //     //         questionModel.mandatory == true)) {
-  //     //   customSnackBar(
-  //     //       isError: true,
-  //     //       title: 'Required',
-  //     //       body:
-  //     //           'Enter all required fields, please \n{${questionModel.question}}');
-  //     // }
-  //     if (questionModel.mandatory == true && questionModel.answer == null ||
-  //         questionModel.answer.toString().isEmpty) {
-  //       customSnackBar(
-  //           isError: true,
-  //           title: 'Required',
-  //           body:
-  //               'Enter all required fields, please \n{${questionModel.question}}');
-  //       return;
-  //     } else if (questionModel.mandatory == true &&
-  //         questionModel.type == 'multiple') {
-  //       // log(_controller.formData[questionModel.id.toString()]['answers']
-  //       //     .toString());
-  //       log('map ${_controller.formData}');
-
-  //       // for (var item in _controller.formData.entries) {
-  //       //   if (item.key == questionModel.id.toString()) {
-  //       //     List<dynamic>? targetList = _controller.formData[questionModel.id];
-  //       //     String targetString = _controller.formData[questionModel.id];
-  //       //     log(targetList.toString());
-  //       //   }
-  //       // }
-  //       if (_controller.formData.containsKey(questionModel.id.toString()) &&
-  //           _controller.formData[questionModel.id.toString()]['answer']
-  //               is List) {
-  //         if (_controller.formData[questionModel.id.toString()]['answer'] ==
-  //             []) {
-  //           log('yes');
-  //         }
-  //       }
-  //     }
-  //     // You can add additional validation rules here based on your requirements
-  //   }
-  // }
 }

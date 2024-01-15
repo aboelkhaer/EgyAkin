@@ -54,18 +54,19 @@ class _SplashScreenState extends State<SplashScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            const SizedBox(
-              height: 20,
-              width: 20,
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
-              ),
-            ),
+            // const SizedBox(
+            //   height: 20,
+            //   width: 20,
+            //   child: CircularProgressIndicator(
+            //     color: AppColors.primary,
+            //   ),
+            // ),
             Image.asset(
-              AppImages.logoForSplash,
+              AppImages.fullBlackLogo,
               width: double.infinity,
-              height: size.height * 0.08,
+              height: size.height * 0.3,
               fit: BoxFit.contain,
+              // color: AppColors.primary,
             ),
             SizedBox(height: size.height * 0.1),
             // const Text(

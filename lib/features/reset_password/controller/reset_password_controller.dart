@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import 'reset_password_repo.dart';
 
 class ResetPasswordController extends GetxController {
   ResetPasswordRepository resetPasswordRepository =

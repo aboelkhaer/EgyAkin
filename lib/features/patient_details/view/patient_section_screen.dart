@@ -139,7 +139,7 @@ class _PatienSectionScreenState extends State<PatienSectionScreen> {
                                           _controller.finalSubmit(
                                               patientId.toString(), context);
                                         },
-                                        title: 'Final Submit',
+                                        title: AppStrings.finalSubmit,
                                         isDisable: doctorId ==
                                                 _controller.homeController
                                                     .currentDoctorId

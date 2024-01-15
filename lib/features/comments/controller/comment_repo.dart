@@ -29,13 +29,6 @@ class CommentRepository {
         } catch (e) {
           isCommentsLoading.value = false;
           if (e is DioException) {
-            // final result = e.response!.data as Map<String, dynamic>;
-            // customSnackBar(
-            //   isError: true,
-            //   title: AppStrings.error,
-            //   body: result['message'],
-            // );
-
             DioExceptions.fromDioError(
                 dioError: e, errorFrom: 'comment_repo/getComments');
           }
@@ -45,7 +38,7 @@ class CommentRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];
@@ -136,7 +129,7 @@ class CommentRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }
@@ -226,7 +219,7 @@ class CommentRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }

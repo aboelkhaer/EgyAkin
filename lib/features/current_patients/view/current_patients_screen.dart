@@ -13,19 +13,17 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
           onTap: () {
             if (controller.currentPatientsScrollController.hasClients) {
               controller.currentPatientsScrollController.animateTo(
-                0, // Scroll position to jump to (top of the list)
-                duration:
-                    const Duration(milliseconds: 500), // Animation duration
-                curve: Curves.easeInOut, // Animation curve
+                0,
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
               );
             }
           },
           child: const Text(
-            'Your Patients',
+            AppStrings.yourPatients,
             style: TextStyle(),
           ),
         ),
-        // elevation: 0,
       ),
       body: Column(
         children: [
@@ -55,11 +53,11 @@ class CurrentPatientsScreen extends GetView<CurrentPatientsController> {
                     var drLastName = currentPatientsController
                         .homeController.currentDoctorLastName;
                     return VerticalPatientCard(
-                      patientName: patient.name ?? '',
-                      drFirstName: drFirstName ?? '',
-                      updatedAt: patient.updatedAt ?? '',
-                      drLastName: drLastName ?? '',
-                      hospital: patient.hospital ?? '',
+                      patientName: patient.name ?? AppStrings.empty,
+                      drFirstName: drFirstName ?? AppStrings.empty,
+                      updatedAt: patient.updatedAt ?? AppStrings.empty,
+                      drLastName: drLastName ?? AppStrings.empty,
+                      hospital: patient.hospital ?? AppStrings.empty,
                       isOutcomeStatus: patient.sections!.outcomeStatus!,
                       submitStatus: patient.sections == null
                           ? false

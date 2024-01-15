@@ -1,12 +1,6 @@
 import 'dart:developer';
-
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
-import '../../../app/utilities/lunch_url.dart';
 import '../../../exports.dart';
 
 class PostDetailsScreen extends StatefulWidget {

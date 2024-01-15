@@ -34,7 +34,7 @@ class AddPatientRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -47,7 +47,7 @@ class AddPatientRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
       return [];
@@ -68,11 +68,6 @@ class AddPatientRepository {
         try {
           var response = await apiServices.addPatientForFirstTime(map);
           if (response.value == true) {
-            // customSnackBar(
-            //   isError: false,
-            //   title: 'Successfully',
-            //   body: response.message,
-            // );
             await Get.find<HomeController>().homeInit();
             isAddPatientForFirstTimeLoading.value = false;
 
@@ -84,31 +79,15 @@ class AddPatientRepository {
                 response.name,
                 response.submitStatus,
               ],
-            )
-                // !
-                //     .then((value) {
-                //   Get.find<HomeController>().homeInit();
-                // })
-                ;
+            );
             Get.find<PatientSectionController>()
                 .getPatientSections(response.id.toString());
-
-            // showCustomDialog(
-            //     context: context,
-            //     title: 'Successfully',
-            //     description:
-            //         '${response.message}\nYour updates:\n${map.toString()}',
-            //     noColoredBottonOnTap: () {},
-            //     coloredBottonText: 'Cancel',
-            //     noColoredBottonText: '',
-            //     isNoColorShow: false,
-            //     coloredBottonOnTap: () => Get.back());
           } else {
             isAddPatientForFirstTimeLoading.value = false;
             customSnackBar(
               isError: true,
-              title: 'Error!',
-              body: 'Something went wrong.',
+              title: AppStrings.error,
+              body: AppStrings.somethingWentWrong,
             );
           }
         } catch (e) {
@@ -118,7 +97,7 @@ class AddPatientRepository {
             customSnackBar(
               isError: true,
               title: AppStrings.error,
-              body: result['message'],
+              body: result[AppStrings.message],
             );
 
             DioExceptions.fromDioError(
@@ -131,7 +110,7 @@ class AddPatientRepository {
         customSnackBar(
           isError: true,
           title: AppStrings.error,
-          body: AppStrings.noInternetConnection,
+          body: AppStrings.somethingWentWrong,
         );
       }
     }

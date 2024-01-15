@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../exports.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -45,7 +43,6 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          log('hello');
           controller.searchHome(searchText: searchController.text);
         },
         child: const Icon(
@@ -55,18 +52,6 @@ class _SearchScreenState extends State<SearchScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // SizedBox(height: size.height * 0.07),
-          // Row(
-          //   children: [
-          //     IconButton(
-          //       onPressed: () => Get.back(),
-          //       icon: const Icon(Icons.arrow_back),
-          //       splashColor: AppColors.transparent,
-          //       highlightColor: AppColors.transparent,
-          //     ),
-          //   ],
-          // ),
-          // SizedBox(height: size.height * 0.005),
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Column(
@@ -79,7 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     onTapOutside: (event) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     decoration: InputDecoration(
-                      hintText: 'Search...',
+                      hintText: '${AppStrings.search}...',
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () => searchController.clear(),
@@ -168,13 +153,15 @@ class _SearchScreenState extends State<SearchScreen> {
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: VerticalPatientCard(
-                                  patientName: patient.name ?? '',
-                                  updatedAt: patient.updatedAt ?? '',
-                                  drFirstName:
-                                      patient.doctorModel!.firstName ?? '',
-                                  drLastName:
-                                      patient.doctorModel!.lastName ?? '',
-                                  hospital: patient.hospital ?? '',
+                                  patientName: patient.name ?? AppStrings.empty,
+                                  updatedAt:
+                                      patient.updatedAt ?? AppStrings.empty,
+                                  drFirstName: patient.doctorModel!.firstName ??
+                                      AppStrings.empty,
+                                  drLastName: patient.doctorModel!.lastName ??
+                                      AppStrings.empty,
+                                  hospital:
+                                      patient.hospital ?? AppStrings.empty,
                                   submitStatus: patient.sections == null
                                       ? false
                                       : patient.sections!.submitStatus ?? false,

@@ -9,7 +9,7 @@ class SearchHomeController extends GetxController {
     required String searchText,
   }) async {
     isSearchLoading(true);
-    if (searchText.trim() != '') {
+    if (searchText.trim() != AppStrings.empty) {
       var ttttt = await searchRepository.searchHome(
           searchContent: searchText, isSearchLoading: isSearchLoading);
 

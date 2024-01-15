@@ -55,7 +55,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Text(
-                                        'Submited by',
+                                        AppStrings.submitBy,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 18,
@@ -114,10 +114,11 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                   child: DropdownButtonFormField<dynamic>(
                                     hint: Text(controller.getOutcomeModel
                                             .outcomeOfThePatient ??
-                                        'Choose'),
+                                        AppStrings.choose),
                                     validator: (val) {
-                                      if (val == null || val == '') {
-                                        return 'This field is required';
+                                      if (val == null ||
+                                          val == AppStrings.empty) {
+                                        return AppStrings.thisFieldIsRequired;
                                       }
                                       return null;
                                     },
@@ -176,11 +177,11 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextFormField(
-                                    title: 'Answer here',
+                                    title: AppStrings.answerHere,
                                     textInputType: TextInputType.text,
                                     initialValue: controller.getOutcomeModel
                                             .creatinineOnDischarge ??
-                                        '',
+                                        AppStrings.empty,
                                     textInputAction: TextInputAction.next,
                                     onChanged: (val) {
                                       controller.creatinineOnDischargeField =
@@ -188,7 +189,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                     },
                                     validator: (val) {
                                       if (val == null || val.isEmpty) {
-                                        return 'This field is required';
+                                        return AppStrings.thisFieldIsRequired;
                                       }
                                       return null;
                                     }),
@@ -225,18 +226,18 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextFormField(
-                                    title: 'Answer here',
+                                    title: AppStrings.answerHere,
                                     textInputType: TextInputType.text,
                                     initialValue:
                                         controller.getOutcomeModel.duration ??
-                                            '',
+                                            AppStrings.empty,
                                     textInputAction: TextInputAction.done,
                                     onChanged: (val) {
                                       controller.durationField = val;
                                     },
                                     validator: (val) {
                                       if (val == null || val.isEmpty) {
-                                        return 'This field is required';
+                                        return AppStrings.thisFieldIsRequired;
                                       }
                                       return null;
                                     }),
@@ -283,12 +284,14 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                   width: double.infinity,
                                   child: DropdownButtonFormField<dynamic>(
                                     isExpanded: true,
-                                    hint: Text(controller
-                                            .getOutcomeModel.finalStatus ??
-                                        'Choose'),
+                                    hint: Text(
+                                      controller.getOutcomeModel.finalStatus ??
+                                          AppStrings.choose,
+                                    ),
                                     validator: (val) {
-                                      if (val == null || val == '') {
-                                        return 'This field is required';
+                                      if (val == null ||
+                                          val == AppStrings.empty) {
+                                        return AppStrings.thisFieldIsRequired;
                                       }
                                       return null;
                                     },
@@ -362,10 +365,11 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                 ),
                                 const SizedBox(height: 10),
                                 CustomTextFormField(
-                                    title: 'Answer here',
+                                    title: AppStrings.answerHere,
                                     textInputType: TextInputType.multiline,
                                     initialValue:
-                                        controller.getOutcomeModel.other ?? '',
+                                        controller.getOutcomeModel.other ??
+                                            AppStrings.empty,
                                     textInputAction: TextInputAction.done,
                                     onChanged: (val) {
                                       controller.otherField = val;
@@ -373,7 +377,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                     maxLines: null,
                                     validator: (val) {
                                       if (val == null || val.isEmpty) {
-                                        return 'This field is required';
+                                        return AppStrings.thisFieldIsRequired;
                                       }
                                       return null;
                                     }),
@@ -429,14 +433,14 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                     } else {
                                       showCustomDialog(
                                         context: context,
-                                        title: 'Email verification',
-                                        description:
-                                            'To add outcome you must verify your email address',
+                                        title: AppStrings.emailVerification,
+                                        description: AppStrings
+                                            .toAddOutcomeYouMustVerifyYourEmailAddress,
                                         noColoredBottonOnTap: () {
                                           Get.back();
                                         },
-                                        coloredBottonText: 'Verify',
-                                        noColoredBottonText: 'Cancel',
+                                        coloredBottonText: AppStrings.verify,
+                                        noColoredBottonText: AppStrings.cancel,
                                         coloredBottonOnTap: () {
                                           Get.offAndToNamed(
                                               AppRoutes.emailVerification);
@@ -444,7 +448,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                       );
                                     }
                                   },
-                                  title: 'Submit',
+                                  title: AppStrings.submit,
                                 ),
                               ),
                             ),

@@ -23,7 +23,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: const Text('Email Verification')),
+      appBar: AppBar(title: const Text(AppStrings.emailVerification)),
       body: Obx(
         () => controller.isSendEmailLoading.value
             ? const Center(
@@ -172,7 +172,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                     onPressed: () {
                                       controller.emailVerificationOTP();
                                     },
-                                    title: 'Confirm',
+                                    title: AppStrings.confirm,
                                   ),
                                 ),
                                 SizedBox(
@@ -182,7 +182,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                           onPressed: () {
                                             controller.resendOtp(context);
                                           },
-                                          title: 'Resend',
+                                          title: AppStrings.resend,
                                           isFlatBotton: true,
                                           size: size,
                                         )

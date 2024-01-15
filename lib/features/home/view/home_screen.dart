@@ -1,11 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dots_indicator/dots_indicator.dart';
 import 'package:html/parser.dart' show parse;
-import 'package:lottie/lottie.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../exports.dart';
-import 'widgets/check_if_verified.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,11 +52,9 @@ class _HomeScreenState extends State<HomeScreen>
               );
             }
           },
-          child: const Text(
-            AppStrings.appName,
-            style: TextStyle(
-              color: AppColors.black,
-            ),
+          child: Image.asset(
+            AppImages.blackEgyAkin,
+            width: size.width * 0.3,
           ),
         ),
         iconTheme: const IconThemeData(color: AppColors.black),
@@ -71,12 +65,12 @@ class _HomeScreenState extends State<HomeScreen>
             margin: const EdgeInsets.only(right: 16),
             child: Obx(
               () => Tooltip(
-                message: 'Score',
+                message: AppStrings.score,
                 child: FadeTransition(
                   opacity: animation,
                   child: Text(
                     controller.currentDoctorScoreValue == null
-                        ? ''
+                        ? AppStrings.empty
                         : controller.currentDoctorScoreValue!.value,
                     style: TextStyle(
                         color: Colors.orange.shade300,
@@ -88,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
           Tooltip(
-            message: 'Notification',
+            message: AppStrings.notification,
             child: GestureDetector(
               onTap: () {
                 Get.toNamed(AppRoutes.notification,
@@ -144,14 +138,14 @@ class _HomeScreenState extends State<HomeScreen>
               } else {
                 showCustomDialog(
                   context: context,
-                  title: 'Email verification',
+                  title: AppStrings.emailVerification,
                   description:
-                      'To add patients you must verify your email address',
+                      AppStrings.toAddPatientsYouMustVerifyYourEmailAddress,
                   noColoredBottonOnTap: () {
                     Get.back();
                   },
-                  coloredBottonText: 'Verify',
-                  noColoredBottonText: 'Cancel',
+                  coloredBottonText: AppStrings.verify,
+                  noColoredBottonText: AppStrings.cancel,
                   coloredBottonOnTap: () {
                     Get.offAndToNamed(AppRoutes.emailVerification);
                   },
@@ -164,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen>
           label: const Row(
             children: [
               Icon(Icons.add),
-              Text('Add patient'),
+              Text(AppStrings.addPatient),
             ],
           )),
       body: RefreshIndicator(
@@ -180,9 +174,12 @@ class _HomeScreenState extends State<HomeScreen>
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CheckIfVerified(
-                        verified: controller.currentDoctorVerification.value,
-                      ),
+                      controller.currentDoctorVerification.value
+                          ? CheckIfVerified(
+                              verified:
+                                  controller.currentDoctorVerification.value,
+                            )
+                          : const SizedBox.shrink(),
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: GestureDetector(
@@ -195,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen>
                               onTapOutside: (event) =>
                                   FocusManager.instance.primaryFocus?.unfocus(),
                               decoration: InputDecoration(
-                                hintText: 'Search...',
+                                hintText: '${AppStrings.search}...',
                                 // Add a clear button to the search bar
                                 suffixIcon: IconButton(
                                   icon: const Icon(Icons.clear),
@@ -233,255 +230,248 @@ class _HomeScreenState extends State<HomeScreen>
                       ),
                       SizedBox(height: size.height * 0.01),
                       Obx(
-                        () => controller.isPostsLoading.value == true ||
-                                controller.postsList == null ||
-                                controller.postsList!.isEmpty
-                            ? SizedBox(
-                                height: size.height * 0.2,
-                                child: Lottie.asset(AppImages.imageLoader),
-                              )
-                            // : controller.postsList!.isEmpty
-                            //     ? FadeTransition(
-                            //         opacity: animation,
-                            //         child: SizedBox(
-                            //           height: size.height * 0.2,
-                            //           child: Image.asset(AppImages.noNetwork),
-                            //         ),
-                            //       )
-                            : FadeTransition(
-                                opacity: animation,
-                                child: CarouselSlider.builder(
-                                  itemCount: controller.postsList!.length,
-                                  carouselController:
-                                      controller.carouselController,
-                                  itemBuilder: (BuildContext context, int index,
-                                      int pageViewIndex) {
-                                    return Card(
-                                      color: Colors.white, // Backgrond color
-                                      elevation: 0.8,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(8),
-                                        splashColor:
-                                            AppColors.subBG, // Splash color
-                                        onTap: () {
-                                          Get.toNamed(
-                                            AppRoutes.postDetails,
-                                            arguments: [
-                                              index,
-                                              controller.postsList![index],
-                                              controller.postsList!.length,
-                                            ],
-                                          );
-                                        },
-                                        child: SizedBox(
-                                          width: size.width * 0.9,
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Expanded(
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .stretch,
-                                                  children: [
-                                                    ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                              topLeft: Radius
-                                                                  .circular(8),
-                                                              bottomLeft: Radius
-                                                                  .circular(8)),
-                                                      child: Hero(
-                                                        tag: controller
-                                                                    .postsList!
-                                                                    .length <=
-                                                                1
-                                                            ? 'postImage'
-                                                            : 'postImage$index',
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          imageUrl: controller
-                                                              .postsList![index]
-                                                              .image
-                                                              .toString(),
-                                                          width:
-                                                              size.width * 0.3,
-                                                          fadeInCurve:
-                                                              Curves.easeIn,
-                                                          fit: BoxFit.cover,
-                                                          placeholder: (context,
-                                                                  url) =>
-                                                              Lottie.asset(AppImages
-                                                                  .imageLoader),
-                                                          errorWidget: (context,
-                                                              url, error) {
-                                                            return Container(
-                                                              color: Colors
-                                                                  .transparent,
-                                                              child:
-                                                                  const Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .error_outline,
-                                                                  color: AppColors
-                                                                      .primary,
-                                                                  size: 40.0,
-                                                                ),
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(8),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            // const SizedBox(height: 10),
-                                                            Row(
-                                                              children: [
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    controller
-                                                                        .postsList![
-                                                                            index]
-                                                                        .title
-                                                                        .toString()
-                                                                        .capitalizeFirst!,
-                                                                    style: const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        color: AppColors
-                                                                            .title,
-                                                                        fontSize:
-                                                                            16),
-                                                                    maxLines: 2,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
+                        () =>
+                            controller.isPostsLoading.value == true ||
+                                    controller.postsList == null ||
+                                    controller.postsList!.isEmpty
+                                ? SizedBox(
+                                    height: size.height * 0.2,
+                                    child: Lottie.asset(AppImages.imageLoader),
+                                  )
+                                : FadeTransition(
+                                    opacity: animation,
+                                    child: CarouselSlider.builder(
+                                      itemCount: controller.postsList!.length,
+                                      carouselController:
+                                          controller.carouselController,
+                                      itemBuilder: (BuildContext context,
+                                          int index, int pageViewIndex) {
+                                        return Card(
+                                          color:
+                                              Colors.white, // Backgrond color
+                                          elevation: 0.8,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            splashColor:
+                                                AppColors.subBG, // Splash color
+                                            onTap: () {
+                                              Get.toNamed(
+                                                AppRoutes.postDetails,
+                                                arguments: [
+                                                  index,
+                                                  controller.postsList![index],
+                                                  controller.postsList!.length,
+                                                ],
+                                              );
+                                            },
+                                            child: SizedBox(
+                                              width: size.width * 0.9,
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .stretch,
+                                                      children: [
+                                                        ClipRRect(
+                                                          borderRadius:
+                                                              const BorderRadius
+                                                                  .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          8),
+                                                                  bottomLeft: Radius
+                                                                      .circular(
+                                                                          8)),
+                                                          child: Hero(
+                                                            tag: controller
+                                                                        .postsList!
+                                                                        .length <=
+                                                                    1
+                                                                ? 'postImage'
+                                                                : 'postImage$index',
+                                                            child:
+                                                                CachedNetworkImage(
+                                                              imageUrl: controller
+                                                                  .postsList![
+                                                                      index]
+                                                                  .image
+                                                                  .toString(),
+                                                              width:
+                                                                  size.width *
+                                                                      0.3,
+                                                              fadeInCurve:
+                                                                  Curves.easeIn,
+                                                              fit: BoxFit.cover,
+                                                              placeholder: (context,
+                                                                      url) =>
+                                                                  Lottie.asset(
+                                                                      AppImages
+                                                                          .imageLoader),
+                                                              errorWidget:
+                                                                  (context, url,
+                                                                      error) {
+                                                                return Container(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  child:
+                                                                      const Center(
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .error_outline,
+                                                                      color: AppColors
+                                                                          .primary,
+                                                                      size:
+                                                                          40.0,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
+                                                                );
+                                                              },
                                                             ),
-                                                            SizedBox(
-                                                                height:
-                                                                    size.height *
-                                                                        0.01),
-                                                            Row(
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .start,
                                                               children: [
-                                                                Flexible(
-                                                                  child: Text(
-                                                                    parse(controller
+                                                                // const SizedBox(height: 10),
+                                                                Row(
+                                                                  children: [
+                                                                    Flexible(
+                                                                      child:
+                                                                          Text(
+                                                                        controller
                                                                             .postsList![index]
-                                                                            .content
+                                                                            .title
                                                                             .toString()
-                                                                            .capitalizeFirst!)
-                                                                        .documentElement!
-                                                                        .text,
-                                                                    style: const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
+                                                                            .capitalizeFirst!,
+                                                                        style: const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: AppColors.title,
+                                                                            fontSize: 16),
+                                                                        maxLines:
+                                                                            2,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(
+                                                                    height: size
+                                                                            .height *
+                                                                        0.01),
+                                                                Row(
+                                                                  children: [
+                                                                    Flexible(
+                                                                      child:
+                                                                          Text(
+                                                                        parse(controller.postsList![index].content.toString().capitalizeFirst!)
+                                                                            .documentElement!
+                                                                            .text,
+                                                                        style: const TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            color: AppColors.description,
+                                                                            fontSize: 13),
+                                                                        maxLines:
+                                                                            4,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                const Spacer(),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .end,
+                                                                  children: [
+                                                                    Text(
+                                                                      timeago
+                                                                          .format(
+                                                                              DateTime.parse(
+                                                                            controller.postsList![index].updatedAt.toString(),
+                                                                          ))
+                                                                          .toString(),
+                                                                      style:
+                                                                          const TextStyle(
                                                                         color: AppColors
                                                                             .description,
                                                                         fontSize:
-                                                                            13),
-                                                                    maxLines: 4,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                  ),
+                                                                            10,
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ],
                                                             ),
-                                                            const Spacer(),
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .end,
-                                                              children: [
-                                                                Text(
-                                                                  timeago
-                                                                      .format(DateTime
-                                                                          .parse(
-                                                                        controller
-                                                                            .postsList![index]
-                                                                            .updatedAt
-                                                                            .toString(),
-                                                                      ))
-                                                                      .toString(),
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    color: AppColors
-                                                                        .description,
-                                                                    fontSize:
-                                                                        10,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
+                                                          ),
                                                         ),
-                                                      ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  options: CarouselOptions(
-                                    height: size.height * 0.23,
-                                    aspectRatio: 16 / 9,
-                                    viewportFraction: 1,
-                                    initialPage: 0,
-                                    enableInfiniteScroll: true,
-                                    reverse: false,
-                                    onPageChanged: (index, reason) {
-                                      controller.dotsPosition.value = index;
-                                      if (controller
-                                          .dotsController.hasClients) {
-                                        WidgetsBinding.instance
-                                            .addPostFrameCallback((_) {
+                                        );
+                                      },
+                                      options: CarouselOptions(
+                                        height: size.height * 0.23,
+                                        aspectRatio: 16 / 9,
+                                        viewportFraction: 1,
+                                        initialPage: 0,
+                                        enableInfiniteScroll:
+                                            controller.postsList!.length <= 1
+                                                ? false
+                                                : true,
+                                        reverse: false,
+                                        onPageChanged: (index, reason) {
+                                          controller.dotsPosition.value = index;
                                           if (controller
                                               .dotsController.hasClients) {
-                                            controller.dotsController
-                                                .jumpToPage(index);
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              if (controller
+                                                  .dotsController.hasClients) {
+                                                controller.dotsController
+                                                    .jumpToPage(index);
+                                              }
+                                            });
                                           }
-                                        });
-                                      }
-                                    },
-                                    autoPlay: true,
-                                    autoPlayInterval:
-                                        const Duration(seconds: 3),
-                                    autoPlayAnimationDuration:
-                                        const Duration(milliseconds: 800),
-                                    autoPlayCurve: Curves.fastOutSlowIn,
-                                    enlargeCenterPage: false,
-                                    // scrollPhysics: const BouncingScrollPhysics(),
-                                    enlargeFactor: 0.3,
-                                    scrollDirection: Axis.horizontal,
+                                        },
+                                        autoPlay: true,
+                                        autoPlayInterval:
+                                            const Duration(seconds: 3),
+                                        autoPlayAnimationDuration:
+                                            const Duration(milliseconds: 800),
+                                        autoPlayCurve: Curves.fastOutSlowIn,
+                                        enlargeCenterPage: false,
+                                        // scrollPhysics: const BouncingScrollPhysics(),
+                                        enlargeFactor: 0.3,
+                                        scrollDirection: Axis.horizontal,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
                       ),
                       SizedBox(height: size.height * 0.01),
-                      // todo moatz123
                       Obx(
                         () => controller.isPostsLoading.value ||
                                 controller.postsList == null ||
@@ -513,7 +503,7 @@ class _HomeScreenState extends State<HomeScreen>
                                     Row(
                                       children: [
                                         const Text(
-                                          'Your patients',
+                                          AppStrings.yourPatients,
                                           style: TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -526,7 +516,7 @@ class _HomeScreenState extends State<HomeScreen>
                                                     controller
                                                             .currentPatinetList ==
                                                         null
-                                                ? ''
+                                                ? AppStrings.empty
                                                 : ' (${controller.currentPatinetList!.length})',
                                             style: const TextStyle(
                                               fontSize: 12,
@@ -596,91 +586,21 @@ class _HomeScreenState extends State<HomeScreen>
                                                 int index) {
                                               var patient = controller
                                                   .currentPatinetList![index];
-                                              // return PatientCard(
-                                              //   size: size,
-                                              //   isCurrentDoctorPatients: true,
-                                              //   patientName:
-                                              //       patient.name ?? '',
-                                              //   drName:
-                                              //       'Dr.${controller.currentDoctorFirstName!.capitalizeFirst ?? ''} ${controller.currentDoctorLastName!.capitalizeFirst ?? ''}',
-                                              //   hospital: homeController
-                                              //           .currentPatinetList![
-                                              //               index]
-                                              //           .hospital ??
-                                              //       '',
-                                              //   createdAt: homeController
-                                              //           .currentPatinetList![
-                                              //               index]
-                                              //           .updatedAt ??
-                                              //       '',
-                                              //   updatedAt: homeController
-                                              //           .currentPatinetList![
-                                              //               index]
-                                              //           .updatedAt ??
-                                              //       '',
-                                              //   submitStatus: homeController
-                                              //               .currentPatinetList![
-                                              //                   index]
-                                              //               .sections ==
-                                              //           null
-                                              //       ? false
-                                              //       : homeController
-                                              //               .currentPatinetList![
-                                              //                   index]
-                                              //               .sections!
-                                              //               .submitStatus ??
-                                              //           false,
-                                              //   isOutcomeStatus: patient
-                                              //       .sections!.outcomeStatus!,
-                                              //   onOutcomeTap: () =>
-                                              //       Get.toNamed(
-                                              //     AppRoutes.outcome,
-                                              //     arguments: [
-                                              //       patient.sections!
-                                              //           .outcomeStatus,
-                                              //       patient.id,
-                                              //       patient.name
-                                              //     ],
-                                              //   ),
-                                              //   onAddCommentTap: () {
-                                              //     Get.toNamed(
-                                              //       AppRoutes.comments,
-                                              //       arguments: [
-                                              //         patient.id,
-                                              //         patient.name,
-                                              //       ],
-                                              //     );
-                                              //   },
-                                              //   onTap: () {
-                                              //     Get.toNamed(
-                                              //         AppRoutes
-                                              //             .patientSections,
-                                              //         // arguments: homeController
-                                              //         //     .currentPatinetList![index],
-                                              //         arguments: [
-                                              //           patient.id,
-                                              //           patient
-                                              //               .doctorModel!.id,
-                                              //           patient.name,
-                                              //           patient.sections!
-                                              //               .submitStatus,
-                                              //         ]);
-                                              //   },
-                                              //   onLongPress: () {},
-                                              // );
+
                                               return VerticalPatientCard(
-                                                patientName: patient.name ?? '',
+                                                patientName: patient.name ??
+                                                    AppStrings.empty,
                                                 drFirstName: patient
                                                         .doctorModel!
                                                         .firstName ??
-                                                    '',
+                                                    AppStrings.empty,
                                                 drLastName: patient.doctorModel!
                                                         .lastName ??
-                                                    '',
-                                                updatedAt:
-                                                    patient.updatedAt ?? '',
-                                                hospital:
-                                                    patient.hospital ?? '',
+                                                    AppStrings.empty,
+                                                updatedAt: patient.updatedAt ??
+                                                    AppStrings.empty,
+                                                hospital: patient.hospital ??
+                                                    AppStrings.empty,
                                                 submitStatus:
                                                     patient.sections == null
                                                         ? false
@@ -736,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 Row(
                                   children: [
                                     const Text(
-                                      'All patients',
+                                      AppStrings.allPatients,
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold,
@@ -812,68 +732,20 @@ class _HomeScreenState extends State<HomeScreen>
                                               int index) {
                                             var patient = controller
                                                 .allPatinetList![index];
-                                            // return PatientCard(
-                                            //   size: size,
-                                            //   isCurrentDoctorPatients: false,
-                                            //   patientName: patient.name!,
-                                            //   drName:
-                                            //       'Dr.${patient.doctorModel!.firstName == null ? '' : patient.doctorModel!.firstName!.capitalizeFirst} ${patient.doctorModel!.lastName == null ? '' : patient.doctorModel!.lastName!.capitalizeFirst}',
-                                            //   createdAt: patient.updatedAt!,
-                                            //   hospital: patient.hospital!,
-                                            //   updatedAt: patient.updatedAt!,
-                                            //   isOutcomeStatus: patient
-                                            //       .sections!.outcomeStatus!,
-                                            //   onOutcomeTap: () => Get.toNamed(
-                                            //     AppRoutes.outcome,
-                                            //     arguments: [
-                                            //       patient.sections!
-                                            //           .outcomeStatus,
-                                            //       patient.id,
-                                            //       patient.name
-                                            //     ],
-                                            //   ),
-                                            //   submitStatus:
-                                            //       patient.sections == null
-                                            //           ? false
-                                            //           : patient.sections!
-                                            //                   .submitStatus ??
-                                            //               false,
-                                            //   onTap: () {
-                                            //     Get.toNamed(
-                                            //       AppRoutes.patientSections,
-                                            //       // arguments:
-                                            //       //     controller.allPatinetList![index],
-                                            //       arguments: [
-                                            //         patient.id,
-                                            //         patient.doctorModel!.id,
-                                            //         patient.name,
-                                            //         patient.sections!
-                                            //             .submitStatus,
-                                            //       ],
-                                            //     );
-                                            //   },
-                                            //   onAddCommentTap: () {
-                                            //     Get.toNamed(
-                                            //       AppRoutes.comments,
-                                            //       arguments: [
-                                            //         patient.id,
-                                            //         patient.name,
-                                            //       ],
-                                            //     );
-                                            //   },
-                                            //   onLongPress: () {},
-                                            // );
+
                                             return VerticalPatientCard(
-                                              patientName: patient.name ?? '',
+                                              patientName: patient.name ??
+                                                  AppStrings.empty,
                                               drFirstName: patient
                                                       .doctorModel!.firstName ??
-                                                  '',
+                                                  AppStrings.empty,
                                               drLastName: patient
                                                       .doctorModel!.lastName ??
-                                                  '',
-                                              updatedAt:
-                                                  patient.updatedAt ?? '',
-                                              hospital: patient.hospital ?? '',
+                                                  AppStrings.empty,
+                                              updatedAt: patient.updatedAt ??
+                                                  AppStrings.empty,
+                                              hospital: patient.hospital ??
+                                                  AppStrings.empty,
                                               submitStatus:
                                                   patient.sections == null
                                                       ? false
@@ -937,7 +809,7 @@ class _HomeScreenState extends State<HomeScreen>
                           height: size.height * 0.01,
                         ),
                         const Text(
-                          'Ooops!',
+                          AppStrings.ooops,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
@@ -946,7 +818,8 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         SizedBox(height: size.height * 0.02),
                         const Text(
-                          'No Internet Connection Found\nCheck Your Connection',
+                          AppStrings
+                              .noInternetConnectionFoundCheckYourConnection,
                           style: TextStyle(
                             fontSize: 18,
                             color: AppColors.description,
@@ -961,7 +834,7 @@ class _HomeScreenState extends State<HomeScreen>
                               onPressed: () async {
                                 controller.homeInit();
                               },
-                              title: 'Try Again'),
+                              title: AppStrings.tryAgain),
                         ),
                       ],
                     ),

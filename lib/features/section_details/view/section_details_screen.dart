@@ -191,6 +191,7 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                                       onPressed: () => _controller.submitBotton(
                                         sectionId: sectionId,
                                         patientId: patientId,
+                                        context: context,
                                       ),
                                       title: 'Submit',
                                       isDisable: doctorId.toString() ==
