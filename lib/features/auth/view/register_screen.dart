@@ -235,7 +235,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: 400,
                                 height: 150,
                                 onSuccess: () {},
-                                onFail: () {}),
+                                onFail: () {
+                                  return null;
+                                }),
                             SizedBox(height: size.height * 0.04),
                             Row(
                               children: [
@@ -488,7 +490,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 GestureDetector(
                                   onTap: () {
                                     Get.offNamed(AppRoutes.signIn);
-                                    resetRegisterForm();
+                                    // resetRegisterForm();
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.only(

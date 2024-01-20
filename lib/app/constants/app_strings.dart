@@ -1,14 +1,14 @@
 class AppStrings {
   //! General
-  static const String initialEmail = 'admin@egyakin.com';
-  static const String initialPassword = '12345678';
+  static const String initialEmail = '';
+  static const String initialPassword = '';
 
+  static const int splashDelay = 2;
   static const int apiTimeOut = 60000;
   static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
   static const String accept = "accept";
-  static const int splashDelay = 2;
   static const String appName = 'EgyAkin';
   static const String somethingWentWrong = 'Something went wrong.';
   static const String questionTypeMultiple = 'multiple';

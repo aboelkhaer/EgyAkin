@@ -458,30 +458,30 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                                 onChanged: (val) {
                                   controller.newComment.value = val;
                                 },
-                                onFieldSubmitted: (val) {
-                                  if (controller.homeController
-                                      .currentDoctorVerification.value) {
-                                    controller.addCommentOnPost(
-                                      postId: postModel.id.toString(),
-                                    );
-                                  } else {
-                                    showCustomDialog(
-                                      context: context,
-                                      title: 'Email verification',
-                                      description:
-                                          'To add comment you must verify your email address',
-                                      noColoredBottonOnTap: () {
-                                        Get.back();
-                                      },
-                                      coloredBottonText: 'Verify',
-                                      noColoredBottonText: 'Cancel',
-                                      coloredBottonOnTap: () {
-                                        Get.offAndToNamed(
-                                            AppRoutes.emailVerification);
-                                      },
-                                    );
-                                  }
-                                },
+                                // onFieldSubmitted: (val) {
+                                //   if (controller.homeController
+                                //       .currentDoctorVerification.value) {
+                                //     controller.addCommentOnPost(
+                                //       postId: postModel.id.toString(),
+                                //     );
+                                //   } else {
+                                //     showCustomDialog(
+                                //       context: context,
+                                //       title: 'Email verification',
+                                //       description:
+                                //           'To add comment you must verify your email address',
+                                //       noColoredBottonOnTap: () {
+                                //         Get.back();
+                                //       },
+                                //       coloredBottonText: 'Verify',
+                                //       noColoredBottonText: 'Cancel',
+                                //       coloredBottonOnTap: () {
+                                //         Get.offAndToNamed(
+                                //             AppRoutes.emailVerification);
+                                //       },
+                                //     );
+                                //   }
+                                // },
                                 textInputAction: TextInputAction.done,
                                 validator: (val) {
                                   return null;

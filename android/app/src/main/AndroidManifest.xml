@@ -15,9 +15,9 @@
         </intent>
     </queries>
     <application
-        android:label="egy_akin"
+        android:label="EgyAkin"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"

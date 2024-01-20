@@ -528,9 +528,14 @@ class _HomeScreenState extends State<HomeScreen>
                                     ),
                                     GestureDetector(
                                       onTap: () {
-                                        Get.toNamed(
-                                          AppRoutes.currentPatients,
-                                        );
+                                        if (controller.currentPatinetList!
+                                                .isNotEmpty &&
+                                            controller.currentPatinetList !=
+                                                null) {
+                                          Get.toNamed(
+                                            AppRoutes.currentPatients,
+                                          );
+                                        }
                                       },
                                       child: const Icon(Icons.arrow_forward),
                                     ),
@@ -679,9 +684,12 @@ class _HomeScreenState extends State<HomeScreen>
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    Get.toNamed(
-                                      AppRoutes.allPatients,
-                                    );
+                                    if (controller.allPatinetList!.isNotEmpty &&
+                                        controller.allPatinetList != null) {
+                                      Get.toNamed(
+                                        AppRoutes.allPatients,
+                                      );
+                                    }
                                   },
                                   child: const Icon(Icons.arrow_forward),
                                 ),

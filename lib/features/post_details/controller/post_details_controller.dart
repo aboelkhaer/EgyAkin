@@ -7,7 +7,7 @@ class PostDetailsController extends GetxController {
 
   RxString newComment = ''.obs;
 
-  RxList<BaseCommentModel>? postCommentsList = RxList();
+  RxList<BaseCommentModel>? postCommentsList = <BaseCommentModel>[].obs;
 
   RxBool isCommentsLoading = false.obs;
 

@@ -1,4 +1,3 @@
-import '../../../app/app_models/notification/base_notification_model.dart';
 import '../../../exports.dart';
 
 class HomeController extends GetxController {
@@ -27,10 +26,11 @@ class HomeController extends GetxController {
   String? currentDoctorRegistrationNumber;
   String? currentDoctorCreatedAt;
   String? currentDoctorUpdatedAt;
-  RxList<BasePatientModel>? currentPatinetList = RxList();
-  RxList<BasePatientModel>? allPatinetList = RxList();
-  RxList<BasePostModel>? postsList = RxList();
-  RxList<BaseNotificationModel>? notificationsList = RxList();
+  RxList<BasePatientModel>? currentPatinetList = <BasePatientModel>[].obs;
+  RxList<BasePatientModel>? allPatinetList = <BasePatientModel>[].obs;
+  RxList<BasePostModel>? postsList = <BasePostModel>[].obs;
+  RxList<BaseNotificationModel>? notificationsList =
+      <BaseNotificationModel>[].obs;
   NetworkInfoImpl networkInfo = Get.find<NetworkInfoImpl>();
 
   void resetTextFieldController() {

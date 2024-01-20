@@ -293,31 +293,31 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 onChanged: (val) {
                                   controller.newComment.value = val;
                                 },
-                                onFieldSubmitted: (val) {
-                                  if (controller.homeController
-                                      .currentDoctorVerification.value) {
-                                    controller.addComment(
-                                        patientId: patientId.toString());
-                                  } else {
-                                    showCustomDialog(
-                                      context: context,
-                                      title: AppStrings.emailVerification,
-                                      description: AppStrings
-                                          .toAddCommentYouMustVerifyYourEmailAddress,
-                                      noColoredBottonOnTap: () {
-                                        Get.back();
-                                      },
-                                      coloredBottonText: AppStrings.verify,
-                                      noColoredBottonText: AppStrings.cancel,
-                                      coloredBottonOnTap: () {
-                                        Get.offAndToNamed(
-                                            AppRoutes.emailVerification);
-                                      },
-                                    );
-                                  }
-                                  controller.addComment(
-                                      patientId: patientId.toString());
-                                },
+                                // onFieldSubmitted: (val) {
+                                //   if (controller.homeController
+                                //       .currentDoctorVerification.value) {
+                                //     controller.addComment(
+                                //         patientId: patientId.toString());
+                                //   } else {
+                                //     showCustomDialog(
+                                //       context: context,
+                                //       title: AppStrings.emailVerification,
+                                //       description: AppStrings
+                                //           .toAddCommentYouMustVerifyYourEmailAddress,
+                                //       noColoredBottonOnTap: () {
+                                //         Get.back();
+                                //       },
+                                //       coloredBottonText: AppStrings.verify,
+                                //       noColoredBottonText: AppStrings.cancel,
+                                //       coloredBottonOnTap: () {
+                                //         Get.offAndToNamed(
+                                //             AppRoutes.emailVerification);
+                                //       },
+                                //     );
+                                //   }
+                                //   controller.addComment(
+                                //       patientId: patientId.toString());
+                                // },
                                 textInputAction: TextInputAction.done,
                                 validator: (val) {
                                   return null;

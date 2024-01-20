@@ -16,7 +16,7 @@ class OnbordingScreen extends GetView<OnboardingController> {
             carouselController: controller.carouselController,
             itemBuilder: (BuildContext context, int index, int pageViewIndex) {
               return Container(
-                width: double.infinity,
+                width: size.width * 0.8,
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -41,7 +41,7 @@ class OnbordingScreen extends GetView<OnboardingController> {
                       controller.onboardingList[index].description,
                       style: const TextStyle(
                         fontWeight: FontWeight.w300,
-                        fontSize: 18,
+                        fontSize: 16,
                         color: AppColors.description,
                       ),
                       textAlign: TextAlign.center,

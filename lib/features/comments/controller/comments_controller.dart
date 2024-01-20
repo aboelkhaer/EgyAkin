@@ -7,7 +7,7 @@ class CommentsController extends GetxController {
 
   RxString newComment = ''.obs;
 
-  RxList<BaseCommentModel>? commentsList = RxList();
+  RxList<BaseCommentModel>? commentsList = <BaseCommentModel>[].obs;
 
   RxBool isCommentsLoading = false.obs;
 

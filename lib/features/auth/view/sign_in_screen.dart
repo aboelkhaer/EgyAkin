@@ -52,7 +52,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    Get.lazyPut(() => SignInController());
+    // Get.lazyPut(() => SignInController());
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).requestFocus(FocusNode()),

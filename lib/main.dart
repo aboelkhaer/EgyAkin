@@ -1,4 +1,3 @@
-import 'app/utilities/app_theme.dart';
 import 'exports.dart';
 import 'injection_container.dart' as di;
 
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     return GetMaterialApp(
-      title: 'EgyAkin',
+      title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
       theme: Themes().lightTheme,
       getPages: AppRoutes.routes,

@@ -70,8 +70,8 @@ class AuthRepository {
                 response.doctorModel!.updatedAt);
 
             isSignInLoading.value = false;
-            Get.offNamed(AppRoutes.home);
             // Get.find<HomeController>().homeInit();
+            Get.offNamed(AppRoutes.home);
           } else {
             isSignInLoading.value = false;
           }

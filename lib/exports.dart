@@ -153,3 +153,4 @@ export 'package:egy_akin/features/notification/view/widgets/check_notification_t
 export 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 export 'package:egy_akin/app/utilities/lunch_url.dart';
 export 'package:egy_akin/features/reset_password/controller/reset_password_repo.dart';
+export 'package:egy_akin/app/utilities/app_theme.dart';

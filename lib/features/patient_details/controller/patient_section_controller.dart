@@ -7,7 +7,7 @@ class PatientSectionController extends GetxController {
       Get.find<PatientSectionRepository>();
   HomeController homeController = Get.find<HomeController>();
 
-  RxList<BaseSectionModel>? sectionModelList = RxList();
+  RxList<BaseSectionModel>? sectionModelList = <BaseSectionModel>[].obs;
 
   RxBool isPatientSectionLoading = false.obs;
 
