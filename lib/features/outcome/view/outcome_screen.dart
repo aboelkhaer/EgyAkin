@@ -63,7 +63,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                       ),
                                       const SizedBox(width: 5),
                                       Text(
-                                        'Dr.${controller.getOutcomeModel.baseDoctorModel!.firstName} ${controller.getOutcomeModel.baseDoctorModel!.lastName}',
+                                        'Dr.${controller.getOutcomeModel.baseDoctorModel!.firstName.toString().capitalizeFirst} ${controller.getOutcomeModel.baseDoctorModel!.lastName.toString().capitalizeFirst}',
                                         style: TextStyle(
                                           color: Colors.green.shade700,
                                           fontWeight: FontWeight.bold,

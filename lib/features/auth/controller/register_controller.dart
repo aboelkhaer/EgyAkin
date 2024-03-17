@@ -43,26 +43,23 @@ class RegisterController extends GetxController {
     // return null;
     // Password must contain at least one uppercase letter
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      // return 'Password must contain at least one uppercase letter';
-      return 'PPassword must meet the criteria';
+      return 'Must contain at least one uppercase letter';
     }
 
     // Password must contain at least one numeric number
     if (!RegExp(r'[0-9]').hasMatch(value)) {
-      // return 'Password must contain at least one numeric number';
-      return 'PPassword must meet the criteria';
+      return 'Must contain at least one numeric digit';
     }
 
     // Password must contain at least one special character
-    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
-      // return 'Password must contain at least one special character';
-      return 'PPassword must meet the criteria';
+    if (!RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').hasMatch(value)) {
+      return 'Must contain at least one special character';
     }
 
     // Password must have a minimum length of 6 characters
     if (value.length < 6) {
       // return 'Password must have a minimum length of 6 characters';
-      return 'PPassword must meet the criteria';
+      return 'Password must be at least 6 characters long';
     }
 
     return null;

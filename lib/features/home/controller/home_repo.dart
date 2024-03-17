@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import '../../../app/app_models/notification/base_notification_model.dart';
@@ -27,6 +29,7 @@ class HomeRepository {
               response.scoreValue.toString();
           Get.find<HomeController>().currentDoctorVerification.value =
               response.verified!;
+          log('moatz123 ${Get.find<HomeController>().currentDoctorVerification.value}');
 
           if (response.basePatientList != null) {
             return response.basePatientList!;

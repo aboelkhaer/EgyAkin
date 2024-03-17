@@ -46,7 +46,7 @@ class OnbordingScreen extends GetView<OnboardingController> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    SizedBox(height: size.height * 0.16),
+                    SizedBox(height: size.height * 0.22),
                   ],
                 ),
               );

@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 
 import 'exports.dart';
 import 'features/email_verification/controller/email_verification_controller.dart';
-import 'features/reset_password/controller/reset_password_repo.dart';
 
 Future<void> diInit() async {
   // Core

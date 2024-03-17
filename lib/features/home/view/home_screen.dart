@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:html/parser.dart' show parse;
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -175,11 +177,10 @@ class _HomeScreenState extends State<HomeScreen>
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       controller.currentDoctorVerification.value
-                          ? CheckIfVerified(
+                          ? const SizedBox.shrink()
+                          : CheckIfVerified(
                               verified:
-                                  controller.currentDoctorVerification.value,
-                            )
-                          : const SizedBox.shrink(),
+                                  controller.currentDoctorVerification.value),
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: GestureDetector(
