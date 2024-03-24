@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
-import '../../../app/utilities/hide_national_id.dart';
 import '../../../exports.dart';
 
 class SectionDetailsScreen extends StatefulWidget {
@@ -28,12 +27,6 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
     super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   _controller.homeController.homeInit();
-  //   super.dispose();
-  // }
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -44,10 +37,9 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
             onTap: () {
               if (_controller.scrollController.hasClients) {
                 _controller.scrollController.animateTo(
-                  0, // Scroll position to jump to (top of the list)
-                  duration:
-                      const Duration(milliseconds: 500), // Animation duration
-                  curve: Curves.easeInOut, // Animation curve
+                  0,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
                 );
               }
             },
@@ -57,158 +49,170 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
-      body: Stack(
-        children: [
-          Form(
-            key: _controller.sectionDetailsKeyForm,
-            child: Obx(
-              () => _controller.isSectionDetailsLoading.value
-                  ? const SingleChildScrollView(
-                      child: ShimmerLoadingPatientsCards(ishorizontal: false))
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _controller.questionModelList!.length,
-                            shrinkWrap: true,
-                            controller: _controller.scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              var question =
-                                  _controller.questionModelList![index];
+      body: finalSubmit
+          ? BuildSectionDetailsIfFinalSubmitTrue(controller: _controller)
+          : doctorId.toString() !=
+                  _controller.homeController.currentDoctorId.toString()
+              ? BuildSectionDetailsIfFinalSubmitTrue(controller: _controller)
+              : buildSectionForm(size: size),
+    );
+  }
 
-                              return Container(
-                                margin: const EdgeInsets.all(16),
-                                padding: const EdgeInsets.all(16),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.primary,
-                                  ),
+  Widget buildSectionForm({
+    required Size size,
+  }) {
+    return Stack(
+      children: [
+        Form(
+          key: _controller.sectionDetailsKeyForm,
+          child: Obx(
+            () => _controller.isSectionDetailsLoading.value
+                ? const SingleChildScrollView(
+                    child: ShimmerLoadingPatientsCards(ishorizontal: false))
+                : Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _controller.questionModelList!.length,
+                          shrinkWrap: true,
+                          controller: _controller.scrollController,
+                          physics: const BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            var question =
+                                _controller.questionModelList![index];
+
+                            return Container(
+                              margin: const EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(16),
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: AppColors.primary,
                                 ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: Text(
-                                            '${index + 1} - ${question.question!}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          '${index + 1} - ${question.question!}',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        question.mandatory! ||
-                                                question.question ==
-                                                    'National ID'
-                                            ? const Text(
-                                                '*',
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    question.type ==
-                                            AppStrings.questionTypeMultiple
-                                        ? const Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                'Press and hold to view all text.',
-                                                style: TextStyle(
-                                                  color: AppColors.description,
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        : const SizedBox.shrink(),
-                                    buildQuestionWidget(
-                                        _controller.questionModelList!,
-                                        index,
-                                        size),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        doctorId.toString() !=
-                                _controller.homeController.currentDoctorId
-                                    .toString()
-                            ? const SizedBox.shrink()
-                            : finalSubmit
-                                ? const SizedBox.shrink()
-                                : Container(
-                                    height: 90,
-                                  ),
-                      ],
-                    ),
-            ),
-          ),
-          doctorId.toString() !=
-                  _controller.homeController.currentDoctorId.toString()
-              ? const SizedBox.shrink()
-              : finalSubmit
-                  ? const SizedBox.shrink()
-                  : Positioned(
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        height: 90,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade100,
-                              spreadRadius: 1,
-                              blurRadius: 7,
-                              offset: const Offset(3, 4),
-                            ),
-                          ],
-                        ),
-                        child: Obx(
-                          () => _controller.isSectionDetailsUpdateLoading.value
-                              ? const SizedBox(
-                                  width: 30,
-                                  height: 30,
-                                  child: CircularProgressIndicator(
-                                    color: AppColors.primary,
-                                  ),
-                                )
-                              : SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: CustomElevatedButton(
-                                      size: size,
-                                      onPressed: () => _controller.submitBotton(
-                                        sectionId: sectionId,
-                                        patientId: patientId,
-                                        context: context,
                                       ),
-                                      title: 'Submit',
-                                      isDisable: doctorId.toString() ==
-                                                  _controller.homeController
-                                                      .currentDoctorId
-                                                      .toString() &&
-                                              _controller.formData.isNotEmpty
-                                          ? false
-                                          : true,
-                                    ),
+                                      question.mandatory! ||
+                                              question.question ==
+                                                  AppStrings.nationalID
+                                          ? const Text(
+                                              '*',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ],
                                   ),
-                                ),
+                                  const SizedBox(height: 16),
+                                  question.type ==
+                                          AppStrings.questionTypeMultiple
+                                      ? const Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              AppStrings
+                                                  .pressAndHoldToViewAllText,
+                                              style: TextStyle(
+                                                color: AppColors.description,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : const SizedBox.shrink(),
+                                  buildQuestionWidget(
+                                      _controller.questionModelList!,
+                                      index,
+                                      size),
+                                ],
+                              ),
+                            );
+                          },
                         ),
                       ),
+                      doctorId.toString() !=
+                              _controller.homeController.currentDoctorId
+                                  .toString()
+                          ? const SizedBox.shrink()
+                          : finalSubmit
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  height: 90,
+                                ),
+                    ],
+                  ),
+          ),
+        ),
+        doctorId.toString() !=
+                _controller.homeController.currentDoctorId.toString()
+            ? const SizedBox.shrink()
+            : finalSubmit
+                ? const SizedBox.shrink()
+                : Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      height: 90,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade100,
+                            spreadRadius: 1,
+                            blurRadius: 7,
+                            offset: const Offset(3, 4),
+                          ),
+                        ],
+                      ),
+                      child: Obx(
+                        () => _controller.isSectionDetailsUpdateLoading.value
+                            ? const SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                ),
+                              )
+                            : SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: CustomElevatedButton(
+                                    size: size,
+                                    onPressed: () => _controller.submitBotton(
+                                      sectionId: sectionId,
+                                      patientId: patientId,
+                                      context: context,
+                                    ),
+                                    title: AppStrings.submit,
+                                    isDisable: doctorId.toString() ==
+                                                _controller.homeController
+                                                    .currentDoctorId
+                                                    .toString() &&
+                                            _controller.formData.isNotEmpty
+                                        ? false
+                                        : true,
+                                  ),
+                                ),
+                              ),
+                      ),
                     ),
-        ],
-      ),
+                  ),
+      ],
     );
   }
 
@@ -221,23 +225,22 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
         return BuildStringValueQuestions(
           questionList: questionList,
           index: index,
-          initialValue: questionList[index].question == 'National ID'
+          initialValue: questionList[index].question == AppStrings.nationalID
               ? doctorId.toString() ==
                       _controller.homeController.currentDoctorId.toString()
-                  ? questionList[index].answer ?? ''
+                  ? questionList[index].answer ?? AppStrings.empty
                   : hideNationalId(questionList[index].answer)
-              : questionList[index].answer ?? '',
-          textInputFormatter: questionList[index].question == 'Phone'
+              : questionList[index].answer ?? AppStrings.empty,
+          textInputFormatter: questionList[index].question == AppStrings.phone
               ? [
                   LengthLimitingTextInputFormatter(11),
                 ]
-              : questionList[index].question == 'National ID'
+              : questionList[index].question == AppStrings.nationalID
                   ? [
                       LengthLimitingTextInputFormatter(14),
                     ]
                   : [],
           onChanged: (val) {
-            // _controller.formData[questionList[index].id.toString()] = val;
             setState(() {
               if (questionList[index].answer != val) {
                 questionList[index].answer = val;
@@ -251,7 +254,7 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
           validator: (val) {
             if (questionList[index].mandatory == true &&
                 (val == null || val.isEmpty)) {
-              return 'This field is required';
+              return AppStrings.thisFieldIsRequired;
             }
 
             return null;
@@ -266,8 +269,8 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
           validator: (val) {
             if (questionList[index].mandatory == true &&
                 (questionList[index].answer == null ||
-                    questionList[index].answer == '')) {
-              return 'This question is required';
+                    questionList[index].answer == AppStrings.empty)) {
+              return AppStrings.thisFieldIsRequired;
             }
 
             return null;
@@ -288,14 +291,17 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
       case AppStrings.questionTypeMultiple:
         // List<dynamic> answers = questionList[index].answer['answers'] ??= [];
         // String otherValue = '';
-        Map<String, dynamic> answerMap =
-            questionList[index].answer ??= {"answers": [], "other_field": ''};
-        List<dynamic> answers = questionList[index].answer['answers'] ??= [];
+        Map<String, dynamic> answerMap = questionList[index].answer ??= {
+          AppStrings.answers: [],
+          AppStrings.otherField: AppStrings.empty
+        };
+        List<dynamic> answers =
+            questionList[index].answer[AppStrings.answers] ??= [];
 
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
-          initialValue: answerMap['other_field'] ?? '',
+          initialValue: answerMap[AppStrings.otherField] ?? '',
           listContainOther: answers,
           onChanged: (val) {
             setState(() {
@@ -305,10 +311,12 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
               //     "other_field": val,
               //   },
               // };
-              answerMap['other_field'] = val;
+              answerMap[AppStrings.otherField] = val;
               _controller.formData[questionList[index].id.toString()] = {
-                "answers": answers,
-                "other_field": answers.contains('Others') ? val : '',
+                AppStrings.answers: answers,
+                AppStrings.otherField: answers.contains(AppStrings.others)
+                    ? val
+                    : AppStrings.empty,
               };
             });
 
@@ -317,7 +325,7 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
           validator: (val) {
             if (questionList[index].mandatory == true) {
               if (val == null || val.isEmpty) {
-                return 'Choose at least one option';
+                return AppStrings.chooseAtLeastOnOption;
               }
             }
             return null;
@@ -331,7 +339,6 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                   style: const TextStyle(
                       color: Colors.white, fontWeight: FontWeight.bold),
                   maxLines: 2,
-                  // overflow: TextOverflow.visible,
                 ),
                 backgroundColor: Colors.grey.shade400,
                 selected: answers.contains(value),
@@ -343,13 +350,12 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
                     } else {
                       answers.remove(value);
                     }
-                    // _controller.formData[questionList[index].id.toString()] =
-                    //     answers;
+
                     _controller.formData[questionList[index].id.toString()] = {
-                      "answers": answers,
-                      "other_field": answers.contains('Others')
-                          ? answerMap['other_field']
-                          : '',
+                      AppStrings.answers: answers,
+                      AppStrings.otherField: answers.contains(AppStrings.others)
+                          ? answerMap[AppStrings.otherField]
+                          : AppStrings.empty,
                     };
                     log('map ${_controller.formData}');
                     // log('list answer ${questionList[index].answer}');
@@ -360,7 +366,6 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
           }).toList(),
         );
       case AppStrings.questionTypeDate:
-        // String? questionAnswer = questionList[index].answer;
         questionList[index].answer ??= DateTime.now().toString();
 
         return SizedBox(
@@ -377,29 +382,6 @@ class _SectionDetailsScreenState extends State<SectionDetailsScreen> {
             },
           ),
         );
-      // return SizedBox(
-      //   height: MediaQuery.of(context).copyWith().size.height / 5,
-      //   child: CupertinoDatePicker(
-      //     initialDateTime: DateTime.parse(questionList[index].answer),
-      //     onDateTimeChanged: (DateTime newdate) {
-      //       if (questionList[index].answer == newdate.toString()) {
-      //         formDataMap.remove(questionList[index].id.toString());
-      //       } else {
-      //         formDataMap[questionList[index].id.toString()] =
-      //             newdate.toString();
-      //       }
-
-      //       setState(() {});
-      //       log(formDataMap.toString());
-      //     },
-      //     use24hFormat: true,
-      //     // maximumDate: DateTime(2024, 12, 30),
-      //     minimumYear: 1900,
-      //     maximumYear: 2100,
-      //     minuteInterval: 1,
-      //     mode: CupertinoDatePickerMode.date,
-      //   ),
-      // );
 
       default:
         return Container();

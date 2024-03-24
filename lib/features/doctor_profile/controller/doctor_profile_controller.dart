@@ -88,9 +88,6 @@ class DoctroProfileController extends GetxController {
       isUpdateLoading: isUpdateLoading,
     );
 
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   homeController.homeInit();
-    // });
     isUpdateLoading.value = false;
     update();
   }

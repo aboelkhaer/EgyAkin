@@ -26,6 +26,8 @@ class DoctorModel {
   String? phone;
   @JsonKey(name: 'job')
   String? job;
+  @JsonKey(name: 'image')
+  String? image;
   @JsonKey(name: 'registration_number')
   String? registrationNumber;
   @JsonKey(name: 'highestdegree')
@@ -47,6 +49,7 @@ class DoctorModel {
     this.workingPlace,
     this.phone,
     this.job,
+    this.image,
     this.highestDegree,
     this.createdAt,
     this.updatedAt,

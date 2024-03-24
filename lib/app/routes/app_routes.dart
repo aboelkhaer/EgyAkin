@@ -32,9 +32,6 @@ class AppRoutes {
     GetPage(
       name: splash,
       page: () => const SplashScreen(),
-      // binding: BindingsBuilder(() async {
-      //   Get.find<SplashController>();
-      // }),
       binding: SplashBinding(),
     ),
     GetPage(

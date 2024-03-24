@@ -59,8 +59,6 @@ abstract class ApiServices {
     @Field("name") String firstName,
     @Field("lname") String lastName,
     @Field("email") String email,
-    // @Field("password") String password,
-    // @Field("password_confirmation") String passwordConfirmation,
     @Field("age") String age,
     @Field("specialty") String specialty,
     @Field("workingplace") String workingPlace,
@@ -97,7 +95,6 @@ abstract class ApiServices {
   );
   @POST(ApiEndPoint.addPatientForFirstTime)
   Future<SemiPatientModel> addPatientForFirstTime(
-    // @Field("doctor_id") String doctorId,
     @Body() Map<String, dynamic> map,
   );
   @POST(ApiEndPoint.outcome)

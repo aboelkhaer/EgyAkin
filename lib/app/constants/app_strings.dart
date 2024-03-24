@@ -47,6 +47,8 @@ class AppStrings {
       'National ID should have 14 digits';
   static const String youMustSelectAtLeastOneChoice =
       'You must select at least one choice.';
+  static const String pressAndHoldToViewAllText =
+      'Press and hold to view all text.';
 
   //! welcome
   static const String getStarted = 'Get Started';
@@ -90,6 +92,7 @@ class AppStrings {
   static const String others = 'Others';
   static const String otherField = 'other_field';
   static const String answers = 'answers';
+  static const String chooseAtLeastOnOption = 'Choose at least one option';
 
   //! register
   static const String alreadyHaveAnAccount = 'Already have an account?';
@@ -133,4 +136,7 @@ class AppStrings {
   static const String continueText = 'Continue';
   static const String save = 'Save';
   static const String back = 'Back';
+
+  //! section details
+  // static const String phone ='';
 }

@@ -154,3 +154,7 @@ export 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 export 'package:egy_akin/app/utilities/lunch_url.dart';
 export 'package:egy_akin/features/reset_password/controller/reset_password_repo.dart';
 export 'package:egy_akin/app/utilities/app_theme.dart';
+export '../../../app/utilities/hide_national_id.dart';
+export 'package:egy_akin/features/section_details/view/widgets/convert_list_to_string.dart';
+export '../../../../app/utilities/formated_date.dart';
+export 'package:egy_akin/features/section_details/view/widgets/build_section_details_if_final_submit_true.dart';

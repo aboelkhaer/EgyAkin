@@ -15,7 +15,7 @@ class HomeController extends GetxController {
   String? currentDoctorLastName;
   String? currentDoctorEmail;
   RxString? currentDoctorScoreValue = ''.obs;
-  RxBool currentDoctorVerification = false.obs;
+  RxBool currentDoctorVerification = true.obs;
   String? currentDoctorPhone;
   int? currentDoctorId;
   String? currentDoctorAge;
