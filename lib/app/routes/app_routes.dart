@@ -1,9 +1,10 @@
+import 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_cubit.dart';
+import 'package:egy_akin/features/email_verification/presentation/pages/email_verification_screen.dart';
+import 'package:egy_akin/features/notification/presentation/cubit/notification_cubit.dart';
+import 'package:egy_akin/features/profile/presentation/cubit/profile_cubit.dart';
+
 import '../../exports.dart';
-import '../../features/email_verification/view/email_verification_screen.dart';
-import '../../features/reset_password/view/reset_password_screen.dart';
-import '../bindings/email_verification_binding.dart';
-import '../bindings/reset_password_binding.dart';
-import '../bindings/splash_biniding.dart';
+import 'package:egy_akin/injection_container.dart' as di;
 
 class AppRoutes {
   static const String splash = '/';
@@ -27,110 +28,94 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String resetPassword = '/resetPassword';
   static const String emailVerification = '/emailVerification';
+}
 
-  static List<GetPage> routes = [
-    GetPage(
-      name: splash,
-      page: () => const SplashScreen(),
-      binding: SplashBinding(),
-    ),
-    GetPage(
-      name: onboarding,
-      page: () => const OnbordingScreen(),
-      binding: OnboardingBinding(),
-    ),
-    GetPage(
-      name: welcome,
-      page: () => const WelcomeScreen(),
-      binding: WelcomeBinding(),
-    ),
-    GetPage(
-      name: signIn,
-      page: () => const SignInScreen(),
-      transition: Transition.fadeIn,
-      binding: SignInBinding(),
-    ),
-    GetPage(
-      name: register,
-      page: () => const RegisterScreen(),
-      transition: Transition.fadeIn,
-      binding: RegisterBinding(),
-    ),
-    GetPage(
-      name: home,
-      page: () => const HomeScreen(),
-      binding: HomeBinding(),
-    ),
-    GetPage(
-      name: currentPatients,
-      page: () => const CurrentPatientsScreen(),
-      binding: CurrentPatientsBinding(),
-    ),
-    GetPage(
-      name: allPatients,
-      page: () => const AllPatientsScreen(),
-      binding: AllPatientsBinding(),
-    ),
-    GetPage(
-      name: doctorProfile,
-      page: () => const DoctorProfileScreen(),
-      binding: DoctorProfileBinding(),
-    ),
-    GetPage(
-      name: search,
-      page: () => const SearchScreen(),
-      binding: SearchBinding(),
-      transition: Transition.fadeIn,
-    ),
-    GetPage(
-      name: patientSections,
-      page: () => const PatienSectionScreen(),
-      binding: PatientSectionBinding(),
-    ),
-    GetPage(
-      name: sectionDetails,
-      page: () => const SectionDetailsScreen(),
-      binding: SectionDetailsBinding(),
-    ),
-    GetPage(
-      name: contactUs,
-      page: () => ContactUsScreen(),
-      binding: ContactUsBinding(),
-    ),
-    GetPage(
-      name: addPatient,
-      page: () => const AddPatientScreen(),
-      binding: AddPatientBinding(),
-    ),
-    GetPage(
-      name: outcome,
-      page: () => const OutcomeScreen(),
-      binding: OutcomeBinding(),
-    ),
-    GetPage(
-      name: comments,
-      page: () => const CommentsScreen(),
-      binding: CommentsBinding(),
-    ),
-    GetPage(
-      name: postDetails,
-      page: () => const PostDetailsScreen(),
-      binding: PostDetailsBinding(),
-    ),
-    GetPage(
-      name: notification,
-      page: () => const NotificationScreen(),
-      binding: NotificationBinding(),
-    ),
-    GetPage(
-      name: resetPassword,
-      page: () => const ResetPasswordScreen(),
-      binding: ResetPasswordBinding(),
-    ),
-    GetPage(
-      name: emailVerification,
-      page: () => const EmailVerificationScreen(),
-      binding: EmailVerificationBinding(),
-    ),
-  ];
+class RouteGenerator {
+  static Route<dynamic> getRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case AppRoutes.splash:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<SplashCubit>(
+            create: (context) => di.sl<SplashCubit>()..loadData(),
+            child: const SplashScreen(),
+          ),
+        );
+      case AppRoutes.welcome:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<WelcomeCubit>(
+            create: (context) => di.sl<WelcomeCubit>(),
+            child: const WelcomeScreen(),
+          ),
+        );
+      case AppRoutes.onboarding:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<OnboardingCubit>(
+            create: (context) => di.sl<OnboardingCubit>(),
+            child: const OnboardingScreen(),
+          ),
+        );
+      case AppRoutes.signIn:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AuthenticationCubit>(
+            create: (context) => di.sl<AuthenticationCubit>(),
+            child: const SignInScreen(),
+          ),
+        );
+      case AppRoutes.register:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AuthenticationCubit>(
+            create: (context) => di.sl<AuthenticationCubit>(),
+            child: const RegisterScreen(),
+          ),
+        );
+      case AppRoutes.resetPassword:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<ResetPasswordCubit>(
+            create: (context) => di.sl<ResetPasswordCubit>(),
+            child: const ResetPasswordScreen(),
+          ),
+        );
+      case AppRoutes.home:
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider<HomeCubit>(
+                  create: (context) => di.sl<HomeCubit>()
+                    ..getDoctorDataFromLocal()
+                    ..getHome()
+                  // ..getNotifications(),
+                  ),
+              BlocProvider<NotificationCubit>(
+                create: (context) =>
+                    di.sl<NotificationCubit>()..getAllNotifications(),
+              ),
+              BlocProvider<ProfileCubit>(
+                create: (context) => di.sl<ProfileCubit>(),
+              ),
+            ],
+            child: const HomeScreen(),
+          ),
+        );
+      case AppRoutes.emailVerification:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<EmailVerificationCubit>(
+            create: (context) => di.sl<EmailVerificationCubit>(),
+            child: const EmailVerifciationScreen(),
+          ),
+        );
+
+      default:
+        return unDefinedRoute();
+    }
+  }
+
+  static Route<dynamic> unDefinedRoute() {
+    return MaterialPageRoute(
+        builder: (_) => Scaffold(
+              appBar: AppBar(
+                title: const Text(AppStrings.noRouteFound),
+              ),
+              body: const Center(child: Text(AppStrings.noRouteFound)),
+            ));
+  }
 }

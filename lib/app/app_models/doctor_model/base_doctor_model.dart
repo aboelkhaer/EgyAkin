@@ -17,6 +17,7 @@ class BaseDoctorModel {
     this.id,
     this.firstName,
     this.lastName,
+    this.workingPlace,
   });
   factory BaseDoctorModel.fromJson(Map<String, dynamic> json) =>
       _$BaseDoctorModelFromJson(json);

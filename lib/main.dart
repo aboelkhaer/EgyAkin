@@ -3,11 +3,8 @@ import 'injection_container.dart' as di;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Future.delayed(const Duration(seconds: 2));
-  // FlutterNativeSplash.remove();
   await di.diInit();
-  GetStorage.init();
-
+  Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
@@ -17,11 +14,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    return GetMaterialApp(
-      title: AppStrings.appName,
-      debugShowCheckedModeBanner: false,
-      theme: Themes().lightTheme,
-      getPages: AppRoutes.routes,
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.white, // Color for Android
+        statusBarBrightness:
+            Brightness.light // Dark == white status bar -- for IOS.
+        ));
+    return ScreenUtilInit(
+      designSize: const Size(360, 640),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      child: MaterialApp(
+        title: AppStrings.appName,
+        debugShowCheckedModeBanner: false,
+        theme: Themes().lightTheme,
+        onGenerateRoute: RouteGenerator.getRoute,
+      ),
     );
   }
 }

@@ -3,7 +3,6 @@ import '../../exports.dart';
 class Themes {
   final lightTheme = ThemeData().copyWith(
     scaffoldBackgroundColor: AppColors.scaffoldBG,
-    // textTheme: TextTheme(),
     appBarTheme: const AppBarTheme(
       iconTheme: IconThemeData(
         color: Colors.white,

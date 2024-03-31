@@ -22,7 +22,7 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<LogoutModel> logout(String token) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': token};
@@ -48,11 +48,11 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetDoctorWithTokenModelResponse> login(
+  Future<AuthenticationModelResponse> signIn(
     String email,
     String password,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -60,7 +60,7 @@ class _ApiServices implements ApiServices {
       'password': password,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetDoctorWithTokenModelResponse>(Options(
+        _setStreamType<AuthenticationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -76,44 +76,20 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
+    final value = AuthenticationModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetDoctorWithTokenModelResponse> register(
-    String firstName,
-    String lastName,
-    String email,
-    String password,
-    String passwordConfirmation,
-    String age,
-    String specialty,
-    String workingPlace,
-    String registrationNumber,
-    String phone,
-    String job,
-    String highestDegree,
-  ) async {
-    const _extra = <String, dynamic>{};
+  Future<AuthenticationModelResponse> register(
+      Map<String, dynamic> doctorModel) async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = {
-      'name': firstName,
-      'lname': lastName,
-      'email': email,
-      'password': password,
-      'password_confirmation': passwordConfirmation,
-      'age': age,
-      'specialty': specialty,
-      'workingplace': workingPlace,
-      'registration_number': registrationNumber,
-      'phone': phone,
-      'job': job,
-      'highestdegree': highestDegree,
-    };
+    final _data = <String, dynamic>{};
+    _data.addAll(doctorModel);
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetDoctorWithTokenModelResponse>(Options(
+        _setStreamType<AuthenticationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -129,13 +105,13 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetDoctorWithTokenModelResponse.fromJson(_result.data!);
+    final value = AuthenticationModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<GetAllBasPatientstModelResponse> getAllPatients(String token) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': token};
@@ -163,7 +139,7 @@ class _ApiServices implements ApiServices {
   @override
   Future<GetCurrentPatientstModelResponse> getCurrentPatients(
       String token) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': token};
@@ -191,10 +167,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<GetAllBasPatientstModelResponse> searchHome(
       String searchContent) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetAllBasPatientstModelResponse>(Options(
       method: 'GET',
@@ -229,7 +205,7 @@ class _ApiServices implements ApiServices {
     String job,
     String highestDegree,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -267,10 +243,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<GetBaseSectionsModelResponse> getPatientSections(
       String patientId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetBaseSectionsModelResponse>(Options(
       method: 'GET',
@@ -297,10 +273,10 @@ class _ApiServices implements ApiServices {
     String sectionId,
     String patientId,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetQuestionsModelResponse>(Options(
       method: 'GET',
@@ -324,10 +300,10 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<DeletePatientModelResponse> deletePatient(String patientId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeletePatientModelResponse>(Options(
       method: 'DELETE',
@@ -355,7 +331,7 @@ class _ApiServices implements ApiServices {
     String patientId,
     Map<String, dynamic> map,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -384,10 +360,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
       String sectionId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetQuestionsModelResponse>(Options(
       method: 'GET',
@@ -412,7 +388,7 @@ class _ApiServices implements ApiServices {
   @override
   Future<SemiPatientModel> addPatientForFirstTime(
       Map<String, dynamic> map) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -447,7 +423,7 @@ class _ApiServices implements ApiServices {
     String finalStatus,
     String other,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -481,10 +457,10 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetOutcomeModelResponse> getOutcome(String patientId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetOutcomeModelResponse>(Options(
       method: 'GET',
@@ -509,10 +485,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<UpdateSectionDetailsModelResponse> finalSubmit(
       String patientId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<UpdateSectionDetailsModelResponse>(Options(
       method: 'PUT',
@@ -536,10 +512,10 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetCommentstModelResponse> getComments(String patientId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetCommentstModelResponse>(Options(
       method: 'GET',
@@ -566,7 +542,7 @@ class _ApiServices implements ApiServices {
     String patientId,
     String content,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -596,10 +572,10 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<DeleteCommentModelResponse> deleteComment(String commentId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeleteCommentModelResponse>(Options(
       method: 'DELETE',
@@ -623,7 +599,7 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<AddContactUsModelResponse> addContactUs(String message) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'message': message};
@@ -650,10 +626,10 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetPostsModelResponse> getHomePosts() async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetPostsModelResponse>(Options(
       method: 'GET',
@@ -678,10 +654,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<GetPostCommentsModelResponse> getHomePostComments(
       String postId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetPostCommentsModelResponse>(Options(
       method: 'GET',
@@ -706,10 +682,10 @@ class _ApiServices implements ApiServices {
   @override
   Future<DeletePostCommentModelResponse> deletePostComment(
       String postId) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<DeletePostCommentModelResponse>(Options(
       method: 'DELETE',
@@ -732,13 +708,13 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetNotificationModelResponse> getNotifications() async {
-    const _extra = <String, dynamic>{};
+  Future<NotificationModelResponse> getNotifications() async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetNotificationModelResponse>(Options(
+        _setStreamType<NotificationModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -754,18 +730,45 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetNotificationModelResponse.fromJson(_result.data!);
+    final value = NotificationModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<UpdateNotificationsModelResponse> updateNotifications() async {
-    const _extra = <String, dynamic>{};
+  Future<GetAllNotificationsModelResponse> getAllNotifications() async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UpdateNotificationsModelResponse>(Options(
+        _setStreamType<GetAllNotificationsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/shownotification',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GetAllNotificationsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UpdateNotificationModelResponse> updateNotifications() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UpdateNotificationModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
@@ -781,7 +784,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UpdateNotificationsModelResponse.fromJson(_result.data!);
+    final value = UpdateNotificationModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -790,7 +793,7 @@ class _ApiServices implements ApiServices {
     String postId,
     String content,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -819,14 +822,14 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<SendEmailForForgetPasswordModelResponse> sendEmailForForgetPassword(
+  Future<ResetPasswordModelResponse> sendEmailForForgetPassword(
       String email) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'email': email};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SendEmailForForgetPasswordModelResponse>(Options(
+        _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -842,17 +845,16 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
-        SendEmailForForgetPasswordModelResponse.fromJson(_result.data!);
+    final value = ResetPasswordModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<VerifyOTPModelResponse> verifyOTP(
+  Future<ResetPasswordModelResponse> verifyOTP(
     String email,
     String otp,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -860,7 +862,7 @@ class _ApiServices implements ApiServices {
       'otp': otp,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<VerifyOTPModelResponse>(Options(
+        _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -876,16 +878,16 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = VerifyOTPModelResponse.fromJson(_result.data!);
+    final value = ResetPasswordModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<ChangePasswordModelResponse> changePassword(
+  Future<ResetPasswordModelResponse> changePassword(
     String email,
     String newPassword,
   ) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {
@@ -893,7 +895,7 @@ class _ApiServices implements ApiServices {
       'password': newPassword,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ChangePasswordModelResponse>(Options(
+        _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -909,16 +911,16 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ChangePasswordModelResponse.fromJson(_result.data!);
+    final value = ResetPasswordModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<SendEmailVerificationModelResponse> sendEmailVerification() async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<SendEmailVerificationModelResponse>(Options(
       method: 'POST',
@@ -943,7 +945,7 @@ class _ApiServices implements ApiServices {
   @override
   Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
       String otp) async {
-    const _extra = <String, dynamic>{};
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'otp': otp};
@@ -965,6 +967,33 @@ class _ApiServices implements ApiServices {
               baseUrl,
             ))));
     final value = EmailVerificationOTPModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<HomeModelResponse> getHome() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<HomeModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/home',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = HomeModelResponse.fromJson(_result.data!);
     return value;
   }
 

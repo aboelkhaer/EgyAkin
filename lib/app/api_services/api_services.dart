@@ -1,13 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/home/data/models/notification_model_response.dart';
+import 'package:egy_akin/features/notification/data/models/update_notification_model_response.dart';
 import 'package:retrofit/http.dart';
-
 import '../../exports.dart';
-import '../app_models/responses/change_password_model.dart';
-import '../app_models/responses/email_verification_otp_model.dart';
-import '../app_models/responses/send_email_for_forget_password_model.dart';
-import '../app_models/responses/send_email_verification_model.dart';
-import '../app_models/responses/verify_otp_model.dart';
-
 part 'api_services.g.dart';
 
 @RestApi(baseUrl: ApiEndPoint.baseUrl)
@@ -19,25 +14,14 @@ abstract class ApiServices {
     @Field("token") String token,
   );
 
-  @POST(ApiEndPoint.login)
-  Future<GetDoctorWithTokenModelResponse> login(
+  @POST(ApiEndPoint.signIn)
+  Future<AuthenticationModelResponse> signIn(
     @Field("email") String email,
     @Field("password") String password,
   );
   @POST(ApiEndPoint.register)
-  Future<GetDoctorWithTokenModelResponse> register(
-    @Field("name") String firstName,
-    @Field("lname") String lastName,
-    @Field("email") String email,
-    @Field("password") String password,
-    @Field("password_confirmation") String passwordConfirmation,
-    @Field("age") String age,
-    @Field("specialty") String specialty,
-    @Field("workingplace") String workingPlace,
-    @Field("registration_number") String registrationNumber,
-    @Field("phone") String phone,
-    @Field("job") String job,
-    @Field("highestdegree") String highestDegree,
+  Future<AuthenticationModelResponse> register(
+    @Body() Map<String, dynamic> doctorModel,
   );
 
   @GET(ApiEndPoint.allPatients)
@@ -146,10 +130,13 @@ abstract class ApiServices {
   );
 
   @GET(ApiEndPoint.notification)
-  Future<GetNotificationModelResponse> getNotifications();
+  Future<NotificationModelResponse> getNotifications();
+
+  @GET(ApiEndPoint.getAllNotifications)
+  Future<GetAllNotificationsModelResponse> getAllNotifications();
 
   @PUT(ApiEndPoint.notification)
-  Future<UpdateNotificationsModelResponse> updateNotifications();
+  Future<UpdateNotificationModelResponse> updateNotifications();
 
   @POST(ApiEndPoint.postComments)
   Future<AddCommentOnPostModelResponse> addCommentOnPost(
@@ -157,23 +144,27 @@ abstract class ApiServices {
     @Field("content") String content,
   );
   @POST(ApiEndPoint.forgetPassword)
-  Future<SendEmailForForgetPasswordModelResponse> sendEmailForForgetPassword(
+  Future<ResetPasswordModelResponse> sendEmailForForgetPassword(
     @Field("email") String email,
   );
   @POST(ApiEndPoint.resetPasswordVerification)
-  Future<VerifyOTPModelResponse> verifyOTP(
+  Future<ResetPasswordModelResponse> verifyOTP(
     @Field("email") String email,
     @Field("otp") String otp,
   );
   @POST(ApiEndPoint.changePassword)
-  Future<ChangePasswordModelResponse> changePassword(
+  Future<ResetPasswordModelResponse> changePassword(
     @Field("email") String email,
     @Field("password") String newPassword,
   );
   @POST(ApiEndPoint.sendEmailVerification)
   Future<SendEmailVerificationModelResponse> sendEmailVerification();
+
   @POST(ApiEndPoint.emailVerificationOTP)
   Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
     @Field("otp") String otp,
   );
+
+  @GET(ApiEndPoint.home)
+  Future<HomeModelResponse> getHome();
 }

@@ -1,4 +1,4 @@
-import 'package:url_launcher/url_launcher.dart';
+import '../../exports.dart';
 
 Future<void> launchURL(String url) async {
   Uri uri = Uri.parse(url);

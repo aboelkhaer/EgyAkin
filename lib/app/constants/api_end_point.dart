@@ -1,6 +1,7 @@
 class ApiEndPoint {
   static const baseUrl = 'https://egyakin.com';
-  static const login = '$baseUrl/api/login';
+  static const home = '$baseUrl/api/home';
+  static const signIn = '$baseUrl/api/login';
   static const register = '$baseUrl/api/register';
   static const logout = '$baseUrl/api/logout';
   static const allPatients = '$baseUrl/api/allPatients';
@@ -20,6 +21,7 @@ class ApiEndPoint {
   static const post = '$baseUrl/api/post';
   static const postComments = '$baseUrl/api/Postcomments';
   static const notification = '$baseUrl/api/notification';
+  static const getAllNotifications = '$baseUrl/api/shownotification';
   static const forgetPassword = '$baseUrl/api/forgotpassword';
   static const resetPasswordVerification =
       '$baseUrl/api/resetpasswordverification';
