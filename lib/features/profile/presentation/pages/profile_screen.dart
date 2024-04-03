@@ -1,4 +1,6 @@
-import 'package:egy_akin/features/profile/presentation/cubit/profile_cubit.dart';
+import 'dart:developer';
+
+import 'package:egy_akin/features/profile/presentation/widgets/profile_features.dart';
 
 import '../../../../exports.dart';
 
@@ -8,8 +10,16 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     ProfileCubit cubit = ProfileCubit.get(context);
-    return const Center(
-      child: Text('Profile'),
+    return Container(
+      color: Colors.grey.shade100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ProfileCover(cubit: cubit),
+          SizedBox(height: 20.h),
+          ProfileFeatures(cubit: cubit),
+        ],
+      ),
     );
   }
 }

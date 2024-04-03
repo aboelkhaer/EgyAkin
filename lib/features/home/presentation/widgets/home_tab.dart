@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:egy_akin/features/home/presentation/widgets/your_patient_section.dart';
 
 import '../../../../exports.dart';
 
@@ -14,7 +14,14 @@ class HomeTab extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       color: AppColors.primary,
-      onRefresh: () async => await cubit.getHome(),
+      onRefresh: () async {
+        await cubit.getHome();
+        if (cubit.scrollController.hasClients) {
+          cubit.scrollController.animateTo(0,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut);
+        }
+      },
       child: Column(
         children: [
           BlocConsumer<HomeCubit, HomeState>(
@@ -22,17 +29,20 @@ class HomeTab extends StatelessWidget {
               state.maybeWhen(
                 orElse: () {},
                 loaded: (homeData, currentDoctorModel, dotsPosition,
-                    notificationDataModel) {
+                    notificationDataModel, homeIndex) {
                   // context
                   // .read<NotificationCubit>()
                   // .fetchNotifications(notificationDataModel.data ?? []);
+                },
+                error: (message) {
+                  customSnackBar(message: message, context: context);
                 },
               );
             },
             builder: (context, state) {
               return state.maybeWhen(
                 loaded: (homeData, currentDoctorModel, dotsPosition,
-                    notificationData) {
+                    notificationData, homeIndex) {
                   return CheckIfVerified(
                     verified: homeData.verified!,
                   );
@@ -43,6 +53,8 @@ class HomeTab extends StatelessWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
+              controller: cubit.scrollController,
+              physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -51,7 +63,9 @@ class HomeTab extends StatelessWidget {
                   children: [
                     const HomeSearchBotton(),
                     PostsSliderAndDots(cubit: cubit),
-                    SizedBox(height: size.height * 0.5),
+                    SizedBox(height: 30.h),
+                    const YourPatientSection(),
+                    const AllPatientSection(),
                   ],
                 ),
               ),

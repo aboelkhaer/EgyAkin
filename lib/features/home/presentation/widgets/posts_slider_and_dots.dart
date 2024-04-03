@@ -22,7 +22,7 @@ class PostsSliderAndDots extends StatelessWidget {
                 );
               },
               loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData) {
+                  notificationData, homeIndex) {
                 return CarouselSlider.builder(
                   itemCount: homeData.data!.posts!.length,
                   carouselController: cubit.carouselController,
@@ -69,6 +69,8 @@ class PostsSliderAndDots extends StatelessWidget {
                                           imageUrl: homeData
                                               .data!.posts![index].image
                                               .toString(),
+                                          fadeInDuration:
+                                              const Duration(milliseconds: 300),
                                           width: size.width * 0.3,
                                           fadeInCurve: Curves.easeIn,
                                           fit: BoxFit.cover,
@@ -217,7 +219,7 @@ class PostsSliderAndDots extends StatelessWidget {
                 return const SizedBox.shrink();
               },
               loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData) {
+                  notificationData, homeIndex) {
                 return DotsIndicator(
                   dotsCount: homeData.data!.posts!.length,
                   position: cubit.dotsPosition,

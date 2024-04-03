@@ -12,6 +12,7 @@ abstract class HomeState with _$HomeState {
       HomeModelResponse homeData,
       DoctorModel currentDoctorModel,
       int dotsPosition,
-      NotificationModelResponse notificationDataModel) = _Loaded;
+      NotificationModelResponse notificationDataModel,
+      int homeIndex) = _Loaded;
   const factory HomeState.error(String message) = _Error;
 }

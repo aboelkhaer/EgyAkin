@@ -14,7 +14,10 @@ class HomeHeader extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         GestureDetector(
-          onTap: () => cubit.tabsController.jumpToTab(2),
+          onTap: () async {
+            cubit.tabsController.jumpToTab(2);
+            cubit.hideHomeHeader();
+          },
           child: Row(
             children: [
               Column(
@@ -57,7 +60,19 @@ class HomeHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      BlocBuilder<HomeCubit, HomeState>(
+                      BlocConsumer<HomeCubit, HomeState>(
+                        listener: (context, state) {
+                          state.maybeWhen(
+                            orElse: () {},
+                            loaded: (homeData, currentDoctorModel, dotsPosition,
+                                notificationDataModel, homeIndex) {
+                              context
+                                  .read<ProfileCubit>()
+                                  .getDoctorDataFromHomeCubit(
+                                      currentDoctorModel);
+                            },
+                          );
+                        },
                         builder: (context, state) {
                           return Text(
                             cubit.currentDoctorModel.firstName == null
@@ -79,8 +94,7 @@ class HomeHeader extends StatelessWidget {
                       BlocBuilder<HomeCubit, HomeState>(
                         builder: (context, state) {
                           return Text(
-                            cubit.currentDoctorModel.workingplace ??
-                                AppStrings.empty,
+                            cubit.currentDoctorModel.job ?? AppStrings.empty,
                             style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10.sp,

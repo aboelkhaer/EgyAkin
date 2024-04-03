@@ -21,10 +21,10 @@ class AppStrings {
   // static const String initialPassword = '';
 
   static const int splashDelay = 3;
-  static const int snackBarDelay = 3;
+  static const int snackBarDelay = 5;
   static const int delayForAPIRequestInMilliseconds = 300;
 
-  static const int apiTimeOut = 15;
+  static const int apiTimeOut = 50;
   static const int resendTimer = 5;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
@@ -46,6 +46,7 @@ class AppStrings {
       'Registeration Number (رقم القيد الخاص بالنقابة)';
   static const String workplace = 'Workplace';
   static const String job = 'Job';
+  static const String addComment = 'Add comment';
   static const String ok = 'OK';
   static const String age = 'Age';
   static const String phone = 'Phone';

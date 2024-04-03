@@ -9,17 +9,52 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          SizedBox(height: 50.h),
-          Container(
-            padding: const EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: Colors.grey.shade300,
-                ),
-              ),
-            ),
-            child: HomeHeader(cubit: cubit),
+          BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return Column(
+                    children: [
+                      SizedBox(height: 50.h),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        child: HomeHeader(cubit: cubit),
+                      ),
+                    ],
+                  );
+                },
+                loaded: (homeData, currentDoctorModel, dotsPosition,
+                    notificationDataModel, homeIndex) {
+                  if (homeIndex == 2) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    children: [
+                      SizedBox(height: 50.h),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        child: HomeHeader(cubit: cubit),
+                      ),
+                    ],
+                  );
+                },
+              );
+              // return cubit.hideHomeHeader(cubit);
+            },
           ),
           Expanded(
             child: PersistentTabView(
@@ -29,6 +64,9 @@ class HomeScreen extends StatelessWidget {
               screens: _buildScreens(
                 cubit,
               ),
+              onItemSelected: (value) {
+                cubit.hideHomeHeader();
+              },
               confineInSafeArea: true,
               backgroundColor: Colors.white,
               popAllScreensOnTapAnyTabs: true,

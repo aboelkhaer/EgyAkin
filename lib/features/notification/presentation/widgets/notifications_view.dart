@@ -13,7 +13,7 @@ class NotificationsView extends StatelessWidget {
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
-        itemCount: notificationsModel.length,
+        itemCount: 10,
         itemBuilder: (context, index) {
           return CheckNotificationType(
             notificationModel: notificationsModel[index],

@@ -1,6 +1,8 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/home/data/models/notification_model_response.dart';
-import 'package:egy_akin/features/notification/data/models/update_notification_model_response.dart';
+import 'package:egy_akin/features/profile/data/models/sign_out_model_response.dart';
+import 'package:egy_akin/features/profile/data/models/upload_profile_image_model_response.dart';
 import 'package:retrofit/http.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
@@ -9,10 +11,8 @@ part 'api_services.g.dart';
 abstract class ApiServices {
   factory ApiServices(Dio dio, {String baseUrl}) = _ApiServices;
 
-  @POST(ApiEndPoint.logout)
-  Future<LogoutModel> logout(
-    @Field("token") String token,
-  );
+  @POST(ApiEndPoint.signOut)
+  Future<SignOutModelResponse> signOut();
 
   @POST(ApiEndPoint.signIn)
   Future<AuthenticationModelResponse> signIn(
@@ -167,4 +167,10 @@ abstract class ApiServices {
 
   @GET(ApiEndPoint.home)
   Future<HomeModelResponse> getHome();
+
+  @POST(ApiEndPoint.uploadProfileImage)
+  @MultiPart()
+  Future<UploadProfileImageModelResponse> uploadProfileImage(
+    @Part() File image,
+  );
 }

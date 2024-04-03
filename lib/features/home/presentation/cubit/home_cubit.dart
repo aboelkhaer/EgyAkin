@@ -9,7 +9,7 @@ class HomeCubit extends Cubit<HomeState> {
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselController carouselController = CarouselController();
-
+  ScrollController scrollController = ScrollController();
   final GetHomeUsecase _getHomeUsecase;
   final GetNotificationsUsecase _getNotificationsUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
@@ -22,6 +22,24 @@ class HomeCubit extends Cubit<HomeState> {
     getNotifications();
   }
 
+  @override
+  Future<void> close() {
+    scrollController.dispose();
+    return super.close();
+  }
+
+  hideHomeHeader() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => HomeState.loaded(
+          value.homeData,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          notificationDataModel,
+          tabsController.index),
+    ));
+  }
+
   changeDotsPositions() {
     emit(
       state.maybeMap(
@@ -30,7 +48,8 @@ class HomeCubit extends Cubit<HomeState> {
               value.homeData,
               value.currentDoctorModel,
               dotsPosition,
-              value.notificationDataModel)),
+              value.notificationDataModel,
+              tabsController.index)),
     );
   }
 
@@ -44,8 +63,8 @@ class HomeCubit extends Cubit<HomeState> {
         emit(HomeState.error(l.message));
       },
       (homeData) async {
-        emit(HomeState.loaded(
-            homeData, currentDoctorModel, dotsPosition, notificationDataModel));
+        emit(HomeState.loaded(homeData, currentDoctorModel, dotsPosition,
+            notificationDataModel, tabsController.index));
       },
     );
   }
@@ -64,8 +83,12 @@ class HomeCubit extends Cubit<HomeState> {
         emit(
           state.maybeMap(
             orElse: () => state,
-            loaded: (value) => HomeState.loaded(value.homeData,
-                value.currentDoctorModel, value.dotsPosition, data),
+            loaded: (value) => HomeState.loaded(
+                value.homeData,
+                value.currentDoctorModel,
+                value.dotsPosition,
+                data,
+                tabsController.index),
           ),
         );
       },

@@ -15,6 +15,7 @@ abstract class LocalStorageProcess {
   Future<void> setDoctorData(DoctorModel doctorModel);
   Future<DoctorModel?> getDoctorData();
   Future<void> setBool(String key, bool value);
+  Future<void> updateDoctorImageData(String newImageUrl);
 }
 
 class AppPreferences implements LocalStorageProcess {
@@ -88,5 +89,22 @@ class AppPreferences implements LocalStorageProcess {
   Future<void> removeDoctorData() async {
     await _sharedPreferences.remove(AppLocalStrings.keyToken);
     await _sharedPreferences.remove(AppLocalStrings.doctorData);
+  }
+
+  @override
+  Future<void> updateDoctorImageData(String newImageUrl) async {
+    // Retrieve the doctor model from shared preferences
+    final doctorModelString =
+        _sharedPreferences.getString(AppLocalStrings.doctorData);
+    if (doctorModelString != null) {
+      final doctorMap = jsonDecode(doctorModelString) as Map<String, dynamic>;
+      final doctorModel = DoctorModel.fromJson(doctorMap);
+
+      // Update the image parameter in the doctor model
+      final updatedDoctorModel = doctorModel.copyWith(image: newImageUrl);
+
+      // Save the updated doctor model back to shared preferences
+      await setDoctorData(updatedDoctorModel);
+    }
   }
 }

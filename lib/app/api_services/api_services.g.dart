@@ -21,13 +21,13 @@ class _ApiServices implements ApiServices {
   String? baseUrl;
 
   @override
-  Future<LogoutModel> logout(String token) async {
+  Future<SignOutModelResponse> signOut() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = {'token': token};
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<LogoutModel>(Options(
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SignOutModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -43,7 +43,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = LogoutModel.fromJson(_result.data!);
+    final value = SignOutModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -994,6 +994,41 @@ class _ApiServices implements ApiServices {
               baseUrl,
             ))));
     final value = HomeModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UploadProfileImageModelResponse> uploadProfileImage(File image) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(MapEntry(
+      'image',
+      MultipartFile.fromFileSync(
+        image.path,
+        filename: image.path.split(Platform.pathSeparator).last,
+      ),
+    ));
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UploadProfileImageModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+            .compose(
+              _dio.options,
+              'https://egyakin.com/api/upload-profile-image',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = UploadProfileImageModelResponse.fromJson(_result.data!);
     return value;
   }
 

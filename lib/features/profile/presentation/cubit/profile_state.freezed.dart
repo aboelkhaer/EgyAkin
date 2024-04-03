@@ -20,7 +20,9 @@ mixin _$ProfileState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +30,9 @@ mixin _$ProfileState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +40,9 @@ mixin _$ProfileState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -45,6 +51,8 @@ mixin _$ProfileState {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) =>
@@ -53,6 +61,8 @@ mixin _$ProfileState {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) =>
@@ -61,6 +71,8 @@ mixin _$ProfileState {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -104,12 +116,18 @@ class __$$InitialImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$InitialImpl implements _Initial {
+class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'ProfileState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'ProfileState.initial'));
   }
 
   @override
@@ -126,7 +144,9 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -137,7 +157,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -148,7 +170,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -163,6 +187,8 @@ class _$InitialImpl implements _Initial {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -174,6 +200,8 @@ class _$InitialImpl implements _Initial {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -185,6 +213,8 @@ class _$InitialImpl implements _Initial {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -218,12 +248,18 @@ class __$$LoadingImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadingImpl implements _Loading {
+class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'ProfileState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'ProfileState.loading'));
   }
 
   @override
@@ -240,7 +276,9 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -251,7 +289,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -262,7 +302,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -277,6 +319,8 @@ class _$LoadingImpl implements _Loading {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -288,6 +332,8 @@ class _$LoadingImpl implements _Loading {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -299,6 +345,8 @@ class _$LoadingImpl implements _Loading {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -315,35 +363,43 @@ abstract class _Loading implements ProfileState {
 }
 
 /// @nodoc
-abstract class _$$LoadedImplCopyWith<$Res> {
-  factory _$$LoadedImplCopyWith(
-          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
-      __$$LoadedImplCopyWithImpl<$Res>;
+abstract class _$$SignOutLoadingImplCopyWith<$Res> {
+  factory _$$SignOutLoadingImplCopyWith(_$SignOutLoadingImpl value,
+          $Res Function(_$SignOutLoadingImpl) then) =
+      __$$SignOutLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$ProfileStateCopyWithImpl<$Res, _$LoadedImpl>
-    implements _$$LoadedImplCopyWith<$Res> {
-  __$$LoadedImplCopyWithImpl(
-      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
+class __$$SignOutLoadingImplCopyWithImpl<$Res>
+    extends _$ProfileStateCopyWithImpl<$Res, _$SignOutLoadingImpl>
+    implements _$$SignOutLoadingImplCopyWith<$Res> {
+  __$$SignOutLoadingImplCopyWithImpl(
+      _$SignOutLoadingImpl _value, $Res Function(_$SignOutLoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl();
+class _$SignOutLoadingImpl
+    with DiagnosticableTreeMixin
+    implements _SignOutLoading {
+  const _$SignOutLoadingImpl();
 
   @override
-  String toString() {
-    return 'ProfileState.loaded()';
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ProfileState.signOutLoading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'ProfileState.signOutLoading'));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadedImpl);
+        (other.runtimeType == runtimeType && other is _$SignOutLoadingImpl);
   }
 
   @override
@@ -354,10 +410,12 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded();
+    return signOutLoading();
   }
 
   @override
@@ -365,10 +423,12 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call();
+    return signOutLoading?.call();
   }
 
   @override
@@ -376,12 +436,14 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
-    if (loaded != null) {
-      return loaded();
+    if (signOutLoading != null) {
+      return signOutLoading();
     }
     return orElse();
   }
@@ -391,6 +453,313 @@ class _$LoadedImpl implements _Loaded {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return signOutLoading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return signOutLoading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (signOutLoading != null) {
+      return signOutLoading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignOutLoading implements ProfileState {
+  const factory _SignOutLoading() = _$SignOutLoadingImpl;
+}
+
+/// @nodoc
+abstract class _$$SignOutLoadedImplCopyWith<$Res> {
+  factory _$$SignOutLoadedImplCopyWith(
+          _$SignOutLoadedImpl value, $Res Function(_$SignOutLoadedImpl) then) =
+      __$$SignOutLoadedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$SignOutLoadedImplCopyWithImpl<$Res>
+    extends _$ProfileStateCopyWithImpl<$Res, _$SignOutLoadedImpl>
+    implements _$$SignOutLoadedImplCopyWith<$Res> {
+  __$$SignOutLoadedImplCopyWithImpl(
+      _$SignOutLoadedImpl _value, $Res Function(_$SignOutLoadedImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$SignOutLoadedImpl
+    with DiagnosticableTreeMixin
+    implements _SignOutLoaded {
+  const _$SignOutLoadedImpl();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ProfileState.signOutLoaded()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'ProfileState.signOutLoaded'));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$SignOutLoadedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(String message) error,
+  }) {
+    return signOutLoaded();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(String message)? error,
+  }) {
+    return signOutLoaded?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (signOutLoaded != null) {
+      return signOutLoaded();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return signOutLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return signOutLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (signOutLoaded != null) {
+      return signOutLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _SignOutLoaded implements ProfileState {
+  const factory _SignOutLoaded() = _$SignOutLoadedImpl;
+}
+
+/// @nodoc
+abstract class _$$LoadedImplCopyWith<$Res> {
+  factory _$$LoadedImplCopyWith(
+          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
+      __$$LoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({DoctorModel doctorModel});
+
+  $DoctorModelCopyWith<$Res> get doctorModel;
+}
+
+/// @nodoc
+class __$$LoadedImplCopyWithImpl<$Res>
+    extends _$ProfileStateCopyWithImpl<$Res, _$LoadedImpl>
+    implements _$$LoadedImplCopyWith<$Res> {
+  __$$LoadedImplCopyWithImpl(
+      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? doctorModel = null,
+  }) {
+    return _then(_$LoadedImpl(
+      null == doctorModel
+          ? _value.doctorModel
+          : doctorModel // ignore: cast_nullable_to_non_nullable
+              as DoctorModel,
+    ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $DoctorModelCopyWith<$Res> get doctorModel {
+    return $DoctorModelCopyWith<$Res>(_value.doctorModel, (value) {
+      return _then(_value.copyWith(doctorModel: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+  const _$LoadedImpl(this.doctorModel);
+
+  @override
+  final DoctorModel doctorModel;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ProfileState.loaded(doctorModel: $doctorModel)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ProfileState.loaded'))
+      ..add(DiagnosticsProperty('doctorModel', doctorModel));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoadedImpl &&
+            (identical(other.doctorModel, doctorModel) ||
+                other.doctorModel == doctorModel));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, doctorModel);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(String message) error,
+  }) {
+    return loaded(doctorModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(String message)? error,
+  }) {
+    return loaded?.call(doctorModel);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (loaded != null) {
+      return loaded(doctorModel);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -402,6 +771,8 @@ class _$LoadedImpl implements _Loaded {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -413,6 +784,8 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -425,7 +798,12 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements ProfileState {
-  const factory _Loaded() = _$LoadedImpl;
+  const factory _Loaded(final DoctorModel doctorModel) = _$LoadedImpl;
+
+  DoctorModel get doctorModel;
+  @JsonKey(ignore: true)
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -461,15 +839,23 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl implements _Error {
+class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'ProfileState.error(message: $message)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ProfileState.error'))
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -494,7 +880,9 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function() signOutLoading,
+    required TResult Function() signOutLoaded,
+    required TResult Function(DoctorModel doctorModel) loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -505,7 +893,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function()? signOutLoading,
+    TResult? Function()? signOutLoaded,
+    TResult? Function(DoctorModel doctorModel)? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -516,7 +906,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function()? signOutLoading,
+    TResult Function()? signOutLoaded,
+    TResult Function(DoctorModel doctorModel)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -531,6 +923,8 @@ class _$ErrorImpl implements _Error {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_SignOutLoading value) signOutLoading,
+    required TResult Function(_SignOutLoaded value) signOutLoaded,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -542,6 +936,8 @@ class _$ErrorImpl implements _Error {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_SignOutLoading value)? signOutLoading,
+    TResult? Function(_SignOutLoaded value)? signOutLoaded,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -553,6 +949,8 @@ class _$ErrorImpl implements _Error {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_SignOutLoading value)? signOutLoading,
+    TResult Function(_SignOutLoaded value)? signOutLoaded,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),

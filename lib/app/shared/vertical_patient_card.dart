@@ -27,12 +27,12 @@ class VerticalPatientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return Stack(
       children: [
         Card(
           color: Colors.white, // Backgrond color
           elevation: 0.8,
+
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -41,8 +41,12 @@ class VerticalPatientCard extends StatelessWidget {
             splashColor: AppColors.subBG, // Splash color
             onTap: onTap,
             child: Container(
-              width: size.width * 0.90,
-              padding: const EdgeInsets.all(16),
+              width: 325.w,
+              height: 135.h,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+
+              // padding: const EdgeInsets.all(16),
+
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -65,7 +69,7 @@ class VerticalPatientCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(width: 15),
+                            SizedBox(width: 12.w),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,21 +136,20 @@ class VerticalPatientCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 8.h),
                   const Divider(),
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        margin:
-                            EdgeInsets.symmetric(vertical: size.height * 0.01),
+                        margin: EdgeInsets.symmetric(vertical: 8.h),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Expanded(
                               child: SizedBox(
-                                height: 40,
+                                height: 28.h,
                                 child: isOutcomeStatus
                                     ? TextButton(
                                         onPressed: onOutcomeTap,
@@ -155,24 +158,25 @@ class VerticalPatientCard extends StatelessWidget {
                                               MaterialStateProperty.all(
                                                   Colors.transparent),
                                         ),
-                                        child: const Text('Outcome'),
+                                        child: const Text(AppStrings.outcome),
                                       )
                                     : CustomElevatedButton(
                                         onPressed: onOutcomeTap,
-                                        title: 'Outcome',
+                                        title: AppStrings.outcome,
                                         isDisable: !submitStatus,
                                         // isDisable:
                                         //     isOutcomeStatus && !submitStatus ? false : true,
                                       ),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 8.w),
                             Expanded(
                               child: SizedBox(
-                                height: 40,
+                                // height: 40,
+                                height: 28.h,
                                 child: CustomElevatedButton(
                                   onPressed: onAddCommentTap,
-                                  title: 'Add Comment',
+                                  title: AppStrings.addComment,
                                 ),
                               ),
                             ),
@@ -187,7 +191,8 @@ class VerticalPatientCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 0,
+          right: 2.w,
+          top: 2.h,
           child: Icon(
             submitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,
             color: submitStatus

@@ -3,7 +3,7 @@ class ApiEndPoint {
   static const home = '$baseUrl/api/home';
   static const signIn = '$baseUrl/api/login';
   static const register = '$baseUrl/api/register';
-  static const logout = '$baseUrl/api/logout';
+  static const signOut = '$baseUrl/api/logout';
   static const allPatients = '$baseUrl/api/allPatients';
   static const currentPatientsHome = '$baseUrl/api/currentPatients';
   static const search = '$baseUrl/api/patient/search';
@@ -28,4 +28,5 @@ class ApiEndPoint {
   static const changePassword = '$baseUrl/api/resetpassword';
   static const sendEmailVerification = '$baseUrl/api/sendverificationmail';
   static const emailVerificationOTP = '$baseUrl/api/emailverification';
+  static const uploadProfileImage = '$baseUrl/api/upload-profile-image';
 }

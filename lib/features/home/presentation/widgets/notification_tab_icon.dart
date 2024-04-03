@@ -18,7 +18,7 @@ class NotificationTabIcon extends StatelessWidget {
                 return const SizedBox.shrink();
               },
               loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData) {
+                  notificationData, homeIndex) {
                 return Positioned(
                   left: 0,
                   right: 10.w,

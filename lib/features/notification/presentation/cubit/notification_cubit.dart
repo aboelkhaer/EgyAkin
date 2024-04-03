@@ -11,11 +11,11 @@ class NotificationCubit extends Cubit<NotificationState> {
   final GetAllNotificationUsecase _getAllNotificationUsecase;
   static NotificationCubit get(context) => BlocProvider.of(context);
 
-  @override
-  Future<void> close() {
-    // updateNotification();
-    return super.close();
-  }
+  // @override
+  // Future<void> close() {
+  //   // updateNotification();
+  //   return super.close();
+  // }
 
   // onRefreshInicator() async {
   //   sl<HomeCubit>().getHome();

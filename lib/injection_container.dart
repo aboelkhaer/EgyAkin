@@ -1,15 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_cubit.dart';
-import 'package:egy_akin/features/home/data/repositories/home_repo_impl.dart';
-import 'package:egy_akin/features/home/domain/usecases/get_notifications_usecase.dart';
-import 'package:egy_akin/features/notification/data/datasources/notifications_datasource.dart';
-import 'package:egy_akin/features/notification/data/repositories/notification_repo_impl.dart';
-import 'package:egy_akin/features/notification/domain/repositories/notification_repo.dart';
-import 'package:egy_akin/features/notification/domain/usecases/get_all_notifications_usecase.dart';
-import 'package:egy_akin/features/notification/domain/usecases/update_notification_usecase.dart';
-import 'package:egy_akin/features/notification/presentation/cubit/notification_cubit.dart';
-import 'package:egy_akin/features/profile/presentation/cubit/profile_cubit.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -36,7 +25,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => HomeCubit(sl(), sl()));
   sl.registerFactory(() => EmailVerificationCubit());
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
-  sl.registerFactory(() => ProfileCubit());
+  sl.registerFactory(() => ProfileCubit(sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -46,6 +35,8 @@ Future<void> diInit() async {
   sl.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl(sl()));
   sl.registerLazySingleton<NotificationsDataSource>(
       () => NotificationsDataSourceImpl(sl()));
+  sl.registerLazySingleton<ProfileDataSource>(
+      () => ProfileDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -56,6 +47,8 @@ Future<void> diInit() async {
       () => HomeRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<NotificationRepository>(
       () => NotificationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -90,6 +83,13 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetAllNotificationUsecase>()) {
     sl.registerFactory<GetAllNotificationUsecase>(
         () => GetAllNotificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UploadProfileImageUsecase>()) {
+    sl.registerFactory<UploadProfileImageUsecase>(
+        () => UploadProfileImageUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SignOutUsecase>()) {
+    sl.registerFactory<SignOutUsecase>(() => SignOutUsecase(sl()));
   }
 }
 
