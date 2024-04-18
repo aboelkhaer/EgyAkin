@@ -43,7 +43,7 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       posts: (json['posts'] as List<dynamic>?)
-          ?.map((e) => PostHomeDataModel.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => PostModel.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
@@ -59,14 +59,12 @@ _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PatientHomeDataModelImpl(
       id: json['id'] as int?,
-      doctorId: json['doctor_id'] as String?,
       name: json['name'] as String?,
       hospital: json['hospital'] as String?,
       updatedAt: json['updated_at'] as String?,
       doctor: json['doctor'] == null
           ? null
-          : DoctorHomeDataModel.fromJson(
-              json['doctor'] as Map<String, dynamic>),
+          : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
       sections: json['sections'] == null
           ? null
           : SectionHomeDataModel.fromJson(
@@ -77,28 +75,11 @@ Map<String, dynamic> _$$PatientHomeDataModelImplToJson(
         _$PatientHomeDataModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'doctor_id': instance.doctorId,
       'name': instance.name,
       'hospital': instance.hospital,
       'updated_at': instance.updatedAt,
       'doctor': instance.doctor,
       'sections': instance.sections,
-    };
-
-_$DoctorHomeDataModelImpl _$$DoctorHomeDataModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DoctorHomeDataModelImpl(
-      id: json['id'] as int?,
-      firstName: json['name'] as String?,
-      lastName: json['lname'] as String?,
-    );
-
-Map<String, dynamic> _$$DoctorHomeDataModelImplToJson(
-        _$DoctorHomeDataModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.firstName,
-      'lname': instance.lastName,
     };
 
 _$SectionHomeDataModelImpl _$$SectionHomeDataModelImplFromJson(
@@ -115,33 +96,4 @@ Map<String, dynamic> _$$SectionHomeDataModelImplToJson(
       'patient_id': instance.patientId,
       'submit_status': instance.submitStatus,
       'outcome_status': instance.outcomeStatus,
-    };
-
-_$PostHomeDataModelImpl _$$PostHomeDataModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$PostHomeDataModelImpl(
-      id: json['id'] as int?,
-      title: json['title'] as String?,
-      content: json['content'] as String?,
-      image: json['image'] as String?,
-      hidden: json['hidden'] as bool?,
-      doctorId: json['doctor_id'] as String?,
-      updatedAt: json['updated_at'] as String?,
-      doctor: json['doctor'] == null
-          ? null
-          : DoctorHomeDataModel.fromJson(
-              json['doctor'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$$PostHomeDataModelImplToJson(
-        _$PostHomeDataModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'title': instance.title,
-      'content': instance.content,
-      'image': instance.image,
-      'hidden': instance.hidden,
-      'doctor_id': instance.doctorId,
-      'updated_at': instance.updatedAt,
-      'doctor': instance.doctor,
     };

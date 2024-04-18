@@ -22,11 +22,13 @@ class ApiEndPoint {
   static const postComments = '$baseUrl/api/Postcomments';
   static const notification = '$baseUrl/api/notification';
   static const getAllNotifications = '$baseUrl/api/shownotification';
+  static String getPaginatedNotifications(int pageNumber) =>
+      '/notifications?page=$pageNumber';
   static const forgetPassword = '$baseUrl/api/forgotpassword';
   static const resetPasswordVerification =
       '$baseUrl/api/resetpasswordverification';
   static const changePassword = '$baseUrl/api/resetpassword';
   static const sendEmailVerification = '$baseUrl/api/sendverificationmail';
-  static const emailVerificationOTP = '$baseUrl/api/emailverification';
+  static const sendOTPForEmailVerification = '$baseUrl/api/emailverification';
   static const uploadProfileImage = '$baseUrl/api/upload-profile-image';
 }

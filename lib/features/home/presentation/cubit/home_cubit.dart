@@ -1,17 +1,15 @@
-import 'package:egy_akin/features/home/domain/usecases/get_notifications_usecase.dart';
-
 import '../../../../exports.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit(this._getHomeUsecase, this._getNotificationsUsecase)
-      : super(const HomeState.initial());
+  HomeCubit(
+    this._getHomeUsecase,
+  ) : super(const HomeState.initial());
   static HomeCubit get(context) => BlocProvider.of(context);
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselController carouselController = CarouselController();
   ScrollController scrollController = ScrollController();
   final GetHomeUsecase _getHomeUsecase;
-  final GetNotificationsUsecase _getNotificationsUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
 
@@ -19,7 +17,6 @@ class HomeCubit extends Cubit<HomeState> {
     currentDoctorModel = (await sl<AppPreferences>().getDoctorData())!;
     emit(const HomeState.loading());
     getHome();
-    getNotifications();
   }
 
   @override
@@ -31,12 +28,8 @@ class HomeCubit extends Cubit<HomeState> {
   hideHomeHeader() {
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => HomeState.loaded(
-          value.homeData,
-          value.currentDoctorModel,
-          value.dotsPosition,
-          notificationDataModel,
-          tabsController.index),
+      loaded: (value) => HomeState.loaded(value.homeData,
+          value.currentDoctorModel, value.dotsPosition, tabsController.index),
     ));
   }
 
@@ -44,12 +37,8 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.maybeMap(
           orElse: () => state,
-          loaded: (value) => HomeState.loaded(
-              value.homeData,
-              value.currentDoctorModel,
-              dotsPosition,
-              value.notificationDataModel,
-              tabsController.index)),
+          loaded: (value) => HomeState.loaded(value.homeData,
+              value.currentDoctorModel, dotsPosition, tabsController.index)),
     );
   }
 
@@ -63,34 +52,8 @@ class HomeCubit extends Cubit<HomeState> {
         emit(HomeState.error(l.message));
       },
       (homeData) async {
-        emit(HomeState.loaded(homeData, currentDoctorModel, dotsPosition,
-            notificationDataModel, tabsController.index));
-      },
-    );
-  }
-
-  NotificationModelResponse notificationDataModel =
-      const NotificationModelResponse();
-
-  void getNotifications() async {
-    emit(const HomeState.loading());
-
-    final result = await _getNotificationsUsecase.excute(NoParams());
-    result.fold(
-      (l) => emit(HomeState.error(l.message)),
-      (data) {
-        notificationDataModel = data;
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => HomeState.loaded(
-                value.homeData,
-                value.currentDoctorModel,
-                value.dotsPosition,
-                data,
-                tabsController.index),
-          ),
-        );
+        emit(HomeState.loaded(
+            homeData, currentDoctorModel, dotsPosition, tabsController.index));
       },
     );
   }

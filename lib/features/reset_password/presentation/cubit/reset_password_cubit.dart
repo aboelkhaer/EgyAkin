@@ -15,8 +15,8 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   GlobalKey<FormState> secondStepFormKey = GlobalKey<FormState>();
   GlobalKey<FormState> thirdStepFormKey = GlobalKey<FormState>();
   String? pin1, pin2, pin3, pin4;
-  bool isOTPDone = false;
   bool isResendBottonShow = false;
+  bool isOTPDone = false;
   // bool isVerifyOTP = false;
   // FocusNode firstOTPFocusNode = FocusNode();
 

@@ -335,7 +335,7 @@ mixin _$HomeDataModelResponse {
   @JsonKey(name: 'current_patient')
   List<PatientHomeDataModel>? get currentPatients =>
       throw _privateConstructorUsedError;
-  List<PostHomeDataModel>? get posts => throw _privateConstructorUsedError;
+  List<PostModel>? get posts => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -353,7 +353,7 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       {@JsonKey(name: 'all_patients') List<PatientHomeDataModel>? allPatients,
       @JsonKey(name: 'current_patient')
       List<PatientHomeDataModel>? currentPatients,
-      List<PostHomeDataModel>? posts});
+      List<PostModel>? posts});
 }
 
 /// @nodoc
@@ -386,7 +386,7 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
       posts: freezed == posts
           ? _value.posts
           : posts // ignore: cast_nullable_to_non_nullable
-              as List<PostHomeDataModel>?,
+              as List<PostModel>?,
     ) as $Val);
   }
 }
@@ -404,7 +404,7 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       {@JsonKey(name: 'all_patients') List<PatientHomeDataModel>? allPatients,
       @JsonKey(name: 'current_patient')
       List<PatientHomeDataModel>? currentPatients,
-      List<PostHomeDataModel>? posts});
+      List<PostModel>? posts});
 }
 
 /// @nodoc
@@ -435,7 +435,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
       posts: freezed == posts
           ? _value._posts
           : posts // ignore: cast_nullable_to_non_nullable
-              as List<PostHomeDataModel>?,
+              as List<PostModel>?,
     ));
   }
 }
@@ -450,7 +450,7 @@ class _$HomeDataModelResponseImpl
       final List<PatientHomeDataModel>? allPatients,
       @JsonKey(name: 'current_patient')
       final List<PatientHomeDataModel>? currentPatients,
-      final List<PostHomeDataModel>? posts})
+      final List<PostModel>? posts})
       : _allPatients = allPatients,
         _currentPatients = currentPatients,
         _posts = posts;
@@ -480,9 +480,9 @@ class _$HomeDataModelResponseImpl
     return EqualUnmodifiableListView(value);
   }
 
-  final List<PostHomeDataModel>? _posts;
+  final List<PostModel>? _posts;
   @override
-  List<PostHomeDataModel>? get posts {
+  List<PostModel>? get posts {
     final value = _posts;
     if (value == null) return null;
     if (_posts is EqualUnmodifiableListView) return _posts;
@@ -546,7 +546,7 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
       final List<PatientHomeDataModel>? allPatients,
       @JsonKey(name: 'current_patient')
       final List<PatientHomeDataModel>? currentPatients,
-      final List<PostHomeDataModel>? posts}) = _$HomeDataModelResponseImpl;
+      final List<PostModel>? posts}) = _$HomeDataModelResponseImpl;
 
   factory _HomeDataModelResponse.fromJson(Map<String, dynamic> json) =
       _$HomeDataModelResponseImpl.fromJson;
@@ -558,7 +558,7 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   @JsonKey(name: 'current_patient')
   List<PatientHomeDataModel>? get currentPatients;
   @override
-  List<PostHomeDataModel>? get posts;
+  List<PostModel>? get posts;
   @override
   @JsonKey(ignore: true)
   _$$HomeDataModelResponseImplCopyWith<_$HomeDataModelResponseImpl>
@@ -572,13 +572,11 @@ PatientHomeDataModel _$PatientHomeDataModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$PatientHomeDataModel {
   int? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'doctor_id')
-  String? get doctorId => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get hospital => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
-  DoctorHomeDataModel? get doctor => throw _privateConstructorUsedError;
+  DoctorModel? get doctor => throw _privateConstructorUsedError;
   SectionHomeDataModel? get sections => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -595,14 +593,13 @@ abstract class $PatientHomeDataModelCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'doctor_id') String? doctorId,
       String? name,
       String? hospital,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      DoctorHomeDataModel? doctor,
+      DoctorModel? doctor,
       SectionHomeDataModel? sections});
 
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor;
+  $DoctorModelCopyWith<$Res>? get doctor;
   $SectionHomeDataModelCopyWith<$Res>? get sections;
 }
 
@@ -621,7 +618,6 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? id = freezed,
-    Object? doctorId = freezed,
     Object? name = freezed,
     Object? hospital = freezed,
     Object? updatedAt = freezed,
@@ -633,10 +629,6 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      doctorId: freezed == doctorId
-          ? _value.doctorId
-          : doctorId // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -652,7 +644,7 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorHomeDataModel?,
+              as DoctorModel?,
       sections: freezed == sections
           ? _value.sections
           : sections // ignore: cast_nullable_to_non_nullable
@@ -662,12 +654,12 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
 
   @override
   @pragma('vm:prefer-inline')
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor {
+  $DoctorModelCopyWith<$Res>? get doctor {
     if (_value.doctor == null) {
       return null;
     }
 
-    return $DoctorHomeDataModelCopyWith<$Res>(_value.doctor!, (value) {
+    return $DoctorModelCopyWith<$Res>(_value.doctor!, (value) {
       return _then(_value.copyWith(doctor: value) as $Val);
     });
   }
@@ -695,15 +687,14 @@ abstract class _$$PatientHomeDataModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'doctor_id') String? doctorId,
       String? name,
       String? hospital,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      DoctorHomeDataModel? doctor,
+      DoctorModel? doctor,
       SectionHomeDataModel? sections});
 
   @override
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor;
+  $DoctorModelCopyWith<$Res>? get doctor;
   @override
   $SectionHomeDataModelCopyWith<$Res>? get sections;
 }
@@ -720,7 +711,6 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = freezed,
-    Object? doctorId = freezed,
     Object? name = freezed,
     Object? hospital = freezed,
     Object? updatedAt = freezed,
@@ -732,10 +722,6 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as int?,
-      doctorId: freezed == doctorId
-          ? _value.doctorId
-          : doctorId // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -751,7 +737,7 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorHomeDataModel?,
+              as DoctorModel?,
       sections: freezed == sections
           ? _value.sections
           : sections // ignore: cast_nullable_to_non_nullable
@@ -767,7 +753,6 @@ class _$PatientHomeDataModelImpl
     implements _PatientHomeDataModel {
   const _$PatientHomeDataModelImpl(
       {this.id,
-      @JsonKey(name: 'doctor_id') this.doctorId,
       this.name,
       this.hospital,
       @JsonKey(name: 'updated_at') this.updatedAt,
@@ -780,9 +765,6 @@ class _$PatientHomeDataModelImpl
   @override
   final int? id;
   @override
-  @JsonKey(name: 'doctor_id')
-  final String? doctorId;
-  @override
   final String? name;
   @override
   final String? hospital;
@@ -790,13 +772,13 @@ class _$PatientHomeDataModelImpl
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
-  final DoctorHomeDataModel? doctor;
+  final DoctorModel? doctor;
   @override
   final SectionHomeDataModel? sections;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientHomeDataModel(id: $id, doctorId: $doctorId, name: $name, hospital: $hospital, updatedAt: $updatedAt, doctor: $doctor, sections: $sections)';
+    return 'PatientHomeDataModel(id: $id, name: $name, hospital: $hospital, updatedAt: $updatedAt, doctor: $doctor, sections: $sections)';
   }
 
   @override
@@ -805,7 +787,6 @@ class _$PatientHomeDataModelImpl
     properties
       ..add(DiagnosticsProperty('type', 'PatientHomeDataModel'))
       ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('doctorId', doctorId))
       ..add(DiagnosticsProperty('name', name))
       ..add(DiagnosticsProperty('hospital', hospital))
       ..add(DiagnosticsProperty('updatedAt', updatedAt))
@@ -819,8 +800,6 @@ class _$PatientHomeDataModelImpl
         (other.runtimeType == runtimeType &&
             other is _$PatientHomeDataModelImpl &&
             (identical(other.id, id) || other.id == id) &&
-            (identical(other.doctorId, doctorId) ||
-                other.doctorId == doctorId) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.hospital, hospital) ||
                 other.hospital == hospital) &&
@@ -833,8 +812,8 @@ class _$PatientHomeDataModelImpl
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, doctorId, name, hospital, updatedAt, doctor, sections);
+  int get hashCode =>
+      Object.hash(runtimeType, id, name, hospital, updatedAt, doctor, sections);
 
   @JsonKey(ignore: true)
   @override
@@ -855,11 +834,10 @@ class _$PatientHomeDataModelImpl
 abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   const factory _PatientHomeDataModel(
       {final int? id,
-      @JsonKey(name: 'doctor_id') final String? doctorId,
       final String? name,
       final String? hospital,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      final DoctorHomeDataModel? doctor,
+      final DoctorModel? doctor,
       final SectionHomeDataModel? sections}) = _$PatientHomeDataModelImpl;
 
   factory _PatientHomeDataModel.fromJson(Map<String, dynamic> json) =
@@ -868,9 +846,6 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   @override
   int? get id;
   @override
-  @JsonKey(name: 'doctor_id')
-  String? get doctorId;
-  @override
   String? get name;
   @override
   String? get hospital;
@@ -878,215 +853,13 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
   @override
-  DoctorHomeDataModel? get doctor;
+  DoctorModel? get doctor;
   @override
   SectionHomeDataModel? get sections;
   @override
   @JsonKey(ignore: true)
   _$$PatientHomeDataModelImplCopyWith<_$PatientHomeDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
-}
-
-DoctorHomeDataModel _$DoctorHomeDataModelFromJson(Map<String, dynamic> json) {
-  return _DoctorHomeDataModel.fromJson(json);
-}
-
-/// @nodoc
-mixin _$DoctorHomeDataModel {
-  int? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
-  String? get firstName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'lname')
-  String? get lastName => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $DoctorHomeDataModelCopyWith<DoctorHomeDataModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DoctorHomeDataModelCopyWith<$Res> {
-  factory $DoctorHomeDataModelCopyWith(
-          DoctorHomeDataModel value, $Res Function(DoctorHomeDataModel) then) =
-      _$DoctorHomeDataModelCopyWithImpl<$Res, DoctorHomeDataModel>;
-  @useResult
-  $Res call(
-      {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName});
-}
-
-/// @nodoc
-class _$DoctorHomeDataModelCopyWithImpl<$Res, $Val extends DoctorHomeDataModel>
-    implements $DoctorHomeDataModelCopyWith<$Res> {
-  _$DoctorHomeDataModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$DoctorHomeDataModelImplCopyWith<$Res>
-    implements $DoctorHomeDataModelCopyWith<$Res> {
-  factory _$$DoctorHomeDataModelImplCopyWith(_$DoctorHomeDataModelImpl value,
-          $Res Function(_$DoctorHomeDataModelImpl) then) =
-      __$$DoctorHomeDataModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName});
-}
-
-/// @nodoc
-class __$$DoctorHomeDataModelImplCopyWithImpl<$Res>
-    extends _$DoctorHomeDataModelCopyWithImpl<$Res, _$DoctorHomeDataModelImpl>
-    implements _$$DoctorHomeDataModelImplCopyWith<$Res> {
-  __$$DoctorHomeDataModelImplCopyWithImpl(_$DoctorHomeDataModelImpl _value,
-      $Res Function(_$DoctorHomeDataModelImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-  }) {
-    return _then(_$DoctorHomeDataModelImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$DoctorHomeDataModelImpl
-    with DiagnosticableTreeMixin
-    implements _DoctorHomeDataModel {
-  const _$DoctorHomeDataModelImpl(
-      {this.id,
-      @JsonKey(name: 'name') this.firstName,
-      @JsonKey(name: 'lname') this.lastName});
-
-  factory _$DoctorHomeDataModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$DoctorHomeDataModelImplFromJson(json);
-
-  @override
-  final int? id;
-  @override
-  @JsonKey(name: 'name')
-  final String? firstName;
-  @override
-  @JsonKey(name: 'lname')
-  final String? lastName;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorHomeDataModel(id: $id, firstName: $firstName, lastName: $lastName)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DoctorHomeDataModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('firstName', firstName))
-      ..add(DiagnosticsProperty('lastName', lastName));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DoctorHomeDataModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.firstName, firstName) ||
-                other.firstName == firstName) &&
-            (identical(other.lastName, lastName) ||
-                other.lastName == lastName));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, id, firstName, lastName);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$DoctorHomeDataModelImplCopyWith<_$DoctorHomeDataModelImpl> get copyWith =>
-      __$$DoctorHomeDataModelImplCopyWithImpl<_$DoctorHomeDataModelImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DoctorHomeDataModelImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _DoctorHomeDataModel implements DoctorHomeDataModel {
-  const factory _DoctorHomeDataModel(
-          {final int? id,
-          @JsonKey(name: 'name') final String? firstName,
-          @JsonKey(name: 'lname') final String? lastName}) =
-      _$DoctorHomeDataModelImpl;
-
-  factory _DoctorHomeDataModel.fromJson(Map<String, dynamic> json) =
-      _$DoctorHomeDataModelImpl.fromJson;
-
-  @override
-  int? get id;
-  @override
-  @JsonKey(name: 'name')
-  String? get firstName;
-  @override
-  @JsonKey(name: 'lname')
-  String? get lastName;
-  @override
-  @JsonKey(ignore: true)
-  _$$DoctorHomeDataModelImplCopyWith<_$DoctorHomeDataModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 SectionHomeDataModel _$SectionHomeDataModelFromJson(Map<String, dynamic> json) {
@@ -1296,328 +1069,4 @@ abstract class _SectionHomeDataModel implements SectionHomeDataModel {
   @JsonKey(ignore: true)
   _$$SectionHomeDataModelImplCopyWith<_$SectionHomeDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
-}
-
-PostHomeDataModel _$PostHomeDataModelFromJson(Map<String, dynamic> json) {
-  return _PostHomeDataModel.fromJson(json);
-}
-
-/// @nodoc
-mixin _$PostHomeDataModel {
-  int? get id => throw _privateConstructorUsedError;
-  String? get title => throw _privateConstructorUsedError;
-  String? get content => throw _privateConstructorUsedError;
-  String? get image => throw _privateConstructorUsedError;
-  bool? get hidden => throw _privateConstructorUsedError;
-  @JsonKey(name: 'doctor_id')
-  String? get doctorId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'updated_at')
-  String? get updatedAt => throw _privateConstructorUsedError;
-  DoctorHomeDataModel? get doctor => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $PostHomeDataModelCopyWith<PostHomeDataModel> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $PostHomeDataModelCopyWith<$Res> {
-  factory $PostHomeDataModelCopyWith(
-          PostHomeDataModel value, $Res Function(PostHomeDataModel) then) =
-      _$PostHomeDataModelCopyWithImpl<$Res, PostHomeDataModel>;
-  @useResult
-  $Res call(
-      {int? id,
-      String? title,
-      String? content,
-      String? image,
-      bool? hidden,
-      @JsonKey(name: 'doctor_id') String? doctorId,
-      @JsonKey(name: 'updated_at') String? updatedAt,
-      DoctorHomeDataModel? doctor});
-
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor;
-}
-
-/// @nodoc
-class _$PostHomeDataModelCopyWithImpl<$Res, $Val extends PostHomeDataModel>
-    implements $PostHomeDataModelCopyWith<$Res> {
-  _$PostHomeDataModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = freezed,
-    Object? content = freezed,
-    Object? image = freezed,
-    Object? hidden = freezed,
-    Object? doctorId = freezed,
-    Object? updatedAt = freezed,
-    Object? doctor = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
-      content: freezed == content
-          ? _value.content
-          : content // ignore: cast_nullable_to_non_nullable
-              as String?,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String?,
-      hidden: freezed == hidden
-          ? _value.hidden
-          : hidden // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      doctorId: freezed == doctorId
-          ? _value.doctorId
-          : doctorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      doctor: freezed == doctor
-          ? _value.doctor
-          : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorHomeDataModel?,
-    ) as $Val);
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor {
-    if (_value.doctor == null) {
-      return null;
-    }
-
-    return $DoctorHomeDataModelCopyWith<$Res>(_value.doctor!, (value) {
-      return _then(_value.copyWith(doctor: value) as $Val);
-    });
-  }
-}
-
-/// @nodoc
-abstract class _$$PostHomeDataModelImplCopyWith<$Res>
-    implements $PostHomeDataModelCopyWith<$Res> {
-  factory _$$PostHomeDataModelImplCopyWith(_$PostHomeDataModelImpl value,
-          $Res Function(_$PostHomeDataModelImpl) then) =
-      __$$PostHomeDataModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int? id,
-      String? title,
-      String? content,
-      String? image,
-      bool? hidden,
-      @JsonKey(name: 'doctor_id') String? doctorId,
-      @JsonKey(name: 'updated_at') String? updatedAt,
-      DoctorHomeDataModel? doctor});
-
-  @override
-  $DoctorHomeDataModelCopyWith<$Res>? get doctor;
-}
-
-/// @nodoc
-class __$$PostHomeDataModelImplCopyWithImpl<$Res>
-    extends _$PostHomeDataModelCopyWithImpl<$Res, _$PostHomeDataModelImpl>
-    implements _$$PostHomeDataModelImplCopyWith<$Res> {
-  __$$PostHomeDataModelImplCopyWithImpl(_$PostHomeDataModelImpl _value,
-      $Res Function(_$PostHomeDataModelImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? title = freezed,
-    Object? content = freezed,
-    Object? image = freezed,
-    Object? hidden = freezed,
-    Object? doctorId = freezed,
-    Object? updatedAt = freezed,
-    Object? doctor = freezed,
-  }) {
-    return _then(_$PostHomeDataModelImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      title: freezed == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String?,
-      content: freezed == content
-          ? _value.content
-          : content // ignore: cast_nullable_to_non_nullable
-              as String?,
-      image: freezed == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
-              as String?,
-      hidden: freezed == hidden
-          ? _value.hidden
-          : hidden // ignore: cast_nullable_to_non_nullable
-              as bool?,
-      doctorId: freezed == doctorId
-          ? _value.doctorId
-          : doctorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
-      doctor: freezed == doctor
-          ? _value.doctor
-          : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorHomeDataModel?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$PostHomeDataModelImpl
-    with DiagnosticableTreeMixin
-    implements _PostHomeDataModel {
-  const _$PostHomeDataModelImpl(
-      {this.id,
-      this.title,
-      this.content,
-      this.image,
-      this.hidden,
-      @JsonKey(name: 'doctor_id') this.doctorId,
-      @JsonKey(name: 'updated_at') this.updatedAt,
-      this.doctor});
-
-  factory _$PostHomeDataModelImpl.fromJson(Map<String, dynamic> json) =>
-      _$$PostHomeDataModelImplFromJson(json);
-
-  @override
-  final int? id;
-  @override
-  final String? title;
-  @override
-  final String? content;
-  @override
-  final String? image;
-  @override
-  final bool? hidden;
-  @override
-  @JsonKey(name: 'doctor_id')
-  final String? doctorId;
-  @override
-  @JsonKey(name: 'updated_at')
-  final String? updatedAt;
-  @override
-  final DoctorHomeDataModel? doctor;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PostHomeDataModel(id: $id, title: $title, content: $content, image: $image, hidden: $hidden, doctorId: $doctorId, updatedAt: $updatedAt, doctor: $doctor)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PostHomeDataModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('content', content))
-      ..add(DiagnosticsProperty('image', image))
-      ..add(DiagnosticsProperty('hidden', hidden))
-      ..add(DiagnosticsProperty('doctorId', doctorId))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('doctor', doctor));
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$PostHomeDataModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.title, title) || other.title == title) &&
-            (identical(other.content, content) || other.content == content) &&
-            (identical(other.image, image) || other.image == image) &&
-            (identical(other.hidden, hidden) || other.hidden == hidden) &&
-            (identical(other.doctorId, doctorId) ||
-                other.doctorId == doctorId) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
-            (identical(other.doctor, doctor) || other.doctor == doctor));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode => Object.hash(runtimeType, id, title, content, image,
-      hidden, doctorId, updatedAt, doctor);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$PostHomeDataModelImplCopyWith<_$PostHomeDataModelImpl> get copyWith =>
-      __$$PostHomeDataModelImplCopyWithImpl<_$PostHomeDataModelImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$PostHomeDataModelImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _PostHomeDataModel implements PostHomeDataModel {
-  const factory _PostHomeDataModel(
-      {final int? id,
-      final String? title,
-      final String? content,
-      final String? image,
-      final bool? hidden,
-      @JsonKey(name: 'doctor_id') final String? doctorId,
-      @JsonKey(name: 'updated_at') final String? updatedAt,
-      final DoctorHomeDataModel? doctor}) = _$PostHomeDataModelImpl;
-
-  factory _PostHomeDataModel.fromJson(Map<String, dynamic> json) =
-      _$PostHomeDataModelImpl.fromJson;
-
-  @override
-  int? get id;
-  @override
-  String? get title;
-  @override
-  String? get content;
-  @override
-  String? get image;
-  @override
-  bool? get hidden;
-  @override
-  @JsonKey(name: 'doctor_id')
-  String? get doctorId;
-  @override
-  @JsonKey(name: 'updated_at')
-  String? get updatedAt;
-  @override
-  DoctorHomeDataModel? get doctor;
-  @override
-  @JsonKey(ignore: true)
-  _$$PostHomeDataModelImplCopyWith<_$PostHomeDataModelImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }

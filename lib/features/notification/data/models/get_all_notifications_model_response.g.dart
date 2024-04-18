@@ -16,10 +16,10 @@ _$GetAllNotificationsModelResponseImpl
               ?.map(
                   (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
               .toList(),
-          recentRecords: (json['recentRecords'] as List<dynamic>?)
-              ?.map(
-                  (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
-              .toList(),
+          recentRecords: json['recentRecords'] == null
+              ? null
+              : RecentNotificationForPagenationModel.fromJson(
+                  json['recentRecords'] as Map<String, dynamic>),
         );
 
 Map<String, dynamic> _$$GetAllNotificationsModelResponseImplToJson(
@@ -29,6 +29,48 @@ Map<String, dynamic> _$$GetAllNotificationsModelResponseImplToJson(
       'unreadCount': instance.unreadCount,
       'todayRecords': instance.todayRecords,
       'recentRecords': instance.recentRecords,
+    };
+
+_$RecentNotificationForPagenationModelImpl
+    _$$RecentNotificationForPagenationModelImplFromJson(
+            Map<String, dynamic> json) =>
+        _$RecentNotificationForPagenationModelImpl(
+          currentPage: json['current_page'] as int?,
+          data: (json['data'] as List<dynamic>?)
+              ?.map(
+                  (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          firstPageUrl: json['first_page_url'] as String?,
+          from: json['from'] as int?,
+          lastPage: json['last_page'] as int?,
+          lastPageUrl: json['last_page_url'] as String?,
+          links: (json['links'] as List<dynamic>?)
+              ?.map((e) => Link.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          nextPageUrl: json['next_page_url'] as String?,
+          path: json['path'] as String?,
+          perPage: json['perPage'] as int?,
+          prevPageUrl: json['prev_page_url'] as String?,
+          to: json['to'] as int?,
+          total: json['total'] as int?,
+        );
+
+Map<String, dynamic> _$$RecentNotificationForPagenationModelImplToJson(
+        _$RecentNotificationForPagenationModelImpl instance) =>
+    <String, dynamic>{
+      'current_page': instance.currentPage,
+      'data': instance.data,
+      'first_page_url': instance.firstPageUrl,
+      'from': instance.from,
+      'last_page': instance.lastPage,
+      'last_page_url': instance.lastPageUrl,
+      'links': instance.links,
+      'next_page_url': instance.nextPageUrl,
+      'path': instance.path,
+      'perPage': instance.perPage,
+      'prev_page_url': instance.prevPageUrl,
+      'to': instance.to,
+      'total': instance.total,
     };
 
 _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
@@ -116,4 +158,17 @@ Map<String, dynamic> _$$SectionsNotificationDataModelImplToJson(
       'submit_status': instance.submitStatus,
       'outcome_status': instance.outcomeStatus,
       'workingplace': instance.workingplace,
+    };
+
+_$LinkImpl _$$LinkImplFromJson(Map<String, dynamic> json) => _$LinkImpl(
+      url: json['url'],
+      label: json['label'] as String,
+      active: json['active'] as bool,
+    );
+
+Map<String, dynamic> _$$LinkImplToJson(_$LinkImpl instance) =>
+    <String, dynamic>{
+      'url': instance.url,
+      'label': instance.label,
+      'active': instance.active,
     };

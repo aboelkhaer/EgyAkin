@@ -1,6 +1,3 @@
-import 'package:egy_akin/features/notification/domain/usecases/get_all_notifications_usecase.dart';
-import 'package:egy_akin/features/notification/domain/usecases/update_notification_usecase.dart';
-
 import '../../../../exports.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
@@ -29,6 +26,11 @@ class NotificationCubit extends Cubit<NotificationState> {
   //   // Update state with received notifications
   //   emit(NotificationState.loaded(notifications));
   // }
+  // @override
+  // Future<void> close() {
+  //   scrollController.dispose();
+  //   return super.close();
+  // }
 
   updateNotification() async {
     final result = await _updateNotificationUsecase.excute(NoParams());
@@ -40,23 +42,63 @@ class NotificationCubit extends Cubit<NotificationState> {
       (r) async {
         emit(state.maybeMap(
           orElse: () => state,
-          loaded: (value) => NotificationState.loaded(value.notificationData),
+          loaded: (value) =>
+              NotificationState.loaded(value.notificationData, false),
         ));
       },
     );
   }
 
+  int _currentPage = 1;
+
   getAllNotifications() async {
     emit(const NotificationState.loading());
-    final result = await _getAllNotificationUsecase.excute(NoParams());
+    final result = await _getAllNotificationUsecase.excute(_currentPage);
 
     result.fold(
       (l) {
         emit(NotificationState.error(l.message));
       },
       (notificationData) async {
-        emit(NotificationState.loaded(notificationData));
-        // updateNotification();
+        emit(NotificationState.loaded(notificationData, false));
+      },
+    );
+  }
+
+  bool isLoadingMoreForScroll = false;
+  final ScrollController scrollController = ScrollController();
+
+  void loadMoreNotifications() async {
+    _currentPage++;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => NotificationState.loaded(value.notificationData, true),
+    ));
+    final result = await _getAllNotificationUsecase.excute(_currentPage);
+    result.fold(
+      (l) {
+        _currentPage--;
+        emit(NotificationState.error(l.message));
+      },
+      (loadMoreNotifications) async {
+        final currentState = state;
+        currentState.when(
+          initial: () {},
+          loading: () {},
+          loaded: (notificationData, isSeeMore) {
+            final updatedData = notificationData.copyWith(
+              recentRecords: notificationData.recentRecords!.copyWith(
+                data: [
+                  ...notificationData.recentRecords!.data!,
+                  ...loadMoreNotifications.recentRecords!.data!
+                ],
+              ),
+            );
+            isLoadingMoreForScroll = false;
+            emit(NotificationState.loaded(updatedData, false));
+          },
+          error: (error) {},
+        );
       },
     );
   }

@@ -1,6 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
+import 'package:egy_akin/features/email_verification/data/models/send_email_for_verification_model_response.dart';
+import 'package:egy_akin/features/email_verification/data/models/send_otp_for_email_verification_model_response.dart';
+import 'package:egy_akin/features/post_details/data/models/add_comment_on_post_model_response.dart';
 import 'package:egy_akin/features/profile/data/models/sign_out_model_response.dart';
 import 'package:egy_akin/features/profile/data/models/upload_profile_image_model_response.dart';
 import 'package:retrofit/http.dart';
@@ -74,7 +78,8 @@ abstract class ApiServices {
     @Body() Map<String, dynamic> map,
   );
   @GET('${ApiEndPoint.getAddPatientsQuestions}/{sectionId}')
-  Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
+  Future<GetPatientHistoryForAddPatientModelResponse>
+      getPatientHistoryForAddPatient(
     @Path("sectionId") String sectionId,
   );
   @POST(ApiEndPoint.addPatientForFirstTime)
@@ -121,19 +126,20 @@ abstract class ApiServices {
   Future<GetPostsModelResponse> getHomePosts();
 
   @GET('${ApiEndPoint.postComments}/{postId}')
-  Future<GetPostCommentsModelResponse> getHomePostComments(
+  Future<PostCommentsModelResponse> getPostComments(
     @Path("postId") String postId,
   );
   @DELETE('${ApiEndPoint.postComments}/{commentId}')
   Future<DeletePostCommentModelResponse> deletePostComment(
-    @Path("commentId") String postId,
+    @Path("commentId") String commentId,
   );
 
-  @GET(ApiEndPoint.notification)
-  Future<NotificationModelResponse> getNotifications();
+  // @GET(ApiEndPoint.notification)
+  // Future<NotificationModelResponse> getNotifications();
 
   @GET(ApiEndPoint.getAllNotifications)
-  Future<GetAllNotificationsModelResponse> getAllNotifications();
+  Future<GetAllNotificationsModelResponse> getAllNotifications(
+      @Query('page') int pageNumber);
 
   @PUT(ApiEndPoint.notification)
   Future<UpdateNotificationModelResponse> updateNotifications();
@@ -143,6 +149,7 @@ abstract class ApiServices {
     @Field("post_id") String postId,
     @Field("content") String content,
   );
+
   @POST(ApiEndPoint.forgetPassword)
   Future<ResetPasswordModelResponse> sendEmailForForgetPassword(
     @Field("email") String email,
@@ -158,10 +165,10 @@ abstract class ApiServices {
     @Field("password") String newPassword,
   );
   @POST(ApiEndPoint.sendEmailVerification)
-  Future<SendEmailVerificationModelResponse> sendEmailVerification();
+  Future<SendEmailForVerificationModelResponse> sendEmailVerification();
 
-  @POST(ApiEndPoint.emailVerificationOTP)
-  Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
+  @POST(ApiEndPoint.sendOTPForEmailVerification)
+  Future<SendOTPForEmailVerificationModelResponse> sendOTPForEmailVerification(
     @Field("otp") String otp,
   );
 

@@ -1,3 +1,5 @@
+import 'package:egy_akin/main.dart';
+
 import '../../../../exports.dart';
 
 class CheckIfVerified extends StatelessWidget {
@@ -11,7 +13,8 @@ class CheckIfVerified extends StatelessWidget {
     } else {
       return GestureDetector(
         onTap: () {
-          Navigator.of(context).pushNamed(AppRoutes.emailVerification);
+          navigatorKey.currentState?.pushNamed(AppRoutes.emailVerification,
+              arguments: context.read<HomeCubit>().currentDoctorModel);
         },
         child: Container(
           width: double.infinity,

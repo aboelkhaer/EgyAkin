@@ -22,20 +22,4 @@ class HomeRepositoryImpl extends HomeRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
-
-  @override
-  Future<Either<Failure, NotificationModelResponse>> getNotifications() async {
-    if (await networkInfo.isConnected) {
-      try {
-        await Future.delayed(const Duration(
-            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await homeDataSource.getNotifications();
-        return Right(response);
-      } catch (error) {
-        debugPrint(error.toString());
-        return Left(ErrorHandler.handle(error).failure);
-      }
-    }
-    return Left(DataSource.noInternetConnection.getFailure());
-  }
 }

@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/home/presentation/widgets/your_patient_section.dart';
-
 import '../../../../exports.dart';
 
 class HomeTab extends StatelessWidget {
@@ -28,8 +26,8 @@ class HomeTab extends StatelessWidget {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
-                loaded: (homeData, currentDoctorModel, dotsPosition,
-                    notificationDataModel, homeIndex) {
+                loaded:
+                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                   // context
                   // .read<NotificationCubit>()
                   // .fetchNotifications(notificationDataModel.data ?? []);
@@ -41,8 +39,8 @@ class HomeTab extends StatelessWidget {
             },
             builder: (context, state) {
               return state.maybeWhen(
-                loaded: (homeData, currentDoctorModel, dotsPosition,
-                    notificationData, homeIndex) {
+                loaded:
+                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                   return CheckIfVerified(
                     verified: homeData.verified!,
                   );
@@ -62,7 +60,9 @@ class HomeTab extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const HomeSearchBotton(),
-                    PostsSliderAndDots(cubit: cubit),
+                    PostsSliderAndDots(
+                      cubit: cubit,
+                    ),
                     SizedBox(height: 30.h),
                     const YourPatientSection(),
                     const AllPatientSection(),

@@ -4,6 +4,6 @@ import '../../../../exports.dart';
 
 abstract class NotificationRepository {
   Future<Either<Failure, UpdateNotificationModelResponse>> updateNotification();
-  Future<Either<Failure, GetAllNotificationsModelResponse>>
-      getAllNotifications();
+  Future<Either<Failure, GetAllNotificationsModelResponse>> getAllNotifications(
+      int page);
 }

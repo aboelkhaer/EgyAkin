@@ -20,7 +20,10 @@ mixin _$EmailVerificationState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
     required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +31,10 @@ mixin _$EmailVerificationState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
     TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +42,10 @@ mixin _$EmailVerificationState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
     TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -45,7 +54,11 @@ mixin _$EmailVerificationState {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -53,7 +66,11 @@ mixin _$EmailVerificationState {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -61,7 +78,11 @@ mixin _$EmailVerificationState {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -127,7 +148,10 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
     required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -138,7 +162,10 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
     TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -149,7 +176,10 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
     TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -164,7 +194,11 @@ class _$InitialImpl implements _Initial {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -175,7 +209,11 @@ class _$InitialImpl implements _Initial {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -186,7 +224,11 @@ class _$InitialImpl implements _Initial {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -241,7 +283,10 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
     required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -252,7 +297,10 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
     TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -263,7 +311,10 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
     TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -278,7 +329,11 @@ class _$LoadingImpl implements _Loading {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -289,7 +344,11 @@ class _$LoadingImpl implements _Loading {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -300,7 +359,11 @@ class _$LoadingImpl implements _Loading {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -313,6 +376,311 @@ class _$LoadingImpl implements _Loading {
 
 abstract class _Loading implements EmailVerificationState {
   const factory _Loading() = _$LoadingImpl;
+}
+
+/// @nodoc
+abstract class _$$CountDownInProgressImplCopyWith<$Res> {
+  factory _$$CountDownInProgressImplCopyWith(_$CountDownInProgressImpl value,
+          $Res Function(_$CountDownInProgressImpl) then) =
+      __$$CountDownInProgressImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int remainingSeconds});
+}
+
+/// @nodoc
+class __$$CountDownInProgressImplCopyWithImpl<$Res>
+    extends _$EmailVerificationStateCopyWithImpl<$Res,
+        _$CountDownInProgressImpl>
+    implements _$$CountDownInProgressImplCopyWith<$Res> {
+  __$$CountDownInProgressImplCopyWithImpl(_$CountDownInProgressImpl _value,
+      $Res Function(_$CountDownInProgressImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? remainingSeconds = null,
+  }) {
+    return _then(_$CountDownInProgressImpl(
+      null == remainingSeconds
+          ? _value.remainingSeconds
+          : remainingSeconds // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CountDownInProgressImpl implements _CountDownInProgress {
+  const _$CountDownInProgressImpl(this.remainingSeconds);
+
+  @override
+  final int remainingSeconds;
+
+  @override
+  String toString() {
+    return 'EmailVerificationState.countDownInProgress(remainingSeconds: $remainingSeconds)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CountDownInProgressImpl &&
+            (identical(other.remainingSeconds, remainingSeconds) ||
+                other.remainingSeconds == remainingSeconds));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, remainingSeconds);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CountDownInProgressImplCopyWith<_$CountDownInProgressImpl> get copyWith =>
+      __$$CountDownInProgressImplCopyWithImpl<_$CountDownInProgressImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
+    required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
+    required TResult Function(String message) error,
+  }) {
+    return countDownInProgress(remainingSeconds);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
+    TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
+    TResult? Function(String message)? error,
+  }) {
+    return countDownInProgress?.call(remainingSeconds);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
+    TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (countDownInProgress != null) {
+      return countDownInProgress(remainingSeconds);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
+    required TResult Function(_Error value) error,
+  }) {
+    return countDownInProgress(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult? Function(_Error value)? error,
+  }) {
+    return countDownInProgress?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (countDownInProgress != null) {
+      return countDownInProgress(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _CountDownInProgress implements EmailVerificationState {
+  const factory _CountDownInProgress(final int remainingSeconds) =
+      _$CountDownInProgressImpl;
+
+  int get remainingSeconds;
+  @JsonKey(ignore: true)
+  _$$CountDownInProgressImplCopyWith<_$CountDownInProgressImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$CountDowncompletedImplCopyWith<$Res> {
+  factory _$$CountDowncompletedImplCopyWith(_$CountDowncompletedImpl value,
+          $Res Function(_$CountDowncompletedImpl) then) =
+      __$$CountDowncompletedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$CountDowncompletedImplCopyWithImpl<$Res>
+    extends _$EmailVerificationStateCopyWithImpl<$Res, _$CountDowncompletedImpl>
+    implements _$$CountDowncompletedImplCopyWith<$Res> {
+  __$$CountDowncompletedImplCopyWithImpl(_$CountDowncompletedImpl _value,
+      $Res Function(_$CountDowncompletedImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$CountDowncompletedImpl implements _CountDowncompleted {
+  const _$CountDowncompletedImpl();
+
+  @override
+  String toString() {
+    return 'EmailVerificationState.countDowncompleted()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$CountDowncompletedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
+    required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
+    required TResult Function(String message) error,
+  }) {
+    return countDowncompleted();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
+    TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
+    TResult? Function(String message)? error,
+  }) {
+    return countDowncompleted?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
+    TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (countDowncompleted != null) {
+      return countDowncompleted();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
+    required TResult Function(_Error value) error,
+  }) {
+    return countDowncompleted(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult? Function(_Error value)? error,
+  }) {
+    return countDowncompleted?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (countDowncompleted != null) {
+      return countDowncompleted(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _CountDowncompleted implements EmailVerificationState {
+  const factory _CountDowncompleted() = _$CountDowncompletedImpl;
 }
 
 /// @nodoc
@@ -355,7 +723,10 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
     required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
     required TResult Function(String message) error,
   }) {
     return loaded();
@@ -366,7 +737,10 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
     TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call();
@@ -377,7 +751,10 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
     TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -392,7 +769,11 @@ class _$LoadedImpl implements _Loaded {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -403,7 +784,11 @@ class _$LoadedImpl implements _Loaded {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -414,7 +799,11 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -427,6 +816,145 @@ class _$LoadedImpl implements _Loaded {
 
 abstract class _Loaded implements EmailVerificationState {
   const factory _Loaded() = _$LoadedImpl;
+}
+
+/// @nodoc
+abstract class _$$EmailVerificationCompleteImplCopyWith<$Res> {
+  factory _$$EmailVerificationCompleteImplCopyWith(
+          _$EmailVerificationCompleteImpl value,
+          $Res Function(_$EmailVerificationCompleteImpl) then) =
+      __$$EmailVerificationCompleteImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$EmailVerificationCompleteImplCopyWithImpl<$Res>
+    extends _$EmailVerificationStateCopyWithImpl<$Res,
+        _$EmailVerificationCompleteImpl>
+    implements _$$EmailVerificationCompleteImplCopyWith<$Res> {
+  __$$EmailVerificationCompleteImplCopyWithImpl(
+      _$EmailVerificationCompleteImpl _value,
+      $Res Function(_$EmailVerificationCompleteImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$EmailVerificationCompleteImpl implements _EmailVerificationComplete {
+  const _$EmailVerificationCompleteImpl();
+
+  @override
+  String toString() {
+    return 'EmailVerificationState.emailVerificationComplete()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EmailVerificationCompleteImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
+    required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
+    required TResult Function(String message) error,
+  }) {
+    return emailVerificationComplete();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
+    TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
+    TResult? Function(String message)? error,
+  }) {
+    return emailVerificationComplete?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
+    TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationComplete != null) {
+      return emailVerificationComplete();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
+    required TResult Function(_Error value) error,
+  }) {
+    return emailVerificationComplete(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult? Function(_Error value)? error,
+  }) {
+    return emailVerificationComplete?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (emailVerificationComplete != null) {
+      return emailVerificationComplete(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _EmailVerificationComplete implements EmailVerificationState {
+  const factory _EmailVerificationComplete() = _$EmailVerificationCompleteImpl;
 }
 
 /// @nodoc
@@ -495,7 +1023,10 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
+    required TResult Function(int remainingSeconds) countDownInProgress,
+    required TResult Function() countDowncompleted,
     required TResult Function() loaded,
+    required TResult Function() emailVerificationComplete,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -506,7 +1037,10 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
+    TResult? Function(int remainingSeconds)? countDownInProgress,
+    TResult? Function()? countDowncompleted,
     TResult? Function()? loaded,
+    TResult? Function()? emailVerificationComplete,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -517,7 +1051,10 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
+    TResult Function(int remainingSeconds)? countDownInProgress,
+    TResult Function()? countDowncompleted,
     TResult Function()? loaded,
+    TResult Function()? emailVerificationComplete,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -532,7 +1069,11 @@ class _$ErrorImpl implements _Error {
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
+    required TResult Function(_CountDownInProgress value) countDownInProgress,
+    required TResult Function(_CountDowncompleted value) countDowncompleted,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_EmailVerificationComplete value)
+        emailVerificationComplete,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -543,7 +1084,11 @@ class _$ErrorImpl implements _Error {
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
+    TResult? Function(_CountDownInProgress value)? countDownInProgress,
+    TResult? Function(_CountDowncompleted value)? countDowncompleted,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -554,7 +1099,11 @@ class _$ErrorImpl implements _Error {
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
+    TResult Function(_CountDownInProgress value)? countDownInProgress,
+    TResult Function(_CountDowncompleted value)? countDowncompleted,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_EmailVerificationComplete value)?
+        emailVerificationComplete,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

@@ -17,22 +17,21 @@ class NotificationTabIcon extends StatelessWidget {
               orElse: () {
                 return const SizedBox.shrink();
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData, homeIndex) {
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                 return Positioned(
                   left: 0,
                   right: 10.w,
                   top: 2.h,
-                  child: notificationData.unreadCount == null ||
-                          notificationData.unreadCount.toString() == '0'
+                  child: homeData.unreadCount == null ||
+                          homeData.unreadCount.toString() == '0'
                       ? const SizedBox.shrink()
                       : CircleAvatar(
                           backgroundColor: Colors.red,
                           radius: 5.r,
                           child: Text(
-                            notificationData.unreadCount == null
+                            homeData.unreadCount == null
                                 ? ''
-                                : notificationData.unreadCount.toString(),
+                                : homeData.unreadCount.toString(),
                             style: TextStyle(
                                 fontSize: 7.sp, color: AppColors.white),
                           ),

@@ -10,11 +10,34 @@ class GetAllNotificationsModelResponse with _$GetAllNotificationsModelResponse {
     bool? value,
     String? unreadCount,
     List<NotificationsModel>? todayRecords,
-    List<NotificationsModel>? recentRecords,
+    RecentNotificationForPagenationModel? recentRecords,
   }) = _GetAllNotificationsModelResponse;
   factory GetAllNotificationsModelResponse.fromJson(
           Map<String, dynamic> json) =>
       _$GetAllNotificationsModelResponseFromJson(json);
+}
+
+@freezed
+class RecentNotificationForPagenationModel
+    with _$RecentNotificationForPagenationModel {
+  const factory RecentNotificationForPagenationModel({
+    @JsonKey(name: 'current_page') int? currentPage,
+    List<NotificationsModel>? data,
+    @JsonKey(name: 'first_page_url') String? firstPageUrl,
+    int? from,
+    @JsonKey(name: 'last_page') int? lastPage,
+    @JsonKey(name: 'last_page_url') String? lastPageUrl,
+    List<Link>? links,
+    @JsonKey(name: 'next_page_url') String? nextPageUrl,
+    String? path,
+    int? perPage,
+    @JsonKey(name: 'prev_page_url') String? prevPageUrl,
+    int? to,
+    int? total,
+  }) = _RecentNotificationForPagenationModel;
+  factory RecentNotificationForPagenationModel.fromJson(
+          Map<String, dynamic> json) =>
+      _$RecentNotificationForPagenationModelFromJson(json);
 }
 
 @freezed
@@ -66,4 +89,15 @@ class SectionsNotificationDataModel with _$SectionsNotificationDataModel {
   }) = _SectionsNotificationDataModel;
   factory SectionsNotificationDataModel.fromJson(Map<String, dynamic> json) =>
       _$SectionsNotificationDataModelFromJson(json);
+}
+
+@freezed
+abstract class Link with _$Link {
+  const factory Link({
+    required dynamic url,
+    required String label,
+    required bool active,
+  }) = _Link;
+
+  factory Link.fromJson(Map<String, dynamic> json) => _$LinkFromJson(json);
 }

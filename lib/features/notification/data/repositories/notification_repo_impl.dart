@@ -26,13 +26,14 @@ class NotificationRepositoryImpl extends NotificationRepository {
   }
 
   @override
-  Future<Either<Failure, GetAllNotificationsModelResponse>>
-      getAllNotifications() async {
+  Future<Either<Failure, GetAllNotificationsModelResponse>> getAllNotifications(
+      int page) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await notificationsDataSource.getAllNotifications();
+        final response =
+            await notificationsDataSource.getAllNotifications(page);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

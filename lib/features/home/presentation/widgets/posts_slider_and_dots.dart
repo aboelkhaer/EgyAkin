@@ -1,10 +1,14 @@
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/main.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:timeago/timeago.dart' as timeago;
 
 class PostsSliderAndDots extends StatelessWidget {
   final HomeCubit cubit;
-  const PostsSliderAndDots({super.key, required this.cubit});
+  const PostsSliderAndDots({
+    super.key,
+    required this.cubit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +25,7 @@ class PostsSliderAndDots extends StatelessWidget {
                   child: Lottie.asset(AppImages.imageLoader),
                 );
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData, homeIndex) {
+              loaded: (homeData, dotsPosition, notificationData, homeIndex) {
                 return CarouselSlider.builder(
                   itemCount: homeData.data!.posts!.length,
                   carouselController: cubit.carouselController,
@@ -38,15 +41,16 @@ class PostsSliderAndDots extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         splashColor: AppColors.subBG, // Splash color
                         onTap: () {
-                          // Get.toNamed(
-                          //   AppRoutes.postDetails,
-                          //   arguments: [
-                          //     index,
-                          //     controller.postsList![index],
-                          //     controller.postsList!.length,
-                          //   ],
-                          // );
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.postDetails,
+                            arguments: {
+                              'postModel': homeData.data!.posts![index],
+                              'doctorModel': cubit.currentDoctorModel,
+                              'accountVerification': homeData.verified,
+                            },
+                          );
                         },
+
                         child: SizedBox(
                           width: size.width * 0.9,
                           child: Row(
@@ -62,9 +66,8 @@ class PostsSliderAndDots extends StatelessWidget {
                                           topLeft: Radius.circular(8),
                                           bottomLeft: Radius.circular(8)),
                                       child: Hero(
-                                        tag: homeData.data!.posts!.length <= 1
-                                            ? 'postImage'
-                                            : 'postImage$index',
+                                        tag:
+                                            'postImage${homeData.data!.posts![index].id}',
                                         child: CachedNetworkImage(
                                           imageUrl: homeData
                                               .data!.posts![index].image
@@ -218,8 +221,7 @@ class PostsSliderAndDots extends StatelessWidget {
               orElse: () {
                 return const SizedBox.shrink();
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationData, homeIndex) {
+              loaded: (homeData, dotsPosition, notificationData, homeIndex) {
                 return DotsIndicator(
                   dotsCount: homeData.data!.posts!.length,
                   position: cubit.dotsPosition,

@@ -1,4 +1,10 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/add_patient/data/datasources/add_patient_datasource.dart';
+import 'package:egy_akin/features/add_patient/data/repositories/add_patient_repo_impl.dart';
+import 'package:egy_akin/features/add_patient/domain/repositories/add_patient_repo.dart';
+import 'package:egy_akin/features/add_patient/domain/usecases/get_patient_history_for_add_patient_usecase.dart';
+import 'package:egy_akin/features/add_patient/presentation/cubit/add_patient_cubit.dart';
+import 'package:egy_akin/features/email_verification/domain/usecases/send_otp_for_email_verification_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -22,10 +28,12 @@ Future<void> diInit() async {
   sl.registerFactory(() => WelcomeCubit());
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => HomeCubit(sl(), sl()));
-  sl.registerFactory(() => EmailVerificationCubit());
+  sl.registerFactory(() => HomeCubit(sl()));
+  sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
+  sl.registerFactory(() => PostDetailsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => AddPatientCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -37,6 +45,12 @@ Future<void> diInit() async {
       () => NotificationsDataSourceImpl(sl()));
   sl.registerLazySingleton<ProfileDataSource>(
       () => ProfileDataSourceImpl(sl()));
+  sl.registerLazySingleton<PostDetailsDataSource>(
+      () => PostDetailsDataSourceImpl(sl()));
+  sl.registerLazySingleton<EmailVerificationDataSource>(
+      () => EmailVerificationDataSourceImpl(sl()));
+  sl.registerLazySingleton<AddPatientDataSource>(
+      () => AddPatientDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -49,6 +63,12 @@ Future<void> diInit() async {
       () => NotificationRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ProfileRepository>(
       () => ProfileRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PostDetailsRepository>(
+      () => PostDetailsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<EmailVerificationRepository>(
+      () => EmailVerificationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<AddPatientRepository>(
+      () => AddPatientRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -72,10 +92,7 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetHomeUsecase>()) {
     sl.registerFactory<GetHomeUsecase>(() => GetHomeUsecase(sl()));
   }
-  if (!GetIt.I.isRegistered<GetNotificationsUsecase>()) {
-    sl.registerFactory<GetNotificationsUsecase>(
-        () => GetNotificationsUsecase(sl()));
-  }
+
   if (!GetIt.I.isRegistered<UpdateNotificationUsecase>()) {
     sl.registerFactory<UpdateNotificationUsecase>(
         () => UpdateNotificationUsecase(sl()));
@@ -91,70 +108,28 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<SignOutUsecase>()) {
     sl.registerFactory<SignOutUsecase>(() => SignOutUsecase(sl()));
   }
+  if (!GetIt.I.isRegistered<GetPostCommentsUsecase>()) {
+    sl.registerFactory<GetPostCommentsUsecase>(
+        () => GetPostCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePostCommentUsecase>()) {
+    sl.registerFactory<DeletePostCommentUsecase>(
+        () => DeletePostCommentUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddCommentOnPostUsecase>()) {
+    sl.registerFactory<AddCommentOnPostUsecase>(
+        () => AddCommentOnPostUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendEmailForVerificationUsecase>()) {
+    sl.registerFactory<SendEmailForVerificationUsecase>(
+        () => SendEmailForVerificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendOTPForEmailVerificationUsecase>()) {
+    sl.registerFactory<SendOTPForEmailVerificationUsecase>(
+        () => SendOTPForEmailVerificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientHistoryForAddPatientUsecase>()) {
+    sl.registerFactory<GetPatientHistoryForAddPatientUsecase>(
+        () => GetPatientHistoryForAddPatientUsecase(sl()));
+  }
 }
-
-
-
-
-// Future<void> diInit() async {
-//   // Core
-//   Get.lazyPut(() => GetStorage(), fenix: true);
-//   Get.lazyPut(() => GetStorageLib(), fenix: true);
-//   Get.lazyPut(() => DioFactory(getStorageLib: Get.find()), fenix: true);
-//   initNetworking();
-//   Get.lazyPut<InternetConnectionChecker>(() => InternetConnectionChecker(),
-//       fenix: true);
-//   Get.lazyPut<NetworkInfoImpl>(() => NetworkInfoImpl(Get.find()), fenix: true);
-//   Get.lazyPut<GetStorage>(() => GetStorage(), fenix: true);
-
-//   // Repository
-//   Get.lazyPut(() => AuthRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => HomeRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => SearchRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => ProfileRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => SectionDetailsRepository(apiServices: Get.find()),
-//       fenix: true);
-//   Get.lazyPut(() => PatientSectionRepository(apiServices: Get.find()),
-//       fenix: true);
-//   Get.lazyPut(() => AddPatientRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => OutcomeRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => CommentRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => ContactUsRepository(apiServices: Get.find()), fenix: true);
-//   Get.lazyPut(() => ResetPasswordRepository(apiServices: Get.find()),
-//       fenix: true);
-//   Get.lazyPut(() => PostDetailsRepository(apiServices: Get.find()),
-//       fenix: true);
-//   Get.lazyPut(() => NotificationRepository(apiServices: Get.find()),
-//       fenix: true);
-//   Get.lazyPut(() => EmailVerificationRepository(apiServices: Get.find()),
-//       fenix: true);
-
-//   Get.lazyPut(() => SplashController(), fenix: true);
-//   Get.lazyPut(() => OnboardingController());
-//   Get.lazyPut(() => WelcomeController());
-//   Get.lazyPut(() => SignInController());
-//   Get.lazyPut(() => RegisterController());
-//   Get.lazyPut(() => HomeController());
-//   Get.lazyPut(() => LogoutController());
-//   Get.lazyPut(() => DoctroProfileController());
-//   Get.lazyPut(() => SectionDetailsController());
-//   Get.lazyPut(() => SearchHomeController());
-//   Get.lazyPut(() => CurrentPatientsController());
-//   Get.lazyPut(() => AllPatientsController());
-//   Get.lazyPut(() => SectionDetailsController());
-//   Get.lazyPut(() => AddPatientController());
-//   Get.lazyPut(() => PatientSectionController());
-//   Get.lazyPut(() => OutcomeController());
-//   Get.lazyPut(() => CommentsController());
-//   Get.lazyPut(() => ContactUsController());
-//   Get.lazyPut(() => PostDetailsController());
-//   Get.lazyPut(() => NotificationController());
-//   Get.lazyPut(() => ResetPasswordController());
-//   Get.lazyPut(() => EmailVerificationController());
-// }
-
-// initNetworking() async {
-//   Dio dio = await Get.find<DioFactory>().getDio();
-
-//   Get.lazyPut<ApiServices>(() => ApiServices(dio), fenix: true);
-// }

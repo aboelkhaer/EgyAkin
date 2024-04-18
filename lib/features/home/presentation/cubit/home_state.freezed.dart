@@ -20,12 +20,8 @@ mixin _$HomeState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)
+    required TResult Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -34,12 +30,8 @@ mixin _$HomeState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult? Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -48,12 +40,8 @@ mixin _$HomeState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
+            int dotsPosition, int homeIndex)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -149,12 +137,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)
+    required TResult Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -166,12 +150,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult? Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -183,12 +163,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
+            int dotsPosition, int homeIndex)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -287,12 +263,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)
+    required TResult Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -304,12 +276,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult? Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -321,12 +289,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
+            int dotsPosition, int homeIndex)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -389,12 +353,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       {HomeModelResponse homeData,
       DoctorModel currentDoctorModel,
       int dotsPosition,
-      NotificationModelResponse notificationDataModel,
       int homeIndex});
 
   $HomeModelResponseCopyWith<$Res> get homeData;
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
-  $NotificationModelResponseCopyWith<$Res> get notificationDataModel;
 }
 
 /// @nodoc
@@ -411,7 +373,6 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? homeData = null,
     Object? currentDoctorModel = null,
     Object? dotsPosition = null,
-    Object? notificationDataModel = null,
     Object? homeIndex = null,
   }) {
     return _then(_$LoadedImpl(
@@ -427,10 +388,6 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.dotsPosition
           : dotsPosition // ignore: cast_nullable_to_non_nullable
               as int,
-      null == notificationDataModel
-          ? _value.notificationDataModel
-          : notificationDataModel // ignore: cast_nullable_to_non_nullable
-              as NotificationModelResponse,
       null == homeIndex
           ? _value.homeIndex
           : homeIndex // ignore: cast_nullable_to_non_nullable
@@ -453,22 +410,13 @@ class __$$LoadedImplCopyWithImpl<$Res>
       return _then(_value.copyWith(currentDoctorModel: value));
     });
   }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $NotificationModelResponseCopyWith<$Res> get notificationDataModel {
-    return $NotificationModelResponseCopyWith<$Res>(
-        _value.notificationDataModel, (value) {
-      return _then(_value.copyWith(notificationDataModel: value));
-    });
-  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   const _$LoadedImpl(this.homeData, this.currentDoctorModel, this.dotsPosition,
-      this.notificationDataModel, this.homeIndex);
+      this.homeIndex);
 
   @override
   final HomeModelResponse homeData;
@@ -477,13 +425,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   @override
   final int dotsPosition;
   @override
-  final NotificationModelResponse notificationDataModel;
-  @override
   final int homeIndex;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, notificationDataModel: $notificationDataModel, homeIndex: $homeIndex)';
+    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex)';
   }
 
   @override
@@ -494,7 +440,6 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       ..add(DiagnosticsProperty('homeData', homeData))
       ..add(DiagnosticsProperty('currentDoctorModel', currentDoctorModel))
       ..add(DiagnosticsProperty('dotsPosition', dotsPosition))
-      ..add(DiagnosticsProperty('notificationDataModel', notificationDataModel))
       ..add(DiagnosticsProperty('homeIndex', homeIndex));
   }
 
@@ -509,15 +454,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
                 other.currentDoctorModel == currentDoctorModel) &&
             (identical(other.dotsPosition, dotsPosition) ||
                 other.dotsPosition == dotsPosition) &&
-            (identical(other.notificationDataModel, notificationDataModel) ||
-                other.notificationDataModel == notificationDataModel) &&
             (identical(other.homeIndex, homeIndex) ||
                 other.homeIndex == homeIndex));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, homeData, currentDoctorModel,
-      dotsPosition, notificationDataModel, homeIndex);
+  int get hashCode => Object.hash(
+      runtimeType, homeData, currentDoctorModel, dotsPosition, homeIndex);
 
   @JsonKey(ignore: true)
   @override
@@ -530,17 +473,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)
+    required TResult Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(homeData, currentDoctorModel, dotsPosition,
-        notificationDataModel, homeIndex);
+    return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex);
   }
 
   @override
@@ -548,17 +486,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult? Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(homeData, currentDoctorModel, dotsPosition,
-        notificationDataModel, homeIndex);
+    return loaded?.call(homeData, currentDoctorModel, dotsPosition, homeIndex);
   }
 
   @override
@@ -566,19 +499,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
+            int dotsPosition, int homeIndex)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(homeData, currentDoctorModel, dotsPosition,
-          notificationDataModel, homeIndex);
+      return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex);
     }
     return orElse();
   }
@@ -626,13 +554,11 @@ abstract class _Loaded implements HomeState {
       final HomeModelResponse homeData,
       final DoctorModel currentDoctorModel,
       final int dotsPosition,
-      final NotificationModelResponse notificationDataModel,
       final int homeIndex) = _$LoadedImpl;
 
   HomeModelResponse get homeData;
   DoctorModel get currentDoctorModel;
   int get dotsPosition;
-  NotificationModelResponse get notificationDataModel;
   int get homeIndex;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -713,12 +639,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)
+    required TResult Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -730,12 +652,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult? Function(HomeModelResponse homeData,
+            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -747,12 +665,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            HomeModelResponse homeData,
-            DoctorModel currentDoctorModel,
-            int dotsPosition,
-            NotificationModelResponse notificationDataModel,
-            int homeIndex)?
+    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
+            int dotsPosition, int homeIndex)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

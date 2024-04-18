@@ -25,7 +25,7 @@ mixin _$GetAllNotificationsModelResponse {
   String? get unreadCount => throw _privateConstructorUsedError;
   List<NotificationsModel>? get todayRecords =>
       throw _privateConstructorUsedError;
-  List<NotificationsModel>? get recentRecords =>
+  RecentNotificationForPagenationModel? get recentRecords =>
       throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -46,7 +46,9 @@ abstract class $GetAllNotificationsModelResponseCopyWith<$Res> {
       {bool? value,
       String? unreadCount,
       List<NotificationsModel>? todayRecords,
-      List<NotificationsModel>? recentRecords});
+      RecentNotificationForPagenationModel? recentRecords});
+
+  $RecentNotificationForPagenationModelCopyWith<$Res>? get recentRecords;
 }
 
 /// @nodoc
@@ -84,8 +86,21 @@ class _$GetAllNotificationsModelResponseCopyWithImpl<$Res,
       recentRecords: freezed == recentRecords
           ? _value.recentRecords
           : recentRecords // ignore: cast_nullable_to_non_nullable
-              as List<NotificationsModel>?,
+              as RecentNotificationForPagenationModel?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $RecentNotificationForPagenationModelCopyWith<$Res>? get recentRecords {
+    if (_value.recentRecords == null) {
+      return null;
+    }
+
+    return $RecentNotificationForPagenationModelCopyWith<$Res>(
+        _value.recentRecords!, (value) {
+      return _then(_value.copyWith(recentRecords: value) as $Val);
+    });
   }
 }
 
@@ -102,7 +117,10 @@ abstract class _$$GetAllNotificationsModelResponseImplCopyWith<$Res>
       {bool? value,
       String? unreadCount,
       List<NotificationsModel>? todayRecords,
-      List<NotificationsModel>? recentRecords});
+      RecentNotificationForPagenationModel? recentRecords});
+
+  @override
+  $RecentNotificationForPagenationModelCopyWith<$Res>? get recentRecords;
 }
 
 /// @nodoc
@@ -137,9 +155,9 @@ class __$$GetAllNotificationsModelResponseImplCopyWithImpl<$Res>
           : todayRecords // ignore: cast_nullable_to_non_nullable
               as List<NotificationsModel>?,
       recentRecords: freezed == recentRecords
-          ? _value._recentRecords
+          ? _value.recentRecords
           : recentRecords // ignore: cast_nullable_to_non_nullable
-              as List<NotificationsModel>?,
+              as RecentNotificationForPagenationModel?,
     ));
   }
 }
@@ -152,9 +170,8 @@ class _$GetAllNotificationsModelResponseImpl
       {this.value,
       this.unreadCount,
       final List<NotificationsModel>? todayRecords,
-      final List<NotificationsModel>? recentRecords})
-      : _todayRecords = todayRecords,
-        _recentRecords = recentRecords;
+      this.recentRecords})
+      : _todayRecords = todayRecords;
 
   factory _$GetAllNotificationsModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -174,15 +191,8 @@ class _$GetAllNotificationsModelResponseImpl
     return EqualUnmodifiableListView(value);
   }
 
-  final List<NotificationsModel>? _recentRecords;
   @override
-  List<NotificationsModel>? get recentRecords {
-    final value = _recentRecords;
-    if (value == null) return null;
-    if (_recentRecords is EqualUnmodifiableListView) return _recentRecords;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
+  final RecentNotificationForPagenationModel? recentRecords;
 
   @override
   String toString() {
@@ -199,18 +209,14 @@ class _$GetAllNotificationsModelResponseImpl
                 other.unreadCount == unreadCount) &&
             const DeepCollectionEquality()
                 .equals(other._todayRecords, _todayRecords) &&
-            const DeepCollectionEquality()
-                .equals(other._recentRecords, _recentRecords));
+            (identical(other.recentRecords, recentRecords) ||
+                other.recentRecords == recentRecords));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      value,
-      unreadCount,
-      const DeepCollectionEquality().hash(_todayRecords),
-      const DeepCollectionEquality().hash(_recentRecords));
+  int get hashCode => Object.hash(runtimeType, value, unreadCount,
+      const DeepCollectionEquality().hash(_todayRecords), recentRecords);
 
   @JsonKey(ignore: true)
   @override
@@ -234,7 +240,7 @@ abstract class _GetAllNotificationsModelResponse
           {final bool? value,
           final String? unreadCount,
           final List<NotificationsModel>? todayRecords,
-          final List<NotificationsModel>? recentRecords}) =
+          final RecentNotificationForPagenationModel? recentRecords}) =
       _$GetAllNotificationsModelResponseImpl;
 
   factory _GetAllNotificationsModelResponse.fromJson(
@@ -248,11 +254,462 @@ abstract class _GetAllNotificationsModelResponse
   @override
   List<NotificationsModel>? get todayRecords;
   @override
-  List<NotificationsModel>? get recentRecords;
+  RecentNotificationForPagenationModel? get recentRecords;
   @override
   @JsonKey(ignore: true)
   _$$GetAllNotificationsModelResponseImplCopyWith<
           _$GetAllNotificationsModelResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+RecentNotificationForPagenationModel
+    _$RecentNotificationForPagenationModelFromJson(Map<String, dynamic> json) {
+  return _RecentNotificationForPagenationModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RecentNotificationForPagenationModel {
+  @JsonKey(name: 'current_page')
+  int? get currentPage => throw _privateConstructorUsedError;
+  List<NotificationsModel>? get data => throw _privateConstructorUsedError;
+  @JsonKey(name: 'first_page_url')
+  String? get firstPageUrl => throw _privateConstructorUsedError;
+  int? get from => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_page')
+  int? get lastPage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_page_url')
+  String? get lastPageUrl => throw _privateConstructorUsedError;
+  List<Link>? get links => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_page_url')
+  String? get nextPageUrl => throw _privateConstructorUsedError;
+  String? get path => throw _privateConstructorUsedError;
+  int? get perPage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'prev_page_url')
+  String? get prevPageUrl => throw _privateConstructorUsedError;
+  int? get to => throw _privateConstructorUsedError;
+  int? get total => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RecentNotificationForPagenationModelCopyWith<
+          RecentNotificationForPagenationModel>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RecentNotificationForPagenationModelCopyWith<$Res> {
+  factory $RecentNotificationForPagenationModelCopyWith(
+          RecentNotificationForPagenationModel value,
+          $Res Function(RecentNotificationForPagenationModel) then) =
+      _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
+          RecentNotificationForPagenationModel>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'current_page') int? currentPage,
+      List<NotificationsModel>? data,
+      @JsonKey(name: 'first_page_url') String? firstPageUrl,
+      int? from,
+      @JsonKey(name: 'last_page') int? lastPage,
+      @JsonKey(name: 'last_page_url') String? lastPageUrl,
+      List<Link>? links,
+      @JsonKey(name: 'next_page_url') String? nextPageUrl,
+      String? path,
+      int? perPage,
+      @JsonKey(name: 'prev_page_url') String? prevPageUrl,
+      int? to,
+      int? total});
+}
+
+/// @nodoc
+class _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
+        $Val extends RecentNotificationForPagenationModel>
+    implements $RecentNotificationForPagenationModelCopyWith<$Res> {
+  _$RecentNotificationForPagenationModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? currentPage = freezed,
+    Object? data = freezed,
+    Object? firstPageUrl = freezed,
+    Object? from = freezed,
+    Object? lastPage = freezed,
+    Object? lastPageUrl = freezed,
+    Object? links = freezed,
+    Object? nextPageUrl = freezed,
+    Object? path = freezed,
+    Object? perPage = freezed,
+    Object? prevPageUrl = freezed,
+    Object? to = freezed,
+    Object? total = freezed,
+  }) {
+    return _then(_value.copyWith(
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<NotificationsModel>?,
+      firstPageUrl: freezed == firstPageUrl
+          ? _value.firstPageUrl
+          : firstPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      from: freezed == from
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPage: freezed == lastPage
+          ? _value.lastPage
+          : lastPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPageUrl: freezed == lastPageUrl
+          ? _value.lastPageUrl
+          : lastPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      links: freezed == links
+          ? _value.links
+          : links // ignore: cast_nullable_to_non_nullable
+              as List<Link>?,
+      nextPageUrl: freezed == nextPageUrl
+          ? _value.nextPageUrl
+          : nextPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
+      perPage: freezed == perPage
+          ? _value.perPage
+          : perPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      prevPageUrl: freezed == prevPageUrl
+          ? _value.prevPageUrl
+          : prevPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      to: freezed == to
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as int?,
+      total: freezed == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RecentNotificationForPagenationModelImplCopyWith<$Res>
+    implements $RecentNotificationForPagenationModelCopyWith<$Res> {
+  factory _$$RecentNotificationForPagenationModelImplCopyWith(
+          _$RecentNotificationForPagenationModelImpl value,
+          $Res Function(_$RecentNotificationForPagenationModelImpl) then) =
+      __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'current_page') int? currentPage,
+      List<NotificationsModel>? data,
+      @JsonKey(name: 'first_page_url') String? firstPageUrl,
+      int? from,
+      @JsonKey(name: 'last_page') int? lastPage,
+      @JsonKey(name: 'last_page_url') String? lastPageUrl,
+      List<Link>? links,
+      @JsonKey(name: 'next_page_url') String? nextPageUrl,
+      String? path,
+      int? perPage,
+      @JsonKey(name: 'prev_page_url') String? prevPageUrl,
+      int? to,
+      int? total});
+}
+
+/// @nodoc
+class __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>
+    extends _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
+        _$RecentNotificationForPagenationModelImpl>
+    implements _$$RecentNotificationForPagenationModelImplCopyWith<$Res> {
+  __$$RecentNotificationForPagenationModelImplCopyWithImpl(
+      _$RecentNotificationForPagenationModelImpl _value,
+      $Res Function(_$RecentNotificationForPagenationModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? currentPage = freezed,
+    Object? data = freezed,
+    Object? firstPageUrl = freezed,
+    Object? from = freezed,
+    Object? lastPage = freezed,
+    Object? lastPageUrl = freezed,
+    Object? links = freezed,
+    Object? nextPageUrl = freezed,
+    Object? path = freezed,
+    Object? perPage = freezed,
+    Object? prevPageUrl = freezed,
+    Object? to = freezed,
+    Object? total = freezed,
+  }) {
+    return _then(_$RecentNotificationForPagenationModelImpl(
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      data: freezed == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<NotificationsModel>?,
+      firstPageUrl: freezed == firstPageUrl
+          ? _value.firstPageUrl
+          : firstPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      from: freezed == from
+          ? _value.from
+          : from // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPage: freezed == lastPage
+          ? _value.lastPage
+          : lastPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPageUrl: freezed == lastPageUrl
+          ? _value.lastPageUrl
+          : lastPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      links: freezed == links
+          ? _value._links
+          : links // ignore: cast_nullable_to_non_nullable
+              as List<Link>?,
+      nextPageUrl: freezed == nextPageUrl
+          ? _value.nextPageUrl
+          : nextPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      path: freezed == path
+          ? _value.path
+          : path // ignore: cast_nullable_to_non_nullable
+              as String?,
+      perPage: freezed == perPage
+          ? _value.perPage
+          : perPage // ignore: cast_nullable_to_non_nullable
+              as int?,
+      prevPageUrl: freezed == prevPageUrl
+          ? _value.prevPageUrl
+          : prevPageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      to: freezed == to
+          ? _value.to
+          : to // ignore: cast_nullable_to_non_nullable
+              as int?,
+      total: freezed == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as int?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RecentNotificationForPagenationModelImpl
+    implements _RecentNotificationForPagenationModel {
+  const _$RecentNotificationForPagenationModelImpl(
+      {@JsonKey(name: 'current_page') this.currentPage,
+      final List<NotificationsModel>? data,
+      @JsonKey(name: 'first_page_url') this.firstPageUrl,
+      this.from,
+      @JsonKey(name: 'last_page') this.lastPage,
+      @JsonKey(name: 'last_page_url') this.lastPageUrl,
+      final List<Link>? links,
+      @JsonKey(name: 'next_page_url') this.nextPageUrl,
+      this.path,
+      this.perPage,
+      @JsonKey(name: 'prev_page_url') this.prevPageUrl,
+      this.to,
+      this.total})
+      : _data = data,
+        _links = links;
+
+  factory _$RecentNotificationForPagenationModelImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$RecentNotificationForPagenationModelImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'current_page')
+  final int? currentPage;
+  final List<NotificationsModel>? _data;
+  @override
+  List<NotificationsModel>? get data {
+    final value = _data;
+    if (value == null) return null;
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'first_page_url')
+  final String? firstPageUrl;
+  @override
+  final int? from;
+  @override
+  @JsonKey(name: 'last_page')
+  final int? lastPage;
+  @override
+  @JsonKey(name: 'last_page_url')
+  final String? lastPageUrl;
+  final List<Link>? _links;
+  @override
+  List<Link>? get links {
+    final value = _links;
+    if (value == null) return null;
+    if (_links is EqualUnmodifiableListView) return _links;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'next_page_url')
+  final String? nextPageUrl;
+  @override
+  final String? path;
+  @override
+  final int? perPage;
+  @override
+  @JsonKey(name: 'prev_page_url')
+  final String? prevPageUrl;
+  @override
+  final int? to;
+  @override
+  final int? total;
+
+  @override
+  String toString() {
+    return 'RecentNotificationForPagenationModel(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RecentNotificationForPagenationModelImpl &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage) &&
+            const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.firstPageUrl, firstPageUrl) ||
+                other.firstPageUrl == firstPageUrl) &&
+            (identical(other.from, from) || other.from == from) &&
+            (identical(other.lastPage, lastPage) ||
+                other.lastPage == lastPage) &&
+            (identical(other.lastPageUrl, lastPageUrl) ||
+                other.lastPageUrl == lastPageUrl) &&
+            const DeepCollectionEquality().equals(other._links, _links) &&
+            (identical(other.nextPageUrl, nextPageUrl) ||
+                other.nextPageUrl == nextPageUrl) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.perPage, perPage) || other.perPage == perPage) &&
+            (identical(other.prevPageUrl, prevPageUrl) ||
+                other.prevPageUrl == prevPageUrl) &&
+            (identical(other.to, to) || other.to == to) &&
+            (identical(other.total, total) || other.total == total));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      currentPage,
+      const DeepCollectionEquality().hash(_data),
+      firstPageUrl,
+      from,
+      lastPage,
+      lastPageUrl,
+      const DeepCollectionEquality().hash(_links),
+      nextPageUrl,
+      path,
+      perPage,
+      prevPageUrl,
+      to,
+      total);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RecentNotificationForPagenationModelImplCopyWith<
+          _$RecentNotificationForPagenationModelImpl>
+      get copyWith => __$$RecentNotificationForPagenationModelImplCopyWithImpl<
+          _$RecentNotificationForPagenationModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RecentNotificationForPagenationModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RecentNotificationForPagenationModel
+    implements RecentNotificationForPagenationModel {
+  const factory _RecentNotificationForPagenationModel(
+      {@JsonKey(name: 'current_page') final int? currentPage,
+      final List<NotificationsModel>? data,
+      @JsonKey(name: 'first_page_url') final String? firstPageUrl,
+      final int? from,
+      @JsonKey(name: 'last_page') final int? lastPage,
+      @JsonKey(name: 'last_page_url') final String? lastPageUrl,
+      final List<Link>? links,
+      @JsonKey(name: 'next_page_url') final String? nextPageUrl,
+      final String? path,
+      final int? perPage,
+      @JsonKey(name: 'prev_page_url') final String? prevPageUrl,
+      final int? to,
+      final int? total}) = _$RecentNotificationForPagenationModelImpl;
+
+  factory _RecentNotificationForPagenationModel.fromJson(
+          Map<String, dynamic> json) =
+      _$RecentNotificationForPagenationModelImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'current_page')
+  int? get currentPage;
+  @override
+  List<NotificationsModel>? get data;
+  @override
+  @JsonKey(name: 'first_page_url')
+  String? get firstPageUrl;
+  @override
+  int? get from;
+  @override
+  @JsonKey(name: 'last_page')
+  int? get lastPage;
+  @override
+  @JsonKey(name: 'last_page_url')
+  String? get lastPageUrl;
+  @override
+  List<Link>? get links;
+  @override
+  @JsonKey(name: 'next_page_url')
+  String? get nextPageUrl;
+  @override
+  String? get path;
+  @override
+  int? get perPage;
+  @override
+  @JsonKey(name: 'prev_page_url')
+  String? get prevPageUrl;
+  @override
+  int? get to;
+  @override
+  int? get total;
+  @override
+  @JsonKey(ignore: true)
+  _$$RecentNotificationForPagenationModelImplCopyWith<
+          _$RecentNotificationForPagenationModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1226,4 +1683,172 @@ abstract class _SectionsNotificationDataModel
   _$$SectionsNotificationDataModelImplCopyWith<
           _$SectionsNotificationDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+Link _$LinkFromJson(Map<String, dynamic> json) {
+  return _Link.fromJson(json);
+}
+
+/// @nodoc
+mixin _$Link {
+  dynamic get url => throw _privateConstructorUsedError;
+  String get label => throw _privateConstructorUsedError;
+  bool get active => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $LinkCopyWith<Link> get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $LinkCopyWith<$Res> {
+  factory $LinkCopyWith(Link value, $Res Function(Link) then) =
+      _$LinkCopyWithImpl<$Res, Link>;
+  @useResult
+  $Res call({dynamic url, String label, bool active});
+}
+
+/// @nodoc
+class _$LinkCopyWithImpl<$Res, $Val extends Link>
+    implements $LinkCopyWith<$Res> {
+  _$LinkCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? url = freezed,
+    Object? label = null,
+    Object? active = null,
+  }) {
+    return _then(_value.copyWith(
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$LinkImplCopyWith<$Res> implements $LinkCopyWith<$Res> {
+  factory _$$LinkImplCopyWith(
+          _$LinkImpl value, $Res Function(_$LinkImpl) then) =
+      __$$LinkImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({dynamic url, String label, bool active});
+}
+
+/// @nodoc
+class __$$LinkImplCopyWithImpl<$Res>
+    extends _$LinkCopyWithImpl<$Res, _$LinkImpl>
+    implements _$$LinkImplCopyWith<$Res> {
+  __$$LinkImplCopyWithImpl(_$LinkImpl _value, $Res Function(_$LinkImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? url = freezed,
+    Object? label = null,
+    Object? active = null,
+  }) {
+    return _then(_$LinkImpl(
+      url: freezed == url
+          ? _value.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      label: null == label
+          ? _value.label
+          : label // ignore: cast_nullable_to_non_nullable
+              as String,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$LinkImpl implements _Link {
+  const _$LinkImpl(
+      {required this.url, required this.label, required this.active});
+
+  factory _$LinkImpl.fromJson(Map<String, dynamic> json) =>
+      _$$LinkImplFromJson(json);
+
+  @override
+  final dynamic url;
+  @override
+  final String label;
+  @override
+  final bool active;
+
+  @override
+  String toString() {
+    return 'Link(url: $url, label: $label, active: $active)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LinkImpl &&
+            const DeepCollectionEquality().equals(other.url, url) &&
+            (identical(other.label, label) || other.label == label) &&
+            (identical(other.active, active) || other.active == active));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(url), label, active);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LinkImplCopyWith<_$LinkImpl> get copyWith =>
+      __$$LinkImplCopyWithImpl<_$LinkImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$LinkImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _Link implements Link {
+  const factory _Link(
+      {required final dynamic url,
+      required final String label,
+      required final bool active}) = _$LinkImpl;
+
+  factory _Link.fromJson(Map<String, dynamic> json) = _$LinkImpl.fromJson;
+
+  @override
+  dynamic get url;
+  @override
+  String get label;
+  @override
+  bool get active;
+  @override
+  @JsonKey(ignore: true)
+  _$$LinkImplCopyWith<_$LinkImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

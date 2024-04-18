@@ -19,8 +19,7 @@ class YourPatientSection extends StatelessWidget {
                   onTap: () {},
                 );
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition,
-                  notificationDataModel, homeIndex) {
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
                   patientCount:
@@ -39,8 +38,7 @@ class YourPatientSection extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: true);
             },
-            loaded: (homeData, currentDoctorModel, dotsPosition,
-                notificationDataModel, homeIndex) {
+            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
               return SizedBox(
                 height: homeData.data!.currentPatients!.isEmpty ? 100.h : 160.h,
                 child: homeData.data!.currentPatients!.isEmpty

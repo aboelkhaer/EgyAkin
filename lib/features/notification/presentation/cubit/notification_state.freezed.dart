@@ -20,7 +20,8 @@ mixin _$NotificationState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetAllNotificationsModelResponse notificationData)
+    required TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -29,7 +30,8 @@ mixin _$NotificationState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetAllNotificationsModelResponse notificationData)?
+    TResult? Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -38,7 +40,9 @@ mixin _$NotificationState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetAllNotificationsModelResponse notificationData)? loaded,
+    TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -134,7 +138,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetAllNotificationsModelResponse notificationData)
+    required TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -146,7 +151,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetAllNotificationsModelResponse notificationData)?
+    TResult? Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -158,7 +164,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetAllNotificationsModelResponse notificationData)? loaded,
+    TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -256,7 +264,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetAllNotificationsModelResponse notificationData)
+    required TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -268,7 +277,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetAllNotificationsModelResponse notificationData)?
+    TResult? Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -280,7 +290,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetAllNotificationsModelResponse notificationData)? loaded,
+    TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -338,7 +350,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({GetAllNotificationsModelResponse notificationData});
+  $Res call(
+      {GetAllNotificationsModelResponse notificationData, bool isSeeMore});
 
   $GetAllNotificationsModelResponseCopyWith<$Res> get notificationData;
 }
@@ -355,12 +368,17 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? notificationData = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$LoadedImpl(
       null == notificationData
           ? _value.notificationData
           : notificationData // ignore: cast_nullable_to_non_nullable
               as GetAllNotificationsModelResponse,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -377,14 +395,16 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.notificationData);
+  const _$LoadedImpl(this.notificationData, this.isSeeMore);
 
   @override
   final GetAllNotificationsModelResponse notificationData;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationState.loaded(notificationData: $notificationData)';
+    return 'NotificationState.loaded(notificationData: $notificationData, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -392,7 +412,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'NotificationState.loaded'))
-      ..add(DiagnosticsProperty('notificationData', notificationData));
+      ..add(DiagnosticsProperty('notificationData', notificationData))
+      ..add(DiagnosticsProperty('isSeeMore', isSeeMore));
   }
 
   @override
@@ -401,11 +422,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.notificationData, notificationData) ||
-                other.notificationData == notificationData));
+                other.notificationData == notificationData) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, notificationData);
+  int get hashCode => Object.hash(runtimeType, notificationData, isSeeMore);
 
   @JsonKey(ignore: true)
   @override
@@ -418,11 +441,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetAllNotificationsModelResponse notificationData)
+    required TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(notificationData);
+    return loaded(notificationData, isSeeMore);
   }
 
   @override
@@ -430,11 +454,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetAllNotificationsModelResponse notificationData)?
+    TResult? Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(notificationData);
+    return loaded?.call(notificationData, isSeeMore);
   }
 
   @override
@@ -442,12 +467,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetAllNotificationsModelResponse notificationData)? loaded,
+    TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(notificationData);
+      return loaded(notificationData, isSeeMore);
     }
     return orElse();
   }
@@ -491,10 +518,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements NotificationState {
-  const factory _Loaded(
-      final GetAllNotificationsModelResponse notificationData) = _$LoadedImpl;
+  const factory _Loaded(final GetAllNotificationsModelResponse notificationData,
+      final bool isSeeMore) = _$LoadedImpl;
 
   GetAllNotificationsModelResponse get notificationData;
+  bool get isSeeMore;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -574,7 +602,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetAllNotificationsModelResponse notificationData)
+    required TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -586,7 +615,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetAllNotificationsModelResponse notificationData)?
+    TResult? Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -598,7 +628,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetAllNotificationsModelResponse notificationData)? loaded,
+    TResult Function(
+            GetAllNotificationsModelResponse notificationData, bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

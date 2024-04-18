@@ -25,7 +25,7 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'all_patients') List<PatientHomeDataModel>? allPatients,
     @JsonKey(name: 'current_patient')
     List<PatientHomeDataModel>? currentPatients,
-    List<PostHomeDataModel>? posts,
+    List<PostModel>? posts,
   }) = _HomeDataModelResponse;
   factory HomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$HomeDataModelResponseFromJson(json);
@@ -35,26 +35,14 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
 class PatientHomeDataModel with _$PatientHomeDataModel {
   const factory PatientHomeDataModel({
     int? id,
-    @JsonKey(name: 'doctor_id') String? doctorId,
     String? name,
     String? hospital,
     @JsonKey(name: 'updated_at') String? updatedAt,
-    DoctorHomeDataModel? doctor,
+    DoctorModel? doctor,
     SectionHomeDataModel? sections,
   }) = _PatientHomeDataModel;
   factory PatientHomeDataModel.fromJson(Map<String, dynamic> json) =>
       _$PatientHomeDataModelFromJson(json);
-}
-
-@freezed
-class DoctorHomeDataModel with _$DoctorHomeDataModel {
-  const factory DoctorHomeDataModel({
-    int? id,
-    @JsonKey(name: 'name') String? firstName,
-    @JsonKey(name: 'lname') String? lastName,
-  }) = _DoctorHomeDataModel;
-  factory DoctorHomeDataModel.fromJson(Map<String, dynamic> json) =>
-      _$DoctorHomeDataModelFromJson(json);
 }
 
 @freezed
@@ -66,20 +54,4 @@ class SectionHomeDataModel with _$SectionHomeDataModel {
   }) = _SectionHomeDataModel;
   factory SectionHomeDataModel.fromJson(Map<String, dynamic> json) =>
       _$SectionHomeDataModelFromJson(json);
-}
-
-@freezed
-class PostHomeDataModel with _$PostHomeDataModel {
-  const factory PostHomeDataModel({
-    int? id,
-    String? title,
-    String? content,
-    String? image,
-    bool? hidden,
-    @JsonKey(name: 'doctor_id') String? doctorId,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-    DoctorHomeDataModel? doctor,
-  }) = _PostHomeDataModel;
-  factory PostHomeDataModel.fromJson(Map<String, dynamic> json) =>
-      _$PostHomeDataModelFromJson(json);
 }

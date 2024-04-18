@@ -2,22 +2,24 @@ import '../../exports.dart';
 
 class ShimmerLoadingPatientsCards extends StatelessWidget {
   final bool ishorizontal;
+  final int? numberOfShimmer;
   const ShimmerLoadingPatientsCards({
     super.key,
     required this.ishorizontal,
+    this.numberOfShimmer,
   });
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return SizedBox(
-      height: ishorizontal ? size.height * 0.22 : size.height,
+      height: ishorizontal ? size.height * 0.22 : null,
       child: ListView.builder(
         shrinkWrap: true,
         padding: EdgeInsets.zero,
         physics: const BouncingScrollPhysics(),
         scrollDirection: ishorizontal ? Axis.horizontal : Axis.vertical,
-        itemCount: ishorizontal ? 5 : 10,
+        itemCount: numberOfShimmer ?? (ishorizontal ? 5 : 10),
         // padding: const EdgeInsets.only(left: 20),
         itemBuilder: (context, index) {
           return Shimmer.fromColors(

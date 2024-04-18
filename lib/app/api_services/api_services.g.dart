@@ -358,14 +358,14 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
-      String sectionId) async {
+  Future<GetPatientHistoryForAddPatientModelResponse>
+      getPatientHistoryForAddPatient(String sectionId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetQuestionsModelResponse>(Options(
+        _setStreamType<GetPatientHistoryForAddPatientModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -381,7 +381,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetQuestionsModelResponse.fromJson(_result.data!);
+    final value =
+        GetPatientHistoryForAddPatientModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -652,14 +653,13 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetPostCommentsModelResponse> getHomePostComments(
-      String postId) async {
+  Future<PostCommentsModelResponse> getPostComments(String postId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetPostCommentsModelResponse>(Options(
+        _setStreamType<PostCommentsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -675,13 +675,13 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetPostCommentsModelResponse.fromJson(_result.data!);
+    final value = PostCommentsModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
   Future<DeletePostCommentModelResponse> deletePostComment(
-      String postId) async {
+      String commentId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -694,7 +694,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://egyakin.com/api/Postcomments/${postId}',
+              'https://egyakin.com/api/Postcomments/${commentId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -708,36 +708,10 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<NotificationModelResponse> getNotifications() async {
+  Future<GetAllNotificationsModelResponse> getAllNotifications(
+      int pageNumber) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<NotificationModelResponse>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              'https://egyakin.com/api/notification',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = NotificationModelResponse.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
-  Future<GetAllNotificationsModelResponse> getAllNotifications() async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -916,13 +890,13 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<SendEmailVerificationModelResponse> sendEmailVerification() async {
+  Future<SendEmailForVerificationModelResponse> sendEmailVerification() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SendEmailVerificationModelResponse>(Options(
+        _setStreamType<SendEmailForVerificationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -938,19 +912,19 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = SendEmailVerificationModelResponse.fromJson(_result.data!);
+    final value = SendEmailForVerificationModelResponse.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
+  Future<SendOTPForEmailVerificationModelResponse> sendOTPForEmailVerification(
       String otp) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'otp': otp};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<EmailVerificationOTPModelResponse>(Options(
+        _setStreamType<SendOTPForEmailVerificationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -966,7 +940,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = EmailVerificationOTPModelResponse.fromJson(_result.data!);
+    final value =
+        SendOTPForEmailVerificationModelResponse.fromJson(_result.data!);
     return value;
   }
 

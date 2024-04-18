@@ -1,3 +1,5 @@
+import 'package:egy_akin/main.dart';
+
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -65,7 +67,7 @@ class HomeHeader extends StatelessWidget {
                           state.maybeWhen(
                             orElse: () {},
                             loaded: (homeData, currentDoctorModel, dotsPosition,
-                                notificationDataModel, homeIndex) {
+                                homeIndex) {
                               context
                                   .read<ProfileCubit>()
                                   .getDoctorDataFromHomeCubit(
@@ -113,7 +115,7 @@ class HomeHeader extends StatelessWidget {
           message: 'Add patient',
           child: IconButton(
             onPressed: () {
-              // Handle notification button press
+              navigatorKey.currentState?.pushNamed(AppRoutes.addPatient);
             },
             icon: Icon(
               Icons.add,

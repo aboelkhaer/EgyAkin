@@ -8,6 +8,8 @@ void main() async {
   runApp(const MyApp());
 }
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -15,16 +17,16 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.white, // Color for Android
-        statusBarBrightness:
-            Brightness.light // Dark == white status bar -- for IOS.
-        ));
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light));
+
     return ScreenUtilInit(
       designSize: const Size(360, 640),
       minTextAdapt: true,
       splitScreenMode: true,
       child: MaterialApp(
         title: AppStrings.appName,
+        navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
         theme: Themes().lightTheme,
         onGenerateRoute: RouteGenerator.getRoute,

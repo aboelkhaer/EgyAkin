@@ -25,7 +25,7 @@ class AppStrings {
   static const int delayForAPIRequestInMilliseconds = 300;
 
   static const int apiTimeOut = 50;
-  static const int resendTimer = 5;
+  static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
   static const String accept = "accept";

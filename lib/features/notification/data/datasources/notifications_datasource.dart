@@ -2,7 +2,7 @@ import '../../../../exports.dart';
 
 abstract class NotificationsDataSource {
   Future<UpdateNotificationModelResponse> updateNotifications();
-  Future<GetAllNotificationsModelResponse> getAllNotifications();
+  Future<GetAllNotificationsModelResponse> getAllNotifications(int page);
 }
 
 class NotificationsDataSourceImpl implements NotificationsDataSource {
@@ -16,7 +16,7 @@ class NotificationsDataSourceImpl implements NotificationsDataSource {
   }
 
   @override
-  Future<GetAllNotificationsModelResponse> getAllNotifications() async {
-    return await _apiServices.getAllNotifications();
+  Future<GetAllNotificationsModelResponse> getAllNotifications(int page) async {
+    return await _apiServices.getAllNotifications(page);
   }
 }

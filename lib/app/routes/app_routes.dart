@@ -1,7 +1,9 @@
-import 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_cubit.dart';
+import 'dart:developer';
+
+import 'package:egy_akin/features/add_patient/presentation/cubit/add_patient_cubit.dart';
+import 'package:egy_akin/features/add_patient/presentation/pages/add_patient_screen.dart';
 import 'package:egy_akin/features/email_verification/presentation/pages/email_verification_screen.dart';
-import 'package:egy_akin/features/notification/presentation/cubit/notification_cubit.dart';
-import 'package:egy_akin/features/profile/presentation/cubit/profile_cubit.dart';
+import 'package:egy_akin/features/post_details/presentation/pages/post_details_screen.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -97,10 +99,47 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.emailVerification:
+        final arguments = settings.arguments;
+        if (arguments is DoctorModel) {
+          return MaterialPageRoute(
+            builder: (_) => BlocProvider<EmailVerificationCubit>(
+              create: (context) => di.sl<EmailVerificationCubit>(),
+              child: EmailVerifciationScreen(currentDoctorModel: arguments),
+            ),
+          );
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.postDetails:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('postModel') &&
+              args.containsKey('doctorModel') &&
+              args.containsKey('accountVerification')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<PostDetailsCubit>(
+                create: (context) => di.sl<PostDetailsCubit>(),
+                child: PostDetailsScreen(
+                  postModel: args['postModel'] as PostModel,
+                  currentDoctorModel: args['doctorModel'] as DoctorModel,
+                  accountVerification: args['accountVerification'] as bool,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.addPatient:
         return MaterialPageRoute(
-          builder: (_) => BlocProvider<EmailVerificationCubit>(
-            create: (context) => di.sl<EmailVerificationCubit>(),
-            child: const EmailVerifciationScreen(),
+          builder: (_) => BlocProvider<AddPatientCubit>(
+            create: (context) => di.sl<AddPatientCubit>(),
+            child: const AddPatientScreen(),
           ),
         );
 

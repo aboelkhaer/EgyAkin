@@ -6,10 +6,18 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = HomeCubit.get(context);
+
     return Scaffold(
       body: Column(
         children: [
-          BlocBuilder<HomeCubit, HomeState>(
+          BlocConsumer<HomeCubit, HomeState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                orElse: () {},
+                loaded:
+                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {},
+              );
+            },
             builder: (context, state) {
               return state.maybeWhen(
                 orElse: () {
@@ -30,8 +38,8 @@ class HomeScreen extends StatelessWidget {
                     ],
                   );
                 },
-                loaded: (homeData, currentDoctorModel, dotsPosition,
-                    notificationDataModel, homeIndex) {
+                loaded:
+                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                   if (homeIndex == 2) {
                     return const SizedBox.shrink();
                   }
@@ -61,9 +69,7 @@ class HomeScreen extends StatelessWidget {
               context,
               controller: cubit.tabsController,
               items: _navBarsItems(),
-              screens: _buildScreens(
-                cubit,
-              ),
+              screens: _buildScreens(cubit),
               onItemSelected: (value) {
                 cubit.hideHomeHeader();
               },
@@ -103,7 +109,9 @@ class HomeScreen extends StatelessWidget {
     HomeCubit cubit,
   ) {
     return [
-      HomeTab(cubit: cubit),
+      HomeTab(
+        cubit: cubit,
+      ),
       const NotificationScreen(),
       const ProfileScreen(),
       const Center(child: Text('More')),

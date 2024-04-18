@@ -2,14 +2,14 @@ import 'package:dartz/dartz.dart';
 import '../../../../exports.dart';
 
 class GetAllNotificationUsecase
-    implements BaseUseCase<NoParams, GetAllNotificationsModelResponse> {
+    implements BaseUseCase<int, GetAllNotificationsModelResponse> {
   final NotificationRepository repository;
 
   GetAllNotificationUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetAllNotificationsModelResponse>> excute(
-      NoParams input) async {
-    return await repository.getAllNotifications();
+      int page) async {
+    return await repository.getAllNotifications(page);
   }
 }
