@@ -6,6 +6,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = HomeCubit.get(context);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.light));
 
     return Scaffold(
       body: Column(
@@ -114,7 +117,7 @@ class HomeScreen extends StatelessWidget {
       ),
       const NotificationScreen(),
       const ProfileScreen(),
-      const Center(child: Text('More')),
+      const Center(child: Text('Soon')),
     ];
   }
 

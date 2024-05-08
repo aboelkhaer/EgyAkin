@@ -1,6 +1,3 @@
-import 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_state.dart';
-import 'package:egy_akin/main.dart';
-
 import '../../../../exports.dart';
 
 class EmailVerifciationScreen extends StatefulWidget {

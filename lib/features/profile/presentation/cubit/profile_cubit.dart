@@ -46,10 +46,6 @@ class ProfileCubit extends Cubit<ProfileState> {
         },
       );
     } else {
-      // emit(state.maybeMap(
-      //   orElse: () => state,
-      //   loaded: (value) => ProfileState.loaded(value.doctorModel),
-      // ));
       emit(ProfileState.loaded(currentDoctor));
     }
   }

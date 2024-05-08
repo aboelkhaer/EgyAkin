@@ -1,16 +1,20 @@
 import 'dart:developer';
 
+import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
 import 'package:egy_akin/app/shared/widgets/build_multiple_value_questions.dart';
 import 'package:egy_akin/app/shared/widgets/build_select_value_questions.dart';
 import 'package:egy_akin/app/shared/widgets/build_string_value_questions.dart';
-import 'package:egy_akin/features/add_patient/presentation/cubit/add_patient_cubit.dart';
-import 'package:egy_akin/features/add_patient/presentation/cubit/add_patient_state.dart';
+import 'package:egy_akin/features/add_patient/presentation/widgets/submit_botton.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
 
 class AddPatientScreen extends StatefulWidget {
-  const AddPatientScreen({super.key});
+  final String currentDoctorId;
+  const AddPatientScreen({
+    super.key,
+    required this.currentDoctorId,
+  });
 
   @override
   State<AddPatientScreen> createState() => _AddPatientScreenState();
@@ -20,7 +24,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   Map<String, dynamic> answerMap = {};
   @override
   void initState() {
-    context.read<AddPatientCubit>().getPatientHistoryForAddPatient();
+    // context.read<AddPatientCubit>().getPatientHistoryForAddPatient();
     answerMap = {
       AppStrings.answers: [],
       AppStrings.otherField: AppStrings.empty,
@@ -63,7 +67,11 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                           ),
                         );
                       },
-                      loaded: (questions) {
+                      loaded: (
+                        questions,
+                        isAddedPatientSuccessfully,
+                        patientId,
+                      ) {
                         return Expanded(
                           child: ListView.builder(
                             itemCount: questions.length,
@@ -143,18 +151,54 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   ),
                 ],
               ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: CustomElevatedButton(
-                    onPressed: () {
-                      //  _controller.submitBotton(context: context)
+              child: BlocConsumer<AddPatientCubit, AddPatientState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    orElse: () {},
+                    loaded: (questions, isAddedPatientSuccessfully, patientId) {
+                      if (isAddedPatientSuccessfully) {
+                        Navigator.of(context).pushReplacementNamed(
+                          AppRoutes.patientSections,
+                          arguments:
+                              AppRoutesArgs.patientSectionsRouteArguments(
+                            patientId: patientId.toString(),
+                            currentDoctorId: widget.currentDoctorId.toString(),
+                          ),
+                        );
+                      }
                     },
-                    title: AppStrings.submit,
-                  ),
-                ),
+                    error: (message) {
+                      showCustomDialog(
+                        context: context,
+                        title: 'Attention!',
+                        description: message,
+                        coloredBottonText: 'Cancel',
+                        isNoColorShow: false,
+                        coloredBottonOnTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                  );
+                },
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return SubmitBotton(
+                        cubit: cubit,
+                      );
+                    },
+                    loading: () => const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                            height: 30,
+                            width: 30,
+                            child: CircularProgressIndicator()),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -165,14 +209,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
   Widget buildQuestionWidget(List<QuestionModel> questionList, int index,
       Size size, AddPatientCubit cubit) {
-    Map<String, dynamic> formDataMap = cubit.formData;
-
     switch (questionList[index].type) {
       case AppStrings.string:
         var questionAnswer = questionList[index].answer;
+        questionAnswer ??= '';
         return BuildStringValueQuestions(
           questionList: questionList,
-          initialValue: formDataMap[questionList[index].id.toString()] ??
+          initialValue: cubit.formData[questionList[index].id.toString()] ??
               AppStrings.empty,
           index: index,
           textInputFormatter:
@@ -191,10 +234,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           onChanged: (val) {
             if (questionAnswer != val) {
               questionAnswer = val;
-              formDataMap[questionList[index].id.toString()] = val;
+              cubit.formData[questionList[index].id.toString()] = val;
             } else {
               questionAnswer = null;
-              formDataMap.remove(questionList[index].id.toString());
+              cubit.formData.remove(questionList[index].id.toString());
             }
             log(questionAnswer.toString());
           },
@@ -208,7 +251,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         return BuildSelectValueQuestion(
           questionList: questionList,
           index: index,
-          selected: questionAnswer ?? selectedValue,
+          selected: cubit.formData[questionList[index].id.toString()] ??
+              selectedValue,
           validator: (val) {
             if (questionList[index].mandatory == true &&
                 (val == null || val == AppStrings.empty)) {
@@ -222,10 +266,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             if (questionAnswer != val) {
               questionAnswer = val;
 
-              formDataMap[questionList[index].id.toString()] = val;
+              cubit.formData[questionList[index].id.toString()] = val;
             } else {
               questionAnswer = null;
-              formDataMap.remove(questionList[index].id.toString());
+              cubit.formData.remove(questionList[index].id.toString());
             }
 
             setState(() {});
@@ -233,11 +277,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
         );
 
       case AppStrings.multipleType:
-        Map<String, dynamic> answerMap = {
-          AppStrings.answers: [],
-          AppStrings.otherField: AppStrings.empty
-        };
-
+        // Map<String, dynamic> answerMap = {
+        //   AppStrings.answers: [],
+        //   AppStrings.otherField: AppStrings.empty
+        // };
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,

@@ -1,6 +1,3 @@
-import 'package:egy_akin/features/email_verification/domain/usecases/send_otp_for_email_verification_usecase.dart';
-import 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_state.dart';
-
 import '../../../../exports.dart';
 
 class EmailVerificationCubit extends Cubit<EmailVerificationState> {
@@ -16,14 +13,14 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
   GlobalKey<FormState> emailVerificationOTPFormKey = GlobalKey<FormState>();
   FocusNode firstOTPFocusNode = FocusNode();
 
-  late Timer _timer;
+  Timer? _timer;
   int countdown = AppStrings.resendTimer;
   bool isOTPDone = false;
 
   @override
   Future<void> close() {
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
     }
     firstOTPFocusNode.dispose();
     return super.close();
@@ -33,15 +30,12 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       countdown--;
       if (countdown <= 0) {
-        _timer.cancel();
-        // isResendBottonShow = true;
+        _timer!.cancel();
         emit(const EmailVerificationState.countDowncompleted());
       } else {
-        // isResendBottonShow = false;
         emit(EmailVerificationState.countDownInProgress(countdown));
       }
     });
-    // isResendBottonShow = false;
     emit(EmailVerificationState.countDownInProgress(countdown));
   }
 
@@ -52,7 +46,6 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
   }
 
   void resendOtp() async {
-    // isResendBottonShow = false;
     countdown = AppStrings.resendTimer;
     startCountdown();
     final result = await _sendEmailForVerificationUsecase.excute(NoParams());

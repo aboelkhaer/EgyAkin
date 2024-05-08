@@ -23,8 +23,10 @@ mixin _$HomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   bool? get verified => throw _privateConstructorUsedError;
   String? get unreadCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'patient_count')
-  String? get patientCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'doctor_patient_count')
+  String? get doctorPatientCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'all_patient_count')
+  String? get allPatientCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'score_value')
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'role')
@@ -47,7 +49,8 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       {bool? value,
       bool? verified,
       String? unreadCount,
-      @JsonKey(name: 'patient_count') String? patientCount,
+      @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
       HomeDataModelResponse? data});
@@ -71,7 +74,8 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? value = freezed,
     Object? verified = freezed,
     Object? unreadCount = freezed,
-    Object? patientCount = freezed,
+    Object? doctorPatientCount = freezed,
+    Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
     Object? data = freezed,
@@ -89,9 +93,13 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
           ? _value.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
               as String?,
-      patientCount: freezed == patientCount
-          ? _value.patientCount
-          : patientCount // ignore: cast_nullable_to_non_nullable
+      doctorPatientCount: freezed == doctorPatientCount
+          ? _value.doctorPatientCount
+          : doctorPatientCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      allPatientCount: freezed == allPatientCount
+          ? _value.allPatientCount
+          : allPatientCount // ignore: cast_nullable_to_non_nullable
               as String?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
@@ -133,7 +141,8 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       {bool? value,
       bool? verified,
       String? unreadCount,
-      @JsonKey(name: 'patient_count') String? patientCount,
+      @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
       HomeDataModelResponse? data});
@@ -156,7 +165,8 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? value = freezed,
     Object? verified = freezed,
     Object? unreadCount = freezed,
-    Object? patientCount = freezed,
+    Object? doctorPatientCount = freezed,
+    Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
     Object? data = freezed,
@@ -174,9 +184,13 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
           ? _value.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
               as String?,
-      patientCount: freezed == patientCount
-          ? _value.patientCount
-          : patientCount // ignore: cast_nullable_to_non_nullable
+      doctorPatientCount: freezed == doctorPatientCount
+          ? _value.doctorPatientCount
+          : doctorPatientCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      allPatientCount: freezed == allPatientCount
+          ? _value.allPatientCount
+          : allPatientCount // ignore: cast_nullable_to_non_nullable
               as String?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
@@ -203,7 +217,8 @@ class _$HomeModelResponseImpl
       {this.value,
       this.verified,
       this.unreadCount,
-      @JsonKey(name: 'patient_count') this.patientCount,
+      @JsonKey(name: 'doctor_patient_count') this.doctorPatientCount,
+      @JsonKey(name: 'all_patient_count') this.allPatientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
       @JsonKey(name: 'role') this.role,
       this.data});
@@ -218,8 +233,11 @@ class _$HomeModelResponseImpl
   @override
   final String? unreadCount;
   @override
-  @JsonKey(name: 'patient_count')
-  final String? patientCount;
+  @JsonKey(name: 'doctor_patient_count')
+  final String? doctorPatientCount;
+  @override
+  @JsonKey(name: 'all_patient_count')
+  final String? allPatientCount;
   @override
   @JsonKey(name: 'score_value')
   final String? scoreValue;
@@ -231,7 +249,7 @@ class _$HomeModelResponseImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, patientCount: $patientCount, scoreValue: $scoreValue, role: $role, data: $data)';
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
   }
 
   @override
@@ -242,7 +260,8 @@ class _$HomeModelResponseImpl
       ..add(DiagnosticsProperty('value', value))
       ..add(DiagnosticsProperty('verified', verified))
       ..add(DiagnosticsProperty('unreadCount', unreadCount))
-      ..add(DiagnosticsProperty('patientCount', patientCount))
+      ..add(DiagnosticsProperty('doctorPatientCount', doctorPatientCount))
+      ..add(DiagnosticsProperty('allPatientCount', allPatientCount))
       ..add(DiagnosticsProperty('scoreValue', scoreValue))
       ..add(DiagnosticsProperty('role', role))
       ..add(DiagnosticsProperty('data', data));
@@ -258,8 +277,10 @@ class _$HomeModelResponseImpl
                 other.verified == verified) &&
             (identical(other.unreadCount, unreadCount) ||
                 other.unreadCount == unreadCount) &&
-            (identical(other.patientCount, patientCount) ||
-                other.patientCount == patientCount) &&
+            (identical(other.doctorPatientCount, doctorPatientCount) ||
+                other.doctorPatientCount == doctorPatientCount) &&
+            (identical(other.allPatientCount, allPatientCount) ||
+                other.allPatientCount == allPatientCount) &&
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
             (identical(other.role, role) || other.role == role) &&
@@ -269,7 +290,7 @@ class _$HomeModelResponseImpl
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, value, verified, unreadCount,
-      patientCount, scoreValue, role, data);
+      doctorPatientCount, allPatientCount, scoreValue, role, data);
 
   @JsonKey(ignore: true)
   @override
@@ -291,7 +312,8 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       {final bool? value,
       final bool? verified,
       final String? unreadCount,
-      @JsonKey(name: 'patient_count') final String? patientCount,
+      @JsonKey(name: 'doctor_patient_count') final String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count') final String? allPatientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
       @JsonKey(name: 'role') final String? role,
       final HomeDataModelResponse? data}) = _$HomeModelResponseImpl;
@@ -306,8 +328,11 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @override
   String? get unreadCount;
   @override
-  @JsonKey(name: 'patient_count')
-  String? get patientCount;
+  @JsonKey(name: 'doctor_patient_count')
+  String? get doctorPatientCount;
+  @override
+  @JsonKey(name: 'all_patient_count')
+  String? get allPatientCount;
   @override
   @JsonKey(name: 'score_value')
   String? get scoreValue;
@@ -869,7 +894,7 @@ SectionHomeDataModel _$SectionHomeDataModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SectionHomeDataModel {
   @JsonKey(name: 'patient_id')
-  String? get patientId => throw _privateConstructorUsedError;
+  int? get patientId => throw _privateConstructorUsedError;
   @JsonKey(name: 'submit_status')
   bool? get submitStatus => throw _privateConstructorUsedError;
   @JsonKey(name: 'outcome_status')
@@ -888,7 +913,7 @@ abstract class $SectionHomeDataModelCopyWith<$Res> {
       _$SectionHomeDataModelCopyWithImpl<$Res, SectionHomeDataModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'patient_id') String? patientId,
+      {@JsonKey(name: 'patient_id') int? patientId,
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'outcome_status') bool? outcomeStatus});
 }
@@ -915,7 +940,7 @@ class _$SectionHomeDataModelCopyWithImpl<$Res,
       patientId: freezed == patientId
           ? _value.patientId
           : patientId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       submitStatus: freezed == submitStatus
           ? _value.submitStatus
           : submitStatus // ignore: cast_nullable_to_non_nullable
@@ -937,7 +962,7 @@ abstract class _$$SectionHomeDataModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'patient_id') String? patientId,
+      {@JsonKey(name: 'patient_id') int? patientId,
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'outcome_status') bool? outcomeStatus});
 }
@@ -961,7 +986,7 @@ class __$$SectionHomeDataModelImplCopyWithImpl<$Res>
       patientId: freezed == patientId
           ? _value.patientId
           : patientId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       submitStatus: freezed == submitStatus
           ? _value.submitStatus
           : submitStatus // ignore: cast_nullable_to_non_nullable
@@ -989,7 +1014,7 @@ class _$SectionHomeDataModelImpl
 
   @override
   @JsonKey(name: 'patient_id')
-  final String? patientId;
+  final int? patientId;
   @override
   @JsonKey(name: 'submit_status')
   final bool? submitStatus;
@@ -1048,7 +1073,7 @@ class _$SectionHomeDataModelImpl
 
 abstract class _SectionHomeDataModel implements SectionHomeDataModel {
   const factory _SectionHomeDataModel(
-          {@JsonKey(name: 'patient_id') final String? patientId,
+          {@JsonKey(name: 'patient_id') final int? patientId,
           @JsonKey(name: 'submit_status') final bool? submitStatus,
           @JsonKey(name: 'outcome_status') final bool? outcomeStatus}) =
       _$SectionHomeDataModelImpl;
@@ -1058,7 +1083,7 @@ abstract class _SectionHomeDataModel implements SectionHomeDataModel {
 
   @override
   @JsonKey(name: 'patient_id')
-  String? get patientId;
+  int? get patientId;
   @override
   @JsonKey(name: 'submit_status')
   bool? get submitStatus;

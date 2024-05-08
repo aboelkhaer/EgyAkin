@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
-import 'package:egy_akin/features/email_verification/data/models/send_email_for_verification_model_response.dart';
-import 'package:egy_akin/features/email_verification/data/models/send_otp_for_email_verification_model_response.dart';
-import 'package:egy_akin/features/post_details/data/models/add_comment_on_post_model_response.dart';
-import 'package:egy_akin/features/profile/data/models/sign_out_model_response.dart';
-import 'package:egy_akin/features/profile/data/models/upload_profile_image_model_response.dart';
+import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
+import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
+import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
+import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
+import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
+
 import 'package:retrofit/http.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
@@ -34,11 +36,12 @@ abstract class ApiServices {
   );
 
   @GET(ApiEndPoint.currentPatientsHome)
-  Future<GetCurrentPatientstModelResponse> getCurrentPatients(
-    @Field("token") String token,
+  Future<GetDoctorPatientsModelResponse> getCurrentPatients(
+    @Query('page') int pageNumber,
   );
+
   @GET('${ApiEndPoint.search}/{searchContent}')
-  Future<GetAllBasPatientstModelResponse> searchHome(
+  Future<GetSearchModelResponse> searchHome(
     @Path("searchContent") String searchContent,
   );
   @PUT('${ApiEndPoint.updateProfile}/{doctorID}')
@@ -56,7 +59,7 @@ abstract class ApiServices {
   );
 
   @GET('${ApiEndPoint.sections}/{patientId}')
-  Future<GetBaseSectionsModelResponse> getPatientSections(
+  Future<GetPatientSectionsModelResponse> getPatientSections(
     @Path("patientId") String patientId,
   );
 
@@ -83,11 +86,11 @@ abstract class ApiServices {
     @Path("sectionId") String sectionId,
   );
   @POST(ApiEndPoint.addPatientForFirstTime)
-  Future<SemiPatientModel> addPatientForFirstTime(
+  Future<AddPatientForFirstTimeModelResponse> addPatientForFirstTime(
     @Body() Map<String, dynamic> map,
   );
   @POST(ApiEndPoint.outcome)
-  Future<AddOutcometModelResponse> submitOutcome(
+  Future<SubmitOutcomeModelResponse> submitOutcome(
     @Field("patient_id") String patientId,
     @Field("outcome_of_the_patient") String outcomeOfThePatient,
     @Field("creatinine_on_discharge") String creatinineOnDischarge,
@@ -101,29 +104,26 @@ abstract class ApiServices {
     @Path("patientId") String patientId,
   );
   @PUT('${ApiEndPoint.finalSubmit}/{patientId}')
-  Future<UpdateSectionDetailsModelResponse> finalSubmit(
+  Future<FinalSubmitModelResponse> finalSubmit(
     @Path("patientId") String patientId,
   );
   @GET('${ApiEndPoint.comment}/{patientId}')
-  Future<GetCommentstModelResponse> getComments(
+  Future<GetPatientCommentsModelResponse> getPatientComments(
     @Path("patientId") String patientId,
   );
   @POST(ApiEndPoint.comment)
-  Future<AddCommentModelResponse> addComment(
+  Future<AddPatientCommentsModelResponse> addComment(
     @Field("patient_id") String patientId,
     @Field("content") String content,
   );
   @DELETE('${ApiEndPoint.comment}/{commentId}')
-  Future<DeleteCommentModelResponse> deleteComment(
+  Future<DeletePatientCommentsModelResponse> deleteComment(
     @Path("commentId") String commentId,
   );
   @POST(ApiEndPoint.contactUs)
   Future<AddContactUsModelResponse> addContactUs(
     @Field("message") String message,
   );
-
-  @GET(ApiEndPoint.post)
-  Future<GetPostsModelResponse> getHomePosts();
 
   @GET('${ApiEndPoint.postComments}/{postId}')
   Future<PostCommentsModelResponse> getPostComments(
@@ -139,7 +139,8 @@ abstract class ApiServices {
 
   @GET(ApiEndPoint.getAllNotifications)
   Future<GetAllNotificationsModelResponse> getAllNotifications(
-      @Query('page') int pageNumber);
+    @Query('page') int pageNumber,
+  );
 
   @PUT(ApiEndPoint.notification)
   Future<UpdateNotificationModelResponse> updateNotifications();

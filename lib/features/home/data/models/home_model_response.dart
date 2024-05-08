@@ -10,7 +10,8 @@ class HomeModelResponse with _$HomeModelResponse {
     bool? value,
     bool? verified,
     String? unreadCount,
-    @JsonKey(name: 'patient_count') String? patientCount,
+    @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
+    @JsonKey(name: 'all_patient_count') String? allPatientCount,
     @JsonKey(name: 'score_value') String? scoreValue,
     @JsonKey(name: 'role') String? role,
     HomeDataModelResponse? data,
@@ -48,7 +49,7 @@ class PatientHomeDataModel with _$PatientHomeDataModel {
 @freezed
 class SectionHomeDataModel with _$SectionHomeDataModel {
   const factory SectionHomeDataModel({
-    @JsonKey(name: 'patient_id') String? patientId,
+    @JsonKey(name: 'patient_id') int? patientId,
     @JsonKey(name: 'submit_status') bool? submitStatus,
     @JsonKey(name: 'outcome_status') bool? outcomeStatus,
   }) = _SectionHomeDataModel;

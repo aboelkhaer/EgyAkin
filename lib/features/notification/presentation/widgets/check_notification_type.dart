@@ -121,16 +121,22 @@ class CheckNotificationType extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            Text(
-              timeago
-                  .format(
-                      DateTime.parse(notificationModel.createdAt.toString()))
-                  .toString(),
-              style: const TextStyle(
-                color: AppColors.title,
-                fontSize: 10,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  timeago
+                      .format(DateTime.parse(
+                          notificationModel.createdAt.toString()))
+                      .toString(),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 8.sp,
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: 15.h),
           ],
         );
       case AppStrings.outcome:
@@ -153,16 +159,22 @@ class CheckNotificationType extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 5),
-            Text(
-              timeago
-                  .format(
-                      DateTime.parse(notificationModel.createdAt.toString()))
-                  .toString(),
-              style: const TextStyle(
-                color: AppColors.title,
-                fontSize: 10,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text(
+                  timeago
+                      .format(DateTime.parse(
+                          notificationModel.createdAt.toString()))
+                      .toString(),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 8.sp,
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: 10.h),
           ],
         );
 

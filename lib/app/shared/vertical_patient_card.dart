@@ -191,7 +191,7 @@ class VerticalPatientCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 2.w,
+          right: 4.w,
           top: 2.h,
           child: Icon(
             submitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,

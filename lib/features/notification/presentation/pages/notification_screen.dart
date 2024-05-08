@@ -49,6 +49,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           onRefresh: () async {
             // return await cubit.onRefreshInicator();
             await cubit.getAllNotifications();
+            // await cubit.updateNotification();
             await Future.delayed(const Duration(
                 milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
           },
@@ -94,7 +95,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 15.h),
+                  SizedBox(height: 5.h),
                   BlocBuilder<NotificationCubit, NotificationState>(
                     builder: (context, state) {
                       return state.maybeWhen(

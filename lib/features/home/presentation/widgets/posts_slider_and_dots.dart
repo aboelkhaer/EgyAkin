@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/main.dart';
 import 'package:html/parser.dart' show parse;
@@ -43,11 +44,11 @@ class PostsSliderAndDots extends StatelessWidget {
                         onTap: () {
                           navigatorKey.currentState?.pushNamed(
                             AppRoutes.postDetails,
-                            arguments: {
-                              'postModel': homeData.data!.posts![index],
-                              'doctorModel': cubit.currentDoctorModel,
-                              'accountVerification': homeData.verified,
-                            },
+                            arguments: AppRoutesArgs.postDetailsRouteArgs(
+                              postModel: homeData.data!.posts![index],
+                              doctorModel: cubit.currentDoctorModel,
+                              verified: homeData.verified!,
+                            ),
                           );
                         },
 
@@ -222,15 +223,17 @@ class PostsSliderAndDots extends StatelessWidget {
                 return const SizedBox.shrink();
               },
               loaded: (homeData, dotsPosition, notificationData, homeIndex) {
-                return DotsIndicator(
-                  dotsCount: homeData.data!.posts!.length,
-                  position: cubit.dotsPosition,
-                  decorator: DotsDecorator(
-                    activeColor: AppColors.primary.withOpacity(0.6),
-                    color: Colors.grey.shade300,
-                    size: const Size(5, 5),
-                  ),
-                );
+                return homeData.data!.posts!.isEmpty
+                    ? const SizedBox.shrink()
+                    : DotsIndicator(
+                        dotsCount: homeData.data!.posts!.length,
+                        position: cubit.dotsPosition,
+                        decorator: DotsDecorator(
+                          activeColor: AppColors.primary.withOpacity(0.6),
+                          color: Colors.grey.shade300,
+                          size: const Size(5, 5),
+                        ),
+                      );
               },
             );
           },

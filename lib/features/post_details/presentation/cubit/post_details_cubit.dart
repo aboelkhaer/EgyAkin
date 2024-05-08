@@ -1,8 +1,4 @@
 import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
-import 'package:egy_akin/features/post_details/domain/usecases/add_comment_on_post_usecase.dart';
-import 'package:egy_akin/features/post_details/domain/usecases/delete_post_comment_usecase.dart';
-import 'package:egy_akin/features/post_details/domain/usecases/get_post_comments_usecase.dart';
-
 import '../../../../exports.dart';
 
 class PostDetailsCubit extends Cubit<PostDetailsState> {

@@ -1,20 +1,29 @@
 import '../../../../exports.dart';
 
 class HomeSearchBotton extends StatelessWidget {
+  final DoctorModel currentDoctorModel;
+  final bool verified;
   const HomeSearchBotton({
     super.key,
+    required this.currentDoctorModel,
+    required this.verified,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // todo: go to search page
+        navigatorKey.currentState?.pushNamed(
+          AppRoutes.search,
+          arguments: AppRoutesArgs.searchRouteArgs(
+            currentDoctorModel: currentDoctorModel,
+            verified: verified,
+          ),
+        );
       },
       child: SizedBox(
         height: 55,
         child: TextField(
-          // controller: controller.searchController,
           cursorColor: AppColors.primary,
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),

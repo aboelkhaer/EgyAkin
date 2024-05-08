@@ -41,7 +41,7 @@ showCustomDialog(
                         ))
                     : const SizedBox.shrink(),
                 SizedBox(
-                  width: size.width * 0.23,
+                  width: size.width * 0.25,
                   child: CustomElevatedButton(
                     onPressed: coloredBottonOnTap,
                     title: coloredBottonText,

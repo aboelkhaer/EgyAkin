@@ -1,10 +1,19 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/add_patient/data/datasources/add_patient_datasource.dart';
-import 'package:egy_akin/features/add_patient/data/repositories/add_patient_repo_impl.dart';
-import 'package:egy_akin/features/add_patient/domain/repositories/add_patient_repo.dart';
-import 'package:egy_akin/features/add_patient/domain/usecases/get_patient_history_for_add_patient_usecase.dart';
-import 'package:egy_akin/features/add_patient/presentation/cubit/add_patient_cubit.dart';
-import 'package:egy_akin/features/email_verification/domain/usecases/send_otp_for_email_verification_usecase.dart';
+import 'package:egy_akin/features/current_doctor_patients/data/datasources/current_doctor_patients_datasource.dart';
+import 'package:egy_akin/features/current_doctor_patients/data/repositories/current_doctor_patients_repo_impl.dart';
+import 'package:egy_akin/features/current_doctor_patients/domain/repositories/current_doctor_patients_repo.dart';
+import 'package:egy_akin/features/current_doctor_patients/domain/usecases/get_current_doctor_patients_usecase.dart';
+import 'package:egy_akin/features/outcome/data/repositories/outcome_repo_impl.dart';
+import 'package:egy_akin/features/outcome/domain/usecases/get_outcome_usecase.dart';
+import 'package:egy_akin/features/outcome/domain/usecases/submit_outcome_usecase.dart';
+import 'package:egy_akin/features/patient_comments/domain/usecases/add_patient_comment_usecase.dart';
+import 'package:egy_akin/features/patient_comments/domain/usecases/delete_patient_comment_usecase.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/delete_patient_usecase.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/final_submit_usecase.dart';
+import 'package:egy_akin/features/search/data/datasources/search_datasourch.dart';
+import 'package:egy_akin/features/search/data/repositories/search_repo_impl.dart';
+import 'package:egy_akin/features/search/domain/repositories/search_repo.dart';
+import 'package:egy_akin/features/search/domain/usecases/get_search_home_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -33,7 +42,12 @@ Future<void> diInit() async {
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
   sl.registerFactory(() => PostDetailsCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => AddPatientCubit(sl()));
+  sl.registerFactory(() => AddPatientCubit(sl(), sl()));
+  sl.registerFactory(() => PatientSectionsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => PatientCommentsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => SearchCubit(sl()));
+  sl.registerFactory(() => OutcomeCubit(sl(), sl()));
+  sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -51,6 +65,15 @@ Future<void> diInit() async {
       () => EmailVerificationDataSourceImpl(sl()));
   sl.registerLazySingleton<AddPatientDataSource>(
       () => AddPatientDataSourceImpl(sl()));
+  sl.registerLazySingleton<PatientSectionsDataSource>(
+      () => PatientSectionsDataSourceImpl(sl()));
+  sl.registerLazySingleton<PatientCommentsDataSource>(
+      () => PatientCommentsDataSourceImpl(sl()));
+  sl.registerLazySingleton<SearchDataSource>(() => SearchDataSourceImpl(sl()));
+  sl.registerLazySingleton<OutcomeDataSource>(
+      () => OutcomeDataSourceImpl(sl()));
+  sl.registerLazySingleton<CurrentDoctorPatientsDataSource>(
+      () => CurrentDoctorPatientsDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -69,6 +92,16 @@ Future<void> diInit() async {
       () => EmailVerificationRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<AddPatientRepository>(
       () => AddPatientRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PatientSectionsRepository>(
+      () => PatientSectionsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PatientCommentsRepository>(
+      () => PatientCommentsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<SearchRepository>(
+      () => SearchRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<OutcomeRepository>(
+      () => OutcomeRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<CurrentDoctorPatientsRepository>(
+      () => CurrentDoctorPatientsRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -131,5 +164,44 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetPatientHistoryForAddPatientUsecase>()) {
     sl.registerFactory<GetPatientHistoryForAddPatientUsecase>(
         () => GetPatientHistoryForAddPatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddPatientForFirstTimetUsecase>()) {
+    sl.registerFactory<AddPatientForFirstTimetUsecase>(
+        () => AddPatientForFirstTimetUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientSectionsUsecase>()) {
+    sl.registerFactory<GetPatientSectionsUsecase>(
+        () => GetPatientSectionsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientCommentsUsecase>()) {
+    sl.registerFactory<GetPatientCommentsUsecase>(
+        () => GetPatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddPatientCommentsUsecase>()) {
+    sl.registerFactory<AddPatientCommentsUsecase>(
+        () => AddPatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePatientCommentsUsecase>()) {
+    sl.registerFactory<DeletePatientCommentsUsecase>(
+        () => DeletePatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetSearchHomeUsecase>()) {
+    sl.registerFactory<GetSearchHomeUsecase>(() => GetSearchHomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePatientUsecase>()) {
+    sl.registerFactory<DeletePatientUsecase>(() => DeletePatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<FinalSubmitUsecase>()) {
+    sl.registerFactory<FinalSubmitUsecase>(() => FinalSubmitUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetOutcomeUsecase>()) {
+    sl.registerFactory<GetOutcomeUsecase>(() => GetOutcomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SubmitOutcomeUsecase>()) {
+    sl.registerFactory<SubmitOutcomeUsecase>(() => SubmitOutcomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetCurrentDoctorPatientsUsecase>()) {
+    sl.registerFactory<GetCurrentDoctorPatientsUsecase>(
+        () => GetCurrentDoctorPatientsUsecase(sl()));
   }
 }

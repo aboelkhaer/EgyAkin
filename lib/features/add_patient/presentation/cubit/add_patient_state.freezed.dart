@@ -20,7 +20,9 @@ mixin _$AddPatientState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<QuestionModel> questions) loaded,
+    required TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +30,9 @@ mixin _$AddPatientState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions)? loaded,
+    TResult? Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +40,9 @@ mixin _$AddPatientState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions)? loaded,
+    TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -104,12 +110,18 @@ class __$$InitialImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$InitialImpl implements _Initial {
+class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AddPatientState.initial()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AddPatientState.initial'));
   }
 
   @override
@@ -126,7 +138,9 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<QuestionModel> questions) loaded,
+    required TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -137,7 +151,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions)? loaded,
+    TResult? Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -148,7 +164,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions)? loaded,
+    TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -218,12 +236,18 @@ class __$$LoadingImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadingImpl implements _Loading {
+class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AddPatientState.loading()';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty('type', 'AddPatientState.loading'));
   }
 
   @override
@@ -240,7 +264,9 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<QuestionModel> questions) loaded,
+    required TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -251,7 +277,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions)? loaded,
+    TResult? Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -262,7 +290,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions)? loaded,
+    TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -320,7 +350,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<QuestionModel> questions});
+  $Res call(
+      {List<QuestionModel> questions,
+      bool isAddedPatientSuccessfully,
+      int patientId});
 }
 
 /// @nodoc
@@ -335,20 +368,31 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? questions = null,
+    Object? isAddedPatientSuccessfully = null,
+    Object? patientId = null,
   }) {
     return _then(_$LoadedImpl(
       null == questions
           ? _value._questions
           : questions // ignore: cast_nullable_to_non_nullable
               as List<QuestionModel>,
+      null == isAddedPatientSuccessfully
+          ? _value.isAddedPatientSuccessfully
+          : isAddedPatientSuccessfully // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == patientId
+          ? _value.patientId
+          : patientId // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
 
 /// @nodoc
 
-class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(final List<QuestionModel> questions)
+class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+  const _$LoadedImpl(final List<QuestionModel> questions,
+      this.isAddedPatientSuccessfully, this.patientId)
       : _questions = questions;
 
   final List<QuestionModel> _questions;
@@ -360,8 +404,24 @@ class _$LoadedImpl implements _Loaded {
   }
 
   @override
-  String toString() {
-    return 'AddPatientState.loaded(questions: $questions)';
+  final bool isAddedPatientSuccessfully;
+  @override
+  final int patientId;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AddPatientState.loaded(questions: $questions, isAddedPatientSuccessfully: $isAddedPatientSuccessfully, patientId: $patientId)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AddPatientState.loaded'))
+      ..add(DiagnosticsProperty('questions', questions))
+      ..add(DiagnosticsProperty(
+          'isAddedPatientSuccessfully', isAddedPatientSuccessfully))
+      ..add(DiagnosticsProperty('patientId', patientId));
   }
 
   @override
@@ -370,12 +430,21 @@ class _$LoadedImpl implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             const DeepCollectionEquality()
-                .equals(other._questions, _questions));
+                .equals(other._questions, _questions) &&
+            (identical(other.isAddedPatientSuccessfully,
+                    isAddedPatientSuccessfully) ||
+                other.isAddedPatientSuccessfully ==
+                    isAddedPatientSuccessfully) &&
+            (identical(other.patientId, patientId) ||
+                other.patientId == patientId));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_questions));
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_questions),
+      isAddedPatientSuccessfully,
+      patientId);
 
   @JsonKey(ignore: true)
   @override
@@ -388,10 +457,12 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<QuestionModel> questions) loaded,
+    required TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(questions);
+    return loaded(questions, isAddedPatientSuccessfully, patientId);
   }
 
   @override
@@ -399,10 +470,12 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions)? loaded,
+    TResult? Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(questions);
+    return loaded?.call(questions, isAddedPatientSuccessfully, patientId);
   }
 
   @override
@@ -410,12 +483,14 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions)? loaded,
+    TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(questions);
+      return loaded(questions, isAddedPatientSuccessfully, patientId);
     }
     return orElse();
   }
@@ -459,9 +534,14 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements AddPatientState {
-  const factory _Loaded(final List<QuestionModel> questions) = _$LoadedImpl;
+  const factory _Loaded(
+      final List<QuestionModel> questions,
+      final bool isAddedPatientSuccessfully,
+      final int patientId) = _$LoadedImpl;
 
   List<QuestionModel> get questions;
+  bool get isAddedPatientSuccessfully;
+  int get patientId;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -500,15 +580,23 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl implements _Error {
+class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'AddPatientState.error(message: $message)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'AddPatientState.error'))
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -533,7 +621,9 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<QuestionModel> questions) loaded,
+    required TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -544,7 +634,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions)? loaded,
+    TResult? Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -555,7 +647,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions)? loaded,
+    TResult Function(List<QuestionModel> questions,
+            bool isAddedPatientSuccessfully, int patientId)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

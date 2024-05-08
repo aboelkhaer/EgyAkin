@@ -1,11 +1,13 @@
 class ApiEndPoint {
-  static const baseUrl = 'https://egyakin.com';
-  static const home = '$baseUrl/api/home';
+  // static const baseUrl = 'https://egyakin.com';
+  static const baseUrl = 'https://api.egyakin.com';
+
+  static const home = '$baseUrl/api/homeNew';
   static const signIn = '$baseUrl/api/login';
   static const register = '$baseUrl/api/register';
   static const signOut = '$baseUrl/api/logout';
   static const allPatients = '$baseUrl/api/allPatients';
-  static const currentPatientsHome = '$baseUrl/api/currentPatients';
+  static const currentPatientsHome = '$baseUrl/api/currentPatientsNew';
   static const search = '$baseUrl/api/patient/search';
   static const updateProfile = '$baseUrl/api/users';
   static const sections = '$baseUrl/api/section';
@@ -20,10 +22,10 @@ class ApiEndPoint {
   static const contactUs = '$baseUrl/api/contact';
   static const post = '$baseUrl/api/post';
   static const postComments = '$baseUrl/api/Postcomments';
+  static const showNotification = '$baseUrl/api/shownotification';
   static const notification = '$baseUrl/api/notification';
   static const getAllNotifications = '$baseUrl/api/shownotification';
-  static String getPaginatedNotifications(int pageNumber) =>
-      '/notifications?page=$pageNumber';
+
   static const forgetPassword = '$baseUrl/api/forgotpassword';
   static const resetPasswordVerification =
       '$baseUrl/api/resetpasswordverification';

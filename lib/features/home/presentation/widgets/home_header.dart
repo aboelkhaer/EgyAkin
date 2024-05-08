@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
 import 'package:egy_akin/main.dart';
 
 import '../../../../exports.dart';
@@ -111,18 +112,65 @@ class HomeHeader extends StatelessWidget {
             ],
           ),
         ),
-        Tooltip(
-          message: 'Add patient',
-          child: IconButton(
-            onPressed: () {
-              navigatorKey.currentState?.pushNamed(AppRoutes.addPatient);
-            },
-            icon: Icon(
-              Icons.add,
-              color: AppColors.description,
-              size: 30.r,
-            ),
-          ),
+        BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () {
+                return IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.add,
+                    color: AppColors.description,
+                    size: 30.r,
+                  ),
+                );
+              },
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+                return Tooltip(
+                  message: 'Add patient',
+                  child: IconButton(
+                    onPressed: () {
+                      if (homeData.verified!) {
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.addPatient,
+                          arguments: AppRoutesArgs.addPatientRouteArgs(
+                            currentDoctorId:
+                                cubit.currentDoctorModel.id.toString(),
+                          ),
+                        );
+                      } else {
+                        showCustomDialog(
+                          context: context,
+                          title: AppStrings.emailVerification,
+                          description: AppStrings
+                              .toAddPatientsYouMustVerifyYourEmailAddress,
+                          noColoredBottonOnTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          coloredBottonText: AppStrings.verify,
+                          noColoredBottonText: AppStrings.cancel,
+                          coloredBottonOnTap: () {
+                            Navigator.of(context).pop();
+                            navigatorKey.currentState?.pushNamed(
+                                AppRoutes.emailVerification,
+                                arguments:
+                                    AppRoutesArgs.emailVerificationRouteArgs(
+                                        currentDoctorModel:
+                                            currentDoctorModel));
+                          },
+                        );
+                      }
+                    },
+                    icon: Icon(
+                      Icons.add,
+                      color: AppColors.description,
+                      size: 30.r,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         ),
       ],
     );

@@ -1,5 +1,3 @@
-import 'package:egy_akin/main.dart';
-
 import '../../../../exports.dart';
 
 class CheckIfVerified extends StatelessWidget {

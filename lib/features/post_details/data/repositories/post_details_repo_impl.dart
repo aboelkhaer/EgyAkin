@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/post_details/data/models/add_comment_on_post_model_response.dart';
+import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
 import '../../../../exports.dart';
 
 class PostDetailsRepositoryImpl extends PostDetailsRepository {

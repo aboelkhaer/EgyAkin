@@ -59,7 +59,22 @@ class HomeTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const HomeSearchBotton(),
+                    BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return const SizedBox.shrink();
+                          },
+                          loaded: (homeData, currentDoctorModel, dotsPosition,
+                              homeIndex) {
+                            return HomeSearchBotton(
+                              currentDoctorModel: currentDoctorModel,
+                              verified: homeData.verified!,
+                            );
+                          },
+                        );
+                      },
+                    ),
                     PostsSliderAndDots(
                       cubit: cubit,
                     ),

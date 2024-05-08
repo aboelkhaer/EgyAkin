@@ -28,6 +28,7 @@ class QuestionModel with _$QuestionModel {
     @JsonKey(name: 'updated_at') String? updatedAt,
     dynamic answer,
   }) = _QuestionModel;
+
   factory QuestionModel.fromJson(Map<String, dynamic> json) =>
       _$QuestionModelFromJson(json);
 }

@@ -61,12 +61,13 @@ class NotificationCubit extends Cubit<NotificationState> {
       },
       (notificationData) async {
         emit(NotificationState.loaded(notificationData, false));
+        // sl<HomeCubit>().getHome();
       },
     );
   }
 
-  bool isLoadingMoreForScroll = false;
   final ScrollController scrollController = ScrollController();
+  bool isLoadingMoreForScroll = false;
 
   void loadMoreNotifications() async {
     _currentPage++;

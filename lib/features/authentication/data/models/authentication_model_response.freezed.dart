@@ -266,6 +266,8 @@ mixin _$DoctorModel {
   String? get registrationNumber => throw _privateConstructorUsedError;
   @JsonKey(name: 'email_verified_at')
   String? get emailVerifiedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'phone_verified_at')
+  String? get phoneVerifiedAt => throw _privateConstructorUsedError;
   bool? get blocked => throw _privateConstructorUsedError;
   bool? get limited => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -304,6 +306,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       String? highestdegree,
       @JsonKey(name: 'registration_number') String? registrationNumber,
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
+      @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       bool? blocked,
       bool? limited,
       @JsonKey(name: 'created_at') String? createdAt,
@@ -341,6 +344,7 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? highestdegree = freezed,
     Object? registrationNumber = freezed,
     Object? emailVerifiedAt = freezed,
+    Object? phoneVerifiedAt = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? createdAt = freezed,
@@ -419,6 +423,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
           ? _value.emailVerifiedAt
           : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      phoneVerifiedAt: freezed == phoneVerifiedAt
+          ? _value.phoneVerifiedAt
+          : phoneVerifiedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
       blocked: freezed == blocked
           ? _value.blocked
           : blocked // ignore: cast_nullable_to_non_nullable
@@ -466,6 +474,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       String? highestdegree,
       @JsonKey(name: 'registration_number') String? registrationNumber,
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
+      @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       bool? blocked,
       bool? limited,
       @JsonKey(name: 'created_at') String? createdAt,
@@ -501,6 +510,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? highestdegree = freezed,
     Object? registrationNumber = freezed,
     Object? emailVerifiedAt = freezed,
+    Object? phoneVerifiedAt = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? createdAt = freezed,
@@ -579,6 +589,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
           ? _value.emailVerifiedAt
           : emailVerifiedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      phoneVerifiedAt: freezed == phoneVerifiedAt
+          ? _value.phoneVerifiedAt
+          : phoneVerifiedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
       blocked: freezed == blocked
           ? _value.blocked
           : blocked // ignore: cast_nullable_to_non_nullable
@@ -621,6 +635,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       this.highestdegree,
       @JsonKey(name: 'registration_number') this.registrationNumber,
       @JsonKey(name: 'email_verified_at') this.emailVerifiedAt,
+      @JsonKey(name: 'phone_verified_at') this.phoneVerifiedAt,
       this.blocked,
       this.limited,
       @JsonKey(name: 'created_at') this.createdAt,
@@ -672,6 +687,9 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   @JsonKey(name: 'email_verified_at')
   final String? emailVerifiedAt;
   @override
+  @JsonKey(name: 'phone_verified_at')
+  final String? phoneVerifiedAt;
+  @override
   final bool? blocked;
   @override
   final bool? limited;
@@ -684,7 +702,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, blocked: $blocked, limited: $limited, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -710,6 +728,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       ..add(DiagnosticsProperty('highestdegree', highestdegree))
       ..add(DiagnosticsProperty('registrationNumber', registrationNumber))
       ..add(DiagnosticsProperty('emailVerifiedAt', emailVerifiedAt))
+      ..add(DiagnosticsProperty('phoneVerifiedAt', phoneVerifiedAt))
       ..add(DiagnosticsProperty('blocked', blocked))
       ..add(DiagnosticsProperty('limited', limited))
       ..add(DiagnosticsProperty('createdAt', createdAt))
@@ -749,6 +768,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.registrationNumber == registrationNumber) &&
             (identical(other.emailVerifiedAt, emailVerifiedAt) ||
                 other.emailVerifiedAt == emailVerifiedAt) &&
+            (identical(other.phoneVerifiedAt, phoneVerifiedAt) ||
+                other.phoneVerifiedAt == phoneVerifiedAt) &&
             (identical(other.blocked, blocked) || other.blocked == blocked) &&
             (identical(other.limited, limited) || other.limited == limited) &&
             (identical(other.createdAt, createdAt) ||
@@ -779,6 +800,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
         highestdegree,
         registrationNumber,
         emailVerifiedAt,
+        phoneVerifiedAt,
         blocked,
         limited,
         createdAt,
@@ -820,6 +842,7 @@ abstract class _DoctorModel implements DoctorModel {
       final String? highestdegree,
       @JsonKey(name: 'registration_number') final String? registrationNumber,
       @JsonKey(name: 'email_verified_at') final String? emailVerifiedAt,
+      @JsonKey(name: 'phone_verified_at') final String? phoneVerifiedAt,
       final bool? blocked,
       final bool? limited,
       @JsonKey(name: 'created_at') final String? createdAt,
@@ -871,6 +894,9 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   @JsonKey(name: 'email_verified_at')
   String? get emailVerifiedAt;
+  @override
+  @JsonKey(name: 'phone_verified_at')
+  String? get phoneVerifiedAt;
   @override
   bool? get blocked;
   @override

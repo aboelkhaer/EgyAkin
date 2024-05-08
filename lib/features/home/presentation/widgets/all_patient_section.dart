@@ -22,7 +22,7 @@ class AllPatientSection extends StatelessWidget {
               loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                 return HomePatientTitleHeader(
                   title: AppStrings.allPatients,
-                  patientCount: homeData.data!.allPatients!.length.toString(),
+                  patientCount: homeData.allPatientCount.toString(),
                   leftArrow: ' ( ',
                   rightArrow: ' ) ',
                   onTap: () {},
@@ -74,24 +74,24 @@ class AllPatientSection extends StatelessWidget {
                         // );
                       },
                       onAddCommentTap: () {
-                        // Get.toNamed(
-                        //   AppRoutes.comments,
-                        //   arguments: [
-                        //     patient.id,
-                        //     patient.name,
-                        //   ],
-                        // );
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.comments,
+                          arguments: AppRoutesArgs.patientCommentsRouteArgs(
+                            patientId: patient.id.toString(),
+                            currentDoctorModel: currentDoctorModel,
+                            verified: homeData.verified!,
+                          ),
+                        );
                       },
                       onTap: () {
-                        // Get.toNamed(
-                        //     AppRoutes.patientSections,
-                        //     arguments: [
-                        //       patient.id,
-                        //       patient.doctorModel!.id,
-                        //       patient.name,
-                        //       patient.sections!
-                        //           .submitStatus,
-                        //     ]);
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.patientSections,
+                          arguments:
+                              AppRoutesArgs.patientSectionsRouteArguments(
+                            patientId: patient.id.toString(),
+                            currentDoctorId: currentDoctorModel.id.toString(),
+                          ),
+                        );
                       },
                     );
                   },

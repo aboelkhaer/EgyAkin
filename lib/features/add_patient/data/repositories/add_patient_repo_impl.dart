@@ -28,4 +28,21 @@ class AddPatientRepositoryImpl extends AddPatientRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+
+  @override
+  Future<Either<Failure, AddPatientForFirstTimeModelResponse>>
+      addPatientForFirstTime({required Map<String, dynamic> map}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final response =
+            await addPatientDataSource.addPatientForFirstTime(map: map);
+
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

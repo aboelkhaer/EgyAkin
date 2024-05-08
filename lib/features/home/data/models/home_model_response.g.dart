@@ -12,7 +12,8 @@ _$HomeModelResponseImpl _$$HomeModelResponseImplFromJson(
       value: json['value'] as bool?,
       verified: json['verified'] as bool?,
       unreadCount: json['unreadCount'] as String?,
-      patientCount: json['patient_count'] as String?,
+      doctorPatientCount: json['doctor_patient_count'] as String?,
+      allPatientCount: json['all_patient_count'] as String?,
       scoreValue: json['score_value'] as String?,
       role: json['role'] as String?,
       data: json['data'] == null
@@ -27,7 +28,8 @@ Map<String, dynamic> _$$HomeModelResponseImplToJson(
       'value': instance.value,
       'verified': instance.verified,
       'unreadCount': instance.unreadCount,
-      'patient_count': instance.patientCount,
+      'doctor_patient_count': instance.doctorPatientCount,
+      'all_patient_count': instance.allPatientCount,
       'score_value': instance.scoreValue,
       'role': instance.role,
       'data': instance.data,
@@ -85,7 +87,7 @@ Map<String, dynamic> _$$PatientHomeDataModelImplToJson(
 _$SectionHomeDataModelImpl _$$SectionHomeDataModelImplFromJson(
         Map<String, dynamic> json) =>
     _$SectionHomeDataModelImpl(
-      patientId: json['patient_id'] as String?,
+      patientId: json['patient_id'] as int?,
       submitStatus: json['submit_status'] as bool?,
       outcomeStatus: json['outcome_status'] as bool?,
     );

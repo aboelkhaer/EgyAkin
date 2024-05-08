@@ -1,3 +1,4 @@
+import 'dart:developer';
 import '../../../../exports.dart';
 
 class YourPatientSection extends StatelessWidget {
@@ -12,21 +13,26 @@ class YourPatientSection extends StatelessWidget {
             return state.maybeWhen(
               orElse: () {
                 return HomePatientTitleHeader(
-                  title: AppStrings.yourPatients,
-                  patientCount: '',
-                  leftArrow: '',
-                  rightArrow: '',
-                  onTap: () {},
-                );
+                    title: AppStrings.yourPatients,
+                    patientCount: '',
+                    leftArrow: '',
+                    rightArrow: '',
+                    onTap: () {});
               },
               loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
-                  patientCount:
-                      homeData.data!.currentPatients!.length.toString(),
+                  patientCount: homeData.doctorPatientCount.toString(),
                   leftArrow: ' ( ',
                   rightArrow: ' ) ',
-                  onTap: () {},
+                  onTap: () {
+                    navigatorKey.currentState?.pushNamed(
+                        AppRoutes.currentPatients,
+                        arguments: AppRoutesArgs.currentDoctorPatientsRouteArgs(
+                          accountVerification: homeData.verified!,
+                          currentDoctorModel: currentDoctorModel,
+                        ));
+                  },
                 );
               },
             );
@@ -71,35 +77,38 @@ class YourPatientSection extends StatelessWidget {
                                 : patient.sections!.submitStatus ?? false,
                             isOutcomeStatus: patient.sections!.outcomeStatus!,
                             onOutcomeTap: () {
-                              //   Get.toNamed(
-                              //   AppRoutes.outcome,
-                              //   arguments: [
-                              //     patient
-                              //         .sections!.outcomeStatus,
-                              //     patient.id,
-                              //     patient.name
-                              //   ],
-                              // );
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.outcome,
+                                arguments: AppRoutesArgs.outcomeRouteArgs(
+                                  verified: homeData.verified!,
+                                  outcomeStatus:
+                                      patient.sections!.outcomeStatus!,
+                                  patientName: patient.name.toString(),
+                                  patientId: patient.id.toString(),
+                                ),
+                              );
                             },
                             onAddCommentTap: () {
-                              // Get.toNamed(
-                              //   AppRoutes.comments,
-                              //   arguments: [
-                              //     patient.id,
-                              //     patient.name,
-                              //   ],
-                              // );
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.comments,
+                                arguments:
+                                    AppRoutesArgs.patientCommentsRouteArgs(
+                                  patientId: patient.id.toString(),
+                                  currentDoctorModel: currentDoctorModel,
+                                  verified: homeData.verified!,
+                                ),
+                              );
                             },
                             onTap: () {
-                              // Get.toNamed(
-                              //     AppRoutes.patientSections,
-                              //     arguments: [
-                              //       patient.id,
-                              //       patient.doctorModel!.id,
-                              //       patient.name,
-                              //       patient.sections!
-                              //           .submitStatus,
-                              //     ]);
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.patientSections,
+                                arguments:
+                                    AppRoutesArgs.patientSectionsRouteArguments(
+                                  patientId: patient.id.toString(),
+                                  currentDoctorId:
+                                      currentDoctorModel.id.toString(),
+                                ),
+                              );
                             },
                           );
                         },
