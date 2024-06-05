@@ -7,7 +7,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
       : super(const CurrentDoctorPatientsState.initial());
   final GetCurrentDoctorPatientsUsecase _getCurrentDoctorPatientsUsecase;
   static CurrentDoctorPatientsCubit get(context) => BlocProvider.of(context);
-  ScrollController scrollController = ScrollController();
+  ScrollController? scrollController;
 
   getCurrentDoctorPatients() async {
     emit(const CurrentDoctorPatientsState.loading());
@@ -24,6 +24,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   }
 
   bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
   int _currentPage = 1;
   void loadMorePatients() async {
     _currentPage++;
@@ -52,6 +53,11 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
                 ],
               ),
             );
+            if (_currentPage >= responseData.data!.lastPage!) {
+              isLastPage = true;
+            } else {
+              isLastPage = false;
+            }
             isLoadingMoreForScroll = false;
             emit(CurrentDoctorPatientsState.loaded(updatedData, false));
           },

@@ -25,7 +25,10 @@ class BuildSelectValueQuestion extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: DropdownButtonFormField<dynamic>(
-        hint: Text(questionList[index].answer ?? 'Choose'),
+        hint: Text(questionList[index].answer == '' ||
+                questionList[index].answer == null
+            ? 'Choose'
+            : questionList[index].answer),
         validator: validator,
         value: selected,
 
@@ -37,6 +40,7 @@ class BuildSelectValueQuestion extends StatelessWidget {
         }).toList(),
 
         onChanged: onChanged,
+        isExpanded: true,
         decoration: const InputDecoration(
           border: OutlineInputBorder(borderSide: BorderSide.none),
         ),

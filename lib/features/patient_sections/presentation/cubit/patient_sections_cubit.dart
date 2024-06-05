@@ -1,6 +1,3 @@
-import 'package:egy_akin/features/patient_sections/domain/usecases/delete_patient_usecase.dart';
-import 'package:egy_akin/features/patient_sections/domain/usecases/final_submit_usecase.dart';
-
 import '../../../../exports.dart';
 
 class PatientSectionsCubit extends Cubit<PatientSectionsState> {
@@ -11,7 +8,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
   final GetPatientSectionsUsecase _getPatientSectionsUsecase;
   final DeletePatientUsecase _deletePatientUsecase;
   final FinalSubmitUsecase _finalSubmitUsecase;
-  List<GetPatientSectionsDataModelResponse>? sectionsDataList;
+  List<SectionModel>? sectionsDataList;
 
   getPatientSections(String patientId) async {
     emit(const PatientSectionsState.loading());
@@ -23,22 +20,33 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
       },
       (result) async {
         sectionsDataList = result.data;
-        emit(PatientSectionsState.loaded(result, false, false));
+        emit(PatientSectionsState.loaded(result, false, false, '', false));
       },
     );
   }
 
   deletePatient(String patientId) async {
-    emit(const PatientSectionsState.loading());
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) =>
+          PatientSectionsState.loaded(value.response, false, false, '', true),
+    ));
     final result = await _deletePatientUsecase.excute(patientId);
 
     result.fold(
       (l) {
-        emit(PatientSectionsState.error(l.message));
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+              value.response, false, false, l.message, false),
+        ));
       },
       (result) async {
-        emit(const PatientSectionsState.loaded(
-            GetPatientSectionsModelResponse(), true, false));
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+              value.response, true, false, '', false),
+        ));
       },
     );
   }
@@ -52,15 +60,27 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
     });
 
     if (sectionsNotCompleted.isEmpty) {
+      emit(state.maybeMap(
+        orElse: () => state,
+        loaded: (value) =>
+            PatientSectionsState.loaded(value.response, false, false, '', true),
+      ));
       final result = await _finalSubmitUsecase.excute(patientId);
 
       result.fold(
         (l) {
-          emit(PatientSectionsState.error(l.message));
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => PatientSectionsState.loaded(
+                value.response, false, false, l.message, false),
+          ));
         },
         (result) async {
-          emit(const PatientSectionsState.loaded(
-              GetPatientSectionsModelResponse(), false, true));
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => PatientSectionsState.loaded(
+                value.response, false, true, '', false),
+          ));
         },
       );
     } else {
@@ -84,7 +104,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
               },
               (result) async {
                 emit(const PatientSectionsState.loaded(
-                    GetPatientSectionsModelResponse(), false, true));
+                    GetPatientSectionsModelResponse(), false, true, '', false));
               },
             );
           });

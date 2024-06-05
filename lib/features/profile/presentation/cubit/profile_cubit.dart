@@ -9,6 +9,7 @@ import 'package:egy_akin/features/profile/presentation/cubit/profile_state.dart'
 import 'package:egy_akin/injection_container.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+//! don't remove imports
 
 class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit(this._uploadProfileImageUsecase, this._signOutUsecase)
@@ -20,8 +21,15 @@ class ProfileCubit extends Cubit<ProfileState> {
   DoctorModel currentDoctor = const DoctorModel();
   getDoctorDataFromHomeCubit(DoctorModel doctorModel) {
     currentDoctor = doctorModel;
-    emit(ProfileState.loaded(doctorModel));
+    emit(ProfileState.loaded(doctorModel, false));
   }
+
+  // refreshCurrentDoctorModel() {
+  //   emit(state.maybeMap(
+  //     orElse: () => state,
+  //     loaded: (value) => ProfileState.loaded(value.doctorModel),
+  //   ));
+  // }
 
   uploadProfileImage() async {
     emit(const ProfileState.loading());
@@ -39,14 +47,11 @@ class ProfileCubit extends Cubit<ProfileState> {
         (r) async {
           log(r.image.toString());
           await sl<AppPreferences>().updateDoctorImageData(r.image!);
-
-          emit(ProfileState.loaded(currentDoctor));
-
-          // updateNotification();
+          emit(ProfileState.loaded(currentDoctor, true));
         },
       );
     } else {
-      emit(ProfileState.loaded(currentDoctor));
+      emit(ProfileState.loaded(currentDoctor, false));
     }
   }
 

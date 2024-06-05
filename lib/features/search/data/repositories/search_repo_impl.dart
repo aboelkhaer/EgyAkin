@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/search/data/datasources/search_datasourch.dart';
-import 'package:egy_akin/features/search/domain/repositories/search_repo.dart';
+
 import '../../../../exports.dart';
 
 class SearchRepositoryImpl extends SearchRepository {
@@ -11,13 +10,13 @@ class SearchRepositoryImpl extends SearchRepository {
 
   @override
   Future<Either<Failure, GetSearchModelResponse>> getSearchHome(
-      {required String searchContent}) async {
+      {required String searchContent, required int page}) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response =
-            await searchDataSource.getSearchHome(searchContent: searchContent);
+        final response = await searchDataSource.getSearchHome(
+            searchContent: searchContent, page: page);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

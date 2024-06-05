@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_annotation_target
+import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-
 part 'get_patient_history_for_add_patient.freezed.dart';
 part 'get_patient_history_for_add_patient.g.dart';
 
@@ -32,3 +32,13 @@ class QuestionModel with _$QuestionModel {
   factory QuestionModel.fromJson(Map<String, dynamic> json) =>
       _$QuestionModelFromJson(json);
 }
+
+// @freezed
+// class StringQuestionModel extends QuestionModel with _$StringQuestionModel {
+//   const factory StringQuestionModel({
+//     String answer,
+//   }) = _StringQuestionModel;
+
+//   factory StringQuestionModel.fromJson(Map<String, dynamic> json) =>
+//       _$StringQuestionModelFromJson(json);
+// }

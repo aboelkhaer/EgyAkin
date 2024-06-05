@@ -1,8 +1,12 @@
 import '../../../../exports.dart';
 
 class NotificationScreen extends StatefulWidget {
+  final DoctorModel currentDoctorModel;
+  final bool accountVerification;
   const NotificationScreen({
     super.key,
+    required this.currentDoctorModel,
+    required this.accountVerification,
   });
 
   @override
@@ -10,33 +14,47 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  NotificationCubit? _cubit;
+
   @override
   void initState() {
     super.initState();
-    context.read<NotificationCubit>().scrollController.addListener(_onScroll);
-    // context.read<NotificationCubit>().loadMoreNotifications();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit = context.read<NotificationCubit>();
+
+      if (!_cubit!.isClosed) {
+        _cubit!.scrollController = ScrollController();
+        _cubit!.scrollController!.addListener(_onScroll);
+      }
+    });
   }
 
   @override
   void dispose() {
-    context.read<NotificationCubit>().scrollController.dispose();
+    if (_cubit != null && !_cubit!.isClosed) {
+      _cubit!.scrollController!.dispose();
+    }
     super.dispose();
   }
 
   void _onScroll() {
-    final maxScroll = context
-        .read<NotificationCubit>()
-        .scrollController
-        .position
-        .maxScrollExtent;
-    final currentScroll =
-        context.read<NotificationCubit>().scrollController.position.pixels;
-    const threshold = 200.0;
-    if (context.read<NotificationCubit>().isLoadingMoreForScroll == false &&
-        maxScroll - currentScroll <= threshold) {
-      context.read<NotificationCubit>().isLoadingMoreForScroll = true;
+    if (context.read<NotificationCubit>().isLastPage) {
+      return;
+    } else {
+      final maxScroll = context
+          .read<NotificationCubit>()
+          .scrollController!
+          .position
+          .maxScrollExtent;
+      final currentScroll =
+          context.read<NotificationCubit>().scrollController!.position.pixels;
+      const threshold = 200.0;
+      if (context.read<NotificationCubit>().isLoadingMoreForScroll == false &&
+          maxScroll - currentScroll <= threshold) {
+        context.read<NotificationCubit>().isLoadingMoreForScroll = true;
 
-      context.read<NotificationCubit>().loadMoreNotifications();
+        context.read<NotificationCubit>().loadMoreNotifications();
+      }
     }
   }
 
@@ -47,11 +65,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
       children: [
         RefreshIndicator(
           onRefresh: () async {
-            // return await cubit.onRefreshInicator();
             await cubit.getAllNotifications();
-            // await cubit.updateNotification();
-            await Future.delayed(const Duration(
-                milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+            // await Future.delayed(const Duration(
+            //     milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+            await cubit.loadMoreNotifications();
           },
           color: AppColors.primary,
           child: SingleChildScrollView(
@@ -68,6 +85,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           return const ShimmerLoadingPatientsCards(
                             ishorizontal: false,
                           );
+                          // return const CircularProgressIndicator();
                         },
                         loaded: (notificationData, isSeeMore) {
                           return notificationData.todayRecords!.isEmpty
@@ -87,8 +105,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     ),
                                     SizedBox(height: 10.h),
                                     NotificationsView(
-                                        notificationsModel:
-                                            notificationData.todayRecords!),
+                                      notificationsModel:
+                                          notificationData.todayRecords!,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      accountVerification:
+                                          widget.accountVerification,
+                                    ),
                                   ],
                                 );
                         },
@@ -100,41 +123,52 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     builder: (context, state) {
                       return state.maybeWhen(
                         orElse: () {
-                          return const ShimmerLoadingPatientsCards(
-                            ishorizontal: false,
-                          );
+                          return const SizedBox.shrink();
                         },
                         loading: () {
-                          return const ShimmerLoadingPatientsCards(
-                            ishorizontal: false,
-                          );
+                          return const SizedBox.shrink();
                         },
                         loaded: (notificationData, isSeeMore) {
-                          return Column(
-                            children: [
-                              notificationData.recentRecords!.data!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Recent',
-                                              style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: 10.h),
-                                      ],
+                          return notificationData
+                                      .recentRecords!.data!.isEmpty &&
+                                  notificationData.todayRecords!.isEmpty
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: 100.h),
+                                    Image.asset(
+                                      AppImages.noNetwork,
+                                      width: 150.w,
+                                      height: 150.h,
                                     ),
-                              NotificationsView(
-                                  notificationsModel:
-                                      notificationData.recentRecords!.data!),
-                            ],
-                          );
+                                  ],
+                                )
+                              : Column(
+                                  children: [
+                                    notificationData
+                                            .recentRecords!.data!.isEmpty
+                                        ? const SizedBox.shrink()
+                                        : Row(
+                                            children: [
+                                              Text(
+                                                'Recent',
+                                                style: TextStyle(
+                                                  fontSize: 18.sp,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                    SizedBox(height: 10.h),
+                                    NotificationsView(
+                                      notificationsModel:
+                                          notificationData.recentRecords!.data!,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      accountVerification:
+                                          widget.accountVerification,
+                                    ),
+                                  ],
+                                );
                         },
                       );
                     },
@@ -171,7 +205,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 20.h),
                 ],
               ),
             ),
@@ -187,7 +221,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
             child: IconButton(
               onPressed: () {
-                animateToTopOfScreen(cubit.scrollController);
+                animateToTopOfScreen(cubit.scrollController!);
               },
               icon: const Icon(
                 Icons.keyboard_arrow_up_outlined,

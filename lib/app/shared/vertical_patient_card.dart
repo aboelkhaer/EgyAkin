@@ -1,7 +1,8 @@
+import 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../exports.dart';
 
-class VerticalPatientCard extends StatelessWidget {
+class PatientCard extends StatelessWidget {
   final String patientName;
   final String drFirstName;
   final String drLastName;
@@ -10,9 +11,12 @@ class VerticalPatientCard extends StatelessWidget {
   final String hospital;
   final VoidCallback onOutcomeTap;
   final VoidCallback onAddCommentTap;
+  final String? doctorImage;
   final bool isOutcomeStatus;
+  final String doctorId;
   final bool submitStatus;
-  const VerticalPatientCard(
+  final String currnetDoctorId;
+  const PatientCard(
       {super.key,
       required this.patientName,
       required this.drFirstName,
@@ -23,7 +27,10 @@ class VerticalPatientCard extends StatelessWidget {
       required this.onOutcomeTap,
       required this.submitStatus,
       required this.updatedAt,
-      required this.onTap});
+      required this.onTap,
+      required this.doctorImage,
+      required this.doctorId,
+      required this.currnetDoctorId});
 
   @override
   Widget build(BuildContext context) {
@@ -44,24 +51,53 @@ class VerticalPatientCard extends StatelessWidget {
               width: 325.w,
               height: 135.h,
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-
-              // padding: const EdgeInsets.all(16),
-
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      CircleAvatar(
-                        backgroundColor: AppColors.subBG,
-                        radius: 20,
-                        child: Text(
-                          patientName[0],
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                              fontSize: 14),
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: doctorId,
+                                  currentDoctorId: currnetDoctorId,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: doctorImage == null
+                                  ? Text(
+                                      drFirstName[0].toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: doctorImage.toString(),
+                                    ),
+                            ),
+                          ),
                         ),
                       ),
                       Expanded(
@@ -151,15 +187,19 @@ class VerticalPatientCard extends StatelessWidget {
                               child: SizedBox(
                                 height: 28.h,
                                 child: isOutcomeStatus
-                                    ? TextButton(
+                                    ? CustomOutlineBotton(
                                         onPressed: onOutcomeTap,
-                                        style: ButtonStyle(
-                                          overlayColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                        ),
-                                        child: const Text(AppStrings.outcome),
+                                        title: AppStrings.outcome,
                                       )
+                                    // TextButton(
+                                    //     onPressed: onOutcomeTap,
+                                    //     style: ButtonStyle(
+                                    //       overlayColor:
+                                    //           MaterialStateProperty.all(
+                                    //               Colors.transparent),
+                                    //     ),
+                                    //     child: const Text(AppStrings.outcome),
+                                    //   )
                                     : CustomElevatedButton(
                                         onPressed: onOutcomeTap,
                                         title: AppStrings.outcome,

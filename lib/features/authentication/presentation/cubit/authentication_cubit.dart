@@ -64,14 +64,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       registerHighestDegree = '';
   int registerErrorValid = 0;
 
-  List<String> highestDegreeList = [
-    'MBBCH',
-    'Master Degree',
-    'Fellowship',
-    'MD',
-    'Other'
-  ];
-
   Future register() async {
     if (registerFormKey.currentState!.validate()) {
       emit(const AuthenticationState.loading());

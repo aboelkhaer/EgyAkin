@@ -1,6 +1,14 @@
 import '../../exports.dart';
 
-customSnackBar({required String message, required BuildContext context}) {
+void customSnackBar({required BuildContext context, required String message}) {
+  final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+  if (!scaffoldMessenger.mounted) {
+    return; // Return if the ScaffoldMessenger is not mounted
+  }
+
+  scaffoldMessenger.hideCurrentSnackBar();
+
   final snackBar = SnackBar(
     content: Text(message),
     duration: const Duration(seconds: AppStrings.snackBarDelay),
@@ -9,5 +17,6 @@ customSnackBar({required String message, required BuildContext context}) {
       onPressed: () {},
     ),
   );
-  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+  scaffoldMessenger.showSnackBar(snackBar);
 }

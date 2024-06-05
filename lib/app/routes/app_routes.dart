@@ -1,5 +1,14 @@
+import 'package:egy_akin/features/all_doctors_patients/presentation/pages/all_doctors_patients_screen.dart';
+import 'package:egy_akin/features/contact_us/presentation/cubit/contact_us_cubit.dart';
+import 'package:egy_akin/features/contact_us/presentation/pages/contact_us_screen.dart';
 import 'package:egy_akin/features/current_doctor_patients/presentation/pages/current_doctor_patients_screen.dart';
+import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
+import 'package:egy_akin/features/doctor_info_view/presentation/pages/doctor_info_view_screen.dart';
+import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_cubit.dart';
+import 'package:egy_akin/features/doctor_profile_view/presentation/pages/doctor_profile_view_screen.dart';
+import 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
 import 'package:egy_akin/features/outcome/presentation/pages/outcome_screen.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/pages/patient_section_details_screen.dart';
 import 'package:egy_akin/features/search/presentation/pages/search_screen.dart';
 
 import '../../exports.dart';
@@ -18,7 +27,7 @@ class AppRoutes {
   static const String doctorProfile = '/doctorProfile';
   static const String search = '/search';
   static const String patientSections = '/patientSection';
-  static const String sectionDetails = '/sectionDetails';
+  static const String patientSectionDetails = '/patientSectionDetails';
   static const String contactUs = '/contactUs';
   static const String addPatient = '/addPatient';
   static const String outcome = '/outcome';
@@ -27,6 +36,7 @@ class AppRoutes {
   static const String notification = '/notification';
   static const String resetPassword = '/resetPassword';
   static const String emailVerification = '/emailVerification';
+  static const String doctorInfoView = '/doctorInfoView';
 }
 
 class RouteGenerator {
@@ -75,26 +85,36 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.home:
-        return MaterialPageRoute(
-          builder: (_) => MultiBlocProvider(
-            providers: [
-              BlocProvider<HomeCubit>(
-                  create: (context) => di.sl<HomeCubit>()
-                    ..getDoctorDataFromLocal()
-                    ..getHome()
-                  // ..getNotifications(),
-                  ),
-              BlocProvider<NotificationCubit>(
-                create: (context) =>
-                    di.sl<NotificationCubit>()..getAllNotifications(),
+        final arguments = settings.arguments;
+        if (arguments is int) {
+          return MaterialPageRoute(
+            builder: (_) => MultiBlocProvider(
+              providers: [
+                BlocProvider<HomeCubit>(
+                    create: (context) => di.sl<HomeCubit>()
+                      ..getDoctorDataFromLocal()
+                      ..getHome()
+                    // ..getNotifications(),
+                    ),
+                BlocProvider<NotificationCubit>(
+                  create: (context) =>
+                      di.sl<NotificationCubit>()..getAllNotifications(),
+                ),
+                BlocProvider<ProfileCubit>(
+                  create: (context) => di.sl<ProfileCubit>(),
+                ),
+                BlocProvider<MoreCubit>(
+                  create: (context) => di.sl<MoreCubit>(),
+                ),
+              ],
+              child: HomeScreen(
+                page: arguments,
               ),
-              BlocProvider<ProfileCubit>(
-                create: (context) => di.sl<ProfileCubit>(),
-              ),
-            ],
-            child: const HomeScreen(),
-          ),
-        );
+            ),
+          );
+        } else {
+          return unDefinedRoute();
+        }
       case AppRoutes.emailVerification:
         final arguments = settings.arguments;
         if (arguments is DoctorModel) {
@@ -135,7 +155,7 @@ class RouteGenerator {
       case AppRoutes.addPatient:
         final arguments = settings.arguments;
 
-        if (arguments is String) {
+        if (arguments is DoctorModel) {
           return MaterialPageRoute(
             // builder: (_) => BlocProvider<AddPatientCubit>(
             //   create: (context) =>
@@ -155,7 +175,7 @@ class RouteGenerator {
                   create: (context) => di.sl<HomeCubit>(),
                 ),
               ],
-              child: AddPatientScreen(currentDoctorId: arguments),
+              child: AddPatientScreen(currentDoctorModel: arguments),
             ),
           );
         } else {
@@ -167,14 +187,14 @@ class RouteGenerator {
           final Map<String, dynamic> args =
               settings.arguments as Map<String, dynamic>;
 
-          if (args.containsKey('currentDoctorId') &&
+          if (args.containsKey('currentDoctorModel') &&
               args.containsKey('patientId')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientSectionsCubit>(
                 create: (context) => di.sl<PatientSectionsCubit>(),
                 child: PatientSectionsScreen(
                   patientId: args['patientId'] as String,
-                  currentDoctorId: args['currentDoctorId'] as String,
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                 ),
               ),
             );
@@ -201,6 +221,7 @@ class RouteGenerator {
                   patientId: args['patientId'] as String,
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  patientName: args['patientName'] as String,
                 ),
               ),
             );
@@ -252,6 +273,8 @@ class RouteGenerator {
                   outcomeStatus: args['outcomeStatus'] as bool,
                   patientName: args['patientName'] as String,
                   patientId: args['patientId'] as String,
+                  doctorId: args['doctorId'] as String,
+                  currentDoctorId: args['currentDoctorId'] as String,
                   accountVerification: args['accountVerification'] as bool,
                 ),
               ),
@@ -286,6 +309,116 @@ class RouteGenerator {
         } else {
           return unDefinedRoute();
         }
+      case AppRoutes.allPatients:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('accountVerification') &&
+              args.containsKey('currentDoctorModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<AllDoctorsPatientsCubit>(
+                create: (context) => di.sl<AllDoctorsPatientsCubit>()
+                  ..getCurrentDoctorPatients(),
+                child: AllDoctorsPatientsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  accountVerification: args['accountVerification'] as bool,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.patientSectionDetails:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('sectionModel') &&
+              args.containsKey('finalSubmitStatus') &&
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('patientId') &&
+              args.containsKey('doctorId')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<PatientSectionDetailsCubit>(
+                create: (context) => di.sl<PatientSectionDetailsCubit>(),
+                child: PatientSectionDetailsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  sectionModel: args['sectionModel'] as SectionModel,
+                  finalSubmitStatus: args['finalSubmitStatus'] as bool,
+                  patientId: args['patientId'] as String,
+                  doctorId: args['doctorId'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
+      case AppRoutes.doctorProfile:
+        // return MaterialPageRoute(
+        //   builder: (_) => BlocProvider<DoctorProfileViewCubit>(
+        //     create: (context) => di.sl<DoctorProfileViewCubit>()
+        //       ..getCurrentDoctorModelFromLocal(),
+        //     child: const DoctorProfileViewScreen(),
+        //   ),
+        // );
+        return MaterialPageRoute(
+          builder: (_) => MultiBlocProvider(
+            providers: [
+              BlocProvider<DoctorProfileViewCubit>(
+                create: (context) => di.sl<DoctorProfileViewCubit>()
+                  ..getCurrentDoctorModelFromLocal(),
+              ),
+              BlocProvider<ProfileCubit>(
+                create: (context) => di.sl<ProfileCubit>(),
+              ),
+              BlocProvider<HomeCubit>(
+                create: (context) => di.sl<HomeCubit>(),
+              ),
+            ],
+            child: const DoctorProfileViewScreen(),
+          ),
+        );
+
+      case AppRoutes.doctorInfoView:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('doctorId') &&
+              args.containsKey('currentDoctorId')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<DoctorInfoViewCubit>(
+                create: (context) => di.sl<DoctorInfoViewCubit>(),
+                child: DoctorInfoViewScreen(
+                  currentDoctorId: args['currentDoctorId'] as String,
+                  doctorId: args['doctorId'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.contactUs:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<ContactUsCubit>(
+            create: (context) => di.sl<ContactUsCubit>(),
+            child: const ContactUsScreen(),
+          ),
+        );
 
       default:
         return unDefinedRoute();

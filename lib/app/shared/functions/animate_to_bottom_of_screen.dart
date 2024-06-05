@@ -1,11 +1,24 @@
+import 'package:flutter/scheduler.dart';
+
 import '../../../exports.dart';
 
 void animateToBottomOfScreen(ScrollController scrollController) {
-  WidgetsBinding.instance.addPostFrameCallback((_) {
+  SchedulerBinding.instance.addPostFrameCallback((_) {
     if (scrollController.hasClients) {
       final maxScroll = scrollController.position.maxScrollExtent + 10;
-      scrollController.animateTo(maxScroll,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      scrollController
+          .animateTo(
+        maxScroll,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      )
+          .then((_) {
+        debugPrint('Animation to bottom of screen completed.');
+      }).catchError((error) {
+        debugPrint('Error during animation: $error');
+      });
+    } else {
+      debugPrint('ScrollController has no clients.');
     }
   });
 }

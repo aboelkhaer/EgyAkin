@@ -83,7 +83,7 @@ class SectionCard extends StatelessWidget {
                                       SectionStatusText(
                                           isSubmitStatus: isSubmitStatus),
                                       Text(
-                                        updatedAt == null
+                                        updatedAt == null || updatedAt!.isEmpty
                                             ? ''
                                             : timeago
                                                 .format(

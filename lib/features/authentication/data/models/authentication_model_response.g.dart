@@ -41,12 +41,16 @@ _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
       image: json['image'] as String?,
       passwordConfirmation: json['password_confirmation'] as String?,
       syndicateCard: json['syndicate_card'] as String?,
+      patientsCount: json['patients_count'] as String?,
       highestdegree: json['highestdegree'] as String?,
       registrationNumber: json['registration_number'] as String?,
       emailVerifiedAt: json['email_verified_at'] as String?,
       phoneVerifiedAt: json['phone_verified_at'] as String?,
       blocked: json['blocked'] as bool?,
       limited: json['limited'] as bool?,
+      patients: (json['patients'] as List<dynamic>?)
+          ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -68,12 +72,14 @@ Map<String, dynamic> _$$DoctorModelImplToJson(_$DoctorModelImpl instance) =>
       'image': instance.image,
       'password_confirmation': instance.passwordConfirmation,
       'syndicate_card': instance.syndicateCard,
+      'patients_count': instance.patientsCount,
       'highestdegree': instance.highestdegree,
       'registration_number': instance.registrationNumber,
       'email_verified_at': instance.emailVerifiedAt,
       'phone_verified_at': instance.phoneVerifiedAt,
       'blocked': instance.blocked,
       'limited': instance.limited,
+      'patients': instance.patients,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
     };

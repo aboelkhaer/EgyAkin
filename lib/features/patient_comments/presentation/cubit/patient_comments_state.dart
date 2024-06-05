@@ -7,6 +7,10 @@ abstract class PatientCommentsState with _$PatientCommentsState {
   const factory PatientCommentsState.initial() = _Initial;
   const factory PatientCommentsState.loading() = _Loading;
   const factory PatientCommentsState.loaded(
-      List<CommentModel> comments, String newComment) = _Loaded;
+      List<CommentModel> comments,
+      String newComment,
+      bool isLoading,
+      bool isCommentSuccess,
+      String message) = _Loaded;
   const factory PatientCommentsState.error(String message) = _Error;
 }

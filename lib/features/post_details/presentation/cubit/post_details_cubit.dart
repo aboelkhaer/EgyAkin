@@ -73,7 +73,11 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
             },
             (r) {
               emit(PostDetailsState.loaded(r.data!));
-              animateToBottomOfScreen(scrollController);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (scrollController.hasClients) {
+                  animateToBottomOfScreen(scrollController);
+                }
+              });
             },
           );
         },

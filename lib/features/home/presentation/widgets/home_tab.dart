@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
+
 import '../../../../exports.dart';
 
 class HomeTab extends StatelessWidget {
@@ -9,16 +11,18 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return RefreshIndicator(
       color: AppColors.primary,
-      onRefresh: () async {
-        await cubit.getHome();
-        if (cubit.scrollController.hasClients) {
-          cubit.scrollController.animateTo(0,
+      onRefresh: () {
+        if (cubit.scrollController!.hasClients) {
+          cubit.scrollController!.animateTo(0,
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut);
         }
+        if (cubit.isUnreadNotification) {
+          context.read<NotificationCubit>().getAllNotifications();
+        }
+        return cubit.getHome();
       },
       child: Column(
         children: [
@@ -27,11 +31,7 @@ class HomeTab extends StatelessWidget {
               state.maybeWhen(
                 orElse: () {},
                 loaded:
-                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {
-                  // context
-                  // .read<NotificationCubit>()
-                  // .fetchNotifications(notificationDataModel.data ?? []);
-                },
+                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {},
                 error: (message) {
                   customSnackBar(message: message, context: context);
                 },
@@ -75,10 +75,9 @@ class HomeTab extends StatelessWidget {
                         );
                       },
                     ),
-                    PostsSliderAndDots(
-                      cubit: cubit,
-                    ),
-                    SizedBox(height: 30.h),
+                    PostsSliderAndDots(cubit: cubit),
+                    SizedBox(height: 10.h),
+                    const TopDoctors(),
                     const YourPatientSection(),
                     const AllPatientSection(),
                   ],

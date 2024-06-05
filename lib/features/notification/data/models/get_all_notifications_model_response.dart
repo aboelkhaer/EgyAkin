@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 
+import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_all_notifications_model_response.freezed.dart';
 part 'get_all_notifications_model_response.g.dart';
@@ -56,27 +57,15 @@ class NotificationsModel with _$NotificationsModel {
 @freezed
 class PatientNotificationModel with _$PatientNotificationModel {
   const factory PatientNotificationModel({
-    int? id,
+    String? id,
     String? name,
     String? hospital,
     String? governorate,
-    DoctorNotificationDataModel? doctor,
+    DoctorModel? doctor,
     SectionsNotificationDataModel? sections,
   }) = _PatientNotificationModel;
   factory PatientNotificationModel.fromJson(Map<String, dynamic> json) =>
       _$PatientNotificationModelFromJson(json);
-}
-
-@freezed
-class DoctorNotificationDataModel with _$DoctorNotificationDataModel {
-  const factory DoctorNotificationDataModel({
-    int? id,
-    @JsonKey(name: 'name') String? firstName,
-    @JsonKey(name: 'lname') String? lastName,
-    String? workingplace,
-  }) = _DoctorNotificationDataModel;
-  factory DoctorNotificationDataModel.fromJson(Map<String, dynamic> json) =>
-      _$DoctorNotificationDataModelFromJson(json);
 }
 
 @freezed

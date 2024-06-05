@@ -1,7 +1,39 @@
+import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
+
 import '../../../../exports.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final int page;
+  const HomeScreen({super.key, required this.page});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  HomeCubit? _cubit;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit = context.read<HomeCubit>();
+
+      if (!_cubit!.isClosed) {
+        _cubit!.scrollController = ScrollController();
+      }
+    });
+
+    context.read<HomeCubit>().tabsController.jumpToTab(widget.page);
+  }
+
+  @override
+  void dispose() {
+    if (_cubit != null && !_cubit!.isClosed) {
+      _cubit!.scrollController!.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,12 +144,23 @@ class HomeScreen extends StatelessWidget {
     HomeCubit cubit,
   ) {
     return [
-      HomeTab(
-        cubit: cubit,
+      HomeTab(cubit: cubit),
+      BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return NotificationScreen(
+            currentDoctorModel: cubit.currentDoctorModel,
+            accountVerification: cubit.accountVerification!,
+          );
+        },
       ),
-      const NotificationScreen(),
       const ProfileScreen(),
-      const Center(child: Text('Soon')),
+      BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return MoreScreen(
+            currentDoctorModel: cubit.currentDoctorModel,
+          );
+        },
+      ),
     ];
   }
 

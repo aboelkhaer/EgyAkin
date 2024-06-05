@@ -16,6 +16,11 @@ class ProfileFeatures extends StatelessWidget {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
+                loaded: (doctorModel, isLoadedImage) async {
+                  if (isLoadedImage) {
+                    context.read<HomeCubit>().getDoctorDataFromLocal();
+                  }
+                },
                 signOutLoaded: () {
                   Navigator.of(context, rootNavigator: true)
                       .pushReplacementNamed(AppRoutes.signIn);
@@ -152,7 +157,7 @@ class ProfileFeatures extends StatelessWidget {
                     ),
                   );
                 },
-                loaded: (doctorModel) {
+                loaded: (doctorModel, isLoadedImage) {
                   return GestureDetector(
                     onTap: _profileScreensData()[index].onTap,
                     child: Container(
@@ -222,7 +227,9 @@ class ProfileFeatures extends StatelessWidget {
         icon: Icons.person_outline,
         title: 'Account',
         description: 'Manage your personal info.',
-        onTap: () {},
+        onTap: () {
+          navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
+        },
       ),
       ProfileScreens(
         icon: Icons.emoji_events_outlined,

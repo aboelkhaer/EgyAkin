@@ -120,6 +120,7 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetPatientHistoryForAddPatientModelResponseImpl
+    with DiagnosticableTreeMixin
     implements _GetPatientHistoryForAddPatientModelResponse {
   const _$GetPatientHistoryForAddPatientModelResponseImpl(
       {this.value, final List<QuestionModel>? data})
@@ -142,8 +143,18 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
   }
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'GetPatientHistoryForAddPatientModelResponse(value: $value, data: $data)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty(
+          'type', 'GetPatientHistoryForAddPatientModelResponse'))
+      ..add(DiagnosticsProperty('value', value))
+      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -376,7 +387,9 @@ class __$$QuestionModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$QuestionModelImpl implements _QuestionModel {
+class _$QuestionModelImpl
+    with DiagnosticableTreeMixin
+    implements _QuestionModel {
   const _$QuestionModelImpl(
       {this.id,
       this.question,
@@ -419,8 +432,23 @@ class _$QuestionModelImpl implements _QuestionModel {
   final dynamic answer;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'QuestionModel(id: $id, question: $question, values: $values, type: $type, keyboardType: $keyboardType, mandatory: $mandatory, updatedAt: $updatedAt, answer: $answer)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'QuestionModel'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('question', question))
+      ..add(DiagnosticsProperty('values', values))
+      ..add(DiagnosticsProperty('type', type))
+      ..add(DiagnosticsProperty('keyboardType', keyboardType))
+      ..add(DiagnosticsProperty('mandatory', mandatory))
+      ..add(DiagnosticsProperty('updatedAt', updatedAt))
+      ..add(DiagnosticsProperty('answer', answer));
   }
 
   @override

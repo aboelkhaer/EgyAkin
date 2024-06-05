@@ -1,10 +1,16 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
+import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
 import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
+import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
 import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
 import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
 import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/update_patient_section_details_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
@@ -31,8 +37,8 @@ abstract class ApiServices {
   );
 
   @GET(ApiEndPoint.allPatients)
-  Future<GetAllBasPatientstModelResponse> getAllPatients(
-    @Field("token") String token,
+  Future<GetAllDoctorsPatientsModelResponse> getAllPatients(
+    @Query('page') int pageNumber,
   );
 
   @GET(ApiEndPoint.currentPatientsHome)
@@ -43,10 +49,10 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.search}/{searchContent}')
   Future<GetSearchModelResponse> searchHome(
     @Path("searchContent") String searchContent,
+    @Query('page') int pageNumber,
   );
-  @PUT('${ApiEndPoint.updateProfile}/{doctorID}')
-  Future<GetDoctorModelResponse> updateProfile(
-    @Path("doctorID") int doctorID,
+  @PUT(ApiEndPoint.updateProfile)
+  Future<UpdateDoctorProfileModelResponse> updateProfile(
     @Field("name") String firstName,
     @Field("lname") String lastName,
     @Field("email") String email,
@@ -63,8 +69,8 @@ abstract class ApiServices {
     @Path("patientId") String patientId,
   );
 
-  @GET('${ApiEndPoint.question}/{sectionId}/{patientId}')
-  Future<GetQuestionsModelResponse> getSectionDetails(
+  @GET('${ApiEndPoint.getPatientSectionDetails}/{sectionId}/{patientId}')
+  Future<GetPatientSectionDetailsModelResponse> getSectionDetails(
     @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
   );
@@ -75,7 +81,7 @@ abstract class ApiServices {
   );
 
   @PUT('${ApiEndPoint.updateSectionDetails}/{sectionId}/{patientId}')
-  Future<UpdateSectionDetailsModelResponse> updateSectionDetails(
+  Future<UpdatePatientSectionDetailsModelResponse> updateSectionDetails(
     @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
     @Body() Map<String, dynamic> map,
@@ -89,20 +95,24 @@ abstract class ApiServices {
   Future<AddPatientForFirstTimeModelResponse> addPatientForFirstTime(
     @Body() Map<String, dynamic> map,
   );
-  @POST(ApiEndPoint.outcome)
+  @PUT('${ApiEndPoint.submitOutcome}/{sectionId}/{patientId}')
   Future<SubmitOutcomeModelResponse> submitOutcome(
-    @Field("patient_id") String patientId,
-    @Field("outcome_of_the_patient") String outcomeOfThePatient,
-    @Field("creatinine_on_discharge") String creatinineOnDischarge,
-    @Field("duration_of_admission") String durationField,
-    @Field("final_status") String finalStatus,
-    @Field("other") String other,
+    @Path("sectionId") String sectionId,
+    @Path("patientId") String patientId,
+    @Body() Map<String, dynamic> map,
   );
 
-  @GET('${ApiEndPoint.outcome}/{patientId}')
+  // @GET('${ApiEndPoint.outcome}/{patientId}')
+  // Future<GetOutcomeModelResponse> getOutcome(
+  //   @Path("patientId") String patientId,
+  // );
+
+  @GET('${ApiEndPoint.outcome}/{sectionId}/{patientId}')
   Future<GetOutcomeModelResponse> getOutcome(
+    @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
   );
+
   @PUT('${ApiEndPoint.finalSubmit}/{patientId}')
   Future<FinalSubmitModelResponse> finalSubmit(
     @Path("patientId") String patientId,
@@ -121,7 +131,7 @@ abstract class ApiServices {
     @Path("commentId") String commentId,
   );
   @POST(ApiEndPoint.contactUs)
-  Future<AddContactUsModelResponse> addContactUs(
+  Future<ContactUsModelResponseModelResponse> addContactUs(
     @Field("message") String message,
   );
 
@@ -180,5 +190,10 @@ abstract class ApiServices {
   @MultiPart()
   Future<UploadProfileImageModelResponse> uploadProfileImage(
     @Part() File image,
+  );
+
+  @GET('${ApiEndPoint.getDoctorInfoView}/{doctorId}')
+  Future<DoctorInfoViewModelResponse> getDoctorInfoView(
+    @Path("doctorId") String doctorId,
   );
 }

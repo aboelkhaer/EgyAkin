@@ -14,8 +14,7 @@ _$GetPatientSectionsModelResponseImpl
           patientName: json['patient_name'] as String?,
           doctorId: json['doctor_Id'] as String?,
           data: (json['data'] as List<dynamic>?)
-              ?.map((e) => GetPatientSectionsDataModelResponse.fromJson(
-                  e as Map<String, dynamic>))
+              ?.map((e) => SectionModel.fromJson(e as Map<String, dynamic>))
               .toList(),
         );
 
@@ -29,18 +28,15 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
       'data': instance.data,
     };
 
-_$GetPatientSectionsDataModelResponseImpl
-    _$$GetPatientSectionsDataModelResponseImplFromJson(
-            Map<String, dynamic> json) =>
-        _$GetPatientSectionsDataModelResponseImpl(
-          sectionId: json['section_id'] as int?,
-          sectionStatus: json['section_status'] as bool?,
-          updatedAt: json['updated_at'] as String?,
-          sectionName: json['section_name'] as String?,
-        );
+_$SectionModelImpl _$$SectionModelImplFromJson(Map<String, dynamic> json) =>
+    _$SectionModelImpl(
+      sectionId: json['section_id'] as int?,
+      sectionStatus: json['section_status'] as bool?,
+      updatedAt: json['updated_at'] as String?,
+      sectionName: json['section_name'] as String?,
+    );
 
-Map<String, dynamic> _$$GetPatientSectionsDataModelResponseImplToJson(
-        _$GetPatientSectionsDataModelResponseImpl instance) =>
+Map<String, dynamic> _$$SectionModelImplToJson(_$SectionModelImpl instance) =>
     <String, dynamic>{
       'section_id': instance.sectionId,
       'section_status': instance.sectionStatus,

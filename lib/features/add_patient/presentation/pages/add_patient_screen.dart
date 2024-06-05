@@ -1,19 +1,14 @@
 import 'dart:developer';
-
-import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
-import 'package:egy_akin/app/shared/widgets/build_multiple_value_questions.dart';
-import 'package:egy_akin/app/shared/widgets/build_select_value_questions.dart';
-import 'package:egy_akin/app/shared/widgets/build_string_value_questions.dart';
-import 'package:egy_akin/features/add_patient/presentation/widgets/submit_botton.dart';
 import 'package:intl/intl.dart';
+import 'package:egy_akin/injection_container.dart' as di;
 
 import '../../../../exports.dart';
 
 class AddPatientScreen extends StatefulWidget {
-  final String currentDoctorId;
+  final DoctorModel currentDoctorModel;
   const AddPatientScreen({
     super.key,
-    required this.currentDoctorId,
+    required this.currentDoctorModel,
   });
 
   @override
@@ -24,7 +19,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   Map<String, dynamic> answerMap = {};
   @override
   void initState() {
-    // context.read<AddPatientCubit>().getPatientHistoryForAddPatient();
     answerMap = {
       AppStrings.answers: [],
       AppStrings.otherField: AppStrings.empty,
@@ -157,14 +151,19 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     orElse: () {},
                     loaded: (questions, isAddedPatientSuccessfully, patientId) {
                       if (isAddedPatientSuccessfully) {
-                        Navigator.of(context).pushReplacementNamed(
-                          AppRoutes.patientSections,
-                          arguments:
-                              AppRoutesArgs.patientSectionsRouteArguments(
-                            patientId: patientId.toString(),
-                            currentDoctorId: widget.currentDoctorId.toString(),
-                          ),
-                        );
+                        navigatorKey.currentState
+                            ?.pushNamed(AppRoutes.home, arguments: 0);
+                        navigatorKey.currentState
+                            ?.pushNamed(
+                              AppRoutes.patientSections,
+                              arguments:
+                                  AppRoutesArgs.patientSectionsRouteArguments(
+                                patientId: patientId.toString(),
+                                currentDoctorModel: widget.currentDoctorModel,
+                              ),
+                            )
+                            .then(
+                                (value) => context.read<HomeCubit>().getHome());
                       }
                     },
                     error: (message) {
@@ -271,6 +270,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               questionAnswer = null;
               cubit.formData.remove(questionList[index].id.toString());
             }
+
+            log(cubit.formData.toString());
 
             setState(() {});
           },
@@ -380,10 +381,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   }
 
   Future processItems({
-    required List<BaseQuestionModel> questionList,
+    required List<QuestionModel> questionList,
     required bool isValid,
   }) async {
-    Future.forEach(questionList, (BaseQuestionModel questionModel) async {
+    Future.forEach(questionList, (QuestionModel questionModel) async {
       if (questionModel.type == AppStrings.multipleType &&
           questionModel.mandatory == true) {
         if (questionModel.answer == [] ||

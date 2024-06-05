@@ -3,10 +3,10 @@ import 'package:egy_akin/features/authentication/data/models/authentication_mode
 
 class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments(
-      {required String patientId, required String currentDoctorId}) {
+      {required String patientId, required DoctorModel currentDoctorModel}) {
     return {
       'patientId': patientId,
-      'currentDoctorId': currentDoctorId,
+      'currentDoctorModel': currentDoctorModel,
     };
   }
 
@@ -21,18 +21,22 @@ class AppRoutesArgs {
     };
   }
 
-  static String addPatientRouteArgs({required String currentDoctorId}) {
-    return currentDoctorId;
+  static DoctorModel addPatientRouteArgs(
+      {required DoctorModel currentDoctorModel}) {
+    return currentDoctorModel;
   }
 
-  static Map<String, dynamic> patientCommentsRouteArgs(
-      {required String patientId,
-      required DoctorModel currentDoctorModel,
-      required bool verified}) {
+  static Map<String, dynamic> patientCommentsRouteArgs({
+    required String patientId,
+    required DoctorModel currentDoctorModel,
+    required bool verified,
+    required String patientName,
+  }) {
     return {
       'patientId': patientId,
       'currentDoctorModel': currentDoctorModel,
       'accountVerification': verified,
+      'patientName': patientName,
     };
   }
 
@@ -57,12 +61,16 @@ class AppRoutesArgs {
     required bool outcomeStatus,
     required String patientName,
     required String patientId,
+    required String doctorId,
+    required String currentDoctorId,
   }) {
     return {
       'accountVerification': verified,
       'outcomeStatus': outcomeStatus,
       'patientName': patientName,
       'patientId': patientId,
+      'currentDoctorId': currentDoctorId,
+      'doctorId': doctorId,
     };
   }
 
@@ -73,6 +81,42 @@ class AppRoutesArgs {
     return {
       'accountVerification': accountVerification,
       'currentDoctorModel': currentDoctorModel,
+    };
+  }
+
+  static Map<String, dynamic> allDoctorsPatientsRouteArgs({
+    required bool accountVerification,
+    required DoctorModel currentDoctorModel,
+  }) {
+    return {
+      'accountVerification': accountVerification,
+      'currentDoctorModel': currentDoctorModel,
+    };
+  }
+
+  static Map<String, dynamic> patientSectionDetailsRouteArgs({
+    required SectionModel sectionModel,
+    required DoctorModel currentDoctorModel,
+    required bool finalSubmitStatus,
+    required String patientId,
+    required String doctorId,
+  }) {
+    return {
+      'sectionModel': sectionModel,
+      'currentDoctorModel': currentDoctorModel,
+      'finalSubmitStatus': finalSubmitStatus,
+      'patientId': patientId,
+      'doctorId': doctorId,
+    };
+  }
+
+  static Map<String, dynamic> doctorInfoViewRouteArgs({
+    required String doctorId,
+    required String currentDoctorId,
+  }) {
+    return {
+      'doctorId': doctorId,
+      'currentDoctorId': currentDoctorId,
     };
   }
 }

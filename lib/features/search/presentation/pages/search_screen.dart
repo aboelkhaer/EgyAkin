@@ -1,6 +1,6 @@
 import '../../../../exports.dart';
 
-class SearchScreen extends StatelessWidget {
+class SearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
 
@@ -9,6 +9,66 @@ class SearchScreen extends StatelessWidget {
     required this.currentDoctorModel,
     required this.accountVerification,
   });
+
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
+  @override
+  void dispose() {
+    final cubit = context.read<SearchCubit>();
+    if (!cubit.isClosed) {
+      cubit.scrollController!.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<SearchCubit>();
+    if (!cubit.isClosed) {
+      cubit.scrollController = ScrollController();
+      cubit.scrollController!.addListener(_onScroll);
+    }
+  }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   context.read<SearchCubit>().scrollController.addListener(_onScroll);
+  // }
+
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final cubit = context.read<SearchCubit>();
+  //   if (!cubit.isClosed && cubit.scrollController.hasClients) {
+  //     cubit.scrollController.dispose();
+  //   }
+  // }
+
+  void _onScroll() {
+    if (context.read<SearchCubit>().isLastPage) {
+      return;
+    } else {
+      final maxScroll = context
+          .read<SearchCubit>()
+          .scrollController!
+          .position
+          .maxScrollExtent;
+      final currentScroll =
+          context.read<SearchCubit>().scrollController!.position.pixels;
+      const threshold = 200.0;
+      if (context.read<SearchCubit>().isLoadingMoreForScroll == false &&
+          maxScroll - currentScroll <= threshold) {
+        context.read<SearchCubit>().isLoadingMoreForScroll = true;
+
+        context.read<SearchCubit>().loadMorePatients();
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +152,11 @@ class SearchScreen extends StatelessWidget {
                           ),
                         );
                       },
-                      loaded: (patients) {
+                      loaded: (response, isSeeMore) {
                         return Text(
-                          patients!.length.toString(),
+                          response!.data!.data!.length.toString(),
                           style: TextStyle(
-                            color: patients.isEmpty
+                            color: response.data!.data!.isEmpty
                                 ? AppColors.description
                                 : Colors.green,
                           ),
@@ -136,9 +196,10 @@ class SearchScreen extends StatelessWidget {
                     return const ShimmerLoadingPatientsCards(
                         ishorizontal: false);
                   },
-                  loaded: (patients) {
+                  loaded: (response, isSeeMore) {
                     return ListView.builder(
-                      itemCount: patients!.length,
+                      controller: cubit.scrollController,
+                      itemCount: response!.data!.data!.length,
                       physics: const BouncingScrollPhysics(),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
@@ -149,40 +210,37 @@ class SearchScreen extends StatelessWidget {
                         bottom: 50,
                       ),
                       itemBuilder: (context, index) {
-                        PatientHomeDataModel patient = patients[index];
+                        PatientHomeDataModel patient =
+                            response.data!.data![index];
 
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: VerticalPatientCard(
+                          child: PatientCard(
                             patientName: patient.name ?? AppStrings.empty,
                             updatedAt: patient.updatedAt ?? AppStrings.empty,
+                            doctorId: patient.doctor!.id.toString(),
                             drFirstName:
                                 patient.doctor!.firstName ?? AppStrings.empty,
                             drLastName:
                                 patient.doctor!.lastName ?? AppStrings.empty,
+                            currnetDoctorId:
+                                widget.currentDoctorModel.id.toString(),
                             hospital: patient.hospital ?? AppStrings.empty,
+                            doctorImage: patient.doctor!.image,
                             submitStatus: patient.sections == null
                                 ? false
                                 : patient.sections!.submitStatus ?? false,
                             isOutcomeStatus: patient.sections!.outcomeStatus!,
-                            onOutcomeTap: () {
-                              //   Get.toNamed(
-                              //   AppRoutes.outcome,
-                              //   arguments: [
-                              //     patient.sections!.outcomeStatus,
-                              //     patient.id,
-                              //     patient.name
-                              //   ],
-                              // ),
-                            },
+                            onOutcomeTap: () {},
                             onAddCommentTap: () {
                               navigatorKey.currentState?.pushNamed(
                                 AppRoutes.comments,
                                 arguments:
                                     AppRoutesArgs.patientCommentsRouteArgs(
                                   patientId: patient.id.toString(),
-                                  currentDoctorModel: currentDoctorModel,
-                                  verified: accountVerification,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                  verified: widget.accountVerification,
+                                  patientName: patient.name.toString(),
                                 ),
                               );
                             },
@@ -192,8 +250,7 @@ class SearchScreen extends StatelessWidget {
                                 arguments:
                                     AppRoutesArgs.patientSectionsRouteArguments(
                                   patientId: patient.id.toString(),
-                                  currentDoctorId:
-                                      currentDoctorModel.id.toString(),
+                                  currentDoctorModel: widget.currentDoctorModel,
                                 ),
                               );
                             },
@@ -205,6 +262,44 @@ class SearchScreen extends StatelessWidget {
                 );
               },
             ),
+          ),
+          SizedBox(height: 10.h),
+          BlocBuilder<SearchCubit, SearchState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loaded: (data, isSeeMore) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      isSeeMore
+                          ? Column(
+                              children: [
+                                const SizedBox(
+                                  height: 15,
+                                  width: 15,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                              ],
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                cubit.loadMorePatients();
+                              },
+                              child: const Text(
+                                '',
+                              ),
+                            ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ],
       ),

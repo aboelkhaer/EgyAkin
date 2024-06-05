@@ -10,10 +10,13 @@ _$GetOutcomeModelResponseImpl _$$GetOutcomeModelResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$GetOutcomeModelResponseImpl(
       value: json['value'] as bool?,
-      data: json['data'] == null
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => QuestionModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      submitter: json['Submitter'] == null
           ? null
-          : GetOutcomeDataModelResponse.fromJson(
-              json['data'] as Map<String, dynamic>),
+          : OutcomeSubmitterModel.fromJson(
+              json['Submitter'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$GetOutcomeModelResponseImplToJson(
@@ -21,6 +24,7 @@ Map<String, dynamic> _$$GetOutcomeModelResponseImplToJson(
     <String, dynamic>{
       'value': instance.value,
       'data': instance.data,
+      'Submitter': instance.submitter,
     };
 
 _$GetOutcomeDataModelResponseImpl _$$GetOutcomeDataModelResponseImplFromJson(
@@ -47,4 +51,18 @@ Map<String, dynamic> _$$GetOutcomeDataModelResponseImplToJson(
       'other': instance.other,
       'update_at': instance.updateAt,
       'doctor': instance.doctor,
+    };
+
+_$OutcomeSubmitterModelImpl _$$OutcomeSubmitterModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$OutcomeSubmitterModelImpl(
+      name: json['name'] as String?,
+      image: json['image'] as String?,
+    );
+
+Map<String, dynamic> _$$OutcomeSubmitterModelImplToJson(
+        _$OutcomeSubmitterModelImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'image': instance.image,
     };

@@ -25,6 +25,15 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final cubit = context.read<PostDetailsCubit>();
+    if (!cubit.isClosed && cubit.scrollController.hasClients) {
+      cubit.scrollController.dispose();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     PostDetailsCubit cubit = PostDetailsCubit.get(context);
     Size size = MediaQuery.of(context).size;

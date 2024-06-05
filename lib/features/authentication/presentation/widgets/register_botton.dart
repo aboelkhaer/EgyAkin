@@ -29,7 +29,8 @@ class RegisterBotton extends StatelessWidget {
       listener: (context, state) {
         state.maybeWhen(
           loaded: (doctorData) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+            Navigator.of(context)
+                .pushReplacementNamed(AppRoutes.home, arguments: 0);
           },
           error: (message) =>
               customSnackBar(message: message, context: context),

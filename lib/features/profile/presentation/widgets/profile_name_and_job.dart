@@ -2,7 +2,11 @@ import 'package:egy_akin/exports.dart';
 
 class ProfileNameAndJob extends StatelessWidget {
   final ProfileCubit cubit;
-  const ProfileNameAndJob({super.key, required this.cubit});
+
+  const ProfileNameAndJob({
+    super.key,
+    required this.cubit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +37,53 @@ class ProfileNameAndJob extends StatelessWidget {
                 ),
                 SizedBox(height: 3.h),
                 Text(
-                  cubit.currentDoctor.job.toString(),
+                  capitalizeFirstText(
+                      cubit.currentDoctor.specialty ?? AppStrings.empty),
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey.shade700,
                   ),
                 ),
+                SizedBox(height: 3.h),
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(context
+                                .read<HomeCubit>()
+                                .doctorPatientCount
+                                .toString()),
+                            SizedBox(width: 3.w),
+                            const Text('Patient'),
+                            SizedBox(width: 10.w),
+                          ],
+                        ),
+                        const Text('|'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10.w),
+                            Text(
+                              context.read<HomeCubit>().doctorScore.toString(),
+                            ),
+                            SizedBox(width: 3.w),
+                            const Text('Score'),
+                            // SizedBox(width: 5.w),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ],
             );
           },
-          loaded: (doctorModel) {
+          loaded: (doctorModel, isLoadedImage) {
             return Column(
               children: [
                 Text(
@@ -55,12 +95,48 @@ class ProfileNameAndJob extends StatelessWidget {
                 ),
                 SizedBox(height: 3.h),
                 Text(
-                  doctorModel.job.toString(),
+                  capitalizeFirstText(
+                      doctorModel.specialty ?? AppStrings.empty),
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey.shade700,
                   ),
+                ),
+                SizedBox(height: 3.h),
+                BlocBuilder<ProfileCubit, ProfileState>(
+                  builder: (context, state) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(context
+                                .read<HomeCubit>()
+                                .doctorPatientCount
+                                .toString()),
+                            SizedBox(width: 3.w),
+                            const Text('Patient'),
+                            SizedBox(width: 10.w),
+                          ],
+                        ),
+                        const Text('|'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 10.w),
+                            Text(
+                              context.read<HomeCubit>().doctorScore.toString(),
+                            ),
+                            SizedBox(width: 3.w),
+                            const Text('Score'),
+                            // SizedBox(width: 5.w),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             );

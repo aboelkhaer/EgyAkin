@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/functions/hightest_degree_list.dart';
+
 import '../../../../exports.dart';
 
 class RegisterForm extends StatelessWidget {
@@ -212,7 +214,7 @@ class RegisterForm extends StatelessWidget {
                   ),
                   child: DropdownButtonFormField<dynamic>(
                     hint: const Text(AppStrings.choose),
-                    items: cubit.highestDegreeList.map((value) {
+                    items: highestDegreeList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(value.toString()),

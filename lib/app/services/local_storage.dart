@@ -16,6 +16,18 @@ abstract class LocalStorageProcess {
   Future<DoctorModel?> getDoctorData();
   Future<void> setBool(String key, bool value);
   Future<void> updateDoctorImageData(String newImageUrl);
+  Future<void> updateDoctorProfile({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String age,
+    required String job,
+    required String workplace,
+    required String registerationNumber,
+    required String specialty,
+    required String highestDegree,
+  });
 }
 
 class AppPreferences implements LocalStorageProcess {
@@ -102,6 +114,44 @@ class AppPreferences implements LocalStorageProcess {
 
       // Update the image parameter in the doctor model
       final updatedDoctorModel = doctorModel.copyWith(image: newImageUrl);
+
+      // Save the updated doctor model back to shared preferences
+      await setDoctorData(updatedDoctorModel);
+    }
+  }
+
+  @override
+  Future<void> updateDoctorProfile(
+      {required String firstName,
+      required String lastName,
+      required String email,
+      required String phone,
+      required String age,
+      required String job,
+      required String workplace,
+      required String registerationNumber,
+      required String specialty,
+      required String highestDegree}) async {
+    // Retrieve the doctor model from shared preferences
+    final doctorModelString =
+        _sharedPreferences.getString(AppLocalStrings.doctorData);
+    if (doctorModelString != null) {
+      final doctorMap = jsonDecode(doctorModelString) as Map<String, dynamic>;
+      final doctorModel = DoctorModel.fromJson(doctorMap);
+
+      // Update the image parameter in the doctor model
+      final updatedDoctorModel = doctorModel.copyWith(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        age: age,
+        job: job,
+        workingplace: workplace,
+        registrationNumber: registerationNumber,
+        specialty: specialty,
+        highestdegree: highestDegree,
+      );
 
       // Save the updated doctor model back to shared preferences
       await setDoctorData(updatedDoctorModel);

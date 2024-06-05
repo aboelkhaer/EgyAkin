@@ -45,7 +45,12 @@ class ProfileCover extends StatelessWidget {
                   children: [
                     ProfileImage(cubit: cubit),
                     SizedBox(height: 5.h),
-                    ProfileNameAndJob(cubit: cubit),
+                    ProfileNameAndJob(
+                      cubit: cubit,
+                    ),
+                    SizedBox(height: 5.h),
+                    // Text('$doctorPatientCount Patient  |  $doctorScore Score'),
+
                     SizedBox(height: 10.h),
                   ],
                 ),

@@ -156,4 +156,5 @@ class AppStrings {
   static const String continueText = 'Continue';
   static const String save = 'Save';
   static const String back = 'Back';
+  static const String content = 'Content';
 }

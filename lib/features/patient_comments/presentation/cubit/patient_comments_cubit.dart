@@ -1,7 +1,4 @@
 import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
-import 'package:egy_akin/features/patient_comments/domain/usecases/add_patient_comment_usecase.dart';
-import 'package:egy_akin/features/patient_comments/domain/usecases/delete_patient_comment_usecase.dart';
-
 import '../../../../exports.dart';
 
 class PatientCommentsCubit extends Cubit<PatientCommentsState> {
@@ -24,7 +21,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
         emit(PatientCommentsState.error(l.message));
       },
       (response) async {
-        emit(PatientCommentsState.loaded(response.data!, ''));
+        emit(PatientCommentsState.loaded(response.data!, '', false, false, ''));
       },
     );
   }
@@ -47,8 +44,12 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
             emit(PatientCommentsState.error(l.message));
           },
           (r) async {
-            emit(PatientCommentsState.loaded(r.data!, ''));
-            animateToBottomOfScreen(scrollController);
+            emit(PatientCommentsState.loaded(r.data!, '', false, false, ''));
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (scrollController.hasClients) {
+                animateToBottomOfScreen(scrollController);
+              }
+            });
           },
         );
       },
@@ -59,8 +60,8 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
     emit(
       state.maybeMap(
         orElse: () => state,
-        loaded: (value) =>
-            PatientCommentsState.loaded(value.comments, newCommentValue),
+        loaded: (value) => PatientCommentsState.loaded(
+            value.comments, newCommentValue, false, false, ''),
       ),
     );
   }
@@ -78,7 +79,8 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
             final updatedComments = value.comments
                 .where((comment) => comment.id.toString() != commentId)
                 .toList();
-            emit(PatientCommentsState.loaded(updatedComments, ''));
+            emit(PatientCommentsState.loaded(
+                updatedComments, '', false, false, ''));
           },
           orElse: () => state,
         );

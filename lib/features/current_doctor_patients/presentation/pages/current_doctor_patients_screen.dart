@@ -15,39 +15,52 @@ class CurrentDoctorPatientsScreen extends StatefulWidget {
 
 class _CurrentDoctorPatientsScreenState
     extends State<CurrentDoctorPatientsScreen> {
+  CurrentDoctorPatientsCubit? _cubit;
+
   @override
   void initState() {
     super.initState();
-    context
-        .read<CurrentDoctorPatientsCubit>()
-        .scrollController
-        .addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit = context.read<CurrentDoctorPatientsCubit>();
+
+      if (!_cubit!.isClosed) {
+        _cubit!.scrollController = ScrollController();
+        _cubit!.scrollController!.addListener(_onScroll);
+      }
+    });
   }
 
   @override
   void dispose() {
-    // context.read<CurrentDoctorPatientsCubit>().scrollController.dispose();
+    if (_cubit != null && !_cubit!.isClosed) {
+      _cubit!.scrollController!.dispose();
+    }
     super.dispose();
   }
 
   void _onScroll() {
-    final maxScroll = context
-        .read<CurrentDoctorPatientsCubit>()
-        .scrollController
-        .position
-        .maxScrollExtent;
-    final currentScroll = context
-        .read<CurrentDoctorPatientsCubit>()
-        .scrollController
-        .position
-        .pixels;
-    const threshold = 200.0;
-    if (context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll ==
-            false &&
-        maxScroll - currentScroll <= threshold) {
-      context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll = true;
+    if (context.read<CurrentDoctorPatientsCubit>().isLastPage) {
+      return;
+    } else {
+      final maxScroll = context
+          .read<CurrentDoctorPatientsCubit>()
+          .scrollController!
+          .position
+          .maxScrollExtent;
+      final currentScroll = context
+          .read<CurrentDoctorPatientsCubit>()
+          .scrollController!
+          .position
+          .pixels;
+      const threshold = 200.0;
+      if (context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll ==
+              false &&
+          maxScroll - currentScroll <= threshold) {
+        context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll =
+            true;
 
-      context.read<CurrentDoctorPatientsCubit>().loadMorePatients();
+        context.read<CurrentDoctorPatientsCubit>().loadMorePatients();
+      }
     }
   }
 
@@ -60,7 +73,7 @@ class _CurrentDoctorPatientsScreenState
       appBar: AppBar(
         title: GestureDetector(
           onTap: () {
-            animateToTopOfScreen(cubit.scrollController);
+            animateToTopOfScreen(cubit.scrollController!);
           },
           child: const Text(
             AppStrings.yourPatients,
@@ -94,14 +107,18 @@ class _CurrentDoctorPatientsScreenState
                       itemCount: data.data!.data!.length,
                       itemBuilder: (BuildContext context, int index) {
                         var patient = data.data!.data![index];
-                        return VerticalPatientCard(
+                        return PatientCard(
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          doctorId: patient.doctor!.id.toString(),
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           drLastName:
                               patient.doctor!.lastName ?? AppStrings.empty,
+                          currnetDoctorId:
+                              widget.currentDoctorModel.id.toString(),
                           hospital: patient.hospital ?? AppStrings.empty,
+                          doctorImage: patient.doctor!.image,
                           isOutcomeStatus: patient.sections!.outcomeStatus!,
                           submitStatus: patient.sections == null
                               ? false
@@ -114,6 +131,9 @@ class _CurrentDoctorPatientsScreenState
                                 outcomeStatus: patient.sections!.outcomeStatus!,
                                 patientName: patient.name.toString(),
                                 patientId: patient.id.toString(),
+                                currentDoctorId:
+                                    widget.currentDoctorModel.id.toString(),
+                                doctorId: patient.doctor!.id.toString(),
                               ),
                             );
                           },
@@ -124,6 +144,7 @@ class _CurrentDoctorPatientsScreenState
                                 patientId: patient.id.toString(),
                                 currentDoctorModel: widget.currentDoctorModel,
                                 verified: widget.accountVerification,
+                                patientName: patient.name.toString(),
                               ),
                             );
                           },
@@ -133,8 +154,7 @@ class _CurrentDoctorPatientsScreenState
                               arguments:
                                   AppRoutesArgs.patientSectionsRouteArguments(
                                 patientId: patient.id.toString(),
-                                currentDoctorId:
-                                    widget.currentDoctorModel.id.toString(),
+                                currentDoctorModel: widget.currentDoctorModel,
                               ),
                             );
                           },

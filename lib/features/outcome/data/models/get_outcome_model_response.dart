@@ -8,7 +8,8 @@ part 'get_outcome_model_response.g.dart';
 class GetOutcomeModelResponse with _$GetOutcomeModelResponse {
   const factory GetOutcomeModelResponse({
     bool? value,
-    GetOutcomeDataModelResponse? data,
+    List<QuestionModel>? data,
+    @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter,
   }) = _GetOutcomeModelResponse;
   factory GetOutcomeModelResponse.fromJson(Map<String, dynamic> json) =>
       _$GetOutcomeModelResponseFromJson(json);
@@ -27,4 +28,14 @@ class GetOutcomeDataModelResponse with _$GetOutcomeDataModelResponse {
   }) = _GetOutcomeDataModelResponse;
   factory GetOutcomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$GetOutcomeDataModelResponseFromJson(json);
+}
+
+@freezed
+class OutcomeSubmitterModel with _$OutcomeSubmitterModel {
+  const factory OutcomeSubmitterModel({
+    String? name,
+    String? image,
+  }) = _OutcomeSubmitterModel;
+  factory OutcomeSubmitterModel.fromJson(Map<String, dynamic> json) =>
+      _$OutcomeSubmitterModelFromJson(json);
 }

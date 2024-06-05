@@ -963,11 +963,11 @@ PatientNotificationModel _$PatientNotificationModelFromJson(
 
 /// @nodoc
 mixin _$PatientNotificationModel {
-  int? get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get hospital => throw _privateConstructorUsedError;
   String? get governorate => throw _privateConstructorUsedError;
-  DoctorNotificationDataModel? get doctor => throw _privateConstructorUsedError;
+  DoctorModel? get doctor => throw _privateConstructorUsedError;
   SectionsNotificationDataModel? get sections =>
       throw _privateConstructorUsedError;
 
@@ -984,14 +984,14 @@ abstract class $PatientNotificationModelCopyWith<$Res> {
       _$PatientNotificationModelCopyWithImpl<$Res, PatientNotificationModel>;
   @useResult
   $Res call(
-      {int? id,
+      {String? id,
       String? name,
       String? hospital,
       String? governorate,
-      DoctorNotificationDataModel? doctor,
+      DoctorModel? doctor,
       SectionsNotificationDataModel? sections});
 
-  $DoctorNotificationDataModelCopyWith<$Res>? get doctor;
+  $DoctorModelCopyWith<$Res>? get doctor;
   $SectionsNotificationDataModelCopyWith<$Res>? get sections;
 }
 
@@ -1020,7 +1020,7 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -1036,7 +1036,7 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorNotificationDataModel?,
+              as DoctorModel?,
       sections: freezed == sections
           ? _value.sections
           : sections // ignore: cast_nullable_to_non_nullable
@@ -1046,12 +1046,12 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
 
   @override
   @pragma('vm:prefer-inline')
-  $DoctorNotificationDataModelCopyWith<$Res>? get doctor {
+  $DoctorModelCopyWith<$Res>? get doctor {
     if (_value.doctor == null) {
       return null;
     }
 
-    return $DoctorNotificationDataModelCopyWith<$Res>(_value.doctor!, (value) {
+    return $DoctorModelCopyWith<$Res>(_value.doctor!, (value) {
       return _then(_value.copyWith(doctor: value) as $Val);
     });
   }
@@ -1080,15 +1080,15 @@ abstract class _$$PatientNotificationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {String? id,
       String? name,
       String? hospital,
       String? governorate,
-      DoctorNotificationDataModel? doctor,
+      DoctorModel? doctor,
       SectionsNotificationDataModel? sections});
 
   @override
-  $DoctorNotificationDataModelCopyWith<$Res>? get doctor;
+  $DoctorModelCopyWith<$Res>? get doctor;
   @override
   $SectionsNotificationDataModelCopyWith<$Res>? get sections;
 }
@@ -1117,7 +1117,7 @@ class __$$PatientNotificationModelImplCopyWithImpl<$Res>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as int?,
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -1133,7 +1133,7 @@ class __$$PatientNotificationModelImplCopyWithImpl<$Res>
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
-              as DoctorNotificationDataModel?,
+              as DoctorModel?,
       sections: freezed == sections
           ? _value.sections
           : sections // ignore: cast_nullable_to_non_nullable
@@ -1157,7 +1157,7 @@ class _$PatientNotificationModelImpl implements _PatientNotificationModel {
       _$$PatientNotificationModelImplFromJson(json);
 
   @override
-  final int? id;
+  final String? id;
   @override
   final String? name;
   @override
@@ -1165,7 +1165,7 @@ class _$PatientNotificationModelImpl implements _PatientNotificationModel {
   @override
   final String? governorate;
   @override
-  final DoctorNotificationDataModel? doctor;
+  final DoctorModel? doctor;
   @override
   final SectionsNotificationDataModel? sections;
 
@@ -1212,11 +1212,11 @@ class _$PatientNotificationModelImpl implements _PatientNotificationModel {
 
 abstract class _PatientNotificationModel implements PatientNotificationModel {
   const factory _PatientNotificationModel(
-          {final int? id,
+          {final String? id,
           final String? name,
           final String? hospital,
           final String? governorate,
-          final DoctorNotificationDataModel? doctor,
+          final DoctorModel? doctor,
           final SectionsNotificationDataModel? sections}) =
       _$PatientNotificationModelImpl;
 
@@ -1224,7 +1224,7 @@ abstract class _PatientNotificationModel implements PatientNotificationModel {
       _$PatientNotificationModelImpl.fromJson;
 
   @override
-  int? get id;
+  String? get id;
   @override
   String? get name;
   @override
@@ -1232,233 +1232,12 @@ abstract class _PatientNotificationModel implements PatientNotificationModel {
   @override
   String? get governorate;
   @override
-  DoctorNotificationDataModel? get doctor;
+  DoctorModel? get doctor;
   @override
   SectionsNotificationDataModel? get sections;
   @override
   @JsonKey(ignore: true)
   _$$PatientNotificationModelImplCopyWith<_$PatientNotificationModelImpl>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-DoctorNotificationDataModel _$DoctorNotificationDataModelFromJson(
-    Map<String, dynamic> json) {
-  return _DoctorNotificationDataModel.fromJson(json);
-}
-
-/// @nodoc
-mixin _$DoctorNotificationDataModel {
-  int? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'name')
-  String? get firstName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'lname')
-  String? get lastName => throw _privateConstructorUsedError;
-  String? get workingplace => throw _privateConstructorUsedError;
-
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
-  $DoctorNotificationDataModelCopyWith<DoctorNotificationDataModel>
-      get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $DoctorNotificationDataModelCopyWith<$Res> {
-  factory $DoctorNotificationDataModelCopyWith(
-          DoctorNotificationDataModel value,
-          $Res Function(DoctorNotificationDataModel) then) =
-      _$DoctorNotificationDataModelCopyWithImpl<$Res,
-          DoctorNotificationDataModel>;
-  @useResult
-  $Res call(
-      {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName,
-      String? workingplace});
-}
-
-/// @nodoc
-class _$DoctorNotificationDataModelCopyWithImpl<$Res,
-        $Val extends DoctorNotificationDataModel>
-    implements $DoctorNotificationDataModelCopyWith<$Res> {
-  _$DoctorNotificationDataModelCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-    Object? workingplace = freezed,
-  }) {
-    return _then(_value.copyWith(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      workingplace: freezed == workingplace
-          ? _value.workingplace
-          : workingplace // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$DoctorNotificationDataModelImplCopyWith<$Res>
-    implements $DoctorNotificationDataModelCopyWith<$Res> {
-  factory _$$DoctorNotificationDataModelImplCopyWith(
-          _$DoctorNotificationDataModelImpl value,
-          $Res Function(_$DoctorNotificationDataModelImpl) then) =
-      __$$DoctorNotificationDataModelImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int? id,
-      @JsonKey(name: 'name') String? firstName,
-      @JsonKey(name: 'lname') String? lastName,
-      String? workingplace});
-}
-
-/// @nodoc
-class __$$DoctorNotificationDataModelImplCopyWithImpl<$Res>
-    extends _$DoctorNotificationDataModelCopyWithImpl<$Res,
-        _$DoctorNotificationDataModelImpl>
-    implements _$$DoctorNotificationDataModelImplCopyWith<$Res> {
-  __$$DoctorNotificationDataModelImplCopyWithImpl(
-      _$DoctorNotificationDataModelImpl _value,
-      $Res Function(_$DoctorNotificationDataModelImpl) _then)
-      : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = freezed,
-    Object? firstName = freezed,
-    Object? lastName = freezed,
-    Object? workingplace = freezed,
-  }) {
-    return _then(_$DoctorNotificationDataModelImpl(
-      id: freezed == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int?,
-      firstName: freezed == firstName
-          ? _value.firstName
-          : firstName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastName: freezed == lastName
-          ? _value.lastName
-          : lastName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      workingplace: freezed == workingplace
-          ? _value.workingplace
-          : workingplace // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$DoctorNotificationDataModelImpl
-    implements _DoctorNotificationDataModel {
-  const _$DoctorNotificationDataModelImpl(
-      {this.id,
-      @JsonKey(name: 'name') this.firstName,
-      @JsonKey(name: 'lname') this.lastName,
-      this.workingplace});
-
-  factory _$DoctorNotificationDataModelImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$DoctorNotificationDataModelImplFromJson(json);
-
-  @override
-  final int? id;
-  @override
-  @JsonKey(name: 'name')
-  final String? firstName;
-  @override
-  @JsonKey(name: 'lname')
-  final String? lastName;
-  @override
-  final String? workingplace;
-
-  @override
-  String toString() {
-    return 'DoctorNotificationDataModel(id: $id, firstName: $firstName, lastName: $lastName, workingplace: $workingplace)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DoctorNotificationDataModelImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.firstName, firstName) ||
-                other.firstName == firstName) &&
-            (identical(other.lastName, lastName) ||
-                other.lastName == lastName) &&
-            (identical(other.workingplace, workingplace) ||
-                other.workingplace == workingplace));
-  }
-
-  @JsonKey(ignore: true)
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, firstName, lastName, workingplace);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$DoctorNotificationDataModelImplCopyWith<_$DoctorNotificationDataModelImpl>
-      get copyWith => __$$DoctorNotificationDataModelImplCopyWithImpl<
-          _$DoctorNotificationDataModelImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$DoctorNotificationDataModelImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _DoctorNotificationDataModel
-    implements DoctorNotificationDataModel {
-  const factory _DoctorNotificationDataModel(
-      {final int? id,
-      @JsonKey(name: 'name') final String? firstName,
-      @JsonKey(name: 'lname') final String? lastName,
-      final String? workingplace}) = _$DoctorNotificationDataModelImpl;
-
-  factory _DoctorNotificationDataModel.fromJson(Map<String, dynamic> json) =
-      _$DoctorNotificationDataModelImpl.fromJson;
-
-  @override
-  int? get id;
-  @override
-  @JsonKey(name: 'name')
-  String? get firstName;
-  @override
-  @JsonKey(name: 'lname')
-  String? get lastName;
-  @override
-  String? get workingplace;
-  @override
-  @JsonKey(ignore: true)
-  _$$DoctorNotificationDataModelImplCopyWith<_$DoctorNotificationDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 

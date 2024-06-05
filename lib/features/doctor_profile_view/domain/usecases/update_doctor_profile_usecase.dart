@@ -1,0 +1,55 @@
+import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
+import 'package:egy_akin/features/doctor_profile_view/domain/repositories/doctor_profile_view_repo.dart';
+import '../../../../exports.dart';
+
+class UpdateDoctorProfileUsecase
+    implements
+        BaseUseCase<UpdateDoctorProfileUsecaseInput,
+            UpdateDoctorProfileModelResponse> {
+  final DoctorProfileViewRepository repository;
+
+  UpdateDoctorProfileUsecase(this.repository);
+
+  @override
+  Future<Either<Failure, UpdateDoctorProfileModelResponse>> excute(
+      UpdateDoctorProfileUsecaseInput input) async {
+    return await repository.updateDoctorProfile(
+      firstName: input.firstName,
+      lastName: input.lastName,
+      email: input.email,
+      phone: input.phone,
+      age: input.age,
+      job: input.job,
+      workplace: input.workplace,
+      registerationNumber: input.registerationNumber,
+      specialty: input.specialty,
+      highestDegree: input.highestDegree,
+    );
+  }
+}
+
+class UpdateDoctorProfileUsecaseInput {
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+  final String age;
+  final String job;
+  final String workplace;
+  final String registerationNumber;
+  final String specialty;
+  final String highestDegree;
+
+  UpdateDoctorProfileUsecaseInput(
+      {required this.firstName,
+      required this.lastName,
+      required this.email,
+      required this.phone,
+      required this.age,
+      required this.job,
+      required this.workplace,
+      required this.registerationNumber,
+      required this.specialty,
+      required this.highestDegree});
+}

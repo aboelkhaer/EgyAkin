@@ -26,7 +26,8 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
           state.maybeWhen(
             orElse: () {},
             emailVerificationComplete: () {
-              navigatorKey.currentState?.pushReplacementNamed(AppRoutes.home);
+              navigatorKey.currentState
+                  ?.pushReplacementNamed(AppRoutes.home, arguments: 0);
             },
             error: (message) {
               customSnackBar(message: message, context: context);
@@ -164,8 +165,9 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                           },
                         ),
                         changeEmailFunction: () {
-                          navigatorKey.currentState
-                              ?.pushReplacementNamed(AppRoutes.home);
+                          navigatorKey.currentState?.pushReplacementNamed(
+                              AppRoutes.home,
+                              arguments: 0);
                         },
                       ),
                       const SizedBox(height: 50),

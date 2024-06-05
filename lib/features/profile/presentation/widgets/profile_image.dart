@@ -68,7 +68,7 @@ class ProfileImage extends StatelessWidget {
                           child: Lottie.asset(AppImages.imageLoader),
                         );
                       },
-                      loaded: (doctorModel) {
+                      loaded: (doctorModel, isLoadedImage) {
                         return cubit.imagePicked != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(80.r),

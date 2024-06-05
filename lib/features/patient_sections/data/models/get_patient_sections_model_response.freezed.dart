@@ -28,8 +28,7 @@ mixin _$GetPatientSectionsModelResponse {
   String? get patientName => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_Id')
   String? get doctorId => throw _privateConstructorUsedError;
-  List<GetPatientSectionsDataModelResponse>? get data =>
-      throw _privateConstructorUsedError;
+  List<SectionModel>? get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -50,7 +49,7 @@ abstract class $GetPatientSectionsModelResponseCopyWith<$Res> {
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
-      List<GetPatientSectionsDataModelResponse>? data});
+      List<SectionModel>? data});
 }
 
 /// @nodoc
@@ -93,7 +92,7 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<GetPatientSectionsDataModelResponse>?,
+              as List<SectionModel>?,
     ) as $Val);
   }
 }
@@ -112,7 +111,7 @@ abstract class _$$GetPatientSectionsModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
-      List<GetPatientSectionsDataModelResponse>? data});
+      List<SectionModel>? data});
 }
 
 /// @nodoc
@@ -154,7 +153,7 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as List<GetPatientSectionsDataModelResponse>?,
+              as List<SectionModel>?,
     ));
   }
 }
@@ -168,7 +167,7 @@ class _$GetPatientSectionsModelResponseImpl
       @JsonKey(name: 'submit_status') this.submitStatus,
       @JsonKey(name: 'patient_name') this.patientName,
       @JsonKey(name: 'doctor_Id') this.doctorId,
-      final List<GetPatientSectionsDataModelResponse>? data})
+      final List<SectionModel>? data})
       : _data = data;
 
   factory _$GetPatientSectionsModelResponseImpl.fromJson(
@@ -186,9 +185,9 @@ class _$GetPatientSectionsModelResponseImpl
   @override
   @JsonKey(name: 'doctor_Id')
   final String? doctorId;
-  final List<GetPatientSectionsDataModelResponse>? _data;
+  final List<SectionModel>? _data;
   @override
-  List<GetPatientSectionsDataModelResponse>? get data {
+  List<SectionModel>? get data {
     final value = _data;
     if (value == null) return null;
     if (_data is EqualUnmodifiableListView) return _data;
@@ -240,12 +239,11 @@ class _$GetPatientSectionsModelResponseImpl
 abstract class _GetPatientSectionsModelResponse
     implements GetPatientSectionsModelResponse {
   const factory _GetPatientSectionsModelResponse(
-          {final bool? value,
-          @JsonKey(name: 'submit_status') final bool? submitStatus,
-          @JsonKey(name: 'patient_name') final String? patientName,
-          @JsonKey(name: 'doctor_Id') final String? doctorId,
-          final List<GetPatientSectionsDataModelResponse>? data}) =
-      _$GetPatientSectionsModelResponseImpl;
+      {final bool? value,
+      @JsonKey(name: 'submit_status') final bool? submitStatus,
+      @JsonKey(name: 'patient_name') final String? patientName,
+      @JsonKey(name: 'doctor_Id') final String? doctorId,
+      final List<SectionModel>? data}) = _$GetPatientSectionsModelResponseImpl;
 
   factory _GetPatientSectionsModelResponse.fromJson(Map<String, dynamic> json) =
       _$GetPatientSectionsModelResponseImpl.fromJson;
@@ -262,7 +260,7 @@ abstract class _GetPatientSectionsModelResponse
   @JsonKey(name: 'doctor_Id')
   String? get doctorId;
   @override
-  List<GetPatientSectionsDataModelResponse>? get data;
+  List<SectionModel>? get data;
   @override
   @JsonKey(ignore: true)
   _$$GetPatientSectionsModelResponseImplCopyWith<
@@ -270,13 +268,12 @@ abstract class _GetPatientSectionsModelResponse
       get copyWith => throw _privateConstructorUsedError;
 }
 
-GetPatientSectionsDataModelResponse
-    _$GetPatientSectionsDataModelResponseFromJson(Map<String, dynamic> json) {
-  return _GetPatientSectionsDataModelResponse.fromJson(json);
+SectionModel _$SectionModelFromJson(Map<String, dynamic> json) {
+  return _SectionModel.fromJson(json);
 }
 
 /// @nodoc
-mixin _$GetPatientSectionsDataModelResponse {
+mixin _$SectionModel {
   @JsonKey(name: 'section_id')
   int? get sectionId => throw _privateConstructorUsedError;
   @JsonKey(name: 'section_status')
@@ -288,18 +285,15 @@ mixin _$GetPatientSectionsDataModelResponse {
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
-  $GetPatientSectionsDataModelResponseCopyWith<
-          GetPatientSectionsDataModelResponse>
-      get copyWith => throw _privateConstructorUsedError;
+  $SectionModelCopyWith<SectionModel> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $GetPatientSectionsDataModelResponseCopyWith<$Res> {
-  factory $GetPatientSectionsDataModelResponseCopyWith(
-          GetPatientSectionsDataModelResponse value,
-          $Res Function(GetPatientSectionsDataModelResponse) then) =
-      _$GetPatientSectionsDataModelResponseCopyWithImpl<$Res,
-          GetPatientSectionsDataModelResponse>;
+abstract class $SectionModelCopyWith<$Res> {
+  factory $SectionModelCopyWith(
+          SectionModel value, $Res Function(SectionModel) then) =
+      _$SectionModelCopyWithImpl<$Res, SectionModel>;
   @useResult
   $Res call(
       {@JsonKey(name: 'section_id') int? sectionId,
@@ -309,10 +303,9 @@ abstract class $GetPatientSectionsDataModelResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GetPatientSectionsDataModelResponseCopyWithImpl<$Res,
-        $Val extends GetPatientSectionsDataModelResponse>
-    implements $GetPatientSectionsDataModelResponseCopyWith<$Res> {
-  _$GetPatientSectionsDataModelResponseCopyWithImpl(this._value, this._then);
+class _$SectionModelCopyWithImpl<$Res, $Val extends SectionModel>
+    implements $SectionModelCopyWith<$Res> {
+  _$SectionModelCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -349,12 +342,11 @@ class _$GetPatientSectionsDataModelResponseCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetPatientSectionsDataModelResponseImplCopyWith<$Res>
-    implements $GetPatientSectionsDataModelResponseCopyWith<$Res> {
-  factory _$$GetPatientSectionsDataModelResponseImplCopyWith(
-          _$GetPatientSectionsDataModelResponseImpl value,
-          $Res Function(_$GetPatientSectionsDataModelResponseImpl) then) =
-      __$$GetPatientSectionsDataModelResponseImplCopyWithImpl<$Res>;
+abstract class _$$SectionModelImplCopyWith<$Res>
+    implements $SectionModelCopyWith<$Res> {
+  factory _$$SectionModelImplCopyWith(
+          _$SectionModelImpl value, $Res Function(_$SectionModelImpl) then) =
+      __$$SectionModelImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -365,13 +357,11 @@ abstract class _$$GetPatientSectionsDataModelResponseImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$GetPatientSectionsDataModelResponseImplCopyWithImpl<$Res>
-    extends _$GetPatientSectionsDataModelResponseCopyWithImpl<$Res,
-        _$GetPatientSectionsDataModelResponseImpl>
-    implements _$$GetPatientSectionsDataModelResponseImplCopyWith<$Res> {
-  __$$GetPatientSectionsDataModelResponseImplCopyWithImpl(
-      _$GetPatientSectionsDataModelResponseImpl _value,
-      $Res Function(_$GetPatientSectionsDataModelResponseImpl) _then)
+class __$$SectionModelImplCopyWithImpl<$Res>
+    extends _$SectionModelCopyWithImpl<$Res, _$SectionModelImpl>
+    implements _$$SectionModelImplCopyWith<$Res> {
+  __$$SectionModelImplCopyWithImpl(
+      _$SectionModelImpl _value, $Res Function(_$SectionModelImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -382,7 +372,7 @@ class __$$GetPatientSectionsDataModelResponseImplCopyWithImpl<$Res>
     Object? updatedAt = freezed,
     Object? sectionName = freezed,
   }) {
-    return _then(_$GetPatientSectionsDataModelResponseImpl(
+    return _then(_$SectionModelImpl(
       sectionId: freezed == sectionId
           ? _value.sectionId
           : sectionId // ignore: cast_nullable_to_non_nullable
@@ -405,17 +395,15 @@ class __$$GetPatientSectionsDataModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GetPatientSectionsDataModelResponseImpl
-    implements _GetPatientSectionsDataModelResponse {
-  const _$GetPatientSectionsDataModelResponseImpl(
+class _$SectionModelImpl implements _SectionModel {
+  const _$SectionModelImpl(
       {@JsonKey(name: 'section_id') this.sectionId,
       @JsonKey(name: 'section_status') this.sectionStatus,
       @JsonKey(name: 'updated_at') this.updatedAt,
       @JsonKey(name: 'section_name') this.sectionName});
 
-  factory _$GetPatientSectionsDataModelResponseImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$GetPatientSectionsDataModelResponseImplFromJson(json);
+  factory _$SectionModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SectionModelImplFromJson(json);
 
   @override
   @JsonKey(name: 'section_id')
@@ -432,14 +420,14 @@ class _$GetPatientSectionsDataModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionsDataModelResponse(sectionId: $sectionId, sectionStatus: $sectionStatus, updatedAt: $updatedAt, sectionName: $sectionName)';
+    return 'SectionModel(sectionId: $sectionId, sectionStatus: $sectionStatus, updatedAt: $updatedAt, sectionName: $sectionName)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetPatientSectionsDataModelResponseImpl &&
+            other is _$SectionModelImpl &&
             (identical(other.sectionId, sectionId) ||
                 other.sectionId == sectionId) &&
             (identical(other.sectionStatus, sectionStatus) ||
@@ -458,31 +446,27 @@ class _$GetPatientSectionsDataModelResponseImpl
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetPatientSectionsDataModelResponseImplCopyWith<
-          _$GetPatientSectionsDataModelResponseImpl>
-      get copyWith => __$$GetPatientSectionsDataModelResponseImplCopyWithImpl<
-          _$GetPatientSectionsDataModelResponseImpl>(this, _$identity);
+  _$$SectionModelImplCopyWith<_$SectionModelImpl> get copyWith =>
+      __$$SectionModelImplCopyWithImpl<_$SectionModelImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$GetPatientSectionsDataModelResponseImplToJson(
+    return _$$SectionModelImplToJson(
       this,
     );
   }
 }
 
-abstract class _GetPatientSectionsDataModelResponse
-    implements GetPatientSectionsDataModelResponse {
-  const factory _GetPatientSectionsDataModelResponse(
+abstract class _SectionModel implements SectionModel {
+  const factory _SectionModel(
           {@JsonKey(name: 'section_id') final int? sectionId,
           @JsonKey(name: 'section_status') final bool? sectionStatus,
           @JsonKey(name: 'updated_at') final String? updatedAt,
           @JsonKey(name: 'section_name') final String? sectionName}) =
-      _$GetPatientSectionsDataModelResponseImpl;
+      _$SectionModelImpl;
 
-  factory _GetPatientSectionsDataModelResponse.fromJson(
-          Map<String, dynamic> json) =
-      _$GetPatientSectionsDataModelResponseImpl.fromJson;
+  factory _SectionModel.fromJson(Map<String, dynamic> json) =
+      _$SectionModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'section_id')
@@ -498,7 +482,6 @@ abstract class _GetPatientSectionsDataModelResponse
   String? get sectionName;
   @override
   @JsonKey(ignore: true)
-  _$$GetPatientSectionsDataModelResponseImplCopyWith<
-          _$GetPatientSectionsDataModelResponseImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  _$$SectionModelImplCopyWith<_$SectionModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

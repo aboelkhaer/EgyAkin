@@ -23,7 +23,7 @@ class WriteCommentField extends StatelessWidget {
           orElse: () {
             return const SizedBox.shrink();
           },
-          loaded: (comments, newComment) {
+          loaded: (comments, newComment, isLoading, isCommentSuccess, message) {
             return Container(
               height: size.height * 0.13,
               width: double.infinity,
@@ -93,7 +93,8 @@ class WriteCommentField extends StatelessWidget {
                           orElse: () {
                             return const SizedBox.shrink();
                           },
-                          loaded: (comments, newComment) {
+                          loaded: (comments, newComment, isLoading,
+                              isCommentSuccess, message) {
                             return newComment.trim() == AppStrings.empty
                                 ? const SizedBox.shrink()
                                 : Column(

@@ -1,6 +1,3 @@
-import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
-import 'package:egy_akin/main.dart';
-
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -38,21 +35,63 @@ class HomeHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: CircleAvatar(
-                      radius: 20.r,
-                      backgroundColor: AppColors.primary.withOpacity(0.8),
-                      child: BlocBuilder<HomeCubit, HomeState>(
-                        builder: (context, state) {
-                          return Text(
-                            cubit.currentDoctorModel.firstName == null
-                                ? ''
-                                : cubit.currentDoctorModel.firstName![0]
-                                    .toUpperCase(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 16.sp),
-                          );
-                        },
-                      ),
+                    child: BlocBuilder<HomeCubit, HomeState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(80.r),
+                              child: CircleAvatar(
+                                radius: 20.r,
+                                backgroundColor:
+                                    AppColors.primary.withOpacity(0.8),
+                                child: cubit.currentDoctorModel.image == null
+                                    ? Text(
+                                        cubit.currentDoctorModel.firstName ==
+                                                null
+                                            ? ''
+                                            : cubit.currentDoctorModel
+                                                .firstName![0]
+                                                .toUpperCase(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.sp),
+                                      )
+                                    : CustomCachedNetworkImage(
+                                        imageUrl: cubit.currentDoctorModel.image
+                                            .toString(),
+                                      ),
+                              ),
+                            );
+                          },
+                          loaded: (homeData, currentDoctorModel, dotsPosition,
+                              homeIndex) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(80.r),
+                              child: CircleAvatar(
+                                radius: 20.r,
+                                backgroundColor:
+                                    AppColors.primary.withOpacity(0.8),
+                                child: currentDoctorModel.image == null
+                                    ? Text(
+                                        currentDoctorModel.firstName == null
+                                            ? ''
+                                            : cubit.currentDoctorModel
+                                                .firstName![0]
+                                                .toUpperCase(),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16.sp),
+                                      )
+                                    : CustomCachedNetworkImage(
+                                        imageUrl:
+                                            currentDoctorModel.image.toString(),
+                                      ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -97,7 +136,9 @@ class HomeHeader extends StatelessWidget {
                       BlocBuilder<HomeCubit, HomeState>(
                         builder: (context, state) {
                           return Text(
-                            cubit.currentDoctorModel.job ?? AppStrings.empty,
+                            capitalizeFirstText(
+                                cubit.currentDoctorModel.specialty ??
+                                    AppStrings.empty),
                             style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10.sp,
@@ -134,8 +175,7 @@ class HomeHeader extends StatelessWidget {
                         navigatorKey.currentState?.pushNamed(
                           AppRoutes.addPatient,
                           arguments: AppRoutesArgs.addPatientRouteArgs(
-                            currentDoctorId:
-                                cubit.currentDoctorModel.id.toString(),
+                            currentDoctorModel: cubit.currentDoctorModel,
                           ),
                         );
                       } else {

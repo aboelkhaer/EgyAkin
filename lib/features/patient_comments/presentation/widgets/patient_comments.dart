@@ -24,7 +24,8 @@ class PatientComments extends StatelessWidget {
             numberOfShimmer: 10,
           );
         },
-        loaded: (comments, newCommentValue) {
+        loaded:
+            (comments, newCommentValue, isLoading, isCommentSuccess, message) {
           return Padding(
             padding: const EdgeInsets.all(20),
             child: Column(

@@ -5,6 +5,7 @@ class HomePatientTitleHeader extends StatelessWidget {
   final String leftArrow;
   final String rightArrow;
   final String patientCount;
+  final bool isWithIcon;
   final Function()? onTap;
   const HomePatientTitleHeader({
     super.key,
@@ -13,6 +14,7 @@ class HomePatientTitleHeader extends StatelessWidget {
     required this.onTap,
     required this.leftArrow,
     required this.rightArrow,
+    this.isWithIcon = true,
   });
 
   @override
@@ -56,13 +58,15 @@ class HomePatientTitleHeader extends StatelessWidget {
             ),
           ],
         ),
-        GestureDetector(
-          onTap: onTap,
-          child: Icon(
-            Icons.arrow_forward,
-            color: Colors.grey.shade700,
-          ),
-        ),
+        isWithIcon
+            ? GestureDetector(
+                onTap: onTap,
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.grey.shade700,
+                ),
+              )
+            : const SizedBox.shrink(),
       ],
     );
   }

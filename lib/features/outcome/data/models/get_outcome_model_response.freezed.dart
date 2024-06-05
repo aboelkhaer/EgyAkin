@@ -22,7 +22,9 @@ GetOutcomeModelResponse _$GetOutcomeModelResponseFromJson(
 /// @nodoc
 mixin _$GetOutcomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
-  GetOutcomeDataModelResponse? get data => throw _privateConstructorUsedError;
+  List<QuestionModel>? get data => throw _privateConstructorUsedError;
+  @JsonKey(name: 'Submitter')
+  OutcomeSubmitterModel? get submitter => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,9 +38,12 @@ abstract class $GetOutcomeModelResponseCopyWith<$Res> {
           $Res Function(GetOutcomeModelResponse) then) =
       _$GetOutcomeModelResponseCopyWithImpl<$Res, GetOutcomeModelResponse>;
   @useResult
-  $Res call({bool? value, GetOutcomeDataModelResponse? data});
+  $Res call(
+      {bool? value,
+      List<QuestionModel>? data,
+      @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter});
 
-  $GetOutcomeDataModelResponseCopyWith<$Res>? get data;
+  $OutcomeSubmitterModelCopyWith<$Res>? get submitter;
 }
 
 /// @nodoc
@@ -57,6 +62,7 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
   $Res call({
     Object? value = freezed,
     Object? data = freezed,
+    Object? submitter = freezed,
   }) {
     return _then(_value.copyWith(
       value: freezed == value
@@ -66,19 +72,23 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as GetOutcomeDataModelResponse?,
+              as List<QuestionModel>?,
+      submitter: freezed == submitter
+          ? _value.submitter
+          : submitter // ignore: cast_nullable_to_non_nullable
+              as OutcomeSubmitterModel?,
     ) as $Val);
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $GetOutcomeDataModelResponseCopyWith<$Res>? get data {
-    if (_value.data == null) {
+  $OutcomeSubmitterModelCopyWith<$Res>? get submitter {
+    if (_value.submitter == null) {
       return null;
     }
 
-    return $GetOutcomeDataModelResponseCopyWith<$Res>(_value.data!, (value) {
-      return _then(_value.copyWith(data: value) as $Val);
+    return $OutcomeSubmitterModelCopyWith<$Res>(_value.submitter!, (value) {
+      return _then(_value.copyWith(submitter: value) as $Val);
     });
   }
 }
@@ -92,10 +102,13 @@ abstract class _$$GetOutcomeModelResponseImplCopyWith<$Res>
       __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? value, GetOutcomeDataModelResponse? data});
+  $Res call(
+      {bool? value,
+      List<QuestionModel>? data,
+      @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter});
 
   @override
-  $GetOutcomeDataModelResponseCopyWith<$Res>? get data;
+  $OutcomeSubmitterModelCopyWith<$Res>? get submitter;
 }
 
 /// @nodoc
@@ -113,6 +126,7 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? value = freezed,
     Object? data = freezed,
+    Object? submitter = freezed,
   }) {
     return _then(_$GetOutcomeModelResponseImpl(
       value: freezed == value
@@ -120,9 +134,13 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
       data: freezed == data
-          ? _value.data
+          ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
-              as GetOutcomeDataModelResponse?,
+              as List<QuestionModel>?,
+      submitter: freezed == submitter
+          ? _value.submitter
+          : submitter // ignore: cast_nullable_to_non_nullable
+              as OutcomeSubmitterModel?,
     ));
   }
 }
@@ -132,19 +150,34 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
 class _$GetOutcomeModelResponseImpl
     with DiagnosticableTreeMixin
     implements _GetOutcomeModelResponse {
-  const _$GetOutcomeModelResponseImpl({this.value, this.data});
+  const _$GetOutcomeModelResponseImpl(
+      {this.value,
+      final List<QuestionModel>? data,
+      @JsonKey(name: 'Submitter') this.submitter})
+      : _data = data;
 
   factory _$GetOutcomeModelResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$GetOutcomeModelResponseImplFromJson(json);
 
   @override
   final bool? value;
+  final List<QuestionModel>? _data;
   @override
-  final GetOutcomeDataModelResponse? data;
+  List<QuestionModel>? get data {
+    final value = _data;
+    if (value == null) return null;
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  @JsonKey(name: 'Submitter')
+  final OutcomeSubmitterModel? submitter;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'GetOutcomeModelResponse(value: $value, data: $data)';
+    return 'GetOutcomeModelResponse(value: $value, data: $data, submitter: $submitter)';
   }
 
   @override
@@ -153,7 +186,8 @@ class _$GetOutcomeModelResponseImpl
     properties
       ..add(DiagnosticsProperty('type', 'GetOutcomeModelResponse'))
       ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
+      ..add(DiagnosticsProperty('data', data))
+      ..add(DiagnosticsProperty('submitter', submitter));
   }
 
   @override
@@ -162,12 +196,15 @@ class _$GetOutcomeModelResponseImpl
         (other.runtimeType == runtimeType &&
             other is _$GetOutcomeModelResponseImpl &&
             (identical(other.value, value) || other.value == value) &&
-            (identical(other.data, data) || other.data == data));
+            const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.submitter, submitter) ||
+                other.submitter == submitter));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, value, data);
+  int get hashCode => Object.hash(runtimeType, value,
+      const DeepCollectionEquality().hash(_data), submitter);
 
   @JsonKey(ignore: true)
   @override
@@ -186,8 +223,10 @@ class _$GetOutcomeModelResponseImpl
 
 abstract class _GetOutcomeModelResponse implements GetOutcomeModelResponse {
   const factory _GetOutcomeModelResponse(
-      {final bool? value,
-      final GetOutcomeDataModelResponse? data}) = _$GetOutcomeModelResponseImpl;
+          {final bool? value,
+          final List<QuestionModel>? data,
+          @JsonKey(name: 'Submitter') final OutcomeSubmitterModel? submitter}) =
+      _$GetOutcomeModelResponseImpl;
 
   factory _GetOutcomeModelResponse.fromJson(Map<String, dynamic> json) =
       _$GetOutcomeModelResponseImpl.fromJson;
@@ -195,7 +234,10 @@ abstract class _GetOutcomeModelResponse implements GetOutcomeModelResponse {
   @override
   bool? get value;
   @override
-  GetOutcomeDataModelResponse? get data;
+  List<QuestionModel>? get data;
+  @override
+  @JsonKey(name: 'Submitter')
+  OutcomeSubmitterModel? get submitter;
   @override
   @JsonKey(ignore: true)
   _$$GetOutcomeModelResponseImplCopyWith<_$GetOutcomeModelResponseImpl>
@@ -528,5 +570,174 @@ abstract class _GetOutcomeDataModelResponse
   @override
   @JsonKey(ignore: true)
   _$$GetOutcomeDataModelResponseImplCopyWith<_$GetOutcomeDataModelResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+OutcomeSubmitterModel _$OutcomeSubmitterModelFromJson(
+    Map<String, dynamic> json) {
+  return _OutcomeSubmitterModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$OutcomeSubmitterModel {
+  String? get name => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $OutcomeSubmitterModelCopyWith<OutcomeSubmitterModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $OutcomeSubmitterModelCopyWith<$Res> {
+  factory $OutcomeSubmitterModelCopyWith(OutcomeSubmitterModel value,
+          $Res Function(OutcomeSubmitterModel) then) =
+      _$OutcomeSubmitterModelCopyWithImpl<$Res, OutcomeSubmitterModel>;
+  @useResult
+  $Res call({String? name, String? image});
+}
+
+/// @nodoc
+class _$OutcomeSubmitterModelCopyWithImpl<$Res,
+        $Val extends OutcomeSubmitterModel>
+    implements $OutcomeSubmitterModelCopyWith<$Res> {
+  _$OutcomeSubmitterModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? image = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$OutcomeSubmitterModelImplCopyWith<$Res>
+    implements $OutcomeSubmitterModelCopyWith<$Res> {
+  factory _$$OutcomeSubmitterModelImplCopyWith(
+          _$OutcomeSubmitterModelImpl value,
+          $Res Function(_$OutcomeSubmitterModelImpl) then) =
+      __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? name, String? image});
+}
+
+/// @nodoc
+class __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>
+    extends _$OutcomeSubmitterModelCopyWithImpl<$Res,
+        _$OutcomeSubmitterModelImpl>
+    implements _$$OutcomeSubmitterModelImplCopyWith<$Res> {
+  __$$OutcomeSubmitterModelImplCopyWithImpl(_$OutcomeSubmitterModelImpl _value,
+      $Res Function(_$OutcomeSubmitterModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = freezed,
+    Object? image = freezed,
+  }) {
+    return _then(_$OutcomeSubmitterModelImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$OutcomeSubmitterModelImpl
+    with DiagnosticableTreeMixin
+    implements _OutcomeSubmitterModel {
+  const _$OutcomeSubmitterModelImpl({this.name, this.image});
+
+  factory _$OutcomeSubmitterModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$OutcomeSubmitterModelImplFromJson(json);
+
+  @override
+  final String? name;
+  @override
+  final String? image;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'OutcomeSubmitterModel(name: $name, image: $image)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'OutcomeSubmitterModel'))
+      ..add(DiagnosticsProperty('name', name))
+      ..add(DiagnosticsProperty('image', image));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OutcomeSubmitterModelImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.image, image) || other.image == image));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, image);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OutcomeSubmitterModelImplCopyWith<_$OutcomeSubmitterModelImpl>
+      get copyWith => __$$OutcomeSubmitterModelImplCopyWithImpl<
+          _$OutcomeSubmitterModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$OutcomeSubmitterModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _OutcomeSubmitterModel implements OutcomeSubmitterModel {
+  const factory _OutcomeSubmitterModel(
+      {final String? name, final String? image}) = _$OutcomeSubmitterModelImpl;
+
+  factory _OutcomeSubmitterModel.fromJson(Map<String, dynamic> json) =
+      _$OutcomeSubmitterModelImpl.fromJson;
+
+  @override
+  String? get name;
+  @override
+  String? get image;
+  @override
+  @JsonKey(ignore: true)
+  _$$OutcomeSubmitterModelImplCopyWith<_$OutcomeSubmitterModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

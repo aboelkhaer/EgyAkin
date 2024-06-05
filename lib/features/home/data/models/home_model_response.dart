@@ -26,6 +26,7 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'all_patients') List<PatientHomeDataModel>? allPatients,
     @JsonKey(name: 'current_patient')
     List<PatientHomeDataModel>? currentPatients,
+    List<DoctorModel>? topDoctors,
     List<PostModel>? posts,
   }) = _HomeDataModelResponse;
   factory HomeDataModelResponse.fromJson(Map<String, dynamic> json) =>

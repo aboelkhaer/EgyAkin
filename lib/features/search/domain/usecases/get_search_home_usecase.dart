@@ -3,14 +3,22 @@ import 'package:egy_akin/features/search/domain/repositories/search_repo.dart';
 import '../../../../exports.dart';
 
 class GetSearchHomeUsecase
-    implements BaseUseCase<String, GetSearchModelResponse> {
+    implements BaseUseCase<GetSearchHomeUsecaseInput, GetSearchModelResponse> {
   final SearchRepository repository;
 
   GetSearchHomeUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetSearchModelResponse>> excute(
-      String searchContent) async {
-    return await repository.getSearchHome(searchContent: searchContent);
+      GetSearchHomeUsecaseInput input) async {
+    return await repository.getSearchHome(
+        searchContent: input.searchContent, page: input.page);
   }
+}
+
+class GetSearchHomeUsecaseInput {
+  final String searchContent;
+  final int page;
+
+  GetSearchHomeUsecaseInput({required this.searchContent, required this.page});
 }

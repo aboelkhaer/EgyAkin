@@ -44,6 +44,9 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       currentPatients: (json['current_patient'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      topDoctors: (json['topDoctors'] as List<dynamic>?)
+          ?.map((e) => DoctorModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       posts: (json['posts'] as List<dynamic>?)
           ?.map((e) => PostModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -54,6 +57,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
     <String, dynamic>{
       'all_patients': instance.allPatients,
       'current_patient': instance.currentPatients,
+      'topDoctors': instance.topDoctors,
       'posts': instance.posts,
     };
 

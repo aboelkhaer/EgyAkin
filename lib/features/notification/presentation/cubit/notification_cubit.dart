@@ -7,30 +7,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   final UpdateNotificationUsecase _updateNotificationUsecase;
   final GetAllNotificationUsecase _getAllNotificationUsecase;
   static NotificationCubit get(context) => BlocProvider.of(context);
-
-  // @override
-  // Future<void> close() {
-  //   // updateNotification();
-  //   return super.close();
-  // }
-
-  // onRefreshInicator() async {
-  //   sl<HomeCubit>().getHome();
-  //   sl<HomeCubit>().getNotifications();
-  //   await Future.delayed(const Duration(
-  //       milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-  //   WidgetsBinding.instance.addPostFrameCallback((_) => updateNotification());
-  // }
-
-  // fetchNotifications(List<NotificationDataModelResponse> notifications) {
-  //   // Update state with received notifications
-  //   emit(NotificationState.loaded(notifications));
-  // }
-  // @override
-  // Future<void> close() {
-  //   scrollController.dispose();
-  //   return super.close();
-  // }
+  ScrollController? scrollController;
 
   updateNotification() async {
     final result = await _updateNotificationUsecase.excute(NoParams());
@@ -49,11 +26,12 @@ class NotificationCubit extends Cubit<NotificationState> {
     );
   }
 
-  int _currentPage = 1;
+  int currentPage = 1;
 
   getAllNotifications() async {
     emit(const NotificationState.loading());
-    final result = await _getAllNotificationUsecase.excute(_currentPage);
+    currentPage = 1;
+    final result = await _getAllNotificationUsecase.excute(currentPage);
 
     result.fold(
       (l) {
@@ -61,24 +39,23 @@ class NotificationCubit extends Cubit<NotificationState> {
       },
       (notificationData) async {
         emit(NotificationState.loaded(notificationData, false));
-        // sl<HomeCubit>().getHome();
       },
     );
   }
 
-  final ScrollController scrollController = ScrollController();
   bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
 
-  void loadMoreNotifications() async {
-    _currentPage++;
+  loadMoreNotifications() async {
+    currentPage++;
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => NotificationState.loaded(value.notificationData, true),
     ));
-    final result = await _getAllNotificationUsecase.excute(_currentPage);
+    final result = await _getAllNotificationUsecase.excute(currentPage);
     result.fold(
       (l) {
-        _currentPage--;
+        currentPage--;
         emit(NotificationState.error(l.message));
       },
       (loadMoreNotifications) async {
@@ -95,6 +72,11 @@ class NotificationCubit extends Cubit<NotificationState> {
                 ],
               ),
             );
+            if (currentPage >= notificationData.recentRecords!.lastPage!) {
+              isLastPage = true;
+            } else {
+              isLastPage = false;
+            }
             isLoadingMoreForScroll = false;
             emit(NotificationState.loaded(updatedData, false));
           },

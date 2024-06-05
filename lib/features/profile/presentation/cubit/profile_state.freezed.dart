@@ -22,7 +22,8 @@ mixin _$ProfileState {
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -32,7 +33,7 @@ mixin _$ProfileState {
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -42,7 +43,7 @@ mixin _$ProfileState {
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -146,7 +147,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -159,7 +161,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -172,7 +174,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -278,7 +280,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -291,7 +294,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -304,7 +307,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -412,7 +415,8 @@ class _$SignOutLoadingImpl
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return signOutLoading();
@@ -425,7 +429,7 @@ class _$SignOutLoadingImpl
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
     return signOutLoading?.call();
@@ -438,7 +442,7 @@ class _$SignOutLoadingImpl
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -546,7 +550,8 @@ class _$SignOutLoadedImpl
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return signOutLoaded();
@@ -559,7 +564,7 @@ class _$SignOutLoadedImpl
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
     return signOutLoaded?.call();
@@ -572,7 +577,7 @@ class _$SignOutLoadedImpl
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -636,7 +641,7 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({DoctorModel doctorModel});
+  $Res call({DoctorModel doctorModel, bool isLoadedImage});
 
   $DoctorModelCopyWith<$Res> get doctorModel;
 }
@@ -653,12 +658,17 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? doctorModel = null,
+    Object? isLoadedImage = null,
   }) {
     return _then(_$LoadedImpl(
       null == doctorModel
           ? _value.doctorModel
           : doctorModel // ignore: cast_nullable_to_non_nullable
               as DoctorModel,
+      null == isLoadedImage
+          ? _value.isLoadedImage
+          : isLoadedImage // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -674,14 +684,16 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.doctorModel);
+  const _$LoadedImpl(this.doctorModel, this.isLoadedImage);
 
   @override
   final DoctorModel doctorModel;
+  @override
+  final bool isLoadedImage;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ProfileState.loaded(doctorModel: $doctorModel)';
+    return 'ProfileState.loaded(doctorModel: $doctorModel, isLoadedImage: $isLoadedImage)';
   }
 
   @override
@@ -689,7 +701,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'ProfileState.loaded'))
-      ..add(DiagnosticsProperty('doctorModel', doctorModel));
+      ..add(DiagnosticsProperty('doctorModel', doctorModel))
+      ..add(DiagnosticsProperty('isLoadedImage', isLoadedImage));
   }
 
   @override
@@ -698,11 +711,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.doctorModel, doctorModel) ||
-                other.doctorModel == doctorModel));
+                other.doctorModel == doctorModel) &&
+            (identical(other.isLoadedImage, isLoadedImage) ||
+                other.isLoadedImage == isLoadedImage));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, doctorModel);
+  int get hashCode => Object.hash(runtimeType, doctorModel, isLoadedImage);
 
   @JsonKey(ignore: true)
   @override
@@ -717,10 +732,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(doctorModel);
+    return loaded(doctorModel, isLoadedImage);
   }
 
   @override
@@ -730,10 +746,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(doctorModel);
+    return loaded?.call(doctorModel, isLoadedImage);
   }
 
   @override
@@ -743,12 +759,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(doctorModel);
+      return loaded(doctorModel, isLoadedImage);
     }
     return orElse();
   }
@@ -798,9 +814,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements ProfileState {
-  const factory _Loaded(final DoctorModel doctorModel) = _$LoadedImpl;
+  const factory _Loaded(
+      final DoctorModel doctorModel, final bool isLoadedImage) = _$LoadedImpl;
 
   DoctorModel get doctorModel;
+  bool get isLoadedImage;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -882,7 +900,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function() loading,
     required TResult Function() signOutLoading,
     required TResult Function() signOutLoaded,
-    required TResult Function(DoctorModel doctorModel) loaded,
+    required TResult Function(DoctorModel doctorModel, bool isLoadedImage)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -895,7 +914,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function()? loading,
     TResult? Function()? signOutLoading,
     TResult? Function()? signOutLoaded,
-    TResult? Function(DoctorModel doctorModel)? loaded,
+    TResult? Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -908,7 +927,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function()? loading,
     TResult Function()? signOutLoading,
     TResult Function()? signOutLoaded,
-    TResult Function(DoctorModel doctorModel)? loaded,
+    TResult Function(DoctorModel doctorModel, bool isLoadedImage)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

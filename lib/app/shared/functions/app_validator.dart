@@ -72,7 +72,7 @@ class AppValidators {
   }
 
   static String? fieldsIsEmptyValidation(String value) {
-    if (value.isEmpty) {
+    if (value.trim().isEmpty) {
       return 'Provide this field, please';
     }
     return null;

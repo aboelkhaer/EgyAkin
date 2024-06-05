@@ -256,11 +256,13 @@ mixin _$DoctorModel {
   String? get phone => throw _privateConstructorUsedError;
   String? get job => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
-  String? get image => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError; // String? score,
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation => throw _privateConstructorUsedError;
   @JsonKey(name: 'syndicate_card')
   String? get syndicateCard => throw _privateConstructorUsedError;
+  @JsonKey(name: 'patients_count')
+  String? get patientsCount => throw _privateConstructorUsedError;
   String? get highestdegree => throw _privateConstructorUsedError;
   @JsonKey(name: 'registration_number')
   String? get registrationNumber => throw _privateConstructorUsedError;
@@ -270,6 +272,8 @@ mixin _$DoctorModel {
   String? get phoneVerifiedAt => throw _privateConstructorUsedError;
   bool? get blocked => throw _privateConstructorUsedError;
   bool? get limited => throw _privateConstructorUsedError;
+  List<PatientHomeDataModel>? get patients =>
+      throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -303,12 +307,14 @@ abstract class $DoctorModelCopyWith<$Res> {
       String? image,
       @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
+      @JsonKey(name: 'patients_count') String? patientsCount,
       String? highestdegree,
       @JsonKey(name: 'registration_number') String? registrationNumber,
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       bool? blocked,
       bool? limited,
+      List<PatientHomeDataModel>? patients,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -341,12 +347,14 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? image = freezed,
     Object? passwordConfirmation = freezed,
     Object? syndicateCard = freezed,
+    Object? patientsCount = freezed,
     Object? highestdegree = freezed,
     Object? registrationNumber = freezed,
     Object? emailVerifiedAt = freezed,
     Object? phoneVerifiedAt = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
+    Object? patients = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -411,6 +419,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
           ? _value.syndicateCard
           : syndicateCard // ignore: cast_nullable_to_non_nullable
               as String?,
+      patientsCount: freezed == patientsCount
+          ? _value.patientsCount
+          : patientsCount // ignore: cast_nullable_to_non_nullable
+              as String?,
       highestdegree: freezed == highestdegree
           ? _value.highestdegree
           : highestdegree // ignore: cast_nullable_to_non_nullable
@@ -435,6 +447,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
           ? _value.limited
           : limited // ignore: cast_nullable_to_non_nullable
               as bool?,
+      patients: freezed == patients
+          ? _value.patients
+          : patients // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -471,12 +487,14 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       String? image,
       @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
+      @JsonKey(name: 'patients_count') String? patientsCount,
       String? highestdegree,
       @JsonKey(name: 'registration_number') String? registrationNumber,
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       bool? blocked,
       bool? limited,
+      List<PatientHomeDataModel>? patients,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -507,12 +525,14 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? image = freezed,
     Object? passwordConfirmation = freezed,
     Object? syndicateCard = freezed,
+    Object? patientsCount = freezed,
     Object? highestdegree = freezed,
     Object? registrationNumber = freezed,
     Object? emailVerifiedAt = freezed,
     Object? phoneVerifiedAt = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
+    Object? patients = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -577,6 +597,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
           ? _value.syndicateCard
           : syndicateCard // ignore: cast_nullable_to_non_nullable
               as String?,
+      patientsCount: freezed == patientsCount
+          ? _value.patientsCount
+          : patientsCount // ignore: cast_nullable_to_non_nullable
+              as String?,
       highestdegree: freezed == highestdegree
           ? _value.highestdegree
           : highestdegree // ignore: cast_nullable_to_non_nullable
@@ -601,6 +625,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
           ? _value.limited
           : limited // ignore: cast_nullable_to_non_nullable
               as bool?,
+      patients: freezed == patients
+          ? _value._patients
+          : patients // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -632,14 +660,17 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       this.image,
       @JsonKey(name: 'password_confirmation') this.passwordConfirmation,
       @JsonKey(name: 'syndicate_card') this.syndicateCard,
+      @JsonKey(name: 'patients_count') this.patientsCount,
       this.highestdegree,
       @JsonKey(name: 'registration_number') this.registrationNumber,
       @JsonKey(name: 'email_verified_at') this.emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') this.phoneVerifiedAt,
       this.blocked,
       this.limited,
+      final List<PatientHomeDataModel>? patients,
       @JsonKey(name: 'created_at') this.createdAt,
-      @JsonKey(name: 'updated_at') this.updatedAt});
+      @JsonKey(name: 'updated_at') this.updatedAt})
+      : _patients = patients;
 
   factory _$DoctorModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$DoctorModelImplFromJson(json);
@@ -672,12 +703,16 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   final String? gender;
   @override
   final String? image;
+// String? score,
   @override
   @JsonKey(name: 'password_confirmation')
   final String? passwordConfirmation;
   @override
   @JsonKey(name: 'syndicate_card')
   final String? syndicateCard;
+  @override
+  @JsonKey(name: 'patients_count')
+  final String? patientsCount;
   @override
   final String? highestdegree;
   @override
@@ -693,6 +728,16 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   final bool? blocked;
   @override
   final bool? limited;
+  final List<PatientHomeDataModel>? _patients;
+  @override
+  List<PatientHomeDataModel>? get patients {
+    final value = _patients;
+    if (value == null) return null;
+    if (_patients is EqualUnmodifiableListView) return _patients;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
@@ -702,7 +747,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -725,12 +770,14 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('passwordConfirmation', passwordConfirmation))
       ..add(DiagnosticsProperty('syndicateCard', syndicateCard))
+      ..add(DiagnosticsProperty('patientsCount', patientsCount))
       ..add(DiagnosticsProperty('highestdegree', highestdegree))
       ..add(DiagnosticsProperty('registrationNumber', registrationNumber))
       ..add(DiagnosticsProperty('emailVerifiedAt', emailVerifiedAt))
       ..add(DiagnosticsProperty('phoneVerifiedAt', phoneVerifiedAt))
       ..add(DiagnosticsProperty('blocked', blocked))
       ..add(DiagnosticsProperty('limited', limited))
+      ..add(DiagnosticsProperty('patients', patients))
       ..add(DiagnosticsProperty('createdAt', createdAt))
       ..add(DiagnosticsProperty('updatedAt', updatedAt));
   }
@@ -762,6 +809,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.passwordConfirmation == passwordConfirmation) &&
             (identical(other.syndicateCard, syndicateCard) ||
                 other.syndicateCard == syndicateCard) &&
+            (identical(other.patientsCount, patientsCount) ||
+                other.patientsCount == patientsCount) &&
             (identical(other.highestdegree, highestdegree) ||
                 other.highestdegree == highestdegree) &&
             (identical(other.registrationNumber, registrationNumber) ||
@@ -772,6 +821,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.phoneVerifiedAt == phoneVerifiedAt) &&
             (identical(other.blocked, blocked) || other.blocked == blocked) &&
             (identical(other.limited, limited) || other.limited == limited) &&
+            const DeepCollectionEquality().equals(other._patients, _patients) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -797,12 +847,14 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
         image,
         passwordConfirmation,
         syndicateCard,
+        patientsCount,
         highestdegree,
         registrationNumber,
         emailVerifiedAt,
         phoneVerifiedAt,
         blocked,
         limited,
+        const DeepCollectionEquality().hash(_patients),
         createdAt,
         updatedAt
       ]);
@@ -839,12 +891,14 @@ abstract class _DoctorModel implements DoctorModel {
       @JsonKey(name: 'password_confirmation')
       final String? passwordConfirmation,
       @JsonKey(name: 'syndicate_card') final String? syndicateCard,
+      @JsonKey(name: 'patients_count') final String? patientsCount,
       final String? highestdegree,
       @JsonKey(name: 'registration_number') final String? registrationNumber,
       @JsonKey(name: 'email_verified_at') final String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') final String? phoneVerifiedAt,
       final bool? blocked,
       final bool? limited,
+      final List<PatientHomeDataModel>? patients,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at')
       final String? updatedAt}) = _$DoctorModelImpl;
@@ -880,12 +934,15 @@ abstract class _DoctorModel implements DoctorModel {
   String? get gender;
   @override
   String? get image;
-  @override
+  @override // String? score,
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation;
   @override
   @JsonKey(name: 'syndicate_card')
   String? get syndicateCard;
+  @override
+  @JsonKey(name: 'patients_count')
+  String? get patientsCount;
   @override
   String? get highestdegree;
   @override
@@ -901,6 +958,8 @@ abstract class _DoctorModel implements DoctorModel {
   bool? get blocked;
   @override
   bool? get limited;
+  @override
+  List<PatientHomeDataModel>? get patients;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;

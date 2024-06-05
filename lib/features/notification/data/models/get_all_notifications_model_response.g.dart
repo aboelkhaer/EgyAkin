@@ -99,14 +99,13 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
 _$PatientNotificationModelImpl _$$PatientNotificationModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PatientNotificationModelImpl(
-      id: json['id'] as int?,
+      id: json['id'] as String?,
       name: json['name'] as String?,
       hospital: json['hospital'] as String?,
       governorate: json['governorate'] as String?,
       doctor: json['doctor'] == null
           ? null
-          : DoctorNotificationDataModel.fromJson(
-              json['doctor'] as Map<String, dynamic>),
+          : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
       sections: json['sections'] == null
           ? null
           : SectionsNotificationDataModel.fromJson(
@@ -122,24 +121,6 @@ Map<String, dynamic> _$$PatientNotificationModelImplToJson(
       'governorate': instance.governorate,
       'doctor': instance.doctor,
       'sections': instance.sections,
-    };
-
-_$DoctorNotificationDataModelImpl _$$DoctorNotificationDataModelImplFromJson(
-        Map<String, dynamic> json) =>
-    _$DoctorNotificationDataModelImpl(
-      id: json['id'] as int?,
-      firstName: json['name'] as String?,
-      lastName: json['lname'] as String?,
-      workingplace: json['workingplace'] as String?,
-    );
-
-Map<String, dynamic> _$$DoctorNotificationDataModelImplToJson(
-        _$DoctorNotificationDataModelImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.firstName,
-      'lname': instance.lastName,
-      'workingplace': instance.workingplace,
     };
 
 _$SectionsNotificationDataModelImpl

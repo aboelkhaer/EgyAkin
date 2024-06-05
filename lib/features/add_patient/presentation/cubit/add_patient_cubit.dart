@@ -49,7 +49,6 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
           // Check if "answers" key is either null or an empty list
           if (myMap.containsKey('answers')) {
-            log('moatz111');
             dynamic answersValue = myMap['answers'];
 
             if (answersValue == null ||
@@ -97,6 +96,17 @@ class AddPatientCubit extends Cubit<AddPatientState> {
               emit(const AddPatientState.error(
                   'National ID should have 14 digits'));
               getPatientHistoryForAddPatient();
+              isValid = false;
+              break;
+            }
+          }
+        }
+        if (question.question == 'Age') {
+          if (formData.containsKey(question.id.toString())) {
+            String age = formData[question.id.toString()];
+            if (int.tryParse(age) == null || int.parse(age) > 99) {
+              emit(const AddPatientState.error('Age should be less than 99'));
+
               isValid = false;
               break;
             }

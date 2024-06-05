@@ -3,7 +3,13 @@ import 'package:egy_akin/features/notification/presentation/widgets/check_notifi
 
 class NotificationsView extends StatelessWidget {
   final List<NotificationsModel> notificationsModel;
-  const NotificationsView({super.key, required this.notificationsModel});
+  final DoctorModel currentDoctorModel;
+  final bool accountVerification;
+  const NotificationsView(
+      {super.key,
+      required this.notificationsModel,
+      required this.currentDoctorModel,
+      required this.accountVerification});
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +23,8 @@ class NotificationsView extends StatelessWidget {
         itemBuilder: (context, index) {
           return CheckNotificationType(
             notificationModel: notificationsModel[index],
+            currentDoctorModel: currentDoctorModel,
+            accountVerification: accountVerification,
           );
         },
       ),

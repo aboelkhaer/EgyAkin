@@ -20,8 +20,8 @@ mixin _$OutcomeState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetOutcomeModelResponse response, bool isSubmitedOutcome)
+    required TResult Function(GetOutcomeModelResponse response,
+            bool isSubmitedOutcome, String message)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,7 +30,8 @@ mixin _$OutcomeState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -39,7 +40,8 @@ mixin _$OutcomeState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -136,8 +138,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetOutcomeModelResponse response, bool isSubmitedOutcome)
+    required TResult Function(GetOutcomeModelResponse response,
+            bool isSubmitedOutcome, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -149,7 +151,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -161,7 +164,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -260,8 +264,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetOutcomeModelResponse response, bool isSubmitedOutcome)
+    required TResult Function(GetOutcomeModelResponse response,
+            bool isSubmitedOutcome, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -273,7 +277,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -285,7 +290,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -344,7 +350,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({GetOutcomeModelResponse response, bool isSubmitedOutcome});
+  $Res call(
+      {GetOutcomeModelResponse response,
+      bool isSubmitedOutcome,
+      String message});
 
   $GetOutcomeModelResponseCopyWith<$Res> get response;
 }
@@ -362,6 +371,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? response = null,
     Object? isSubmitedOutcome = null,
+    Object? message = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -372,6 +382,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSubmitedOutcome
           : isSubmitedOutcome // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 
@@ -387,16 +401,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.response, this.isSubmitedOutcome);
+  const _$LoadedImpl(this.response, this.isSubmitedOutcome, this.message);
 
   @override
   final GetOutcomeModelResponse response;
   @override
   final bool isSubmitedOutcome;
+  @override
+  final String message;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'OutcomeState.loaded(response: $response, isSubmitedOutcome: $isSubmitedOutcome)';
+    return 'OutcomeState.loaded(response: $response, isSubmitedOutcome: $isSubmitedOutcome, message: $message)';
   }
 
   @override
@@ -405,7 +421,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     properties
       ..add(DiagnosticsProperty('type', 'OutcomeState.loaded'))
       ..add(DiagnosticsProperty('response', response))
-      ..add(DiagnosticsProperty('isSubmitedOutcome', isSubmitedOutcome));
+      ..add(DiagnosticsProperty('isSubmitedOutcome', isSubmitedOutcome))
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -416,11 +433,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             (identical(other.response, response) ||
                 other.response == response) &&
             (identical(other.isSubmitedOutcome, isSubmitedOutcome) ||
-                other.isSubmitedOutcome == isSubmitedOutcome));
+                other.isSubmitedOutcome == isSubmitedOutcome) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, response, isSubmitedOutcome);
+  int get hashCode =>
+      Object.hash(runtimeType, response, isSubmitedOutcome, message);
 
   @JsonKey(ignore: true)
   @override
@@ -433,12 +452,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetOutcomeModelResponse response, bool isSubmitedOutcome)
+    required TResult Function(GetOutcomeModelResponse response,
+            bool isSubmitedOutcome, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isSubmitedOutcome);
+    return loaded(response, isSubmitedOutcome, message);
   }
 
   @override
@@ -446,11 +465,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isSubmitedOutcome);
+    return loaded?.call(response, isSubmitedOutcome, message);
   }
 
   @override
@@ -458,13 +478,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isSubmitedOutcome);
+      return loaded(response, isSubmitedOutcome, message);
     }
     return orElse();
   }
@@ -509,10 +530,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 
 abstract class _Loaded implements OutcomeState {
   const factory _Loaded(final GetOutcomeModelResponse response,
-      final bool isSubmitedOutcome) = _$LoadedImpl;
+      final bool isSubmitedOutcome, final String message) = _$LoadedImpl;
 
   GetOutcomeModelResponse get response;
   bool get isSubmitedOutcome;
+  String get message;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -592,8 +614,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetOutcomeModelResponse response, bool isSubmitedOutcome)
+    required TResult Function(GetOutcomeModelResponse response,
+            bool isSubmitedOutcome, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -605,7 +627,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult? Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -617,7 +640,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome)?
+    TResult Function(GetOutcomeModelResponse response, bool isSubmitedOutcome,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

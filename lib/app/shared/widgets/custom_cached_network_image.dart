@@ -9,20 +9,13 @@ class CustomCachedNetworkImage extends StatelessWidget {
     try {
       return CachedNetworkImage(
         imageUrl: imageUrl,
+        width: 100.w,
+        height: 100.h,
         fadeInCurve: Curves.easeIn,
         fit: BoxFit.cover,
         placeholder: (context, url) => Lottie.asset(AppImages.imageLoader),
         errorWidget: (context, url, error) {
-          return Container(
-            color: Colors.transparent,
-            child: const Center(
-              child: Icon(
-                Icons.error_outline,
-                color: AppColors.primary,
-                size: 40.0,
-              ),
-            ),
-          );
+          return const SizedBox.shrink();
         },
       );
     } catch (error) {

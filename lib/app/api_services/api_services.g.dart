@@ -110,20 +110,21 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetAllBasPatientstModelResponse> getAllPatients(String token) async {
+  Future<GetAllDoctorsPatientsModelResponse> getAllPatients(
+      int pageNumber) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
-    final _data = {'token': token};
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAllBasPatientstModelResponse>(Options(
+        _setStreamType<GetAllDoctorsPatientsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/allPatients',
+              'https://api.egyakin.com/api/allPatientsNew',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -132,7 +133,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetAllBasPatientstModelResponse.fromJson(_result.data!);
+    final value = GetAllDoctorsPatientsModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -165,9 +166,12 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetSearchModelResponse> searchHome(String searchContent) async {
+  Future<GetSearchModelResponse> searchHome(
+    String searchContent,
+    int pageNumber,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -178,7 +182,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/patient/search/${searchContent}',
+              'https://api.egyakin.com/api/searchNew/${searchContent}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -192,8 +196,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetDoctorModelResponse> updateProfile(
-    int doctorID,
+  Future<UpdateDoctorProfileModelResponse> updateProfile(
     String firstName,
     String lastName,
     String email,
@@ -219,14 +222,14 @@ class _ApiServices implements ApiServices {
       'highestdegree': highestDegree,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetDoctorModelResponse>(Options(
+        _setStreamType<UpdateDoctorProfileModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/users/${doctorID}',
+              'https://api.egyakin.com/api/users',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -235,7 +238,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetDoctorModelResponse.fromJson(_result.data!);
+    final value = UpdateDoctorProfileModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -254,7 +257,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/section/${patientId}',
+              'https://api.egyakin.com/api/showSections/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -268,7 +271,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetQuestionsModelResponse> getSectionDetails(
+  Future<GetPatientSectionDetailsModelResponse> getSectionDetails(
     String sectionId,
     String patientId,
   ) async {
@@ -277,14 +280,14 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetQuestionsModelResponse>(Options(
+        _setStreamType<GetPatientSectionDetailsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/questions/${sectionId}/${patientId}',
+              'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -293,7 +296,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetQuestionsModelResponse.fromJson(_result.data!);
+    final value = GetPatientSectionDetailsModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -311,7 +314,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/patientHistory/${patientId}',
+              'https://api.egyakin.com/api/patient/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -325,7 +328,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<UpdateSectionDetailsModelResponse> updateSectionDetails(
+  Future<UpdatePatientSectionDetailsModelResponse> updateSectionDetails(
     String sectionId,
     String patientId,
     Map<String, dynamic> map,
@@ -336,14 +339,14 @@ class _ApiServices implements ApiServices {
     final _data = <String, dynamic>{};
     _data.addAll(map);
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UpdateSectionDetailsModelResponse>(Options(
+        _setStreamType<UpdatePatientSectionDetailsModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/section/${sectionId}/${patientId}',
+              'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -352,7 +355,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UpdateSectionDetailsModelResponse.fromJson(_result.data!);
+    final value =
+        UpdatePatientSectionDetailsModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -401,7 +405,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/patientHistory',
+              'https://api.egyakin.com/api/patient',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -416,33 +420,24 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<SubmitOutcomeModelResponse> submitOutcome(
+    String sectionId,
     String patientId,
-    String outcomeOfThePatient,
-    String creatinineOnDischarge,
-    String durationField,
-    String finalStatus,
-    String other,
+    Map<String, dynamic> map,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final _data = {
-      'patient_id': patientId,
-      'outcome_of_the_patient': outcomeOfThePatient,
-      'creatinine_on_discharge': creatinineOnDischarge,
-      'duration_of_admission': durationField,
-      'final_status': finalStatus,
-      'other': other,
-    };
+    final _data = <String, dynamic>{};
+    _data.addAll(map);
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<SubmitOutcomeModelResponse>(Options(
-      method: 'POST',
+      method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/outcome',
+              'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -456,7 +451,10 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetOutcomeModelResponse> getOutcome(String patientId) async {
+  Future<GetOutcomeModelResponse> getOutcome(
+    String sectionId,
+    String patientId,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -469,7 +467,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/outcome/${patientId}',
+              'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -496,7 +494,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/section/${patientId}',
+              'https://api.egyakin.com/api/submitStatus/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -599,13 +597,14 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<AddContactUsModelResponse> addContactUs(String message) async {
+  Future<ContactUsModelResponseModelResponse> addContactUs(
+      String message) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'message': message};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AddContactUsModelResponse>(Options(
+        _setStreamType<ContactUsModelResponseModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
@@ -621,7 +620,7 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AddContactUsModelResponse.fromJson(_result.data!);
+    final value = ContactUsModelResponseModelResponse.fromJson(_result.data!);
     return value;
   }
 
@@ -977,6 +976,33 @@ class _ApiServices implements ApiServices {
               baseUrl,
             ))));
     final value = UploadProfileImageModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DoctorInfoViewModelResponse> getDoctorInfoView(String doctorId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DoctorInfoViewModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/showAnotherProfile/${doctorId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = DoctorInfoViewModelResponse.fromJson(_result.data!);
     return value;
   }
 

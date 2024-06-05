@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
 import '../../../../exports.dart';
 
 class OutcomeRepositoryImpl extends OutcomeRepository {
@@ -12,12 +13,13 @@ class OutcomeRepositoryImpl extends OutcomeRepository {
 
   @override
   Future<Either<Failure, GetOutcomeModelResponse>> getOutcome(
-      String patientId) async {
+      String sectionId, String patientId) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await outcomeDataSource.getOutcome(patientId);
+        final response =
+            await outcomeDataSource.getOutcome(sectionId, patientId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());
@@ -29,23 +31,19 @@ class OutcomeRepositoryImpl extends OutcomeRepository {
 
   @override
   Future<Either<Failure, SubmitOutcomeModelResponse>> submitOutcome(
-      String patientId,
-      String outcomeOfThePatient,
-      String creatinineOnDischarge,
-      String durationField,
-      String finalStatus,
-      String other) async {
+    String patientId,
+    String sectionId,
+    Map<String, dynamic> map,
+  ) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await outcomeDataSource.submitOutcome(
-            patientId,
-            outcomeOfThePatient,
-            creatinineOnDischarge,
-            durationField,
-            finalStatus,
-            other);
+          patientId,
+          sectionId,
+          map,
+        );
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

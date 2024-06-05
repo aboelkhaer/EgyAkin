@@ -21,7 +21,7 @@ mixin _$PatientSectionsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(GetPatientSectionsModelResponse response,
-            bool isDelete, bool isFinalSubmit)
+            bool isDelete, bool isFinalSubmit, String message, bool isLoading)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -31,7 +31,7 @@ mixin _$PatientSectionsState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -41,7 +41,7 @@ mixin _$PatientSectionsState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -140,7 +140,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(GetPatientSectionsModelResponse response,
-            bool isDelete, bool isFinalSubmit)
+            bool isDelete, bool isFinalSubmit, String message, bool isLoading)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -153,7 +153,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -166,7 +166,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -266,7 +266,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(GetPatientSectionsModelResponse response,
-            bool isDelete, bool isFinalSubmit)
+            bool isDelete, bool isFinalSubmit, String message, bool isLoading)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -279,7 +279,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -292,7 +292,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -354,7 +354,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   $Res call(
       {GetPatientSectionsModelResponse response,
       bool isDelete,
-      bool isFinalSubmit});
+      bool isFinalSubmit,
+      String message,
+      bool isLoading});
 
   $GetPatientSectionsModelResponseCopyWith<$Res> get response;
 }
@@ -373,6 +375,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? response = null,
     Object? isDelete = null,
     Object? isFinalSubmit = null,
+    Object? message = null,
+    Object? isLoading = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -386,6 +390,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
       null == isFinalSubmit
           ? _value.isFinalSubmit
           : isFinalSubmit // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -403,7 +415,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.response, this.isDelete, this.isFinalSubmit);
+  const _$LoadedImpl(this.response, this.isDelete, this.isFinalSubmit,
+      this.message, this.isLoading);
 
   @override
   final GetPatientSectionsModelResponse response;
@@ -411,10 +424,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   final bool isDelete;
   @override
   final bool isFinalSubmit;
+  @override
+  final String message;
+  @override
+  final bool isLoading;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientSectionsState.loaded(response: $response, isDelete: $isDelete, isFinalSubmit: $isFinalSubmit)';
+    return 'PatientSectionsState.loaded(response: $response, isDelete: $isDelete, isFinalSubmit: $isFinalSubmit, message: $message, isLoading: $isLoading)';
   }
 
   @override
@@ -424,7 +441,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       ..add(DiagnosticsProperty('type', 'PatientSectionsState.loaded'))
       ..add(DiagnosticsProperty('response', response))
       ..add(DiagnosticsProperty('isDelete', isDelete))
-      ..add(DiagnosticsProperty('isFinalSubmit', isFinalSubmit));
+      ..add(DiagnosticsProperty('isFinalSubmit', isFinalSubmit))
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty('isLoading', isLoading));
   }
 
   @override
@@ -437,12 +456,15 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             (identical(other.isDelete, isDelete) ||
                 other.isDelete == isDelete) &&
             (identical(other.isFinalSubmit, isFinalSubmit) ||
-                other.isFinalSubmit == isFinalSubmit));
+                other.isFinalSubmit == isFinalSubmit) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, response, isDelete, isFinalSubmit);
+  int get hashCode => Object.hash(
+      runtimeType, response, isDelete, isFinalSubmit, message, isLoading);
 
   @JsonKey(ignore: true)
   @override
@@ -456,11 +478,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(GetPatientSectionsModelResponse response,
-            bool isDelete, bool isFinalSubmit)
+            bool isDelete, bool isFinalSubmit, String message, bool isLoading)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isDelete, isFinalSubmit);
+    return loaded(response, isDelete, isFinalSubmit, message, isLoading);
   }
 
   @override
@@ -469,11 +491,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isDelete, isFinalSubmit);
+    return loaded?.call(response, isDelete, isFinalSubmit, message, isLoading);
   }
 
   @override
@@ -482,13 +504,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isDelete, isFinalSubmit);
+      return loaded(response, isDelete, isFinalSubmit, message, isLoading);
     }
     return orElse();
   }
@@ -532,12 +554,18 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements PatientSectionsState {
-  const factory _Loaded(final GetPatientSectionsModelResponse response,
-      final bool isDelete, final bool isFinalSubmit) = _$LoadedImpl;
+  const factory _Loaded(
+      final GetPatientSectionsModelResponse response,
+      final bool isDelete,
+      final bool isFinalSubmit,
+      final String message,
+      final bool isLoading) = _$LoadedImpl;
 
   GetPatientSectionsModelResponse get response;
   bool get isDelete;
   bool get isFinalSubmit;
+  String get message;
+  bool get isLoading;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -618,7 +646,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(GetPatientSectionsModelResponse response,
-            bool isDelete, bool isFinalSubmit)
+            bool isDelete, bool isFinalSubmit, String message, bool isLoading)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -631,7 +659,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -644,7 +672,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetPatientSectionsModelResponse response, bool isDelete,
-            bool isFinalSubmit)?
+            bool isFinalSubmit, String message, bool isLoading)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

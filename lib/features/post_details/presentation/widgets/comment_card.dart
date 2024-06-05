@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../exports.dart';
@@ -52,15 +53,46 @@ class CommentCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    backgroundColor: AppColors.subBG,
-                    radius: 20,
-                    child: Text(
-                      '${capitalizeFirstText(commentModel.doctor!.firstName![0])}${capitalizeFirstText(commentModel.doctor!.lastName![0])}',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                          fontSize: 14),
+                  // CircleAvatar(
+                  //   backgroundColor: AppColors.subBG,
+                  //   radius: 20,
+                  //   child: Text(
+                  //     '${capitalizeFirstText(commentModel.doctor!.firstName![0])}${capitalizeFirstText(commentModel.doctor!.lastName![0])}',
+                  //     style: const TextStyle(
+                  //         fontWeight: FontWeight.bold,
+                  //         color: AppColors.primary,
+                  //         fontSize: 14),
+                  //   ),
+                  // ),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.4),
+                          spreadRadius: 2,
+                          blurRadius: 9,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(80.r),
+                      child: CircleAvatar(
+                        radius: 20.r,
+                        backgroundColor: AppColors.primary.withOpacity(0.8),
+                        child: commentModel.doctor!.id == null
+                            ? Text(
+                                commentModel.doctor!.firstName![0]
+                                    .toUpperCase(),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.sp),
+                              )
+                            : CustomCachedNetworkImage(
+                                imageUrl: commentModel.doctor!.image.toString(),
+                              ),
+                      ),
                     ),
                   ),
                   Expanded(

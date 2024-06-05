@@ -20,7 +20,8 @@ mixin _$PatientCommentsState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<CommentModel> comments, String newComment)
+    required TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -29,7 +30,9 @@ mixin _$PatientCommentsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult? Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,7 +40,9 @@ mixin _$PatientCommentsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -134,7 +139,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<CommentModel> comments, String newComment)
+    required TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -146,7 +152,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult? Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -157,7 +165,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -255,7 +265,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<CommentModel> comments, String newComment)
+    required TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -267,7 +278,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult? Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -278,7 +291,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -336,7 +351,12 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<CommentModel> comments, String newComment});
+  $Res call(
+      {List<CommentModel> comments,
+      String newComment,
+      bool isLoading,
+      bool isCommentSuccess,
+      String message});
 }
 
 /// @nodoc
@@ -352,6 +372,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? comments = null,
     Object? newComment = null,
+    Object? isLoading = null,
+    Object? isCommentSuccess = null,
+    Object? message = null,
   }) {
     return _then(_$LoadedImpl(
       null == comments
@@ -362,6 +385,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.newComment
           : newComment // ignore: cast_nullable_to_non_nullable
               as String,
+      null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isCommentSuccess
+          ? _value.isCommentSuccess
+          : isCommentSuccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -369,7 +404,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(final List<CommentModel> comments, this.newComment)
+  const _$LoadedImpl(final List<CommentModel> comments, this.newComment,
+      this.isLoading, this.isCommentSuccess, this.message)
       : _comments = comments;
 
   final List<CommentModel> _comments;
@@ -382,10 +418,16 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 
   @override
   final String newComment;
+  @override
+  final bool isLoading;
+  @override
+  final bool isCommentSuccess;
+  @override
+  final String message;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientCommentsState.loaded(comments: $comments, newComment: $newComment)';
+    return 'PatientCommentsState.loaded(comments: $comments, newComment: $newComment, isLoading: $isLoading, isCommentSuccess: $isCommentSuccess, message: $message)';
   }
 
   @override
@@ -394,7 +436,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     properties
       ..add(DiagnosticsProperty('type', 'PatientCommentsState.loaded'))
       ..add(DiagnosticsProperty('comments', comments))
-      ..add(DiagnosticsProperty('newComment', newComment));
+      ..add(DiagnosticsProperty('newComment', newComment))
+      ..add(DiagnosticsProperty('isLoading', isLoading))
+      ..add(DiagnosticsProperty('isCommentSuccess', isCommentSuccess))
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -404,12 +449,22 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             other is _$LoadedImpl &&
             const DeepCollectionEquality().equals(other._comments, _comments) &&
             (identical(other.newComment, newComment) ||
-                other.newComment == newComment));
+                other.newComment == newComment) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.isCommentSuccess, isCommentSuccess) ||
+                other.isCommentSuccess == isCommentSuccess) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_comments), newComment);
+      runtimeType,
+      const DeepCollectionEquality().hash(_comments),
+      newComment,
+      isLoading,
+      isCommentSuccess,
+      message);
 
   @JsonKey(ignore: true)
   @override
@@ -422,11 +477,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<CommentModel> comments, String newComment)
+    required TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(comments, newComment);
+    return loaded(comments, newComment, isLoading, isCommentSuccess, message);
   }
 
   @override
@@ -434,10 +490,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult? Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(comments, newComment);
+    return loaded?.call(
+        comments, newComment, isLoading, isCommentSuccess, message);
   }
 
   @override
@@ -445,12 +504,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(comments, newComment);
+      return loaded(comments, newComment, isLoading, isCommentSuccess, message);
     }
     return orElse();
   }
@@ -495,11 +556,17 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 
 abstract class _Loaded implements PatientCommentsState {
   const factory _Loaded(
-          final List<CommentModel> comments, final String newComment) =
-      _$LoadedImpl;
+      final List<CommentModel> comments,
+      final String newComment,
+      final bool isLoading,
+      final bool isCommentSuccess,
+      final String message) = _$LoadedImpl;
 
   List<CommentModel> get comments;
   String get newComment;
+  bool get isLoading;
+  bool get isCommentSuccess;
+  String get message;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -579,7 +646,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<CommentModel> comments, String newComment)
+    required TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -591,7 +659,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult? Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -602,7 +672,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<CommentModel> comments, String newComment)? loaded,
+    TResult Function(List<CommentModel> comments, String newComment,
+            bool isLoading, bool isCommentSuccess, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

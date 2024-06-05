@@ -1,14 +1,18 @@
+import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
+
 import '../../../../exports.dart';
 
 class PatientCommentsScreen extends StatefulWidget {
   final String patientId;
   final DoctorModel currentDoctorModel;
+  final String? patientName;
   final bool accountVerification;
 
   const PatientCommentsScreen({
     super.key,
     required this.patientId,
     required this.currentDoctorModel,
+    required this.patientName,
     required this.accountVerification,
   });
 
@@ -20,7 +24,17 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
   @override
   void initState() {
     context.read<PatientCommentsCubit>().getPatientComments(widget.patientId);
+
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final cubit = context.read<PatientCommentsCubit>();
+    if (!cubit.isClosed && cubit.scrollController.hasClients) {
+      cubit.scrollController.dispose();
+    }
   }
 
   @override
@@ -28,7 +42,9 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
     PatientCommentsCubit cubit = PatientCommentsCubit.get(context);
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text(widget.patientName ?? ''),
+      ),
       body: Stack(
         fit: StackFit.expand,
         children: [

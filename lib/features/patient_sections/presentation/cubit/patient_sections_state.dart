@@ -10,7 +10,9 @@ abstract class PatientSectionsState with _$PatientSectionsState {
   const factory PatientSectionsState.loaded(
       GetPatientSectionsModelResponse response,
       bool isDelete,
-      bool isFinalSubmit) = _Loaded;
+      bool isFinalSubmit,
+      String message,
+      bool isLoading) = _Loaded;
 
   const factory PatientSectionsState.error(String message) = _Error;
 }

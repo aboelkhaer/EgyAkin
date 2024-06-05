@@ -6,18 +6,19 @@ class ApiEndPoint {
   static const signIn = '$baseUrl/api/login';
   static const register = '$baseUrl/api/register';
   static const signOut = '$baseUrl/api/logout';
-  static const allPatients = '$baseUrl/api/allPatients';
+  static const allPatients = '$baseUrl/api/allPatientsNew';
   static const currentPatientsHome = '$baseUrl/api/currentPatientsNew';
-  static const search = '$baseUrl/api/patient/search';
+  static const search = '$baseUrl/api/searchNew';
   static const updateProfile = '$baseUrl/api/users';
-  static const sections = '$baseUrl/api/section';
-  static const question = '$baseUrl/api/questions';
-  static const deletePatient = '$baseUrl/api/patientHistory';
-  static const updateSectionDetails = '$baseUrl/api/section';
+  static const sections = '$baseUrl/api/showSections';
+  static const getPatientSectionDetails = '$baseUrl/api/patient';
+  static const deletePatient = '$baseUrl/api/patient';
+  static const updateSectionDetails = '$baseUrl/api/patientsection';
   static const getAddPatientsQuestions = '$baseUrl/api/questions';
-  static const addPatientForFirstTime = '$baseUrl/api/patientHistory';
-  static const outcome = '$baseUrl/api/outcome';
-  static const finalSubmit = '$baseUrl/api/section';
+  static const addPatientForFirstTime = '$baseUrl/api/patient';
+  static const outcome = '$baseUrl/api/patient';
+  static const submitOutcome = '$baseUrl/api/patientsection';
+  static const finalSubmit = '$baseUrl/api/submitStatus';
   static const comment = '$baseUrl/api/comment';
   static const contactUs = '$baseUrl/api/contact';
   static const post = '$baseUrl/api/post';
@@ -33,4 +34,5 @@ class ApiEndPoint {
   static const sendEmailVerification = '$baseUrl/api/sendverificationmail';
   static const sendOTPForEmailVerification = '$baseUrl/api/emailverification';
   static const uploadProfileImage = '$baseUrl/api/upload-profile-image';
+  static const getDoctorInfoView = '$baseUrl/api/showAnotherProfile';
 }

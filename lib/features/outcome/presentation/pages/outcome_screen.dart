@@ -8,6 +8,8 @@ class OutcomeScreen extends StatefulWidget {
   final bool outcomeStatus;
   final String patientName;
   final String patientId;
+  final String doctorId;
+  final String currentDoctorId;
 
   const OutcomeScreen({
     super.key,
@@ -15,6 +17,8 @@ class OutcomeScreen extends StatefulWidget {
     required this.patientName,
     required this.patientId,
     required this.accountVerification,
+    required this.doctorId,
+    required this.currentDoctorId,
   });
 
   @override
@@ -24,24 +28,39 @@ class OutcomeScreen extends StatefulWidget {
 class _OutcomeScreenState extends State<OutcomeScreen> {
   @override
   void initState() {
-    if (widget.outcomeStatus) {
-      context.read<OutcomeCubit>().getOutcome(widget.patientId);
-    }
+    context.read<OutcomeCubit>().getOutcome(widget.patientId);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     OutcomeCubit cubit = OutcomeCubit.get(context);
-    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Text(widget.patientName),
+        title: Row(
+          children: [
+            Flexible(
+              child: Text(
+                widget.patientName,
+                style: TextStyle(fontSize: 14.sp),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Text(
+              '\'s Outcome',
+              style: TextStyle(fontSize: 14.sp),
+            ),
+          ],
+        ),
         centerTitle: true,
       ),
       body: widget.outcomeStatus
-          ? IfOutcomeSubmitted(cubit: cubit)
+          ? IfOutcomeSubmitted(
+              cubit: cubit,
+              currentDoctorId: widget.currentDoctorId,
+              doctorId: widget.doctorId,
+            )
           : IfOutcomeNotSubmitted(
               cubit: cubit,
               outcomeStatus: widget.outcomeStatus,

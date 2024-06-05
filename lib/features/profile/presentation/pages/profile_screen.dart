@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:egy_akin/features/profile/presentation/widgets/profile_features.dart';
-
 import '../../../../exports.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -15,7 +12,9 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ProfileCover(cubit: cubit),
+          ProfileCover(
+            cubit: cubit,
+          ),
           SizedBox(height: 20.h),
           ProfileFeatures(cubit: cubit),
         ],
