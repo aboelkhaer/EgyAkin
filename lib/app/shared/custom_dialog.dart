@@ -19,6 +19,7 @@ showCustomDialog(
           child: Opacity(
             opacity: a1.value,
             child: AlertDialog(
+              backgroundColor: Colors.grey.shade100,
               shape:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
               title: Text(title),

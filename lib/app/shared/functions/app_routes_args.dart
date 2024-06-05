@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
 
 class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments(

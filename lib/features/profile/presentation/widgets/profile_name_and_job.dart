@@ -54,12 +54,26 @@ class ProfileNameAndJob extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(context
-                                .read<HomeCubit>()
-                                .doctorPatientCount
-                                .toString()),
+                            Text(
+                              context
+                                  .read<HomeCubit>()
+                                  .doctorPatientCount
+                                  .toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 14.sp,
+                              ),
+                            ),
                             SizedBox(width: 3.w),
-                            const Text('Patient'),
+                            Text(
+                              'Patient',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 14.sp,
+                              ),
+                            ),
                             SizedBox(width: 10.w),
                           ],
                         ),
@@ -70,9 +84,21 @@ class ProfileNameAndJob extends StatelessWidget {
                             SizedBox(width: 10.w),
                             Text(
                               context.read<HomeCubit>().doctorScore.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 14.sp,
+                              ),
                             ),
                             SizedBox(width: 3.w),
-                            const Text('Score'),
+                            Text(
+                              'Score',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 14.sp,
+                              ),
+                            ),
                             // SizedBox(width: 5.w),
                           ],
                         ),
@@ -112,12 +138,26 @@ class ProfileNameAndJob extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(context
-                                .read<HomeCubit>()
-                                .doctorPatientCount
-                                .toString()),
+                            Text(
+                              context
+                                  .read<HomeCubit>()
+                                  .doctorPatientCount
+                                  .toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                             SizedBox(width: 3.w),
-                            const Text('Patient'),
+                            Text(
+                              'Patient',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                             SizedBox(width: 10.w),
                           ],
                         ),
@@ -128,9 +168,21 @@ class ProfileNameAndJob extends StatelessWidget {
                             SizedBox(width: 10.w),
                             Text(
                               context.read<HomeCubit>().doctorScore.toString(),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                              ),
                             ),
                             SizedBox(width: 3.w),
-                            const Text('Score'),
+                            Text(
+                              'Score',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                              ),
+                            ),
                             // SizedBox(width: 5.w),
                           ],
                         ),

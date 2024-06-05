@@ -1,5 +1,3 @@
-import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
-
 import '../../../../exports.dart';
 
 class PatientCommentsScreen extends StatefulWidget {

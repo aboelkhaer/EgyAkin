@@ -71,142 +71,145 @@ class _NotificationScreenState extends State<NotificationScreen> {
             await cubit.loadMoreNotifications();
           },
           color: AppColors.primary,
-          child: SingleChildScrollView(
-            controller: cubit.scrollController,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  BlocBuilder<NotificationCubit, NotificationState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return const ShimmerLoadingPatientsCards(
-                            ishorizontal: false,
-                          );
-                          // return const CircularProgressIndicator();
-                        },
-                        loaded: (notificationData, isSeeMore) {
-                          return notificationData.todayRecords!.isEmpty
-                              ? const SizedBox.shrink()
-                              : Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          'Today',
-                                          style: TextStyle(
-                                            fontSize: 18.sp,
-                                            fontWeight: FontWeight.w500,
+          child: Container(
+            color: Colors.grey.shade100,
+            child: SingleChildScrollView(
+              controller: cubit.scrollController,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    BlocBuilder<NotificationCubit, NotificationState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return const ShimmerLoadingPatientsCards(
+                              ishorizontal: false,
+                            );
+                            // return const CircularProgressIndicator();
+                          },
+                          loaded: (notificationData, isSeeMore) {
+                            return notificationData.todayRecords!.isEmpty
+                                ? const SizedBox.shrink()
+                                : Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Today',
+                                            style: TextStyle(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10.h),
-                                    NotificationsView(
-                                      notificationsModel:
-                                          notificationData.todayRecords!,
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      accountVerification:
-                                          widget.accountVerification,
-                                    ),
-                                  ],
-                                );
-                        },
-                      );
-                    },
-                  ),
-                  SizedBox(height: 5.h),
-                  BlocBuilder<NotificationCubit, NotificationState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return const SizedBox.shrink();
-                        },
-                        loading: () {
-                          return const SizedBox.shrink();
-                        },
-                        loaded: (notificationData, isSeeMore) {
-                          return notificationData
-                                      .recentRecords!.data!.isEmpty &&
-                                  notificationData.todayRecords!.isEmpty
-                              ? Column(
-                                  children: [
-                                    SizedBox(height: 100.h),
-                                    Image.asset(
-                                      AppImages.noNetwork,
-                                      width: 150.w,
-                                      height: 150.h,
-                                    ),
-                                  ],
-                                )
-                              : Column(
-                                  children: [
-                                    notificationData
-                                            .recentRecords!.data!.isEmpty
-                                        ? const SizedBox.shrink()
-                                        : Row(
-                                            children: [
-                                              Text(
-                                                'Recent',
-                                                style: TextStyle(
-                                                  fontSize: 18.sp,
-                                                  fontWeight: FontWeight.w500,
+                                        ],
+                                      ),
+                                      SizedBox(height: 10.h),
+                                      NotificationsView(
+                                        notificationsModel:
+                                            notificationData.todayRecords!,
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        accountVerification:
+                                            widget.accountVerification,
+                                      ),
+                                    ],
+                                  );
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(height: 5.h),
+                    BlocBuilder<NotificationCubit, NotificationState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return const SizedBox.shrink();
+                          },
+                          loading: () {
+                            return const SizedBox.shrink();
+                          },
+                          loaded: (notificationData, isSeeMore) {
+                            return notificationData
+                                        .recentRecords!.data!.isEmpty &&
+                                    notificationData.todayRecords!.isEmpty
+                                ? Column(
+                                    children: [
+                                      SizedBox(height: 100.h),
+                                      Image.asset(
+                                        AppImages.noNetwork,
+                                        width: 150.w,
+                                        height: 150.h,
+                                      ),
+                                    ],
+                                  )
+                                : Column(
+                                    children: [
+                                      notificationData
+                                              .recentRecords!.data!.isEmpty
+                                          ? const SizedBox.shrink()
+                                          : Row(
+                                              children: [
+                                                Text(
+                                                  'Recent',
+                                                  style: TextStyle(
+                                                    fontSize: 18.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                    SizedBox(height: 10.h),
-                                    NotificationsView(
-                                      notificationsModel:
-                                          notificationData.recentRecords!.data!,
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      accountVerification:
-                                          widget.accountVerification,
-                                    ),
-                                  ],
-                                );
-                        },
-                      );
-                    },
-                  ),
-                  BlocBuilder<NotificationCubit, NotificationState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return const SizedBox.shrink();
-                        },
-                        loaded: (notificationData, isSeeMore) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              isSeeMore
-                                  ? const SizedBox(
-                                      height: 15,
-                                      width: 15,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 3,
+                                              ],
+                                            ),
+                                      SizedBox(height: 10.h),
+                                      NotificationsView(
+                                        notificationsModel: notificationData
+                                            .recentRecords!.data!,
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        accountVerification:
+                                            widget.accountVerification,
                                       ),
-                                    )
-                                  : GestureDetector(
-                                      onTap: () {
-                                        cubit.loadMoreNotifications();
-                                      },
-                                      child: const Text(
-                                        '',
+                                    ],
+                                  );
+                          },
+                        );
+                      },
+                    ),
+                    BlocBuilder<NotificationCubit, NotificationState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return const SizedBox.shrink();
+                          },
+                          loaded: (notificationData, isSeeMore) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                isSeeMore
+                                    ? const SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 3,
+                                        ),
+                                      )
+                                    : GestureDetector(
+                                        onTap: () {
+                                          cubit.loadMoreNotifications();
+                                        },
+                                        child: const Text(
+                                          '',
+                                        ),
                                       ),
-                                    ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  SizedBox(height: 20.h),
-                ],
+                              ],
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    SizedBox(height: 20.h),
+                  ],
+                ),
               ),
             ),
           ),

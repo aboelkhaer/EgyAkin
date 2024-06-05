@@ -314,7 +314,7 @@ class _PatientSectionDetailsScreenState
 
     switch (questions[index].type) {
       case AppStrings.questionTypeString:
-        String questionAnswer = questions[index].answer;
+        var questionAnswer = questions[index].answer;
         return BuildStringValueQuestions(
           questionList: questions,
           index: index,
@@ -339,12 +339,12 @@ class _PatientSectionDetailsScreenState
             setState(() {
               if (questionAnswer != val) {
                 questionAnswer = val;
-                log(questionAnswer.toString());
                 cubit.formData[questions[index].id.toString()] = val;
               } else {
                 questionAnswer = '';
                 cubit.formData.remove(questions[index].id.toString());
               }
+              log(questionAnswer.toString());
             });
           },
           validator: (val) {

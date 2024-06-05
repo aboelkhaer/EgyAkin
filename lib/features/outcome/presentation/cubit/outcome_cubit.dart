@@ -1,7 +1,3 @@
-import 'dart:developer';
-
-import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
-
 import '../../../../exports.dart';
 
 class OutcomeCubit extends Cubit<OutcomeState> {

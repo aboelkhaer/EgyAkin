@@ -80,12 +80,21 @@ class _SearchScreenState extends State<SearchScreen> {
         backgroundColor: AppColors.transparent,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          cubit.getSearchHome();
-        },
-        child: const Icon(
-          Icons.search,
+      floatingActionButton: SizedBox(
+        height: 50.w,
+        width: 50.w,
+        child: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0),
+          ),
+          onPressed: () {
+            cubit.getSearchHome();
+          },
+          child: Icon(
+            Icons.search,
+            color: Colors.white,
+            size: 25.r,
+          ),
         ),
       ),
       body: Column(

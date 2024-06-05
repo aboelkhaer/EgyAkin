@@ -1,4 +1,3 @@
-import 'package:egy_akin/app/app_models/responses/get_patient_data_model.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'patient_sections_state.freezed.dart';

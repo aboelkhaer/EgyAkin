@@ -1,7 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/update_patient_section_details_model_response.dart';
-import 'package:egy_akin/features/patient_section_details/domain/repositories/patient_section_details_repo.dart';
 import '../../../../exports.dart';
 
 class UpdatePatientSectionDetailsUsecase
