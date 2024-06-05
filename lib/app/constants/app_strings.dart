@@ -1,25 +1,53 @@
 class AppStrings {
-  //! General
-  static const String initialEmail = '';
-  static const String initialPassword = '';
+  //! api strings
+  static const String success = 'Success';
+  static const String badRequestError = 'Bad request. try again later';
+  static const String noContentError = 'Success with not content';
+  static const String unAuthorizedError = 'User unauthorized, try again later';
+  static const String forbiddenError = 'Forbidden request. try again later';
+  static const String internalServerError =
+      'Some thing went wrong, try again later';
+  static const String notFoundError = 'Url not found, try again later';
+  static const String conflictError = 'Conflict found, try again later';
+  static const String timeoutError = 'Time out, try again late';
+  static const String defaultError = 'Some thing went wrong, try again later';
+  static const String cacheError = 'Cache error, try again later';
+  static const String noInternetError = 'Please check your internet connection';
+  static const String unknownError = 'Some thing went wrong, try again later';
 
-  static const int splashDelay = 2;
-  static const int apiTimeOut = 60000;
+  //! ------------
+
+  // static const String initialEmail = '';
+  // static const String initialPassword = '';
+
+  static const int splashDelay = 3;
+  static const int snackBarDelay = 5;
+  static const int delayForAPIRequestInMilliseconds = 300;
+
+  static const int apiTimeOut = 50;
   static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
   static const String accept = "accept";
   static const String appName = 'EgyAkin';
   static const String somethingWentWrong = 'Something went wrong.';
+  static const String passwordMustBeAtLeast6Characters =
+      'Password must be at least 6 characters';
   static const String questionTypeMultiple = 'multiple';
   static const String questionTypeString = 'string';
   static const String questionTypeSelect = 'select';
   static const String questionTypeDate = 'date';
   static const String specialty = 'Specialty';
+  static const String highestDegree = 'Highest Degree';
+  static const String pleaseEnterYourPassword = 'Please enter your password';
+  static const String pleaseEnterYourEmail = 'Please enter your email';
+  static const String pleaseEnterAVlidEmail = 'Please enter a valid email';
   static const String fullRegisterationNumber =
       'Registeration Number (رقم القيد الخاص بالنقابة)';
   static const String workplace = 'Workplace';
   static const String job = 'Job';
+  static const String addComment = 'Add comment';
+  static const String ok = 'OK';
   static const String age = 'Age';
   static const String phone = 'Phone';
   static const String confirmPassword = 'Confirm password';
@@ -49,13 +77,12 @@ class AppStrings {
       'You must select at least one choice.';
   static const String pressAndHoldToViewAllText =
       'Press and hold to view all text.';
+  static const String noRouteFound = 'No page found.';
 
-  //! welcome
   static const String getStarted = 'Get Started';
   static const String welcomeTitle = 'Welcome To EgyAkin';
   static const String welcomeDescription =
       'Empowering lives through kidney health\nawareness';
-  //! onbaoarding
   static const String onboardingTitle1 = 'Understanding Kidney Health';
   static const String onboardingTitle2 = 'Lifestyle and Kidney Wellness';
   static const String onboardingTitle3 = 'Managing Kidney Conditions';
@@ -94,18 +121,15 @@ class AppStrings {
   static const String answers = 'answers';
   static const String chooseAtLeastOnOption = 'Choose at least one option';
 
-  //! register
   static const String alreadyHaveAnAccount = 'Already have an account?';
   static const String register = 'Register';
   static const String choose = 'Choose';
   static const String signInNow = 'Sign in now!';
 
-  //! sign in
   static const String dontHaveAnAccount = 'Don\'t have an account?';
   static const String forgotPassword = 'Forgot Password ?';
   static const String registerNow = 'Register now!';
 
-  //! home
   static const String score = 'Score';
   static const String notification = 'Notification';
   static const String toAddPatientsYouMustVerifyYourEmailAddress =
@@ -118,25 +142,19 @@ class AppStrings {
       'No Internet Connection Found\nCheck Your Connection';
   static const String tryAgain = 'Try Again';
 
-  //! contact us
   static const String contactUs = 'Contact us';
   static const String feedback = 'Feedback';
   static const String send = 'Send';
 
-  //! email verification
   static const String confirm = 'Confirm';
   static const String resend = 'Resend';
 
-  //! notification
   static const String newPatient = 'New Patient';
   static const String outcome = 'Outcome';
 
-  //! reset password
   static const String resetPassword = 'Reset Password';
   static const String continueText = 'Continue';
   static const String save = 'Save';
   static const String back = 'Back';
-
-  //! section details
-  // static const String phone ='';
+  static const String content = 'Content';
 }

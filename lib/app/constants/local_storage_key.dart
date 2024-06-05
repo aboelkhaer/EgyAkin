@@ -1,6 +1,7 @@
 class AppLocalStrings {
-  static const String keyIsUserLoggedIn = "PREFS_KEY_IS_USER_LOGGED_IN";
-  static const String keyToken = "PREFS_KEY_TOKEN";
+  static const String keyToken = 'PREFS_KEY_TOKEN';
+  static const String doctorData = 'doctorData';
+  static const String isWelcomed = "isWelcomed";
   static const String currnetDoctorFirstName = 'currentDoctorFirstName';
   static const String currentDoctorLastName = 'currentDoctorLastName';
   static const String currentDoctorEmail = 'currentDoctorEmail';

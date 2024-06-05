@@ -1,0 +1,155 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'get_all_notifications_model_response.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$GetAllNotificationsModelResponseImpl
+    _$$GetAllNotificationsModelResponseImplFromJson(
+            Map<String, dynamic> json) =>
+        _$GetAllNotificationsModelResponseImpl(
+          value: json['value'] as bool?,
+          unreadCount: json['unreadCount'] as String?,
+          todayRecords: (json['todayRecords'] as List<dynamic>?)
+              ?.map(
+                  (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          recentRecords: json['recentRecords'] == null
+              ? null
+              : RecentNotificationForPagenationModel.fromJson(
+                  json['recentRecords'] as Map<String, dynamic>),
+        );
+
+Map<String, dynamic> _$$GetAllNotificationsModelResponseImplToJson(
+        _$GetAllNotificationsModelResponseImpl instance) =>
+    <String, dynamic>{
+      'value': instance.value,
+      'unreadCount': instance.unreadCount,
+      'todayRecords': instance.todayRecords,
+      'recentRecords': instance.recentRecords,
+    };
+
+_$RecentNotificationForPagenationModelImpl
+    _$$RecentNotificationForPagenationModelImplFromJson(
+            Map<String, dynamic> json) =>
+        _$RecentNotificationForPagenationModelImpl(
+          currentPage: json['current_page'] as int?,
+          data: (json['data'] as List<dynamic>?)
+              ?.map(
+                  (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          firstPageUrl: json['first_page_url'] as String?,
+          from: json['from'] as int?,
+          lastPage: json['last_page'] as int?,
+          lastPageUrl: json['last_page_url'] as String?,
+          links: (json['links'] as List<dynamic>?)
+              ?.map((e) => Link.fromJson(e as Map<String, dynamic>))
+              .toList(),
+          nextPageUrl: json['next_page_url'] as String?,
+          path: json['path'] as String?,
+          perPage: json['perPage'] as int?,
+          prevPageUrl: json['prev_page_url'] as String?,
+          to: json['to'] as int?,
+          total: json['total'] as int?,
+        );
+
+Map<String, dynamic> _$$RecentNotificationForPagenationModelImplToJson(
+        _$RecentNotificationForPagenationModelImpl instance) =>
+    <String, dynamic>{
+      'current_page': instance.currentPage,
+      'data': instance.data,
+      'first_page_url': instance.firstPageUrl,
+      'from': instance.from,
+      'last_page': instance.lastPage,
+      'last_page_url': instance.lastPageUrl,
+      'links': instance.links,
+      'next_page_url': instance.nextPageUrl,
+      'path': instance.path,
+      'perPage': instance.perPage,
+      'prev_page_url': instance.prevPageUrl,
+      'to': instance.to,
+      'total': instance.total,
+    };
+
+_$NotificationsModelImpl _$$NotificationsModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$NotificationsModelImpl(
+      id: json['id'] as int?,
+      read: json['read'] as bool?,
+      type: json['type'] as String?,
+      createdAt: json['created_at'] as String?,
+      patient: json['patient'] == null
+          ? null
+          : PatientNotificationModel.fromJson(
+              json['patient'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$NotificationsModelImplToJson(
+        _$NotificationsModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'read': instance.read,
+      'type': instance.type,
+      'created_at': instance.createdAt,
+      'patient': instance.patient,
+    };
+
+_$PatientNotificationModelImpl _$$PatientNotificationModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PatientNotificationModelImpl(
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      hospital: json['hospital'] as String?,
+      governorate: json['governorate'] as String?,
+      doctor: json['doctor'] == null
+          ? null
+          : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
+      sections: json['sections'] == null
+          ? null
+          : SectionsNotificationDataModel.fromJson(
+              json['sections'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$PatientNotificationModelImplToJson(
+        _$PatientNotificationModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'hospital': instance.hospital,
+      'governorate': instance.governorate,
+      'doctor': instance.doctor,
+      'sections': instance.sections,
+    };
+
+_$SectionsNotificationDataModelImpl
+    _$$SectionsNotificationDataModelImplFromJson(Map<String, dynamic> json) =>
+        _$SectionsNotificationDataModelImpl(
+          id: json['id'] as int?,
+          submitStatus: json['submit_status'] as bool?,
+          outcomeStatus: json['outcome_status'] as bool?,
+          workingplace: json['workingplace'] as String?,
+        );
+
+Map<String, dynamic> _$$SectionsNotificationDataModelImplToJson(
+        _$SectionsNotificationDataModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'submit_status': instance.submitStatus,
+      'outcome_status': instance.outcomeStatus,
+      'workingplace': instance.workingplace,
+    };
+
+_$LinkImpl _$$LinkImplFromJson(Map<String, dynamic> json) => _$LinkImpl(
+      url: json['url'],
+      label: json['label'] as String,
+      active: json['active'] as bool,
+    );
+
+Map<String, dynamic> _$$LinkImplToJson(_$LinkImpl instance) =>
+    <String, dynamic>{
+      'url': instance.url,
+      'label': instance.label,
+      'active': instance.active,
+    };

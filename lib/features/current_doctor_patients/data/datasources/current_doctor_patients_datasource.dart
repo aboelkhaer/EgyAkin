@@ -1,0 +1,20 @@
+import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
+
+import '../../../../exports.dart';
+
+abstract class CurrentDoctorPatientsDataSource {
+  Future<GetDoctorPatientsModelResponse> getCurrentDoctorPatients(int page);
+}
+
+class CurrentDoctorPatientsDataSourceImpl
+    implements CurrentDoctorPatientsDataSource {
+  final ApiServices _apiServices;
+
+  CurrentDoctorPatientsDataSourceImpl(this._apiServices);
+
+  @override
+  Future<GetDoctorPatientsModelResponse> getCurrentDoctorPatients(
+      int page) async {
+    return await _apiServices.getCurrentPatients(page);
+  }
+}

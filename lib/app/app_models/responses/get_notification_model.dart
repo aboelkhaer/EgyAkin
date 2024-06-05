@@ -1,5 +1,4 @@
 import '../../../exports.dart';
-import '../notification/base_notification_model.dart';
 
 part 'get_notification_model.g.dart';
 

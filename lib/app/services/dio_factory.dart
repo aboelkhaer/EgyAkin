@@ -10,8 +10,8 @@ const String authorization = "authorization";
 const String defaultLanguage = "Accept-Language";
 
 class DioFactory {
-  DioFactory({required this.getStorageLib});
-  GetStorageLib getStorageLib;
+  DioFactory({required this.appPreferences});
+  AppPreferences appPreferences;
   String? token;
 
   Future<Dio> getDio() async {
@@ -26,16 +26,14 @@ class DioFactory {
 
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        token = await getStorageLib.getString(AppLocalStrings.keyToken) ?? '';
+        token = await appPreferences.getString(AppLocalStrings.keyToken) ?? '';
         options.headers = headers;
         options.headers[authorization] = 'Bearer $token';
         options.baseUrl = ApiEndPoint.baseUrl;
         options.contentType = applicationJson;
 
-        options.sendTimeout =
-            const Duration(milliseconds: AppStrings.apiTimeOut);
-        options.receiveTimeout =
-            const Duration(milliseconds: AppStrings.apiTimeOut);
+        options.sendTimeout = const Duration(seconds: AppStrings.apiTimeOut);
+        options.receiveTimeout = const Duration(seconds: AppStrings.apiTimeOut);
 
         return handler.next(options);
       },

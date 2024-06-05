@@ -1,61 +1,58 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
+import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
+import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
+import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
+import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
+import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
+import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/update_patient_section_details_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
+import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
+
 import 'package:retrofit/http.dart';
-
 import '../../exports.dart';
-import '../app_models/responses/change_password_model.dart';
-import '../app_models/responses/email_verification_otp_model.dart';
-import '../app_models/responses/send_email_for_forget_password_model.dart';
-import '../app_models/responses/send_email_verification_model.dart';
-import '../app_models/responses/verify_otp_model.dart';
-
 part 'api_services.g.dart';
 
 @RestApi(baseUrl: ApiEndPoint.baseUrl)
 abstract class ApiServices {
   factory ApiServices(Dio dio, {String baseUrl}) = _ApiServices;
 
-  @POST(ApiEndPoint.logout)
-  Future<LogoutModel> logout(
-    @Field("token") String token,
-  );
+  @POST(ApiEndPoint.signOut)
+  Future<SignOutModelResponse> signOut();
 
-  @POST(ApiEndPoint.login)
-  Future<GetDoctorWithTokenModelResponse> login(
+  @POST(ApiEndPoint.signIn)
+  Future<AuthenticationModelResponse> signIn(
     @Field("email") String email,
     @Field("password") String password,
   );
   @POST(ApiEndPoint.register)
-  Future<GetDoctorWithTokenModelResponse> register(
-    @Field("name") String firstName,
-    @Field("lname") String lastName,
-    @Field("email") String email,
-    @Field("password") String password,
-    @Field("password_confirmation") String passwordConfirmation,
-    @Field("age") String age,
-    @Field("specialty") String specialty,
-    @Field("workingplace") String workingPlace,
-    @Field("registration_number") String registrationNumber,
-    @Field("phone") String phone,
-    @Field("job") String job,
-    @Field("highestdegree") String highestDegree,
+  Future<AuthenticationModelResponse> register(
+    @Body() Map<String, dynamic> doctorModel,
   );
 
   @GET(ApiEndPoint.allPatients)
-  Future<GetAllBasPatientstModelResponse> getAllPatients(
-    @Field("token") String token,
+  Future<GetAllDoctorsPatientsModelResponse> getAllPatients(
+    @Query('page') int pageNumber,
   );
 
   @GET(ApiEndPoint.currentPatientsHome)
-  Future<GetCurrentPatientstModelResponse> getCurrentPatients(
-    @Field("token") String token,
+  Future<GetDoctorPatientsModelResponse> getCurrentPatients(
+    @Query('page') int pageNumber,
   );
+
   @GET('${ApiEndPoint.search}/{searchContent}')
-  Future<GetAllBasPatientstModelResponse> searchHome(
+  Future<GetSearchModelResponse> searchHome(
     @Path("searchContent") String searchContent,
+    @Query('page') int pageNumber,
   );
-  @PUT('${ApiEndPoint.updateProfile}/{doctorID}')
-  Future<GetDoctorModelResponse> updateProfile(
-    @Path("doctorID") int doctorID,
+  @PUT(ApiEndPoint.updateProfile)
+  Future<UpdateDoctorProfileModelResponse> updateProfile(
     @Field("name") String firstName,
     @Field("lname") String lastName,
     @Field("email") String email,
@@ -68,12 +65,12 @@ abstract class ApiServices {
   );
 
   @GET('${ApiEndPoint.sections}/{patientId}')
-  Future<GetBaseSectionsModelResponse> getPatientSections(
+  Future<GetPatientSectionsModelResponse> getPatientSections(
     @Path("patientId") String patientId,
   );
 
-  @GET('${ApiEndPoint.question}/{sectionId}/{patientId}')
-  Future<GetQuestionsModelResponse> getSectionDetails(
+  @GET('${ApiEndPoint.getPatientSectionDetails}/{sectionId}/{patientId}')
+  Future<GetPatientSectionDetailsModelResponse> getSectionDetails(
     @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
   );
@@ -84,96 +81,119 @@ abstract class ApiServices {
   );
 
   @PUT('${ApiEndPoint.updateSectionDetails}/{sectionId}/{patientId}')
-  Future<UpdateSectionDetailsModelResponse> updateSectionDetails(
+  Future<UpdatePatientSectionDetailsModelResponse> updateSectionDetails(
     @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
     @Body() Map<String, dynamic> map,
   );
   @GET('${ApiEndPoint.getAddPatientsQuestions}/{sectionId}')
-  Future<GetQuestionsModelResponse> getPatientHistoryForAddPatient(
+  Future<GetPatientHistoryForAddPatientModelResponse>
+      getPatientHistoryForAddPatient(
     @Path("sectionId") String sectionId,
   );
   @POST(ApiEndPoint.addPatientForFirstTime)
-  Future<SemiPatientModel> addPatientForFirstTime(
+  Future<AddPatientForFirstTimeModelResponse> addPatientForFirstTime(
     @Body() Map<String, dynamic> map,
   );
-  @POST(ApiEndPoint.outcome)
-  Future<AddOutcometModelResponse> submitOutcome(
-    @Field("patient_id") String patientId,
-    @Field("outcome_of_the_patient") String outcomeOfThePatient,
-    @Field("creatinine_on_discharge") String creatinineOnDischarge,
-    @Field("duration_of_admission") String durationField,
-    @Field("final_status") String finalStatus,
-    @Field("other") String other,
+  @PUT('${ApiEndPoint.submitOutcome}/{sectionId}/{patientId}')
+  Future<SubmitOutcomeModelResponse> submitOutcome(
+    @Path("sectionId") String sectionId,
+    @Path("patientId") String patientId,
+    @Body() Map<String, dynamic> map,
   );
 
-  @GET('${ApiEndPoint.outcome}/{patientId}')
+  // @GET('${ApiEndPoint.outcome}/{patientId}')
+  // Future<GetOutcomeModelResponse> getOutcome(
+  //   @Path("patientId") String patientId,
+  // );
+
+  @GET('${ApiEndPoint.outcome}/{sectionId}/{patientId}')
   Future<GetOutcomeModelResponse> getOutcome(
+    @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,
   );
+
   @PUT('${ApiEndPoint.finalSubmit}/{patientId}')
-  Future<UpdateSectionDetailsModelResponse> finalSubmit(
+  Future<FinalSubmitModelResponse> finalSubmit(
     @Path("patientId") String patientId,
   );
   @GET('${ApiEndPoint.comment}/{patientId}')
-  Future<GetCommentstModelResponse> getComments(
+  Future<GetPatientCommentsModelResponse> getPatientComments(
     @Path("patientId") String patientId,
   );
   @POST(ApiEndPoint.comment)
-  Future<AddCommentModelResponse> addComment(
+  Future<AddPatientCommentsModelResponse> addComment(
     @Field("patient_id") String patientId,
     @Field("content") String content,
   );
   @DELETE('${ApiEndPoint.comment}/{commentId}')
-  Future<DeleteCommentModelResponse> deleteComment(
+  Future<DeletePatientCommentsModelResponse> deleteComment(
     @Path("commentId") String commentId,
   );
   @POST(ApiEndPoint.contactUs)
-  Future<AddContactUsModelResponse> addContactUs(
+  Future<ContactUsModelResponseModelResponse> addContactUs(
     @Field("message") String message,
   );
 
-  @GET(ApiEndPoint.post)
-  Future<GetPostsModelResponse> getHomePosts();
-
   @GET('${ApiEndPoint.postComments}/{postId}')
-  Future<GetPostCommentsModelResponse> getHomePostComments(
+  Future<PostCommentsModelResponse> getPostComments(
     @Path("postId") String postId,
   );
   @DELETE('${ApiEndPoint.postComments}/{commentId}')
   Future<DeletePostCommentModelResponse> deletePostComment(
-    @Path("commentId") String postId,
+    @Path("commentId") String commentId,
   );
 
-  @GET(ApiEndPoint.notification)
-  Future<GetNotificationModelResponse> getNotifications();
+  // @GET(ApiEndPoint.notification)
+  // Future<NotificationModelResponse> getNotifications();
+
+  @GET(ApiEndPoint.getAllNotifications)
+  Future<GetAllNotificationsModelResponse> getAllNotifications(
+    @Query('page') int pageNumber,
+  );
 
   @PUT(ApiEndPoint.notification)
-  Future<UpdateNotificationsModelResponse> updateNotifications();
+  Future<UpdateNotificationModelResponse> updateNotifications();
 
   @POST(ApiEndPoint.postComments)
   Future<AddCommentOnPostModelResponse> addCommentOnPost(
     @Field("post_id") String postId,
     @Field("content") String content,
   );
+
   @POST(ApiEndPoint.forgetPassword)
-  Future<SendEmailForForgetPasswordModelResponse> sendEmailForForgetPassword(
+  Future<ResetPasswordModelResponse> sendEmailForForgetPassword(
     @Field("email") String email,
   );
   @POST(ApiEndPoint.resetPasswordVerification)
-  Future<VerifyOTPModelResponse> verifyOTP(
+  Future<ResetPasswordModelResponse> verifyOTP(
     @Field("email") String email,
     @Field("otp") String otp,
   );
   @POST(ApiEndPoint.changePassword)
-  Future<ChangePasswordModelResponse> changePassword(
+  Future<ResetPasswordModelResponse> changePassword(
     @Field("email") String email,
     @Field("password") String newPassword,
   );
   @POST(ApiEndPoint.sendEmailVerification)
-  Future<SendEmailVerificationModelResponse> sendEmailVerification();
-  @POST(ApiEndPoint.emailVerificationOTP)
-  Future<EmailVerificationOTPModelResponse> emailVerificationOTP(
+  Future<SendEmailForVerificationModelResponse> sendEmailVerification();
+
+  @POST(ApiEndPoint.sendOTPForEmailVerification)
+  Future<SendOTPForEmailVerificationModelResponse> sendOTPForEmailVerification(
     @Field("otp") String otp,
+  );
+
+  @GET(ApiEndPoint.home)
+  Future<HomeModelResponse> getHome();
+
+  @POST(ApiEndPoint.uploadProfileImage)
+  @MultiPart()
+  Future<UploadProfileImageModelResponse> uploadProfileImage(
+    @Part() File image,
+  );
+
+  @GET('${ApiEndPoint.getDoctorInfoView}/{doctorId}')
+  Future<DoctorInfoViewModelResponse> getDoctorInfoView(
+    @Path("doctorId") String doctorId,
   );
 }

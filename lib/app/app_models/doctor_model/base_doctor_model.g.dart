@@ -11,7 +11,8 @@ BaseDoctorModel _$BaseDoctorModelFromJson(Map<String, dynamic> json) =>
       id: json['id'] as int?,
       firstName: json['name'] as String?,
       lastName: json['lname'] as String?,
-    )..workingPlace = json['workingplace'] as String?;
+      workingPlace: json['workingplace'] as String?,
+    );
 
 Map<String, dynamic> _$BaseDoctorModelToJson(BaseDoctorModel instance) =>
     <String, dynamic>{

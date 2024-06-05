@@ -1,75 +1,257 @@
 import 'package:dio/dio.dart';
-
+import 'package:egy_akin/features/contact_us/data/datasources/contact_us_datasource.dart';
+import 'package:egy_akin/features/contact_us/data/repositories/contact_us_repo_impl.dart';
+import 'package:egy_akin/features/contact_us/domain/repositories/contact_us_repo.dart';
+import 'package:egy_akin/features/contact_us/domain/usecases/add_contact_us_usecase.dart';
+import 'package:egy_akin/features/contact_us/presentation/cubit/contact_us_cubit.dart';
+import 'package:egy_akin/features/doctor_info_view/data/datasources/doctor_info_view_datasource.dart';
+import 'package:egy_akin/features/doctor_info_view/data/repositories/doctor_info_view_repo_impl.dart';
+import 'package:egy_akin/features/doctor_info_view/domain/repositories/doctor_info_view_repo.dart';
+import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_doctor_info_usecase.dart';
+import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
+import 'package:egy_akin/features/doctor_profile_view/data/datasources/doctor_profile_view_datasource.dart';
+import 'package:egy_akin/features/doctor_profile_view/data/repositories/doctor_profile_view_repo_impl.dart';
+import 'package:egy_akin/features/doctor_profile_view/domain/repositories/doctor_profile_view_repo.dart';
+import 'package:egy_akin/features/doctor_profile_view/domain/usecases/update_doctor_profile_usecase.dart';
+import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_cubit.dart';
+import 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_it/get_it.dart';
 import 'exports.dart';
-import 'features/email_verification/controller/email_verification_controller.dart';
+
+GetIt sl = GetIt.instance;
 
 Future<void> diInit() async {
-  // Core
-  //  Get.lazyPut(() => sharedPreferences);
-  // Get.lazyPut(() => ApiClient(appBaseUrl: AppConstants.BASE_URL, sharedPreferences: Get.find()));
-  // Get.find<DioFactory>().getDio();
-  Get.lazyPut(() => GetStorage(), fenix: true);
-  Get.lazyPut(() => GetStorageLib(), fenix: true);
-  Get.lazyPut(() => DioFactory(getStorageLib: Get.find()), fenix: true);
-  initNetworking();
-  Get.lazyPut<InternetConnectionChecker>(() => InternetConnectionChecker(),
-      fenix: true);
-  Get.lazyPut<NetworkInfoImpl>(() => NetworkInfoImpl(Get.find()), fenix: true);
-  Get.lazyPut<GetStorage>(() => GetStorage(), fenix: true);
+  //! Core
+  final sharedPrefs = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPrefs);
+  sl.registerLazySingleton<AppPreferences>(() => AppPreferences(sl()));
+  sl.registerLazySingleton<DioFactory>(() => DioFactory(appPreferences: sl()));
+  Dio dio = await sl<DioFactory>().getDio();
+  sl.registerLazySingleton<ApiServices>(() => ApiServices(dio));
+  sl.registerLazySingleton(() => InternetConnectionChecker());
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 
-  // Repository
-  // Get.lazyPut(() => SplashRepo(sharedPreferences: Get.find(), apiClient: Get.find()));
-  // Get.lazyPut(() => LanguageRepo());
-  Get.lazyPut(() => AuthRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => HomeRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => SearchRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => ProfileRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => SectionDetailsRepository(apiServices: Get.find()),
-      fenix: true);
-  Get.lazyPut(() => PatientSectionRepository(apiServices: Get.find()),
-      fenix: true);
-  Get.lazyPut(() => AddPatientRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => OutcomeRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => CommentRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => ContactUsRepository(apiServices: Get.find()), fenix: true);
-  Get.lazyPut(() => ResetPasswordRepository(apiServices: Get.find()),
-      fenix: true);
-  Get.lazyPut(() => PostDetailsRepository(apiServices: Get.find()),
-      fenix: true);
-  Get.lazyPut(() => NotificationRepository(apiServices: Get.find()),
-      fenix: true);
-  Get.lazyPut(() => EmailVerificationRepository(apiServices: Get.find()),
-      fenix: true);
+  //! Cubit
+  sl.registerFactory(() => AuthenticationCubit(sl(), sl()));
+  sl.registerFactory(() => SplashCubit());
+  sl.registerFactory(() => WelcomeCubit());
+  sl.registerFactory(() => OnboardingCubit());
+  sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => HomeCubit(sl()));
+  sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
+  sl.registerFactory(() => NotificationCubit(sl(), sl()));
+  sl.registerFactory(() => ProfileCubit(sl(), sl()));
+  sl.registerFactory(() => PostDetailsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => AddPatientCubit(sl(), sl()));
+  sl.registerFactory(() => PatientSectionsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => PatientCommentsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => SearchCubit(sl()));
+  sl.registerFactory(() => OutcomeCubit(sl(), sl()));
+  sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
+  sl.registerFactory(() => PatientSectionDetailsCubit(sl(), sl()));
+  sl.registerFactory(() => AllDoctorsPatientsCubit(sl()));
+  sl.registerFactory(() => DoctorProfileViewCubit(sl()));
+  sl.registerFactory(() => MoreCubit());
+  sl.registerFactory(() => DoctorInfoViewCubit(sl()));
+  sl.registerFactory(() => ContactUsCubit(sl()));
 
-  // Controller
-  // Get.lazyPut(() => ThemeController(sharedPreferences: Get.find()));
-  Get.lazyPut(() => SplashController(), fenix: true);
-  Get.lazyPut(() => OnboardingController());
-  // Get.lazyPut(() => AuthController());
-  Get.lazyPut(() => WelcomeController());
-  Get.lazyPut(() => SignInController());
-  Get.lazyPut(() => RegisterController());
-  Get.lazyPut(() => HomeController());
-  Get.lazyPut(() => LogoutController());
-  Get.lazyPut(() => DoctroProfileController());
-  Get.lazyPut(() => SectionDetailsController());
-  Get.lazyPut(() => SearchHomeController());
-  Get.lazyPut(() => CurrentPatientsController());
-  Get.lazyPut(() => AllPatientsController());
-  Get.lazyPut(() => SectionDetailsController());
-  Get.lazyPut(() => AddPatientController());
-  Get.lazyPut(() => PatientSectionController());
-  Get.lazyPut(() => OutcomeController());
-  Get.lazyPut(() => CommentsController());
-  Get.lazyPut(() => ContactUsController());
-  Get.lazyPut(() => PostDetailsController());
-  Get.lazyPut(() => NotificationController());
-  Get.lazyPut(() => ResetPasswordController());
-  Get.lazyPut(() => EmailVerificationController());
-}
+  //! REMOTE DATASOURCE
+  sl.registerLazySingleton<AuthenticationDataSource>(
+      () => AuthenticationDataSourceImpl(sl()));
+  sl.registerLazySingleton<ResetPasswordDataSource>(
+      () => ResetPasswordDataSourceImpl(sl()));
+  sl.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl(sl()));
+  sl.registerLazySingleton<NotificationsDataSource>(
+      () => NotificationsDataSourceImpl(sl()));
+  sl.registerLazySingleton<ProfileDataSource>(
+      () => ProfileDataSourceImpl(sl()));
+  sl.registerLazySingleton<PostDetailsDataSource>(
+      () => PostDetailsDataSourceImpl(sl()));
+  sl.registerLazySingleton<EmailVerificationDataSource>(
+      () => EmailVerificationDataSourceImpl(sl()));
+  sl.registerLazySingleton<AddPatientDataSource>(
+      () => AddPatientDataSourceImpl(sl()));
+  sl.registerLazySingleton<PatientSectionsDataSource>(
+      () => PatientSectionsDataSourceImpl(sl()));
+  sl.registerLazySingleton<PatientCommentsDataSource>(
+      () => PatientCommentsDataSourceImpl(sl()));
+  sl.registerLazySingleton<SearchDataSource>(() => SearchDataSourceImpl(sl()));
+  sl.registerLazySingleton<OutcomeDataSource>(
+      () => OutcomeDataSourceImpl(sl()));
+  sl.registerLazySingleton<CurrentDoctorPatientsDataSource>(
+      () => CurrentDoctorPatientsDataSourceImpl(sl()));
+  sl.registerLazySingleton<AllDoctorsPatientsDataSource>(
+      () => AllDoctorsPatientsDataSourceImpl(sl()));
+  sl.registerLazySingleton<PatientSectionDetailsDataSource>(
+      () => PatientSectionDetailsDataSourceImpl(sl()));
+  sl.registerLazySingleton<DoctorProfileViewDataSource>(
+      () => DoctorProfileViewDataSourceImpl(sl()));
+  sl.registerLazySingleton<DoctorInfoViewDataSource>(
+      () => DoctorInfoViewDataSourceImpl(sl()));
+  sl.registerLazySingleton<ContactUsDataSource>(
+      () => ContactUsDataSourceImpl(sl()));
 
-initNetworking() async {
-  Dio dio = await Get.find<DioFactory>().getDio();
+  //! Repository
+  sl.registerLazySingleton<AuthenticationRepository>(
+      () => AuthenticationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ResetPasswordRepository>(
+      () => ResetPasswordRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<HomeRepository>(
+      () => HomeRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<NotificationRepository>(
+      () => NotificationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PostDetailsRepository>(
+      () => PostDetailsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<EmailVerificationRepository>(
+      () => EmailVerificationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<AddPatientRepository>(
+      () => AddPatientRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PatientSectionsRepository>(
+      () => PatientSectionsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PatientCommentsRepository>(
+      () => PatientCommentsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<SearchRepository>(
+      () => SearchRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<OutcomeRepository>(
+      () => OutcomeRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<CurrentDoctorPatientsRepository>(
+      () => CurrentDoctorPatientsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<AllDoctorsPatientsRepository>(
+      () => AllDoctorsPatientsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<PatientSectionDetailsRepository>(
+      () => PatientSectionDetailsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<DoctorProfileViewRepository>(
+      () => DoctorProfileViewRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<DoctorInfoViewRepository>(
+      () => DoctorInfoViewRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ContactUsRepository>(
+      () => ContactUsRepositoryImpl(sl(), sl()));
 
-  Get.lazyPut<ApiServices>(() => ApiServices(dio), fenix: true);
+  //! USECASES
+  if (!GetIt.I.isRegistered<SignInUsecase>()) {
+    sl.registerFactory<SignInUsecase>(() => SignInUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<RegisterUsecase>()) {
+    sl.registerFactory<RegisterUsecase>(() => RegisterUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendEmailForResetPasswordUsecase>()) {
+    sl.registerFactory<SendEmailForResetPasswordUsecase>(
+        () => SendEmailForResetPasswordUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<VerifyOTPForResetPasswordUsecase>()) {
+    sl.registerFactory<VerifyOTPForResetPasswordUsecase>(
+        () => VerifyOTPForResetPasswordUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<ChangePasswordForResetPasswordUsecase>()) {
+    sl.registerFactory<ChangePasswordForResetPasswordUsecase>(
+        () => ChangePasswordForResetPasswordUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetHomeUsecase>()) {
+    sl.registerFactory<GetHomeUsecase>(() => GetHomeUsecase(sl()));
+  }
+
+  if (!GetIt.I.isRegistered<UpdateNotificationUsecase>()) {
+    sl.registerFactory<UpdateNotificationUsecase>(
+        () => UpdateNotificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAllNotificationUsecase>()) {
+    sl.registerFactory<GetAllNotificationUsecase>(
+        () => GetAllNotificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UploadProfileImageUsecase>()) {
+    sl.registerFactory<UploadProfileImageUsecase>(
+        () => UploadProfileImageUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SignOutUsecase>()) {
+    sl.registerFactory<SignOutUsecase>(() => SignOutUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPostCommentsUsecase>()) {
+    sl.registerFactory<GetPostCommentsUsecase>(
+        () => GetPostCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePostCommentUsecase>()) {
+    sl.registerFactory<DeletePostCommentUsecase>(
+        () => DeletePostCommentUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddCommentOnPostUsecase>()) {
+    sl.registerFactory<AddCommentOnPostUsecase>(
+        () => AddCommentOnPostUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendEmailForVerificationUsecase>()) {
+    sl.registerFactory<SendEmailForVerificationUsecase>(
+        () => SendEmailForVerificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendOTPForEmailVerificationUsecase>()) {
+    sl.registerFactory<SendOTPForEmailVerificationUsecase>(
+        () => SendOTPForEmailVerificationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientHistoryForAddPatientUsecase>()) {
+    sl.registerFactory<GetPatientHistoryForAddPatientUsecase>(
+        () => GetPatientHistoryForAddPatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddPatientForFirstTimetUsecase>()) {
+    sl.registerFactory<AddPatientForFirstTimetUsecase>(
+        () => AddPatientForFirstTimetUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientSectionsUsecase>()) {
+    sl.registerFactory<GetPatientSectionsUsecase>(
+        () => GetPatientSectionsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientCommentsUsecase>()) {
+    sl.registerFactory<GetPatientCommentsUsecase>(
+        () => GetPatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddPatientCommentsUsecase>()) {
+    sl.registerFactory<AddPatientCommentsUsecase>(
+        () => AddPatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePatientCommentsUsecase>()) {
+    sl.registerFactory<DeletePatientCommentsUsecase>(
+        () => DeletePatientCommentsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetSearchHomeUsecase>()) {
+    sl.registerFactory<GetSearchHomeUsecase>(() => GetSearchHomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePatientUsecase>()) {
+    sl.registerFactory<DeletePatientUsecase>(() => DeletePatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<FinalSubmitUsecase>()) {
+    sl.registerFactory<FinalSubmitUsecase>(() => FinalSubmitUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetOutcomeUsecase>()) {
+    sl.registerFactory<GetOutcomeUsecase>(() => GetOutcomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SubmitOutcomeUsecase>()) {
+    sl.registerFactory<SubmitOutcomeUsecase>(() => SubmitOutcomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetCurrentDoctorPatientsUsecase>()) {
+    sl.registerFactory<GetCurrentDoctorPatientsUsecase>(
+        () => GetCurrentDoctorPatientsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAllDoctorsPatientsUsecase>()) {
+    sl.registerFactory<GetAllDoctorsPatientsUsecase>(
+        () => GetAllDoctorsPatientsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPatientSectionDetailsUsecase>()) {
+    sl.registerFactory<GetPatientSectionDetailsUsecase>(
+        () => GetPatientSectionDetailsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdatePatientSectionDetailsUsecase>()) {
+    sl.registerFactory<UpdatePatientSectionDetailsUsecase>(
+        () => UpdatePatientSectionDetailsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdateDoctorProfileUsecase>()) {
+    sl.registerFactory<UpdateDoctorProfileUsecase>(
+        () => UpdateDoctorProfileUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetDoctorInfoViewUsecase>()) {
+    sl.registerFactory<GetDoctorInfoViewUsecase>(
+        () => GetDoctorInfoViewUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddContactUsUsecase>()) {
+    sl.registerFactory<AddContactUsUsecase>(() => AddContactUsUsecase(sl()));
+  }
 }
