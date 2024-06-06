@@ -10,7 +10,7 @@ _$AddPatientForFirstTimeModelResponseImpl
     _$$AddPatientForFirstTimeModelResponseImplFromJson(
             Map<String, dynamic> json) =>
         _$AddPatientForFirstTimeModelResponseImpl(
-          id: json['id'] as int?,
+          id: (json['id'] as num?)?.toInt(),
           message: json['message'] as String?,
         );
 

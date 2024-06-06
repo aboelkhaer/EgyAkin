@@ -24,7 +24,7 @@ Map<String, dynamic> _$$PostCommentsModelResponseImplToJson(
 
 _$CommentModelImpl _$$CommentModelImplFromJson(Map<String, dynamic> json) =>
     _$CommentModelImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       content: json['content'] as String?,
       updatedAt: json['updated_at'] as String?,
       doctor: json['doctor'] == null

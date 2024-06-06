@@ -8,7 +8,7 @@ part of 'base_post_model.dart';
 
 BasePostModel _$BasePostModelFromJson(Map<String, dynamic> json) =>
     BasePostModel(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       title: json['title'] as String?,
       content: json['content'] as String?,
       image: json['image'] as String?,

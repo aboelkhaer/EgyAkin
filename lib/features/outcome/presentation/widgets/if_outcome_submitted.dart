@@ -28,7 +28,8 @@ class IfOutcomeSubmitted extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: false);
             },
-            loaded: (response, isSubmitedOutcome, message) {
+            loaded: (response, isSubmitedOutcome, message, _,
+                isSubmitedOutcomeLoading) {
               return Column(
                 children: [
                   Container(
@@ -65,7 +66,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                             );
                           },
                           child: Text(
-                            'Dr.${response.submitter!.name.toString()}',
+                            'Dr.${cubit.submitterName.toString()}',
                             style: TextStyle(
                               color: Colors.green.shade700,
                               fontWeight: FontWeight.bold,
@@ -84,10 +85,11 @@ class IfOutcomeSubmitted extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           );
                         },
-                        loaded: (response, isSubmitedOutcome, message) {
+                        loaded: (response, isSubmitedOutcome, message, _,
+                            isSubmitedOutcomeLoading) {
                           return ListView.builder(
                             shrinkWrap: true,
-                            itemCount: response.data!.length,
+                            itemCount: response.length,
                             itemBuilder: (context, index) {
                               return Container(
                                 margin: const EdgeInsets.only(
@@ -104,7 +106,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                     Row(
                                       children: [
                                         Text(
-                                          '${response.data![index].question}:',
+                                          '${response[index].question}:',
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -123,7 +125,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        response.data![index].answer.toString(),
+                                        response[index].answer.toString(),
                                       ),
                                     ),
                                   ],

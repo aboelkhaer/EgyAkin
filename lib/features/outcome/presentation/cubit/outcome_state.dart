@@ -6,7 +6,11 @@ part 'outcome_state.freezed.dart';
 abstract class OutcomeState with _$OutcomeState {
   const factory OutcomeState.initial() = _Initial;
   const factory OutcomeState.loading() = _Loading;
-  const factory OutcomeState.loaded(GetOutcomeModelResponse response,
-      bool isSubmitedOutcome, String message) = _Loaded;
+  const factory OutcomeState.loaded(
+      List<QuestionModel> response,
+      bool isSubmitedOutcome,
+      String message,
+      int snackbarErrorCounter,
+      bool isSubmitedOutcomeLoading) = _Loaded;
   const factory OutcomeState.error(String message) = _Error;
 }

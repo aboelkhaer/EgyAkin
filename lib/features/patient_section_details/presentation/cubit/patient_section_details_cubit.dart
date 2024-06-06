@@ -15,6 +15,24 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   Map<String, dynamic> formData = {};
   GlobalKey<FormState> sectionDetailsKeyForm = GlobalKey<FormState>();
   int snackbarErrorCounter = 0;
+
+  void updateQuestionAnswer(String questionId, dynamic newAnswer) {
+    // Create a new list from the existing list
+    final updatedQuestionModelList =
+        List<QuestionModel>.from(questionModelList);
+
+    final questionIndex = updatedQuestionModelList
+        .indexWhere((question) => question.id.toString() == questionId);
+    if (questionIndex != -1) {
+      updatedQuestionModelList[questionIndex] =
+          updatedQuestionModelList[questionIndex].copyWith(answer: newAnswer);
+      questionModelList =
+          updatedQuestionModelList; // Replace the old list with the new list
+      emit(PatientSectionDetailsState.loaded(
+          updatedQuestionModelList, false, false, '', snackbarErrorCounter));
+    }
+  }
+
   getPatientSectionDetails(String sectionId, String patientId) async {
     emit(const PatientSectionDetailsState.loading());
     final result = await _getPatientSectionDetailsUsecase.excute(
@@ -33,11 +51,11 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     );
   }
 
-  updatePatientSectionDetails(
-      String sectionId, String patientId, List<QuestionModel> questions) async {
+  updatePatientSectionDetails(String sectionId, String patientId) async {
     bool isValid = true;
+    log(questionModelList.toString());
 
-    for (var question in questions) {
+    for (var question in questionModelList) {
       // if (question.question == 'Hospital') {
       //   log(question.toString());
       // }
@@ -113,72 +131,50 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         }
         if (question.type == AppStrings.questionTypeString) {
           if (question.question == 'National ID') {
-            if (formData.containsKey(question.id.toString())) {
-              String nationalID = formData[question.id.toString()];
-              if (nationalID.length != 14) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                      value.questions,
-                      false,
-                      false,
-                      'National ID should have 14 digits',
-                      snackbarErrorCounter += 1),
-                ));
-
-                isValid = false;
-                break;
-              }
-              if (int.tryParse(nationalID) == null) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                      value.questions,
-                      false,
-                      false,
-                      'National ID should have 14 digits',
-                      snackbarErrorCounter += 1),
-                ));
-
-                isValid = false;
-                break;
-              }
-            }
-          }
-
-          if (question.question == 'Age') {
-            if (formData.containsKey(question.id.toString())) {
-              String age = formData[question.id.toString()];
-
-              if (int.tryParse(age) == null || int.parse(age) > 99) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                      value.questions,
-                      false,
-                      false,
-                      'Age should be less than 99',
-                      snackbarErrorCounter += 1),
-                ));
-
-                isValid = false;
-                break;
-              }
-            }
-          }
-
-          if (formData.containsKey(question.id.toString())) {
-            String stringAnswer = formData[question.id.toString()];
-            if (stringAnswer.isEmpty || stringAnswer == '') {
-              debugPrint('moatz123 $question');
-              log('Answer is empty or null for question: ${question.question}');
+            String nationalID = question.answer;
+            log('moatz123 $nationalID');
+            if (nationalID.length != 14) {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
                     value.questions,
                     false,
                     false,
-                    'This question is required \n{${question.question}}',
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1),
+              ));
+
+              isValid = false;
+              break;
+            }
+            if (int.tryParse(nationalID) == null) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1),
+              ));
+
+              isValid = false;
+              break;
+            }
+          }
+
+          if (question.question == 'Age') {
+            String age = question.answer;
+
+            if (int.tryParse(age) == null ||
+                (int.parse(age) > 119 || int.parse(age) <= 0)) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Age should be less than 120',
                     snackbarErrorCounter += 1),
               ));
 
@@ -203,6 +199,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               isValid = false;
               break;
             }
+
             if (int.tryParse(phoneNumber) == null) {
               emit(state.maybeMap(
                 orElse: () => state,
@@ -217,6 +214,20 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               break;
             }
           }
+        }
+        if (question.answer == null || question.answer == '') {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => PatientSectionDetailsState.loaded(
+                value.questions,
+                false,
+                false,
+                'This question is required \n{${question.question}}',
+                snackbarErrorCounter += 1),
+          ));
+
+          isValid = false;
+          break;
         }
       }
     }

@@ -8,9 +8,9 @@ part of 'semi_patient_model.dart';
 
 SemiPatientModel _$SemiPatientModelFromJson(Map<String, dynamic> json) =>
     SemiPatientModel(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
-      doctorId: json['doctor_id'] as int?,
+      doctorId: (json['doctor_id'] as num?)?.toInt(),
       message: json['message'] as String?,
       submitStatus: json['submit_status'] as bool?,
     )..value = json['value'] as bool?;

@@ -9,7 +9,7 @@ part of 'base_notification_model.dart';
 BaseNotificationModel _$BaseNotificationModelFromJson(
         Map<String, dynamic> json) =>
     BaseNotificationModel(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       read: json['read'] as bool?,
       patientId: json['patient_id'] as String?,
       createdAt: json['created_at'] as String?,

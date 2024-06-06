@@ -8,7 +8,7 @@ part of 'base_comment_model.dart';
 
 BaseCommentModel _$BaseCommentModelFromJson(Map<String, dynamic> json) =>
     BaseCommentModel(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       content: json['content'] as String?,
       updatedAt: json['updated_at'] as String?,
       baseDoctorModel: json['doctor'] == null

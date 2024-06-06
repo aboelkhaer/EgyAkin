@@ -49,11 +49,15 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 listener: (context, state) {
                   state.maybeWhen(
                     orElse: () {},
-                    loaded: (response, isSubmitedOutcome, message) {
+                    loaded: (response, isSubmitedOutcome, message, _,
+                        isSubmitedOutcomeLoading) {
                       if (isSubmitedOutcome) {
                         navigatorKey.currentState?.pushReplacementNamed(
                             AppRoutes.home,
                             arguments: 0);
+                      }
+                      if (message.isNotEmpty) {
+                        customSnackBar(context: context, message: message);
                       }
                     },
                   );
@@ -69,64 +73,71 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                         ),
                       );
                     },
-                    loaded: (
-                      response,
-                      isSubmitedOutcome,
-                      message,
-                    ) {
-                      List<QuestionModel> questions = response.data ?? [];
-                      return Expanded(
-                        child: ListView.builder(
-                          itemCount: questions.length,
-                          shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            var question = questions[index];
+                    loaded: (response, isSubmitedOutcome, message, _,
+                        isSubmitedOutcomeLoading) {
+                      List<QuestionModel> questions = response;
+                      if (isSubmitedOutcomeLoading) {
+                        return const Expanded(
+                          child: SingleChildScrollView(
+                            child: ShimmerLoadingPatientsCards(
+                              ishorizontal: false,
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: questions.length,
+                            shrinkWrap: true,
+                            physics: const BouncingScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              var question = questions[index];
 
-                            return Container(
-                              margin: const EdgeInsets.all(16),
-                              padding: const EdgeInsets.all(16),
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  color: AppColors.primary,
+                              return Container(
+                                margin: const EdgeInsets.all(16),
+                                padding: const EdgeInsets.all(16),
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: AppColors.primary,
+                                  ),
                                 ),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Flexible(
-                                        child: Text(
-                                          '${index + 1} - ${question.question!}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            '${index + 1} - ${question.question!}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                      question.mandatory!
-                                          ? const Text(
-                                              AppStrings.asteriskMark,
-                                              style: TextStyle(
-                                                color: Colors.red,
-                                              ),
-                                            )
-                                          : const SizedBox.shrink(),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                  buildQuestionWidget(
-                                    questions,
-                                    index,
-                                    size,
-                                    cubit,
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      );
+                                        question.mandatory!
+                                            ? const Text(
+                                                AppStrings.asteriskMark,
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                ),
+                                              )
+                                            : const SizedBox.shrink(),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    buildQuestionWidget(
+                                      cubit.questionModelList,
+                                      index,
+                                      size,
+                                      cubit,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      }
                     },
                   );
                 },
@@ -156,7 +167,8 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: () {},
-                  loaded: (response, isSubmitedOutcome, message) {
+                  loaded: (response, isSubmitedOutcome, message, _,
+                      isSubmitedOutcomeLoading) {
                     // if (isAddedPatientSuccessfully) {
                     //   navigatorKey.currentState
                     //       ?.pushNamed(AppRoutes.home, arguments: 0);
@@ -189,6 +201,25 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               },
               builder: (context, state) {
                 return state.maybeWhen(
+                  loaded: (response, isSubmitedOutcome, message,
+                      snackbarErrorCounter, isSubmitedOutcomeLoading) {
+                    if (isSubmitedOutcomeLoading) {
+                      return const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator()),
+                        ],
+                      );
+                    } else {
+                      return SubmitBottonForOutcome(
+                        cubit: cubit,
+                        patientId: widget.patientId,
+                      );
+                    }
+                  },
                   orElse: () {
                     return SubmitBottonForOutcome(
                       cubit: cubit,
@@ -221,8 +252,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
         questionAnswer ??= '';
         return BuildStringValueQuestions(
           questionList: questionList,
-          initialValue: cubit.formData[questionList[index].id.toString()] ??
-              AppStrings.empty,
+          initialValue: questionList[index].answer ?? AppStrings.empty,
           index: index,
           textInputFormatter:
               questionList[index].question == AppStrings.phone ||
@@ -239,10 +269,13 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                         ],
           onChanged: (val) {
             if (questionAnswer != val) {
-              questionAnswer = val;
+              // questionAnswer = val;
+              cubit.updateQuestionAnswer(
+                  questionList[index].id.toString(), val);
               cubit.formData[questionList[index].id.toString()] = val;
             } else {
-              questionAnswer = null;
+              // questionAnswer = null;
+              cubit.formData[questionList[index].id.toString()] = null;
               cubit.formData.remove(questionList[index].id.toString());
             }
             log(questionAnswer.toString());
@@ -257,8 +290,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
         return BuildSelectValueQuestion(
           questionList: questionList,
           index: index,
-          selected: cubit.formData[questionList[index].id.toString()] ??
-              selectedValue,
+          selected: questionAnswer ?? selectedValue,
           validator: (val) {
             if (questionList[index].mandatory == true &&
                 (val == null || val == AppStrings.empty)) {
@@ -271,10 +303,13 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
             selectedValue = val;
             if (questionAnswer != val) {
               questionAnswer = val;
+              cubit.updateQuestionAnswer(
+                  questionList[index].id.toString(), val);
 
               cubit.formData[questionList[index].id.toString()] = val;
             } else {
-              questionAnswer = null;
+              cubit.updateQuestionAnswer(
+                  questionList[index].id.toString(), val);
               cubit.formData.remove(questionList[index].id.toString());
             }
 

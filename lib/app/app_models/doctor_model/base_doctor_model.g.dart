@@ -8,7 +8,7 @@ part of 'base_doctor_model.dart';
 
 BaseDoctorModel _$BaseDoctorModelFromJson(Map<String, dynamic> json) =>
     BaseDoctorModel(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       firstName: json['name'] as String?,
       lastName: json['lname'] as String?,
       workingPlace: json['workingplace'] as String?,

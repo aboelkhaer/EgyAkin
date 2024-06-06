@@ -8,7 +8,7 @@ part of 'post_model_response.dart';
 
 _$PostModelImpl _$$PostModelImplFromJson(Map<String, dynamic> json) =>
     _$PostModelImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       title: json['title'] as String?,
       content: json['content'] as String?,
       image: json['image'] as String?,

@@ -16,21 +16,6 @@ class GetOutcomeModelResponse with _$GetOutcomeModelResponse {
 }
 
 @freezed
-class GetOutcomeDataModelResponse with _$GetOutcomeDataModelResponse {
-  const factory GetOutcomeDataModelResponse({
-    @JsonKey(name: 'outcome_of_the_patient') String? outcomeOfThePatient,
-    @JsonKey(name: 'creatinine_on_discharge') String? creatinineOnDischarge,
-    @JsonKey(name: 'duration_of_admission') String? duration,
-    @JsonKey(name: 'final_status') String? finalSubmit,
-    @JsonKey(name: 'other') String? other,
-    @JsonKey(name: 'update_at') String? updateAt,
-    DoctorModel? doctor,
-  }) = _GetOutcomeDataModelResponse;
-  factory GetOutcomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
-      _$GetOutcomeDataModelResponseFromJson(json);
-}
-
-@freezed
 class OutcomeSubmitterModel with _$OutcomeSubmitterModel {
   const factory OutcomeSubmitterModel({
     String? name,

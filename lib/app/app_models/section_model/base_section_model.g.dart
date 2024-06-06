@@ -8,7 +8,7 @@ part of 'base_section_model.dart';
 
 BaseSectionModel _$BaseSectionModelFromJson(Map<String, dynamic> json) =>
     BaseSectionModel(
-      sectionId: json['section_id'] as int?,
+      sectionId: (json['section_id'] as num?)?.toInt(),
       sectionName: json['section_name'] as String?,
       sectionStatus: json['section_status'] as bool?,
       updatedAt: json['updated_at'] as String?,

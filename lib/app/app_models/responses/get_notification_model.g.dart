@@ -13,7 +13,7 @@ GetNotificationModelResponse _$GetNotificationModelResponseFromJson(
           ?.map(
               (e) => BaseNotificationModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      unreadCount: json['unreadCount'] as int?,
+      unreadCount: (json['unreadCount'] as num?)?.toInt(),
     )..value = json['value'] as bool?;
 
 Map<String, dynamic> _$GetNotificationModelResponseToJson(

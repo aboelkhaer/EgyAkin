@@ -64,7 +64,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
 _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PatientHomeDataModelImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       hospital: json['hospital'] as String?,
       updatedAt: json['updated_at'] as String?,
@@ -91,7 +91,7 @@ Map<String, dynamic> _$$PatientHomeDataModelImplToJson(
 _$SectionHomeDataModelImpl _$$SectionHomeDataModelImplFromJson(
         Map<String, dynamic> json) =>
     _$SectionHomeDataModelImpl(
-      patientId: json['patient_id'] as int?,
+      patientId: (json['patient_id'] as num?)?.toInt(),
       submitStatus: json['submit_status'] as bool?,
       outcomeStatus: json['outcome_status'] as bool?,
     );

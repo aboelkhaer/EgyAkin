@@ -27,32 +27,6 @@ Map<String, dynamic> _$$GetOutcomeModelResponseImplToJson(
       'Submitter': instance.submitter,
     };
 
-_$GetOutcomeDataModelResponseImpl _$$GetOutcomeDataModelResponseImplFromJson(
-        Map<String, dynamic> json) =>
-    _$GetOutcomeDataModelResponseImpl(
-      outcomeOfThePatient: json['outcome_of_the_patient'] as String?,
-      creatinineOnDischarge: json['creatinine_on_discharge'] as String?,
-      duration: json['duration_of_admission'] as String?,
-      finalSubmit: json['final_status'] as String?,
-      other: json['other'] as String?,
-      updateAt: json['update_at'] as String?,
-      doctor: json['doctor'] == null
-          ? null
-          : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$$GetOutcomeDataModelResponseImplToJson(
-        _$GetOutcomeDataModelResponseImpl instance) =>
-    <String, dynamic>{
-      'outcome_of_the_patient': instance.outcomeOfThePatient,
-      'creatinine_on_discharge': instance.creatinineOnDischarge,
-      'duration_of_admission': instance.duration,
-      'final_status': instance.finalSubmit,
-      'other': instance.other,
-      'update_at': instance.updateAt,
-      'doctor': instance.doctor,
-    };
-
 _$OutcomeSubmitterModelImpl _$$OutcomeSubmitterModelImplFromJson(
         Map<String, dynamic> json) =>
     _$OutcomeSubmitterModelImpl(

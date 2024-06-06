@@ -30,7 +30,7 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
 
 _$SectionModelImpl _$$SectionModelImplFromJson(Map<String, dynamic> json) =>
     _$SectionModelImpl(
-      sectionId: json['section_id'] as int?,
+      sectionId: (json['section_id'] as num?)?.toInt(),
       sectionStatus: json['section_status'] as bool?,
       updatedAt: json['updated_at'] as String?,
       sectionName: json['section_name'] as String?,

@@ -26,7 +26,7 @@ Map<String, dynamic> _$$AuthenticationModelResponseImplToJson(
 
 _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
     _$DoctorModelImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       firstName: json['name'] as String?,
       lastName: json['lname'] as String?,
       email: json['email'] as String?,

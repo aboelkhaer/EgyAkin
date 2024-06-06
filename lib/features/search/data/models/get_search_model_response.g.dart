@@ -26,23 +26,23 @@ Map<String, dynamic> _$$GetSearchModelResponseImplToJson(
 _$GetSearchDataModelResponseImpl _$$GetSearchDataModelResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$GetSearchDataModelResponseImpl(
-      currentPage: json['current_page'] as int?,
+      currentPage: (json['current_page'] as num?)?.toInt(),
       data: (json['data'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       firstPageUrl: json['first_page_url'] as String?,
-      from: json['from'] as int?,
-      lastPage: json['last_page'] as int?,
+      from: (json['from'] as num?)?.toInt(),
+      lastPage: (json['last_page'] as num?)?.toInt(),
       lastPageUrl: json['last_page_url'] as String?,
       links: (json['links'] as List<dynamic>?)
           ?.map((e) => Link.fromJson(e as Map<String, dynamic>))
           .toList(),
       nextPageUrl: json['next_page_url'] as String?,
       path: json['path'] as String?,
-      perPage: json['perPage'] as int?,
+      perPage: (json['perPage'] as num?)?.toInt(),
       prevPageUrl: json['prev_page_url'] as String?,
-      to: json['to'] as int?,
-      total: json['total'] as int?,
+      to: (json['to'] as num?)?.toInt(),
+      total: (json['total'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$$GetSearchDataModelResponseImplToJson(

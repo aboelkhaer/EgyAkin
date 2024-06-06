@@ -156,7 +156,11 @@ class _PatientSectionDetailsScreenState
                                   ],
                                 )
                               : const SizedBox.shrink(),
-                          buildQuestionWidget(index, size, cubit, questions),
+                          buildQuestionWidget(
+                            index,
+                            size,
+                            cubit,
+                          ),
                         ],
                       ),
                     );
@@ -243,7 +247,6 @@ class _PatientSectionDetailsScreenState
                                         widget.sectionModel.sectionId
                                             .toString(),
                                         widget.patientId.toString(),
-                                        questions,
                                       );
                                     },
                                     title: AppStrings.submit,
@@ -277,7 +280,6 @@ class _PatientSectionDetailsScreenState
                                           widget.sectionModel.sectionId
                                               .toString(),
                                           widget.patientId.toString(),
-                                          questions,
                                         );
                                       },
                                       title: AppStrings.submit,
@@ -308,43 +310,52 @@ class _PatientSectionDetailsScreenState
     );
   }
 
-  Widget buildQuestionWidget(int index, Size size,
-      PatientSectionDetailsCubit cubit, List<QuestionModel> questions) {
+  Widget buildQuestionWidget(
+      int index, Size size, PatientSectionDetailsCubit cubit) {
     // Map<String, dynamic> formDataMap = cubit.formData;
 
-    switch (questions[index].type) {
+    switch (cubit.questionModelList[index].type) {
       case AppStrings.questionTypeString:
-        var questionAnswer = questions[index].answer;
+        var questionAnswer = cubit.questionModelList[index].answer;
         return BuildStringValueQuestions(
-          questionList: questions,
+          questionList: cubit.questionModelList,
           index: index,
           initialValue: initialValueInQuestions(
             answer: questionAnswer,
             currentDoctorId: widget.currentDoctorModel.id.toString(),
             doctorId: widget.doctorId.toString(),
-            question: questions[index].question.toString(),
+            question: cubit.questionModelList[index].question.toString(),
             questionAnswerInForm:
-                cubit.formData[questions[index].id.toString()],
+                cubit.formData[cubit.questionModelList[index].id.toString()],
           ),
-          textInputFormatter: questions[index].question == AppStrings.phone
+          textInputFormatter: cubit.questionModelList[index].question ==
+                  AppStrings.phone
               ? [
                   LengthLimitingTextInputFormatter(11),
                 ]
-              : questions[index].question == AppStrings.nationalID
+              : cubit.questionModelList[index].question == AppStrings.nationalID
                   ? [
                       LengthLimitingTextInputFormatter(14),
                     ]
                   : [],
           onChanged: (val) {
+            log('Old answer: ${cubit.questionModelList[index].answer}');
             setState(() {
               if (questionAnswer != val) {
-                questionAnswer = val;
-                cubit.formData[questions[index].id.toString()] = val;
+                cubit.updateQuestionAnswer(
+                    cubit.questionModelList[index].id.toString(),
+                    val); // Pass question ID directly
+                // You might not need to update formData manually here if it's updated in cubit.updateQuestionAnswer
+                cubit.formData[cubit.questionModelList[index].id.toString()] =
+                    val;
               } else {
-                questionAnswer = '';
-                cubit.formData.remove(questions[index].id.toString());
+                cubit.updateQuestionAnswer(
+                    cubit.questionModelList[index].id.toString(), null);
+                cubit.formData
+                    .remove(cubit.questionModelList[index].id.toString());
               }
-              log(questionAnswer.toString());
+              // Log the updated answer from the questionModelList
+              log('New answer: ${cubit.questionModelList[index].answer}');
             });
           },
           validator: (val) {
@@ -357,17 +368,18 @@ class _PatientSectionDetailsScreenState
           },
         );
       case AppStrings.questionTypeSelect:
-        var questionAnswer = questions[index].answer;
+        var questionAnswer = cubit.questionModelList[index].answer;
         dynamic selectedValue;
         return BuildSelectValueQuestion(
-          questionList: questions,
+          questionList: cubit.questionModelList,
           index: index,
           selected: initialValueInSelectQuestion(
               questionAnswer: questionAnswer, selectedValue: selectedValue),
           validator: (val) {
-            if (questions[index].mandatory == true &&
-                (questions[index].answer == null ||
-                    questions[index].answer == AppStrings.empty)) {
+            if (cubit.questionModelList[index].mandatory == true &&
+                (cubit.questionModelList[index].answer == null ||
+                    cubit.questionModelList[index].answer ==
+                        AppStrings.empty)) {
               return AppStrings.thisFieldIsRequired;
             }
 
@@ -376,29 +388,35 @@ class _PatientSectionDetailsScreenState
           onChanged: (val) {
             selectedValue = val;
             if (questionAnswer != val) {
-              questionAnswer = val;
+              // questionAnswer = val;
+              cubit.updateQuestionAnswer(
+                  cubit.questionModelList[index].id.toString(), val);
 
-              cubit.formData[questions[index].id.toString()] = val;
+              cubit.formData[cubit.questionModelList[index].id.toString()] =
+                  val;
             } else {
-              questionAnswer = null;
-              cubit.formData.remove(questions[index].id.toString());
+              // questionAnswer = null;
+              cubit.updateQuestionAnswer(
+                  cubit.questionModelList[index].id.toString(), null);
+              cubit.formData
+                  .remove(cubit.questionModelList[index].id.toString());
             }
 
             setState(() {});
           },
         );
       case AppStrings.questionTypeMultiple:
-        var questionAnswer = questions[index].answer;
+        var questionAnswer = cubit.questionModelList[index].answer;
         Map<String, dynamic> answerMap = questionAnswer ??= {
           AppStrings.answers: [],
           AppStrings.otherField: AppStrings.empty
         };
         List<dynamic> answers =
-            questions[index].answer[AppStrings.answers] ??= [];
+            cubit.questionModelList[index].answer[AppStrings.answers] ??= [];
 
         return BuildMultipleValueQuestion(
           index: index,
-          questionList: questions,
+          questionList: cubit.questionModelList,
           initialValue: answerMap[AppStrings.otherField] ?? '',
           listContainOther: answers,
           onChanged: (val) {
@@ -410,7 +428,7 @@ class _PatientSectionDetailsScreenState
               //   },
               // };
               answerMap[AppStrings.otherField] = val;
-              cubit.formData[questions[index].id.toString()] = {
+              cubit.formData[cubit.questionModelList[index].id.toString()] = {
                 AppStrings.answers: answers,
                 AppStrings.otherField: answers.contains(AppStrings.others)
                     ? val
@@ -421,14 +439,14 @@ class _PatientSectionDetailsScreenState
             log('map ${cubit.formData}');
           },
           validator: (val) {
-            if (questions[index].mandatory == true) {
+            if (cubit.questionModelList[index].mandatory == true) {
               if (val == null || val.isEmpty) {
                 return AppStrings.chooseAtLeastOnOption;
               }
             }
             return null;
           },
-          children: questions[index].values!.map((value) {
+          children: cubit.questionModelList[index].values!.map((value) {
             return Tooltip(
               message: value.toString(),
               child: ChoiceChip(
@@ -449,7 +467,8 @@ class _PatientSectionDetailsScreenState
                       answers.remove(value);
                     }
 
-                    cubit.formData[questions[index].id.toString()] = {
+                    cubit.formData[
+                        cubit.questionModelList[index].id.toString()] = {
                       AppStrings.answers: answers,
                       AppStrings.otherField: answers.contains(AppStrings.others)
                           ? answerMap[AppStrings.otherField]
@@ -464,7 +483,7 @@ class _PatientSectionDetailsScreenState
           }).toList(),
         );
       case AppStrings.questionTypeDate:
-        var questionAnswer = questions[index].answer;
+        var questionAnswer = cubit.questionModelList[index].answer;
         questionAnswer ??= DateTime.now().toString();
         // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
 
@@ -478,8 +497,9 @@ class _PatientSectionDetailsScreenState
             lastDate: DateTime(2100),
             onDateChanged: (val) {
               questionAnswer = val.toString();
-              cubit.formData[questions[index].id.toString()] = questionAnswer;
-              log(cubit.formData[questions[index].id.toString()]);
+              cubit.formData[cubit.questionModelList[index].id.toString()] =
+                  questionAnswer;
+              log(cubit.formData[cubit.questionModelList[index].id.toString()]);
               setState(() {});
             },
           ),

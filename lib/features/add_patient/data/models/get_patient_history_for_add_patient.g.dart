@@ -25,7 +25,7 @@ Map<String, dynamic> _$$GetPatientHistoryForAddPatientModelResponseImplToJson(
 
 _$QuestionModelImpl _$$QuestionModelImplFromJson(Map<String, dynamic> json) =>
     _$QuestionModelImpl(
-      id: json['id'] as int?,
+      id: (json['id'] as num?)?.toInt(),
       question: json['question'] as String?,
       values: json['values'] as List<dynamic>?,
       type: json['type'] as String?,
