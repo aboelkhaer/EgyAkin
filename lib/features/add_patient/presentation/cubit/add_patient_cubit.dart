@@ -9,7 +9,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
   final GetPatientHistoryForAddPatientUsecase
       _getPatientHistoryForAddPatientUsecase;
   final AddPatientForFirstTimetUsecase _addPatientForFirstTimetUsecase;
-
+  int snackbarErrorCounter = 0;
   GlobalKey<FormState> addPatientKeyForm = GlobalKey<FormState>();
   List<QuestionModel>? questionModelList = [];
   Map<String, dynamic> formData = {};
@@ -25,17 +25,13 @@ class AddPatientCubit extends Cubit<AddPatientState> {
       },
       (response) async {
         questionModelList = response.data;
-        emit(AddPatientState.loaded(response.data ?? [], false, 0));
+        emit(AddPatientState.loaded(
+            response.data ?? [], false, 0, false, '', snackbarErrorCounter));
       },
     );
   }
 
   addPatientForFirstTime() async {
-    emit(const AddPatientState.loading());
-    submitBotton();
-  }
-
-  submitBotton() async {
     bool isValid = true;
 
     for (var question in questionModelList!) {
@@ -54,8 +50,16 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                 (answersValue is List && answersValue.isEmpty)) {
               debugPrint('"answers" key is either null or an empty list.');
 
-              emit(AddPatientState.error(
-                  'You must select at least one choice. \n{${question.question}}'));
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'You must select at least one choice. \n{${question.question}}',
+                    snackbarErrorCounter += 1),
+              ));
 
               isValid = false;
               break;
@@ -66,7 +70,16 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           } else {
             debugPrint('"answers" key is not present in the map.');
 
-            emit(const AddPatientState.error(AppStrings.somethingWentWrong));
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  AppStrings.somethingWentWrong,
+                  snackbarErrorCounter += 1),
+            ));
             isValid = false;
             break;
           }
@@ -74,8 +87,16 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           if ((myMap['other_field'] == null ||
                   myMap['other_field'].toString().isEmpty) &&
               (myMap['answers'] as List).contains('Others')) {
-            emit(AddPatientState.error(
-                'You must add "Others" field in \n{${question.question}}'));
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  'You must add "Others" field in \n{${question.question}}',
+                  snackbarErrorCounter += 1),
+            ));
 
             isValid = false;
             break;
@@ -85,16 +106,31 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           if (formData.containsKey(question.id.toString())) {
             String nationalID = formData[question.id.toString()];
             if (nationalID.length != 14) {
-              emit(const AddPatientState.error(
-                  'National ID should have 14 digits'));
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1),
+              ));
 
               isValid = false;
               break;
             }
             if (int.tryParse(nationalID) == null) {
-              emit(const AddPatientState.error(
-                  'National ID should have 14 digits'));
-              getPatientHistoryForAddPatient();
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1),
+              ));
               isValid = false;
               break;
             }
@@ -103,8 +139,19 @@ class AddPatientCubit extends Cubit<AddPatientState> {
         if (question.question == 'Age') {
           if (formData.containsKey(question.id.toString())) {
             String age = formData[question.id.toString()];
-            if (int.tryParse(age) == null || int.parse(age) > 99) {
-              emit(const AddPatientState.error('Age should be less than 99'));
+            if (int.tryParse(age) == null ||
+                int.parse(age) > 119 ||
+                int.parse(age) <= 0) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'Age should be less than 120',
+                    snackbarErrorCounter += 1),
+              ));
 
               isValid = false;
               break;
@@ -113,8 +160,16 @@ class AddPatientCubit extends Cubit<AddPatientState> {
         }
         if (formData[question.id.toString()] == null ||
             formData[question.id.toString()] == '') {
-          emit(AddPatientState.error(
-              'This question is required \n{${question.question}}'));
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => AddPatientState.loaded(
+                value.questions,
+                false,
+                0,
+                false,
+                'This question is required \n{${question.question}}',
+                snackbarErrorCounter += 1),
+          ));
 
           isValid = false;
           break;
@@ -124,12 +179,30 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           String phoneNumber = formData[question.id.toString()];
 
           if (phoneNumber.length != 11) {
-            emit(const AddPatientState.error('Phone should have 11 digits'));
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  'This question is required \n{${question.question}}',
+                  snackbarErrorCounter += 1),
+            ));
             isValid = false;
             break;
           }
           if (int.tryParse(phoneNumber) == null) {
-            emit(const AddPatientState.error('Phone should have 11 digits'));
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  'This question is required \n{${question.question}}',
+                  snackbarErrorCounter += 1),
+            ));
             isValid = false;
             break;
           }
@@ -138,20 +211,31 @@ class AddPatientCubit extends Cubit<AddPatientState> {
     }
 
     if (isValid == true) {
+      emit(state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => AddPatientState.loaded(
+            value.questions, false, 0, true, '', snackbarErrorCounter),
+      ));
+
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
       final result = await _addPatientForFirstTimetUsecase.excute(formData);
       result.fold(
         (l) {
-          emit(AddPatientState.error(l.message));
-          getPatientHistoryForAddPatient();
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => AddPatientState.loaded(value.questions, false, 0,
+                false, l.message, snackbarErrorCounter),
+          ));
         },
         (response) async {
-          emit(AddPatientState.loaded([], true, response.id!));
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => AddPatientState.loaded(value.questions, true,
+                response.id!, false, '', snackbarErrorCounter),
+          ));
         },
       );
-    } else {
-      getPatientHistoryForAddPatient();
     }
   }
 }

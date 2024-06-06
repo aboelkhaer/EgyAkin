@@ -1,15 +1,4 @@
-import 'package:egy_akin/features/all_doctors_patients/presentation/pages/all_doctors_patients_screen.dart';
-import 'package:egy_akin/features/contact_us/presentation/cubit/contact_us_cubit.dart';
-import 'package:egy_akin/features/contact_us/presentation/pages/contact_us_screen.dart';
-import 'package:egy_akin/features/current_doctor_patients/presentation/pages/current_doctor_patients_screen.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/pages/doctor_info_view_screen.dart';
-import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_cubit.dart';
-import 'package:egy_akin/features/doctor_profile_view/presentation/pages/doctor_profile_view_screen.dart';
-import 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
-import 'package:egy_akin/features/outcome/presentation/pages/outcome_screen.dart';
-import 'package:egy_akin/features/patient_section_details/presentation/pages/patient_section_details_screen.dart';
-import 'package:egy_akin/features/search/presentation/pages/search_screen.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/pages/gfr_calculator_screen.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -37,6 +26,7 @@ class AppRoutes {
   static const String resetPassword = '/resetPassword';
   static const String emailVerification = '/emailVerification';
   static const String doctorInfoView = '/doctorInfoView';
+  static const String gfrCalculator = '/gfrCalculator';
 }
 
 class RouteGenerator {
@@ -417,6 +407,13 @@ class RouteGenerator {
           builder: (_) => BlocProvider<ContactUsCubit>(
             create: (context) => di.sl<ContactUsCubit>(),
             child: const ContactUsScreen(),
+          ),
+        );
+      case AppRoutes.gfrCalculator:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<GfrCalculatorCubit>(
+            create: (context) => di.sl<GfrCalculatorCubit>(),
+            child: const GfrCalculatorScreen(),
           ),
         );
 

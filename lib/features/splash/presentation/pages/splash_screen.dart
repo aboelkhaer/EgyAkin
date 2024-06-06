@@ -106,6 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Update Available'),
+          backgroundColor: Colors.grey.shade100,
           content: const Text(
               'A new version of the app is available. Please update to continue.'),
           actions: <Widget>[

@@ -61,11 +61,17 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                           ),
                         );
                       },
-                      loaded: (
-                        questions,
-                        isAddedPatientSuccessfully,
-                        patientId,
-                      ) {
+                      loaded: (questions, isAddedPatientSuccessfully, patientId,
+                          isAddPatientLoading, message, _) {
+                        if (isAddPatientLoading) {
+                          return const Expanded(
+                            child: SingleChildScrollView(
+                              child: ShimmerLoadingPatientsCards(
+                                ishorizontal: false,
+                              ),
+                            ),
+                          );
+                        }
                         return Expanded(
                           child: ListView.builder(
                             itemCount: questions.length,
@@ -149,7 +155,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 listener: (context, state) {
                   state.maybeWhen(
                     orElse: () {},
-                    loaded: (questions, isAddedPatientSuccessfully, patientId) {
+                    loaded: (questions, isAddedPatientSuccessfully, patientId,
+                        isAddPatientLoading, message, _) {
                       if (isAddedPatientSuccessfully) {
                         navigatorKey.currentState
                             ?.pushNamed(AppRoutes.home, arguments: 0);
@@ -164,6 +171,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                             )
                             .then(
                                 (value) => context.read<HomeCubit>().getHome());
+                      }
+                      if (message.isNotEmpty) {
+                        customSnackBar(context: context, message: message);
                       }
                     },
                     error: (message) {
@@ -182,6 +192,24 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 },
                 builder: (context, state) {
                   return state.maybeWhen(
+                    loaded: (questions, isAddedPatientSuccessfully, patientId,
+                        isAddPatientLoading, message, _) {
+                      if (isAddPatientLoading) {
+                        return const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                height: 30,
+                                width: 30,
+                                child: CircularProgressIndicator()),
+                          ],
+                        );
+                      } else {
+                        return SubmitBotton(
+                          cubit: cubit,
+                        );
+                      }
+                    },
                     orElse: () {
                       return SubmitBotton(
                         cubit: cubit,

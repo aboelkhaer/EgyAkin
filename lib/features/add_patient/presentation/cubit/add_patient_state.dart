@@ -10,6 +10,9 @@ abstract class AddPatientState with _$AddPatientState {
     List<QuestionModel> questions,
     bool isAddedPatientSuccessfully,
     int patientId,
+    bool isAddPatientLoading,
+    String message,
+    int snackbarErrorCounter,
   ) = _Loaded;
   const factory AddPatientState.error(String message) = _Error;
 }

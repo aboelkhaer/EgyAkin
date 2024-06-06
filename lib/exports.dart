@@ -276,3 +276,13 @@ export 'package:egy_akin/features/doctor_profile_view/domain/repositories/doctor
 export 'package:egy_akin/features/doctor_profile_view/domain/usecases/update_doctor_profile_usecase.dart';
 export 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_cubit.dart';
 export 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
+export 'package:egy_akin/features/gfr_calculator/presentation/cubit/gfr_calculator_cubit.dart';
+export 'package:egy_akin/features/gfr_calculator/presentation/cubit/gfr_calculator_state.dart';
+export 'package:egy_akin/features/all_doctors_patients/presentation/pages/all_doctors_patients_screen.dart';
+export 'package:egy_akin/features/contact_us/presentation/pages/contact_us_screen.dart';
+export 'package:egy_akin/features/current_doctor_patients/presentation/pages/current_doctor_patients_screen.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/pages/doctor_info_view_screen.dart';
+export 'package:egy_akin/features/doctor_profile_view/presentation/pages/doctor_profile_view_screen.dart';
+export 'package:egy_akin/features/outcome/presentation/pages/outcome_screen.dart';
+export 'package:egy_akin/features/patient_section_details/presentation/pages/patient_section_details_screen.dart';
+export 'package:egy_akin/features/search/presentation/pages/search_screen.dart';

@@ -22,16 +22,18 @@ class MoreScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold, color: Colors.grey.shade500),
               ),
               ListTile(
-                title: const Text('Test'),
-                leading: const Icon(
-                  Icons.support,
-                  color: AppColors.primary,
+                title: const Text('GFR Calculator'),
+                leading: Icon(
+                  Icons.calculate,
+                  color: Colors.grey.shade600,
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
                   size: 15.r,
                 ),
-                onTap: () {},
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed(AppRoutes.gfrCalculator);
+                },
               ),
               SizedBox(height: 15.h),
               Text(
@@ -41,9 +43,9 @@ class MoreScreen extends StatelessWidget {
               ),
               ListTile(
                 title: const Text('Change password'),
-                leading: const Icon(
-                  Icons.support,
-                  color: AppColors.primary,
+                leading: Icon(
+                  Icons.password,
+                  color: Colors.grey.shade600,
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
@@ -53,9 +55,9 @@ class MoreScreen extends StatelessWidget {
               ),
               ListTile(
                 title: const Text('Email verification'),
-                leading: const Icon(
-                  Icons.support,
-                  color: AppColors.primary,
+                leading: Icon(
+                  Icons.verified,
+                  color: Colors.grey.shade600,
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
@@ -76,9 +78,9 @@ class MoreScreen extends StatelessWidget {
               ),
               ListTile(
                 title: const Text('Contact Us'),
-                leading: const Icon(
-                  Icons.message_rounded,
-                  color: AppColors.primary,
+                leading: Icon(
+                  Icons.contact_mail,
+                  color: Colors.grey.shade600,
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,

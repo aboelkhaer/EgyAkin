@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'add_patient_state.dart';
+part of 'gfr_calculator_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,19 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$AddPatientState {
+mixin _$GfrCalculatorState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -35,14 +28,7 @@ mixin _$AddPatientState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -50,14 +36,7 @@ mixin _$AddPatientState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -90,16 +69,16 @@ mixin _$AddPatientState {
 }
 
 /// @nodoc
-abstract class $AddPatientStateCopyWith<$Res> {
-  factory $AddPatientStateCopyWith(
-          AddPatientState value, $Res Function(AddPatientState) then) =
-      _$AddPatientStateCopyWithImpl<$Res, AddPatientState>;
+abstract class $GfrCalculatorStateCopyWith<$Res> {
+  factory $GfrCalculatorStateCopyWith(
+          GfrCalculatorState value, $Res Function(GfrCalculatorState) then) =
+      _$GfrCalculatorStateCopyWithImpl<$Res, GfrCalculatorState>;
 }
 
 /// @nodoc
-class _$AddPatientStateCopyWithImpl<$Res, $Val extends AddPatientState>
-    implements $AddPatientStateCopyWith<$Res> {
-  _$AddPatientStateCopyWithImpl(this._value, this._then);
+class _$GfrCalculatorStateCopyWithImpl<$Res, $Val extends GfrCalculatorState>
+    implements $GfrCalculatorStateCopyWith<$Res> {
+  _$GfrCalculatorStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -116,7 +95,7 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$AddPatientStateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$GfrCalculatorStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
@@ -125,18 +104,12 @@ class __$$InitialImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
+class _$InitialImpl implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddPatientState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'AddPatientState.initial'));
+  String toString() {
+    return 'GfrCalculatorState.initial()';
   }
 
   @override
@@ -153,14 +126,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -171,14 +137,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -189,14 +148,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -244,7 +196,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   }
 }
 
-abstract class _Initial implements AddPatientState {
+abstract class _Initial implements GfrCalculatorState {
   const factory _Initial() = _$InitialImpl;
 }
 
@@ -257,7 +209,7 @@ abstract class _$$LoadingImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$AddPatientStateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$GfrCalculatorStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
@@ -266,18 +218,12 @@ class __$$LoadingImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
+class _$LoadingImpl implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddPatientState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'AddPatientState.loading'));
+  String toString() {
+    return 'GfrCalculatorState.loading()';
   }
 
   @override
@@ -294,14 +240,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -312,14 +251,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -330,14 +262,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -385,7 +310,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   }
 }
 
-abstract class _Loading implements AddPatientState {
+abstract class _Loading implements GfrCalculatorState {
   const factory _Loading() = _$LoadingImpl;
 }
 
@@ -394,166 +319,45 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   factory _$$LoadedImplCopyWith(
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call(
-      {List<QuestionModel> questions,
-      bool isAddedPatientSuccessfully,
-      int patientId,
-      bool isAddPatientLoading,
-      String message,
-      int snackbarErrorCounter});
 }
 
 /// @nodoc
 class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$AddPatientStateCopyWithImpl<$Res, _$LoadedImpl>
+    extends _$GfrCalculatorStateCopyWithImpl<$Res, _$LoadedImpl>
     implements _$$LoadedImplCopyWith<$Res> {
   __$$LoadedImplCopyWithImpl(
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? questions = null,
-    Object? isAddedPatientSuccessfully = null,
-    Object? patientId = null,
-    Object? isAddPatientLoading = null,
-    Object? message = null,
-    Object? snackbarErrorCounter = null,
-  }) {
-    return _then(_$LoadedImpl(
-      null == questions
-          ? _value._questions
-          : questions // ignore: cast_nullable_to_non_nullable
-              as List<QuestionModel>,
-      null == isAddedPatientSuccessfully
-          ? _value.isAddedPatientSuccessfully
-          : isAddedPatientSuccessfully // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == patientId
-          ? _value.patientId
-          : patientId // ignore: cast_nullable_to_non_nullable
-              as int,
-      null == isAddPatientLoading
-          ? _value.isAddPatientLoading
-          : isAddPatientLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == snackbarErrorCounter
-          ? _value.snackbarErrorCounter
-          : snackbarErrorCounter // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
 }
 
 /// @nodoc
 
-class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(
-      final List<QuestionModel> questions,
-      this.isAddedPatientSuccessfully,
-      this.patientId,
-      this.isAddPatientLoading,
-      this.message,
-      this.snackbarErrorCounter)
-      : _questions = questions;
-
-  final List<QuestionModel> _questions;
-  @override
-  List<QuestionModel> get questions {
-    if (_questions is EqualUnmodifiableListView) return _questions;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_questions);
-  }
+class _$LoadedImpl implements _Loaded {
+  const _$LoadedImpl();
 
   @override
-  final bool isAddedPatientSuccessfully;
-  @override
-  final int patientId;
-  @override
-  final bool isAddPatientLoading;
-  @override
-  final String message;
-  @override
-  final int snackbarErrorCounter;
-
-  @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddPatientState.loaded(questions: $questions, isAddedPatientSuccessfully: $isAddedPatientSuccessfully, patientId: $patientId, isAddPatientLoading: $isAddPatientLoading, message: $message, snackbarErrorCounter: $snackbarErrorCounter)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AddPatientState.loaded'))
-      ..add(DiagnosticsProperty('questions', questions))
-      ..add(DiagnosticsProperty(
-          'isAddedPatientSuccessfully', isAddedPatientSuccessfully))
-      ..add(DiagnosticsProperty('patientId', patientId))
-      ..add(DiagnosticsProperty('isAddPatientLoading', isAddPatientLoading))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('snackbarErrorCounter', snackbarErrorCounter));
+  String toString() {
+    return 'GfrCalculatorState.loaded()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LoadedImpl &&
-            const DeepCollectionEquality()
-                .equals(other._questions, _questions) &&
-            (identical(other.isAddedPatientSuccessfully,
-                    isAddedPatientSuccessfully) ||
-                other.isAddedPatientSuccessfully ==
-                    isAddedPatientSuccessfully) &&
-            (identical(other.patientId, patientId) ||
-                other.patientId == patientId) &&
-            (identical(other.isAddPatientLoading, isAddPatientLoading) ||
-                other.isAddPatientLoading == isAddPatientLoading) &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.snackbarErrorCounter, snackbarErrorCounter) ||
-                other.snackbarErrorCounter == snackbarErrorCounter));
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(_questions),
-      isAddedPatientSuccessfully,
-      patientId,
-      isAddPatientLoading,
-      message,
-      snackbarErrorCounter);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(questions, isAddedPatientSuccessfully, patientId,
-        isAddPatientLoading, message, snackbarErrorCounter);
+    return loaded();
   }
 
   @override
@@ -561,18 +365,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(questions, isAddedPatientSuccessfully, patientId,
-        isAddPatientLoading, message, snackbarErrorCounter);
+    return loaded?.call();
   }
 
   @override
@@ -580,20 +376,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(questions, isAddedPatientSuccessfully, patientId,
-          isAddPatientLoading, message, snackbarErrorCounter);
+      return loaded();
     }
     return orElse();
   }
@@ -636,24 +424,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   }
 }
 
-abstract class _Loaded implements AddPatientState {
-  const factory _Loaded(
-      final List<QuestionModel> questions,
-      final bool isAddedPatientSuccessfully,
-      final int patientId,
-      final bool isAddPatientLoading,
-      final String message,
-      final int snackbarErrorCounter) = _$LoadedImpl;
-
-  List<QuestionModel> get questions;
-  bool get isAddedPatientSuccessfully;
-  int get patientId;
-  bool get isAddPatientLoading;
-  String get message;
-  int get snackbarErrorCounter;
-  @JsonKey(ignore: true)
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+abstract class _Loaded implements GfrCalculatorState {
+  const factory _Loaded() = _$LoadedImpl;
 }
 
 /// @nodoc
@@ -667,7 +439,7 @@ abstract class _$$ErrorImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$ErrorImplCopyWithImpl<$Res>
-    extends _$AddPatientStateCopyWithImpl<$Res, _$ErrorImpl>
+    extends _$GfrCalculatorStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
   __$$ErrorImplCopyWithImpl(
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
@@ -689,23 +461,15 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
+class _$ErrorImpl implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AddPatientState.error(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AddPatientState.error'))
-      ..add(DiagnosticsProperty('message', message));
+  String toString() {
+    return 'GfrCalculatorState.error(message: $message)';
   }
 
   @override
@@ -730,14 +494,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -748,14 +505,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -766,14 +516,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            List<QuestionModel> questions,
-            bool isAddedPatientSuccessfully,
-            int patientId,
-            bool isAddPatientLoading,
-            String message,
-            int snackbarErrorCounter)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -821,7 +564,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   }
 }
 
-abstract class _Error implements AddPatientState {
+abstract class _Error implements GfrCalculatorState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;

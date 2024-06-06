@@ -39,6 +39,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => MoreCubit());
   sl.registerFactory(() => DoctorInfoViewCubit(sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
+  sl.registerFactory(() => GfrCalculatorCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
