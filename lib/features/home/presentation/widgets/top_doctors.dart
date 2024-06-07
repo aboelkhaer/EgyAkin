@@ -24,7 +24,10 @@ class TopDoctors extends StatelessWidget {
             builder: (context, state) {
               return state.maybeWhen(
                 orElse: () {
-                  return const SizedBox();
+                  return const ShimmerLoadingPatientsCards(
+                    ishorizontal: true,
+                    isTopDoctor: true,
+                  );
                 },
                 loaded:
                     (homeData, currentDoctorModel, dotsPosition, homeIndex) {

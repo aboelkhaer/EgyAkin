@@ -64,12 +64,12 @@ class WriteCommentField extends StatelessWidget {
                               title: AppStrings.emailVerification,
                               description: AppStrings
                                   .toAddCommentYouMustVerifyYourEmailAddress,
-                              noColoredBottonOnTap: () {
+                              noColoredButtonOnTap: () {
                                 Navigator.of(context).pop();
                               },
-                              coloredBottonText: AppStrings.verify,
-                              noColoredBottonText: AppStrings.cancel,
-                              coloredBottonOnTap: () {
+                              coloredButtonText: AppStrings.verify,
+                              noColoredButtonText: AppStrings.cancel,
+                              coloredButtonOnTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.emailVerification,
                                   arguments:
@@ -112,14 +112,14 @@ class WriteCommentField extends StatelessWidget {
                                                   AppStrings.emailVerification,
                                               description: AppStrings
                                                   .toAddCommentYouMustVerifyYourEmailAddress,
-                                              noColoredBottonOnTap: () {
+                                              noColoredButtonOnTap: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              coloredBottonText:
+                                              coloredButtonText:
                                                   AppStrings.verify,
-                                              noColoredBottonText:
+                                              noColoredButtonText:
                                                   AppStrings.cancel,
-                                              coloredBottonOnTap: () {
+                                              coloredButtonOnTap: () {
                                                 Navigator.of(context).pop();
                                                 navigatorKey.currentState
                                                     ?.pushNamed(

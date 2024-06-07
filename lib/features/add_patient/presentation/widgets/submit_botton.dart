@@ -1,8 +1,8 @@
 import '../../../../exports.dart';
 
-class SubmitBotton extends StatelessWidget {
+class SubmitButton extends StatelessWidget {
   final AddPatientCubit cubit;
-  const SubmitBotton({super.key, required this.cubit});
+  const SubmitButton({super.key, required this.cubit});
 
   @override
   Widget build(BuildContext context) {

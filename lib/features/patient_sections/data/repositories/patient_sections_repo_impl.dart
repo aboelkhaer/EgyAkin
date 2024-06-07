@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 
 import '../../../../exports.dart';
@@ -55,6 +56,24 @@ class PatientSectionsRepositoryImpl extends PatientSectionsRepository {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await patientSectionsDataSource.finalSubmit(patientId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, DownloadPatientReportModelResponse>>
+      downloadPatientReport({required String patientId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await patientSectionsDataSource.downloadPatientReport(patientId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

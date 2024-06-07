@@ -35,4 +35,5 @@ class ApiEndPoint {
   static const sendOTPForEmailVerification = '$baseUrl/api/emailverification';
   static const uploadProfileImage = '$baseUrl/api/upload-profile-image';
   static const getDoctorInfoView = '$baseUrl/api/showAnotherProfile';
+  static const downloadPatientReport = '$baseUrl/api/generatePDF';
 }

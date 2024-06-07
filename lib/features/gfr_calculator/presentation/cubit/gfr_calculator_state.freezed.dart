@@ -18,7 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$GfrCalculatorState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(int changesCount) initial,
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) error,
@@ -26,7 +26,7 @@ mixin _$GfrCalculatorState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(int changesCount)? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? error,
@@ -34,7 +34,7 @@ mixin _$GfrCalculatorState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(int changesCount)? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? error,
@@ -91,6 +91,8 @@ abstract class _$$InitialImplCopyWith<$Res> {
   factory _$$InitialImplCopyWith(
           _$InitialImpl value, $Res Function(_$InitialImpl) then) =
       __$$InitialImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int changesCount});
 }
 
 /// @nodoc
@@ -100,60 +102,85 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? changesCount = null,
+  }) {
+    return _then(_$InitialImpl(
+      null == changesCount
+          ? _value.changesCount
+          : changesCount // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$InitialImpl implements _Initial {
-  const _$InitialImpl();
+  const _$InitialImpl(this.changesCount);
+
+  @override
+  final int changesCount;
 
   @override
   String toString() {
-    return 'GfrCalculatorState.initial()';
+    return 'GfrCalculatorState.initial(changesCount: $changesCount)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$InitialImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$InitialImpl &&
+            (identical(other.changesCount, changesCount) ||
+                other.changesCount == changesCount));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, changesCount);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$InitialImplCopyWith<_$InitialImpl> get copyWith =>
+      __$$InitialImplCopyWithImpl<_$InitialImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(int changesCount) initial,
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
-    return initial();
+    return initial(changesCount);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(int changesCount)? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
-    return initial?.call();
+    return initial?.call(changesCount);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(int changesCount)? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (initial != null) {
-      return initial();
+      return initial(changesCount);
     }
     return orElse();
   }
@@ -197,7 +224,12 @@ class _$InitialImpl implements _Initial {
 }
 
 abstract class _Initial implements GfrCalculatorState {
-  const factory _Initial() = _$InitialImpl;
+  const factory _Initial(final int changesCount) = _$InitialImpl;
+
+  int get changesCount;
+  @JsonKey(ignore: true)
+  _$$InitialImplCopyWith<_$InitialImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -238,7 +270,7 @@ class _$LoadingImpl implements _Loading {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(int changesCount) initial,
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) error,
@@ -249,7 +281,7 @@ class _$LoadingImpl implements _Loading {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(int changesCount)? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? error,
@@ -260,7 +292,7 @@ class _$LoadingImpl implements _Loading {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(int changesCount)? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? error,
@@ -352,7 +384,7 @@ class _$LoadedImpl implements _Loaded {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(int changesCount) initial,
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) error,
@@ -363,7 +395,7 @@ class _$LoadedImpl implements _Loaded {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(int changesCount)? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? error,
@@ -374,7 +406,7 @@ class _$LoadedImpl implements _Loaded {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(int changesCount)? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? error,
@@ -492,7 +524,7 @@ class _$ErrorImpl implements _Error {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function() initial,
+    required TResult Function(int changesCount) initial,
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) error,
@@ -503,7 +535,7 @@ class _$ErrorImpl implements _Error {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
+    TResult? Function(int changesCount)? initial,
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? error,
@@ -514,7 +546,7 @@ class _$ErrorImpl implements _Error {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
+    TResult Function(int changesCount)? initial,
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? error,

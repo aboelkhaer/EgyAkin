@@ -33,7 +33,15 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
           listener: (context, state) {
             state.maybeWhen(
               orElse: () {},
-              loaded: (response, isDelete, isFinalSubmit, message, isLoading) {
+              loaded: (response,
+                  isDelete,
+                  isFinalSubmit,
+                  message,
+                  isLoading,
+                  reportProgress,
+                  filePath,
+                  isDownloadingReport,
+                  isDownloadedReport) {
                 if (isDelete) {
                   Navigator.pushReplacementNamed(context, AppRoutes.home,
                       arguments: 0);
@@ -54,7 +62,15 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                       fontWeight: FontWeight.bold, color: Colors.white),
                 );
               },
-              loaded: (response, isDelete, isFinalSubmit, message, isLoading) {
+              loaded: (response,
+                  isDelete,
+                  isFinalSubmit,
+                  message,
+                  isLoading,
+                  reportProgress,
+                  filePath,
+                  isDownloadingReport,
+                  isDownloadedReport) {
                 return Text(
                   response.patientName.toString(),
                   style: const TextStyle(
@@ -70,9 +86,23 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         listener: (context, state) {
           state.maybeWhen(
             orElse: () {},
-            loaded: (response, isDelete, isFinalSubmit, message, isLoading) {
+            loaded: (response,
+                isDelete,
+                isFinalSubmit,
+                message,
+                isLoading,
+                reportProgress,
+                filePath,
+                isDownloadingReport,
+                isDownloadedReport) {
               if (message.isNotEmpty) {
                 customSnackBar(context: context, message: message);
+              }
+
+              if (isDownloadedReport && reportProgress == 1.0) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('PDF downloaded: $filePath')),
+                );
               }
             },
           );
@@ -82,7 +112,15 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: false);
             },
-            loaded: (response, isDelete, isFinalSubmit, message, isLoading) {
+            loaded: (response,
+                isDelete,
+                isFinalSubmit,
+                message,
+                isLoading,
+                reportProgress,
+                filePath,
+                isDownloadingReport,
+                isDownloadedReport) {
               if (isLoading) {
                 return const ShimmerLoadingPatientsCards(ishorizontal: false);
               } else {
@@ -136,22 +174,57 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                           orElse: () {
                             return const SizedBox.shrink();
                           },
-                          loaded: (response, isDelete, isFinalSubmit, message,
-                              isLoading) {
+                          loaded: (response,
+                              isDelete,
+                              isFinalSubmit,
+                              message,
+                              isLoading,
+                              reportProgress,
+                              filePath,
+                              isDownloadingReport,
+                              isDownloadedReport) {
                             if ((response.doctorId.toString() ==
                                     widget.currentDoctorModel.id.toString()) &&
                                 (response.submitStatus != null &&
                                     !response.submitStatus!)) {
-                              return FooterBottons(
+                              return FooterButtons(
                                 currentDoctorId:
                                     widget.currentDoctorModel.id.toString(),
                                 doctorId: response.doctorId!,
                                 patientName: response.patientName!,
                                 cubit: cubit,
                                 patientId: widget.patientId,
+                                finalSubmit: response.submitStatus!,
                               );
                             }
-                            return const SizedBox.shrink();
+                            if (isDownloadingReport) {
+                              return SizedBox(
+                                height: 100.h,
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text('Downloading...'),
+                                      const SizedBox(height: 10),
+                                      LinearProgressIndicator(
+                                          value: reportProgress),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                          '${(reportProgress * 100).toStringAsFixed(0)}%'),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            return FooterButtons(
+                              currentDoctorId:
+                                  widget.currentDoctorModel.id.toString(),
+                              doctorId: response.doctorId!,
+                              patientName: response.patientName!,
+                              cubit: cubit,
+                              patientId: widget.patientId,
+                              finalSubmit: response.submitStatus!,
+                            );
                           },
                         );
                       },

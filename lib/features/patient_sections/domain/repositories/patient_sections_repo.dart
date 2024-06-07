@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 
 import '../../../../exports.dart';
@@ -12,6 +13,10 @@ abstract class PatientSectionsRepository {
     required String patientId,
   });
   Future<Either<Failure, FinalSubmitModelResponse>> finalSubmit({
+    required String patientId,
+  });
+  Future<Either<Failure, DownloadPatientReportModelResponse>>
+      downloadPatientReport({
     required String patientId,
   });
 }

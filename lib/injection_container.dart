@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -12,6 +14,7 @@ Future<void> diInit() async {
   sl.registerLazySingleton<AppPreferences>(() => AppPreferences(sl()));
   sl.registerLazySingleton<DioFactory>(() => DioFactory(appPreferences: sl()));
   Dio dio = await sl<DioFactory>().getDio();
+  sl.registerLazySingleton(() => dio);
   sl.registerLazySingleton<ApiServices>(() => ApiServices(dio));
   sl.registerLazySingleton(() => InternetConnectionChecker());
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
@@ -28,7 +31,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
   sl.registerFactory(() => PostDetailsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => AddPatientCubit(sl(), sl()));
-  sl.registerFactory(() => PatientSectionsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => PatientSectionsCubit(sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => PatientCommentsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => OutcomeCubit(sl(), sl()));
@@ -40,6 +43,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => DoctorInfoViewCubit(sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
+  sl.registerFactory(() => ChangePasswordCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -238,5 +242,9 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<AddContactUsUsecase>()) {
     sl.registerFactory<AddContactUsUsecase>(() => AddContactUsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DownloadPatientReportUsecase>()) {
+    sl.registerFactory<DownloadPatientReportUsecase>(
+        () => DownloadPatientReportUsecase(sl()));
   }
 }

@@ -34,15 +34,15 @@ class CommentCard extends StatelessWidget {
                 context: context,
                 title: 'Delete',
                 description: 'Are you sure to delete comment?',
-                noColoredBottonOnTap: () {
+                noColoredButtonOnTap: () {
                   Navigator.of(context).pop();
 
                   onDelete();
                 },
-                coloredBottonText: 'Cancel',
-                noColoredBottonText: 'Delete',
+                coloredButtonText: 'Cancel',
+                noColoredButtonText: 'Delete',
                 isNoColorShow: true,
-                coloredBottonOnTap: () => Navigator.of(context).pop());
+                coloredButtonOnTap: () => Navigator.of(context).pop());
           }
         },
         onTap: () {},

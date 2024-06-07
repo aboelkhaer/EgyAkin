@@ -51,7 +51,10 @@ class MoreScreen extends StatelessWidget {
                   Icons.arrow_forward_ios,
                   size: 15.r,
                 ),
-                onTap: () {},
+                onTap: () {
+                  navigatorKey.currentState
+                      ?.pushNamed(AppRoutes.changePassword);
+                },
               ),
               ListTile(
                 title: const Text('Email verification'),

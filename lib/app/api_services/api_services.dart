@@ -12,6 +12,7 @@ import 'package:egy_akin/features/patient_comments/data/models/delete_patient_co
 import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/update_patient_section_details_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
 
@@ -195,5 +196,10 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.getDoctorInfoView}/{doctorId}')
   Future<DoctorInfoViewModelResponse> getDoctorInfoView(
     @Path("doctorId") String doctorId,
+  );
+
+  @GET('${ApiEndPoint.downloadPatientReport}/{patientId}')
+  Future<DownloadPatientReportModelResponse> downloadPatientReport(
+    @Path("patientId") String patientId,
   );
 }

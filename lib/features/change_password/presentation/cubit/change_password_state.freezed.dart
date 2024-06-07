@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'patient_sections_state.dart';
+part of 'change_password_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,22 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$PatientSectionsState {
+mixin _$ChangePasswordState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -38,17 +28,7 @@ mixin _$PatientSectionsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -56,17 +36,7 @@ mixin _$PatientSectionsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -99,17 +69,16 @@ mixin _$PatientSectionsState {
 }
 
 /// @nodoc
-abstract class $PatientSectionsStateCopyWith<$Res> {
-  factory $PatientSectionsStateCopyWith(PatientSectionsState value,
-          $Res Function(PatientSectionsState) then) =
-      _$PatientSectionsStateCopyWithImpl<$Res, PatientSectionsState>;
+abstract class $ChangePasswordStateCopyWith<$Res> {
+  factory $ChangePasswordStateCopyWith(
+          ChangePasswordState value, $Res Function(ChangePasswordState) then) =
+      _$ChangePasswordStateCopyWithImpl<$Res, ChangePasswordState>;
 }
 
 /// @nodoc
-class _$PatientSectionsStateCopyWithImpl<$Res,
-        $Val extends PatientSectionsState>
-    implements $PatientSectionsStateCopyWith<$Res> {
-  _$PatientSectionsStateCopyWithImpl(this._value, this._then);
+class _$ChangePasswordStateCopyWithImpl<$Res, $Val extends ChangePasswordState>
+    implements $ChangePasswordStateCopyWith<$Res> {
+  _$ChangePasswordStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
@@ -126,7 +95,7 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$PatientSectionsStateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$ChangePasswordStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
@@ -140,13 +109,13 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientSectionsState.initial()';
+    return 'ChangePasswordState.initial()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'PatientSectionsState.initial'));
+    properties.add(DiagnosticsProperty('type', 'ChangePasswordState.initial'));
   }
 
   @override
@@ -163,17 +132,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -184,17 +143,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -205,17 +154,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -263,7 +202,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   }
 }
 
-abstract class _Initial implements PatientSectionsState {
+abstract class _Initial implements ChangePasswordState {
   const factory _Initial() = _$InitialImpl;
 }
 
@@ -276,7 +215,7 @@ abstract class _$$LoadingImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$PatientSectionsStateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$ChangePasswordStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
@@ -290,13 +229,13 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientSectionsState.loading()';
+    return 'ChangePasswordState.loading()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'PatientSectionsState.loading'));
+    properties.add(DiagnosticsProperty('type', 'ChangePasswordState.loading'));
   }
 
   @override
@@ -313,17 +252,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -334,17 +263,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -355,17 +274,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -413,7 +322,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   }
 }
 
-abstract class _Loading implements PatientSectionsState {
+abstract class _Loading implements ChangePasswordState {
   const factory _Loading() = _$LoadingImpl;
 }
 
@@ -422,209 +331,51 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   factory _$$LoadedImplCopyWith(
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call(
-      {GetPatientSectionsModelResponse response,
-      bool isDelete,
-      bool isFinalSubmit,
-      String message,
-      bool isLoading,
-      double reportProgress,
-      String filePath,
-      bool isDownloadingReport,
-      bool isDownloadedReport});
-
-  $GetPatientSectionsModelResponseCopyWith<$Res> get response;
 }
 
 /// @nodoc
 class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$PatientSectionsStateCopyWithImpl<$Res, _$LoadedImpl>
+    extends _$ChangePasswordStateCopyWithImpl<$Res, _$LoadedImpl>
     implements _$$LoadedImplCopyWith<$Res> {
   __$$LoadedImplCopyWithImpl(
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
-
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? response = null,
-    Object? isDelete = null,
-    Object? isFinalSubmit = null,
-    Object? message = null,
-    Object? isLoading = null,
-    Object? reportProgress = null,
-    Object? filePath = null,
-    Object? isDownloadingReport = null,
-    Object? isDownloadedReport = null,
-  }) {
-    return _then(_$LoadedImpl(
-      null == response
-          ? _value.response
-          : response // ignore: cast_nullable_to_non_nullable
-              as GetPatientSectionsModelResponse,
-      null == isDelete
-          ? _value.isDelete
-          : isDelete // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == isFinalSubmit
-          ? _value.isFinalSubmit
-          : isFinalSubmit // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == reportProgress
-          ? _value.reportProgress
-          : reportProgress // ignore: cast_nullable_to_non_nullable
-              as double,
-      null == filePath
-          ? _value.filePath
-          : filePath // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == isDownloadingReport
-          ? _value.isDownloadingReport
-          : isDownloadingReport // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == isDownloadedReport
-          ? _value.isDownloadedReport
-          : isDownloadedReport // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $GetPatientSectionsModelResponseCopyWith<$Res> get response {
-    return $GetPatientSectionsModelResponseCopyWith<$Res>(_value.response,
-        (value) {
-      return _then(_value.copyWith(response: value));
-    });
-  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(
-      this.response,
-      this.isDelete,
-      this.isFinalSubmit,
-      this.message,
-      this.isLoading,
-      this.reportProgress,
-      this.filePath,
-      this.isDownloadingReport,
-      this.isDownloadedReport);
-
-  @override
-  final GetPatientSectionsModelResponse response;
-  @override
-  final bool isDelete;
-  @override
-  final bool isFinalSubmit;
-  @override
-  final String message;
-  @override
-  final bool isLoading;
-  @override
-  final double reportProgress;
-  @override
-  final String filePath;
-  @override
-  final bool isDownloadingReport;
-  @override
-  final bool isDownloadedReport;
+  const _$LoadedImpl();
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientSectionsState.loaded(response: $response, isDelete: $isDelete, isFinalSubmit: $isFinalSubmit, message: $message, isLoading: $isLoading, reportProgress: $reportProgress, filePath: $filePath, isDownloadingReport: $isDownloadingReport, isDownloadedReport: $isDownloadedReport)';
+    return 'ChangePasswordState.loaded()';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PatientSectionsState.loaded'))
-      ..add(DiagnosticsProperty('response', response))
-      ..add(DiagnosticsProperty('isDelete', isDelete))
-      ..add(DiagnosticsProperty('isFinalSubmit', isFinalSubmit))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('isLoading', isLoading))
-      ..add(DiagnosticsProperty('reportProgress', reportProgress))
-      ..add(DiagnosticsProperty('filePath', filePath))
-      ..add(DiagnosticsProperty('isDownloadingReport', isDownloadingReport))
-      ..add(DiagnosticsProperty('isDownloadedReport', isDownloadedReport));
+    properties.add(DiagnosticsProperty('type', 'ChangePasswordState.loaded'));
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$LoadedImpl &&
-            (identical(other.response, response) ||
-                other.response == response) &&
-            (identical(other.isDelete, isDelete) ||
-                other.isDelete == isDelete) &&
-            (identical(other.isFinalSubmit, isFinalSubmit) ||
-                other.isFinalSubmit == isFinalSubmit) &&
-            (identical(other.message, message) || other.message == message) &&
-            (identical(other.isLoading, isLoading) ||
-                other.isLoading == isLoading) &&
-            (identical(other.reportProgress, reportProgress) ||
-                other.reportProgress == reportProgress) &&
-            (identical(other.filePath, filePath) ||
-                other.filePath == filePath) &&
-            (identical(other.isDownloadingReport, isDownloadingReport) ||
-                other.isDownloadingReport == isDownloadingReport) &&
-            (identical(other.isDownloadedReport, isDownloadedReport) ||
-                other.isDownloadedReport == isDownloadedReport));
+        (other.runtimeType == runtimeType && other is _$LoadedImpl);
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      response,
-      isDelete,
-      isFinalSubmit,
-      message,
-      isLoading,
-      reportProgress,
-      filePath,
-      isDownloadingReport,
-      isDownloadedReport);
-
-  @JsonKey(ignore: true)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
+  int get hashCode => runtimeType.hashCode;
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isDelete, isFinalSubmit, message, isLoading,
-        reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+    return loaded();
   }
 
   @override
@@ -632,21 +383,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isDelete, isFinalSubmit, message, isLoading,
-        reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+    return loaded?.call();
   }
 
   @override
@@ -654,23 +394,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isDelete, isFinalSubmit, message, isLoading,
-          reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+      return loaded();
     }
     return orElse();
   }
@@ -713,30 +442,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   }
 }
 
-abstract class _Loaded implements PatientSectionsState {
-  const factory _Loaded(
-      final GetPatientSectionsModelResponse response,
-      final bool isDelete,
-      final bool isFinalSubmit,
-      final String message,
-      final bool isLoading,
-      final double reportProgress,
-      final String filePath,
-      final bool isDownloadingReport,
-      final bool isDownloadedReport) = _$LoadedImpl;
-
-  GetPatientSectionsModelResponse get response;
-  bool get isDelete;
-  bool get isFinalSubmit;
-  String get message;
-  bool get isLoading;
-  double get reportProgress;
-  String get filePath;
-  bool get isDownloadingReport;
-  bool get isDownloadedReport;
-  @JsonKey(ignore: true)
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+abstract class _Loaded implements ChangePasswordState {
+  const factory _Loaded() = _$LoadedImpl;
 }
 
 /// @nodoc
@@ -750,7 +457,7 @@ abstract class _$$ErrorImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$ErrorImplCopyWithImpl<$Res>
-    extends _$PatientSectionsStateCopyWithImpl<$Res, _$ErrorImpl>
+    extends _$ChangePasswordStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
   __$$ErrorImplCopyWithImpl(
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
@@ -780,14 +487,14 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PatientSectionsState.error(message: $message)';
+    return 'ChangePasswordState.error(message: $message)';
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties
-      ..add(DiagnosticsProperty('type', 'PatientSectionsState.error'))
+      ..add(DiagnosticsProperty('type', 'ChangePasswordState.error'))
       ..add(DiagnosticsProperty('message', message));
   }
 
@@ -813,17 +520,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)
-        loaded,
+    required TResult Function() loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -834,17 +531,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult? Function()? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -855,17 +542,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(
-            GetPatientSectionsModelResponse response,
-            bool isDelete,
-            bool isFinalSubmit,
-            String message,
-            bool isLoading,
-            double reportProgress,
-            String filePath,
-            bool isDownloadingReport,
-            bool isDownloadedReport)?
-        loaded,
+    TResult Function()? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -913,7 +590,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   }
 }
 
-abstract class _Error implements PatientSectionsState {
+abstract class _Error implements ChangePasswordState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;

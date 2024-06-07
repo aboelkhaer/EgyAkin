@@ -11,7 +11,11 @@ abstract class PatientSectionsState with _$PatientSectionsState {
       bool isDelete,
       bool isFinalSubmit,
       String message,
-      bool isLoading) = _Loaded;
+      bool isLoading,
+      double reportProgress,
+      String filePath,
+      bool isDownloadingReport,
+      bool isDownloadedReport) = _Loaded;
 
   const factory PatientSectionsState.error(String message) = _Error;
 }

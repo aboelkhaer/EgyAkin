@@ -190,9 +190,9 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                       context: context,
                       title: 'Attention!',
                       description: message,
-                      coloredBottonText: 'Cancel',
+                      coloredButtonText: 'Cancel',
                       isNoColorShow: false,
-                      coloredBottonOnTap: () {
+                      coloredButtonOnTap: () {
                         Navigator.of(context).pop();
                       },
                     );

@@ -181,9 +181,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                         context: context,
                         title: 'Attention!',
                         description: message,
-                        coloredBottonText: 'Cancel',
+                        coloredButtonText: 'Cancel',
                         isNoColorShow: false,
-                        coloredBottonOnTap: () {
+                        coloredButtonOnTap: () {
                           Navigator.of(context).pop();
                         },
                       );
@@ -205,13 +205,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                           ],
                         );
                       } else {
-                        return SubmitBotton(
+                        return SubmitButton(
                           cubit: cubit,
                         );
                       }
                     },
                     orElse: () {
-                      return SubmitBotton(
+                      return SubmitButton(
                         cubit: cubit,
                       );
                     },

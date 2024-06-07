@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
+import 'package:egy_akin/features/change_password/presentation/pages/change_password_screen.dart';
 import 'package:egy_akin/features/gfr_calculator/presentation/pages/gfr_calculator_screen.dart';
 
 import '../../exports.dart';
@@ -27,6 +29,7 @@ class AppRoutes {
   static const String emailVerification = '/emailVerification';
   static const String doctorInfoView = '/doctorInfoView';
   static const String gfrCalculator = '/gfrCalculator';
+  static const String changePassword = '/changePassword';
 }
 
 class RouteGenerator {
@@ -414,6 +417,13 @@ class RouteGenerator {
           builder: (_) => BlocProvider<GfrCalculatorCubit>(
             create: (context) => di.sl<GfrCalculatorCubit>(),
             child: const GfrCalculatorScreen(),
+          ),
+        );
+      case AppRoutes.changePassword:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<ChangePasswordCubit>(
+            create: (context) => di.sl<ChangePasswordCubit>(),
+            child: const ChangePasswordScreen(),
           ),
         );
 

@@ -93,12 +93,12 @@ class AddCommentField extends StatelessWidget {
                                 title: 'Email verification',
                                 description:
                                     'To add comment you must verify your email address',
-                                noColoredBottonOnTap: () {
+                                noColoredButtonOnTap: () {
                                   Navigator.of(context).pop();
                                 },
-                                coloredBottonText: 'Verify',
-                                noColoredBottonText: 'Cancel',
-                                coloredBottonOnTap: () {
+                                coloredButtonText: 'Verify',
+                                noColoredButtonText: 'Cancel',
+                                coloredButtonOnTap: () {
                                   // Get.offAndToNamed(AppRoutes.emailVerification);
                                 },
                               );

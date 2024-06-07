@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 
 import '../../../../exports.dart';
@@ -7,6 +8,8 @@ abstract class PatientSectionsDataSource {
   Future<GetPatientSectionsModelResponse> getPatientSections(String patientId);
   Future<DeletePatientModelResponse> deletePatient(String patientId);
   Future<FinalSubmitModelResponse> finalSubmit(String patientId);
+  Future<DownloadPatientReportModelResponse> downloadPatientReport(
+      String patientId);
 }
 
 class PatientSectionsDataSourceImpl implements PatientSectionsDataSource {
@@ -28,5 +31,11 @@ class PatientSectionsDataSourceImpl implements PatientSectionsDataSource {
   @override
   Future<FinalSubmitModelResponse> finalSubmit(String patientId) async {
     return await _apiServices.finalSubmit(patientId);
+  }
+
+  @override
+  Future<DownloadPatientReportModelResponse> downloadPatientReport(
+      String patientId) async {
+    return await _apiServices.downloadPatientReport(patientId);
   }
 }

@@ -184,12 +184,12 @@ class HomeHeader extends StatelessWidget {
                           title: AppStrings.emailVerification,
                           description: AppStrings
                               .toAddPatientsYouMustVerifyYourEmailAddress,
-                          noColoredBottonOnTap: () {
+                          noColoredButtonOnTap: () {
                             Navigator.of(context).pop();
                           },
-                          coloredBottonText: AppStrings.verify,
-                          noColoredBottonText: AppStrings.cancel,
-                          coloredBottonOnTap: () {
+                          coloredButtonText: AppStrings.verify,
+                          noColoredButtonText: AppStrings.cancel,
+                          coloredButtonOnTap: () {
                             Navigator.of(context).pop();
                             navigatorKey.currentState?.pushNamed(
                                 AppRoutes.emailVerification,

@@ -4,12 +4,12 @@ showCustomDialog(
     {required BuildContext context,
     required String title,
     required var description,
-    VoidCallback? noColoredBottonOnTap,
-    required String coloredBottonText,
-    String? noColoredBottonText,
+    VoidCallback? noColoredButtonOnTap,
+    required String coloredButtonText,
+    String? noColoredButtonText,
     bool isNoColorShow = true,
-    bool isColoredBottonDisable = false,
-    required VoidCallback coloredBottonOnTap}) {
+    bool isColoredButtonDisable = false,
+    required VoidCallback coloredButtonOnTap}) {
   Size size = MediaQuery.of(context).size;
   return showGeneralDialog(
       barrierColor: Colors.black.withOpacity(0.5),
@@ -24,18 +24,18 @@ showCustomDialog(
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
               title: Text(title),
               scrollable: true,
-              content: discriptionWidget(description),
+              content: descriptionWidget(description),
               actions: [
                 isNoColorShow
                     ? TextButton(
-                        onPressed: noColoredBottonOnTap,
+                        onPressed: noColoredButtonOnTap,
                         style: ButtonStyle(
                           overlayColor: MaterialStateColor.resolveWith(
                             (states) => Colors.transparent,
                           ),
                         ),
                         child: Text(
-                          noColoredBottonText!,
+                          noColoredButtonText!,
                           style: TextStyle(
                             color: Colors.grey.shade600,
                           ),
@@ -44,9 +44,9 @@ showCustomDialog(
                 SizedBox(
                   width: size.width * 0.25,
                   child: CustomElevatedButton(
-                    onPressed: coloredBottonOnTap,
-                    title: coloredBottonText,
-                    isDisable: isColoredBottonDisable,
+                    onPressed: coloredButtonOnTap,
+                    title: coloredButtonText,
+                    isDisable: isColoredButtonDisable,
                   ),
                 ),
               ],
@@ -64,7 +64,7 @@ showCustomDialog(
       });
 }
 
-Widget discriptionWidget(var description) {
+Widget descriptionWidget(var description) {
   if (description is String) {
     return Text(
       description,
