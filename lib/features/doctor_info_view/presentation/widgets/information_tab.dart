@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
 
 import '../../../../exports.dart';

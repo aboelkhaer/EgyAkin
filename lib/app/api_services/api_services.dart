@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
+import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
 import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
 import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
 import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
+import 'package:egy_akin/features/home/data/models/upload_syndicate_card_model_response.dart';
 import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
 import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
 import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
@@ -15,6 +17,7 @@ import 'package:egy_akin/features/patient_sections/data/models/delete_patient_mo
 import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
+import 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 
 import 'package:retrofit/http.dart';
 import '../../exports.dart';
@@ -201,5 +204,20 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.downloadPatientReport}/{patientId}')
   Future<DownloadPatientReportModelResponse> downloadPatientReport(
     @Path("patientId") String patientId,
+  );
+
+  @GET(ApiEndPoint.appSettings)
+  Future<GetAppSettingsModelResponse> getAppSettings();
+
+  @POST(ApiEndPoint.uploadSyndicateCard)
+  @MultiPart()
+  Future<UploadSyndicateCardModelResponse> uploadSyndicateCard(
+    @Part(name: "syndicate_card") File image,
+  );
+
+  @POST(ApiEndPoint.changePasswordFeature)
+  Future<ChangePasswordModelResponse> changePasswordFeature(
+    @Field("current_password") String oldPassword,
+    @Field("new_password") String newPassword,
   );
 }

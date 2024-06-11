@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/home/data/models/upload_syndicate_card_model_response.dart';
 import '../../../../exports.dart';
 
 class HomeRepositoryImpl extends HomeRepository {
@@ -14,6 +17,23 @@ class HomeRepositoryImpl extends HomeRepository {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await homeDataSource.getHome();
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, UploadSyndicateCardModelResponse>> uploadSyndicateCard(
+      {required File image}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await homeDataSource.uploadSyndicateCard(image: image);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

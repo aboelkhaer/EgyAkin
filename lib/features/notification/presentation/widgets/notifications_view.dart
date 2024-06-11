@@ -5,11 +5,13 @@ class NotificationsView extends StatelessWidget {
   final List<NotificationsModel> notificationsModel;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
   const NotificationsView(
       {super.key,
       required this.notificationsModel,
       required this.currentDoctorModel,
-      required this.accountVerification});
+      required this.accountVerification,
+      required this.isSyndicateCardRequired});
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +27,7 @@ class NotificationsView extends StatelessWidget {
             notificationModel: notificationsModel[index],
             currentDoctorModel: currentDoctorModel,
             accountVerification: accountVerification,
+            isSyndicateCardRequired: isSyndicateCardRequired,
           );
         },
       ),

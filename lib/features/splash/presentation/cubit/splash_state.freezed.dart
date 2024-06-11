@@ -19,19 +19,25 @@ mixin _$SplashState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(bool isAuthentication, bool isWelcomed) loaded,
+    required TResult Function(bool isAuthentication, bool isWelcomed,
+            bool isAppFreeze, bool isForceUpdate)
+        loaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult? Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -113,7 +119,9 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(bool isAuthentication, bool isWelcomed) loaded,
+    required TResult Function(bool isAuthentication, bool isWelcomed,
+            bool isAppFreeze, bool isForceUpdate)
+        loaded,
   }) {
     return loading();
   }
@@ -122,7 +130,9 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult? Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
   }) {
     return loading?.call();
   }
@@ -131,7 +141,9 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -182,7 +194,11 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({bool isAuthentication, bool isWelcomed});
+  $Res call(
+      {bool isAuthentication,
+      bool isWelcomed,
+      bool isAppFreeze,
+      bool isForceUpdate});
 }
 
 /// @nodoc
@@ -198,6 +214,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? isAuthentication = null,
     Object? isWelcomed = null,
+    Object? isAppFreeze = null,
+    Object? isForceUpdate = null,
   }) {
     return _then(_$LoadedImpl(
       null == isAuthentication
@@ -208,6 +226,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isWelcomed
           : isWelcomed // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isAppFreeze
+          ? _value.isAppFreeze
+          : isAppFreeze // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isForceUpdate
+          ? _value.isForceUpdate
+          : isForceUpdate // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -215,16 +241,21 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.isAuthentication, this.isWelcomed);
+  const _$LoadedImpl(this.isAuthentication, this.isWelcomed, this.isAppFreeze,
+      this.isForceUpdate);
 
   @override
   final bool isAuthentication;
   @override
   final bool isWelcomed;
+  @override
+  final bool isAppFreeze;
+  @override
+  final bool isForceUpdate;
 
   @override
   String toString() {
-    return 'SplashState.loaded(isAuthentication: $isAuthentication, isWelcomed: $isWelcomed)';
+    return 'SplashState.loaded(isAuthentication: $isAuthentication, isWelcomed: $isWelcomed, isAppFreeze: $isAppFreeze, isForceUpdate: $isForceUpdate)';
   }
 
   @override
@@ -235,11 +266,16 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isAuthentication, isAuthentication) ||
                 other.isAuthentication == isAuthentication) &&
             (identical(other.isWelcomed, isWelcomed) ||
-                other.isWelcomed == isWelcomed));
+                other.isWelcomed == isWelcomed) &&
+            (identical(other.isAppFreeze, isAppFreeze) ||
+                other.isAppFreeze == isAppFreeze) &&
+            (identical(other.isForceUpdate, isForceUpdate) ||
+                other.isForceUpdate == isForceUpdate));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isAuthentication, isWelcomed);
+  int get hashCode => Object.hash(
+      runtimeType, isAuthentication, isWelcomed, isAppFreeze, isForceUpdate);
 
   @JsonKey(ignore: true)
   @override
@@ -251,29 +287,36 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
-    required TResult Function(bool isAuthentication, bool isWelcomed) loaded,
+    required TResult Function(bool isAuthentication, bool isWelcomed,
+            bool isAppFreeze, bool isForceUpdate)
+        loaded,
   }) {
-    return loaded(isAuthentication, isWelcomed);
+    return loaded(isAuthentication, isWelcomed, isAppFreeze, isForceUpdate);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? loading,
-    TResult? Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult? Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
   }) {
-    return loaded?.call(isAuthentication, isWelcomed);
+    return loaded?.call(
+        isAuthentication, isWelcomed, isAppFreeze, isForceUpdate);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? loading,
-    TResult Function(bool isAuthentication, bool isWelcomed)? loaded,
+    TResult Function(bool isAuthentication, bool isWelcomed, bool isAppFreeze,
+            bool isForceUpdate)?
+        loaded,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(isAuthentication, isWelcomed);
+      return loaded(isAuthentication, isWelcomed, isAppFreeze, isForceUpdate);
     }
     return orElse();
   }
@@ -311,11 +354,13 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements SplashState {
-  const factory _Loaded(final bool isAuthentication, final bool isWelcomed) =
-      _$LoadedImpl;
+  const factory _Loaded(final bool isAuthentication, final bool isWelcomed,
+      final bool isAppFreeze, final bool isForceUpdate) = _$LoadedImpl;
 
   bool get isAuthentication;
   bool get isWelcomed;
+  bool get isAppFreeze;
+  bool get isForceUpdate;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;

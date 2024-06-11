@@ -1,21 +1,6 @@
 export 'dart:async';
 
 export 'package:egy_akin/app/api_services/api_services.dart';
-export 'package:egy_akin/app/app_models/base_response/base_response.dart';
-export 'package:egy_akin/app/app_models/comments/base_comment_model.dart';
-export 'package:egy_akin/app/app_models/doctor_model/base_doctor_model.dart';
-export 'package:egy_akin/app/app_models/doctor_model/doctor_model.dart';
-export 'package:egy_akin/app/app_models/patient_model/base_patient_model.dart';
-export 'package:egy_akin/app/app_models/posts/base_post_model.dart';
-export 'package:egy_akin/app/app_models/responses/add_contact_us_model.dart';
-export 'package:egy_akin/app/app_models/responses/get_all_patients.dart';
-export 'package:egy_akin/app/app_models/responses/get_base_sections_model.dart';
-export 'package:egy_akin/app/app_models/responses/get_doctor_model.dart';
-export 'package:egy_akin/app/app_models/responses/get_doctor_with_token.dart';
-export 'package:egy_akin/app/app_models/responses/get_notification_model.dart';
-export 'package:egy_akin/app/app_models/responses/semi_patient_model.dart';
-export 'package:egy_akin/app/app_models/responses/update_notifications_model.dart';
-export 'package:egy_akin/app/app_models/section_model/base_section_model.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'package:egy_akin/app/constants/api_end_point.dart';
 export 'package:egy_akin/app/constants/app_color.dart';
@@ -54,7 +39,6 @@ export 'app/utilities/custom_snack_bar.dart';
 export 'package:cached_network_image/cached_network_image.dart';
 export 'package:dots_indicator/dots_indicator.dart';
 export 'package:lottie/lottie.dart';
-export 'package:egy_akin/app/app_models/notification/base_notification_model.dart';
 export 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 export 'package:egy_akin/app/utilities/lunch_url.dart';
 export 'package:egy_akin/app/utilities/app_theme.dart';
@@ -146,7 +130,6 @@ export 'package:egy_akin/features/home/presentation/widgets/all_patient_section.
 export 'package:egy_akin/features/home/presentation/widgets/home_patient_title_header.dart';
 export 'package:egy_akin/features/email_verification/presentation/cubit/email_verification_cubit.dart';
 export 'package:egy_akin/features/home/data/repositories/home_repo_impl.dart';
-export 'package:egy_akin/features/home/domain/usecases/get_notifications_usecase.dart';
 export 'package:egy_akin/features/notification/data/repositories/notification_repo_impl.dart';
 export 'package:egy_akin/features/notification/domain/usecases/get_all_notifications_usecase.dart';
 export 'package:egy_akin/features/notification/domain/usecases/update_notification_usecase.dart';
@@ -286,3 +269,4 @@ export 'package:egy_akin/features/doctor_profile_view/presentation/pages/doctor_
 export 'package:egy_akin/features/outcome/presentation/pages/outcome_screen.dart';
 export 'package:egy_akin/features/patient_section_details/presentation/pages/patient_section_details_screen.dart';
 export 'package:egy_akin/features/search/presentation/pages/search_screen.dart';
+export 'package:animate_do/animate_do.dart';

@@ -3,11 +3,13 @@ import '../../../../exports.dart';
 class SearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
 
   const SearchScreen({
     super.key,
     required this.currentDoctorModel,
     required this.accountVerification,
+    required this.isSyndicateCardRequired,
   });
 
   @override
@@ -250,6 +252,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                   currentDoctorModel: widget.currentDoctorModel,
                                   verified: widget.accountVerification,
                                   patientName: patient.name.toString(),
+                                  isSyndicateCardRequired:
+                                      widget.isSyndicateCardRequired,
                                 ),
                               );
                             },

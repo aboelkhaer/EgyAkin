@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
@@ -103,24 +104,27 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     ),
                                   );
                                 },
-                                child: CircleAvatar(
-                                  radius: 45.r,
-                                  backgroundColor:
-                                      AppColors.primary.withOpacity(0.8),
-                                  child: doctorInfo.data!.image == null
-                                      ? Text(
-                                          doctorInfo.data!.firstName == null
-                                              ? ''
-                                              : doctorInfo.data!.firstName![0]
-                                                  .toUpperCase(),
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.sp),
-                                        )
-                                      : CustomCachedNetworkImage(
-                                          imageUrl:
-                                              doctorInfo.data!.image.toString(),
-                                        ),
+                                child: FadeIn(
+                                  duration: const Duration(milliseconds: 300),
+                                  child: CircleAvatar(
+                                    radius: 45.r,
+                                    backgroundColor:
+                                        AppColors.primary.withOpacity(0.8),
+                                    child: doctorInfo.data!.image == null
+                                        ? Text(
+                                            doctorInfo.data!.firstName == null
+                                                ? ''
+                                                : doctorInfo.data!.firstName![0]
+                                                    .toUpperCase(),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp),
+                                          )
+                                        : CustomCachedNetworkImage(
+                                            imageUrl: doctorInfo.data!.image
+                                                .toString(),
+                                          ),
+                                  ),
                                 ),
                               ),
                             );
@@ -144,12 +148,34 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                         );
                       },
                       loaded: (doctorInfo) {
-                        return Text(
-                          'Dr.${capitalizeFirstText(doctorInfo.data!.firstName!)} ${capitalizeFirstText(doctorInfo.data!.lastName!)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Dr.${capitalizeFirstText(doctorInfo.data!.firstName!)} ${capitalizeFirstText(doctorInfo.data!.lastName!)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            doctorInfo.data!.isSyndicateCardRequired ==
+                                    'Verified'
+                                ? Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 3),
+                                    child: FadeIn(
+                                      duration:
+                                          const Duration(milliseconds: 300),
+                                      child: Image.asset(
+                                        AppImages.verified,
+                                        height: 20,
+                                        width: 20,
+                                        color: Colors.green.shade600,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ],
                         );
                       },
                     );

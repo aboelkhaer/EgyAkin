@@ -36,4 +36,9 @@ class ApiEndPoint {
   static const uploadProfileImage = '$baseUrl/api/upload-profile-image';
   static const getDoctorInfoView = '$baseUrl/api/showAnotherProfile';
   static const downloadPatientReport = '$baseUrl/api/generatePDF';
+  static const appSettings = '$baseUrl/api/settings';
+  static const uploadSyndicateCard = '$baseUrl/api/uploadSyndicateCard';
+  static const changePasswordFeature = '$baseUrl/api/changePassword';
+  static const getPatientForSpecificDoctor =
+      '$baseUrl/api/doctorProfileGetPatients';
 }

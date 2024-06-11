@@ -66,7 +66,7 @@ class FooterButtons extends StatelessWidget {
                           onPressed: () {
                             cubit.downloadPatientReport(patientId);
                           },
-                          title: 'Download report',
+                          title: 'Request report',
                           // isDisable: doctorId == currentDoctorId ? false : true,
                         )
                       : CustomElevatedButton(

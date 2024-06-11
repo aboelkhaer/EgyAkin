@@ -1,10 +1,15 @@
 import 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
+import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 
 import '../../../../exports.dart';
 
 class MoreScreen extends StatelessWidget {
   final DoctorModel currentDoctorModel;
-  const MoreScreen({super.key, required this.currentDoctorModel});
+  final bool accountVerification;
+  const MoreScreen(
+      {super.key,
+      required this.currentDoctorModel,
+      required this.accountVerification});
 
   @override
   Widget build(BuildContext context) {
@@ -56,21 +61,28 @@ class MoreScreen extends StatelessWidget {
                       ?.pushNamed(AppRoutes.changePassword);
                 },
               ),
-              ListTile(
-                title: const Text('Email verification'),
-                leading: Icon(
-                  Icons.verified,
-                  color: Colors.grey.shade600,
-                ),
-                trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 15.r,
-                ),
-                onTap: () {
-                  navigatorKey.currentState?.pushNamed(
-                      AppRoutes.emailVerification,
-                      arguments: AppRoutesArgs.emailVerificationRouteArgs(
-                          currentDoctorModel: currentDoctorModel));
+              BlocBuilder<MoreCubit, MoreState>(
+                builder: (context, state) {
+                  if (accountVerification) {
+                    return const SizedBox.shrink();
+                  }
+                  return ListTile(
+                    title: const Text('Email verification'),
+                    leading: Icon(
+                      Icons.verified,
+                      color: Colors.grey.shade600,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 15.r,
+                    ),
+                    onTap: () {
+                      navigatorKey.currentState?.pushNamed(
+                          AppRoutes.emailVerification,
+                          arguments: AppRoutesArgs.emailVerificationRouteArgs(
+                              currentDoctorModel: currentDoctorModel));
+                    },
+                  );
                 },
               ),
               SizedBox(height: 15.h),

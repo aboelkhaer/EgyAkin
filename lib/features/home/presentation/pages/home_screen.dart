@@ -49,8 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
-                loaded:
-                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {},
+                loaded: (homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message) {},
               );
             },
             builder: (context, state) {
@@ -73,8 +78,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   );
                 },
-                loaded:
-                    (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+                loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                    isUploadingSyndicateCard, isUploadedSyndicateCar, message) {
                   if (homeIndex == 2) {
                     return const SizedBox.shrink();
                   }
@@ -150,14 +155,22 @@ class _HomeScreenState extends State<HomeScreen> {
           return NotificationScreen(
             currentDoctorModel: cubit.currentDoctorModel,
             accountVerification: cubit.accountVerification!,
+            isSyndicateCardRequired: cubit.isSyndicateCardRequired,
           );
         },
       ),
-      const ProfileScreen(),
+      BlocBuilder<HomeCubit, HomeState>(
+        builder: (context, state) {
+          return ProfileScreen(
+            isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+          );
+        },
+      ),
       BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
           return MoreScreen(
             currentDoctorModel: cubit.currentDoctorModel,
+            accountVerification: cubit.accountVerification!,
           );
         },
       ),

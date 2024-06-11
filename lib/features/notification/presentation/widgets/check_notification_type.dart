@@ -7,12 +7,14 @@ class CheckNotificationType extends StatelessWidget {
   final NotificationsModel notificationModel;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
 
   const CheckNotificationType(
       {super.key,
       required this.notificationModel,
       required this.currentDoctorModel,
-      required this.accountVerification});
+      required this.accountVerification,
+      required this.isSyndicateCardRequired});
 
   @override
   Widget build(BuildContext context) {
@@ -155,12 +157,16 @@ class CheckNotificationType extends StatelessWidget {
       case AppStrings.comment:
         return GestureDetector(
           onTap: () {
-            navigatorKey.currentState?.pushNamed(AppRoutes.comments,
-                arguments: AppRoutesArgs.patientCommentsRouteArgs(
-                    patientId: notificationModel.patient!.id.toString(),
-                    currentDoctorModel: currentDoctorModel,
-                    verified: accountVerification,
-                    patientName: notificationModel.patient!.name.toString()));
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.comments,
+              arguments: AppRoutesArgs.patientCommentsRouteArgs(
+                patientId: notificationModel.patient!.id.toString(),
+                currentDoctorModel: currentDoctorModel,
+                verified: accountVerification,
+                patientName: notificationModel.patient!.name.toString(),
+                isSyndicateCardRequired: isSyndicateCardRequired,
+              ),
+            );
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,7 +225,8 @@ class CheckNotificationType extends StatelessWidget {
                 patientName: notificationModel.patient!.name.toString(),
                 patientId: notificationModel.patient!.id.toString(),
                 doctorId: notificationModel.patient!.doctor!.id.toString(),
-                currentDoctorId: currentDoctorModel.id.toString(),
+                currentDoctorModel: currentDoctorModel,
+                isSyndicateCardRequired: isSyndicateCardRequired,
               ),
             );
           },

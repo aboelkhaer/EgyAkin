@@ -20,4 +20,5 @@ class AppImages {
   static const String emailVerification = '$imagePath/email_verification.png';
   static const String whiteEgyAkin = '$imagePath/white_egyakin.png';
   static const String blackEgyAkin = '$imagePath/black_egyakin.png';
+  static const String verified = '$imagePath/verify.png';
 }

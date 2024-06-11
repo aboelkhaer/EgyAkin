@@ -1,9 +1,11 @@
 import '../../../../exports.dart';
 
 class ProfileCover extends StatelessWidget {
+  final String isSyndicateCardRequired;
   const ProfileCover({
     super.key,
     required this.cubit,
+    required this.isSyndicateCardRequired,
   });
 
   final ProfileCubit cubit;
@@ -47,6 +49,7 @@ class ProfileCover extends StatelessWidget {
                     SizedBox(height: 5.h),
                     ProfileNameAndJob(
                       cubit: cubit,
+                      isSyndicateCardRequired: isSyndicateCardRequired,
                     ),
                     SizedBox(height: 5.h),
                     // Text('$doctorPatientCount Patient  |  $doctorScore Score'),

@@ -12,12 +12,16 @@ class IfOutcomeNotSubmitted extends StatefulWidget {
     required this.outcomeStatus,
     required this.accountVerification,
     required this.patientId,
+    required this.isSyndicateCardRequired,
+    required this.currentDoctorModel,
   });
 
   final OutcomeCubit cubit;
   final bool outcomeStatus;
   final String patientId;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
+  final DoctorModel currentDoctorModel;
 
   @override
   State<IfOutcomeNotSubmitted> createState() => _IfOutcomeNotSubmittedState();
@@ -39,6 +43,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     OutcomeCubit cubit = OutcomeCubit.get(context);
+    log(widget.isSyndicateCardRequired);
     return Stack(
       children: [
         Form(
@@ -214,16 +219,22 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                         ],
                       );
                     } else {
-                      return SubmitBottonForOutcome(
+                      return SubmitButtonForOutcome(
                         cubit: cubit,
                         patientId: widget.patientId,
+                        accountVerification: widget.accountVerification,
+                        isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                        currentDoctorModel: widget.currentDoctorModel,
                       );
                     }
                   },
                   orElse: () {
-                    return SubmitBottonForOutcome(
+                    return SubmitButtonForOutcome(
                       cubit: cubit,
                       patientId: widget.patientId,
+                      accountVerification: widget.accountVerification,
+                      isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                      currentDoctorModel: widget.currentDoctorModel,
                     );
                   },
                   loading: () => const Row(

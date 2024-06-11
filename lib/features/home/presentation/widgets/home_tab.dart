@@ -32,8 +32,13 @@ class HomeTab extends StatelessWidget {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: () {},
-                  loaded: (homeData, currentDoctorModel, dotsPosition,
-                      homeIndex) {},
+                  loaded: (homeData,
+                      currentDoctorModel,
+                      dotsPosition,
+                      homeIndex,
+                      isUploadingSyndicateCard,
+                      isUploadedSyndicateCard,
+                      message) {},
                   error: (message) {
                     customSnackBar(message: message, context: context);
                   },
@@ -41,10 +46,17 @@ class HomeTab extends StatelessWidget {
               },
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded:
-                      (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+                  loaded: (homeData,
+                      currentDoctorModel,
+                      dotsPosition,
+                      homeIndex,
+                      isUploadingSyndicateCard,
+                      isUploadedSyndicateCard,
+                      message) {
                     return CheckIfVerified(
                       verified: homeData.verified!,
+                      isSyndicateCardRequired:
+                          homeData.isSyndicateCardRequired!,
                     );
                   },
                   orElse: () => const SizedBox.shrink(),
@@ -67,11 +79,18 @@ class HomeTab extends StatelessWidget {
                             orElse: () {
                               return const SizedBox.shrink();
                             },
-                            loaded: (homeData, currentDoctorModel, dotsPosition,
-                                homeIndex) {
+                            loaded: (homeData,
+                                currentDoctorModel,
+                                dotsPosition,
+                                homeIndex,
+                                isUploadingSyndicateCard,
+                                isUploadedSyndicateCard,
+                                message) {
                               return HomeSearchBotton(
                                 currentDoctorModel: currentDoctorModel,
                                 verified: homeData.verified!,
+                                isSyndicateCardRequired:
+                                    homeData.isSyndicateCardRequired!,
                               );
                             },
                           );

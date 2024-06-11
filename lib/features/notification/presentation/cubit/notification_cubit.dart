@@ -78,7 +78,11 @@ class NotificationCubit extends Cubit<NotificationState> {
               isLastPage = false;
             }
             isLoadingMoreForScroll = false;
-            emit(NotificationState.loaded(updatedData, false));
+            // emit(NotificationState.loaded(updatedData, false));
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => NotificationState.loaded(updatedData, false),
+            ));
           },
           error: (error) {},
         );

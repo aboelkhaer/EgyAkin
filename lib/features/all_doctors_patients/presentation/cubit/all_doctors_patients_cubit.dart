@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/all_doctors_patients/domain/usecases/get_all_doctors_patients_usecase.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 import '../../../../exports.dart';

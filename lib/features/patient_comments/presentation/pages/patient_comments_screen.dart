@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../exports.dart';
 
 class PatientCommentsScreen extends StatefulWidget {
@@ -5,6 +7,7 @@ class PatientCommentsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final String? patientName;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
 
   const PatientCommentsScreen({
     super.key,
@@ -12,6 +15,7 @@ class PatientCommentsScreen extends StatefulWidget {
     required this.currentDoctorModel,
     required this.patientName,
     required this.accountVerification,
+    required this.isSyndicateCardRequired,
   });
 
   @override
@@ -38,6 +42,7 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
   @override
   Widget build(BuildContext context) {
     PatientCommentsCubit cubit = PatientCommentsCubit.get(context);
+    log('${widget.isSyndicateCardRequired} moatz123');
 
     return Scaffold(
       appBar: AppBar(
@@ -64,6 +69,7 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
               accountVerification: widget.accountVerification,
               currentDoctorModel: widget.currentDoctorModel,
               patientId: widget.patientId,
+              isSyndicateCardRequired: widget.isSyndicateCardRequired,
             ),
           ),
         ],

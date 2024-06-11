@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/doctor_profile_view/domain/usecases/update_doctor_profile_usecase.dart';
 import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_state.dart';
 
 import '../../../../exports.dart';
@@ -61,51 +60,55 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
   }
 
   updateDoctorProfile() async {
-    // if (formKey.currentState!.validate()) {
-    emit(state.maybeMap(
-      orElse: () => state,
-      loaded: (value) => DoctorProfileViewState.loaded(
-          value.currentDoctorModel, false, '', true, false),
-    ));
-    final result = await _updateDoctorProfileUsecase.excute(
-      UpdateDoctorProfileUsecaseInput(
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-        age: age,
-        job: job,
-        workplace: workplace,
-        registerationNumber: registerationNumber,
-        specialty: specialty,
-        highestDegree: highestDegree,
-      ),
-    );
-    result.fold((l) {
+    if (formKey.currentState?.validate() ?? false) {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => DoctorProfileViewState.loaded(
-            value.currentDoctorModel, false, l.message, false, false),
+            value.currentDoctorModel, false, '', true, false),
       ));
-    }, (r) async {
-      await sl<AppPreferences>().updateDoctorProfile(
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-        age: age,
-        job: job,
-        workplace: workplace,
-        registerationNumber: registerationNumber,
-        specialty: specialty,
-        highestDegree: highestDegree,
+      final result = await _updateDoctorProfileUsecase.excute(
+        UpdateDoctorProfileUsecaseInput(
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          age: age,
+          job: job,
+          workplace: workplace,
+          registerationNumber: registerationNumber,
+          specialty: specialty,
+          highestDegree: highestDegree,
+        ),
       );
-      emit(state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => DoctorProfileViewState.loaded(
-            value.currentDoctorModel, false, r.message.toString(), false, true),
-      ));
-    });
-    // }
+      result.fold((l) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => DoctorProfileViewState.loaded(
+              value.currentDoctorModel, false, l.message, false, false),
+        ));
+      }, (r) async {
+        await sl<AppPreferences>().updateDoctorProfile(
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          age: age,
+          job: job,
+          workplace: workplace,
+          registerationNumber: registerationNumber,
+          specialty: specialty,
+          highestDegree: highestDegree,
+        );
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => DoctorProfileViewState.loaded(
+              value.currentDoctorModel,
+              false,
+              r.message.toString(),
+              false,
+              true),
+        ));
+      });
+    }
   }
 }

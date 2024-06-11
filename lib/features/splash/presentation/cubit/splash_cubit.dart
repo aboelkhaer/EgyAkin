@@ -1,7 +1,12 @@
+import 'dart:developer';
+
+import 'package:egy_akin/features/splash/domain/usecases/get_app_settings_usecase.dart';
+
 import '../../../../exports.dart';
 
 class SplashCubit extends Cubit<SplashState> {
-  SplashCubit() : super(const SplashState.loading());
+  SplashCubit(this._getAppSettingsUsecase) : super(const SplashState.loading());
+  final GetAppSettingsUsecase _getAppSettingsUsecase;
   static SplashCubit get(context) => BlocProvider.of(context);
 
   Future<void> loadData() async {
@@ -14,6 +19,22 @@ class SplashCubit extends Cubit<SplashState> {
     if (token != null && token != AppStrings.empty) {
       isAuthentication = true;
     }
-    emit(SplashState.loaded(isAuthentication, isWelcomed));
+    bool appFreeze = false;
+    bool forceUpdate = false;
+    final result = await _getAppSettingsUsecase.excute(NoParams());
+    result.fold(
+      (l) {
+        appFreeze = false;
+        forceUpdate = false;
+      },
+      (result) async {
+        appFreeze = result.appFreeze!;
+        forceUpdate = result.forceUpdate!;
+      },
+    );
+    log('$appFreeze moatz123');
+
+    emit(SplashState.loaded(
+        isAuthentication, isWelcomed, appFreeze, forceUpdate));
   }
 }

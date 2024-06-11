@@ -18,8 +18,13 @@ class NotificationTabIcon extends StatelessWidget {
                     orElse: () {
                       return const SizedBox.shrink();
                     },
-                    loaded: (homeData, currentDoctorModel, dotsPosition,
-                        homeIndex) {
+                    loaded: (homeData,
+                        currentDoctorModel,
+                        dotsPosition,
+                        homeIndex,
+                        isUploadingSyndicateCard,
+                        isUploadedSyndicateCard,
+                        message) {
                       return Positioned(
                         left: 0,
                         right: 10.w,
@@ -46,7 +51,8 @@ class NotificationTabIcon extends StatelessWidget {
             ],
           );
         },
-        loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+        loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+            isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
           return GestureDetector(
             onTap: () {
               if (context.read<HomeCubit>().tabsController.index != 1) {
@@ -82,8 +88,13 @@ class NotificationTabIcon extends StatelessWidget {
                       orElse: () {
                         return const SizedBox.shrink();
                       },
-                      loaded: (homeData, currentDoctorModel, dotsPosition,
-                          homeIndex) {
+                      loaded: (homeData,
+                          currentDoctorModel,
+                          dotsPosition,
+                          homeIndex,
+                          isUploadingSyndicateCard,
+                          isUploadedSyndicateCard,
+                          message) {
                         return Positioned(
                           left: 0,
                           right: 10.w,

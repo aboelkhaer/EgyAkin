@@ -9,7 +9,8 @@ class OutcomeScreen extends StatefulWidget {
   final String patientName;
   final String patientId;
   final String doctorId;
-  final String currentDoctorId;
+  final DoctorModel currentDoctorModel;
+  final String isSyndicateCardRequired;
 
   const OutcomeScreen({
     super.key,
@@ -18,7 +19,8 @@ class OutcomeScreen extends StatefulWidget {
     required this.patientId,
     required this.accountVerification,
     required this.doctorId,
-    required this.currentDoctorId,
+    required this.currentDoctorModel,
+    required this.isSyndicateCardRequired,
   });
 
   @override
@@ -58,7 +60,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
       body: widget.outcomeStatus
           ? IfOutcomeSubmitted(
               cubit: cubit,
-              currentDoctorId: widget.currentDoctorId,
+              currentDoctorId: widget.currentDoctorModel.id.toString(),
               doctorId: widget.doctorId,
             )
           : IfOutcomeNotSubmitted(
@@ -66,6 +68,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
               outcomeStatus: widget.outcomeStatus,
               accountVerification: widget.accountVerification,
               patientId: widget.patientId,
+              isSyndicateCardRequired: widget.isSyndicateCardRequired,
+              currentDoctorModel: widget.currentDoctorModel,
             ),
     );
   }

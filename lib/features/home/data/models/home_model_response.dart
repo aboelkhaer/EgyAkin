@@ -10,6 +10,7 @@ class HomeModelResponse with _$HomeModelResponse {
     bool? value,
     bool? verified,
     String? unreadCount,
+    String? isSyndicateCardRequired,
     @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
     @JsonKey(name: 'all_patient_count') String? allPatientCount,
     @JsonKey(name: 'score_value') String? scoreValue,

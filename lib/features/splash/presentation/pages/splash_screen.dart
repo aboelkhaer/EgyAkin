@@ -27,9 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
       begin: 0.0,
       end: 1.0,
     ).animate(animationController);
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      checkForUpdates();
-    });
+
     super.initState();
   }
 
@@ -155,7 +153,16 @@ class _SplashScreenState extends State<SplashScreen>
       final SplashCubit cubit = SplashCubit.get(context);
 
       cubit.state.maybeWhen(
-        loaded: (isAuthentication, isWelcomed) {
+        loaded: (isAuthentication, isWelcomed, isAppFreeze, isForceUpdate) {
+          if (isAppFreeze) {
+            return _showErrorDialog(
+                'EgyAkin is currently experiencing a technical issue. Please try accessing the application again at a later time.');
+          }
+          if (isForceUpdate) {
+            WidgetsBinding.instance.addPostFrameCallback((_) async {
+              checkForUpdates();
+            });
+          }
           if (isAuthentication && isWelcomed) {
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);

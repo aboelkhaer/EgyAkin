@@ -21,7 +21,8 @@ class AllPatientSection extends StatelessWidget {
                   onTap: () {},
                 );
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
                 return HomePatientTitleHeader(
                   title: AppStrings.allPatients,
                   patientCount: homeData.allPatientCount.toString(),
@@ -32,6 +33,8 @@ class AllPatientSection extends StatelessWidget {
                         arguments: AppRoutesArgs.allDoctorsPatientsRouteArgs(
                           accountVerification: homeData.verified!,
                           currentDoctorModel: currentDoctorModel,
+                          isSyndicateCardRequired:
+                              homeData.isSyndicateCardRequired!,
                         ));
                   },
                 );
@@ -45,7 +48,8 @@ class AllPatientSection extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: true);
             },
-            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
               return FadeIn(
                 child: SizedBox(
                   height: homeData.data!.allPatients!.isEmpty ? 100.h : 160.h,
@@ -90,9 +94,10 @@ class AllPatientSection extends StatelessWidget {
                                         patient.sections!.outcomeStatus!,
                                     patientName: patient.name.toString(),
                                     patientId: patient.id.toString(),
-                                    currentDoctorId:
-                                        currentDoctorModel.id.toString(),
+                                    currentDoctorModel: currentDoctorModel,
                                     doctorId: patient.doctor!.id.toString(),
+                                    isSyndicateCardRequired:
+                                        homeData.isSyndicateCardRequired!,
                                   ),
                                 );
                               },
@@ -105,7 +110,9 @@ class AllPatientSection extends StatelessWidget {
                                           currentDoctorModel:
                                               currentDoctorModel,
                                           verified: homeData.verified!,
-                                          patientName: patient.name.toString()),
+                                          patientName: patient.name.toString(),
+                                          isSyndicateCardRequired: homeData
+                                              .isSyndicateCardRequired!),
                                 );
                               },
                               onTap: () {

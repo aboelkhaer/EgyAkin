@@ -1,11 +1,14 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:egy_akin/exports.dart';
 
 class ProfileNameAndJob extends StatelessWidget {
   final ProfileCubit cubit;
+  final String isSyndicateCardRequired;
 
   const ProfileNameAndJob({
     super.key,
     required this.cubit,
+    required this.isSyndicateCardRequired,
   });
 
   @override
@@ -28,12 +31,31 @@ class ProfileNameAndJob extends StatelessWidget {
             }
             return Column(
               children: [
-                Text(
-                  'Dr.${capitalizeFirstText(cubit.currentDoctor.firstName!)} ${capitalizeFirstText(cubit.currentDoctor.lastName!)}',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Dr.${capitalizeFirstText(cubit.currentDoctor.firstName!)} ${capitalizeFirstText(cubit.currentDoctor.lastName!)}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    isSyndicateCardRequired == 'Verified'
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: FadeIn(
+                              duration: const Duration(seconds: 2),
+                              child: Image.asset(
+                                AppImages.verified,
+                                height: 20,
+                                width: 20,
+                                color: Colors.green.shade600,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
                 ),
                 SizedBox(height: 3.h),
                 Text(
@@ -112,12 +134,31 @@ class ProfileNameAndJob extends StatelessWidget {
           loaded: (doctorModel, isLoadedImage) {
             return Column(
               children: [
-                Text(
-                  'Dr.${capitalizeFirstText(doctorModel.firstName!)} ${capitalizeFirstText(doctorModel.lastName!)}',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Dr.${capitalizeFirstText(doctorModel.firstName!)} ${capitalizeFirstText(doctorModel.lastName!)}',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    isSyndicateCardRequired == 'Verified'
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: FadeIn(
+                              duration: const Duration(seconds: 2),
+                              child: Image.asset(
+                                AppImages.verified,
+                                height: 20,
+                                width: 20,
+                                color: Colors.green.shade600,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ],
                 ),
                 SizedBox(height: 3.h),
                 Text(

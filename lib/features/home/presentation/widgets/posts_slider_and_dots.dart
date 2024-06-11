@@ -25,7 +25,8 @@ class PostsSliderAndDots extends StatelessWidget {
                   child: Lottie.asset(AppImages.imageLoader),
                 );
               },
-              loaded: (homeData, dotsPosition, notificationData, homeIndex) {
+              loaded: (homeData, dotsPosition, notificationData, homeIndex,
+                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
                 return FadeIn(
                   duration: const Duration(seconds: 2),
                   child: CarouselSlider.builder(
@@ -46,10 +47,11 @@ class PostsSliderAndDots extends StatelessWidget {
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.postDetails,
                               arguments: AppRoutesArgs.postDetailsRouteArgs(
-                                postModel: homeData.data!.posts![index],
-                                doctorModel: cubit.currentDoctorModel,
-                                verified: homeData.verified!,
-                              ),
+                                  postModel: homeData.data!.posts![index],
+                                  doctorModel: cubit.currentDoctorModel,
+                                  verified: homeData.verified!,
+                                  isSyndicateCardRequired:
+                                      homeData.isSyndicateCardRequired!),
                             );
                           },
 
@@ -226,7 +228,8 @@ class PostsSliderAndDots extends StatelessWidget {
               orElse: () {
                 return const SizedBox.shrink();
               },
-              loaded: (homeData, dotsPosition, notificationData, homeIndex) {
+              loaded: (homeData, dotsPosition, notificationData, homeIndex,
+                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
                 return homeData.data!.posts!.isEmpty
                     ? const SizedBox.shrink()
                     : DotsIndicator(

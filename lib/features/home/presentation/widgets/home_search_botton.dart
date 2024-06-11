@@ -3,10 +3,12 @@ import '../../../../exports.dart';
 class HomeSearchBotton extends StatelessWidget {
   final DoctorModel currentDoctorModel;
   final bool verified;
+  final String isSyndicateCardRequired;
   const HomeSearchBotton({
     super.key,
     required this.currentDoctorModel,
     required this.verified,
+    required this.isSyndicateCardRequired,
   });
 
   @override
@@ -18,6 +20,7 @@ class HomeSearchBotton extends StatelessWidget {
           arguments: AppRoutesArgs.searchRouteArgs(
             currentDoctorModel: currentDoctorModel,
             verified: verified,
+            isSyndicateCardRequired: isSyndicateCardRequired,
           ),
         );
       },

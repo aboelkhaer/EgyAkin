@@ -9,14 +9,17 @@ class AppRoutesArgs {
     };
   }
 
-  static Map<String, dynamic> postDetailsRouteArgs(
-      {required PostModel postModel,
-      required DoctorModel doctorModel,
-      required bool verified}) {
+  static Map<String, dynamic> postDetailsRouteArgs({
+    required PostModel postModel,
+    required DoctorModel doctorModel,
+    required bool verified,
+    required String isSyndicateCardRequired,
+  }) {
     return {
       'postModel': postModel,
       'doctorModel': doctorModel,
       'accountVerification': verified,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 
@@ -30,12 +33,14 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required bool verified,
     required String patientName,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'patientId': patientId,
       'currentDoctorModel': currentDoctorModel,
       'accountVerification': verified,
       'patientName': patientName,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 
@@ -48,10 +53,12 @@ class AppRoutesArgs {
   static Map<String, dynamic> searchRouteArgs({
     required DoctorModel currentDoctorModel,
     required bool verified,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'accountVerification': verified,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 
@@ -61,35 +68,41 @@ class AppRoutesArgs {
     required String patientName,
     required String patientId,
     required String doctorId,
-    required String currentDoctorId,
+    required DoctorModel currentDoctorModel,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'accountVerification': verified,
       'outcomeStatus': outcomeStatus,
       'patientName': patientName,
       'patientId': patientId,
-      'currentDoctorId': currentDoctorId,
+      'currentDoctorModel': currentDoctorModel,
       'doctorId': doctorId,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 
   static Map<String, dynamic> currentDoctorPatientsRouteArgs({
     required bool accountVerification,
     required DoctorModel currentDoctorModel,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'accountVerification': accountVerification,
       'currentDoctorModel': currentDoctorModel,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 
   static Map<String, dynamic> allDoctorsPatientsRouteArgs({
     required bool accountVerification,
     required DoctorModel currentDoctorModel,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'accountVerification': accountVerification,
       'currentDoctorModel': currentDoctorModel,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
     };
   }
 

@@ -3,10 +3,12 @@ import '../../../../exports.dart';
 class CurrentDoctorPatientsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final String isSyndicateCardRequired;
   const CurrentDoctorPatientsScreen(
       {super.key,
       required this.currentDoctorModel,
-      required this.accountVerification});
+      required this.accountVerification,
+      required this.isSyndicateCardRequired});
 
   @override
   State<CurrentDoctorPatientsScreen> createState() =>
@@ -131,9 +133,10 @@ class _CurrentDoctorPatientsScreenState
                                 outcomeStatus: patient.sections!.outcomeStatus!,
                                 patientName: patient.name.toString(),
                                 patientId: patient.id.toString(),
-                                currentDoctorId:
-                                    widget.currentDoctorModel.id.toString(),
+                                currentDoctorModel: widget.currentDoctorModel,
                                 doctorId: patient.doctor!.id.toString(),
+                                isSyndicateCardRequired:
+                                    widget.isSyndicateCardRequired,
                               ),
                             );
                           },
@@ -145,6 +148,8 @@ class _CurrentDoctorPatientsScreenState
                                 currentDoctorModel: widget.currentDoctorModel,
                                 verified: widget.accountVerification,
                                 patientName: patient.name.toString(),
+                                isSyndicateCardRequired:
+                                    widget.isSyndicateCardRequired,
                               ),
                             );
                           },

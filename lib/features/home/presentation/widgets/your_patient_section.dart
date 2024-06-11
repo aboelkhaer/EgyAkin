@@ -20,7 +20,8 @@ class YourPatientSection extends StatelessWidget {
                     rightArrow: '',
                     onTap: () {});
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
                   patientCount: homeData.doctorPatientCount.toString(),
@@ -32,6 +33,8 @@ class YourPatientSection extends StatelessWidget {
                         arguments: AppRoutesArgs.currentDoctorPatientsRouteArgs(
                           accountVerification: homeData.verified!,
                           currentDoctorModel: currentDoctorModel,
+                          isSyndicateCardRequired:
+                              homeData.isSyndicateCardRequired!,
                         ));
                   },
                 );
@@ -45,7 +48,8 @@ class YourPatientSection extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: true);
             },
-            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
               return FadeIn(
                 duration: const Duration(seconds: 2),
                 child: SizedBox(
@@ -88,15 +92,15 @@ class YourPatientSection extends StatelessWidget {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.outcome,
                                   arguments: AppRoutesArgs.outcomeRouteArgs(
-                                    verified: homeData.verified!,
-                                    outcomeStatus:
-                                        patient.sections!.outcomeStatus!,
-                                    patientName: patient.name.toString(),
-                                    patientId: patient.id.toString(),
-                                    currentDoctorId:
-                                        currentDoctorModel.id.toString(),
-                                    doctorId: patient.doctor!.id.toString(),
-                                  ),
+                                      verified: homeData.verified!,
+                                      outcomeStatus:
+                                          patient.sections!.outcomeStatus!,
+                                      patientName: patient.name.toString(),
+                                      patientId: patient.id.toString(),
+                                      currentDoctorModel: currentDoctorModel,
+                                      doctorId: patient.doctor!.id.toString(),
+                                      isSyndicateCardRequired:
+                                          homeData.isSyndicateCardRequired!),
                                 );
                               },
                               onAddCommentTap: () {
@@ -104,11 +108,13 @@ class YourPatientSection extends StatelessWidget {
                                   AppRoutes.comments,
                                   arguments:
                                       AppRoutesArgs.patientCommentsRouteArgs(
-                                          patientId: patient.id.toString(),
-                                          currentDoctorModel:
-                                              currentDoctorModel,
-                                          verified: homeData.verified!,
-                                          patientName: patient.name.toString()),
+                                    patientId: patient.id.toString(),
+                                    currentDoctorModel: currentDoctorModel,
+                                    verified: homeData.verified!,
+                                    patientName: patient.name.toString(),
+                                    isSyndicateCardRequired:
+                                        homeData.isSyndicateCardRequired!,
+                                  ),
                                 );
                               },
                               onTap: () {

@@ -99,11 +99,11 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                 customSnackBar(context: context, message: message);
               }
 
-              if (isDownloadedReport && reportProgress == 1.0) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('PDF downloaded: $filePath')),
-                );
-              }
+              // if (isDownloadedReport && reportProgress == 1.0) {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(content: Text('PDF downloaded: $filePath')),
+              //   );
+              // }
             },
           );
         },
@@ -198,33 +198,45 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                               );
                             }
                             if (isDownloadingReport) {
-                              return SizedBox(
-                                height: 100.h,
+                              return const SizedBox(
+                                height: 90,
                                 child: Center(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Text('Downloading...'),
-                                      const SizedBox(height: 10),
-                                      LinearProgressIndicator(
-                                          value: reportProgress),
-                                      const SizedBox(height: 10),
-                                      Text(
-                                          '${(reportProgress * 100).toStringAsFixed(0)}%'),
+                                      SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      // Text('Opening...'),
+                                      // const SizedBox(height: 10),
+                                      // LinearProgressIndicator(
+                                      //     value: reportProgress),
+                                      // SizedBox(height: 10),
+                                      // Text(
+                                      //     '${(reportProgress * 100).toStringAsFixed(0)}%'),
                                     ],
                                   ),
                                 ),
                               );
                             }
-                            return FooterButtons(
-                              currentDoctorId:
-                                  widget.currentDoctorModel.id.toString(),
-                              doctorId: response.doctorId!,
-                              patientName: response.patientName!,
-                              cubit: cubit,
-                              patientId: widget.patientId,
-                              finalSubmit: response.submitStatus!,
-                            );
+                            if ((response.doctorId.toString() ==
+                                    widget.currentDoctorModel.id.toString()) &&
+                                (response.submitStatus != null &&
+                                    response.submitStatus!)) {
+                              return FooterButtons(
+                                currentDoctorId:
+                                    widget.currentDoctorModel.id.toString(),
+                                doctorId: response.doctorId!,
+                                patientName: response.patientName!,
+                                cubit: cubit,
+                                patientId: widget.patientId,
+                                finalSubmit: response.submitStatus!,
+                              );
+                            }
+
+                            return const SizedBox.shrink();
                           },
                         );
                       },

@@ -28,6 +28,7 @@ class DoctorModel with _$DoctorModel {
     String? token,
     String? password,
     String? workingplace,
+    String? isSyndicateCardRequired,
     String? phone,
     String? job,
     String? gender,

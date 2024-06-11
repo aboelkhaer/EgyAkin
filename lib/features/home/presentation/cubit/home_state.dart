@@ -11,6 +11,9 @@ abstract class HomeState with _$HomeState {
       HomeModelResponse homeData,
       DoctorModel currentDoctorModel,
       int dotsPosition,
-      int homeIndex) = _Loaded;
+      int homeIndex,
+      bool isUploadingSyndicateCard,
+      bool isUploadedSyndicateCard,
+      String message) = _Loaded;
   const factory HomeState.error(String message) = _Error;
 }

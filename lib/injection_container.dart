@@ -1,6 +1,15 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/change_password/data/datasources/change_password_datasource.dart';
+import 'package:egy_akin/features/change_password/data/repositories/change_password_repo_impl.dart';
+import 'package:egy_akin/features/change_password/domain/repositories/change_password_repo.dart';
+import 'package:egy_akin/features/change_password/domain/usecases/change_password_usecase.dart';
 import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
+import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
+import 'package:egy_akin/features/splash/data/datasources/splash_datasource.dart';
+import 'package:egy_akin/features/splash/data/repositories/splash_repo_impl.dart';
+import 'package:egy_akin/features/splash/domain/repositories/splash_repo.dart';
+import 'package:egy_akin/features/splash/domain/usecases/get_app_settings_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -21,11 +30,11 @@ Future<void> diInit() async {
 
   //! Cubit
   sl.registerFactory(() => AuthenticationCubit(sl(), sl()));
-  sl.registerFactory(() => SplashCubit());
+  sl.registerFactory(() => SplashCubit(sl()));
   sl.registerFactory(() => WelcomeCubit());
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => HomeCubit(sl()));
+  sl.registerFactory(() => HomeCubit(sl(), sl()));
   sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
@@ -43,7 +52,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => DoctorInfoViewCubit(sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
-  sl.registerFactory(() => ChangePasswordCubit());
+  sl.registerFactory(() => ChangePasswordCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -80,6 +89,9 @@ Future<void> diInit() async {
       () => DoctorInfoViewDataSourceImpl(sl()));
   sl.registerLazySingleton<ContactUsDataSource>(
       () => ContactUsDataSourceImpl(sl()));
+  sl.registerLazySingleton<SplashDataSource>(() => SplashDataSourceImpl(sl()));
+  sl.registerLazySingleton<ChangePasswordDataSource>(
+      () => ChangePasswordDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -118,6 +130,10 @@ Future<void> diInit() async {
       () => DoctorInfoViewRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ContactUsRepository>(
       () => ContactUsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<SplashRepository>(
+      () => SplashRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ChangePasswordRepository>(
+      () => ChangePasswordRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -246,5 +262,17 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<DownloadPatientReportUsecase>()) {
     sl.registerFactory<DownloadPatientReportUsecase>(
         () => DownloadPatientReportUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAppSettingsUsecase>()) {
+    sl.registerFactory<GetAppSettingsUsecase>(
+        () => GetAppSettingsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UploadSyndicateCardUsecase>()) {
+    sl.registerFactory<UploadSyndicateCardUsecase>(
+        () => UploadSyndicateCardUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<ChangePasswordUsecase>()) {
+    sl.registerFactory<ChangePasswordUsecase>(
+        () => ChangePasswordUsecase(sl()));
   }
 }

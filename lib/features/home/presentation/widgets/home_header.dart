@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:animate_do/animate_do.dart';
+
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -64,8 +68,13 @@ class HomeHeader extends StatelessWidget {
                               ),
                             );
                           },
-                          loaded: (homeData, currentDoctorModel, dotsPosition,
-                              homeIndex) {
+                          loaded: (homeData,
+                              currentDoctorModel,
+                              dotsPosition,
+                              homeIndex,
+                              isUploadingSyndicateCard,
+                              isUploadedSyndicateCard,
+                              message) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
                               child: CircleAvatar(
@@ -106,8 +115,13 @@ class HomeHeader extends StatelessWidget {
                         listener: (context, state) {
                           state.maybeWhen(
                             orElse: () {},
-                            loaded: (homeData, currentDoctorModel, dotsPosition,
-                                homeIndex) {
+                            loaded: (homeData,
+                                currentDoctorModel,
+                                dotsPosition,
+                                homeIndex,
+                                isUploadingSyndicateCard,
+                                isUploadedSyndicateCard,
+                                message) {
                               context
                                   .read<ProfileCubit>()
                                   .getDoctorDataFromHomeCubit(
@@ -128,6 +142,40 @@ class HomeHeader extends StatelessWidget {
                           );
                         },
                       ),
+                      BlocBuilder<HomeCubit, HomeState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () {
+                              return const SizedBox.shrink();
+                            },
+                            loaded: (homeData,
+                                currentDoctorModel,
+                                dotsPosition,
+                                homeIndex,
+                                isUploadingSyndicateCard,
+                                isUploadedSyndicateCard,
+                                message) {
+                              if (homeData.isSyndicateCardRequired ==
+                                  'Verified') {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  child: FadeIn(
+                                    duration: const Duration(seconds: 2),
+                                    child: Image.asset(
+                                      AppImages.verified,
+                                      height: 20,
+                                      width: 20,
+                                      color: Colors.green.shade600,
+                                    ),
+                                  ),
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
+                          );
+                        },
+                      )
                     ],
                   ),
                   Row(
@@ -166,19 +214,24 @@ class HomeHeader extends StatelessWidget {
                   ),
                 );
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex) {
+              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
                 return Tooltip(
                   message: 'Add patient',
                   child: IconButton(
                     onPressed: () {
-                      if (homeData.verified!) {
+                      if (homeData.verified! &&
+                          (homeData.isSyndicateCardRequired != 'Required' &&
+                              homeData.isSyndicateCardRequired != 'Pending')) {
+                        log('hello');
                         navigatorKey.currentState?.pushNamed(
                           AppRoutes.addPatient,
                           arguments: AppRoutesArgs.addPatientRouteArgs(
                             currentDoctorModel: cubit.currentDoctorModel,
                           ),
                         );
-                      } else {
+                      }
+                      if (!homeData.verified!) {
                         showCustomDialog(
                           context: context,
                           title: AppStrings.emailVerification,
@@ -197,6 +250,25 @@ class HomeHeader extends StatelessWidget {
                                     AppRoutesArgs.emailVerificationRouteArgs(
                                         currentDoctorModel:
                                             currentDoctorModel));
+                          },
+                        );
+                        return;
+                      }
+                      if (homeData.isSyndicateCardRequired == 'Required' ||
+                          homeData.isSyndicateCardRequired == 'Pending') {
+                        showCustomDialog(
+                          context: context,
+                          title: 'Syndicate card verification',
+                          description:
+                              'To add patients you must verify your syndicate card.',
+                          noColoredButtonOnTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          coloredButtonText: AppStrings.ok,
+                          noColoredButtonText: '',
+                          isNoColorShow: true,
+                          coloredButtonOnTap: () {
+                            Navigator.of(context).pop();
                           },
                         );
                       }

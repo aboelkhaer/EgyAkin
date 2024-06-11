@@ -20,8 +20,14 @@ mixin _$HomeState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
+    required TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,8 +36,14 @@ mixin _$HomeState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
+    TResult? Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -40,8 +52,14 @@ mixin _$HomeState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
-            int dotsPosition, int homeIndex)?
+    TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -137,8 +155,14 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
+    required TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -150,8 +174,14 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
+    TResult? Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -163,8 +193,14 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
-            int dotsPosition, int homeIndex)?
+    TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -263,8 +299,14 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
+    required TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -276,8 +318,14 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
+    TResult? Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -289,8 +337,14 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
-            int dotsPosition, int homeIndex)?
+    TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -353,7 +407,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       {HomeModelResponse homeData,
       DoctorModel currentDoctorModel,
       int dotsPosition,
-      int homeIndex});
+      int homeIndex,
+      bool isUploadingSyndicateCard,
+      bool isUploadedSyndicateCard,
+      String message});
 
   $HomeModelResponseCopyWith<$Res> get homeData;
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
@@ -374,6 +431,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? currentDoctorModel = null,
     Object? dotsPosition = null,
     Object? homeIndex = null,
+    Object? isUploadingSyndicateCard = null,
+    Object? isUploadedSyndicateCard = null,
+    Object? message = null,
   }) {
     return _then(_$LoadedImpl(
       null == homeData
@@ -392,6 +452,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.homeIndex
           : homeIndex // ignore: cast_nullable_to_non_nullable
               as int,
+      null == isUploadingSyndicateCard
+          ? _value.isUploadingSyndicateCard
+          : isUploadingSyndicateCard // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isUploadedSyndicateCard
+          ? _value.isUploadedSyndicateCard
+          : isUploadedSyndicateCard // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 
@@ -415,8 +487,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.homeData, this.currentDoctorModel, this.dotsPosition,
-      this.homeIndex);
+  const _$LoadedImpl(
+      this.homeData,
+      this.currentDoctorModel,
+      this.dotsPosition,
+      this.homeIndex,
+      this.isUploadingSyndicateCard,
+      this.isUploadedSyndicateCard,
+      this.message);
 
   @override
   final HomeModelResponse homeData;
@@ -426,10 +504,16 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   final int dotsPosition;
   @override
   final int homeIndex;
+  @override
+  final bool isUploadingSyndicateCard;
+  @override
+  final bool isUploadedSyndicateCard;
+  @override
+  final String message;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex)';
+    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message)';
   }
 
   @override
@@ -440,7 +524,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       ..add(DiagnosticsProperty('homeData', homeData))
       ..add(DiagnosticsProperty('currentDoctorModel', currentDoctorModel))
       ..add(DiagnosticsProperty('dotsPosition', dotsPosition))
-      ..add(DiagnosticsProperty('homeIndex', homeIndex));
+      ..add(DiagnosticsProperty('homeIndex', homeIndex))
+      ..add(DiagnosticsProperty(
+          'isUploadingSyndicateCard', isUploadingSyndicateCard))
+      ..add(DiagnosticsProperty(
+          'isUploadedSyndicateCard', isUploadedSyndicateCard))
+      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -455,12 +544,26 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             (identical(other.dotsPosition, dotsPosition) ||
                 other.dotsPosition == dotsPosition) &&
             (identical(other.homeIndex, homeIndex) ||
-                other.homeIndex == homeIndex));
+                other.homeIndex == homeIndex) &&
+            (identical(
+                    other.isUploadingSyndicateCard, isUploadingSyndicateCard) ||
+                other.isUploadingSyndicateCard == isUploadingSyndicateCard) &&
+            (identical(
+                    other.isUploadedSyndicateCard, isUploadedSyndicateCard) ||
+                other.isUploadedSyndicateCard == isUploadedSyndicateCard) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, homeData, currentDoctorModel, dotsPosition, homeIndex);
+      runtimeType,
+      homeData,
+      currentDoctorModel,
+      dotsPosition,
+      homeIndex,
+      isUploadingSyndicateCard,
+      isUploadedSyndicateCard,
+      message);
 
   @JsonKey(ignore: true)
   @override
@@ -473,12 +576,19 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
+    required TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex);
+    return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex,
+        isUploadingSyndicateCard, isUploadedSyndicateCard, message);
   }
 
   @override
@@ -486,12 +596,19 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
+    TResult? Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(homeData, currentDoctorModel, dotsPosition, homeIndex);
+    return loaded?.call(homeData, currentDoctorModel, dotsPosition, homeIndex,
+        isUploadingSyndicateCard, isUploadedSyndicateCard, message);
   }
 
   @override
@@ -499,14 +616,21 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
-            int dotsPosition, int homeIndex)?
+    TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex);
+      return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex,
+          isUploadingSyndicateCard, isUploadedSyndicateCard, message);
     }
     return orElse();
   }
@@ -554,12 +678,18 @@ abstract class _Loaded implements HomeState {
       final HomeModelResponse homeData,
       final DoctorModel currentDoctorModel,
       final int dotsPosition,
-      final int homeIndex) = _$LoadedImpl;
+      final int homeIndex,
+      final bool isUploadingSyndicateCard,
+      final bool isUploadedSyndicateCard,
+      final String message) = _$LoadedImpl;
 
   HomeModelResponse get homeData;
   DoctorModel get currentDoctorModel;
   int get dotsPosition;
   int get homeIndex;
+  bool get isUploadingSyndicateCard;
+  bool get isUploadedSyndicateCard;
+  String get message;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -639,8 +769,14 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)
+    required TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -652,8 +788,14 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(HomeModelResponse homeData,
-            DoctorModel currentDoctorModel, int dotsPosition, int homeIndex)?
+    TResult? Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -665,8 +807,14 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(HomeModelResponse homeData, DoctorModel currentDoctorModel,
-            int dotsPosition, int homeIndex)?
+    TResult Function(
+            HomeModelResponse homeData,
+            DoctorModel currentDoctorModel,
+            int dotsPosition,
+            int homeIndex,
+            bool isUploadingSyndicateCard,
+            bool isUploadedSyndicateCard,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

@@ -128,7 +128,8 @@ class RouteGenerator {
 
           if (args.containsKey('postModel') &&
               args.containsKey('doctorModel') &&
-              args.containsKey('accountVerification')) {
+              args.containsKey('accountVerification') &&
+              args.containsKey('isSyndicateCardRequired')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PostDetailsCubit>(
                 create: (context) => di.sl<PostDetailsCubit>(),
@@ -136,6 +137,8 @@ class RouteGenerator {
                   postModel: args['postModel'] as PostModel,
                   currentDoctorModel: args['doctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -206,7 +209,8 @@ class RouteGenerator {
 
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('patientId') &&
-              args.containsKey('accountVerification')) {
+              args.containsKey('accountVerification') &&
+              args.containsKey('isSyndicateCardRequired')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientCommentsCubit>(
                 create: (context) => di.sl<PatientCommentsCubit>(),
@@ -215,6 +219,8 @@ class RouteGenerator {
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
                   patientName: args['patientName'] as String,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -232,13 +238,16 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('currentDoctorModel') &&
-              args.containsKey('accountVerification')) {
+              args.containsKey('accountVerification') &&
+              args.containsKey('isSyndicateCardRequired')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<SearchCubit>(
                 create: (context) => di.sl<SearchCubit>(),
                 child: SearchScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -258,7 +267,9 @@ class RouteGenerator {
           if (args.containsKey('accountVerification') &&
               args.containsKey('outcomeStatus') &&
               args.containsKey('patientName') &&
-              args.containsKey('patientId')) {
+              args.containsKey('patientId') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorModel')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<OutcomeCubit>(
                 create: (context) => di.sl<OutcomeCubit>(),
@@ -267,8 +278,10 @@ class RouteGenerator {
                   patientName: args['patientName'] as String,
                   patientId: args['patientId'] as String,
                   doctorId: args['doctorId'] as String,
-                  currentDoctorId: args['currentDoctorId'] as String,
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -293,6 +306,8 @@ class RouteGenerator {
                 child: CurrentDoctorPatientsScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -317,6 +332,8 @@ class RouteGenerator {
                 child: AllDoctorsPatientsScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );

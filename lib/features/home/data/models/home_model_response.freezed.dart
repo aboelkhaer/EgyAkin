@@ -23,6 +23,7 @@ mixin _$HomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   bool? get verified => throw _privateConstructorUsedError;
   String? get unreadCount => throw _privateConstructorUsedError;
+  String? get isSyndicateCardRequired => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_patient_count')
   String? get doctorPatientCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'all_patient_count')
@@ -49,6 +50,7 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       {bool? value,
       bool? verified,
       String? unreadCount,
+      String? isSyndicateCardRequired,
       @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
@@ -74,6 +76,7 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? value = freezed,
     Object? verified = freezed,
     Object? unreadCount = freezed,
+    Object? isSyndicateCardRequired = freezed,
     Object? doctorPatientCount = freezed,
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
@@ -92,6 +95,10 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
       unreadCount: freezed == unreadCount
           ? _value.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
       doctorPatientCount: freezed == doctorPatientCount
           ? _value.doctorPatientCount
@@ -141,6 +148,7 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       {bool? value,
       bool? verified,
       String? unreadCount,
+      String? isSyndicateCardRequired,
       @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
@@ -165,6 +173,7 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? value = freezed,
     Object? verified = freezed,
     Object? unreadCount = freezed,
+    Object? isSyndicateCardRequired = freezed,
     Object? doctorPatientCount = freezed,
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
@@ -183,6 +192,10 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
       unreadCount: freezed == unreadCount
           ? _value.unreadCount
           : unreadCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
       doctorPatientCount: freezed == doctorPatientCount
           ? _value.doctorPatientCount
@@ -217,6 +230,7 @@ class _$HomeModelResponseImpl
       {this.value,
       this.verified,
       this.unreadCount,
+      this.isSyndicateCardRequired,
       @JsonKey(name: 'doctor_patient_count') this.doctorPatientCount,
       @JsonKey(name: 'all_patient_count') this.allPatientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
@@ -232,6 +246,8 @@ class _$HomeModelResponseImpl
   final bool? verified;
   @override
   final String? unreadCount;
+  @override
+  final String? isSyndicateCardRequired;
   @override
   @JsonKey(name: 'doctor_patient_count')
   final String? doctorPatientCount;
@@ -249,7 +265,7 @@ class _$HomeModelResponseImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
   }
 
   @override
@@ -260,6 +276,8 @@ class _$HomeModelResponseImpl
       ..add(DiagnosticsProperty('value', value))
       ..add(DiagnosticsProperty('verified', verified))
       ..add(DiagnosticsProperty('unreadCount', unreadCount))
+      ..add(DiagnosticsProperty(
+          'isSyndicateCardRequired', isSyndicateCardRequired))
       ..add(DiagnosticsProperty('doctorPatientCount', doctorPatientCount))
       ..add(DiagnosticsProperty('allPatientCount', allPatientCount))
       ..add(DiagnosticsProperty('scoreValue', scoreValue))
@@ -277,6 +295,9 @@ class _$HomeModelResponseImpl
                 other.verified == verified) &&
             (identical(other.unreadCount, unreadCount) ||
                 other.unreadCount == unreadCount) &&
+            (identical(
+                    other.isSyndicateCardRequired, isSyndicateCardRequired) ||
+                other.isSyndicateCardRequired == isSyndicateCardRequired) &&
             (identical(other.doctorPatientCount, doctorPatientCount) ||
                 other.doctorPatientCount == doctorPatientCount) &&
             (identical(other.allPatientCount, allPatientCount) ||
@@ -289,8 +310,17 @@ class _$HomeModelResponseImpl
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, value, verified, unreadCount,
-      doctorPatientCount, allPatientCount, scoreValue, role, data);
+  int get hashCode => Object.hash(
+      runtimeType,
+      value,
+      verified,
+      unreadCount,
+      isSyndicateCardRequired,
+      doctorPatientCount,
+      allPatientCount,
+      scoreValue,
+      role,
+      data);
 
   @JsonKey(ignore: true)
   @override
@@ -312,6 +342,7 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       {final bool? value,
       final bool? verified,
       final String? unreadCount,
+      final String? isSyndicateCardRequired,
       @JsonKey(name: 'doctor_patient_count') final String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') final String? allPatientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
@@ -327,6 +358,8 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   bool? get verified;
   @override
   String? get unreadCount;
+  @override
+  String? get isSyndicateCardRequired;
   @override
   @JsonKey(name: 'doctor_patient_count')
   String? get doctorPatientCount;

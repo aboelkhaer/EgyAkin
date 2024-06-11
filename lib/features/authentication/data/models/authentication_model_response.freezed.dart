@@ -253,6 +253,7 @@ mixin _$DoctorModel {
   String? get token => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
   String? get workingplace => throw _privateConstructorUsedError;
+  String? get isSyndicateCardRequired => throw _privateConstructorUsedError;
   String? get phone => throw _privateConstructorUsedError;
   String? get job => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
@@ -301,6 +302,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       String? token,
       String? password,
       String? workingplace,
+      String? isSyndicateCardRequired,
       String? phone,
       String? job,
       String? gender,
@@ -341,6 +343,7 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? token = freezed,
     Object? password = freezed,
     Object? workingplace = freezed,
+    Object? isSyndicateCardRequired = freezed,
     Object? phone = freezed,
     Object? job = freezed,
     Object? gender = freezed,
@@ -394,6 +397,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
       workingplace: freezed == workingplace
           ? _value.workingplace
           : workingplace // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
       phone: freezed == phone
           ? _value.phone
@@ -481,6 +488,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       String? token,
       String? password,
       String? workingplace,
+      String? isSyndicateCardRequired,
       String? phone,
       String? job,
       String? gender,
@@ -519,6 +527,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? token = freezed,
     Object? password = freezed,
     Object? workingplace = freezed,
+    Object? isSyndicateCardRequired = freezed,
     Object? phone = freezed,
     Object? job = freezed,
     Object? gender = freezed,
@@ -572,6 +581,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
       workingplace: freezed == workingplace
           ? _value.workingplace
           : workingplace // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
       phone: freezed == phone
           ? _value.phone
@@ -654,6 +667,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       this.token,
       this.password,
       this.workingplace,
+      this.isSyndicateCardRequired,
       this.phone,
       this.job,
       this.gender,
@@ -695,6 +709,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   final String? password;
   @override
   final String? workingplace;
+  @override
+  final String? isSyndicateCardRequired;
   @override
   final String? phone;
   @override
@@ -747,7 +763,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -764,6 +780,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       ..add(DiagnosticsProperty('token', token))
       ..add(DiagnosticsProperty('password', password))
       ..add(DiagnosticsProperty('workingplace', workingplace))
+      ..add(DiagnosticsProperty(
+          'isSyndicateCardRequired', isSyndicateCardRequired))
       ..add(DiagnosticsProperty('phone', phone))
       ..add(DiagnosticsProperty('job', job))
       ..add(DiagnosticsProperty('gender', gender))
@@ -801,6 +819,9 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.password == password) &&
             (identical(other.workingplace, workingplace) ||
                 other.workingplace == workingplace) &&
+            (identical(
+                    other.isSyndicateCardRequired, isSyndicateCardRequired) ||
+                other.isSyndicateCardRequired == isSyndicateCardRequired) &&
             (identical(other.phone, phone) || other.phone == phone) &&
             (identical(other.job, job) || other.job == job) &&
             (identical(other.gender, gender) || other.gender == gender) &&
@@ -841,6 +862,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
         token,
         password,
         workingplace,
+        isSyndicateCardRequired,
         phone,
         job,
         gender,
@@ -884,6 +906,7 @@ abstract class _DoctorModel implements DoctorModel {
       final String? token,
       final String? password,
       final String? workingplace,
+      final String? isSyndicateCardRequired,
       final String? phone,
       final String? job,
       final String? gender,
@@ -926,6 +949,8 @@ abstract class _DoctorModel implements DoctorModel {
   String? get password;
   @override
   String? get workingplace;
+  @override
+  String? get isSyndicateCardRequired;
   @override
   String? get phone;
   @override

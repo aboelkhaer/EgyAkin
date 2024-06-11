@@ -2,7 +2,8 @@ import 'package:egy_akin/features/profile/presentation/widgets/profile_features.
 import '../../../../exports.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final String isSyndicateCardRequired;
+  const ProfileScreen({super.key, required this.isSyndicateCardRequired});
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           ProfileCover(
             cubit: cubit,
+            isSyndicateCardRequired: isSyndicateCardRequired,
           ),
           SizedBox(height: 20.h),
           ProfileFeatures(cubit: cubit),
