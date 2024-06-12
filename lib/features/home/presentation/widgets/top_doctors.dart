@@ -104,17 +104,20 @@ class TopDoctors extends StatelessWidget {
                                       fontSize: 13.sp),
                                 ),
                                 SizedBox(height: 2.h),
-                                Text(
-                                  'Dr.${capitalizeFirstText(doctor.firstName!)}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w500),
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Dr.${capitalizeFirstText(doctor.firstName!)}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    doctor.isSyndicateCardRequired == 'Verified'
+                                        ? const VerificationIcon(
+                                            isSmaller: true,
+                                          )
+                                        : const SizedBox.shrink(),
+                                  ],
                                 ),
-                                // SizedBox(height: 2.h),
-                                // Text(
-                                //   doctor.score.toString(),
-                                //   style: const TextStyle(
-                                //       fontWeight: FontWeight.w500),
-                                // ),
                               ],
                             ),
                           ),

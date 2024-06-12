@@ -2,19 +2,37 @@ import '../../../exports.dart';
 
 class VerificationIcon extends StatelessWidget {
   final int duration;
-  const VerificationIcon({super.key, this.duration = 2000});
+  final bool isPatientCard;
+  final bool isSmaller;
+  const VerificationIcon({
+    super.key,
+    this.duration = 2000,
+    this.isPatientCard = false,
+    this.isSmaller = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 3),
-      child: FadeIn(
-        duration: Duration(milliseconds: duration),
-        child: Image.asset(
-          AppImages.verified,
-          height: 20,
-          width: 20,
-          color: Colors.green.shade600,
+    return Tooltip(
+      message: 'Verified',
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        child: FadeIn(
+          duration: Duration(milliseconds: duration),
+          child: Image.asset(
+            AppImages.verified,
+            height: isSmaller
+                ? 18
+                : isPatientCard
+                    ? 18
+                    : 20,
+            width: isSmaller
+                ? 18
+                : isPatientCard
+                    ? 18
+                    : 20,
+            color: isPatientCard ? Colors.grey.shade400 : Colors.green.shade600,
+          ),
         ),
       ),
     );

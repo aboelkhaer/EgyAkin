@@ -129,6 +129,8 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           hospital: patient.hospital ?? AppStrings.empty,
                           currnetDoctorId:
                               widget.currentDoctorModel.id.toString(),
+                          isSyndicateCardRequired:
+                              patient.doctor!.isSyndicateCardRequired!,
                           doctorImage: patient.doctor!.image,
                           isOutcomeStatus: patient.sections!.outcomeStatus!,
                           submitStatus: patient.sections == null

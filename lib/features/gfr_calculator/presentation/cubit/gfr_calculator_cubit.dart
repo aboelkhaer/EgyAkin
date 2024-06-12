@@ -9,12 +9,51 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
   String ageForm = '';
   String creatinineForm = '';
   String genderForm = 'Male';
+  String equationType = 'CKD-EPI';
+  String weightForm = '';
+  String heightForm = '';
   int changesCounter = 0;
   List<GFRCalculatorHistoryModelResponse> gfrHistory = [];
-  changeRadioButton(String value) {
+
+  changeGenderValue(String value) {
     genderForm = value;
 
     emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  changeEquationTypeValue(String value) {
+    equationType = value;
+
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  double calculateGFRForCKD(bool isMale, int age, double creatinine) {
+    // Constants based on gender
+    final kappa = isMale ? 0.9 : 0.7;
+    final alpha = isMale ? -0.411 : -0.329;
+    final constant = isMale ? 141 : 144;
+    final genderFactor = isMale ? 1.0 : 1.018;
+
+    // CKD-EPI equation components
+    final minScr = min(creatinine / kappa, 1);
+    final maxScr = max(creatinine / kappa, 1);
+
+    // Calculate GFR
+    final gfr = constant *
+        pow(minScr, alpha) *
+        pow(maxScr, -1.209) *
+        pow(0.993, age) *
+        genderFactor;
+
+    return gfr;
+  }
+
+  double calculateSobhCcr(
+      int age, double weight, double height, double serumCreatinine) {
+    return ((140 - age) / serumCreatinine) *
+        pow(weight, 0.54) *
+        pow(height, 0.40) *
+        0.014;
   }
 
   void calculateGFR(BuildContext context) {
@@ -23,15 +62,23 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         age: ageForm,
         creatinine: creatinineForm,
         gender: genderForm,
+        equationType: equationType,
+        height: heightForm,
+        weight: weightForm,
       );
 
       // Calculate GFR (example formula)
-      final age = double.parse(data.age!);
+      final age = int.parse(data.age!);
       final creatinine = double.parse(data.creatinine!);
+      final height = double.parse(data.height!);
+      final weight = double.parse(data.weight!);
       final isMale = data.gender == 'Male';
-      final gfr = (isMale ? 141 : 144) *
-          (age > 30 ? pow(0.993, (age - 30)) : 1) /
-          creatinine;
+      final double gfr;
+      if (equationType == 'CKD-EPI') {
+        gfr = calculateGFRForCKD(isMale, age, creatinine);
+      } else {
+        gfr = calculateSobhCcr(age, weight, height, creatinine);
+      }
       gfrHistory.add(
         GFRCalculatorHistoryModelResponse(
           age: age.toString(),
@@ -67,6 +114,7 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
     ageForm = '';
     creatinineForm = '';
     genderForm = 'Male';
+    equationType = 'CKD-EPI';
     formKey.currentState?.reset();
   }
 }

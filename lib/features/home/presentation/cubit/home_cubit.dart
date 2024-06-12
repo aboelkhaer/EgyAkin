@@ -34,6 +34,10 @@ class HomeCubit extends Cubit<HomeState> {
   bool isUnreadNotification = false;
   String isSyndicateCardRequired = '';
 
+  final GlobalKey addPatientKey = GlobalKey();
+  final GlobalKey topDoctorKey = GlobalKey();
+  final GlobalKey yourPatientKey = GlobalKey();
+
   getDoctorDataFromLocal() async {
     currentDoctorModel = (await sl<AppPreferences>().getDoctorData())!;
 

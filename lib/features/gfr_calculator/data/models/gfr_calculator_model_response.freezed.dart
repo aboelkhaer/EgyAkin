@@ -24,6 +24,9 @@ mixin _$GFRCalculatorModelResponse {
   String? get age => throw _privateConstructorUsedError;
   String? get creatinine => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
+  String? get equationType => throw _privateConstructorUsedError;
+  String? get weight => throw _privateConstructorUsedError;
+  String? get height => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -38,7 +41,13 @@ abstract class $GFRCalculatorModelResponseCopyWith<$Res> {
       _$GFRCalculatorModelResponseCopyWithImpl<$Res,
           GFRCalculatorModelResponse>;
   @useResult
-  $Res call({String? age, String? creatinine, String? gender});
+  $Res call(
+      {String? age,
+      String? creatinine,
+      String? gender,
+      String? equationType,
+      String? weight,
+      String? height});
 }
 
 /// @nodoc
@@ -58,6 +67,9 @@ class _$GFRCalculatorModelResponseCopyWithImpl<$Res,
     Object? age = freezed,
     Object? creatinine = freezed,
     Object? gender = freezed,
+    Object? equationType = freezed,
+    Object? weight = freezed,
+    Object? height = freezed,
   }) {
     return _then(_value.copyWith(
       age: freezed == age
@@ -72,6 +84,18 @@ class _$GFRCalculatorModelResponseCopyWithImpl<$Res,
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
+      equationType: freezed == equationType
+          ? _value.equationType
+          : equationType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      weight: freezed == weight
+          ? _value.weight
+          : weight // ignore: cast_nullable_to_non_nullable
+              as String?,
+      height: freezed == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -85,7 +109,13 @@ abstract class _$$GFRCalculatorModelResponseImplCopyWith<$Res>
       __$$GFRCalculatorModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? age, String? creatinine, String? gender});
+  $Res call(
+      {String? age,
+      String? creatinine,
+      String? gender,
+      String? equationType,
+      String? weight,
+      String? height});
 }
 
 /// @nodoc
@@ -104,6 +134,9 @@ class __$$GFRCalculatorModelResponseImplCopyWithImpl<$Res>
     Object? age = freezed,
     Object? creatinine = freezed,
     Object? gender = freezed,
+    Object? equationType = freezed,
+    Object? weight = freezed,
+    Object? height = freezed,
   }) {
     return _then(_$GFRCalculatorModelResponseImpl(
       age: freezed == age
@@ -118,6 +151,18 @@ class __$$GFRCalculatorModelResponseImplCopyWithImpl<$Res>
           ? _value.gender
           : gender // ignore: cast_nullable_to_non_nullable
               as String?,
+      equationType: freezed == equationType
+          ? _value.equationType
+          : equationType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      weight: freezed == weight
+          ? _value.weight
+          : weight // ignore: cast_nullable_to_non_nullable
+              as String?,
+      height: freezed == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -126,7 +171,12 @@ class __$$GFRCalculatorModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$GFRCalculatorModelResponseImpl implements _GFRCalculatorModelResponse {
   const _$GFRCalculatorModelResponseImpl(
-      {this.age, this.creatinine, this.gender});
+      {this.age,
+      this.creatinine,
+      this.gender,
+      this.equationType,
+      this.weight,
+      this.height});
 
   factory _$GFRCalculatorModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -138,10 +188,16 @@ class _$GFRCalculatorModelResponseImpl implements _GFRCalculatorModelResponse {
   final String? creatinine;
   @override
   final String? gender;
+  @override
+  final String? equationType;
+  @override
+  final String? weight;
+  @override
+  final String? height;
 
   @override
   String toString() {
-    return 'GFRCalculatorModelResponse(age: $age, creatinine: $creatinine, gender: $gender)';
+    return 'GFRCalculatorModelResponse(age: $age, creatinine: $creatinine, gender: $gender, equationType: $equationType, weight: $weight, height: $height)';
   }
 
   @override
@@ -152,12 +208,17 @@ class _$GFRCalculatorModelResponseImpl implements _GFRCalculatorModelResponse {
             (identical(other.age, age) || other.age == age) &&
             (identical(other.creatinine, creatinine) ||
                 other.creatinine == creatinine) &&
-            (identical(other.gender, gender) || other.gender == gender));
+            (identical(other.gender, gender) || other.gender == gender) &&
+            (identical(other.equationType, equationType) ||
+                other.equationType == equationType) &&
+            (identical(other.weight, weight) || other.weight == weight) &&
+            (identical(other.height, height) || other.height == height));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, age, creatinine, gender);
+  int get hashCode => Object.hash(
+      runtimeType, age, creatinine, gender, equationType, weight, height);
 
   @JsonKey(ignore: true)
   @override
@@ -179,7 +240,10 @@ abstract class _GFRCalculatorModelResponse
   const factory _GFRCalculatorModelResponse(
       {final String? age,
       final String? creatinine,
-      final String? gender}) = _$GFRCalculatorModelResponseImpl;
+      final String? gender,
+      final String? equationType,
+      final String? weight,
+      final String? height}) = _$GFRCalculatorModelResponseImpl;
 
   factory _GFRCalculatorModelResponse.fromJson(Map<String, dynamic> json) =
       _$GFRCalculatorModelResponseImpl.fromJson;
@@ -190,6 +254,12 @@ abstract class _GFRCalculatorModelResponse
   String? get creatinine;
   @override
   String? get gender;
+  @override
+  String? get equationType;
+  @override
+  String? get weight;
+  @override
+  String? get height;
   @override
   @JsonKey(ignore: true)
   _$$GFRCalculatorModelResponseImplCopyWith<_$GFRCalculatorModelResponseImpl>
@@ -208,6 +278,9 @@ mixin _$GFRCalculatorHistoryModelResponse {
   String? get gender => throw _privateConstructorUsedError;
   String? get result => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
+  String? get weight => throw _privateConstructorUsedError;
+  String? get height => throw _privateConstructorUsedError;
+  String? get equationType => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -228,7 +301,10 @@ abstract class $GFRCalculatorHistoryModelResponseCopyWith<$Res> {
       String? creatinine,
       String? gender,
       String? result,
-      String? date});
+      String? date,
+      String? weight,
+      String? height,
+      String? equationType});
 }
 
 /// @nodoc
@@ -250,6 +326,9 @@ class _$GFRCalculatorHistoryModelResponseCopyWithImpl<$Res,
     Object? gender = freezed,
     Object? result = freezed,
     Object? date = freezed,
+    Object? weight = freezed,
+    Object? height = freezed,
+    Object? equationType = freezed,
   }) {
     return _then(_value.copyWith(
       age: freezed == age
@@ -272,6 +351,18 @@ class _$GFRCalculatorHistoryModelResponseCopyWithImpl<$Res,
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String?,
+      weight: freezed == weight
+          ? _value.weight
+          : weight // ignore: cast_nullable_to_non_nullable
+              as String?,
+      height: freezed == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as String?,
+      equationType: freezed == equationType
+          ? _value.equationType
+          : equationType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -290,7 +381,10 @@ abstract class _$$GFRCalculatorHistoryModelResponseImplCopyWith<$Res>
       String? creatinine,
       String? gender,
       String? result,
-      String? date});
+      String? date,
+      String? weight,
+      String? height,
+      String? equationType});
 }
 
 /// @nodoc
@@ -311,6 +405,9 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
     Object? gender = freezed,
     Object? result = freezed,
     Object? date = freezed,
+    Object? weight = freezed,
+    Object? height = freezed,
+    Object? equationType = freezed,
   }) {
     return _then(_$GFRCalculatorHistoryModelResponseImpl(
       age: freezed == age
@@ -333,6 +430,18 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
           ? _value.date
           : date // ignore: cast_nullable_to_non_nullable
               as String?,
+      weight: freezed == weight
+          ? _value.weight
+          : weight // ignore: cast_nullable_to_non_nullable
+              as String?,
+      height: freezed == height
+          ? _value.height
+          : height // ignore: cast_nullable_to_non_nullable
+              as String?,
+      equationType: freezed == equationType
+          ? _value.equationType
+          : equationType // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -342,7 +451,14 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
 class _$GFRCalculatorHistoryModelResponseImpl
     implements _GFRCalculatorHistoryModelResponse {
   const _$GFRCalculatorHistoryModelResponseImpl(
-      {this.age, this.creatinine, this.gender, this.result, this.date});
+      {this.age,
+      this.creatinine,
+      this.gender,
+      this.result,
+      this.date,
+      this.weight,
+      this.height,
+      this.equationType});
 
   factory _$GFRCalculatorHistoryModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -358,10 +474,16 @@ class _$GFRCalculatorHistoryModelResponseImpl
   final String? result;
   @override
   final String? date;
+  @override
+  final String? weight;
+  @override
+  final String? height;
+  @override
+  final String? equationType;
 
   @override
   String toString() {
-    return 'GFRCalculatorHistoryModelResponse(age: $age, creatinine: $creatinine, gender: $gender, result: $result, date: $date)';
+    return 'GFRCalculatorHistoryModelResponse(age: $age, creatinine: $creatinine, gender: $gender, result: $result, date: $date, weight: $weight, height: $height, equationType: $equationType)';
   }
 
   @override
@@ -374,13 +496,17 @@ class _$GFRCalculatorHistoryModelResponseImpl
                 other.creatinine == creatinine) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.result, result) || other.result == result) &&
-            (identical(other.date, date) || other.date == date));
+            (identical(other.date, date) || other.date == date) &&
+            (identical(other.weight, weight) || other.weight == weight) &&
+            (identical(other.height, height) || other.height == height) &&
+            (identical(other.equationType, equationType) ||
+                other.equationType == equationType));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, age, creatinine, gender, result, date);
+  int get hashCode => Object.hash(runtimeType, age, creatinine, gender, result,
+      date, weight, height, equationType);
 
   @JsonKey(ignore: true)
   @override
@@ -405,7 +531,10 @@ abstract class _GFRCalculatorHistoryModelResponse
       final String? creatinine,
       final String? gender,
       final String? result,
-      final String? date}) = _$GFRCalculatorHistoryModelResponseImpl;
+      final String? date,
+      final String? weight,
+      final String? height,
+      final String? equationType}) = _$GFRCalculatorHistoryModelResponseImpl;
 
   factory _GFRCalculatorHistoryModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -421,6 +550,12 @@ abstract class _GFRCalculatorHistoryModelResponse
   String? get result;
   @override
   String? get date;
+  @override
+  String? get weight;
+  @override
+  String? get height;
+  @override
+  String? get equationType;
   @override
   @JsonKey(ignore: true)
   _$$GFRCalculatorHistoryModelResponseImplCopyWith<

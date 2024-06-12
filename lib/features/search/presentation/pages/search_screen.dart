@@ -234,6 +234,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 patient.doctor!.firstName ?? AppStrings.empty,
                             drLastName:
                                 patient.doctor!.lastName ?? AppStrings.empty,
+                            isSyndicateCardRequired:
+                                patient.doctor!.isSyndicateCardRequired!,
                             currnetDoctorId:
                                 widget.currentDoctorModel.id.toString(),
                             hospital: patient.hospital ?? AppStrings.empty,

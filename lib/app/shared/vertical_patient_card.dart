@@ -11,6 +11,7 @@ class PatientCard extends StatelessWidget {
   final String hospital;
   final VoidCallback onOutcomeTap;
   final VoidCallback onAddCommentTap;
+  final String isSyndicateCardRequired;
   final String? doctorImage;
   final bool isOutcomeStatus;
   final String doctorId;
@@ -30,7 +31,8 @@ class PatientCard extends StatelessWidget {
       required this.onTap,
       required this.doctorImage,
       required this.doctorId,
-      required this.currnetDoctorId});
+      required this.currnetDoctorId,
+      required this.isSyndicateCardRequired});
 
   @override
   Widget build(BuildContext context) {
@@ -143,14 +145,24 @@ class PatientCard extends StatelessWidget {
                                       : const SizedBox(height: 4),
                                   drFirstName == ''
                                       ? const SizedBox.shrink()
-                                      : Text(
-                                          'Dr.${capitalizeFirstText(drFirstName.toString())} ${capitalizeFirstText(drLastName.toString())}',
-                                          style: const TextStyle(
-                                            color: AppColors.description,
-                                            fontSize: 13,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                      : Row(
+                                          children: [
+                                            Text(
+                                              'Dr.${capitalizeFirstText(drFirstName.toString())} ${capitalizeFirstText(drLastName.toString())}',
+                                              style: const TextStyle(
+                                                color: AppColors.description,
+                                                fontSize: 13,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            isSyndicateCardRequired ==
+                                                    'Verified'
+                                                ? const VerificationIcon(
+                                                    isPatientCard: true,
+                                                  )
+                                                : const SizedBox.shrink(),
+                                          ],
                                         ),
                                   drFirstName == ''
                                       ? const SizedBox.shrink()

@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'package:animate_do/animate_do.dart';
-
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -157,19 +155,7 @@ class HomeHeader extends StatelessWidget {
                                 message) {
                               if (homeData.isSyndicateCardRequired ==
                                   'Verified') {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 3),
-                                  child: FadeIn(
-                                    duration: const Duration(seconds: 2),
-                                    child: Image.asset(
-                                      AppImages.verified,
-                                      height: 20,
-                                      width: 20,
-                                      color: Colors.green.shade600,
-                                    ),
-                                  ),
-                                );
+                                return const VerificationIcon();
                               }
                               return const SizedBox.shrink();
                             },

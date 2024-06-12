@@ -42,17 +42,8 @@ class ProfileNameAndJob extends StatelessWidget {
                       ),
                     ),
                     isSyndicateCardRequired == 'Verified'
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 3),
-                            child: FadeIn(
-                              duration: const Duration(seconds: 2),
-                              child: Image.asset(
-                                AppImages.verified,
-                                height: 20,
-                                width: 20,
-                                color: Colors.green.shade600,
-                              ),
-                            ),
+                        ? const VerificationIcon(
+                            duration: 300,
                           )
                         : const SizedBox.shrink(),
                   ],
@@ -145,17 +136,8 @@ class ProfileNameAndJob extends StatelessWidget {
                       ),
                     ),
                     isSyndicateCardRequired == 'Verified'
-                        ? Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 3),
-                            child: FadeIn(
-                              duration: const Duration(seconds: 2),
-                              child: Image.asset(
-                                AppImages.verified,
-                                height: 20,
-                                width: 20,
-                                color: Colors.green.shade600,
-                              ),
-                            ),
+                        ? const VerificationIcon(
+                            duration: 300,
                           )
                         : const SizedBox.shrink(),
                   ],

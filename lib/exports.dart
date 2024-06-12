@@ -270,3 +270,4 @@ export 'package:egy_akin/features/outcome/presentation/pages/outcome_screen.dart
 export 'package:egy_akin/features/patient_section_details/presentation/pages/patient_section_details_screen.dart';
 export 'package:egy_akin/features/search/presentation/pages/search_screen.dart';
 export 'package:animate_do/animate_do.dart';
+export 'package:egy_akin/app/shared/widgets/verification_icon.dart';

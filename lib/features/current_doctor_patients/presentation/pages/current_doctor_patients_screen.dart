@@ -120,6 +120,8 @@ class _CurrentDoctorPatientsScreenState
                           currnetDoctorId:
                               widget.currentDoctorModel.id.toString(),
                           hospital: patient.hospital ?? AppStrings.empty,
+                          isSyndicateCardRequired:
+                              patient.doctor!.isSyndicateCardRequired!,
                           doctorImage: patient.doctor!.image,
                           isOutcomeStatus: patient.sections!.outcomeStatus!,
                           submitStatus: patient.sections == null

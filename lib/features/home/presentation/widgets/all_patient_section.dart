@@ -80,6 +80,8 @@ class AllPatientSection extends StatelessWidget {
                               updatedAt: patient.updatedAt ?? AppStrings.empty,
                               hospital: patient.hospital ?? AppStrings.empty,
                               currnetDoctorId: currentDoctorModel.id.toString(),
+                              isSyndicateCardRequired:
+                                  patient.doctor!.isSyndicateCardRequired!,
                               doctorImage: patient.doctor!.image,
                               submitStatus: patient.sections == null
                                   ? false

@@ -10,6 +10,9 @@ class GFRCalculatorModelResponse with _$GFRCalculatorModelResponse {
     String? age,
     String? creatinine,
     String? gender,
+    String? equationType,
+    String? weight,
+    String? height,
   }) = _GFRCalculatorModelResponse;
   factory GFRCalculatorModelResponse.fromJson(Map<String, dynamic> json) =>
       _$GFRCalculatorModelResponseFromJson(json);
@@ -24,6 +27,9 @@ class GFRCalculatorHistoryModelResponse
     String? gender,
     String? result,
     String? date,
+    String? weight,
+    String? height,
+    String? equationType,
   }) = _GFRCalculatorHistoryModelResponse;
   factory GFRCalculatorHistoryModelResponse.fromJson(
           Map<String, dynamic> json) =>
