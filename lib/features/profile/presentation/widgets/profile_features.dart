@@ -231,18 +231,18 @@ class ProfileFeatures extends StatelessWidget {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
       ),
-      ProfileScreens(
-        icon: Icons.emoji_events_outlined,
-        title: 'Achievements',
-        description: 'Explore your accomplishments.',
-        onTap: () {},
-      ),
-      ProfileScreens(
-        icon: Icons.chat_bubble_outline,
-        title: 'Consultation',
-        description: 'Initiate or view consultations.',
-        onTap: () {},
-      ),
+      // ProfileScreens(
+      //   icon: Icons.emoji_events_outlined,
+      //   title: 'Achievements',
+      //   description: 'Explore your accomplishments.',
+      //   onTap: () {},
+      // ),
+      // ProfileScreens(
+      //   icon: Icons.chat_bubble_outline,
+      //   title: 'Consultation',
+      //   description: 'Initiate or view consultations.',
+      //   onTap: () {},
+      // ),
       ProfileScreens(
           icon: Icons.exit_to_app_outlined,
           title: 'Sign out',

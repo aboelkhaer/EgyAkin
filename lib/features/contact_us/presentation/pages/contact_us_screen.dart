@@ -90,6 +90,15 @@ class ContactUsScreen extends StatelessWidget {
                       );
                     },
                   )),
+              SizedBox(height: 30.h),
+              const Text(
+                'Attention!',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10.h),
+              const Text(
+                'Disclaimer: This app provides informational content only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.',
+              ),
             ],
           ),
         ),

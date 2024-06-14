@@ -85,6 +85,20 @@ class MoreScreen extends StatelessWidget {
                   );
                 },
               ),
+              ListTile(
+                title: const Text('Privacy Policy'),
+                leading: Icon(
+                  Icons.privacy_tip,
+                  color: Colors.grey.shade600,
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15.r,
+                ),
+                onTap: () {
+                  launchURL('https://egyakin.com/policy');
+                },
+              ),
               SizedBox(height: 15.h),
               Text(
                 'Support',

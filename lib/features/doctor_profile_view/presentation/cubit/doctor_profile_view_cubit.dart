@@ -8,7 +8,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
   final UpdateDoctorProfileUsecase _updateDoctorProfileUsecase;
 
   static DoctorProfileViewCubit get(context) => BlocProvider.of(context);
-  GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String firstName = '';
   String lastName = '';
   String email = '';

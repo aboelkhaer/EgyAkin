@@ -70,6 +70,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     loaded: (message) {
                       if (message.isNotEmpty) {
                         customSnackBar(context: context, message: message);
+                        navigatorKey.currentState?.pop();
                       }
                     },
                     error: (message) {

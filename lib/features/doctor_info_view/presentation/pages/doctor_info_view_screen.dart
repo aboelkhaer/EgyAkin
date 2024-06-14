@@ -1,5 +1,3 @@
-import 'package:animate_do/animate_do.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
@@ -55,12 +53,13 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                       },
                       icon: const Icon(Icons.edit),
                     )
-                  : IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.chat_bubble_outline,
-                      ),
-                    ),
+                  // : IconButton(
+                  //     onPressed: () {},
+                  //     icon: const Icon(
+                  //       Icons.chat_bubble_outline,
+                  //     ),
+                  //   ),
+                  : const SizedBox.shrink(),
               SizedBox(width: 20.w),
             ],
           ),

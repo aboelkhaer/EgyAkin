@@ -55,9 +55,6 @@ class DoctorProfileViewScreen extends StatelessWidget {
                       SizedBox(height: size.height * 0.05),
                       Form(
                         key: cubit.formKey,
-                        autovalidateMode: cubit.profileErrorValid == 0
-                            ? AutovalidateMode.disabled
-                            : AutovalidateMode.onUserInteraction,
                         child: Column(
                           children: [
                             const Row(
