@@ -50,8 +50,10 @@ class TopDoctors extends StatelessWidget {
                               AppRoutes.doctorInfoView,
                               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
                                 doctorId: doctor.id.toString(),
-                                currentDoctorId:
-                                    currentDoctorModel.id.toString(),
+                                currentDoctorModel: currentDoctorModel,
+                                accountVerification: homeData.verified!,
+                                isSyndicateCardRequired:
+                                    homeData.isSyndicateCardRequired.toString(),
                               ),
                             );
                           },

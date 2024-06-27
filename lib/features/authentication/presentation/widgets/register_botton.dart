@@ -28,7 +28,15 @@ class RegisterBotton extends StatelessWidget {
       },
       listener: (context, state) {
         state.maybeWhen(
-          loaded: (doctorData) {
+          loaded: (doctorData, isSignInSuccess, isRegisterSuccess) {
+            // if (isRegisterSuccess) {
+            //   sl<NotificationServices>().getDeviceToken().then((value) {
+            //     debugPrint('fcmToken: $value');
+            //     sl<AppPreferences>()
+            //         .setData(AppLocalStrings.fcmTokenKey, value);
+            //   });
+            // }
+
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);
           },

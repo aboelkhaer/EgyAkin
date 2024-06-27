@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:egy_akin/exports.dart';
 
 class ProfileNameAndJob extends StatelessWidget {
@@ -75,7 +74,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600,
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                               ),
                             ),
                             SizedBox(width: 3.w),
@@ -84,7 +83,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600,
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                               ),
                             ),
                             SizedBox(width: 10.w),
@@ -100,7 +99,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600,
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                               ),
                             ),
                             SizedBox(width: 3.w),
@@ -109,7 +108,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600,
-                                fontSize: 14.sp,
+                                fontSize: 12.sp,
                               ),
                             ),
                             // SizedBox(width: 5.w),

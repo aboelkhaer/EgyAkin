@@ -1,8 +1,21 @@
 import 'exports.dart';
 import 'injection_container.dart' as di;
 
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+}
+
+// Future printFCM() async {
+//   String? token = await FirebaseMessaging.instance.getToken();
+//   log(token.toString());
+// }
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   await di.diInit();
   Bloc.observer = MyBlocObserver();
   runApp(const MyApp());

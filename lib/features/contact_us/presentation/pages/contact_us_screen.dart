@@ -90,15 +90,43 @@ class ContactUsScreen extends StatelessWidget {
                       );
                     },
                   )),
-              SizedBox(height: 30.h),
-              const Text(
-                'Attention!',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10.h),
-              const Text(
-                'Disclaimer: This app provides informational content only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.',
-              ),
+              // SizedBox(height: 30.h),
+              // const Text(
+              //   'About EgyAkin',
+              //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 10),
+              // const Text(
+              //   'EgyAkin is dedicated to empowering Egypt\'s fight against kidney failure with cutting-edge data collection, insights, and community support.',
+              // ),
+              // const SizedBox(height: 20),
+              // const Text(
+              //   'Developer Contact Information',
+              //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // ),
+              // const SizedBox(height: 10),
+              // const Text(
+              //   'If you have any questions or need support, please contact us at:',
+              // ),
+              // const SizedBox(height: 10),
+              // const Text(
+              //   'Email: support@egyakin.com',
+              //   style: TextStyle(color: Colors.blue),
+              // ),
+              // const Text(
+              //   'Website: www.egyakin.com',
+              //   style: TextStyle(color: Colors.blue),
+              // ),
+              // SizedBox(height: 30.h),
+              // const Text(
+              //   'Attention!',
+              //   style: TextStyle(fontWeight: FontWeight.bold),
+              // ),
+              // SizedBox(height: 10.h),
+              // const Text(
+              //   'Disclaimer: This app provides informational content only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.',
+              // ),
+              // SizedBox(height: 50.h),
             ],
           ),
         ),

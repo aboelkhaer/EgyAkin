@@ -20,7 +20,13 @@ mixin _$DoctorInfoViewState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(DoctorInfoViewModelResponse doctorInfo) loaded,
+    required TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +34,13 @@ mixin _$DoctorInfoViewState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult? Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +48,13 @@ mixin _$DoctorInfoViewState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -132,7 +150,13 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(DoctorInfoViewModelResponse doctorInfo) loaded,
+    required TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -143,7 +167,13 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult? Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -154,7 +184,13 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -252,7 +288,13 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(DoctorInfoViewModelResponse doctorInfo) loaded,
+    required TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -263,7 +305,13 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult? Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -274,7 +322,13 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -332,9 +386,15 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({DoctorInfoViewModelResponse doctorInfo});
+  $Res call(
+      {DoctorInfoViewModelResponse doctorInfo,
+      bool isLoadingScoreHistory,
+      bool isLoadedScoreHistory,
+      String message,
+      GetDoctorProfileScoreModelResponse? scoreHistory});
 
   $DoctorInfoViewModelResponseCopyWith<$Res> get doctorInfo;
+  $GetDoctorProfileScoreModelResponseCopyWith<$Res>? get scoreHistory;
 }
 
 /// @nodoc
@@ -349,12 +409,32 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? doctorInfo = null,
+    Object? isLoadingScoreHistory = null,
+    Object? isLoadedScoreHistory = null,
+    Object? message = null,
+    Object? scoreHistory = freezed,
   }) {
     return _then(_$LoadedImpl(
       null == doctorInfo
           ? _value.doctorInfo
           : doctorInfo // ignore: cast_nullable_to_non_nullable
               as DoctorInfoViewModelResponse,
+      null == isLoadingScoreHistory
+          ? _value.isLoadingScoreHistory
+          : isLoadingScoreHistory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isLoadedScoreHistory
+          ? _value.isLoadedScoreHistory
+          : isLoadedScoreHistory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      freezed == scoreHistory
+          ? _value.scoreHistory
+          : scoreHistory // ignore: cast_nullable_to_non_nullable
+              as GetDoctorProfileScoreModelResponse?,
     ));
   }
 
@@ -366,19 +446,41 @@ class __$$LoadedImplCopyWithImpl<$Res>
       return _then(_value.copyWith(doctorInfo: value));
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $GetDoctorProfileScoreModelResponseCopyWith<$Res>? get scoreHistory {
+    if (_value.scoreHistory == null) {
+      return null;
+    }
+
+    return $GetDoctorProfileScoreModelResponseCopyWith<$Res>(
+        _value.scoreHistory!, (value) {
+      return _then(_value.copyWith(scoreHistory: value));
+    });
+  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.doctorInfo);
+  const _$LoadedImpl(this.doctorInfo, this.isLoadingScoreHistory,
+      this.isLoadedScoreHistory, this.message, this.scoreHistory);
 
   @override
   final DoctorInfoViewModelResponse doctorInfo;
+  @override
+  final bool isLoadingScoreHistory;
+  @override
+  final bool isLoadedScoreHistory;
+  @override
+  final String message;
+  @override
+  final GetDoctorProfileScoreModelResponse? scoreHistory;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo)';
+    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo, isLoadingScoreHistory: $isLoadingScoreHistory, isLoadedScoreHistory: $isLoadedScoreHistory, message: $message, scoreHistory: $scoreHistory)';
   }
 
   @override
@@ -386,7 +488,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'DoctorInfoViewState.loaded'))
-      ..add(DiagnosticsProperty('doctorInfo', doctorInfo));
+      ..add(DiagnosticsProperty('doctorInfo', doctorInfo))
+      ..add(DiagnosticsProperty('isLoadingScoreHistory', isLoadingScoreHistory))
+      ..add(DiagnosticsProperty('isLoadedScoreHistory', isLoadedScoreHistory))
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty('scoreHistory', scoreHistory));
   }
 
   @override
@@ -395,11 +501,19 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.doctorInfo, doctorInfo) ||
-                other.doctorInfo == doctorInfo));
+                other.doctorInfo == doctorInfo) &&
+            (identical(other.isLoadingScoreHistory, isLoadingScoreHistory) ||
+                other.isLoadingScoreHistory == isLoadingScoreHistory) &&
+            (identical(other.isLoadedScoreHistory, isLoadedScoreHistory) ||
+                other.isLoadedScoreHistory == isLoadedScoreHistory) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.scoreHistory, scoreHistory) ||
+                other.scoreHistory == scoreHistory));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, doctorInfo);
+  int get hashCode => Object.hash(runtimeType, doctorInfo,
+      isLoadingScoreHistory, isLoadedScoreHistory, message, scoreHistory);
 
   @JsonKey(ignore: true)
   @override
@@ -412,10 +526,17 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(DoctorInfoViewModelResponse doctorInfo) loaded,
+    required TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(doctorInfo);
+    return loaded(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
+        message, scoreHistory);
   }
 
   @override
@@ -423,10 +544,17 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult? Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(doctorInfo);
+    return loaded?.call(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
+        message, scoreHistory);
   }
 
   @override
@@ -434,12 +562,19 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(doctorInfo);
+      return loaded(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
+          message, scoreHistory);
     }
     return orElse();
   }
@@ -483,10 +618,18 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements DoctorInfoViewState {
-  const factory _Loaded(final DoctorInfoViewModelResponse doctorInfo) =
-      _$LoadedImpl;
+  const factory _Loaded(
+      final DoctorInfoViewModelResponse doctorInfo,
+      final bool isLoadingScoreHistory,
+      final bool isLoadedScoreHistory,
+      final String message,
+      final GetDoctorProfileScoreModelResponse? scoreHistory) = _$LoadedImpl;
 
   DoctorInfoViewModelResponse get doctorInfo;
+  bool get isLoadingScoreHistory;
+  bool get isLoadedScoreHistory;
+  String get message;
+  GetDoctorProfileScoreModelResponse? get scoreHistory;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -566,7 +709,13 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(DoctorInfoViewModelResponse doctorInfo) loaded,
+    required TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -577,7 +726,13 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult? Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -588,7 +743,13 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorInfoViewModelResponse doctorInfo)? loaded,
+    TResult Function(
+            DoctorInfoViewModelResponse doctorInfo,
+            bool isLoadingScoreHistory,
+            bool isLoadedScoreHistory,
+            String message,
+            GetDoctorProfileScoreModelResponse? scoreHistory)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

@@ -20,7 +20,8 @@ mixin _$SearchState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetSearchModelResponse? response, bool isSeeMore)
+    required TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -29,7 +30,9 @@ mixin _$SearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult? Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,7 +40,9 @@ mixin _$SearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -127,7 +132,8 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetSearchModelResponse? response, bool isSeeMore)
+    required TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -139,7 +145,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult? Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -150,7 +158,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -242,7 +252,8 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetSearchModelResponse? response, bool isSeeMore)
+    required TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -254,7 +265,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult? Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -265,7 +278,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -323,9 +338,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({GetSearchModelResponse? response, bool isSeeMore});
-
-  $GetSearchModelResponseCopyWith<$Res>? get response;
+  $Res call(
+      {List<PatientHomeDataModel>? patients,
+      List<SearchDataForDosesModelResponse>? doses});
 }
 
 /// @nodoc
@@ -339,47 +354,53 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? response = freezed,
-    Object? isSeeMore = null,
+    Object? patients = freezed,
+    Object? doses = freezed,
   }) {
     return _then(_$LoadedImpl(
-      freezed == response
-          ? _value.response
-          : response // ignore: cast_nullable_to_non_nullable
-              as GetSearchModelResponse?,
-      null == isSeeMore
-          ? _value.isSeeMore
-          : isSeeMore // ignore: cast_nullable_to_non_nullable
-              as bool,
+      freezed == patients
+          ? _value._patients
+          : patients // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
+      freezed == doses
+          ? _value._doses
+          : doses // ignore: cast_nullable_to_non_nullable
+              as List<SearchDataForDosesModelResponse>?,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $GetSearchModelResponseCopyWith<$Res>? get response {
-    if (_value.response == null) {
-      return null;
-    }
-
-    return $GetSearchModelResponseCopyWith<$Res>(_value.response!, (value) {
-      return _then(_value.copyWith(response: value));
-    });
   }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.response, this.isSeeMore);
+  const _$LoadedImpl(final List<PatientHomeDataModel>? patients,
+      final List<SearchDataForDosesModelResponse>? doses)
+      : _patients = patients,
+        _doses = doses;
 
+  final List<PatientHomeDataModel>? _patients;
   @override
-  final GetSearchModelResponse? response;
+  List<PatientHomeDataModel>? get patients {
+    final value = _patients;
+    if (value == null) return null;
+    if (_patients is EqualUnmodifiableListView) return _patients;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<SearchDataForDosesModelResponse>? _doses;
   @override
-  final bool isSeeMore;
+  List<SearchDataForDosesModelResponse>? get doses {
+    final value = _doses;
+    if (value == null) return null;
+    if (_doses is EqualUnmodifiableListView) return _doses;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'SearchState.loaded(response: $response, isSeeMore: $isSeeMore)';
+    return 'SearchState.loaded(patients: $patients, doses: $doses)';
   }
 
   @override
@@ -387,14 +408,15 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            (identical(other.response, response) ||
-                other.response == response) &&
-            (identical(other.isSeeMore, isSeeMore) ||
-                other.isSeeMore == isSeeMore));
+            const DeepCollectionEquality().equals(other._patients, _patients) &&
+            const DeepCollectionEquality().equals(other._doses, _doses));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, response, isSeeMore);
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_patients),
+      const DeepCollectionEquality().hash(_doses));
 
   @JsonKey(ignore: true)
   @override
@@ -407,11 +429,12 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetSearchModelResponse? response, bool isSeeMore)
+    required TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isSeeMore);
+    return loaded(patients, doses);
   }
 
   @override
@@ -419,10 +442,12 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult? Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isSeeMore);
+    return loaded?.call(patients, doses);
   }
 
   @override
@@ -430,12 +455,14 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isSeeMore);
+      return loaded(patients, doses);
     }
     return orElse();
   }
@@ -479,12 +506,11 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements SearchState {
-  const factory _Loaded(
-          final GetSearchModelResponse? response, final bool isSeeMore) =
-      _$LoadedImpl;
+  const factory _Loaded(final List<PatientHomeDataModel>? patients,
+      final List<SearchDataForDosesModelResponse>? doses) = _$LoadedImpl;
 
-  GetSearchModelResponse? get response;
-  bool get isSeeMore;
+  List<PatientHomeDataModel>? get patients;
+  List<SearchDataForDosesModelResponse>? get doses;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -556,7 +582,8 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetSearchModelResponse? response, bool isSeeMore)
+    required TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -568,7 +595,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult? Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -579,7 +608,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetSearchModelResponse? response, bool isSeeMore)? loaded,
+    TResult Function(List<PatientHomeDataModel>? patients,
+            List<SearchDataForDosesModelResponse>? doses)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

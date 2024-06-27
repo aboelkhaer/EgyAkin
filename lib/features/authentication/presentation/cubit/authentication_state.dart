@@ -10,6 +10,8 @@ abstract class AuthenticationState with _$AuthenticationState {
           bool signInObscureText, bool signInVisiblePasswordIcon) =
       _ChangePasswordVisibility;
   const factory AuthenticationState.loaded(
-      AuthenticationModelResponse doctorData) = _Loaded;
+      AuthenticationModelResponse doctorData,
+      bool isSignInSuccess,
+      bool isRegisterSuccess) = _Loaded;
   const factory AuthenticationState.error(String message) = _Error;
 }

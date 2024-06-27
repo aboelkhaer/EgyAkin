@@ -50,6 +50,14 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   Navigator.pushReplacementNamed(context, AppRoutes.home,
                       arguments: 0);
                 }
+                if (isDownloadedReport) {
+                  launchURL(
+                    url: cubit.reportPdfUrl,
+                    onError: (error) {
+                      showErrorDialog(context, error);
+                    },
+                  );
+                }
               },
             );
           },

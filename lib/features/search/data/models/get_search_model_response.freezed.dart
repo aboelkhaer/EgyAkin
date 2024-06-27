@@ -209,25 +209,10 @@ GetSearchDataModelResponse _$GetSearchDataModelResponseFromJson(
 
 /// @nodoc
 mixin _$GetSearchDataModelResponse {
-  @JsonKey(name: 'current_page')
-  int? get currentPage => throw _privateConstructorUsedError;
-  List<PatientHomeDataModel>? get data => throw _privateConstructorUsedError;
-  @JsonKey(name: 'first_page_url')
-  String? get firstPageUrl => throw _privateConstructorUsedError;
-  int? get from => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_page')
-  int? get lastPage => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_page_url')
-  String? get lastPageUrl => throw _privateConstructorUsedError;
-  List<Link>? get links => throw _privateConstructorUsedError;
-  @JsonKey(name: 'next_page_url')
-  String? get nextPageUrl => throw _privateConstructorUsedError;
-  String? get path => throw _privateConstructorUsedError;
-  int? get perPage => throw _privateConstructorUsedError;
-  @JsonKey(name: 'prev_page_url')
-  String? get prevPageUrl => throw _privateConstructorUsedError;
-  int? get to => throw _privateConstructorUsedError;
-  int? get total => throw _privateConstructorUsedError;
+  List<PatientHomeDataModel>? get patients =>
+      throw _privateConstructorUsedError;
+  List<SearchDataForDosesModelResponse>? get doses =>
+      throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -243,19 +228,8 @@ abstract class $GetSearchDataModelResponseCopyWith<$Res> {
           GetSearchDataModelResponse>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_page') int? currentPage,
-      List<PatientHomeDataModel>? data,
-      @JsonKey(name: 'first_page_url') String? firstPageUrl,
-      int? from,
-      @JsonKey(name: 'last_page') int? lastPage,
-      @JsonKey(name: 'last_page_url') String? lastPageUrl,
-      List<Link>? links,
-      @JsonKey(name: 'next_page_url') String? nextPageUrl,
-      String? path,
-      int? perPage,
-      @JsonKey(name: 'prev_page_url') String? prevPageUrl,
-      int? to,
-      int? total});
+      {List<PatientHomeDataModel>? patients,
+      List<SearchDataForDosesModelResponse>? doses});
 }
 
 /// @nodoc
@@ -272,73 +246,18 @@ class _$GetSearchDataModelResponseCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? currentPage = freezed,
-    Object? data = freezed,
-    Object? firstPageUrl = freezed,
-    Object? from = freezed,
-    Object? lastPage = freezed,
-    Object? lastPageUrl = freezed,
-    Object? links = freezed,
-    Object? nextPageUrl = freezed,
-    Object? path = freezed,
-    Object? perPage = freezed,
-    Object? prevPageUrl = freezed,
-    Object? to = freezed,
-    Object? total = freezed,
+    Object? patients = freezed,
+    Object? doses = freezed,
   }) {
     return _then(_value.copyWith(
-      currentPage: freezed == currentPage
-          ? _value.currentPage
-          : currentPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      data: freezed == data
-          ? _value.data
-          : data // ignore: cast_nullable_to_non_nullable
+      patients: freezed == patients
+          ? _value.patients
+          : patients // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
-      firstPageUrl: freezed == firstPageUrl
-          ? _value.firstPageUrl
-          : firstPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      from: freezed == from
-          ? _value.from
-          : from // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lastPage: freezed == lastPage
-          ? _value.lastPage
-          : lastPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lastPageUrl: freezed == lastPageUrl
-          ? _value.lastPageUrl
-          : lastPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      links: freezed == links
-          ? _value.links
-          : links // ignore: cast_nullable_to_non_nullable
-              as List<Link>?,
-      nextPageUrl: freezed == nextPageUrl
-          ? _value.nextPageUrl
-          : nextPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      path: freezed == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as String?,
-      perPage: freezed == perPage
-          ? _value.perPage
-          : perPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      prevPageUrl: freezed == prevPageUrl
-          ? _value.prevPageUrl
-          : prevPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      to: freezed == to
-          ? _value.to
-          : to // ignore: cast_nullable_to_non_nullable
-              as int?,
-      total: freezed == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int?,
+      doses: freezed == doses
+          ? _value.doses
+          : doses // ignore: cast_nullable_to_non_nullable
+              as List<SearchDataForDosesModelResponse>?,
     ) as $Val);
   }
 }
@@ -353,19 +272,8 @@ abstract class _$$GetSearchDataModelResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_page') int? currentPage,
-      List<PatientHomeDataModel>? data,
-      @JsonKey(name: 'first_page_url') String? firstPageUrl,
-      int? from,
-      @JsonKey(name: 'last_page') int? lastPage,
-      @JsonKey(name: 'last_page_url') String? lastPageUrl,
-      List<Link>? links,
-      @JsonKey(name: 'next_page_url') String? nextPageUrl,
-      String? path,
-      int? perPage,
-      @JsonKey(name: 'prev_page_url') String? prevPageUrl,
-      int? to,
-      int? total});
+      {List<PatientHomeDataModel>? patients,
+      List<SearchDataForDosesModelResponse>? doses});
 }
 
 /// @nodoc
@@ -381,73 +289,18 @@ class __$$GetSearchDataModelResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? currentPage = freezed,
-    Object? data = freezed,
-    Object? firstPageUrl = freezed,
-    Object? from = freezed,
-    Object? lastPage = freezed,
-    Object? lastPageUrl = freezed,
-    Object? links = freezed,
-    Object? nextPageUrl = freezed,
-    Object? path = freezed,
-    Object? perPage = freezed,
-    Object? prevPageUrl = freezed,
-    Object? to = freezed,
-    Object? total = freezed,
+    Object? patients = freezed,
+    Object? doses = freezed,
   }) {
     return _then(_$GetSearchDataModelResponseImpl(
-      currentPage: freezed == currentPage
-          ? _value.currentPage
-          : currentPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      data: freezed == data
-          ? _value._data
-          : data // ignore: cast_nullable_to_non_nullable
+      patients: freezed == patients
+          ? _value._patients
+          : patients // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
-      firstPageUrl: freezed == firstPageUrl
-          ? _value.firstPageUrl
-          : firstPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      from: freezed == from
-          ? _value.from
-          : from // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lastPage: freezed == lastPage
-          ? _value.lastPage
-          : lastPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      lastPageUrl: freezed == lastPageUrl
-          ? _value.lastPageUrl
-          : lastPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      links: freezed == links
-          ? _value._links
-          : links // ignore: cast_nullable_to_non_nullable
-              as List<Link>?,
-      nextPageUrl: freezed == nextPageUrl
-          ? _value.nextPageUrl
-          : nextPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      path: freezed == path
-          ? _value.path
-          : path // ignore: cast_nullable_to_non_nullable
-              as String?,
-      perPage: freezed == perPage
-          ? _value.perPage
-          : perPage // ignore: cast_nullable_to_non_nullable
-              as int?,
-      prevPageUrl: freezed == prevPageUrl
-          ? _value.prevPageUrl
-          : prevPageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      to: freezed == to
-          ? _value.to
-          : to // ignore: cast_nullable_to_non_nullable
-              as int?,
-      total: freezed == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as int?,
+      doses: freezed == doses
+          ? _value._doses
+          : doses // ignore: cast_nullable_to_non_nullable
+              as List<SearchDataForDosesModelResponse>?,
     ));
   }
 }
@@ -458,78 +311,38 @@ class _$GetSearchDataModelResponseImpl
     with DiagnosticableTreeMixin
     implements _GetSearchDataModelResponse {
   const _$GetSearchDataModelResponseImpl(
-      {@JsonKey(name: 'current_page') this.currentPage,
-      final List<PatientHomeDataModel>? data,
-      @JsonKey(name: 'first_page_url') this.firstPageUrl,
-      this.from,
-      @JsonKey(name: 'last_page') this.lastPage,
-      @JsonKey(name: 'last_page_url') this.lastPageUrl,
-      final List<Link>? links,
-      @JsonKey(name: 'next_page_url') this.nextPageUrl,
-      this.path,
-      this.perPage,
-      @JsonKey(name: 'prev_page_url') this.prevPageUrl,
-      this.to,
-      this.total})
-      : _data = data,
-        _links = links;
+      {final List<PatientHomeDataModel>? patients,
+      final List<SearchDataForDosesModelResponse>? doses})
+      : _patients = patients,
+        _doses = doses;
 
   factory _$GetSearchDataModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$GetSearchDataModelResponseImplFromJson(json);
 
+  final List<PatientHomeDataModel>? _patients;
   @override
-  @JsonKey(name: 'current_page')
-  final int? currentPage;
-  final List<PatientHomeDataModel>? _data;
-  @override
-  List<PatientHomeDataModel>? get data {
-    final value = _data;
+  List<PatientHomeDataModel>? get patients {
+    final value = _patients;
     if (value == null) return null;
-    if (_data is EqualUnmodifiableListView) return _data;
+    if (_patients is EqualUnmodifiableListView) return _patients;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
 
+  final List<SearchDataForDosesModelResponse>? _doses;
   @override
-  @JsonKey(name: 'first_page_url')
-  final String? firstPageUrl;
-  @override
-  final int? from;
-  @override
-  @JsonKey(name: 'last_page')
-  final int? lastPage;
-  @override
-  @JsonKey(name: 'last_page_url')
-  final String? lastPageUrl;
-  final List<Link>? _links;
-  @override
-  List<Link>? get links {
-    final value = _links;
+  List<SearchDataForDosesModelResponse>? get doses {
+    final value = _doses;
     if (value == null) return null;
-    if (_links is EqualUnmodifiableListView) return _links;
+    if (_doses is EqualUnmodifiableListView) return _doses;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
-
-  @override
-  @JsonKey(name: 'next_page_url')
-  final String? nextPageUrl;
-  @override
-  final String? path;
-  @override
-  final int? perPage;
-  @override
-  @JsonKey(name: 'prev_page_url')
-  final String? prevPageUrl;
-  @override
-  final int? to;
-  @override
-  final int? total;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'GetSearchDataModelResponse(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
+    return 'GetSearchDataModelResponse(patients: $patients, doses: $doses)';
   }
 
   @override
@@ -537,19 +350,8 @@ class _$GetSearchDataModelResponseImpl
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'GetSearchDataModelResponse'))
-      ..add(DiagnosticsProperty('currentPage', currentPage))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('firstPageUrl', firstPageUrl))
-      ..add(DiagnosticsProperty('from', from))
-      ..add(DiagnosticsProperty('lastPage', lastPage))
-      ..add(DiagnosticsProperty('lastPageUrl', lastPageUrl))
-      ..add(DiagnosticsProperty('links', links))
-      ..add(DiagnosticsProperty('nextPageUrl', nextPageUrl))
-      ..add(DiagnosticsProperty('path', path))
-      ..add(DiagnosticsProperty('perPage', perPage))
-      ..add(DiagnosticsProperty('prevPageUrl', prevPageUrl))
-      ..add(DiagnosticsProperty('to', to))
-      ..add(DiagnosticsProperty('total', total));
+      ..add(DiagnosticsProperty('patients', patients))
+      ..add(DiagnosticsProperty('doses', doses));
   }
 
   @override
@@ -557,44 +359,16 @@ class _$GetSearchDataModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$GetSearchDataModelResponseImpl &&
-            (identical(other.currentPage, currentPage) ||
-                other.currentPage == currentPage) &&
-            const DeepCollectionEquality().equals(other._data, _data) &&
-            (identical(other.firstPageUrl, firstPageUrl) ||
-                other.firstPageUrl == firstPageUrl) &&
-            (identical(other.from, from) || other.from == from) &&
-            (identical(other.lastPage, lastPage) ||
-                other.lastPage == lastPage) &&
-            (identical(other.lastPageUrl, lastPageUrl) ||
-                other.lastPageUrl == lastPageUrl) &&
-            const DeepCollectionEquality().equals(other._links, _links) &&
-            (identical(other.nextPageUrl, nextPageUrl) ||
-                other.nextPageUrl == nextPageUrl) &&
-            (identical(other.path, path) || other.path == path) &&
-            (identical(other.perPage, perPage) || other.perPage == perPage) &&
-            (identical(other.prevPageUrl, prevPageUrl) ||
-                other.prevPageUrl == prevPageUrl) &&
-            (identical(other.to, to) || other.to == to) &&
-            (identical(other.total, total) || other.total == total));
+            const DeepCollectionEquality().equals(other._patients, _patients) &&
+            const DeepCollectionEquality().equals(other._doses, _doses));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      currentPage,
-      const DeepCollectionEquality().hash(_data),
-      firstPageUrl,
-      from,
-      lastPage,
-      lastPageUrl,
-      const DeepCollectionEquality().hash(_links),
-      nextPageUrl,
-      path,
-      perPage,
-      prevPageUrl,
-      to,
-      total);
+      const DeepCollectionEquality().hash(_patients),
+      const DeepCollectionEquality().hash(_doses));
 
   @JsonKey(ignore: true)
   @override
@@ -614,57 +388,272 @@ class _$GetSearchDataModelResponseImpl
 abstract class _GetSearchDataModelResponse
     implements GetSearchDataModelResponse {
   const factory _GetSearchDataModelResponse(
-      {@JsonKey(name: 'current_page') final int? currentPage,
-      final List<PatientHomeDataModel>? data,
-      @JsonKey(name: 'first_page_url') final String? firstPageUrl,
-      final int? from,
-      @JsonKey(name: 'last_page') final int? lastPage,
-      @JsonKey(name: 'last_page_url') final String? lastPageUrl,
-      final List<Link>? links,
-      @JsonKey(name: 'next_page_url') final String? nextPageUrl,
-      final String? path,
-      final int? perPage,
-      @JsonKey(name: 'prev_page_url') final String? prevPageUrl,
-      final int? to,
-      final int? total}) = _$GetSearchDataModelResponseImpl;
+          {final List<PatientHomeDataModel>? patients,
+          final List<SearchDataForDosesModelResponse>? doses}) =
+      _$GetSearchDataModelResponseImpl;
 
   factory _GetSearchDataModelResponse.fromJson(Map<String, dynamic> json) =
       _$GetSearchDataModelResponseImpl.fromJson;
 
   @override
-  @JsonKey(name: 'current_page')
-  int? get currentPage;
+  List<PatientHomeDataModel>? get patients;
   @override
-  List<PatientHomeDataModel>? get data;
-  @override
-  @JsonKey(name: 'first_page_url')
-  String? get firstPageUrl;
-  @override
-  int? get from;
-  @override
-  @JsonKey(name: 'last_page')
-  int? get lastPage;
-  @override
-  @JsonKey(name: 'last_page_url')
-  String? get lastPageUrl;
-  @override
-  List<Link>? get links;
-  @override
-  @JsonKey(name: 'next_page_url')
-  String? get nextPageUrl;
-  @override
-  String? get path;
-  @override
-  int? get perPage;
-  @override
-  @JsonKey(name: 'prev_page_url')
-  String? get prevPageUrl;
-  @override
-  int? get to;
-  @override
-  int? get total;
+  List<SearchDataForDosesModelResponse>? get doses;
   @override
   @JsonKey(ignore: true)
   _$$GetSearchDataModelResponseImplCopyWith<_$GetSearchDataModelResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SearchDataForDosesModelResponse _$SearchDataForDosesModelResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SearchDataForDosesModelResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SearchDataForDosesModelResponse {
+  int? get id => throw _privateConstructorUsedError;
+  String? get title => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  String? get dose => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String? get createdAt => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SearchDataForDosesModelResponseCopyWith<SearchDataForDosesModelResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SearchDataForDosesModelResponseCopyWith<$Res> {
+  factory $SearchDataForDosesModelResponseCopyWith(
+          SearchDataForDosesModelResponse value,
+          $Res Function(SearchDataForDosesModelResponse) then) =
+      _$SearchDataForDosesModelResponseCopyWithImpl<$Res,
+          SearchDataForDosesModelResponse>;
+  @useResult
+  $Res call(
+      {int? id,
+      String? title,
+      String? description,
+      String? dose,
+      @JsonKey(name: 'created_at') String? createdAt});
+}
+
+/// @nodoc
+class _$SearchDataForDosesModelResponseCopyWithImpl<$Res,
+        $Val extends SearchDataForDosesModelResponse>
+    implements $SearchDataForDosesModelResponseCopyWith<$Res> {
+  _$SearchDataForDosesModelResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? title = freezed,
+    Object? description = freezed,
+    Object? dose = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dose: freezed == dose
+          ? _value.dose
+          : dose // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SearchDataForDosesModelResponseImplCopyWith<$Res>
+    implements $SearchDataForDosesModelResponseCopyWith<$Res> {
+  factory _$$SearchDataForDosesModelResponseImplCopyWith(
+          _$SearchDataForDosesModelResponseImpl value,
+          $Res Function(_$SearchDataForDosesModelResponseImpl) then) =
+      __$$SearchDataForDosesModelResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      String? title,
+      String? description,
+      String? dose,
+      @JsonKey(name: 'created_at') String? createdAt});
+}
+
+/// @nodoc
+class __$$SearchDataForDosesModelResponseImplCopyWithImpl<$Res>
+    extends _$SearchDataForDosesModelResponseCopyWithImpl<$Res,
+        _$SearchDataForDosesModelResponseImpl>
+    implements _$$SearchDataForDosesModelResponseImplCopyWith<$Res> {
+  __$$SearchDataForDosesModelResponseImplCopyWithImpl(
+      _$SearchDataForDosesModelResponseImpl _value,
+      $Res Function(_$SearchDataForDosesModelResponseImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? title = freezed,
+    Object? description = freezed,
+    Object? dose = freezed,
+    Object? createdAt = freezed,
+  }) {
+    return _then(_$SearchDataForDosesModelResponseImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      title: freezed == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      dose: freezed == dose
+          ? _value.dose
+          : dose // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SearchDataForDosesModelResponseImpl
+    with DiagnosticableTreeMixin
+    implements _SearchDataForDosesModelResponse {
+  const _$SearchDataForDosesModelResponseImpl(
+      {this.id,
+      this.title,
+      this.description,
+      this.dose,
+      @JsonKey(name: 'created_at') this.createdAt});
+
+  factory _$SearchDataForDosesModelResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SearchDataForDosesModelResponseImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  final String? title;
+  @override
+  final String? description;
+  @override
+  final String? dose;
+  @override
+  @JsonKey(name: 'created_at')
+  final String? createdAt;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'SearchDataForDosesModelResponse(id: $id, title: $title, description: $description, dose: $dose, createdAt: $createdAt)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'SearchDataForDosesModelResponse'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('title', title))
+      ..add(DiagnosticsProperty('description', description))
+      ..add(DiagnosticsProperty('dose', dose))
+      ..add(DiagnosticsProperty('createdAt', createdAt));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SearchDataForDosesModelResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.description, description) ||
+                other.description == description) &&
+            (identical(other.dose, dose) || other.dose == dose) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, id, title, description, dose, createdAt);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SearchDataForDosesModelResponseImplCopyWith<
+          _$SearchDataForDosesModelResponseImpl>
+      get copyWith => __$$SearchDataForDosesModelResponseImplCopyWithImpl<
+          _$SearchDataForDosesModelResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SearchDataForDosesModelResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SearchDataForDosesModelResponse
+    implements SearchDataForDosesModelResponse {
+  const factory _SearchDataForDosesModelResponse(
+          {final int? id,
+          final String? title,
+          final String? description,
+          final String? dose,
+          @JsonKey(name: 'created_at') final String? createdAt}) =
+      _$SearchDataForDosesModelResponseImpl;
+
+  factory _SearchDataForDosesModelResponse.fromJson(Map<String, dynamic> json) =
+      _$SearchDataForDosesModelResponseImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  String? get title;
+  @override
+  String? get description;
+  @override
+  String? get dose;
+  @override
+  @JsonKey(name: 'created_at')
+  String? get createdAt;
+  @override
+  @JsonKey(ignore: true)
+  _$$SearchDataForDosesModelResponseImplCopyWith<
+          _$SearchDataForDosesModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

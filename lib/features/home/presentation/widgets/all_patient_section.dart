@@ -78,8 +78,9 @@ class AllPatientSection extends StatelessWidget {
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
                               updatedAt: patient.updatedAt ?? AppStrings.empty,
+                              accountVerification: homeData.verified!,
                               hospital: patient.hospital ?? AppStrings.empty,
-                              currnetDoctorId: currentDoctorModel.id.toString(),
+                              currentDoctorModel: currentDoctorModel,
                               isSyndicateCardRequired:
                                   patient.doctor!.isSyndicateCardRequired!,
                               doctorImage: patient.doctor!.image,

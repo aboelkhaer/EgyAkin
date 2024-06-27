@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/authentication/domain/usecases/send_fcm_token_usecase.dart';
+
 import '../../../../exports.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
@@ -6,7 +8,15 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   final SignInUsecase _signInUsecase;
   final RegisterUsecase _registerUsecase;
+  // final SendFCMTokenUsecase _sendFCMTokenUsecase;
   static AuthenticationCubit get(context) => BlocProvider.of(context);
+
+  String fcmToken = '';
+  getFCMToken() async {
+    sl<NotificationServices>().getDeviceToken().then((value) {
+      fcmToken = value;
+    });
+  }
 
   //! Sign in
   GlobalKey<FormState> signInFormKey = GlobalKey<FormState>();
@@ -33,6 +43,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         SignInUseCaseInput(
           email: signInEmail,
           password: signInPassword,
+          fcmToken: fcmToken,
         ),
       );
       result.fold(
@@ -40,7 +51,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           emit(AuthenticationState.error(l.message));
         },
         (doctorModel) async {
-          emit(AuthenticationState.loaded(doctorModel));
+          emit(AuthenticationState.loaded(doctorModel, true, false));
         },
       );
     }
@@ -67,6 +78,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   Future register() async {
     if (registerFormKey.currentState!.validate()) {
       emit(const AuthenticationState.loading());
+
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
       final result = await _registerUsecase.excute(DoctorModel(
@@ -82,13 +94,14 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         registrationNumber: registerRegistrationNumber,
         specialty: registerSpecialty,
         highestdegree: registerHighestDegree,
+        fcmToken: fcmToken,
       ));
       result.fold(
         (l) {
           emit(AuthenticationState.error(l.message));
         },
         (doctorModel) async {
-          emit(AuthenticationState.loaded(doctorModel));
+          emit(AuthenticationState.loaded(doctorModel, false, true));
         },
       );
     }

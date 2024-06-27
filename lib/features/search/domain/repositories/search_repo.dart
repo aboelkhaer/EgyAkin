@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 
 abstract class SearchRepository {
   Future<Either<Failure, GetSearchModelResponse>> getSearchHome({
-    required String searchContent,
-    required int page,
+    required String patient,
+    required String dose,
   });
 }

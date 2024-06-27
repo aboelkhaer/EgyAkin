@@ -1,0 +1,32 @@
+import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/profile_patients/data/datasources/profile_patients_datasource.dart';
+import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
+import 'package:egy_akin/features/profile_patients/domain/repositories/profile_patients_repo.dart';
+
+import '../../../../exports.dart';
+
+class ProfilePatientsRepositoryImpl extends ProfilePatientsRepository {
+  final ProfilePatientsDataSource profilePatientsDataSource;
+  final NetworkInfo networkInfo;
+
+  ProfilePatientsRepositoryImpl(
+      this.profilePatientsDataSource, this.networkInfo);
+
+  @override
+  Future<Either<Failure, GetProfilePatientsModelResponse>> getProfilePatients(
+      {required int page, required String doctorId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await profilePatientsDataSource.getProfilePatients(
+            pageNumber: page, doctorId: doctorId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+}

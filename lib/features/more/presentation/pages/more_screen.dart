@@ -1,15 +1,25 @@
-import 'package:egy_akin/features/more/presentation/cubit/more_cubit.dart';
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 
 import '../../../../exports.dart';
 
-class MoreScreen extends StatelessWidget {
+class MoreScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   const MoreScreen(
       {super.key,
       required this.currentDoctorModel,
       required this.accountVerification});
+
+  @override
+  State<MoreScreen> createState() => _MoreScreenState();
+}
+
+class _MoreScreenState extends State<MoreScreen> {
+  @override
+  void initState() {
+    context.read<MoreCubit>().getFcmTokenTest();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +73,7 @@ class MoreScreen extends StatelessWidget {
               ),
               BlocBuilder<MoreCubit, MoreState>(
                 builder: (context, state) {
-                  if (accountVerification) {
+                  if (widget.accountVerification) {
                     return const SizedBox.shrink();
                   }
                   return ListTile(
@@ -80,7 +90,7 @@ class MoreScreen extends StatelessWidget {
                       navigatorKey.currentState?.pushNamed(
                           AppRoutes.emailVerification,
                           arguments: AppRoutesArgs.emailVerificationRouteArgs(
-                              currentDoctorModel: currentDoctorModel));
+                              currentDoctorModel: widget.currentDoctorModel));
                     },
                   );
                 },
@@ -96,7 +106,12 @@ class MoreScreen extends StatelessWidget {
                   size: 15.r,
                 ),
                 onTap: () {
-                  launchURL('https://egyakin.com/policy');
+                  launchURL(
+                    url: 'https://egyakin.com/policy',
+                    onError: (error) {
+                      showErrorDialog(context, error);
+                    },
+                  );
                 },
               ),
               SizedBox(height: 15.h),
@@ -119,6 +134,29 @@ class MoreScreen extends StatelessWidget {
                   navigatorKey.currentState?.pushNamed(AppRoutes.contactUs);
                 },
               ),
+              ListTile(
+                title: const Text('About us'),
+                leading: Icon(
+                  Icons.info,
+                  color: Colors.grey.shade600,
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15.r,
+                ),
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed(AppRoutes.aboutUs);
+                },
+              ),
+              // BlocBuilder<MoreCubit, MoreState>(
+              //   builder: (context, state) {
+              //     return state.maybeWhen(
+              //       orElse: () {
+              //         return SelectableText(cubit.fcmToken);
+              //       },
+              //     );
+              //   },
+              // )
             ],
           ),
         ),

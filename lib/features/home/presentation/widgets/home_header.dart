@@ -56,8 +56,10 @@ class HomeHeader extends StatelessWidget {
                                                 .firstName![0]
                                                 .toUpperCase(),
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                          color: Colors.white,
+                                        ),
                                       )
                                     : CustomCachedNetworkImage(
                                         imageUrl: cubit.currentDoctorModel.image
@@ -87,8 +89,10 @@ class HomeHeader extends StatelessWidget {
                                                 .firstName![0]
                                                 .toUpperCase(),
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp),
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp,
+                                          color: Colors.white,
+                                        ),
                                       )
                                     : CustomCachedNetworkImage(
                                         imageUrl:
@@ -155,7 +159,9 @@ class HomeHeader extends StatelessWidget {
                                 message) {
                               if (homeData.isSyndicateCardRequired ==
                                   'Verified') {
-                                return const VerificationIcon();
+                                return const VerificationIcon(
+                                  duration: 300,
+                                );
                               }
                               return const SizedBox.shrink();
                             },
@@ -209,7 +215,6 @@ class HomeHeader extends StatelessWidget {
                       if (homeData.verified! &&
                           (homeData.isSyndicateCardRequired != 'Required' &&
                               homeData.isSyndicateCardRequired != 'Pending')) {
-                        log('hello');
                         navigatorKey.currentState?.pushNamed(
                           AppRoutes.addPatient,
                           arguments: AppRoutesArgs.addPatientRouteArgs(

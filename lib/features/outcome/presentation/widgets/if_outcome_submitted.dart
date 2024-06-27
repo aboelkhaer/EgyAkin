@@ -1,30 +1,34 @@
 import '../../../../exports.dart';
 
 class IfOutcomeSubmitted extends StatelessWidget {
-  const IfOutcomeSubmitted(
-      {super.key,
-      required this.cubit,
-      required this.doctorId,
-      required this.currentDoctorId});
+  const IfOutcomeSubmitted({
+    super.key,
+    required this.cubit,
+    required this.doctorId,
+    required this.currentDoctorModel,
+    required this.accountVerification,
+    required this.isSyndicateCardRequired,
+  });
   final OutcomeCubit cubit;
   final String doctorId;
-  final String currentDoctorId;
+  final DoctorModel currentDoctorModel;
+  final bool accountVerification;
+  final String isSyndicateCardRequired;
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: BlocConsumer<OutcomeCubit, OutcomeState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            orElse: () {},
-            error: (message) {
-              customSnackBar(context: context, message: message);
-            },
-          );
-        },
-        builder: (context, state) {
-          return state.maybeWhen(
+    return BlocConsumer<OutcomeCubit, OutcomeState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          orElse: () {},
+          error: (message) {
+            customSnackBar(context: context, message: message);
+          },
+        );
+      },
+      builder: (context, state) {
+        return SingleChildScrollView(
+          child: state.maybeWhen(
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: false);
             },
@@ -47,21 +51,16 @@ class IfOutcomeSubmitted extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        // Text(
-                        //   'Dr.${controller.getOutcomeModel.baseDoctorModel!.firstName.toString().capitalizeFirst} ${controller.getOutcomeModel.baseDoctorModel!.lastName.toString().capitalizeFirst}',
-                        //   style: TextStyle(
-                        //     color: Colors.green.shade700,
-                        //     fontWeight: FontWeight.bold,
-                        //     fontSize: 18,
-                        //   ),
-                        // ),
                         GestureDetector(
                           onTap: () {
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.doctorInfoView,
                               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
                                 doctorId: doctorId,
-                                currentDoctorId: currentDoctorId,
+                                currentDoctorModel: currentDoctorModel,
+                                accountVerification: accountVerification,
+                                isSyndicateCardRequired:
+                                    isSyndicateCardRequired,
                               ),
                             );
                           },
@@ -89,6 +88,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                             isSubmitedOutcomeLoading) {
                           return ListView.builder(
                             shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount: response.length,
                             itemBuilder: (context, index) {
                               return Container(
@@ -125,7 +125,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        response[index].answer.toString(),
+                                        response[index].answer ?? '...',
                                       ),
                                     ),
                                   ],
@@ -137,15 +137,12 @@ class IfOutcomeSubmitted extends StatelessWidget {
                       );
                     },
                   ),
-                  const SizedBox(
-                    height: 200,
-                  ),
                 ],
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

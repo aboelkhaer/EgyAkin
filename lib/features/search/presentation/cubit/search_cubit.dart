@@ -8,68 +8,74 @@ class SearchCubit extends Cubit<SearchState> {
   TextEditingController searchController = TextEditingController();
   ScrollController? scrollController;
 
+  bool patientOrDoctorOrHospital = true;
+  bool dose = false;
+
   getSearchHome() async {
     if (searchController.text.trim().isNotEmpty) {
       emit(const SearchState.loading());
-      _currentPage = 1;
+      // _currentPage = 1;
+      String patientValue = '';
+      String doseValue = '';
+      if (patientOrDoctorOrHospital) {
+        patientValue = searchController.text;
+      }
+      if (dose) {
+        doseValue = searchController.text;
+      }
 
       final result = await _getSearchHomeUsecase.excute(
-        GetSearchHomeUsecaseInput(
-            searchContent: searchController.text, page: _currentPage),
+        GetSearchHomeUsecaseInput(patient: patientValue, dose: doseValue),
       );
       result.fold(
         (l) => emit(SearchState.error(l.message)),
         (r) {
-          emit(SearchState.loaded(r, false));
+          emit(SearchState.loaded(r.data!.patients, r.data!.doses));
         },
       );
     }
   }
 
-  bool isLoadingMoreForScroll = false;
-  bool isLastPage = false;
-  int _currentPage = 1;
-
-  void loadMorePatients() async {
-    _currentPage++;
-    emit(state.maybeMap(
-      orElse: () => state,
-      loaded: (value) => SearchState.loaded(value.response, true),
-    ));
-    final result = await _getSearchHomeUsecase.excute(
-      GetSearchHomeUsecaseInput(
-          searchContent: searchController.text, page: _currentPage),
-    );
-    result.fold(
-      (l) {
-        _currentPage--;
-        emit(SearchState.error(l.message));
-      },
-      (loadMorePatients) async {
-        final currentState = state;
-        currentState.when(
-          initial: () {},
-          loading: () {},
-          loaded: (responseData, isSeeMore) {
-            final updatedData = responseData!.copyWith(
-              data: responseData.data!.copyWith(
-                data: [
-                  ...responseData.data!.data!,
-                  ...loadMorePatients.data!.data!
-                ],
-              ),
-            );
-            if (_currentPage >= responseData.data!.lastPage!) {
-              isLastPage = true;
-            } else {
-              isLastPage = false;
-            }
-            isLoadingMoreForScroll = false;
-            emit(SearchState.loaded(updatedData, false));
-          },
-          error: (error) {},
-        );
-      },
-    );
-  }
+  // void loadMorePatients() async {
+  //   _currentPage++;
+  //   emit(state.maybeMap(
+  //     orElse: () => state,
+  //     loaded: (value) => SearchState.loaded(value.response, true),
+  //   ));
+  //   final result = await _getSearchHomeUsecase.excute(
+  //     GetSearchHomeUsecaseInput(
+  //         searchContent: searchController.text, page: _currentPage),
+  //   );
+  //   result.fold(
+  //     (l) {
+  //       _currentPage--;
+  //       emit(SearchState.error(l.message));
+  //     },
+  //     (loadMorePatients) async {
+  //       final currentState = state;
+  //       currentState.when(
+  //         initial: () {},
+  //         loading: () {},
+  //         loaded: (responseData, isSeeMore) {
+  //           final updatedData = responseData!.copyWith(
+  //             data: responseData.data!.copyWith(
+  //               data: [
+  //                 ...responseData.data!.data!,
+  //                 ...loadMorePatients.data!.data!
+  //               ],
+  //             ),
+  //           );
+  //           if (_currentPage >= responseData.data!.lastPage!) {
+  //             isLastPage = true;
+  //           } else {
+  //             isLastPage = false;
+  //           }
+  //           isLoadingMoreForScroll = false;
+  //           emit(SearchState.loaded(updatedData, false));
+  //         },
+  //         error: (error) {},
+  //       );
+  //     },
+  //   );
+  // }
 }

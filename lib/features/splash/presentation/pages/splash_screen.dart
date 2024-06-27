@@ -18,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController animationController;
   late Animation<double> animation;
   bool _isUpToDate = true;
+  // NotificationServices notificationServices = NotificationServices();
 
   @override
   void initState() {
@@ -27,7 +28,14 @@ class _SplashScreenState extends State<SplashScreen>
       begin: 0.0,
       end: 1.0,
     ).animate(animationController);
-
+    sl<NotificationServices>().requestNotificationPermisions();
+    sl<NotificationServices>().forgroundMessage();
+    sl<NotificationServices>().firebaseInit(context);
+    sl<NotificationServices>().setupInteractMessage(context);
+    sl<NotificationServices>().getDeviceToken().then((value) {
+      debugPrint(value);
+    });
+    sl<NotificationServices>().isRefreshToken();
     super.initState();
   }
 

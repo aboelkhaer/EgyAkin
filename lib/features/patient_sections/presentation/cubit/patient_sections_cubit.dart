@@ -133,6 +133,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
     sectionsNotCompleted = [];
   }
 
+  String reportPdfUrl = '';
+
   downloadPatientReport(String patientId) async {
     emit(state.maybeMap(
       orElse: () => state,
@@ -150,7 +152,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         ));
       },
       (result) async {
-        launchURL(result.pdfUrl!);
+        reportPdfUrl = result.pdfUrl.toString();
+
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => PatientSectionsState.loaded(

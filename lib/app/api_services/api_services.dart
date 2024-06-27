@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
+import 'package:egy_akin/features/authentication/data/models/send_fcm_token_model_response.dart';
 import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
 import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
 import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
 import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
 import 'package:egy_akin/features/home/data/models/upload_syndicate_card_model_response.dart';
 import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
@@ -17,6 +19,7 @@ import 'package:egy_akin/features/patient_sections/data/models/delete_patient_mo
 import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
+import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
 import 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 
 import 'package:retrofit/http.dart';
@@ -34,6 +37,7 @@ abstract class ApiServices {
   Future<AuthenticationModelResponse> signIn(
     @Field("email") String email,
     @Field("password") String password,
+    @Field("fcmToken") String fcmToken,
   );
   @POST(ApiEndPoint.register)
   Future<AuthenticationModelResponse> register(
@@ -45,15 +49,21 @@ abstract class ApiServices {
     @Query('page') int pageNumber,
   );
 
+  @GET('${ApiEndPoint.doctorProfileGetPatients}/{doctorId}')
+  Future<GetProfilePatientsModelResponse> getProfilePatients(
+    @Query('page') int pageNumber,
+    @Path("doctorId") String doctorId,
+  );
+
   @GET(ApiEndPoint.currentPatientsHome)
   Future<GetDoctorPatientsModelResponse> getCurrentPatients(
     @Query('page') int pageNumber,
   );
 
-  @GET('${ApiEndPoint.search}/{searchContent}')
+  @POST(ApiEndPoint.search)
   Future<GetSearchModelResponse> searchHome(
-    @Path("searchContent") String searchContent,
-    @Query('page') int pageNumber,
+    @Field("patient") String patient,
+    @Field("dose") String dose,
   );
   @PUT(ApiEndPoint.updateProfile)
   Future<UpdateDoctorProfileModelResponse> updateProfile(
@@ -219,5 +229,15 @@ abstract class ApiServices {
   Future<ChangePasswordModelResponse> changePasswordFeature(
     @Field("current_password") String oldPassword,
     @Field("new_password") String newPassword,
+  );
+  @POST(ApiEndPoint.sendFCMToken)
+  Future<SendFCMTokenModelResponse> sendFCMToken(
+    @Field("token") String fcmToken,
+  );
+
+  @GET('${ApiEndPoint.doctorProfileGetScoreHistory}/{doctorId}')
+  Future<GetDoctorProfileScoreModelResponse> getDoctorProfileScoreHistory(
+    @Query('page') int pageNumber,
+    @Path("doctorId") String doctorId,
   );
 }

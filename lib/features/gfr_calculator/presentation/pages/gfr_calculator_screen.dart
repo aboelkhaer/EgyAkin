@@ -194,7 +194,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                           SizedBox(height: 8.h),
                           CustomTextFormField(
                             title: 'Creatinine (mg/dL)',
-                            textInputType: TextInputType.number,
+                            textInputType: TextInputType.text,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter creatinine level';

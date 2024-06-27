@@ -124,11 +124,31 @@ class AppRoutesArgs {
 
   static Map<String, dynamic> doctorInfoViewRouteArgs({
     required String doctorId,
-    required String currentDoctorId,
+    required DoctorModel currentDoctorModel,
+    required bool accountVerification,
+    required String isSyndicateCardRequired,
   }) {
     return {
       'doctorId': doctorId,
-      'currentDoctorId': currentDoctorId,
+      'currentDoctorModel': currentDoctorModel,
+      'accountVerification': accountVerification,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
+    };
+  }
+
+  static Map<String, dynamic> profilePatientsRouteArgs({
+    required String doctorId,
+    required bool accountVerification,
+    required String isSyndicateCardRequired,
+    required DoctorModel currentDoctorModel,
+    required String doctorFirstName,
+  }) {
+    return {
+      'doctorId': doctorId,
+      'accountVerification': accountVerification,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorModel': currentDoctorModel,
+      'doctorFirstName': doctorFirstName,
     };
   }
 }

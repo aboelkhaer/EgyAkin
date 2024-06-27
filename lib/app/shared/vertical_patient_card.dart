@@ -16,23 +16,26 @@ class PatientCard extends StatelessWidget {
   final bool isOutcomeStatus;
   final String doctorId;
   final bool submitStatus;
-  final String currnetDoctorId;
-  const PatientCard(
-      {super.key,
-      required this.patientName,
-      required this.drFirstName,
-      required this.drLastName,
-      required this.onAddCommentTap,
-      required this.isOutcomeStatus,
-      required this.hospital,
-      required this.onOutcomeTap,
-      required this.submitStatus,
-      required this.updatedAt,
-      required this.onTap,
-      required this.doctorImage,
-      required this.doctorId,
-      required this.currnetDoctorId,
-      required this.isSyndicateCardRequired});
+  final DoctorModel currentDoctorModel;
+  final bool accountVerification;
+  const PatientCard({
+    super.key,
+    required this.patientName,
+    required this.drFirstName,
+    required this.drLastName,
+    required this.onAddCommentTap,
+    required this.isOutcomeStatus,
+    required this.hospital,
+    required this.onOutcomeTap,
+    required this.submitStatus,
+    required this.updatedAt,
+    required this.onTap,
+    required this.doctorImage,
+    required this.doctorId,
+    required this.currentDoctorModel,
+    required this.isSyndicateCardRequired,
+    required this.accountVerification,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +83,10 @@ class PatientCard extends StatelessWidget {
                                 arguments:
                                     AppRoutesArgs.doctorInfoViewRouteArgs(
                                   doctorId: doctorId,
-                                  currentDoctorId: currnetDoctorId,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
                                 ),
                               );
                             },
@@ -184,58 +190,60 @@ class PatientCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(height: 8.h),
+                  // SizedBox(height: 8.h),
                   const Divider(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 8.h),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 28.h,
-                                child: isOutcomeStatus
-                                    ? CustomOutlineBotton(
-                                        onPressed: onOutcomeTap,
-                                        title: AppStrings.outcome,
-                                      )
-                                    // TextButton(
-                                    //     onPressed: onOutcomeTap,
-                                    //     style: ButtonStyle(
-                                    //       overlayColor:
-                                    //           MaterialStateProperty.all(
-                                    //               Colors.transparent),
-                                    //     ),
-                                    //     child: const Text(AppStrings.outcome),
-                                    //   )
-                                    : CustomElevatedButton(
-                                        onPressed: onOutcomeTap,
-                                        title: AppStrings.outcome,
-                                        isDisable: !submitStatus,
-                                        // isDisable:
-                                        //     isOutcomeStatus && !submitStatus ? false : true,
-                                      ),
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Expanded(
-                              child: SizedBox(
-                                // height: 40,
-                                height: 28.h,
-                                child: CustomElevatedButton(
-                                  onPressed: onAddCommentTap,
-                                  title: AppStrings.addComment,
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(vertical: 8.h),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: SizedBox(
+                                  height: 30.h,
+                                  child: isOutcomeStatus
+                                      ? CustomOutlineBotton(
+                                          onPressed: onOutcomeTap,
+                                          title: AppStrings.outcome,
+                                        )
+                                      // TextButton(
+                                      //     onPressed: onOutcomeTap,
+                                      //     style: ButtonStyle(
+                                      //       overlayColor:
+                                      //           MaterialStateProperty.all(
+                                      //               Colors.transparent),
+                                      //     ),
+                                      //     child: const Text(AppStrings.outcome),
+                                      //   )
+                                      : CustomElevatedButton(
+                                          onPressed: onOutcomeTap,
+                                          title: AppStrings.outcome,
+                                          isDisable: !submitStatus,
+                                          // isDisable:
+                                          //     isOutcomeStatus && !submitStatus ? false : true,
+                                        ),
                                 ),
                               ),
-                            ),
-                          ],
+                              SizedBox(width: 8.w),
+                              Expanded(
+                                child: SizedBox(
+                                  // height: 40,
+                                  height: 30.h,
+                                  child: CustomElevatedButton(
+                                    onPressed: onAddCommentTap,
+                                    title: AppStrings.addComment,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),

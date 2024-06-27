@@ -1,8 +1,5 @@
 import 'package:egy_akin/features/gfr_calculator/data/models/gfr_calculator_model_response.dart';
 import 'dart:math';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../exports.dart';
 
 class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
@@ -29,21 +26,21 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
   }
 
   double calculateGFRForCKD(bool isMale, int age, double creatinine) {
-    final kappa = isMale ? 0.9 : 0.7;
-    final alpha = isMale ? -0.411 : -0.329;
-    final constant = isMale ? 141 : 144;
-    final genderFactor = isMale ? 1.0 : 1.018;
-
-    final minScr = min(creatinine / kappa, 1);
-    final maxScr = max(creatinine / kappa, 1);
-
-    final gfr = constant *
-        pow(minScr, alpha) *
-        pow(maxScr, -1.209) *
-        pow(0.993, age) *
-        genderFactor;
-
-    return gfr;
+    if (isMale) {
+      double A = 0.9;
+      double B = (creatinine <= 0.9) ? -0.302 : -1.200;
+      double gfr =
+          142 * pow(creatinine / A, B).toDouble() * pow(0.9938, age).toDouble();
+      return gfr;
+    } else {
+      double A = 0.7;
+      double B = (creatinine <= 0.7) ? -0.241 : -1.200;
+      double gfr = 142 *
+          pow(creatinine / A, B).toDouble() *
+          pow(0.9938, age).toDouble() *
+          1.012;
+      return gfr;
+    }
   }
 
   double calculateSobhCcr(

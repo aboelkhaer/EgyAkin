@@ -1,6 +1,10 @@
+import 'package:egy_akin/features/about_us/presentation/cubit/about_us_cubit.dart';
+import 'package:egy_akin/features/about_us/presentation/pages/about_us_screen.dart';
 import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
 import 'package:egy_akin/features/change_password/presentation/pages/change_password_screen.dart';
 import 'package:egy_akin/features/gfr_calculator/presentation/pages/gfr_calculator_screen.dart';
+import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_cubit.dart';
+import 'package:egy_akin/features/profile_patients/presentation/pages/profile_patients_screen.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -30,6 +34,8 @@ class AppRoutes {
   static const String doctorInfoView = '/doctorInfoView';
   static const String gfrCalculator = '/gfrCalculator';
   static const String changePassword = '/changePassword';
+  static const String profilePatients = '/profilePatients';
+  static const String aboutUs = '/aboutUs';
 }
 
 class RouteGenerator {
@@ -59,14 +65,14 @@ class RouteGenerator {
       case AppRoutes.signIn:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<AuthenticationCubit>(
-            create: (context) => di.sl<AuthenticationCubit>(),
+            create: (context) => di.sl<AuthenticationCubit>()..getFCMToken(),
             child: const SignInScreen(),
           ),
         );
       case AppRoutes.register:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<AuthenticationCubit>(
-            create: (context) => di.sl<AuthenticationCubit>(),
+            create: (context) => di.sl<AuthenticationCubit>()..getFCMToken(),
             child: const RegisterScreen(),
           ),
         );
@@ -406,13 +412,18 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('doctorId') &&
-              args.containsKey('currentDoctorId')) {
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('accountVerification')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<DoctorInfoViewCubit>(
                 create: (context) => di.sl<DoctorInfoViewCubit>(),
                 child: DoctorInfoViewScreen(
-                  currentDoctorId: args['currentDoctorId'] as String,
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   doctorId: args['doctorId'] as String,
+                  accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
                 ),
               ),
             );
@@ -441,6 +452,45 @@ class RouteGenerator {
           builder: (_) => BlocProvider<ChangePasswordCubit>(
             create: (context) => di.sl<ChangePasswordCubit>(),
             child: const ChangePasswordScreen(),
+          ),
+        );
+      case AppRoutes.profilePatients:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('doctorId')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<ProfilePatientsCubit>(
+                create: (context) => di.sl<ProfilePatientsCubit>(),
+                child: ProfilePatientsScreen(
+                  // postModel: args['postModel'] as PostModel,
+                  // currentDoctorModel: args['doctorModel'] as DoctorModel,
+                  // accountVerification: args['accountVerification'] as bool,
+                  // isSyndicateCardRequired:
+                  //     args['isSyndicateCardRequired'] as String,
+                  doctorId: args['doctorId'] as String,
+                  accountVerification: args['accountVerification'] as bool,
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
+                  doctorFirstName: args['doctorFirstName'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
+      case AppRoutes.aboutUs:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<AboutUsCubit>(
+            create: (context) => di.sl<AboutUsCubit>(),
+            child: const AboutUsScreen(),
           ),
         );
 

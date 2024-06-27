@@ -76,8 +76,12 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     onChanged: (value) =>
                                         cubit.firstName = value,
                                     enableSuggestions: true,
-                                    validator: (value) => AppValidators
-                                        .firstAndLastNameValidation(value!),
+                                    validator: (value) {
+                                      print('Validating First Name: $value');
+                                      return AppValidators
+                                          .firstAndLastNameValidation(
+                                              value ?? '');
+                                    },
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -92,7 +96,8 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     enableSuggestions: true,
                                     textInputType: TextInputType.text,
                                     validator: (value) => AppValidators
-                                        .firstAndLastNameValidation(value!),
+                                        .firstAndLastNameValidation(
+                                            value ?? ''),
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -111,7 +116,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               enableSuggestions: true,
                               textInputType: TextInputType.text,
                               validator: (value) =>
-                                  AppValidators.emailValidator(value),
+                                  AppValidators.emailValidator(value ?? ''),
                               onChanged: (value) => cubit.email = value,
                               textInputAction: TextInputAction.next,
                             ),
@@ -136,7 +141,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     textInputType: TextInputType.phone,
                                     validator: (value) =>
                                         AppValidators.validatePhoneNumber(
-                                            value!),
+                                            value ?? ''),
                                     textInputAction: TextInputAction.next,
                                     inputFormatters: [
                                       LengthLimitingTextInputFormatter(11)
@@ -151,7 +156,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     onChanged: (value) => cubit.age = value,
                                     textInputType: TextInputType.number,
                                     validator: (value) =>
-                                        AppValidators.validateAge(value!),
+                                        AppValidators.validateAge(value ?? ''),
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -176,7 +181,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     onChanged: (value) => cubit.job = value,
                                     validator: (value) =>
                                         AppValidators.fieldsIsEmptyValidation(
-                                            value!),
+                                            value ?? ''),
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -189,7 +194,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     textInputType: TextInputType.text,
                                     validator: (value) =>
                                         AppValidators.fieldsIsEmptyValidation(
-                                            value!),
+                                            value ?? ''),
                                     onChanged: (value) =>
                                         cubit.workplace = value,
                                     textInputAction: TextInputAction.next,
@@ -222,7 +227,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     textInputType: TextInputType.number,
                                     validator: (value) =>
                                         AppValidators.fieldsIsEmptyValidation(
-                                            value!),
+                                            value ?? ''),
                                     textInputAction: TextInputAction.next,
                                   ),
                                 ),
@@ -247,7 +252,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     textInputType: TextInputType.text,
                                     validator: (value) =>
                                         AppValidators.fieldsIsEmptyValidation(
-                                            value!),
+                                            value ?? ''),
                                     onChanged: (value) =>
                                         cubit.specialty = value,
                                     textInputAction: TextInputAction.next,
@@ -262,9 +267,12 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: DropdownButtonFormField<dynamic>(
-                                      hint: Text(
-                                          currentDoctorModel.highestdegree ??
-                                              'Choose'),
+                                      // hint: Text(
+                                      //     currentDoctorModel.highestdegree ??
+                                      //         'Choose'),
+                                      value: currentDoctorModel.highestdegree ??
+                                          'Choose',
+
                                       items: highestDegreeList.map((value) {
                                         return DropdownMenuItem<String>(
                                           value: value,
@@ -272,10 +280,10 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                         );
                                       }).toList(),
                                       onChanged: (val) =>
-                                          cubit.highestDegree = val,
+                                          cubit.highestDegree = val ?? '',
                                       validator: (value) =>
                                           AppValidators.fieldsIsEmptyValidation(
-                                              value!),
+                                              value ?? ''),
                                       decoration: const InputDecoration(
                                         border: OutlineInputBorder(
                                             borderSide: BorderSide.none),
@@ -289,7 +297,15 @@ class DoctorProfileViewScreen extends StatelessWidget {
                             SizedBox(
                               width: double.infinity,
                               child: CustomElevatedButton(
-                                onPressed: () => cubit.updateDoctorProfile(),
+                                onPressed: () {
+                                  print("Button Pressed");
+                                  if (cubit.formKey.currentState?.validate() ??
+                                      false) {
+                                    cubit.updateDoctorProfile();
+                                  } else {
+                                    print("Form validation failed");
+                                  }
+                                },
                                 title: 'Save',
                               ),
                             ),

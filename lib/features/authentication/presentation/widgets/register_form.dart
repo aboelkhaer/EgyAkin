@@ -212,19 +212,20 @@ class RegisterForm extends StatelessWidget {
                     color: AppColors.primary.withOpacity(0.06),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: DropdownButtonFormField<dynamic>(
+                  child: DropdownButtonFormField<String>(
                     hint: const Text(AppStrings.choose),
                     items: highestDegreeList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value.toString()),
+                        child: Text(value),
                       );
                     }).toList(),
                     onChanged: (value) {
-                      cubit.registerHighestDegree = value;
+                      cubit.registerHighestDegree = value.toString();
                     },
-                    validator: (value) =>
-                        AppValidators.fieldsIsEmptyValidation(value),
+                    validator: (value) => value == null
+                        ? AppValidators.fieldsIsEmptyValidation('')
+                        : AppValidators.fieldsIsEmptyValidation(value),
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
                     ),

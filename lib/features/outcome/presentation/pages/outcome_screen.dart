@@ -60,8 +60,10 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
       body: widget.outcomeStatus
           ? IfOutcomeSubmitted(
               cubit: cubit,
-              currentDoctorId: widget.currentDoctorModel.id.toString(),
+              currentDoctorModel: widget.currentDoctorModel,
               doctorId: widget.doctorId,
+              accountVerification: widget.accountVerification,
+              isSyndicateCardRequired: widget.isSyndicateCardRequired,
             )
           : IfOutcomeNotSubmitted(
               cubit: cubit,

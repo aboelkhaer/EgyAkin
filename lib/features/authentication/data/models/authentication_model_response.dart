@@ -24,6 +24,7 @@ class DoctorModel with _$DoctorModel {
     @JsonKey(name: 'lname') String? lastName,
     String? email,
     String? age,
+    String? fcmToken,
     String? specialty,
     String? token,
     String? password,

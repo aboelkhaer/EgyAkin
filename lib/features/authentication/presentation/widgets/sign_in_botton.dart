@@ -29,7 +29,15 @@ class SignInBotton extends StatelessWidget {
       },
       listener: (context, state) {
         state.maybeWhen(
-          loaded: (doctorData) {
+          loaded: (doctorData, isSignInSuccess, isRegisterSuccess) {
+            if (isSignInSuccess) {
+              // sl<NotificationServices>().getDeviceToken().then((value) {
+              //   debugPrint('fcmToken: $value');
+              //   sl<AppPreferences>()
+              //       .setData(AppLocalStrings.fcmTokenKey, value);
+              // });
+            }
+
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);
           },

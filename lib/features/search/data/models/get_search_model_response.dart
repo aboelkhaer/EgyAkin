@@ -19,20 +19,22 @@ class GetSearchModelResponse with _$GetSearchModelResponse {
 @freezed
 class GetSearchDataModelResponse with _$GetSearchDataModelResponse {
   const factory GetSearchDataModelResponse({
-    @JsonKey(name: 'current_page') int? currentPage,
-    List<PatientHomeDataModel>? data,
-    @JsonKey(name: 'first_page_url') String? firstPageUrl,
-    int? from,
-    @JsonKey(name: 'last_page') int? lastPage,
-    @JsonKey(name: 'last_page_url') String? lastPageUrl,
-    List<Link>? links,
-    @JsonKey(name: 'next_page_url') String? nextPageUrl,
-    String? path,
-    int? perPage,
-    @JsonKey(name: 'prev_page_url') String? prevPageUrl,
-    int? to,
-    int? total,
+    List<PatientHomeDataModel>? patients,
+    List<SearchDataForDosesModelResponse>? doses,
   }) = _GetSearchDataModelResponse;
   factory GetSearchDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$GetSearchDataModelResponseFromJson(json);
+}
+
+@freezed
+class SearchDataForDosesModelResponse with _$SearchDataForDosesModelResponse {
+  const factory SearchDataForDosesModelResponse({
+    int? id,
+    String? title,
+    String? description,
+    String? dose,
+    @JsonKey(name: 'created_at') String? createdAt,
+  }) = _SearchDataForDosesModelResponse;
+  factory SearchDataForDosesModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$SearchDataForDosesModelResponseFromJson(json);
 }

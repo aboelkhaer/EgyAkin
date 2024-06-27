@@ -249,6 +249,7 @@ mixin _$DoctorModel {
   String? get lastName => throw _privateConstructorUsedError;
   String? get email => throw _privateConstructorUsedError;
   String? get age => throw _privateConstructorUsedError;
+  String? get fcmToken => throw _privateConstructorUsedError;
   String? get specialty => throw _privateConstructorUsedError;
   String? get token => throw _privateConstructorUsedError;
   String? get password => throw _privateConstructorUsedError;
@@ -298,6 +299,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       @JsonKey(name: 'lname') String? lastName,
       String? email,
       String? age,
+      String? fcmToken,
       String? specialty,
       String? token,
       String? password,
@@ -339,6 +341,7 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? lastName = freezed,
     Object? email = freezed,
     Object? age = freezed,
+    Object? fcmToken = freezed,
     Object? specialty = freezed,
     Object? token = freezed,
     Object? password = freezed,
@@ -381,6 +384,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
       age: freezed == age
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
               as String?,
       specialty: freezed == specialty
           ? _value.specialty
@@ -484,6 +491,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       @JsonKey(name: 'lname') String? lastName,
       String? email,
       String? age,
+      String? fcmToken,
       String? specialty,
       String? token,
       String? password,
@@ -523,6 +531,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? lastName = freezed,
     Object? email = freezed,
     Object? age = freezed,
+    Object? fcmToken = freezed,
     Object? specialty = freezed,
     Object? token = freezed,
     Object? password = freezed,
@@ -565,6 +574,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
       age: freezed == age
           ? _value.age
           : age // ignore: cast_nullable_to_non_nullable
+              as String?,
+      fcmToken: freezed == fcmToken
+          ? _value.fcmToken
+          : fcmToken // ignore: cast_nullable_to_non_nullable
               as String?,
       specialty: freezed == specialty
           ? _value.specialty
@@ -663,6 +676,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       @JsonKey(name: 'lname') this.lastName,
       this.email,
       this.age,
+      this.fcmToken,
       this.specialty,
       this.token,
       this.password,
@@ -701,6 +715,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   final String? email;
   @override
   final String? age;
+  @override
+  final String? fcmToken;
   @override
   final String? specialty;
   @override
@@ -763,7 +779,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -776,6 +792,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
       ..add(DiagnosticsProperty('lastName', lastName))
       ..add(DiagnosticsProperty('email', email))
       ..add(DiagnosticsProperty('age', age))
+      ..add(DiagnosticsProperty('fcmToken', fcmToken))
       ..add(DiagnosticsProperty('specialty', specialty))
       ..add(DiagnosticsProperty('token', token))
       ..add(DiagnosticsProperty('password', password))
@@ -812,6 +829,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.lastName == lastName) &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.age, age) || other.age == age) &&
+            (identical(other.fcmToken, fcmToken) ||
+                other.fcmToken == fcmToken) &&
             (identical(other.specialty, specialty) ||
                 other.specialty == specialty) &&
             (identical(other.token, token) || other.token == token) &&
@@ -858,6 +877,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
         lastName,
         email,
         age,
+        fcmToken,
         specialty,
         token,
         password,
@@ -902,6 +922,7 @@ abstract class _DoctorModel implements DoctorModel {
       @JsonKey(name: 'lname') final String? lastName,
       final String? email,
       final String? age,
+      final String? fcmToken,
       final String? specialty,
       final String? token,
       final String? password,
@@ -941,6 +962,8 @@ abstract class _DoctorModel implements DoctorModel {
   String? get email;
   @override
   String? get age;
+  @override
+  String? get fcmToken;
   @override
   String? get specialty;
   @override

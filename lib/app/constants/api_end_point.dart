@@ -41,4 +41,9 @@ class ApiEndPoint {
   static const changePasswordFeature = '$baseUrl/api/changePassword';
   static const getPatientForSpecificDoctor =
       '$baseUrl/api/doctorProfileGetPatients';
+  static const sendFCMToken = '$baseUrl/api/storeFCM';
+  static const doctorProfileGetPatients =
+      '$baseUrl/api/doctorProfileGetPatients';
+  static const doctorProfileGetScoreHistory =
+      '$baseUrl/api/doctorProfileGetScoreHistory';
 }

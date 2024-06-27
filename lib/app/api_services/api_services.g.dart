@@ -51,6 +51,7 @@ class _ApiServices implements ApiServices {
   Future<AuthenticationModelResponse> signIn(
     String email,
     String password,
+    String fcmToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -58,6 +59,7 @@ class _ApiServices implements ApiServices {
     final _data = {
       'email': email,
       'password': password,
+      'fcmToken': fcmToken,
     };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<AuthenticationModelResponse>(Options(
@@ -138,6 +140,36 @@ class _ApiServices implements ApiServices {
   }
 
   @override
+  Future<GetProfilePatientsModelResponse> getProfilePatients(
+    int pageNumber,
+    String doctorId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetProfilePatientsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/doctorProfileGetPatients/${doctorId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GetProfilePatientsModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetDoctorPatientsModelResponse> getCurrentPatients(
       int pageNumber) async {
     final _extra = <String, dynamic>{};
@@ -167,22 +199,25 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetSearchModelResponse> searchHome(
-    String searchContent,
-    int pageNumber,
+    String patient,
+    String dose,
   ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    const Map<String, dynamic>? _data = null;
+    final _data = {
+      'patient': patient,
+      'dose': dose,
+    };
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetSearchModelResponse>(Options(
-      method: 'GET',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
             .compose(
               _dio.options,
-              'https://api.egyakin.com/api/searchNew/${searchContent}',
+              'https://api.egyakin.com/api/searchNew',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1127,6 +1162,63 @@ class _ApiServices implements ApiServices {
               baseUrl,
             ))));
     final value = ChangePasswordModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SendFCMTokenModelResponse> sendFCMToken(String fcmToken) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'token': fcmToken};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SendFCMTokenModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/storeFCM',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = SendFCMTokenModelResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetDoctorProfileScoreModelResponse> getDoctorProfileScoreHistory(
+    int pageNumber,
+    String doctorId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetDoctorProfileScoreModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/doctorProfileGetScoreHistory/${doctorId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = GetDoctorProfileScoreModelResponse.fromJson(_result.data!);
     return value;
   }
 

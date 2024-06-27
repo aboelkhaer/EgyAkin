@@ -10,7 +10,11 @@ class PostContent extends StatelessWidget {
       children: [
         Flexible(
           child: HtmlWidget(content, onTapUrl: (url) {
-            launchURL(url);
+            launchURL(
+                url: url,
+                onError: (error) {
+                  showErrorDialog(context, error);
+                });
             return true;
           }),
         ),

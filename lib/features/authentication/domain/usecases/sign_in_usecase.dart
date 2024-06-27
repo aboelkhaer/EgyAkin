@@ -13,6 +13,7 @@ class SignInUsecase
     return await repository.signIn(
       email: input.email,
       password: input.password,
+      fcmToken: input.fcmToken,
     );
   }
 }
@@ -20,8 +21,11 @@ class SignInUsecase
 class SignInUseCaseInput {
   final String email;
   final String password;
+  final String fcmToken;
+
   const SignInUseCaseInput({
     required this.email,
     required this.password,
+    required this.fcmToken,
   });
 }

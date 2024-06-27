@@ -23,7 +23,9 @@ mixin _$AuthenticationState {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -33,7 +35,9 @@ mixin _$AuthenticationState {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -43,7 +47,9 @@ mixin _$AuthenticationState {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -147,7 +153,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -160,7 +168,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -173,7 +183,9 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -279,7 +291,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -292,7 +306,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -305,7 +321,9 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -461,7 +479,9 @@ class _$ChangePasswordVisibilityImpl
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return changePasswordVisibility(
@@ -475,7 +495,9 @@ class _$ChangePasswordVisibilityImpl
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return changePasswordVisibility?.call(
@@ -489,7 +511,9 @@ class _$ChangePasswordVisibilityImpl
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -561,7 +585,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({AuthenticationModelResponse doctorData});
+  $Res call(
+      {AuthenticationModelResponse doctorData,
+      bool isSignInSuccess,
+      bool isRegisterSuccess});
 
   $AuthenticationModelResponseCopyWith<$Res> get doctorData;
 }
@@ -578,12 +605,22 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? doctorData = null,
+    Object? isSignInSuccess = null,
+    Object? isRegisterSuccess = null,
   }) {
     return _then(_$LoadedImpl(
       null == doctorData
           ? _value.doctorData
           : doctorData // ignore: cast_nullable_to_non_nullable
               as AuthenticationModelResponse,
+      null == isSignInSuccess
+          ? _value.isSignInSuccess
+          : isSignInSuccess // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isRegisterSuccess
+          ? _value.isRegisterSuccess
+          : isRegisterSuccess // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -600,14 +637,19 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.doctorData);
+  const _$LoadedImpl(
+      this.doctorData, this.isSignInSuccess, this.isRegisterSuccess);
 
   @override
   final AuthenticationModelResponse doctorData;
+  @override
+  final bool isSignInSuccess;
+  @override
+  final bool isRegisterSuccess;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'AuthenticationState.loaded(doctorData: $doctorData)';
+    return 'AuthenticationState.loaded(doctorData: $doctorData, isSignInSuccess: $isSignInSuccess, isRegisterSuccess: $isRegisterSuccess)';
   }
 
   @override
@@ -615,7 +657,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'AuthenticationState.loaded'))
-      ..add(DiagnosticsProperty('doctorData', doctorData));
+      ..add(DiagnosticsProperty('doctorData', doctorData))
+      ..add(DiagnosticsProperty('isSignInSuccess', isSignInSuccess))
+      ..add(DiagnosticsProperty('isRegisterSuccess', isRegisterSuccess));
   }
 
   @override
@@ -624,11 +668,16 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.doctorData, doctorData) ||
-                other.doctorData == doctorData));
+                other.doctorData == doctorData) &&
+            (identical(other.isSignInSuccess, isSignInSuccess) ||
+                other.isSignInSuccess == isSignInSuccess) &&
+            (identical(other.isRegisterSuccess, isRegisterSuccess) ||
+                other.isRegisterSuccess == isRegisterSuccess));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, doctorData);
+  int get hashCode =>
+      Object.hash(runtimeType, doctorData, isSignInSuccess, isRegisterSuccess);
 
   @JsonKey(ignore: true)
   @override
@@ -644,10 +693,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(doctorData);
+    return loaded(doctorData, isSignInSuccess, isRegisterSuccess);
   }
 
   @override
@@ -657,10 +708,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(doctorData);
+    return loaded?.call(doctorData, isSignInSuccess, isRegisterSuccess);
   }
 
   @override
@@ -670,12 +723,14 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(doctorData);
+      return loaded(doctorData, isSignInSuccess, isRegisterSuccess);
     }
     return orElse();
   }
@@ -724,10 +779,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 }
 
 abstract class _Loaded implements AuthenticationState {
-  const factory _Loaded(final AuthenticationModelResponse doctorData) =
-      _$LoadedImpl;
+  const factory _Loaded(final AuthenticationModelResponse doctorData,
+      final bool isSignInSuccess, final bool isRegisterSuccess) = _$LoadedImpl;
 
   AuthenticationModelResponse get doctorData;
+  bool get isSignInSuccess;
+  bool get isRegisterSuccess;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -810,7 +867,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
-    required TResult Function(AuthenticationModelResponse doctorData) loaded,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -823,7 +882,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult? Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -836,7 +897,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
-    TResult Function(AuthenticationModelResponse doctorData)? loaded,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

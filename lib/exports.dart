@@ -271,3 +271,8 @@ export 'package:egy_akin/features/patient_section_details/presentation/pages/pat
 export 'package:egy_akin/features/search/presentation/pages/search_screen.dart';
 export 'package:animate_do/animate_do.dart';
 export 'package:egy_akin/app/shared/widgets/verification_icon.dart';
+export 'package:egy_akin/firebase_options.dart';
+export 'package:firebase_core/firebase_core.dart';
+export 'package:egy_akin/notification_service.dart';
+export 'package:firebase_messaging/firebase_messaging.dart';
+export 'package:flutter_local_notifications/flutter_local_notifications.dart';

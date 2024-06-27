@@ -1,15 +1,26 @@
+import 'package:egy_akin/app/shared/functions/custom_bottom_sheet.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/information_tab.dart';
+import 'package:egy_akin/features/doctor_info_view/presentation/widgets/score_content.dart';
+import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
+import 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
 
 import '../../../../exports.dart';
 
 class DoctorInfoViewScreen extends StatefulWidget {
   final String doctorId;
-  final String currentDoctorId;
-  const DoctorInfoViewScreen(
-      {super.key, required this.doctorId, required this.currentDoctorId});
+  final DoctorModel currentDoctorModel;
+  final String isSyndicateCardRequired;
+  final bool accountVerification;
+  const DoctorInfoViewScreen({
+    super.key,
+    required this.doctorId,
+    required this.currentDoctorModel,
+    required this.isSyndicateCardRequired,
+    required this.accountVerification,
+  });
 
   @override
   State<DoctorInfoViewScreen> createState() => _DoctorInfoViewScreenState();
@@ -44,7 +55,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                 ),
               ),
               const Spacer(),
-              widget.doctorId == widget.currentDoctorId
+              widget.doctorId == widget.currentDoctorModel.id.toString()
                   ? IconButton(
                       onPressed: () {
                         navigatorKey.currentState?.pushReplacementNamed(
@@ -88,7 +99,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               ),
                             );
                           },
-                          loaded: (doctorInfo) {
+                          loaded: (doctorInfo, isLoadingScoreHistory,
+                              isLoadedScoreHistory, message, scoreHistory) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
                               child: GestureDetector(
@@ -146,7 +158,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           ),
                         );
                       },
-                      loaded: (doctorInfo) {
+                      loaded: (doctorInfo, isLoadingScoreHistory,
+                          isLoadedScoreHistory, message, scoreHistory) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -193,7 +206,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               color: Colors.grey.shade600),
                         );
                       },
-                      loaded: (doctorInfo) {
+                      loaded: (doctorInfo, isLoadingScoreHistory,
+                          isLoadedScoreHistory, message, scoreHistory) {
                         return Text(
                           capitalizeFirstText(
                               doctorInfo.data!.specialty ?? AppStrings.empty),
@@ -210,57 +224,120 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Column(
-                      children: [
-                        BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return const SizedBox.shrink();
-                              },
-                              loaded: (doctorInfo) {
-                                return Text(doctorInfo.patientCount.toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp));
-                              },
+                    BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return Text(
+                              'Patient',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600,
+                              ),
                             );
                           },
-                        ),
-                        Text(
-                          'Patient',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
+                          loaded: (doctorInfo, isLoadingScoreHistory,
+                              isLoadedScoreHistory, message, scoreHistory) {
+                            return GestureDetector(
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.profilePatients,
+                                  arguments:
+                                      AppRoutesArgs.profilePatientsRouteArgs(
+                                    doctorId: widget.doctorId,
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    accountVerification:
+                                        widget.accountVerification,
+                                    isSyndicateCardRequired:
+                                        widget.isSyndicateCardRequired,
+                                    doctorFirstName:
+                                        doctorInfo.data!.firstName.toString(),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  BlocBuilder<DoctorInfoViewCubit,
+                                      DoctorInfoViewState>(
+                                    builder: (context, state) {
+                                      return state.maybeWhen(
+                                        orElse: () {
+                                          return const SizedBox.shrink();
+                                        },
+                                        loaded: (doctorInfo,
+                                            isLoadingScoreHistory,
+                                            isLoadedScoreHistory,
+                                            message,
+                                            scoreHistory) {
+                                          return Text(
+                                              doctorInfo.patientCount
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14.sp));
+                                        },
+                                      );
+                                    },
+                                  ),
+                                  Text(
+                                    'Patient',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
-                    Column(
-                      children: [
-                        BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return const SizedBox.shrink();
-                              },
-                              loaded: (doctorInfo) {
-                                return Text(doctorInfo.scoreValue.toString(),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp));
-                              },
+                    GestureDetector(
+                      onTap: () {
+                        showCustomBottomSheet(
+                          context: context,
+                          builder: (context) {
+                            return BlocProvider(
+                              create: (context) => ScoreHistoryCubit(sl()),
+                              child: ScoreHistoryScreen(
+                                doctorId: widget.doctorId,
+                              ),
                             );
                           },
-                        ),
-                        Text(
-                          'Score',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                        );
+                      },
+                      child: Column(
+                        children: [
+                          BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox.shrink();
+                                },
+                                loaded: (doctorInfo,
+                                    isLoadingScoreHistory,
+                                    isLoadedScoreHistory,
+                                    message,
+                                    scoreHistory) {
+                                  return Text(doctorInfo.scoreValue.toString(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14.sp));
+                                },
+                              );
+                            },
                           ),
-                        ),
-                      ],
+                          Text(
+                            'Score',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

@@ -15,6 +15,7 @@ class AppLocalStrings {
   static const String currentDoctorCreatedAt = 'currentDoctorCreatedAt';
   static const String currentDoctorUpdatedAt = 'currentDoctorUpdatedAt';
   static const String currentDoctorScoreValue = 'currentDoctorScoreValue';
+  static const String fcmTokenKey = 'fcmTokenKey';
   static const String currentDoctorRegistrationNumber =
       'currentDoctorRegistrationNumber';
 }

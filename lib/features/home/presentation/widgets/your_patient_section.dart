@@ -79,9 +79,10 @@ class YourPatientSection extends StatelessWidget {
                                   patient.doctor!.firstName ?? AppStrings.empty,
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
+                              accountVerification: homeData.verified!,
                               updatedAt: patient.updatedAt ?? AppStrings.empty,
                               hospital: patient.hospital ?? AppStrings.empty,
-                              currnetDoctorId: currentDoctorModel.id.toString(),
+                              currentDoctorModel: currentDoctorModel,
                               isSyndicateCardRequired:
                                   patient.doctor!.isSyndicateCardRequired!,
                               doctorId: patient.doctor!.id.toString(),

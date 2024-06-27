@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "520481338319",
+    "project_id": "egyakin-e28b5",
+    "storage_bucket": "egyakin-e28b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520481338319:android:2a75742d055e9e8feb18ba",
+        "android_client_info": {
+          "package_name": "com.incode.EgyAkin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCEnuR2qn-rw-Z8m0302fwjFCkBpPS7paE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

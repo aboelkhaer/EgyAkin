@@ -17,59 +17,23 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  SearchCubit? cubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    cubit = context.read<SearchCubit>();
+    if (!cubit!.isClosed) {
+      cubit!.scrollController = ScrollController();
+    }
+  }
+
   @override
   void dispose() {
-    final cubit = context.read<SearchCubit>();
-    if (!cubit.isClosed) {
-      cubit.scrollController!.dispose();
+    if (cubit != null && !cubit!.isClosed) {
+      cubit!.scrollController!.dispose();
     }
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final cubit = context.read<SearchCubit>();
-    if (!cubit.isClosed) {
-      cubit.scrollController = ScrollController();
-      cubit.scrollController!.addListener(_onScroll);
-    }
-  }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   context.read<SearchCubit>().scrollController.addListener(_onScroll);
-  // }
-
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final cubit = context.read<SearchCubit>();
-  //   if (!cubit.isClosed && cubit.scrollController.hasClients) {
-  //     cubit.scrollController.dispose();
-  //   }
-  // }
-
-  void _onScroll() {
-    if (context.read<SearchCubit>().isLastPage) {
-      return;
-    } else {
-      final maxScroll = context
-          .read<SearchCubit>()
-          .scrollController!
-          .position
-          .maxScrollExtent;
-      final currentScroll =
-          context.read<SearchCubit>().scrollController!.position.pixels;
-      const threshold = 200.0;
-      if (context.read<SearchCubit>().isLoadingMoreForScroll == false &&
-          maxScroll - currentScroll <= threshold) {
-        context.read<SearchCubit>().isLoadingMoreForScroll = true;
-
-        context.read<SearchCubit>().loadMorePatients();
-      }
-    }
   }
 
   @override
@@ -125,12 +89,12 @@ class _SearchScreenState extends State<SearchScreen> {
                       prefixIcon: const Icon(
                         Icons.search,
                       ),
-                      prefixIconColor: MaterialStateColor.resolveWith(
-                          (states) => states.contains(MaterialState.focused)
+                      prefixIconColor: WidgetStateColor.resolveWith((states) =>
+                          states.contains(WidgetState.focused)
                               ? AppColors.primary
                               : Colors.grey),
-                      suffixIconColor: MaterialStateColor.resolveWith(
-                          (states) => states.contains(MaterialState.focused)
+                      suffixIconColor: WidgetStateColor.resolveWith((states) =>
+                          states.contains(WidgetState.focused)
                               ? AppColors.primary
                               : Colors.grey),
                       border: OutlineInputBorder(
@@ -147,37 +111,112 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
           ),
-          Row(
-            children: [
-              const Expanded(child: Divider()),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: BlocBuilder<SearchCubit, SearchState>(
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return const Text(
-                          '0',
-                          style: TextStyle(
-                            color: AppColors.description,
-                          ),
-                        );
+          Container(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: cubit.patientOrDoctorOrHospital,
+                      onChanged: (value) {
+                        setState(() {
+                          cubit.patientOrDoctorOrHospital = value ?? false;
+                        });
                       },
-                      loaded: (response, isSeeMore) {
-                        return Text(
-                          response!.data!.data!.length.toString(),
-                          style: TextStyle(
-                            color: response.data!.data!.isEmpty
-                                ? AppColors.description
-                                : Colors.green,
-                          ),
-                        );
-                      },
-                    );
-                  },
+                      activeColor: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Patient',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      child: BlocBuilder<SearchCubit, SearchState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () {
+                              return const Text(
+                                '0',
+                                style: TextStyle(
+                                  color: AppColors.description,
+                                ),
+                              );
+                            },
+                            loaded: (patients, doses) {
+                              return Text(
+                                patients!.length.toString(),
+                                style: TextStyle(
+                                  color: patients.isEmpty
+                                      ? AppColors.description
+                                      : Colors.green,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              const Expanded(child: Divider()),
+                const SizedBox(width: 16),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: cubit.dose,
+                      onChanged: (value) {
+                        setState(() {
+                          cubit.dose = value ?? false;
+                        });
+                      },
+                      activeColor: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'Dose',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 10),
+                      child: BlocBuilder<SearchCubit, SearchState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () {
+                              return const Text(
+                                '0',
+                                style: TextStyle(
+                                  color: AppColors.description,
+                                ),
+                              );
+                            },
+                            loaded: (patients, doses) {
+                              return Text(
+                                doses!.length.toString(),
+                                style: TextStyle(
+                                  color: doses.isEmpty
+                                      ? AppColors.description
+                                      : Colors.green,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const Row(
+            children: [
+              Expanded(child: Divider()),
             ],
           ),
           SizedBox(height: size.height * 0.01),
@@ -207,115 +246,234 @@ class _SearchScreenState extends State<SearchScreen> {
                     return const ShimmerLoadingPatientsCards(
                         ishorizontal: false);
                   },
-                  loaded: (response, isSeeMore) {
-                    return ListView.builder(
-                      controller: cubit.scrollController,
-                      itemCount: response!.data!.data!.length,
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      padding: EdgeInsets.only(
-                        left: 30,
-                        top: 8,
-                        right: size.width * 0.09,
-                        bottom: 50,
-                      ),
-                      itemBuilder: (context, index) {
-                        PatientHomeDataModel patient =
-                            response.data!.data![index];
+                  loaded: (patients, doses) {
+                    return patients!.isEmpty && doses!.isEmpty
+                        ? Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.search_off_outlined,
+                                  size: 40,
+                                  color: AppColors.primary,
+                                ),
+                                SizedBox(
+                                  height: size.height * 0.2,
+                                )
+                              ],
+                            ),
+                          )
+                        : SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Column(
+                              children: [
+                                ListView.builder(
+                                  controller: cubit.scrollController,
+                                  itemCount: patients.length,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  padding: EdgeInsets.only(
+                                    left: 30,
+                                    top: 8,
+                                    right: size.width * 0.09,
+                                    bottom: 40,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    PatientHomeDataModel patient =
+                                        patients[index];
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: PatientCard(
-                            patientName: patient.name ?? AppStrings.empty,
-                            updatedAt: patient.updatedAt ?? AppStrings.empty,
-                            doctorId: patient.doctor!.id.toString(),
-                            drFirstName:
-                                patient.doctor!.firstName ?? AppStrings.empty,
-                            drLastName:
-                                patient.doctor!.lastName ?? AppStrings.empty,
-                            isSyndicateCardRequired:
-                                patient.doctor!.isSyndicateCardRequired!,
-                            currnetDoctorId:
-                                widget.currentDoctorModel.id.toString(),
-                            hospital: patient.hospital ?? AppStrings.empty,
-                            doctorImage: patient.doctor!.image,
-                            submitStatus: patient.sections == null
-                                ? false
-                                : patient.sections!.submitStatus ?? false,
-                            isOutcomeStatus: patient.sections!.outcomeStatus!,
-                            onOutcomeTap: () {},
-                            onAddCommentTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                AppRoutes.comments,
-                                arguments:
-                                    AppRoutesArgs.patientCommentsRouteArgs(
-                                  patientId: patient.id.toString(),
-                                  currentDoctorModel: widget.currentDoctorModel,
-                                  verified: widget.accountVerification,
-                                  patientName: patient.name.toString(),
-                                  isSyndicateCardRequired:
-                                      widget.isSyndicateCardRequired,
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: PatientCard(
+                                        patientName:
+                                            patient.name ?? AppStrings.empty,
+                                        updatedAt: patient.updatedAt ??
+                                            AppStrings.empty,
+                                        doctorId: patient.doctor!.id.toString(),
+                                        drFirstName:
+                                            patient.doctor!.firstName ??
+                                                AppStrings.empty,
+                                        accountVerification:
+                                            widget.accountVerification,
+                                        drLastName: patient.doctor!.lastName ??
+                                            AppStrings.empty,
+                                        isSyndicateCardRequired: patient
+                                            .doctor!.isSyndicateCardRequired!,
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        hospital: patient.hospital ??
+                                            AppStrings.empty,
+                                        doctorImage: patient.doctor!.image,
+                                        submitStatus: patient.sections == null
+                                            ? false
+                                            : patient.sections!.submitStatus ??
+                                                false,
+                                        isOutcomeStatus:
+                                            patient.sections!.outcomeStatus!,
+                                        onOutcomeTap: () {},
+                                        onAddCommentTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.comments,
+                                            arguments: AppRoutesArgs
+                                                .patientCommentsRouteArgs(
+                                              patientId: patient.id.toString(),
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              verified:
+                                                  widget.accountVerification,
+                                              patientName:
+                                                  patient.name.toString(),
+                                              isSyndicateCardRequired: widget
+                                                  .isSyndicateCardRequired,
+                                            ),
+                                          );
+                                        },
+                                        onTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.patientSections,
+                                            arguments: AppRoutesArgs
+                                                .patientSectionsRouteArguments(
+                                              patientId: patient.id.toString(),
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                            onTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                AppRoutes.patientSections,
-                                arguments:
-                                    AppRoutesArgs.patientSectionsRouteArguments(
-                                  patientId: patient.id.toString(),
-                                  currentDoctorModel: widget.currentDoctorModel,
+                                patients.isNotEmpty && doses!.isNotEmpty
+                                    ? Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 20),
+                                        child: Row(
+                                          children: [
+                                            const Expanded(child: Divider()),
+                                            Container(
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              child: const Text(
+                                                'Doses',
+                                                style: TextStyle(
+                                                    color: Colors.green,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                            ),
+                                            const Expanded(child: Divider()),
+                                          ],
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
+                                ListView.builder(
+                                  controller: cubit.scrollController,
+                                  itemCount: doses!.length,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.vertical,
+                                  padding: EdgeInsets.only(
+                                    left: 30,
+                                    right: size.width * 0.09,
+                                    bottom: 50,
+                                  ),
+                                  itemBuilder: (context, index) {
+                                    SearchDataForDosesModelResponse dose =
+                                        doses[index];
+                                    return Padding(
+                                      padding: const EdgeInsets.only(bottom: 8),
+                                      child: Card(
+                                        color: Colors.white,
+                                        elevation: 0.8,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 16.w, vertical: 12.h),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: AppColors.primary
+                                                .withOpacity(0.8),
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Flexible(
+                                                    child: Text(
+                                                      dose.title.toString(),
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14.sp,
+                                                        color: AppColors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 5.h),
+                                              const Divider(
+                                                color: AppColors.white,
+                                              ),
+                                              SizedBox(height: 5.h),
+                                              Row(
+                                                children: [
+                                                  Flexible(
+                                                    child: HtmlWidget(
+                                                      dose.description
+                                                          .toString(),
+                                                      textStyle: TextStyle(
+                                                        color: AppColors.white,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: 10.h),
+                                              Row(
+                                                children: [
+                                                  Flexible(
+                                                    child: HtmlWidget(
+                                                      dose.dose.toString(),
+                                                      textStyle: TextStyle(
+                                                        color: AppColors.white,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12.sp,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                    );
+                              ],
+                            ),
+                          );
                   },
                 );
               },
             ),
           ),
           SizedBox(height: 10.h),
-          BlocBuilder<SearchCubit, SearchState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
-                },
-                loaded: (data, isSeeMore) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      isSeeMore
-                          ? Column(
-                              children: [
-                                const SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                  ),
-                                ),
-                                SizedBox(height: 20.h),
-                              ],
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                cubit.loadMorePatients();
-                              },
-                              child: const Text(
-                                '',
-                              ),
-                            ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
         ],
       ),
     );

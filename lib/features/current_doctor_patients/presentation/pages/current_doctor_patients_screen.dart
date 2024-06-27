@@ -117,8 +117,8 @@ class _CurrentDoctorPatientsScreenState
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           drLastName:
                               patient.doctor!.lastName ?? AppStrings.empty,
-                          currnetDoctorId:
-                              widget.currentDoctorModel.id.toString(),
+                          accountVerification: widget.accountVerification,
+                          currentDoctorModel: widget.currentDoctorModel,
                           hospital: patient.hospital ?? AppStrings.empty,
                           isSyndicateCardRequired:
                               patient.doctor!.isSyndicateCardRequired!,

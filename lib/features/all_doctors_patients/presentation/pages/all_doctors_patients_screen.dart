@@ -122,13 +122,13 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          accountVerification: widget.accountVerification,
                           doctorId: patient.doctor!.id.toString(),
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           drLastName:
                               patient.doctor!.lastName ?? AppStrings.empty,
                           hospital: patient.hospital ?? AppStrings.empty,
-                          currnetDoctorId:
-                              widget.currentDoctorModel.id.toString(),
+                          currentDoctorModel: widget.currentDoctorModel,
                           isSyndicateCardRequired:
                               patient.doctor!.isSyndicateCardRequired!,
                           doctorImage: patient.doctor!.image,

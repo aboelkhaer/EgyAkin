@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/search/domain/repositories/search_repo.dart';
 import '../../../../exports.dart';
 
 class GetSearchHomeUsecase
@@ -12,13 +11,13 @@ class GetSearchHomeUsecase
   Future<Either<Failure, GetSearchModelResponse>> excute(
       GetSearchHomeUsecaseInput input) async {
     return await repository.getSearchHome(
-        searchContent: input.searchContent, page: input.page);
+        patient: input.patient, dose: input.dose);
   }
 }
 
 class GetSearchHomeUsecaseInput {
-  final String searchContent;
-  final int page;
+  final String patient;
+  final String dose;
 
-  GetSearchHomeUsecaseInput({required this.searchContent, required this.page});
+  GetSearchHomeUsecaseInput({required this.patient, required this.dose});
 }

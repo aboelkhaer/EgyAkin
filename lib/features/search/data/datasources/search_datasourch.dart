@@ -2,8 +2,8 @@ import '../../../../exports.dart';
 
 abstract class SearchDataSource {
   Future<GetSearchModelResponse> getSearchHome({
-    required String searchContent,
-    required int page,
+    required String patient,
+    required String dose,
   });
 }
 
@@ -14,7 +14,7 @@ class SearchDataSourceImpl implements SearchDataSource {
 
   @override
   Future<GetSearchModelResponse> getSearchHome(
-      {required String searchContent, required int page}) async {
-    return await _apiServices.searchHome(searchContent, page);
+      {required String patient, required String dose}) async {
+    return await _apiServices.searchHome(patient, dose);
   }
 }

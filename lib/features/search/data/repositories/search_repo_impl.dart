@@ -10,13 +10,13 @@ class SearchRepositoryImpl extends SearchRepository {
 
   @override
   Future<Either<Failure, GetSearchModelResponse>> getSearchHome(
-      {required String searchContent, required int page}) async {
+      {required String patient, required String dose}) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await searchDataSource.getSearchHome(
-            searchContent: searchContent, page: page);
+        final response =
+            await searchDataSource.getSearchHome(patient: patient, dose: dose);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());
