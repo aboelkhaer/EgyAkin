@@ -84,14 +84,14 @@ class AppStrings {
   static const String getStarted = 'Get Started';
   static const String welcomeTitle = 'Welcome To EgyAkin';
   static const String welcomeDescription =
-      'Empowering lives through kidney health\nawareness';
+      'Analysis of kidney disease data\nin Egypt';
   static const String onboardingTitle1 = 'Understanding Kidney Health';
-  static const String onboardingTitle2 = 'Lifestyle and Kidney Wellness';
+  static const String onboardingTitle2 = 'Access to reflux treatment';
   static const String onboardingTitle3 = 'Managing Kidney Conditions';
   static const String onboardingDescription1 =
       'Explore essential information about kidney functions and common issues.';
   static const String onboardingDescription2 =
-      'Discover lifestyle choices that promote kidney health and overall well-being.';
+      'Collecting kidney disease data, analyzing it, and arriving at radical solutions.';
   static const String onboardingDescription3 =
       'Learn about effective strategies for managing kidney conditions and seeking support';
   static const String createAccount = 'Create Account';
@@ -106,7 +106,7 @@ class AppStrings {
   static const String toAddOutcomeYouMustVerifyYourEmailAddress =
       'To add outcome you must verify your email address';
   static const String submit = 'Submit';
-  static const String submitBy = 'Submited by';
+  static const String submitBy = 'Submitted by';
   static const String finalSubmit = 'Final Submit';
   static const String nationalID = 'National ID';
   static const String mobile = 'Mobile';
