@@ -77,6 +77,9 @@ class AboutUsScreen extends StatelessWidget {
         <h2>Contact Us</h2>
         <p>For support, please contact us at: <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
         
+         <h2>Developer Information</h2>
+    <p>This application was developed by Mohamed Ibrahiem.</p>
+    
         <p>Thank you for choosing EgyAkin as your partner in kidney health management.</p>
           </div>
               </body>

@@ -41,7 +41,11 @@
 		<true/>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your app needs access to the photo library to pick images.</string>
+	<string>EgyAkin requires access to the photo library to upload your profile photo.</string>
+	<key>NSCameraUsageDescription</key>
+    <string>EgyAkin would like to use your camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>EgyAkin would like access to your photo gallery</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

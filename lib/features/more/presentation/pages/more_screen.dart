@@ -120,6 +120,20 @@ class _MoreScreenState extends State<MoreScreen> {
                 style: TextStyle(
                     fontWeight: FontWeight.bold, color: Colors.grey.shade500),
               ),
+              // ListTile(
+              //   title: const Text('Terms Of Service'),
+              //   leading: Icon(
+              //     Icons.contact_mail,
+              //     color: Colors.grey.shade600,
+              //   ),
+              //   trailing: Icon(
+              //     Icons.terms,
+              //     size: 15.r,
+              //   ),
+              //   onTap: () {
+              //     navigatorKey.currentState?.pushNamed(AppRoutes.contactUs);
+              //   },
+              // ),
               ListTile(
                 title: const Text('Contact Us'),
                 leading: Icon(

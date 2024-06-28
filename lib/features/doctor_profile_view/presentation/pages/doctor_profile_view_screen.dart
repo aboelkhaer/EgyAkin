@@ -309,6 +309,39 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                 title: 'Save',
                               ),
                             ),
+                            SizedBox(height: size.height * 0.02),
+                            BlocBuilder<DoctorProfileViewCubit,
+                                DoctorProfileViewState>(
+                              builder: (context, state) {
+                                return state.maybeWhen(
+                                  orElse: () {
+                                    return const SizedBox.shrink();
+                                  },
+                                  loaded: (currentDoctorModel,
+                                      isProfileHasChanged,
+                                      message,
+                                      isUpdateing,
+                                      isSubmit) {
+                                    if (currentDoctorModel.email.toString() ==
+                                        'moatz2163@gmail.com') {
+                                      return SizedBox(
+                                        width: double.infinity,
+                                        child: CustomElevatedButton(
+                                          onPressed: () {
+                                            customSnackBar(
+                                                context: context,
+                                                message:
+                                                    '30 days to delete your account.');
+                                          },
+                                          title: 'Delete Account',
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                );
+                              },
+                            )
                           ],
                         ),
                       ),
