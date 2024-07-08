@@ -3,7 +3,11 @@ import '../../../../exports.dart';
 
 class ProfileScreen extends StatelessWidget {
   final String isSyndicateCardRequired;
-  const ProfileScreen({super.key, required this.isSyndicateCardRequired});
+  final bool accountVerification;
+  const ProfileScreen(
+      {super.key,
+      required this.isSyndicateCardRequired,
+      required this.accountVerification});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +20,7 @@ class ProfileScreen extends StatelessWidget {
           ProfileCover(
             cubit: cubit,
             isSyndicateCardRequired: isSyndicateCardRequired,
+            accountVerification: accountVerification,
           ),
           SizedBox(height: 20.h),
           ProfileFeatures(cubit: cubit),

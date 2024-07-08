@@ -22,8 +22,9 @@ class FooterButtons extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Center(
-        child: SizedBox(
+        child: Container(
           height: 90,
+          color: Colors.grey.shade100,
           child: Row(
             children: [
               finalSubmit

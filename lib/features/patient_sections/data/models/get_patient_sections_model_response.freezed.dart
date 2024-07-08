@@ -28,6 +28,7 @@ mixin _$GetPatientSectionsModelResponse {
   String? get patientName => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_Id')
   String? get doctorId => throw _privateConstructorUsedError;
+  GFRModel? get gfr => throw _privateConstructorUsedError;
   List<SectionModel>? get data => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -49,7 +50,10 @@ abstract class $GetPatientSectionsModelResponseCopyWith<$Res> {
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
+      GFRModel? gfr,
       List<SectionModel>? data});
+
+  $GFRModelCopyWith<$Res>? get gfr;
 }
 
 /// @nodoc
@@ -70,6 +74,7 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
     Object? submitStatus = freezed,
     Object? patientName = freezed,
     Object? doctorId = freezed,
+    Object? gfr = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -89,11 +94,27 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      gfr: freezed == gfr
+          ? _value.gfr
+          : gfr // ignore: cast_nullable_to_non_nullable
+              as GFRModel?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as List<SectionModel>?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $GFRModelCopyWith<$Res>? get gfr {
+    if (_value.gfr == null) {
+      return null;
+    }
+
+    return $GFRModelCopyWith<$Res>(_value.gfr!, (value) {
+      return _then(_value.copyWith(gfr: value) as $Val);
+    });
   }
 }
 
@@ -111,7 +132,11 @@ abstract class _$$GetPatientSectionsModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
+      GFRModel? gfr,
       List<SectionModel>? data});
+
+  @override
+  $GFRModelCopyWith<$Res>? get gfr;
 }
 
 /// @nodoc
@@ -131,6 +156,7 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
     Object? submitStatus = freezed,
     Object? patientName = freezed,
     Object? doctorId = freezed,
+    Object? gfr = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetPatientSectionsModelResponseImpl(
@@ -150,6 +176,10 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      gfr: freezed == gfr
+          ? _value.gfr
+          : gfr // ignore: cast_nullable_to_non_nullable
+              as GFRModel?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -167,6 +197,7 @@ class _$GetPatientSectionsModelResponseImpl
       @JsonKey(name: 'submit_status') this.submitStatus,
       @JsonKey(name: 'patient_name') this.patientName,
       @JsonKey(name: 'doctor_Id') this.doctorId,
+      this.gfr,
       final List<SectionModel>? data})
       : _data = data;
 
@@ -185,6 +216,8 @@ class _$GetPatientSectionsModelResponseImpl
   @override
   @JsonKey(name: 'doctor_Id')
   final String? doctorId;
+  @override
+  final GFRModel? gfr;
   final List<SectionModel>? _data;
   @override
   List<SectionModel>? get data {
@@ -197,7 +230,7 @@ class _$GetPatientSectionsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, data: $data)';
+    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, gfr: $gfr, data: $data)';
   }
 
   @override
@@ -212,13 +245,14 @@ class _$GetPatientSectionsModelResponseImpl
                 other.patientName == patientName) &&
             (identical(other.doctorId, doctorId) ||
                 other.doctorId == doctorId) &&
+            (identical(other.gfr, gfr) || other.gfr == gfr) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, value, submitStatus, patientName,
-      doctorId, const DeepCollectionEquality().hash(_data));
+      doctorId, gfr, const DeepCollectionEquality().hash(_data));
 
   @JsonKey(ignore: true)
   @override
@@ -243,6 +277,7 @@ abstract class _GetPatientSectionsModelResponse
       @JsonKey(name: 'submit_status') final bool? submitStatus,
       @JsonKey(name: 'patient_name') final String? patientName,
       @JsonKey(name: 'doctor_Id') final String? doctorId,
+      final GFRModel? gfr,
       final List<SectionModel>? data}) = _$GetPatientSectionsModelResponseImpl;
 
   factory _GetPatientSectionsModelResponse.fromJson(Map<String, dynamic> json) =
@@ -259,6 +294,8 @@ abstract class _GetPatientSectionsModelResponse
   @override
   @JsonKey(name: 'doctor_Id')
   String? get doctorId;
+  @override
+  GFRModel? get gfr;
   @override
   List<SectionModel>? get data;
   @override
@@ -483,5 +520,386 @@ abstract class _SectionModel implements SectionModel {
   @override
   @JsonKey(ignore: true)
   _$$SectionModelImplCopyWith<_$SectionModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GFRModel _$GFRModelFromJson(Map<String, dynamic> json) {
+  return _GFRModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GFRModel {
+  EquationModel? get ckd => throw _privateConstructorUsedError;
+  EquationModel? get sobh => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $GFRModelCopyWith<GFRModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GFRModelCopyWith<$Res> {
+  factory $GFRModelCopyWith(GFRModel value, $Res Function(GFRModel) then) =
+      _$GFRModelCopyWithImpl<$Res, GFRModel>;
+  @useResult
+  $Res call({EquationModel? ckd, EquationModel? sobh});
+
+  $EquationModelCopyWith<$Res>? get ckd;
+  $EquationModelCopyWith<$Res>? get sobh;
+}
+
+/// @nodoc
+class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
+    implements $GFRModelCopyWith<$Res> {
+  _$GFRModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ckd = freezed,
+    Object? sobh = freezed,
+  }) {
+    return _then(_value.copyWith(
+      ckd: freezed == ckd
+          ? _value.ckd
+          : ckd // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
+      sobh: freezed == sobh
+          ? _value.sobh
+          : sobh // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationModelCopyWith<$Res>? get ckd {
+    if (_value.ckd == null) {
+      return null;
+    }
+
+    return $EquationModelCopyWith<$Res>(_value.ckd!, (value) {
+      return _then(_value.copyWith(ckd: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationModelCopyWith<$Res>? get sobh {
+    if (_value.sobh == null) {
+      return null;
+    }
+
+    return $EquationModelCopyWith<$Res>(_value.sobh!, (value) {
+      return _then(_value.copyWith(sobh: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$GFRModelImplCopyWith<$Res>
+    implements $GFRModelCopyWith<$Res> {
+  factory _$$GFRModelImplCopyWith(
+          _$GFRModelImpl value, $Res Function(_$GFRModelImpl) then) =
+      __$$GFRModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({EquationModel? ckd, EquationModel? sobh});
+
+  @override
+  $EquationModelCopyWith<$Res>? get ckd;
+  @override
+  $EquationModelCopyWith<$Res>? get sobh;
+}
+
+/// @nodoc
+class __$$GFRModelImplCopyWithImpl<$Res>
+    extends _$GFRModelCopyWithImpl<$Res, _$GFRModelImpl>
+    implements _$$GFRModelImplCopyWith<$Res> {
+  __$$GFRModelImplCopyWithImpl(
+      _$GFRModelImpl _value, $Res Function(_$GFRModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? ckd = freezed,
+    Object? sobh = freezed,
+  }) {
+    return _then(_$GFRModelImpl(
+      ckd: freezed == ckd
+          ? _value.ckd
+          : ckd // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
+      sobh: freezed == sobh
+          ? _value.sobh
+          : sobh // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GFRModelImpl implements _GFRModel {
+  const _$GFRModelImpl({this.ckd, this.sobh});
+
+  factory _$GFRModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GFRModelImplFromJson(json);
+
+  @override
+  final EquationModel? ckd;
+  @override
+  final EquationModel? sobh;
+
+  @override
+  String toString() {
+    return 'GFRModel(ckd: $ckd, sobh: $sobh)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GFRModelImpl &&
+            (identical(other.ckd, ckd) || other.ckd == ckd) &&
+            (identical(other.sobh, sobh) || other.sobh == sobh));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, ckd, sobh);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GFRModelImplCopyWith<_$GFRModelImpl> get copyWith =>
+      __$$GFRModelImplCopyWithImpl<_$GFRModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GFRModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GFRModel implements GFRModel {
+  const factory _GFRModel(
+      {final EquationModel? ckd, final EquationModel? sobh}) = _$GFRModelImpl;
+
+  factory _GFRModel.fromJson(Map<String, dynamic> json) =
+      _$GFRModelImpl.fromJson;
+
+  @override
+  EquationModel? get ckd;
+  @override
+  EquationModel? get sobh;
+  @override
+  @JsonKey(ignore: true)
+  _$$GFRModelImplCopyWith<_$GFRModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+EquationModel _$EquationModelFromJson(Map<String, dynamic> json) {
+  return _EquationModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EquationModel {
+  @JsonKey(name: 'current_GFR')
+  String? get currentGFR => throw _privateConstructorUsedError;
+  @JsonKey(name: 'basal_creatinine_GFR')
+  String? get basalCreatinine => throw _privateConstructorUsedError;
+  @JsonKey(name: 'creatinine_on_discharge_GFR')
+  String? get creatinineOnDischarge => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $EquationModelCopyWith<EquationModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EquationModelCopyWith<$Res> {
+  factory $EquationModelCopyWith(
+          EquationModel value, $Res Function(EquationModel) then) =
+      _$EquationModelCopyWithImpl<$Res, EquationModel>;
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'current_GFR') String? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') String? basalCreatinine,
+      @JsonKey(name: 'creatinine_on_discharge_GFR')
+      String? creatinineOnDischarge});
+}
+
+/// @nodoc
+class _$EquationModelCopyWithImpl<$Res, $Val extends EquationModel>
+    implements $EquationModelCopyWith<$Res> {
+  _$EquationModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? currentGFR = freezed,
+    Object? basalCreatinine = freezed,
+    Object? creatinineOnDischarge = freezed,
+  }) {
+    return _then(_value.copyWith(
+      currentGFR: freezed == currentGFR
+          ? _value.currentGFR
+          : currentGFR // ignore: cast_nullable_to_non_nullable
+              as String?,
+      basalCreatinine: freezed == basalCreatinine
+          ? _value.basalCreatinine
+          : basalCreatinine // ignore: cast_nullable_to_non_nullable
+              as String?,
+      creatinineOnDischarge: freezed == creatinineOnDischarge
+          ? _value.creatinineOnDischarge
+          : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EquationModelImplCopyWith<$Res>
+    implements $EquationModelCopyWith<$Res> {
+  factory _$$EquationModelImplCopyWith(
+          _$EquationModelImpl value, $Res Function(_$EquationModelImpl) then) =
+      __$$EquationModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(name: 'current_GFR') String? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') String? basalCreatinine,
+      @JsonKey(name: 'creatinine_on_discharge_GFR')
+      String? creatinineOnDischarge});
+}
+
+/// @nodoc
+class __$$EquationModelImplCopyWithImpl<$Res>
+    extends _$EquationModelCopyWithImpl<$Res, _$EquationModelImpl>
+    implements _$$EquationModelImplCopyWith<$Res> {
+  __$$EquationModelImplCopyWithImpl(
+      _$EquationModelImpl _value, $Res Function(_$EquationModelImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? currentGFR = freezed,
+    Object? basalCreatinine = freezed,
+    Object? creatinineOnDischarge = freezed,
+  }) {
+    return _then(_$EquationModelImpl(
+      currentGFR: freezed == currentGFR
+          ? _value.currentGFR
+          : currentGFR // ignore: cast_nullable_to_non_nullable
+              as String?,
+      basalCreatinine: freezed == basalCreatinine
+          ? _value.basalCreatinine
+          : basalCreatinine // ignore: cast_nullable_to_non_nullable
+              as String?,
+      creatinineOnDischarge: freezed == creatinineOnDischarge
+          ? _value.creatinineOnDischarge
+          : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EquationModelImpl implements _EquationModel {
+  const _$EquationModelImpl(
+      {@JsonKey(name: 'current_GFR') this.currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') this.basalCreatinine,
+      @JsonKey(name: 'creatinine_on_discharge_GFR')
+      this.creatinineOnDischarge});
+
+  factory _$EquationModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EquationModelImplFromJson(json);
+
+  @override
+  @JsonKey(name: 'current_GFR')
+  final String? currentGFR;
+  @override
+  @JsonKey(name: 'basal_creatinine_GFR')
+  final String? basalCreatinine;
+  @override
+  @JsonKey(name: 'creatinine_on_discharge_GFR')
+  final String? creatinineOnDischarge;
+
+  @override
+  String toString() {
+    return 'EquationModel(currentGFR: $currentGFR, basalCreatinine: $basalCreatinine, creatinineOnDischarge: $creatinineOnDischarge)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EquationModelImpl &&
+            (identical(other.currentGFR, currentGFR) ||
+                other.currentGFR == currentGFR) &&
+            (identical(other.basalCreatinine, basalCreatinine) ||
+                other.basalCreatinine == basalCreatinine) &&
+            (identical(other.creatinineOnDischarge, creatinineOnDischarge) ||
+                other.creatinineOnDischarge == creatinineOnDischarge));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, currentGFR, basalCreatinine, creatinineOnDischarge);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>
+      __$$EquationModelImplCopyWithImpl<_$EquationModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EquationModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EquationModel implements EquationModel {
+  const factory _EquationModel(
+      {@JsonKey(name: 'current_GFR') final String? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') final String? basalCreatinine,
+      @JsonKey(name: 'creatinine_on_discharge_GFR')
+      final String? creatinineOnDischarge}) = _$EquationModelImpl;
+
+  factory _EquationModel.fromJson(Map<String, dynamic> json) =
+      _$EquationModelImpl.fromJson;
+
+  @override
+  @JsonKey(name: 'current_GFR')
+  String? get currentGFR;
+  @override
+  @JsonKey(name: 'basal_creatinine_GFR')
+  String? get basalCreatinine;
+  @override
+  @JsonKey(name: 'creatinine_on_discharge_GFR')
+  String? get creatinineOnDischarge;
+  @override
+  @JsonKey(ignore: true)
+  _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

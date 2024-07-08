@@ -161,8 +161,20 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          return ProfileScreen(
-            isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+          return state.maybeWhen(
+            orElse: () {
+              return ProfileScreen(
+                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+                accountVerification: false,
+              );
+            },
+            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              return ProfileScreen(
+                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+                accountVerification: cubit.accountVerification!,
+              );
+            },
           );
         },
       ),
@@ -170,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           return MoreScreen(
             currentDoctorModel: cubit.currentDoctorModel,
-            accountVerification: cubit.accountVerification!,
+            accountVerification: cubit.accountVerification ?? true,
           );
         },
       ),

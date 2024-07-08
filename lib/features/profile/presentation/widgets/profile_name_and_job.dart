@@ -1,13 +1,18 @@
+import 'package:egy_akin/app/shared/functions/custom_bottom_sheet.dart';
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
+import 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
 
 class ProfileNameAndJob extends StatelessWidget {
   final ProfileCubit cubit;
   final String isSyndicateCardRequired;
+  final bool accountVerification;
 
   const ProfileNameAndJob({
     super.key,
     required this.cubit,
     required this.isSyndicateCardRequired,
+    required this.accountVerification,
   });
 
   @override
@@ -63,56 +68,92 @@ class ProfileNameAndJob extends StatelessWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              context
-                                  .read<HomeCubit>()
-                                  .doctorPatientCount
-                                  .toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
+                        GestureDetector(
+                          onTap: () {
+                            // navigatorKey.currentState?.pushNamed(
+                            //   AppRoutes.profilePatients,
+                            //   arguments: AppRoutesArgs.profilePatientsRouteArgs(
+                            //     doctorId: cubit.currentDoctor.id.toString(),
+                            //     currentDoctorModel: cubit.currentDoctor,
+                            //     accountVerification: accountVerification,
+                            //     isSyndicateCardRequired:
+                            //         isSyndicateCardRequired,
+                            //     doctorFirstName:
+                            //         cubit.currentDoctor.firstName.toString(),
+                            //   ),
+                            // );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                context
+                                    .read<HomeCubit>()
+                                    .doctorPatientCount
+                                    .toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12.sp,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 3.w),
-                            Text(
-                              'Patient',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
+                              SizedBox(width: 3.w),
+                              Text(
+                                'Patient',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12.sp,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10.w),
-                          ],
+                              SizedBox(width: 10.w),
+                            ],
+                          ),
                         ),
                         const Text('|'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10.w),
-                            Text(
-                              context.read<HomeCubit>().doctorScore.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                              ),
+                        GestureDetector(
+                          onTap: () {
+                            showCustomBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return BlocProvider(
+                                  create: (context) => ScoreHistoryCubit(sl()),
+                                  child: ScoreHistoryScreen(
+                                    doctorId: cubit.currentDoctor.id.toString(),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(width: 10.w),
+                                Text(
+                                  context
+                                      .read<HomeCubit>()
+                                      .doctorScore
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                SizedBox(width: 3.w),
+                                Text(
+                                  'Score',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade600,
+                                    fontSize: 12.sp,
+                                  ),
+                                ),
+                                // SizedBox(width: 5.w),
+                              ],
                             ),
-                            SizedBox(width: 3.w),
-                            Text(
-                              'Score',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                            // SizedBox(width: 5.w),
-                          ],
+                          ),
                         ),
                       ],
                     );
@@ -157,56 +198,109 @@ class ProfileNameAndJob extends StatelessWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              context
-                                  .read<HomeCubit>()
-                                  .doctorPatientCount
-                                  .toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
+                        GestureDetector(
+                          onTap: () {
+                            navigatorKey.currentState?.pushNamed(
+                              AppRoutes.profilePatients,
+                              arguments: AppRoutesArgs.profilePatientsRouteArgs(
+                                doctorId: cubit.currentDoctor.id.toString(),
+                                currentDoctorModel: cubit.currentDoctor,
+                                accountVerification: accountVerification,
+                                isSyndicateCardRequired:
+                                    isSyndicateCardRequired,
+                                doctorFirstName:
+                                    cubit.currentDoctor.firstName.toString(),
                               ),
-                            ),
-                            SizedBox(width: 3.w),
-                            Text(
-                              'Patient',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                context
+                                    .read<HomeCubit>()
+                                    .doctorPatientCount
+                                    .toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12.sp,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10.w),
-                          ],
+                              SizedBox(width: 3.w),
+                              Text(
+                                'Patient',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.grey.shade600,
+                                  fontSize: 12.sp,
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                            ],
+                          ),
                         ),
                         const Text('|'),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 10.w),
-                            Text(
-                              context.read<HomeCubit>().doctorScore.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
+                        GestureDetector(
+                          onTap: () {
+                            showCustomBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return BlocProvider(
+                                  create: (context) => ScoreHistoryCubit(sl()),
+                                  child: ScoreHistoryScreen(
+                                    doctorId: cubit.currentDoctor.id.toString(),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: GestureDetector(
+                            onTap: () {
+                              showCustomBottomSheet(
+                                context: context,
+                                builder: (context) {
+                                  return BlocProvider(
+                                    create: (context) =>
+                                        ScoreHistoryCubit(sl()),
+                                    child: ScoreHistoryScreen(
+                                      doctorId:
+                                          cubit.currentDoctor.id.toString(),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(width: 10.w),
+                                  Text(
+                                    context
+                                        .read<HomeCubit>()
+                                        .doctorScore
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  SizedBox(width: 3.w),
+                                  Text(
+                                    'Score',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12.sp,
+                                    ),
+                                  ),
+                                  // SizedBox(width: 5.w),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 3.w),
-                            Text(
-                              'Score',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                            // SizedBox(width: 5.w),
-                          ],
+                          ),
                         ),
                       ],
                     );

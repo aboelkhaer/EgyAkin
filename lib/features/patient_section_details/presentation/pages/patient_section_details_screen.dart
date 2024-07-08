@@ -449,35 +449,50 @@ class _PatientSectionDetailsScreenState
           children: cubit.questionModelList[index].values!.map((value) {
             return Tooltip(
               message: value.toString(),
-              child: ChoiceChip(
-                label: Text(
-                  value.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                  maxLines: 2,
-                ),
-                backgroundColor: Colors.grey.shade400,
-                selected: answers.contains(value),
-                selectedColor: AppColors.primary.withOpacity(0.7),
-                onSelected: (selected) {
-                  setState(() {
-                    if (selected) {
-                      answers.add(value);
-                    } else {
-                      answers.remove(value);
-                    }
+              child: Theme(
+                data: ThemeData(
+                  chipTheme: ChipThemeData(
+                    selectedColor: AppColors.primary.withOpacity(0.7),
+                    checkmarkColor: Colors.white, // Change the checkmark color
+                    showCheckmark: true,
 
-                    cubit.formData[
-                        cubit.questionModelList[index].id.toString()] = {
-                      AppStrings.answers: answers,
-                      AppStrings.otherField: answers.contains(AppStrings.others)
-                          ? answerMap[AppStrings.otherField]
-                          : AppStrings.empty,
-                    };
-                    log('map ${cubit.formData}');
-                    // log('list answer ${questionList[index].answer}');
-                  });
-                },
+                    labelStyle: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                child: ChoiceChip(
+                  label: Text(
+                    value.toString(),
+                    style: const TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                  ),
+                  backgroundColor: Colors.grey.shade400,
+                  selected: answers.contains(value),
+                  selectedColor: AppColors.primary.withOpacity(0.7),
+                  onSelected: (selected) {
+                    setState(() {
+                      if (selected) {
+                        answers.add(value);
+                      } else {
+                        answers.remove(value);
+                      }
+
+                      cubit.formData[
+                          cubit.questionModelList[index].id.toString()] = {
+                        AppStrings.answers: answers,
+                        AppStrings.otherField:
+                            answers.contains(AppStrings.others)
+                                ? answerMap[AppStrings.otherField]
+                                : AppStrings.empty,
+                      };
+                      log('map ${cubit.formData}');
+                      // log('list answer ${questionList[index].answer}');
+                    });
+                  },
+                ),
               ),
             );
           }).toList(),

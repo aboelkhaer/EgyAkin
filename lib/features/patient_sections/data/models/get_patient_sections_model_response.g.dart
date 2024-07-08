@@ -13,6 +13,9 @@ _$GetPatientSectionsModelResponseImpl
           submitStatus: json['submit_status'] as bool?,
           patientName: json['patient_name'] as String?,
           doctorId: json['doctor_Id'] as String?,
+          gfr: json['gfr'] == null
+              ? null
+              : GFRModel.fromJson(json['gfr'] as Map<String, dynamic>),
           data: (json['data'] as List<dynamic>?)
               ?.map((e) => SectionModel.fromJson(e as Map<String, dynamic>))
               .toList(),
@@ -25,6 +28,7 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
       'submit_status': instance.submitStatus,
       'patient_name': instance.patientName,
       'doctor_Id': instance.doctorId,
+      'gfr': instance.gfr,
       'data': instance.data,
     };
 
@@ -42,4 +46,34 @@ Map<String, dynamic> _$$SectionModelImplToJson(_$SectionModelImpl instance) =>
       'section_status': instance.sectionStatus,
       'updated_at': instance.updatedAt,
       'section_name': instance.sectionName,
+    };
+
+_$GFRModelImpl _$$GFRModelImplFromJson(Map<String, dynamic> json) =>
+    _$GFRModelImpl(
+      ckd: json['ckd'] == null
+          ? null
+          : EquationModel.fromJson(json['ckd'] as Map<String, dynamic>),
+      sobh: json['sobh'] == null
+          ? null
+          : EquationModel.fromJson(json['sobh'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$$GFRModelImplToJson(_$GFRModelImpl instance) =>
+    <String, dynamic>{
+      'ckd': instance.ckd,
+      'sobh': instance.sobh,
+    };
+
+_$EquationModelImpl _$$EquationModelImplFromJson(Map<String, dynamic> json) =>
+    _$EquationModelImpl(
+      currentGFR: json['current_GFR'] as String?,
+      basalCreatinine: json['basal_creatinine_GFR'] as String?,
+      creatinineOnDischarge: json['creatinine_on_discharge_GFR'] as String?,
+    );
+
+Map<String, dynamic> _$$EquationModelImplToJson(_$EquationModelImpl instance) =>
+    <String, dynamic>{
+      'current_GFR': instance.currentGFR,
+      'basal_creatinine_GFR': instance.basalCreatinine,
+      'creatinine_on_discharge_GFR': instance.creatinineOnDischarge,
     };

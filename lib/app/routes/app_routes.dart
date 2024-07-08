@@ -380,13 +380,6 @@ class RouteGenerator {
         }
 
       case AppRoutes.doctorProfile:
-        // return MaterialPageRoute(
-        //   builder: (_) => BlocProvider<DoctorProfileViewCubit>(
-        //     create: (context) => di.sl<DoctorProfileViewCubit>()
-        //       ..getCurrentDoctorModelFromLocal(),
-        //     child: const DoctorProfileViewScreen(),
-        //   ),
-        // );
         return MaterialPageRoute(
           builder: (_) => MultiBlocProvider(
             providers: [
