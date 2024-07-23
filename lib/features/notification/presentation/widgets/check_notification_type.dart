@@ -1,4 +1,3 @@
-import 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
 
 import '../../../../exports.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -7,6 +6,8 @@ class CheckNotificationType extends StatelessWidget {
   final NotificationsModel notificationModel;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   final String isSyndicateCardRequired;
 
   const CheckNotificationType(
@@ -14,7 +15,9 @@ class CheckNotificationType extends StatelessWidget {
       required this.notificationModel,
       required this.currentDoctorModel,
       required this.accountVerification,
-      required this.isSyndicateCardRequired});
+      required this.isSyndicateCardRequired,
+      required this.currentDoctorRole,
+      required this.currentDoctorPoints});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,8 @@ class CheckNotificationType extends StatelessWidget {
               AppRoutes.patientSections,
               arguments: AppRoutesArgs.patientSectionsRouteArguments(
                 patientId: notificationModel.patient!.id.toString(),
+                currentDoctorRole: currentDoctorRole,
+                currentDoctorPoints: currentDoctorPoints,
                 currentDoctorModel: currentDoctorModel,
               ),
             );
@@ -164,7 +169,9 @@ class CheckNotificationType extends StatelessWidget {
                 currentDoctorModel: currentDoctorModel,
                 verified: accountVerification,
                 patientName: notificationModel.patient!.name.toString(),
+                currentDoctorPoints: currentDoctorPoints,
                 isSyndicateCardRequired: isSyndicateCardRequired,
+                currentDoctorRole: currentDoctorRole,
               ),
             );
           },
@@ -227,6 +234,8 @@ class CheckNotificationType extends StatelessWidget {
                 doctorId: notificationModel.patient!.doctor!.id.toString(),
                 currentDoctorModel: currentDoctorModel,
                 isSyndicateCardRequired: isSyndicateCardRequired,
+                currentDoctorRole: currentDoctorRole,
+                currentDoctorPoints: currentDoctorPoints,
               ),
             );
           },

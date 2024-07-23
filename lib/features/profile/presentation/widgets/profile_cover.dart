@@ -3,11 +3,15 @@ import '../../../../exports.dart';
 class ProfileCover extends StatelessWidget {
   final String isSyndicateCardRequired;
   final bool accountVerification;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const ProfileCover({
     super.key,
     required this.cubit,
     required this.isSyndicateCardRequired,
     required this.accountVerification,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   final ProfileCubit cubit;
@@ -53,10 +57,10 @@ class ProfileCover extends StatelessWidget {
                       cubit: cubit,
                       isSyndicateCardRequired: isSyndicateCardRequired,
                       accountVerification: accountVerification,
+                      currentDoctorRole: currentDoctorRole,
+                      currentDoctorPoints: currentDoctorPoints,
                     ),
                     SizedBox(height: 5.h),
-                    // Text('$doctorPatientCount Patient  |  $doctorScore Score'),
-
                     SizedBox(height: 10.h),
                   ],
                 ),

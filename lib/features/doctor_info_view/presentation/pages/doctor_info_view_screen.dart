@@ -3,7 +3,6 @@ import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_inf
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/widgets/information_tab.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/widgets/score_content.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
 import 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
 
@@ -14,12 +13,16 @@ class DoctorInfoViewScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final String isSyndicateCardRequired;
   final bool accountVerification;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const DoctorInfoViewScreen({
     super.key,
     required this.doctorId,
     required this.currentDoctorModel,
     required this.isSyndicateCardRequired,
     required this.accountVerification,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -249,10 +252,13 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                         widget.currentDoctorModel,
                                     accountVerification:
                                         widget.accountVerification,
+                                    currentDoctorPoints:
+                                        widget.currentDoctorPoints,
                                     isSyndicateCardRequired:
                                         widget.isSyndicateCardRequired,
                                     doctorFirstName:
                                         doctorInfo.data!.firstName.toString(),
+                                    currentDoctorRole: widget.currentDoctorRole,
                                   ),
                                 );
                               },

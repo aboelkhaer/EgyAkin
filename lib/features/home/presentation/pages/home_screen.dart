@@ -155,6 +155,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return NotificationScreen(
             currentDoctorModel: cubit.currentDoctorModel,
             accountVerification: cubit.accountVerification!,
+            currentDoctorRole: cubit.currentDoctorRole,
+            currentDoctorPoints:
+                cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
             isSyndicateCardRequired: cubit.isSyndicateCardRequired,
           );
         },
@@ -166,6 +169,10 @@ class _HomeScreenState extends State<HomeScreen> {
               return ProfileScreen(
                 isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                 accountVerification: false,
+                currentDoctorRole: cubit.currentDoctorRole,
+                currentDoctorPoints: cubit.doctorScore == null
+                    ? 0
+                    : int.parse(cubit.doctorScore!),
               );
             },
             loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
@@ -173,6 +180,10 @@ class _HomeScreenState extends State<HomeScreen> {
               return ProfileScreen(
                 isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                 accountVerification: cubit.accountVerification!,
+                currentDoctorPoints: cubit.doctorScore == null
+                    ? 0
+                    : int.parse(cubit.doctorScore!),
+                currentDoctorRole: homeData.role.toString(),
               );
             },
           );

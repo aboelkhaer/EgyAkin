@@ -4,11 +4,15 @@ class HomeSearchBotton extends StatelessWidget {
   final DoctorModel currentDoctorModel;
   final bool verified;
   final String isSyndicateCardRequired;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const HomeSearchBotton({
     super.key,
     required this.currentDoctorModel,
     required this.verified,
     required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -21,6 +25,8 @@ class HomeSearchBotton extends StatelessWidget {
             currentDoctorModel: currentDoctorModel,
             verified: verified,
             isSyndicateCardRequired: isSyndicateCardRequired,
+            currentDoctorRole: currentDoctorRole,
+            currentDoctorPoints: currentDoctorPoints,
           ),
         );
       },

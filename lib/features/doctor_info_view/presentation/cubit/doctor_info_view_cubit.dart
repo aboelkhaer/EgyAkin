@@ -1,13 +1,10 @@
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
 import '../../../../exports.dart';
 
 class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
-  DoctorInfoViewCubit(
-      this._getDoctorInfoViewUsecase, this._getScoreHistoryUsecase)
+  DoctorInfoViewCubit(this._getDoctorInfoViewUsecase)
       : super(const DoctorInfoViewState.initial());
   final GetDoctorInfoViewUsecase _getDoctorInfoViewUsecase;
-  final GetScoreHistoryUsecase _getScoreHistoryUsecase;
   static DoctorInfoViewCubit get(context) => BlocProvider.of(context);
 
   getCurrentDoctorPatients(String doctorId) async {

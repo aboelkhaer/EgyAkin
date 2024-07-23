@@ -19,8 +19,9 @@ class RegisterBotton extends StatelessWidget {
             return SizedBox(
               width: double.infinity,
               child: CustomElevatedButton(
-                onPressed: () async => await cubit.register(),
+                onPressed: () async => await cubit.register(context),
                 title: AppStrings.register,
+                // isDisable: !cubit.isConfirmationChecked,
               ),
             );
           },

@@ -4,12 +4,16 @@ class NotificationScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String isSyndicateCardRequired;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
 
   const NotificationScreen({
     super.key,
     required this.currentDoctorModel,
     required this.accountVerification,
     required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -98,6 +102,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                               notificationData.todayRecords!,
                                           currentDoctorModel:
                                               widget.currentDoctorModel,
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
                                           accountVerification:
                                               widget.accountVerification,
                                           isSyndicateCardRequired:
@@ -156,6 +164,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                               .recentRecords!.data!,
                                           currentDoctorModel:
                                               widget.currentDoctorModel,
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
                                           accountVerification:
                                               widget.accountVerification,
                                           isSyndicateCardRequired:

@@ -1,10 +1,10 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
+import 'package:egy_akin/features/home/data/models/home_model_response.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
@@ -33,10 +33,26 @@ class HomeCubit extends Cubit<HomeState> {
   String? doctorScore;
   bool isUnreadNotification = false;
   String isSyndicateCardRequired = '';
+  String currentDoctorRole = '';
+  HomeModelResponse homeDataModel = const HomeModelResponse();
 
   final GlobalKey addPatientKey = GlobalKey();
   final GlobalKey topDoctorKey = GlobalKey();
   final GlobalKey yourPatientKey = GlobalKey();
+
+  refreshScreenOnly() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => HomeState.loaded(
+          value.homeData,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          value.homeIndex,
+          value.isUploadingSyndicateCard,
+          value.isUploadedSyndicateCard,
+          ''),
+    ));
+  }
 
   getDoctorDataFromLocal() async {
     currentDoctorModel = (await sl<AppPreferences>().getDoctorData())!;
@@ -111,6 +127,8 @@ class HomeCubit extends Cubit<HomeState> {
         doctorPatientCount = homeData.doctorPatientCount.toString();
         doctorScore = homeData.scoreValue.toString();
         isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
+        currentDoctorRole = homeData.role.toString();
+        homeDataModel = homeData;
         emit(HomeState.loaded(homeData, currentDoctorModel, dotsPosition,
             tabsController.index, false, false, ''));
       },

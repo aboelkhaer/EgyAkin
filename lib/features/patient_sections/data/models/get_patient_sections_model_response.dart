@@ -35,6 +35,7 @@ class GFRModel with _$GFRModel {
   const factory GFRModel({
     EquationModel? ckd,
     EquationModel? sobh,
+    EquationModel? mdrd,
   }) = _GFRModel;
   factory GFRModel.fromJson(Map<String, dynamic> json) =>
       _$GFRModelFromJson(json);

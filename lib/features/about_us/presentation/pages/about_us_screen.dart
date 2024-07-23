@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/about_us/presentation/cubit/about_us_cubit.dart';
 
 import '../../../../exports.dart';
 
@@ -63,7 +62,7 @@ class AboutUsScreen extends StatelessWidget {
         <h2>Key Features</h2>
         <ul>
             <li><strong>Patient Data Management:</strong> Easily add and manage patient details including name, age, gender, and medical history.</li>
-            <li><strong>GFR Calculation:</strong> Utilize accurate CKD-EPI and Sobh equations to calculate the Glomerular Filtration Rate (GFR) for better kidney health management.</li>
+            <li><strong>GFR Calculation:</strong> Utilize accurate CKD-EPI, MDRD and Sobh equations to calculate the Glomerular Filtration Rate (GFR) for better kidney health management.</li>
             <li><strong>Historical Data Tracking:</strong> Monitor patient progress with detailed historical data tracking.</li>
             <li><strong>Health Insights:</strong> Gain valuable insights to improve kidney health outcomes.</li>
         </ul>
@@ -77,10 +76,18 @@ class AboutUsScreen extends StatelessWidget {
         <h2>Contact Us</h2>
         <p>For support, please contact us at: <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
         
+         <h2>Supervisor and responsible</h2>
+          <ul>
+            <li><strong>Mostafa Abdelsalam (MD, FRCP):</strong> Professor of Medicine and Nephrology, Mansoura University and the leader of <strong>EgyAkin</strong> team.</li>
+          
+        </ul>
+         
+
+
          <h2>Developer Information</h2>
-    <p>This application was developed by Mohamed Ibrahiem.</p>
+    <p>This application was developed by Mohamed Ibrahiem and EgyAkin Team.</p>
     
-        <p>Thank you for choosing EgyAkin as your partner in kidney health management.</p>
+        <p>Thank you for choosing EgyAkin.</p>
           </div>
               </body>
               </html>

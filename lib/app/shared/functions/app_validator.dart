@@ -16,7 +16,7 @@ class AppValidators {
       return AppStrings.pleaseEnterYourPassword;
     }
     if (value.length <= 6) {
-      return AppStrings.passwordMustBeAtLeast6Characters;
+      return 'Please enter a valid password';
     }
     return null;
   }
@@ -28,23 +28,23 @@ class AppValidators {
 
   static String? passwordValidateForRegister(String value) {
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Must contain at least one uppercase letter';
+      return 'Please enter a valid password';
     }
 
     // Password must contain at least one numeric number
     if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Must contain at least one numeric digit';
+      return 'Please enter a valid password';
     }
 
     // Password must contain at least one special character
     if (!RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').hasMatch(value)) {
-      return 'Must contain at least one special character';
+      return 'Please enter a valid password';
     }
 
     // Password must have a minimum length of 6 characters
     if (value.length < 6) {
       // return 'Password must have a minimum length of 6 characters';
-      return 'Password must be at least 6 characters long';
+      return 'Please enter a valid password';
     }
 
     return null;

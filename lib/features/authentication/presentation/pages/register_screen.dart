@@ -22,11 +22,45 @@ class RegisterScreen extends StatelessWidget {
                       height: 130.h,
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          RegisterBotton(
-                            cubit: cubit,
+                          Row(
+                            children: [
+                              BlocBuilder<AuthenticationCubit,
+                                  AuthenticationState>(
+                                builder: (context, state) {
+                                  return Checkbox(
+                                    value: cubit.isConfirmationChecked,
+                                    onChanged: (value) {
+                                      cubit.isConfirmationChecked = value!;
+                                      cubit.refreshScreen();
+                                    },
+                                  );
+                                },
+                              ),
+                              Text(
+                                'I have read and agree to the ',
+                                style: TextStyle(fontSize: 11.5.sp),
+                              ),
+                              GestureDetector(
+                                onTap: () async {
+                                  launchURL(
+                                    url: 'https://egyakin.com/policy',
+                                    onError: (error) {
+                                      showErrorDialog(context, error);
+                                    },
+                                  );
+                                },
+                                child: Text(
+                                  'Privacy Policy',
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 11.5.sp),
+                                ),
+                              ),
+                            ],
                           ),
+                          SizedBox(height: 10.h),
+                          RegisterBotton(cubit: cubit),
                           SizedBox(height: 10.h),
                           const AlreadyHaveAnAccountLine(),
                         ],

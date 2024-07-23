@@ -213,7 +213,10 @@ class RegisterForm extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: DropdownButtonFormField<String>(
-                    hint: const Text(AppStrings.choose),
+                    hint: Text(
+                      AppStrings.choose,
+                      style: TextStyle(fontSize: 13.5.sp),
+                    ),
                     items: highestDegreeList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value,

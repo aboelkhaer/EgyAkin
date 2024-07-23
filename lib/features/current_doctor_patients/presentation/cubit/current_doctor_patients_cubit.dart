@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/current_doctor_patients/domain/usecases/get_current_doctor_patients_usecase.dart';
 
 import '../../../../exports.dart';
 

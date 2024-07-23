@@ -91,6 +91,9 @@ class HomeTab extends StatelessWidget {
                                 verified: homeData.verified!,
                                 isSyndicateCardRequired:
                                     homeData.isSyndicateCardRequired!,
+                                currentDoctorPoints:
+                                    int.parse(homeData.scoreValue!),
+                                currentDoctorRole: homeData.role.toString(),
                               );
                             },
                           );

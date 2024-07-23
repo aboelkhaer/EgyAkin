@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:html/parser.dart' show parse;
 import 'package:timeago/timeago.dart' as timeago;
@@ -50,6 +49,7 @@ class PostsSliderAndDots extends StatelessWidget {
                                   postModel: homeData.data!.posts![index],
                                   doctorModel: cubit.currentDoctorModel,
                                   verified: homeData.verified!,
+                                  currentDoctorRole: homeData.role.toString(),
                                   isSyndicateCardRequired:
                                       homeData.isSyndicateCardRequired!),
                             );

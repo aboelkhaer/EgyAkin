@@ -269,9 +269,9 @@ RecentNotificationForPagenationModel
 
 /// @nodoc
 mixin _$RecentNotificationForPagenationModel {
+  List<NotificationsModel>? get data => throw _privateConstructorUsedError;
   @JsonKey(name: 'current_page')
   int? get currentPage => throw _privateConstructorUsedError;
-  List<NotificationsModel>? get data => throw _privateConstructorUsedError;
   @JsonKey(name: 'first_page_url')
   String? get firstPageUrl => throw _privateConstructorUsedError;
   int? get from => throw _privateConstructorUsedError;
@@ -305,8 +305,8 @@ abstract class $RecentNotificationForPagenationModelCopyWith<$Res> {
           RecentNotificationForPagenationModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_page') int? currentPage,
-      List<NotificationsModel>? data,
+      {List<NotificationsModel>? data,
+      @JsonKey(name: 'current_page') int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
       int? from,
       @JsonKey(name: 'last_page') int? lastPage,
@@ -334,8 +334,8 @@ class _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? currentPage = freezed,
     Object? data = freezed,
+    Object? currentPage = freezed,
     Object? firstPageUrl = freezed,
     Object? from = freezed,
     Object? lastPage = freezed,
@@ -349,14 +349,14 @@ class _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
     Object? total = freezed,
   }) {
     return _then(_value.copyWith(
-      currentPage: freezed == currentPage
-          ? _value.currentPage
-          : currentPage // ignore: cast_nullable_to_non_nullable
-              as int?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as List<NotificationsModel>?,
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int?,
       firstPageUrl: freezed == firstPageUrl
           ? _value.firstPageUrl
           : firstPageUrl // ignore: cast_nullable_to_non_nullable
@@ -415,8 +415,8 @@ abstract class _$$RecentNotificationForPagenationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_page') int? currentPage,
-      List<NotificationsModel>? data,
+      {List<NotificationsModel>? data,
+      @JsonKey(name: 'current_page') int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
       int? from,
       @JsonKey(name: 'last_page') int? lastPage,
@@ -443,8 +443,8 @@ class __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? currentPage = freezed,
     Object? data = freezed,
+    Object? currentPage = freezed,
     Object? firstPageUrl = freezed,
     Object? from = freezed,
     Object? lastPage = freezed,
@@ -458,14 +458,14 @@ class __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>
     Object? total = freezed,
   }) {
     return _then(_$RecentNotificationForPagenationModelImpl(
-      currentPage: freezed == currentPage
-          ? _value.currentPage
-          : currentPage // ignore: cast_nullable_to_non_nullable
-              as int?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<NotificationsModel>?,
+      currentPage: freezed == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int?,
       firstPageUrl: freezed == firstPageUrl
           ? _value.firstPageUrl
           : firstPageUrl // ignore: cast_nullable_to_non_nullable
@@ -519,8 +519,8 @@ class __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>
 class _$RecentNotificationForPagenationModelImpl
     implements _RecentNotificationForPagenationModel {
   const _$RecentNotificationForPagenationModelImpl(
-      {@JsonKey(name: 'current_page') this.currentPage,
-      final List<NotificationsModel>? data,
+      {final List<NotificationsModel>? data,
+      @JsonKey(name: 'current_page') this.currentPage,
       @JsonKey(name: 'first_page_url') this.firstPageUrl,
       this.from,
       @JsonKey(name: 'last_page') this.lastPage,
@@ -539,9 +539,6 @@ class _$RecentNotificationForPagenationModelImpl
           Map<String, dynamic> json) =>
       _$$RecentNotificationForPagenationModelImplFromJson(json);
 
-  @override
-  @JsonKey(name: 'current_page')
-  final int? currentPage;
   final List<NotificationsModel>? _data;
   @override
   List<NotificationsModel>? get data {
@@ -552,6 +549,9 @@ class _$RecentNotificationForPagenationModelImpl
     return EqualUnmodifiableListView(value);
   }
 
+  @override
+  @JsonKey(name: 'current_page')
+  final int? currentPage;
   @override
   @JsonKey(name: 'first_page_url')
   final String? firstPageUrl;
@@ -590,7 +590,7 @@ class _$RecentNotificationForPagenationModelImpl
 
   @override
   String toString() {
-    return 'RecentNotificationForPagenationModel(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
+    return 'RecentNotificationForPagenationModel(data: $data, currentPage: $currentPage, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
   }
 
   @override
@@ -598,9 +598,9 @@ class _$RecentNotificationForPagenationModelImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$RecentNotificationForPagenationModelImpl &&
+            const DeepCollectionEquality().equals(other._data, _data) &&
             (identical(other.currentPage, currentPage) ||
                 other.currentPage == currentPage) &&
-            const DeepCollectionEquality().equals(other._data, _data) &&
             (identical(other.firstPageUrl, firstPageUrl) ||
                 other.firstPageUrl == firstPageUrl) &&
             (identical(other.from, from) || other.from == from) &&
@@ -623,8 +623,8 @@ class _$RecentNotificationForPagenationModelImpl
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      currentPage,
       const DeepCollectionEquality().hash(_data),
+      currentPage,
       firstPageUrl,
       from,
       lastPage,
@@ -656,8 +656,8 @@ class _$RecentNotificationForPagenationModelImpl
 abstract class _RecentNotificationForPagenationModel
     implements RecentNotificationForPagenationModel {
   const factory _RecentNotificationForPagenationModel(
-      {@JsonKey(name: 'current_page') final int? currentPage,
-      final List<NotificationsModel>? data,
+      {final List<NotificationsModel>? data,
+      @JsonKey(name: 'current_page') final int? currentPage,
       @JsonKey(name: 'first_page_url') final String? firstPageUrl,
       final int? from,
       @JsonKey(name: 'last_page') final int? lastPage,
@@ -675,10 +675,10 @@ abstract class _RecentNotificationForPagenationModel
       _$RecentNotificationForPagenationModelImpl.fromJson;
 
   @override
+  List<NotificationsModel>? get data;
+  @override
   @JsonKey(name: 'current_page')
   int? get currentPage;
-  @override
-  List<NotificationsModel>? get data;
   @override
   @JsonKey(name: 'first_page_url')
   String? get firstPageUrl;

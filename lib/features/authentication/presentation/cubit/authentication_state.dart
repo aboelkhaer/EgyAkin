@@ -9,6 +9,8 @@ abstract class AuthenticationState with _$AuthenticationState {
   const factory AuthenticationState.changePasswordVisibility(
           bool signInObscureText, bool signInVisiblePasswordIcon) =
       _ChangePasswordVisibility;
+  const factory AuthenticationState.checkConfirmation(int changedCounter) =
+      _CheckConfirmation;
   const factory AuthenticationState.loaded(
       AuthenticationModelResponse doctorData,
       bool isSignInSuccess,

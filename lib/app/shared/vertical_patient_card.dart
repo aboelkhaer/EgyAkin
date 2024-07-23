@@ -1,4 +1,4 @@
-import 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
+import 'package:egy_akin/app/shared/functions/doctor_name.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../exports.dart';
 
@@ -18,6 +18,8 @@ class PatientCard extends StatelessWidget {
   final bool submitStatus;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final int currentDoctorPoints;
+  final String currentDoctorRole;
   const PatientCard({
     super.key,
     required this.patientName,
@@ -35,6 +37,8 @@ class PatientCard extends StatelessWidget {
     required this.currentDoctorModel,
     required this.isSyndicateCardRequired,
     required this.accountVerification,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -87,6 +91,8 @@ class PatientCard extends StatelessWidget {
                                   isSyndicateCardRequired:
                                       isSyndicateCardRequired,
                                   accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
                                 ),
                               );
                             },
@@ -154,7 +160,12 @@ class PatientCard extends StatelessWidget {
                                       : Row(
                                           children: [
                                             Text(
-                                              'Dr.${capitalizeFirstText(drFirstName.toString())} ${capitalizeFirstText(drLastName.toString())}',
+                                              doctorName(
+                                                firstName:
+                                                    drFirstName.toString(),
+                                                lastName: drLastName.toString(),
+                                                role: currentDoctorRole,
+                                              ),
                                               style: const TextStyle(
                                                 color: AppColors.description,
                                                 fontSize: 13,

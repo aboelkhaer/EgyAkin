@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import '../../../../exports.dart';
 
@@ -48,6 +47,9 @@ class AddCommentField extends StatelessWidget {
                         title: 'Write comment',
                         textInputType: TextInputType.text,
                         enableSuggestions: true,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(255),
+                        ],
                         onChanged: (val) {
                           cubit.newComment = val;
                         },

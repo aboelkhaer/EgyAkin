@@ -1,4 +1,4 @@
-import 'dart:developer';
+import 'package:egy_akin/app/shared/functions/doctor_name.dart';
 
 import '../../../../exports.dart';
 
@@ -135,7 +135,14 @@ class HomeHeader extends StatelessWidget {
                           return Text(
                             cubit.currentDoctorModel.firstName == null
                                 ? ''
-                                : 'Dr.${capitalizeFirstText(cubit.currentDoctorModel.firstName!)} ${capitalizeFirstText(cubit.currentDoctorModel.lastName!)}',
+                                : doctorName(
+                                    firstName:
+                                        cubit.currentDoctorModel.firstName ??
+                                            '',
+                                    lastName:
+                                        cubit.currentDoctorModel.lastName ?? '',
+                                    role: cubit.currentDoctorRole,
+                                  ),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.grey.shade700,
@@ -219,6 +226,9 @@ class HomeHeader extends StatelessWidget {
                           AppRoutes.addPatient,
                           arguments: AppRoutesArgs.addPatientRouteArgs(
                             currentDoctorModel: cubit.currentDoctorModel,
+                            currentDoctorRole: homeData.role.toString(),
+                            currentDoctorPoints:
+                                int.parse(homeData.scoreValue!),
                           ),
                         );
                       }

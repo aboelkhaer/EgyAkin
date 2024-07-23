@@ -24,13 +24,6 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileState.loaded(doctorModel, false));
   }
 
-  // refreshCurrentDoctorModel() {
-  //   emit(state.maybeMap(
-  //     orElse: () => state,
-  //     loaded: (value) => ProfileState.loaded(value.doctorModel),
-  //   ));
-  // }
-
   uploadProfileImage() async {
     emit(const ProfileState.loading());
     final picker = ImagePicker();

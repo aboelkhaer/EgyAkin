@@ -13,6 +13,8 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
   String weightForm = '';
   String heightForm = '';
   int changesCounter = 0;
+  String isBlackForm = 'No';
+  // String isBlack = 'No';
   List<GFRCalculatorHistoryModelResponse> gfrHistory = [];
 
   changeGenderValue(String value) {
@@ -20,9 +22,27 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
     emit(GfrCalculatorState.initial(changesCounter += 1));
   }
 
+  changeBlackRaceValue(String value) {
+    isBlackForm = value;
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
   changeEquationTypeValue(String value) {
     equationType = value;
     emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  double calculateGFRforMDRD(
+      double serumCr, int age, String isBlack, bool isFemale) {
+    double constant = 175;
+    double ageFactor = pow(age, -0.203) as double;
+    double serumCrFactor = pow(serumCr, -1.154) as double;
+    double raceFactor = isBlack == 'Yes' ? 1.212 : 1.0;
+    double genderFactor = isFemale ? 0.742 : 1.0;
+    double gfr =
+        constant * serumCrFactor * ageFactor * raceFactor * genderFactor;
+
+    return gfr;
   }
 
   double calculateGFRForCKD(bool isMale, int age, double creatinine) {
@@ -92,12 +112,13 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         final age = int.parse(data.age!);
         final creatinine = parseDouble(data.creatinine!);
         final isMale = data.gender == 'Male';
+        final isFemale = data.gender == 'Female';
 
         // Ensure height and weight are provided if using the Sobh formula
         double height, weight;
-        if (equationType == 'CKD-EPI') {
-          height = 0; // Default value, won't be used in CKD-EPI
-          weight = 0; // Default value, won't be used in CKD-EPI
+        if (equationType == 'CKD-EPI' || equationType == 'MDRD') {
+          height = 0; // Default value, won't be used in CKD-EPI or MDRD
+          weight = 0; // Default value, won't be used in CKD-EPI or MDRD
         } else {
           if (data.height!.isEmpty) {
             throw const FormatException('Height is required for Sobh formula');
@@ -112,6 +133,8 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         final double gfr;
         if (equationType == 'CKD-EPI') {
           gfr = calculateGFRForCKD(isMale, age, creatinine);
+        } else if (equationType == 'MDRD') {
+          gfr = calculateGFRforMDRD(creatinine, age, isBlackForm, isFemale);
         } else {
           gfr = calculateSobhCcr(age, weight, height, creatinine);
         }
@@ -126,7 +149,6 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
           ),
         );
 
-        debugPrint(gfrHistory.toString());
         emit(GfrCalculatorState.initial(changesCounter += 1));
 
         // Show result

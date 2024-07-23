@@ -23,6 +23,7 @@ mixin _$AuthenticationState {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -35,6 +36,7 @@ mixin _$AuthenticationState {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -47,6 +49,7 @@ mixin _$AuthenticationState {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -60,6 +63,7 @@ mixin _$AuthenticationState {
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) =>
@@ -70,6 +74,7 @@ mixin _$AuthenticationState {
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) =>
@@ -79,6 +84,7 @@ mixin _$AuthenticationState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -153,6 +159,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -168,6 +175,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -183,6 +191,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -202,6 +211,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -215,6 +225,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -227,6 +238,7 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -291,6 +303,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -306,6 +319,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -321,6 +335,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -340,6 +355,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -353,6 +369,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -365,6 +382,7 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -479,6 +497,7 @@ class _$ChangePasswordVisibilityImpl
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -495,6 +514,7 @@ class _$ChangePasswordVisibilityImpl
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -511,6 +531,7 @@ class _$ChangePasswordVisibilityImpl
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -531,6 +552,7 @@ class _$ChangePasswordVisibilityImpl
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -544,6 +566,7 @@ class _$ChangePasswordVisibilityImpl
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -556,6 +579,7 @@ class _$ChangePasswordVisibilityImpl
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -577,6 +601,189 @@ abstract class _ChangePasswordVisibility implements AuthenticationState {
   @JsonKey(ignore: true)
   _$$ChangePasswordVisibilityImplCopyWith<_$ChangePasswordVisibilityImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$CheckConfirmationImplCopyWith<$Res> {
+  factory _$$CheckConfirmationImplCopyWith(_$CheckConfirmationImpl value,
+          $Res Function(_$CheckConfirmationImpl) then) =
+      __$$CheckConfirmationImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int changedCounter});
+}
+
+/// @nodoc
+class __$$CheckConfirmationImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res, _$CheckConfirmationImpl>
+    implements _$$CheckConfirmationImplCopyWith<$Res> {
+  __$$CheckConfirmationImplCopyWithImpl(_$CheckConfirmationImpl _value,
+      $Res Function(_$CheckConfirmationImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? changedCounter = null,
+  }) {
+    return _then(_$CheckConfirmationImpl(
+      null == changedCounter
+          ? _value.changedCounter
+          : changedCounter // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$CheckConfirmationImpl
+    with DiagnosticableTreeMixin
+    implements _CheckConfirmation {
+  const _$CheckConfirmationImpl(this.changedCounter);
+
+  @override
+  final int changedCounter;
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'AuthenticationState.checkConfirmation(changedCounter: $changedCounter)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(
+          DiagnosticsProperty('type', 'AuthenticationState.checkConfirmation'))
+      ..add(DiagnosticsProperty('changedCounter', changedCounter));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$CheckConfirmationImpl &&
+            (identical(other.changedCounter, changedCounter) ||
+                other.changedCounter == changedCounter));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, changedCounter);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$CheckConfirmationImplCopyWith<_$CheckConfirmationImpl> get copyWith =>
+      __$$CheckConfirmationImplCopyWithImpl<_$CheckConfirmationImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            bool signInObscureText, bool signInVisiblePasswordIcon)
+        changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
+    required TResult Function(String message) error,
+  }) {
+    return checkConfirmation(changedCounter);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult? Function(String message)? error,
+  }) {
+    return checkConfirmation?.call(changedCounter);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (checkConfirmation != null) {
+      return checkConfirmation(changedCounter);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_ChangePasswordVisibility value)
+        changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return checkConfirmation(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_ChangePasswordVisibility value)?
+        changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return checkConfirmation?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (checkConfirmation != null) {
+      return checkConfirmation(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _CheckConfirmation implements AuthenticationState {
+  const factory _CheckConfirmation(final int changedCounter) =
+      _$CheckConfirmationImpl;
+
+  int get changedCounter;
+  @JsonKey(ignore: true)
+  _$$CheckConfirmationImplCopyWith<_$CheckConfirmationImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -693,6 +900,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -708,6 +916,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -723,6 +932,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -742,6 +952,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -755,6 +966,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -767,6 +979,7 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
@@ -867,6 +1080,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function(
             bool signInObscureText, bool signInVisiblePasswordIcon)
         changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
@@ -882,6 +1096,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function()? loading,
     TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -897,6 +1112,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function()? loading,
     TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
         changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
@@ -916,6 +1132,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function(_Loading value) loading,
     required TResult Function(_ChangePasswordVisibility value)
         changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Error value) error,
   }) {
@@ -929,6 +1146,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function(_Loading value)? loading,
     TResult? Function(_ChangePasswordVisibility value)?
         changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Error value)? error,
   }) {
@@ -941,6 +1159,7 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),

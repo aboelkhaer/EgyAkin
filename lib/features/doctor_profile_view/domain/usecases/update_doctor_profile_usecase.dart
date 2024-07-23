@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
-import 'package:egy_akin/features/doctor_profile_view/domain/repositories/doctor_profile_view_repo.dart';
 import '../../../../exports.dart';
 
 class UpdateDoctorProfileUsecase

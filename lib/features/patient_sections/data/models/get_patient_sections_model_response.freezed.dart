@@ -531,6 +531,7 @@ GFRModel _$GFRModelFromJson(Map<String, dynamic> json) {
 mixin _$GFRModel {
   EquationModel? get ckd => throw _privateConstructorUsedError;
   EquationModel? get sobh => throw _privateConstructorUsedError;
+  EquationModel? get mdrd => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -543,10 +544,11 @@ abstract class $GFRModelCopyWith<$Res> {
   factory $GFRModelCopyWith(GFRModel value, $Res Function(GFRModel) then) =
       _$GFRModelCopyWithImpl<$Res, GFRModel>;
   @useResult
-  $Res call({EquationModel? ckd, EquationModel? sobh});
+  $Res call({EquationModel? ckd, EquationModel? sobh, EquationModel? mdrd});
 
   $EquationModelCopyWith<$Res>? get ckd;
   $EquationModelCopyWith<$Res>? get sobh;
+  $EquationModelCopyWith<$Res>? get mdrd;
 }
 
 /// @nodoc
@@ -564,6 +566,7 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
   $Res call({
     Object? ckd = freezed,
     Object? sobh = freezed,
+    Object? mdrd = freezed,
   }) {
     return _then(_value.copyWith(
       ckd: freezed == ckd
@@ -573,6 +576,10 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
       sobh: freezed == sobh
           ? _value.sobh
           : sobh // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
+      mdrd: freezed == mdrd
+          ? _value.mdrd
+          : mdrd // ignore: cast_nullable_to_non_nullable
               as EquationModel?,
     ) as $Val);
   }
@@ -600,6 +607,18 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
       return _then(_value.copyWith(sobh: value) as $Val);
     });
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationModelCopyWith<$Res>? get mdrd {
+    if (_value.mdrd == null) {
+      return null;
+    }
+
+    return $EquationModelCopyWith<$Res>(_value.mdrd!, (value) {
+      return _then(_value.copyWith(mdrd: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -610,12 +629,14 @@ abstract class _$$GFRModelImplCopyWith<$Res>
       __$$GFRModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({EquationModel? ckd, EquationModel? sobh});
+  $Res call({EquationModel? ckd, EquationModel? sobh, EquationModel? mdrd});
 
   @override
   $EquationModelCopyWith<$Res>? get ckd;
   @override
   $EquationModelCopyWith<$Res>? get sobh;
+  @override
+  $EquationModelCopyWith<$Res>? get mdrd;
 }
 
 /// @nodoc
@@ -631,6 +652,7 @@ class __$$GFRModelImplCopyWithImpl<$Res>
   $Res call({
     Object? ckd = freezed,
     Object? sobh = freezed,
+    Object? mdrd = freezed,
   }) {
     return _then(_$GFRModelImpl(
       ckd: freezed == ckd
@@ -641,6 +663,10 @@ class __$$GFRModelImplCopyWithImpl<$Res>
           ? _value.sobh
           : sobh // ignore: cast_nullable_to_non_nullable
               as EquationModel?,
+      mdrd: freezed == mdrd
+          ? _value.mdrd
+          : mdrd // ignore: cast_nullable_to_non_nullable
+              as EquationModel?,
     ));
   }
 }
@@ -648,7 +674,7 @@ class __$$GFRModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GFRModelImpl implements _GFRModel {
-  const _$GFRModelImpl({this.ckd, this.sobh});
+  const _$GFRModelImpl({this.ckd, this.sobh, this.mdrd});
 
   factory _$GFRModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$GFRModelImplFromJson(json);
@@ -657,10 +683,12 @@ class _$GFRModelImpl implements _GFRModel {
   final EquationModel? ckd;
   @override
   final EquationModel? sobh;
+  @override
+  final EquationModel? mdrd;
 
   @override
   String toString() {
-    return 'GFRModel(ckd: $ckd, sobh: $sobh)';
+    return 'GFRModel(ckd: $ckd, sobh: $sobh, mdrd: $mdrd)';
   }
 
   @override
@@ -669,12 +697,13 @@ class _$GFRModelImpl implements _GFRModel {
         (other.runtimeType == runtimeType &&
             other is _$GFRModelImpl &&
             (identical(other.ckd, ckd) || other.ckd == ckd) &&
-            (identical(other.sobh, sobh) || other.sobh == sobh));
+            (identical(other.sobh, sobh) || other.sobh == sobh) &&
+            (identical(other.mdrd, mdrd) || other.mdrd == mdrd));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, ckd, sobh);
+  int get hashCode => Object.hash(runtimeType, ckd, sobh, mdrd);
 
   @JsonKey(ignore: true)
   @override
@@ -692,7 +721,9 @@ class _$GFRModelImpl implements _GFRModel {
 
 abstract class _GFRModel implements GFRModel {
   const factory _GFRModel(
-      {final EquationModel? ckd, final EquationModel? sobh}) = _$GFRModelImpl;
+      {final EquationModel? ckd,
+      final EquationModel? sobh,
+      final EquationModel? mdrd}) = _$GFRModelImpl;
 
   factory _GFRModel.fromJson(Map<String, dynamic> json) =
       _$GFRModelImpl.fromJson;
@@ -701,6 +732,8 @@ abstract class _GFRModel implements GFRModel {
   EquationModel? get ckd;
   @override
   EquationModel? get sobh;
+  @override
+  EquationModel? get mdrd;
   @override
   @JsonKey(ignore: true)
   _$$GFRModelImplCopyWith<_$GFRModelImpl> get copyWith =>

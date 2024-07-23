@@ -1,14 +1,14 @@
-import 'package:egy_akin/features/post_details/presentation/widgets/comment_card.dart';
-
 import '../../../../exports.dart';
 
 class PostComments extends StatelessWidget {
   final PostDetailsCubit cubit;
   final DoctorModel currentDoctorModel;
+  final String currentDoctorRole;
   const PostComments({
     super.key,
     required this.cubit,
     required this.currentDoctorModel,
+    required this.currentDoctorRole,
   });
 
   @override
@@ -54,6 +54,7 @@ class PostComments extends StatelessWidget {
                     return CommentCard(
                       commentModel: comments[index],
                       currentDoctorModel: currentDoctorModel,
+                      currentDoctorRole: currentDoctorRole,
                       onDelete: () {
                         cubit.deletePostComment(comments[index].id.toString());
                       },

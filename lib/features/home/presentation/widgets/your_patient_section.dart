@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 
 import '../../../../exports.dart';
 
@@ -35,6 +34,8 @@ class YourPatientSection extends StatelessWidget {
                           currentDoctorModel: currentDoctorModel,
                           isSyndicateCardRequired:
                               homeData.isSyndicateCardRequired!,
+                          currentDoctorPoints: int.parse(homeData.scoreValue!),
+                          currentDoctorRole: homeData.role.toString(),
                         ));
                   },
                 );
@@ -85,6 +86,9 @@ class YourPatientSection extends StatelessWidget {
                               currentDoctorModel: currentDoctorModel,
                               isSyndicateCardRequired:
                                   patient.doctor!.isSyndicateCardRequired!,
+                              currentDoctorPoints:
+                                  int.parse(homeData.scoreValue!),
+                              currentDoctorRole: homeData.role.toString(),
                               doctorId: patient.doctor!.id.toString(),
                               doctorImage: patient.doctor!.image,
                               submitStatus: patient.sections == null
@@ -103,7 +107,11 @@ class YourPatientSection extends StatelessWidget {
                                       currentDoctorModel: currentDoctorModel,
                                       doctorId: patient.doctor!.id.toString(),
                                       isSyndicateCardRequired:
-                                          homeData.isSyndicateCardRequired!),
+                                          homeData.isSyndicateCardRequired!,
+                                      currentDoctorPoints:
+                                          int.parse(homeData.scoreValue!),
+                                      currentDoctorRole:
+                                          homeData.role.toString()),
                                 );
                               },
                               onAddCommentTap: () {
@@ -115,8 +123,11 @@ class YourPatientSection extends StatelessWidget {
                                     currentDoctorModel: currentDoctorModel,
                                     verified: homeData.verified!,
                                     patientName: patient.name.toString(),
+                                    currentDoctorPoints:
+                                        int.parse(homeData.scoreValue!),
                                     isSyndicateCardRequired:
                                         homeData.isSyndicateCardRequired!,
+                                    currentDoctorRole: homeData.role.toString(),
                                   ),
                                 );
                               },
@@ -126,7 +137,10 @@ class YourPatientSection extends StatelessWidget {
                                   arguments: AppRoutesArgs
                                       .patientSectionsRouteArguments(
                                     patientId: patient.id.toString(),
+                                    currentDoctorPoints:
+                                        int.parse(homeData.scoreValue!),
                                     currentDoctorModel: currentDoctorModel,
+                                    currentDoctorRole: homeData.role.toString(),
                                   ),
                                 );
                               },

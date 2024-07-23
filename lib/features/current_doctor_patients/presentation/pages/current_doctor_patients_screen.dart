@@ -4,11 +4,15 @@ class CurrentDoctorPatientsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String isSyndicateCardRequired;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const CurrentDoctorPatientsScreen(
       {super.key,
       required this.currentDoctorModel,
       required this.accountVerification,
-      required this.isSyndicateCardRequired});
+      required this.isSyndicateCardRequired,
+      required this.currentDoctorRole,
+      required this.currentDoctorPoints});
 
   @override
   State<CurrentDoctorPatientsScreen> createState() =>
@@ -117,11 +121,13 @@ class _CurrentDoctorPatientsScreenState
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           drLastName:
                               patient.doctor!.lastName ?? AppStrings.empty,
+                          currentDoctorPoints: widget.currentDoctorPoints,
                           accountVerification: widget.accountVerification,
                           currentDoctorModel: widget.currentDoctorModel,
                           hospital: patient.hospital ?? AppStrings.empty,
                           isSyndicateCardRequired:
                               patient.doctor!.isSyndicateCardRequired!,
+                          currentDoctorRole: widget.currentDoctorRole,
                           doctorImage: patient.doctor!.image,
                           isOutcomeStatus: patient.sections!.outcomeStatus!,
                           submitStatus: patient.sections == null
@@ -139,6 +145,8 @@ class _CurrentDoctorPatientsScreenState
                                 doctorId: patient.doctor!.id.toString(),
                                 isSyndicateCardRequired:
                                     widget.isSyndicateCardRequired,
+                                currentDoctorRole: widget.currentDoctorRole,
+                                currentDoctorPoints: widget.currentDoctorPoints,
                               ),
                             );
                           },
@@ -150,6 +158,8 @@ class _CurrentDoctorPatientsScreenState
                                 currentDoctorModel: widget.currentDoctorModel,
                                 verified: widget.accountVerification,
                                 patientName: patient.name.toString(),
+                                currentDoctorPoints: widget.currentDoctorPoints,
+                                currentDoctorRole: widget.currentDoctorRole,
                                 isSyndicateCardRequired:
                                     widget.isSyndicateCardRequired,
                               ),
@@ -162,6 +172,8 @@ class _CurrentDoctorPatientsScreenState
                                   AppRoutesArgs.patientSectionsRouteArguments(
                                 patientId: patient.id.toString(),
                                 currentDoctorModel: widget.currentDoctorModel,
+                                currentDoctorPoints: widget.currentDoctorPoints,
+                                currentDoctorRole: widget.currentDoctorRole,
                               ),
                             );
                           },

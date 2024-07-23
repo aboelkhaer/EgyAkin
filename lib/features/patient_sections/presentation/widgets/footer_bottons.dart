@@ -1,3 +1,4 @@
+
 import '../../../../exports.dart';
 
 class FooterButtons extends StatelessWidget {
@@ -6,6 +7,8 @@ class FooterButtons extends StatelessWidget {
   final String patientName;
   final String patientId;
   final bool finalSubmit;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   final PatientSectionsCubit cubit;
   const FooterButtons({
     super.key,
@@ -15,6 +18,8 @@ class FooterButtons extends StatelessWidget {
     required this.cubit,
     required this.patientId,
     required this.finalSubmit,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -27,7 +32,9 @@ class FooterButtons extends StatelessWidget {
           color: Colors.grey.shade100,
           child: Row(
             children: [
-              finalSubmit
+              finalSubmit &&
+                      currentDoctorRole != 'Admin' &&
+                      currentDoctorPoints < 200
                   ? const SizedBox.shrink()
                   : Expanded(
                       child: SizedBox(
@@ -50,11 +57,17 @@ class FooterButtons extends StatelessWidget {
                           },
                           title: 'Delete',
                           isDelete: true,
-                          isDisable: doctorId == currentDoctorId ? false : true,
+                          isDisable: currentDoctorRole == 'Admin'
+                              ? false
+                              : doctorId == currentDoctorId
+                                  ? false
+                                  : true,
                         ),
                       ),
                     ),
-              finalSubmit
+              finalSubmit &&
+                      currentDoctorRole != 'Admin' &&
+                      currentDoctorPoints < 200
                   ? const SizedBox.shrink()
                   : const SizedBox(
                       width: 10,

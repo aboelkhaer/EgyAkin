@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/functions/doctor_name.dart';
+
 import '../../../../exports.dart';
 
 class IfOutcomeSubmitted extends StatelessWidget {
@@ -8,12 +10,16 @@ class IfOutcomeSubmitted extends StatelessWidget {
     required this.currentDoctorModel,
     required this.accountVerification,
     required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
   final OutcomeCubit cubit;
   final String doctorId;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String isSyndicateCardRequired;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +65,19 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                 doctorId: doctorId,
                                 currentDoctorModel: currentDoctorModel,
                                 accountVerification: accountVerification,
+                                currentDoctorPoints: currentDoctorPoints,
                                 isSyndicateCardRequired:
                                     isSyndicateCardRequired,
+                                currentDoctorRole: currentDoctorRole,
                               ),
                             );
                           },
                           child: Text(
-                            'Dr.${cubit.submitterName.toString()}',
+                            doctorName(
+                                firstName: cubit.submitterName,
+                                lastName: cubit.submitterName,
+                                role: currentDoctorRole),
+                            // '',
                             style: TextStyle(
                               color: Colors.green.shade700,
                               fontWeight: FontWeight.bold,

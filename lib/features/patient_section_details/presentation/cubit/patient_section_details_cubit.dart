@@ -1,6 +1,12 @@
 import 'dart:developer';
 
-import '../../../../exports.dart';
+import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/get_patient_section_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   PatientSectionDetailsCubit(this._getPatientSectionDetailsUsecase,
@@ -49,6 +55,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             response.data!, false, false, '', 0));
       },
     );
+  }
+
+  updateScreen() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+          value.questions, false, false, '', snackbarErrorCounter += 1),
+    ));
   }
 
   updatePatientSectionDetails(String sectionId, String patientId) async {

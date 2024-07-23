@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/onboarding/presentation/cubit/onboarding_cubit.dart';
-import 'package:egy_akin/features/onboarding/presentation/cubit/onboarding_state.dart';
 
 import '../../../../exports.dart';
 

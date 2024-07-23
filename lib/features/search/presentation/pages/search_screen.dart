@@ -4,12 +4,16 @@ class SearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String isSyndicateCardRequired;
+  final int currentDoctorPoints;
+  final String currentDoctorRole;
 
   const SearchScreen({
     super.key,
     required this.currentDoctorModel,
     required this.accountVerification,
     required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -297,10 +301,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 AppStrings.empty,
                                         accountVerification:
                                             widget.accountVerification,
+                                        currentDoctorPoints:
+                                            widget.currentDoctorPoints,
                                         drLastName: patient.doctor!.lastName ??
                                             AppStrings.empty,
                                         isSyndicateCardRequired: patient
                                             .doctor!.isSyndicateCardRequired!,
+                                        currentDoctorRole:
+                                            widget.currentDoctorRole,
                                         currentDoctorModel:
                                             widget.currentDoctorModel,
                                         hospital: patient.hospital ??
@@ -321,10 +329,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                               patientId: patient.id.toString(),
                                               currentDoctorModel:
                                                   widget.currentDoctorModel,
+                                              currentDoctorRole:
+                                                  widget.currentDoctorRole,
                                               verified:
                                                   widget.accountVerification,
                                               patientName:
                                                   patient.name.toString(),
+                                              currentDoctorPoints:
+                                                  widget.currentDoctorPoints,
                                               isSyndicateCardRequired: widget
                                                   .isSyndicateCardRequired,
                                             ),
@@ -338,6 +350,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                               patientId: patient.id.toString(),
                                               currentDoctorModel:
                                                   widget.currentDoctorModel,
+                                              currentDoctorPoints:
+                                                  widget.currentDoctorPoints,
+                                              currentDoctorRole: sl<HomeCubit>()
+                                                  .currentDoctorRole,
                                             ),
                                           );
                                         },
@@ -426,23 +442,34 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 color: AppColors.white,
                                               ),
                                               SizedBox(height: 5.h),
-                                              Row(
-                                                children: [
-                                                  Flexible(
-                                                    child: HtmlWidget(
-                                                      dose.description
-                                                          .toString(),
-                                                      textStyle: TextStyle(
-                                                        color: AppColors.white,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 12.sp,
-                                                      ),
+                                              dose.description == null
+                                                  ? const SizedBox.shrink()
+                                                  : Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Flexible(
+                                                              child: HtmlWidget(
+                                                                dose.description
+                                                                    .toString(),
+                                                                textStyle:
+                                                                    TextStyle(
+                                                                  color:
+                                                                      AppColors
+                                                                          .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: 10.h),
+                                                      ],
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: 10.h),
                                               Row(
                                                 children: [
                                                   Flexible(

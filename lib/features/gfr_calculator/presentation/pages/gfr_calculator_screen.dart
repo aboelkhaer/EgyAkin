@@ -1,4 +1,3 @@
-import 'package:egy_akin/app/utilities/formated_date.dart';
 import '../../../../exports.dart';
 
 class GfrCalculatorScreen extends StatelessWidget {
@@ -13,6 +12,7 @@ class GfrCalculatorScreen extends StatelessWidget {
         title: const Text('GFR Calculator'),
       ),
       body: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Form(
@@ -36,30 +36,45 @@ class GfrCalculatorScreen extends StatelessWidget {
                   builder: (context, state) {
                     return state.maybeWhen(
                       orElse: () {
-                        return Row(
+                        return Wrap(
                           children: [
-                            Expanded(
-                              child: ListTile(
-                                title: const Text('CKD-EPI'),
-                                leading: Radio<String>(
-                                  value: 'CKD-EPI',
-                                  groupValue: cubit.equationType,
-                                  onChanged: (String? value) {
-                                    cubit.changeEquationTypeValue(value!);
-                                  },
-                                ),
+                            ListTile(
+                              title: Text(
+                                'CKD-EPI',
+                                style: TextStyle(fontSize: 13.sp),
+                              ),
+                              leading: Radio<String>(
+                                value: 'CKD-EPI',
+                                groupValue: cubit.equationType,
+                                onChanged: (String? value) {
+                                  cubit.changeEquationTypeValue(value!);
+                                },
                               ),
                             ),
-                            Expanded(
-                              child: ListTile(
-                                title: const Text('Sobh'),
-                                leading: Radio<String>(
-                                  value: 'Sobh Equation',
-                                  groupValue: cubit.equationType,
-                                  onChanged: (String? value) {
-                                    cubit.changeEquationTypeValue(value!);
-                                  },
-                                ),
+                            ListTile(
+                              title: Text(
+                                'Sobh Equation',
+                                style: TextStyle(fontSize: 13.sp),
+                              ),
+                              leading: Radio<String>(
+                                value: 'Sobh Equation',
+                                groupValue: cubit.equationType,
+                                onChanged: (String? value) {
+                                  cubit.changeEquationTypeValue(value!);
+                                },
+                              ),
+                            ),
+                            ListTile(
+                              title: Text(
+                                'MDRD',
+                                style: TextStyle(fontSize: 13.sp),
+                              ),
+                              leading: Radio<String>(
+                                value: 'MDRD',
+                                groupValue: cubit.equationType,
+                                onChanged: (String? value) {
+                                  cubit.changeEquationTypeValue(value!);
+                                },
                               ),
                             ),
                           ],
@@ -71,7 +86,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
                   builder: (context, state) {
-                    if (cubit.equationType == 'CKD-EPI') {
+                    if (cubit.equationType != 'Sobh Equation') {
                       return const SizedBox.shrink();
                     }
                     return FadeIn(
@@ -94,7 +109,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     CustomTextFormField(
-                                      title: 'Height',
+                                      title: 'Height/cm',
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -124,7 +139,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     CustomTextFormField(
-                                      title: 'Weight',
+                                      title: 'Weight/kg',
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -140,6 +155,78 @@ class GfrCalculatorScreen extends StatelessWidget {
                                 ),
                               ),
                             ],
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                  builder: (context, state) {
+                    if (cubit.equationType != 'MDRD') {
+                      return const SizedBox.shrink();
+                    }
+                    return FadeIn(
+                      duration: const Duration(milliseconds: 500),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'Black Race',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return Row(
+                                    children: [
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(
+                                            'Yes',
+                                            style: TextStyle(fontSize: 13.sp),
+                                          ),
+                                          leading: Radio<String>(
+                                            value: 'Yes',
+                                            groupValue: cubit.isBlackForm,
+                                            onChanged: (String? value) {
+                                              cubit
+                                                  .changeBlackRaceValue(value!);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: ListTile(
+                                          title: Text(
+                                            'No',
+                                            style: TextStyle(fontSize: 13.sp),
+                                          ),
+                                          leading: Radio<String>(
+                                            value: 'No',
+                                            groupValue: cubit.isBlackForm,
+                                            onChanged: (String? value) {
+                                              cubit
+                                                  .changeBlackRaceValue(value!);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                           ),
                           SizedBox(height: 20.h),
                         ],
@@ -232,7 +319,10 @@ class GfrCalculatorScreen extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ListTile(
-                                title: const Text('Male'),
+                                title: Text(
+                                  'Male',
+                                  style: TextStyle(fontSize: 13.sp),
+                                ),
                                 leading: Radio<String>(
                                   value: 'Male',
                                   groupValue: cubit.genderForm,
@@ -244,7 +334,10 @@ class GfrCalculatorScreen extends StatelessWidget {
                             ),
                             Expanded(
                               child: ListTile(
-                                title: const Text('Female'),
+                                title: Text(
+                                  'Female',
+                                  style: TextStyle(fontSize: 13.sp),
+                                ),
                                 leading: Radio<String>(
                                   value: 'Female',
                                   groupValue: cubit.genderForm,
@@ -265,6 +358,15 @@ class GfrCalculatorScreen extends StatelessWidget {
                   onPressed: () => cubit.calculateGFR(context),
                   title: 'Calculate',
                 ),
+                // SizedBox(height: 20.h),
+                // Text(
+                //   'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
+                //   textAlign: TextAlign.center,
+                //   style: TextStyle(
+                //     fontSize: 12.0.sp,
+                //     color: Colors.red,
+                //   ),
+                // ),
                 SizedBox(height: 30.h),
                 Row(
                   children: [
@@ -304,6 +406,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                     );
                   },
                 ),
+                SizedBox(height: 20.h),
               ],
             ),
           ),

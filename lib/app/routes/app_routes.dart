@@ -1,11 +1,3 @@
-import 'package:egy_akin/features/about_us/presentation/cubit/about_us_cubit.dart';
-import 'package:egy_akin/features/about_us/presentation/pages/about_us_screen.dart';
-import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
-import 'package:egy_akin/features/change_password/presentation/pages/change_password_screen.dart';
-import 'package:egy_akin/features/gfr_calculator/presentation/pages/gfr_calculator_screen.dart';
-import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_cubit.dart';
-import 'package:egy_akin/features/profile_patients/presentation/pages/profile_patients_screen.dart';
-
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 
@@ -36,6 +28,7 @@ class AppRoutes {
   static const String changePassword = '/changePassword';
   static const String profilePatients = '/profilePatients';
   static const String aboutUs = '/aboutUs';
+  static const String sendConsultation = '/sendConsultation';
 }
 
 class RouteGenerator {
@@ -135,7 +128,8 @@ class RouteGenerator {
           if (args.containsKey('postModel') &&
               args.containsKey('doctorModel') &&
               args.containsKey('accountVerification') &&
-              args.containsKey('isSyndicateCardRequired')) {
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorRole')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PostDetailsCubit>(
                 create: (context) => di.sl<PostDetailsCubit>(),
@@ -145,6 +139,7 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
                 ),
               ),
             );
@@ -155,31 +150,28 @@ class RouteGenerator {
           return unDefinedRoute();
         }
       case AppRoutes.addPatient:
-        final arguments = settings.arguments;
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
 
-        if (arguments is DoctorModel) {
-          return MaterialPageRoute(
-            // builder: (_) => BlocProvider<AddPatientCubit>(
-            //   create: (context) =>
-            //       di.sl<AddPatientCubit>()..getPatientHistoryForAddPatient(),
-            //   child: AddPatientScreen(
-            //     currentDoctorId: arguments,
-            //   ),
-            // ),
-            builder: (_) => MultiBlocProvider(
-              providers: [
-                BlocProvider<AddPatientCubit>(
-                    create: (context) => di.sl<AddPatientCubit>()
-                      ..getPatientHistoryForAddPatient()
-                    // ..getNotifications(),
-                    ),
-                BlocProvider<HomeCubit>(
-                  create: (context) => di.sl<HomeCubit>(),
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<AddPatientCubit>(
+                create: (context) =>
+                    di.sl<AddPatientCubit>()..getPatientHistoryForAddPatient(),
+                child: AddPatientScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
-              ],
-              child: AddPatientScreen(currentDoctorModel: arguments),
-            ),
-          );
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
         } else {
           return unDefinedRoute();
         }
@@ -190,13 +182,17 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('currentDoctorModel') &&
-              args.containsKey('patientId')) {
+              args.containsKey('patientId') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientSectionsCubit>(
                 create: (context) => di.sl<PatientSectionsCubit>(),
                 child: PatientSectionsScreen(
                   patientId: args['patientId'] as String,
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -216,7 +212,9 @@ class RouteGenerator {
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('patientId') &&
               args.containsKey('accountVerification') &&
-              args.containsKey('isSyndicateCardRequired')) {
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorPoints') &&
+              args.containsKey('currentDoctorRole')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientCommentsCubit>(
                 create: (context) => di.sl<PatientCommentsCubit>(),
@@ -227,6 +225,8 @@ class RouteGenerator {
                   patientName: args['patientName'] as String,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
                 ),
               ),
             );
@@ -245,7 +245,9 @@ class RouteGenerator {
 
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('accountVerification') &&
-              args.containsKey('isSyndicateCardRequired')) {
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<SearchCubit>(
                 create: (context) => di.sl<SearchCubit>(),
@@ -254,6 +256,8 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -275,7 +279,9 @@ class RouteGenerator {
               args.containsKey('patientName') &&
               args.containsKey('patientId') &&
               args.containsKey('isSyndicateCardRequired') &&
-              args.containsKey('currentDoctorModel')) {
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<OutcomeCubit>(
                 create: (context) => di.sl<OutcomeCubit>(),
@@ -288,6 +294,8 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -304,7 +312,10 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('accountVerification') &&
-              args.containsKey('currentDoctorModel')) {
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<CurrentDoctorPatientsCubit>(
                 create: (context) => di.sl<CurrentDoctorPatientsCubit>()
@@ -314,6 +325,8 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -330,7 +343,10 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('accountVerification') &&
-              args.containsKey('currentDoctorModel')) {
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<AllDoctorsPatientsCubit>(
                 create: (context) => di.sl<AllDoctorsPatientsCubit>()
@@ -340,6 +356,8 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -359,7 +377,9 @@ class RouteGenerator {
               args.containsKey('finalSubmitStatus') &&
               args.containsKey('currentDoctorModel') &&
               args.containsKey('patientId') &&
-              args.containsKey('doctorId')) {
+              args.containsKey('doctorId') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientSectionDetailsCubit>(
                 create: (context) => di.sl<PatientSectionDetailsCubit>(),
@@ -368,7 +388,9 @@ class RouteGenerator {
                   sectionModel: args['sectionModel'] as SectionModel,
                   finalSubmitStatus: args['finalSubmitStatus'] as bool,
                   patientId: args['patientId'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
                   doctorId: args['doctorId'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -407,7 +429,9 @@ class RouteGenerator {
           if (args.containsKey('doctorId') &&
               args.containsKey('currentDoctorModel') &&
               args.containsKey('isSyndicateCardRequired') &&
-              args.containsKey('accountVerification')) {
+              args.containsKey('accountVerification') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<DoctorInfoViewCubit>(
                 create: (context) => di.sl<DoctorInfoViewCubit>(),
@@ -417,6 +441,8 @@ class RouteGenerator {
                   accountVerification: args['accountVerification'] as bool,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -453,22 +479,25 @@ class RouteGenerator {
           final Map<String, dynamic> args =
               settings.arguments as Map<String, dynamic>;
 
-          if (args.containsKey('doctorId')) {
+          if (args.containsKey('doctorId') &&
+              args.containsKey('accountVerification') &&
+              args.containsKey('currentDoctorModel') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('doctorFirstName') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<ProfilePatientsCubit>(
                 create: (context) => di.sl<ProfilePatientsCubit>(),
                 child: ProfilePatientsScreen(
-                  // postModel: args['postModel'] as PostModel,
-                  // currentDoctorModel: args['doctorModel'] as DoctorModel,
-                  // accountVerification: args['accountVerification'] as bool,
-                  // isSyndicateCardRequired:
-                  //     args['isSyndicateCardRequired'] as String,
                   doctorId: args['doctorId'] as String,
                   accountVerification: args['accountVerification'] as bool,
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   isSyndicateCardRequired:
                       args['isSyndicateCardRequired'] as String,
                   doctorFirstName: args['doctorFirstName'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
                 ),
               ),
             );
@@ -484,6 +513,14 @@ class RouteGenerator {
           builder: (_) => BlocProvider<AboutUsCubit>(
             create: (context) => di.sl<AboutUsCubit>(),
             child: const AboutUsScreen(),
+          ),
+        );
+
+      case AppRoutes.sendConsultation:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<SendConsultationCubit>(
+            create: (context) => di.sl<SendConsultationCubit>(),
+            child: const SendConsultationScreen(),
           ),
         );
 

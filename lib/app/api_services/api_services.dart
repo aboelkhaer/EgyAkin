@@ -95,6 +95,7 @@ abstract class ApiServices {
   );
 
   @PUT('${ApiEndPoint.updateSectionDetails}/{sectionId}/{patientId}')
+  // @POST(ApiEndPoint.updateSectionDetails)
   Future<UpdatePatientSectionDetailsModelResponse> updateSectionDetails(
     @Path("sectionId") String sectionId,
     @Path("patientId") String patientId,

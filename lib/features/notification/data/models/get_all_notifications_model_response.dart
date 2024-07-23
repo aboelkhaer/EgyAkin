@@ -22,8 +22,8 @@ class GetAllNotificationsModelResponse with _$GetAllNotificationsModelResponse {
 class RecentNotificationForPagenationModel
     with _$RecentNotificationForPagenationModel {
   const factory RecentNotificationForPagenationModel({
-    @JsonKey(name: 'current_page') int? currentPage,
     List<NotificationsModel>? data,
+    @JsonKey(name: 'current_page') int? currentPage,
     @JsonKey(name: 'first_page_url') String? firstPageUrl,
     int? from,
     @JsonKey(name: 'last_page') int? lastPage,

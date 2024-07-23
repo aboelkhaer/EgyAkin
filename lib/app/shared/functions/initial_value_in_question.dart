@@ -6,10 +6,12 @@ String initialValueInQuestions({
   required String currentDoctorId,
   required String doctorId,
   required dynamic questionAnswerInForm,
+  required String currentDoctorRole,
 }) {
   if (answer == null) return '';
   if (question == AppStrings.nationalID) {
-    if (currentDoctorId.trim() == doctorId.trim()) {
+    if (currentDoctorId.trim() == doctorId.trim() ||
+        currentDoctorRole == 'Admin') {
       return questionAnswerInForm ?? answer;
     }
     if (currentDoctorId.trim() != doctorId.trim()) {

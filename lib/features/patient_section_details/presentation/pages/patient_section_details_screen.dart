@@ -1,8 +1,13 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_submit_button.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
@@ -12,6 +17,8 @@ class PatientSectionDetailsScreen extends StatefulWidget {
   final SectionModel sectionModel;
   final bool finalSubmitStatus;
   final String patientId;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   final String doctorId;
   const PatientSectionDetailsScreen(
       {super.key,
@@ -19,7 +26,9 @@ class PatientSectionDetailsScreen extends StatefulWidget {
       required this.sectionModel,
       required this.finalSubmitStatus,
       required this.patientId,
-      required this.doctorId});
+      required this.doctorId,
+      required this.currentDoctorRole,
+      required this.currentDoctorPoints});
 
   @override
   State<PatientSectionDetailsScreen> createState() =>
@@ -69,19 +78,47 @@ class _PatientSectionDetailsScreenState
             },
             loaded: (questions, isSubmitLoading, isSubmitted, message,
                 snackbarErrorCounter) {
-              return widget.finalSubmitStatus
-                  ? BuildSectionDetailsIfFinalSubmitTrue(
-                      questionList: cubit.questionModelList,
-                    )
-                  : widget.doctorId.toString() !=
-                          widget.currentDoctorModel.id.toString()
-                      ? BuildSectionDetailsIfFinalSubmitTrue(
-                          questionList: cubit.questionModelList,
-                        )
-                      : buildSectionForm(
-                          size: size,
-                          cubit: cubit,
-                          questions: cubit.questionModelList);
+              if (widget.currentDoctorRole == 'Admin') {
+                return buildSectionForm(
+                    size: size,
+                    cubit: cubit,
+                    questions: cubit.questionModelList);
+              }
+              if (widget.finalSubmitStatus) {
+                return BuildSectionDetailsIfFinalSubmitTrue(
+                  questionList: cubit.questionModelList,
+                  doctorId: widget.doctorId,
+                  currentDoctorId: widget.currentDoctorModel.id.toString(),
+                );
+              }
+              if (widget.doctorId.toString() !=
+                  widget.currentDoctorModel.id.toString()) {
+                BuildSectionDetailsIfFinalSubmitTrue(
+                  questionList: cubit.questionModelList,
+                  doctorId: widget.doctorId,
+                  currentDoctorId: widget.currentDoctorModel.id.toString(),
+                );
+              }
+              return buildSectionForm(
+                  size: size, cubit: cubit, questions: cubit.questionModelList);
+              // return widget.finalSubmitStatus
+              //     ? BuildSectionDetailsIfFinalSubmitTrue(
+              //         questionList: cubit.questionModelList,
+              //         doctorId: widget.doctorId,
+              //         currentDoctorId: widget.currentDoctorModel.id.toString(),
+              //       )
+              //     : widget.doctorId.toString() !=
+              //             widget.currentDoctorModel.id.toString()
+              //         ? BuildSectionDetailsIfFinalSubmitTrue(
+              //             questionList: cubit.questionModelList,
+              //             doctorId: widget.doctorId,
+              //             currentDoctorId:
+              //                 widget.currentDoctorModel.id.toString(),
+              //           )
+              //         : buildSectionForm(
+              //             size: size,
+              //             cubit: cubit,
+              //             questions: cubit.questionModelList);
             },
           );
         },
@@ -167,145 +204,157 @@ class _PatientSectionDetailsScreenState
                   },
                 ),
               ),
-              widget.doctorId.toString() !=
-                      widget.currentDoctorModel.id.toString()
-                  ? const SizedBox.shrink()
-                  : widget.finalSubmitStatus
+              widget.currentDoctorRole == 'Admin'
+                  ? Container(height: 90)
+                  : widget.doctorId.toString() !=
+                          widget.currentDoctorModel.id.toString()
                       ? const SizedBox.shrink()
-                      : Container(
-                          height: 90,
-                        ),
+                      : widget.finalSubmitStatus
+                          ? const SizedBox.shrink()
+                          : Container(
+                              height: 90,
+                            ),
             ],
           ),
         ),
-        widget.doctorId.toString() != widget.currentDoctorModel.id.toString()
-            ? const SizedBox.shrink()
-            : widget.finalSubmitStatus
-                ? const SizedBox.shrink()
-                : Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      height: 90,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade100,
-                            spreadRadius: 1,
-                            blurRadius: 7,
-                            offset: const Offset(3, 4),
-                          ),
-                        ],
-                      ),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: BlocConsumer<PatientSectionDetailsCubit,
-                              PatientSectionDetailsState>(
-                            listener: (context, state) {
-                              state.maybeWhen(
-                                orElse: () {},
-                                loaded: (questions,
-                                    isSubmitLoading,
-                                    isSubmitted,
-                                    message,
-                                    snackbarErrorCounter) {
-                                  if (message.isNotEmpty) {
-                                    customSnackBar(
-                                        context: context, message: message);
-                                  }
-                                  if (isSubmitted) {
-                                    // context
-                                    //     .read<PatientSectionsCubit>()
-                                    //     .getPatientSections(widget.patientId);
-                                    navigatorKey.currentState
-                                        ?.pushReplacementNamed(AppRoutes.home,
-                                            arguments: 0);
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.patientSections,
-                                      arguments: AppRoutesArgs
-                                          .patientSectionsRouteArguments(
-                                        patientId: widget.patientId,
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                            builder: (context, state) {
-                              return state.maybeWhen(
-                                orElse: () {
-                                  return CustomElevatedButton(
-                                    onPressed: () {
-                                      cubit.updatePatientSectionDetails(
-                                        widget.sectionModel.sectionId
-                                            .toString(),
-                                        widget.patientId.toString(),
-                                      );
-                                    },
-                                    title: AppStrings.submit,
-                                    isDisable: widget.doctorId.toString() ==
-                                                widget.currentDoctorModel.id
-                                                    .toString() &&
-                                            cubit.formData.isNotEmpty
-                                        ? false
-                                        : true,
-                                  );
-                                },
-                                loaded: (questions,
-                                    isSubmitLoading,
-                                    isSubmitted,
-                                    message,
-                                    snackbarErrorCounter) {
-                                  if (isSubmitLoading) {
-                                    return const Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 25,
-                                          width: 25,
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ],
-                                    );
-                                  } else {
-                                    return CustomElevatedButton(
-                                      onPressed: () {
-                                        cubit.updatePatientSectionDetails(
-                                          widget.sectionModel.sectionId
-                                              .toString(),
-                                          widget.patientId.toString(),
-                                        );
-                                      },
-                                      title: AppStrings.submit,
-                                      isDisable: widget.doctorId.toString() ==
-                                                  widget.currentDoctorModel.id
-                                                      .toString() &&
-                                              cubit.formData.isNotEmpty
-                                          ? false
-                                          : true,
-                                    );
-                                  }
-                                },
-                                loading: () {
-                                  return const SizedBox(
-                                    height: 25,
-                                    width: 25,
-                                    child: CircularProgressIndicator(),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+        SectionSubmitButton(
+            doctorId: widget.doctorId,
+            currentDoctorModel: widget.currentDoctorModel,
+            currentDoctorRole: widget.currentDoctorRole,
+            sectionModel: widget.sectionModel,
+            patientId: widget.patientId,
+            currentDoctorPoints: widget.currentDoctorPoints,
+            finalSubmitStatus: widget.finalSubmitStatus),
+        // widget.doctorId.toString() != widget.currentDoctorModel.id.toString()
+        //     ? const SizedBox.shrink()
+        //     : widget.finalSubmitStatus
+        //         ? const SizedBox.shrink()
+        //         : Positioned(
+        //             left: 0,
+        //             right: 0,
+        //             bottom: 0,
+        //             child: Container(
+        //               height: 90,
+        //               alignment: Alignment.center,
+        //               decoration: BoxDecoration(
+        //                 boxShadow: [
+        //                   BoxShadow(
+        //                     color: Colors.grey.shade100,
+        //                     spreadRadius: 1,
+        //                     blurRadius: 7,
+        //                     offset: const Offset(3, 4),
+        //                   ),
+        //                 ],
+        //               ),
+        //               child: SizedBox(
+        //                 width: double.infinity,
+        //                 height: 50,
+        //                 child: Padding(
+        //                   padding: const EdgeInsets.symmetric(horizontal: 20),
+        //                   child: BlocConsumer<PatientSectionDetailsCubit,
+        //                       PatientSectionDetailsState>(
+        //                     listener: (context, state) {
+        //                       state.maybeWhen(
+        //                         orElse: () {},
+        //                         loaded: (questions,
+        //                             isSubmitLoading,
+        //                             isSubmitted,
+        //                             message,
+        //                             snackbarErrorCounter) {
+        //                           if (message.isNotEmpty) {
+        //                             customSnackBar(
+        //                                 context: context, message: message);
+        //                           }
+        //                           if (isSubmitted) {
+        //                             // context
+        //                             //     .read<PatientSectionsCubit>()
+        //                             //     .getPatientSections(widget.patientId);
+        //                             navigatorKey.currentState
+        //                                 ?.pushReplacementNamed(AppRoutes.home,
+        //                                     arguments: 0);
+        //                             navigatorKey.currentState?.pushNamed(
+        //                               AppRoutes.patientSections,
+        //                               arguments: AppRoutesArgs
+        //                                   .patientSectionsRouteArguments(
+        //                                 patientId: widget.patientId,
+        //                                 currentDoctorModel:
+        //                                     widget.currentDoctorModel,
+        //                                 currentDoctorRole:
+        //                                     widget.currentDoctorRole,
+        //                               ),
+        //                             );
+        //                           }
+        //                         },
+        //                       );
+        //                     },
+        //                     builder: (context, state) {
+        //                       return state.maybeWhen(
+        //                         orElse: () {
+        //                           return CustomElevatedButton(
+        //                             onPressed: () {
+        //                               cubit.updatePatientSectionDetails(
+        //                                 widget.sectionModel.sectionId
+        //                                     .toString(),
+        //                                 widget.patientId.toString(),
+        //                               );
+        //                             },
+        //                             title: AppStrings.submit,
+        //                             isDisable: widget.doctorId.toString() ==
+        //                                         widget.currentDoctorModel.id
+        //                                             .toString() &&
+        //                                     cubit.formData.isNotEmpty
+        //                                 ? false
+        //                                 : true,
+        //                           );
+        //                         },
+        //                         loaded: (questions,
+        //                             isSubmitLoading,
+        //                             isSubmitted,
+        //                             message,
+        //                             snackbarErrorCounter) {
+        //                           if (isSubmitLoading) {
+        //                             return const Column(
+        //                               children: [
+        //                                 SizedBox(
+        //                                   height: 25,
+        //                                   width: 25,
+        //                                   child: CircularProgressIndicator(),
+        //                                 ),
+        //                               ],
+        //                             );
+        //                           } else {
+        //                             return CustomElevatedButton(
+        //                               onPressed: () {
+        //                                 cubit.updatePatientSectionDetails(
+        //                                   widget.sectionModel.sectionId
+        //                                       .toString(),
+        //                                   widget.patientId.toString(),
+        //                                 );
+        //                               },
+        //                               title: AppStrings.submit,
+        //                               isDisable: widget.doctorId.toString() ==
+        //                                           widget.currentDoctorModel.id
+        //                                               .toString() &&
+        //                                       cubit.formData.isNotEmpty
+        //                                   ? false
+        //                                   : true,
+        //                             );
+        //                           }
+        //                         },
+        //                         loading: () {
+        //                           return const SizedBox(
+        //                             height: 25,
+        //                             width: 25,
+        //                             child: CircularProgressIndicator(),
+        //                           );
+        //                         },
+        //                       );
+        //                     },
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
       ],
     );
   }
@@ -327,6 +376,7 @@ class _PatientSectionDetailsScreenState
             question: cubit.questionModelList[index].question.toString(),
             questionAnswerInForm:
                 cubit.formData[cubit.questionModelList[index].id.toString()],
+            currentDoctorRole: widget.currentDoctorRole,
           ),
           textInputFormatter: cubit.questionModelList[index].question ==
                   AppStrings.phone
@@ -337,15 +387,14 @@ class _PatientSectionDetailsScreenState
                   ? [
                       LengthLimitingTextInputFormatter(14),
                     ]
-                  : [],
+                  : [
+                      LengthLimitingTextInputFormatter(255),
+                    ],
           onChanged: (val) {
-            log('Old answer: ${cubit.questionModelList[index].answer}');
             setState(() {
               if (questionAnswer != val) {
                 cubit.updateQuestionAnswer(
-                    cubit.questionModelList[index].id.toString(),
-                    val); // Pass question ID directly
-                // You might not need to update formData manually here if it's updated in cubit.updateQuestionAnswer
+                    cubit.questionModelList[index].id.toString(), val);
                 cubit.formData[cubit.questionModelList[index].id.toString()] =
                     val;
               } else {
@@ -354,8 +403,6 @@ class _PatientSectionDetailsScreenState
                 cubit.formData
                     .remove(cubit.questionModelList[index].id.toString());
               }
-              // Log the updated answer from the questionModelList
-              log('New answer: ${cubit.questionModelList[index].answer}');
             });
           },
           validator: (val) {
@@ -421,12 +468,6 @@ class _PatientSectionDetailsScreenState
           listContainOther: answers,
           onChanged: (val) {
             setState(() {
-              // _controller.formData[questionList[index].id.toString()] = {
-              //   "answer": {
-              //     "answer": answers,
-              //     "other_field": val,
-              //   },
-              // };
               answerMap[AppStrings.otherField] = val;
               cubit.formData[cubit.questionModelList[index].id.toString()] = {
                 AppStrings.answers: answers,
@@ -518,6 +559,113 @@ class _PatientSectionDetailsScreenState
               setState(() {});
             },
           ),
+        );
+
+      case AppStrings.questionTypeFiles:
+        List<String> filesList =
+            List.from(cubit.questionModelList[index].answer);
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      // Pick multiple files
+                      FilePickerResult? result;
+                      result = await FilePicker.platform
+                          .pickFiles(allowMultiple: true);
+                      if (result != null && result.files.isNotEmpty) {
+                        List<Map<String, String>> filesList = [];
+
+                        for (var pickedFile in result.files) {
+                          File file = File(pickedFile.path!);
+                          String fileName = pickedFile.name;
+                          String fileData =
+                              base64Encode(await file.readAsBytes());
+
+                          filesList.add(
+                              {"file_name": fileName, "file_data": fileData});
+                        }
+
+                        setState(() {
+                          cubit.formData[cubit.questionModelList[index].id
+                              .toString()] = filesList;
+                        });
+
+                        log(cubit.formData[
+                                cubit.questionModelList[index].id.toString()]
+                            .toString());
+                      }
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    child: const SizedBox(
+                      height: 50,
+                      child: Icon(
+                        Icons.cloud_upload_outlined,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            // Display the picked files
+            if (cubit.formData
+                .containsKey(cubit.questionModelList[index].id.toString()))
+              Column(
+                children: (cubit.formData[cubit.questionModelList[index].id
+                        .toString()] as List<Map<String, String>>)
+                    .map(
+                      (file) => ListTile(
+                        title: Text(file['file_name']!),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.remove_circle_outline),
+                          onPressed: () {
+                            setState(
+                              () {
+                                (cubit.formData[cubit
+                                            .questionModelList[index].id
+                                            .toString()]
+                                        as List<Map<String, String>>)
+                                    .remove(file);
+                              },
+                            );
+                            log(cubit.formData.toString());
+                            // cubit.updateScreen();
+                          },
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
+              builder: (context, state) {
+                //  cubit.formData[cubit.questionModelList[index].id.toString()] ==
+                //             null ||
+                //         cubit.formData[
+                //                 cubit.questionModelList[index].id.toString()] ==
+                //             []
+                //     ? FileListWhenSubmit(files: filesList)
+                //     : const SizedBox.shrink(),
+                if (cubit.formData[
+                            cubit.questionModelList[index].id.toString()] ==
+                        null ||
+                    (cubit.formData[cubit.questionModelList[index].id
+                            .toString()]) as List ==
+                        [] ||
+                    cubit.formData[
+                            cubit.questionModelList[index].id.toString()] ==
+                        {}) {
+                  return FileListWhenSubmit(files: filesList);
+                }
+                return const SizedBox.shrink();
+              },
+            )
+          ],
         );
 
       default:

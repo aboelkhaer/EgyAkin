@@ -24,19 +24,20 @@ class AppStrings {
   static const int snackBarDelay = 5;
   static const int delayForAPIRequestInMilliseconds = 300;
 
-  static const int apiTimeOut = 50;
+  static const int apiTimeOut = 120;
   static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";
   static const String accept = "accept";
   static const String appName = 'EgyAkin';
   static const String somethingWentWrong = 'Something went wrong.';
-  static const String passwordMustBeAtLeast6Characters =
-      'Password must be at least 6 characters';
+  static const String passwordMustBeAtLeast6Chars =
+      'Password must be at least 6 chars';
   static const String questionTypeMultiple = 'multiple';
   static const String questionTypeString = 'string';
   static const String questionTypeSelect = 'select';
   static const String questionTypeDate = 'date';
+  static const String questionTypeFiles = 'files';
   static const String specialty = 'Specialty';
   static const String highestDegree = 'Highest Degree';
   static const String pleaseEnterYourPassword = 'Please enter your password';

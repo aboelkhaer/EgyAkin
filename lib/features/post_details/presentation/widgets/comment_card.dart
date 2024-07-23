@@ -1,4 +1,4 @@
-import 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
+import 'package:egy_akin/app/shared/functions/doctor_name.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../exports.dart';
@@ -6,19 +6,20 @@ import '../../../../exports.dart';
 class CommentCard extends StatelessWidget {
   final CommentModel commentModel;
   final DoctorModel currentDoctorModel;
+  final String currentDoctorRole;
   final Function() onDelete;
   const CommentCard({
     super.key,
     required this.commentModel,
     required this.currentDoctorModel,
     required this.onDelete,
+    required this.currentDoctorRole,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       color: Colors.white,
-      // Backgrond color
       margin: const EdgeInsets.only(bottom: 10),
       elevation: 0.8,
       shape: RoundedRectangleBorder(
@@ -29,7 +30,8 @@ class CommentCard extends StatelessWidget {
         splashColor: AppColors.subBG, // Splash color
         onLongPress: () {
           if (commentModel.doctor!.id.toString() ==
-              currentDoctorModel.id.toString()) {
+                  currentDoctorModel.id.toString() ||
+              currentDoctorRole == 'Admin') {
             showCustomDialog(
                 context: context,
                 title: 'Delete',
@@ -53,17 +55,6 @@ class CommentCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  // CircleAvatar(
-                  //   backgroundColor: AppColors.subBG,
-                  //   radius: 20,
-                  //   child: Text(
-                  //     '${capitalizeFirstText(commentModel.doctor!.firstName![0])}${capitalizeFirstText(commentModel.doctor!.lastName![0])}',
-                  //     style: const TextStyle(
-                  //         fontWeight: FontWeight.bold,
-                  //         color: AppColors.primary,
-                  //         fontSize: 14),
-                  //   ),
-                  // ),
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -110,7 +101,13 @@ class CommentCard extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Dr.${capitalizeFirstText(commentModel.doctor!.firstName!)} ${capitalizeFirstText(commentModel.doctor!.lastName!)}',
+                                    doctorName(
+                                      firstName:
+                                          commentModel.doctor!.firstName ?? '',
+                                      lastName:
+                                          commentModel.doctor!.lastName ?? '',
+                                      role: currentDoctorRole,
+                                    ),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.title,

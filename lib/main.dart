@@ -37,12 +37,16 @@ class MyApp extends StatelessWidget {
       designSize: const Size(360, 640),
       minTextAdapt: true,
       splitScreenMode: true,
-      child: MaterialApp(
-        title: AppStrings.appName,
-        navigatorKey: navigatorKey,
-        debugShowCheckedModeBanner: false,
-        theme: Themes().lightTheme,
-        onGenerateRoute: RouteGenerator.getRoute,
+      child: MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: const TextScaler.linear(1.0)),
+        child: MaterialApp(
+          title: AppStrings.appName,
+          navigatorKey: navigatorKey,
+          debugShowCheckedModeBanner: false,
+          theme: Themes().lightTheme,
+          onGenerateRoute: RouteGenerator.getRoute,
+        ),
       ),
     );
   }

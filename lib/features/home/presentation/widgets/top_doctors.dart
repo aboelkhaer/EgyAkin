@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 
 import '../../../../exports.dart';
 
@@ -51,9 +50,12 @@ class TopDoctors extends StatelessWidget {
                               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
                                 doctorId: doctor.id.toString(),
                                 currentDoctorModel: currentDoctorModel,
+                                currentDoctorPoints:
+                                    int.parse(homeData.scoreValue!),
                                 accountVerification: homeData.verified!,
                                 isSyndicateCardRequired:
                                     homeData.isSyndicateCardRequired.toString(),
+                                currentDoctorRole: homeData.role.toString(),
                               ),
                             );
                           },

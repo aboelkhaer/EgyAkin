@@ -35,11 +35,11 @@ _$RecentNotificationForPagenationModelImpl
     _$$RecentNotificationForPagenationModelImplFromJson(
             Map<String, dynamic> json) =>
         _$RecentNotificationForPagenationModelImpl(
-          currentPage: (json['current_page'] as num?)?.toInt(),
           data: (json['data'] as List<dynamic>?)
               ?.map(
                   (e) => NotificationsModel.fromJson(e as Map<String, dynamic>))
               .toList(),
+          currentPage: (json['current_page'] as num?)?.toInt(),
           firstPageUrl: json['first_page_url'] as String?,
           from: (json['from'] as num?)?.toInt(),
           lastPage: (json['last_page'] as num?)?.toInt(),
@@ -58,8 +58,8 @@ _$RecentNotificationForPagenationModelImpl
 Map<String, dynamic> _$$RecentNotificationForPagenationModelImplToJson(
         _$RecentNotificationForPagenationModelImpl instance) =>
     <String, dynamic>{
-      'current_page': instance.currentPage,
       'data': instance.data,
+      'current_page': instance.currentPage,
       'first_page_url': instance.firstPageUrl,
       'from': instance.from,
       'last_page': instance.lastPage,

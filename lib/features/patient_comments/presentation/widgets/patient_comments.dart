@@ -5,18 +5,29 @@ class PatientComments extends StatelessWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String patientId;
+  final int currentDoctorPoints;
+  final String currentDoctorRole;
   const PatientComments({
     super.key,
     required this.cubit,
     required this.currentDoctorModel,
     required this.accountVerification,
     required this.patientId,
+    required this.currentDoctorPoints,
+    required this.currentDoctorRole,
   });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PatientCommentsCubit, PatientCommentsState>(
-        builder: (context, state) {
+    return BlocConsumer<PatientCommentsCubit, PatientCommentsState>(
+        listener: (context, state) {
+      state.maybeWhen(
+        orElse: () {},
+        error: (message) {
+          customSnackBar(context: context, message: message);
+        },
+      );
+    }, builder: (context, state) {
       return state.maybeWhen(
         orElse: () {
           return const ShimmerLoadingPatientsCards(
@@ -59,6 +70,7 @@ class PatientComments extends StatelessWidget {
                       return CommentCard(
                         commentModel: comments[index],
                         currentDoctorModel: currentDoctorModel,
+                        currentDoctorRole: currentDoctorRole,
                         onDelete: () {
                           cubit.deletePatientComment(
                               comments[index].id.toString());

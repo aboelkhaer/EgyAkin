@@ -15,6 +15,7 @@ class AlreadyHaveAnAccountLine extends StatelessWidget {
           style: TextStyle(
             color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
+            fontSize: 12.sp,
           ),
         ),
         const SizedBox(width: 4),
@@ -32,10 +33,11 @@ class AlreadyHaveAnAccountLine extends StatelessWidget {
               color: Colors.blue,
               width: 1.0, // Underline thickness
             ))),
-            child: const Text(
+            child: Text(
               AppStrings.signInNow,
               style: TextStyle(
                 color: Colors.blue,
+                fontSize: 12.sp,
               ),
             ),
           ),

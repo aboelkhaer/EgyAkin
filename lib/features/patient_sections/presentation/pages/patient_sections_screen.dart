@@ -1,15 +1,16 @@
-import 'package:egy_akin/features/patient_sections/presentation/widgets/equation_impelmentaion.dart';
-import 'package:egy_akin/features/patient_sections/presentation/widgets/footer_bottons.dart';
-
 import '../../../../exports.dart';
 
 class PatientSectionsScreen extends StatefulWidget {
   final String patientId;
   final DoctorModel currentDoctorModel;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const PatientSectionsScreen({
     super.key,
     required this.patientId,
     required this.currentDoctorModel,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -25,6 +26,9 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
+        statusBarColor: Colors.transparent,
+        statusBarBrightness: Brightness.dark));
     PatientSectionsCubit cubit = PatientSectionsCubit.get(context);
     return Scaffold(
       appBar: AppBar(
@@ -33,6 +37,9 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
           listener: (context, state) {
             state.maybeWhen(
               orElse: () {},
+              error: (message) {
+                customSnackBar(context: context, message: message);
+              },
               loaded: (response,
                   isDelete,
                   isFinalSubmit,
@@ -42,6 +49,9 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   filePath,
                   isDownloadingReport,
                   isDownloadedReport) {
+                if (message != '') {
+                  customSnackBar(context: context, message: message);
+                }
                 if (isDelete) {
                   Navigator.pushReplacementNamed(context, AppRoutes.home,
                       arguments: 0);
@@ -89,6 +99,17 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
           },
         ),
         centerTitle: true,
+        // actions: [
+        //   IconButton(
+        //     onPressed: () {
+        //       navigatorKey.currentState?.pushNamed(AppRoutes.sendConsultation);
+        //     },
+        //     icon: Icon(
+        //       Icons.chat_bubble_outline,
+        //       size: 20.r,
+        //     ),
+        //   ),
+        // ],
       ),
       body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
         listener: (context, state) {
@@ -167,6 +188,18 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                             .gfr!.sobh!.creatinineOnDischarge
                                             .toString(),
                                       ),
+                                      EquationImplementation(
+                                        equationName: 'MDRD',
+                                        currentCreatinineValue: response
+                                            .gfr!.mdrd!.currentGFR
+                                            .toString(),
+                                        basalCreatinineValue: response
+                                            .gfr!.mdrd!.basalCreatinine
+                                            .toString(),
+                                        creatinineOnDischargeValue: response
+                                            .gfr!.mdrd!.creatinineOnDischarge
+                                            .toString(),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -217,6 +250,10 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                                               .submitStatus!,
                                                       patientId:
                                                           widget.patientId,
+                                                      currentDoctorRole: widget
+                                                          .currentDoctorRole,
+                                                      currentDoctorPoints: widget
+                                                          .currentDoctorPoints,
                                                       doctorId: response
                                                           .doctorId
                                                           .toString()),
@@ -267,9 +304,12 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                       widget.currentDoctorModel.id.toString(),
                                   doctorId: response.doctorId!,
                                   patientName: response.patientName!,
+                                  currentDoctorPoints:
+                                      widget.currentDoctorPoints,
                                   cubit: cubit,
                                   patientId: widget.patientId,
                                   finalSubmit: response.submitStatus!,
+                                  currentDoctorRole: widget.currentDoctorRole,
                                 );
                               }
                               if (isDownloadingReport) {
@@ -290,19 +330,36 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   ),
                                 );
                               }
-                              if ((response.doctorId.toString() ==
+                              if (((response.doctorId.toString() ==
                                       widget.currentDoctorModel.id
                                           .toString()) &&
                                   (response.submitStatus != null &&
-                                      response.submitStatus!)) {
+                                      response.submitStatus!))) {
                                 return FooterButtons(
                                   currentDoctorId:
                                       widget.currentDoctorModel.id.toString(),
                                   doctorId: response.doctorId!,
                                   patientName: response.patientName!,
+                                  currentDoctorPoints:
+                                      widget.currentDoctorPoints,
                                   cubit: cubit,
                                   patientId: widget.patientId,
                                   finalSubmit: response.submitStatus!,
+                                  currentDoctorRole: widget.currentDoctorRole,
+                                );
+                              }
+                              if (widget.currentDoctorRole == 'Admin') {
+                                return FooterButtons(
+                                  currentDoctorId:
+                                      widget.currentDoctorModel.id.toString(),
+                                  doctorId: response.doctorId!,
+                                  patientName: response.patientName!,
+                                  currentDoctorPoints:
+                                      widget.currentDoctorPoints,
+                                  cubit: cubit,
+                                  patientId: widget.patientId,
+                                  finalSubmit: response.submitStatus!,
+                                  currentDoctorRole: widget.currentDoctorRole,
                                 );
                               }
 

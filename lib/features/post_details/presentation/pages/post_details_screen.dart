@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import '../../../../exports.dart';
 
@@ -7,12 +6,14 @@ class PostDetailsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String isSyndicateCardRequired;
+  final String currentDoctorRole;
   const PostDetailsScreen({
     super.key,
     required this.postModel,
     required this.currentDoctorModel,
     required this.accountVerification,
     required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
   });
 
   @override
@@ -40,7 +41,6 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     PostDetailsCubit cubit = PostDetailsCubit.get(context);
-    log(widget.isSyndicateCardRequired);
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(),
@@ -94,6 +94,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                         PostComments(
                           cubit: cubit,
                           currentDoctorModel: widget.currentDoctorModel,
+                          currentDoctorRole: widget.currentDoctorRole,
                         ),
                       ],
                     ),

@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/profile/data/models/upload_profile_image_model_response.dart';
-import 'package:egy_akin/features/profile/domain/repositories/profile_repo.dart';
 import '../../../../exports.dart';
 
 class UploadProfileImageUsecase

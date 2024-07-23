@@ -34,10 +34,15 @@ class _MoreScreenState extends State<MoreScreen> {
               Text(
                 'General',
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.grey.shade500),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    fontSize: 13.sp),
               ),
               ListTile(
-                title: const Text('GFR Calculator'),
+                title: Text(
+                  'GFR Calculator',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
                 leading: Icon(
                   Icons.calculate,
                   color: Colors.grey.shade600,
@@ -54,7 +59,9 @@ class _MoreScreenState extends State<MoreScreen> {
               Text(
                 'Privacy & Security',
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.grey.shade500),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    fontSize: 13.sp),
               ),
               ListTile(
                 title: const Text('Change password'),
@@ -77,7 +84,10 @@ class _MoreScreenState extends State<MoreScreen> {
                     return const SizedBox.shrink();
                   }
                   return ListTile(
-                    title: const Text('Email verification'),
+                    title: Text(
+                      'Email verification',
+                      style: TextStyle(fontSize: 13.5.sp),
+                    ),
                     leading: Icon(
                       Icons.verified,
                       color: Colors.grey.shade600,
@@ -96,7 +106,10 @@ class _MoreScreenState extends State<MoreScreen> {
                 },
               ),
               ListTile(
-                title: const Text('Privacy Policy'),
+                title: Text(
+                  'Privacy Policy',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
                 leading: Icon(
                   Icons.privacy_tip,
                   color: Colors.grey.shade600,
@@ -118,7 +131,9 @@ class _MoreScreenState extends State<MoreScreen> {
               Text(
                 'Support',
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.grey.shade500),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    fontSize: 13.sp),
               ),
               // ListTile(
               //   title: const Text('Terms Of Service'),
@@ -135,7 +150,10 @@ class _MoreScreenState extends State<MoreScreen> {
               //   },
               // ),
               ListTile(
-                title: const Text('Contact Us'),
+                title: Text(
+                  'Contact Us',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
                 leading: Icon(
                   Icons.contact_mail,
                   color: Colors.grey.shade600,
@@ -149,7 +167,10 @@ class _MoreScreenState extends State<MoreScreen> {
                 },
               ),
               ListTile(
-                title: const Text('About us'),
+                title: Text(
+                  'About us',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
                 leading: Icon(
                   Icons.info,
                   color: Colors.grey.shade600,

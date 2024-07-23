@@ -1,11 +1,17 @@
 import 'package:egy_akin/exports.dart';
 
 class AppRoutesArgs {
-  static Map<String, dynamic> patientSectionsRouteArguments(
-      {required String patientId, required DoctorModel currentDoctorModel}) {
+  static Map<String, dynamic> patientSectionsRouteArguments({
+    required String patientId,
+    required DoctorModel currentDoctorModel,
+    required int currentDoctorPoints,
+    required String currentDoctorRole,
+  }) {
     return {
       'patientId': patientId,
       'currentDoctorModel': currentDoctorModel,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -14,18 +20,27 @@ class AppRoutesArgs {
     required DoctorModel doctorModel,
     required bool verified,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
   }) {
     return {
       'postModel': postModel,
       'doctorModel': doctorModel,
       'accountVerification': verified,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
     };
   }
 
-  static DoctorModel addPatientRouteArgs(
-      {required DoctorModel currentDoctorModel}) {
-    return currentDoctorModel;
+  static Map<String, dynamic> addPatientRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
+    };
   }
 
   static Map<String, dynamic> patientCommentsRouteArgs({
@@ -34,6 +49,8 @@ class AppRoutesArgs {
     required bool verified,
     required String patientName,
     required String isSyndicateCardRequired,
+    required int currentDoctorPoints,
+    required String currentDoctorRole,
   }) {
     return {
       'patientId': patientId,
@@ -41,6 +58,8 @@ class AppRoutesArgs {
       'accountVerification': verified,
       'patientName': patientName,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorPoints': currentDoctorPoints,
+      'currentDoctorRole': currentDoctorRole,
     };
   }
 
@@ -54,11 +73,15 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required bool verified,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'accountVerification': verified,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -70,6 +93,8 @@ class AppRoutesArgs {
     required String doctorId,
     required DoctorModel currentDoctorModel,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'accountVerification': verified,
@@ -79,6 +104,8 @@ class AppRoutesArgs {
       'currentDoctorModel': currentDoctorModel,
       'doctorId': doctorId,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -86,11 +113,15 @@ class AppRoutesArgs {
     required bool accountVerification,
     required DoctorModel currentDoctorModel,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'accountVerification': accountVerification,
       'currentDoctorModel': currentDoctorModel,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -98,11 +129,15 @@ class AppRoutesArgs {
     required bool accountVerification,
     required DoctorModel currentDoctorModel,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'accountVerification': accountVerification,
       'currentDoctorModel': currentDoctorModel,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -111,7 +146,9 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required bool finalSubmitStatus,
     required String patientId,
+    required String currentDoctorRole,
     required String doctorId,
+    required int currentDoctorPoints,
   }) {
     return {
       'sectionModel': sectionModel,
@@ -119,6 +156,8 @@ class AppRoutesArgs {
       'finalSubmitStatus': finalSubmitStatus,
       'patientId': patientId,
       'doctorId': doctorId,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -127,12 +166,16 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required bool accountVerification,
     required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'doctorId': doctorId,
       'currentDoctorModel': currentDoctorModel,
       'accountVerification': accountVerification,
       'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 
@@ -142,6 +185,8 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required DoctorModel currentDoctorModel,
     required String doctorFirstName,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
   }) {
     return {
       'doctorId': doctorId,
@@ -149,6 +194,8 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorModel': currentDoctorModel,
       'doctorFirstName': doctorFirstName,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
     };
   }
 }

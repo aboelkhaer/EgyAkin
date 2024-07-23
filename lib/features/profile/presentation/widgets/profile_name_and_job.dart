@@ -7,12 +7,16 @@ class ProfileNameAndJob extends StatelessWidget {
   final ProfileCubit cubit;
   final String isSyndicateCardRequired;
   final bool accountVerification;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
 
   const ProfileNameAndJob({
     super.key,
     required this.cubit,
     required this.isSyndicateCardRequired,
     required this.accountVerification,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -68,7 +72,9 @@ class ProfileNameAndJob extends StatelessWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        GestureDetector(
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: () {
                             // navigatorKey.currentState?.pushNamed(
                             //   AppRoutes.profilePatients,
@@ -111,7 +117,9 @@ class ProfileNameAndJob extends StatelessWidget {
                           ),
                         ),
                         const Text('|'),
-                        GestureDetector(
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: () {
                             showCustomBottomSheet(
                               context: context,
@@ -198,7 +206,9 @@ class ProfileNameAndJob extends StatelessWidget {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        GestureDetector(
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: () {
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.profilePatients,
@@ -206,10 +216,12 @@ class ProfileNameAndJob extends StatelessWidget {
                                 doctorId: cubit.currentDoctor.id.toString(),
                                 currentDoctorModel: cubit.currentDoctor,
                                 accountVerification: accountVerification,
+                                currentDoctorPoints: currentDoctorPoints,
                                 isSyndicateCardRequired:
                                     isSyndicateCardRequired,
                                 doctorFirstName:
                                     cubit.currentDoctor.firstName.toString(),
+                                currentDoctorRole: currentDoctorRole,
                               ),
                             );
                           },
@@ -241,7 +253,9 @@ class ProfileNameAndJob extends StatelessWidget {
                           ),
                         ),
                         const Text('|'),
-                        GestureDetector(
+                        InkWell(
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
                           onTap: () {
                             showCustomBottomSheet(
                               context: context,

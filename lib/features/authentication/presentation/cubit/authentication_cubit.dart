@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/authentication/domain/usecases/send_fcm_token_usecase.dart';
-
 import '../../../../exports.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
@@ -10,12 +8,18 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   final RegisterUsecase _registerUsecase;
   // final SendFCMTokenUsecase _sendFCMTokenUsecase;
   static AuthenticationCubit get(context) => BlocProvider.of(context);
-
+  bool isConfirmationChecked = false;
   String fcmToken = '';
   getFCMToken() async {
     sl<NotificationServices>().getDeviceToken().then((value) {
       fcmToken = value;
     });
+  }
+
+  int changedCounter = 0;
+  refreshScreen() {
+    emit(AuthenticationState.checkConfirmation(changedCounter));
+    changedCounter += 1;
   }
 
   //! Sign in
@@ -75,35 +79,40 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       registerHighestDegree = '';
   int registerErrorValid = 0;
 
-  Future register() async {
-    if (registerFormKey.currentState!.validate()) {
-      emit(const AuthenticationState.loading());
+  Future register(context) async {
+    if (isConfirmationChecked) {
+      if (registerFormKey.currentState!.validate()) {
+        emit(const AuthenticationState.loading());
 
-      await Future.delayed(const Duration(
-          milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-      final result = await _registerUsecase.excute(DoctorModel(
-        firstName: registerFirstName,
-        lastName: registerLastName,
-        email: registerEmail,
-        password: registerPasswordController.text,
-        passwordConfirmation: registerPasswordConformation,
-        phone: registerPhone,
-        age: registerAge,
-        job: registerJop,
-        workingplace: registerWorkplace,
-        registrationNumber: registerRegistrationNumber,
-        specialty: registerSpecialty,
-        highestdegree: registerHighestDegree,
-        fcmToken: fcmToken,
-      ));
-      result.fold(
-        (l) {
-          emit(AuthenticationState.error(l.message));
-        },
-        (doctorModel) async {
-          emit(AuthenticationState.loaded(doctorModel, false, true));
-        },
-      );
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final result = await _registerUsecase.excute(DoctorModel(
+          firstName: registerFirstName,
+          lastName: registerLastName,
+          email: registerEmail,
+          password: registerPasswordController.text,
+          passwordConfirmation: registerPasswordConformation,
+          phone: registerPhone,
+          age: registerAge,
+          job: registerJop,
+          workingplace: registerWorkplace,
+          registrationNumber: registerRegistrationNumber,
+          specialty: registerSpecialty,
+          highestdegree: registerHighestDegree,
+          fcmToken: fcmToken,
+        ));
+        result.fold(
+          (l) {
+            emit(AuthenticationState.error(l.message));
+          },
+          (doctorModel) async {
+            emit(AuthenticationState.loaded(doctorModel, false, true));
+          },
+        );
+      }
+    } else {
+      customSnackBar(
+          context: context, message: 'You must agree to the Privacy Policy.');
     }
   }
   //! ---------------

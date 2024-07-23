@@ -56,12 +56,16 @@ _$GFRModelImpl _$$GFRModelImplFromJson(Map<String, dynamic> json) =>
       sobh: json['sobh'] == null
           ? null
           : EquationModel.fromJson(json['sobh'] as Map<String, dynamic>),
+      mdrd: json['mdrd'] == null
+          ? null
+          : EquationModel.fromJson(json['mdrd'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$GFRModelImplToJson(_$GFRModelImpl instance) =>
     <String, dynamic>{
       'ckd': instance.ckd,
       'sobh': instance.sobh,
+      'mdrd': instance.mdrd,
     };
 
 _$EquationModelImpl _$$EquationModelImplFromJson(Map<String, dynamic> json) =>

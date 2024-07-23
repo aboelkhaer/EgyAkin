@@ -1,14 +1,17 @@
 import 'dart:developer';
 import 'package:intl/intl.dart';
-import 'package:egy_akin/injection_container.dart' as di;
 
 import '../../../../exports.dart';
 
 class AddPatientScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const AddPatientScreen({
     super.key,
     required this.currentDoctorModel,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -167,6 +170,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                   AppRoutesArgs.patientSectionsRouteArguments(
                                 patientId: patientId.toString(),
                                 currentDoctorModel: widget.currentDoctorModel,
+                                currentDoctorPoints: widget.currentDoctorPoints,
+                                currentDoctorRole: widget.currentDoctorRole,
                               ),
                             )
                             .then(

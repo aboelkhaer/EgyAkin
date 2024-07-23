@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
-import 'package:egy_akin/features/all_doctors_patients/domain/repositories/all_doctors_patients_repo.dart';
 import '../../../../exports.dart';
 
 class GetAllDoctorsPatientsUsecase

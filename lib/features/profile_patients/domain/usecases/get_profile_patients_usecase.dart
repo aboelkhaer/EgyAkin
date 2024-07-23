@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
 import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
 import 'package:egy_akin/features/profile_patients/domain/repositories/profile_patients_repo.dart';
 

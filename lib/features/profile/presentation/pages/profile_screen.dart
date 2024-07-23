@@ -4,10 +4,15 @@ import '../../../../exports.dart';
 class ProfileScreen extends StatelessWidget {
   final String isSyndicateCardRequired;
   final bool accountVerification;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
+
   const ProfileScreen(
       {super.key,
       required this.isSyndicateCardRequired,
-      required this.accountVerification});
+      required this.accountVerification,
+      required this.currentDoctorRole,
+      required this.currentDoctorPoints});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +26,8 @@ class ProfileScreen extends StatelessWidget {
             cubit: cubit,
             isSyndicateCardRequired: isSyndicateCardRequired,
             accountVerification: accountVerification,
+            currentDoctorRole: currentDoctorRole,
+            currentDoctorPoints: currentDoctorPoints,
           ),
           SizedBox(height: 20.h),
           ProfileFeatures(cubit: cubit),

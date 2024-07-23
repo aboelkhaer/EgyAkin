@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 
 import '../../../../exports.dart';
 
@@ -35,6 +34,8 @@ class AllPatientSection extends StatelessWidget {
                           currentDoctorModel: currentDoctorModel,
                           isSyndicateCardRequired:
                               homeData.isSyndicateCardRequired!,
+                          currentDoctorRole: homeData.role.toString(),
+                          currentDoctorPoints: int.parse(homeData.scoreValue!),
                         ));
                   },
                 );
@@ -81,6 +82,9 @@ class AllPatientSection extends StatelessWidget {
                               accountVerification: homeData.verified!,
                               hospital: patient.hospital ?? AppStrings.empty,
                               currentDoctorModel: currentDoctorModel,
+                              currentDoctorPoints:
+                                  int.parse(homeData.scoreValue!),
+                              currentDoctorRole: homeData.role.toString(),
                               isSyndicateCardRequired:
                                   patient.doctor!.isSyndicateCardRequired!,
                               doctorImage: patient.doctor!.image,
@@ -101,19 +105,26 @@ class AllPatientSection extends StatelessWidget {
                                     doctorId: patient.doctor!.id.toString(),
                                     isSyndicateCardRequired:
                                         homeData.isSyndicateCardRequired!,
+                                    currentDoctorRole: homeData.role.toString(),
+                                    currentDoctorPoints:
+                                        int.parse(homeData.scoreValue!),
                                   ),
                                 );
                               },
                               onAddCommentTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.comments,
-                                  arguments:
-                                      AppRoutesArgs.patientCommentsRouteArgs(
+                                  arguments: AppRoutesArgs
+                                      .patientCommentsRouteArgs(
                                           patientId: patient.id.toString(),
                                           currentDoctorModel:
                                               currentDoctorModel,
                                           verified: homeData.verified!,
                                           patientName: patient.name.toString(),
+                                          currentDoctorPoints:
+                                              int.parse(homeData.scoreValue!),
+                                          currentDoctorRole:
+                                              homeData.role.toString(),
                                           isSyndicateCardRequired: homeData
                                               .isSyndicateCardRequired!),
                                 );
@@ -124,6 +135,9 @@ class AllPatientSection extends StatelessWidget {
                                   arguments: AppRoutesArgs
                                       .patientSectionsRouteArguments(
                                     patientId: patient.id.toString(),
+                                    currentDoctorRole: homeData.role.toString(),
+                                    currentDoctorPoints:
+                                        int.parse(homeData.scoreValue!),
                                     currentDoctorModel: currentDoctorModel,
                                   ),
                                 );

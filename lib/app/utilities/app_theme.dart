@@ -21,8 +21,5 @@ class Themes {
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: AppColors.primary.withOpacity(0.8),
     ),
-    // colorScheme: ColorScheme.fromSwatch().copyWith(
-    //   secondary: AppColors.primary,
-    // ),
   );
 }

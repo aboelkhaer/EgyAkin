@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
 import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
 
 import '../../../../exports.dart';

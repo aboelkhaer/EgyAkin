@@ -13,6 +13,7 @@ class ApiEndPoint {
   static const sections = '$baseUrl/api/showSections';
   static const getPatientSectionDetails = '$baseUrl/api/patient';
   static const deletePatient = '$baseUrl/api/patient';
+  // Todo: return to patientsection ,    uploadFileNew
   static const updateSectionDetails = '$baseUrl/api/patientsection';
   static const getAddPatientsQuestions = '$baseUrl/api/questions';
   static const addPatientForFirstTime = '$baseUrl/api/patient';
@@ -46,4 +47,5 @@ class ApiEndPoint {
       '$baseUrl/api/doctorProfileGetPatients';
   static const doctorProfileGetScoreHistory =
       '$baseUrl/api/doctorProfileGetScoreHistory';
+  static const uploadFileNew = '$baseUrl/api/uploadFileNew';
 }

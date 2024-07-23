@@ -1,10 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/about_us/presentation/cubit/about_us_cubit.dart';
 import 'package:egy_akin/features/change_password/data/datasources/change_password_datasource.dart';
 import 'package:egy_akin/features/change_password/data/repositories/change_password_repo_impl.dart';
 import 'package:egy_akin/features/change_password/domain/repositories/change_password_repo.dart';
 import 'package:egy_akin/features/change_password/domain/usecases/change_password_usecase.dart';
-import 'package:egy_akin/features/change_password/presentation/cubit/change_password_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
@@ -12,7 +10,6 @@ import 'package:egy_akin/features/profile_patients/data/datasources/profile_pati
 import 'package:egy_akin/features/profile_patients/data/repositories/profile_patients_repo_impl.dart';
 import 'package:egy_akin/features/profile_patients/domain/repositories/profile_patients_repo.dart';
 import 'package:egy_akin/features/profile_patients/domain/usecases/get_profile_patients_usecase.dart';
-import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_cubit.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
 import 'package:egy_akin/features/splash/data/datasources/splash_datasource.dart';
 import 'package:egy_akin/features/splash/data/repositories/splash_repo_impl.dart';
@@ -58,13 +55,14 @@ Future<void> diInit() async {
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
-  sl.registerFactory(() => DoctorInfoViewCubit(sl(), sl()));
+  sl.registerFactory(() => DoctorInfoViewCubit(sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
   sl.registerFactory(() => ChangePasswordCubit(sl()));
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));
   sl.registerFactory(() => AboutUsCubit());
+  sl.registerFactory(() => SendConsultationCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(

@@ -1,6 +1,4 @@
-import 'dart:developer';
 
-import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_cubit.dart';
 import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_state.dart';
 
 import '../../../../exports.dart';
@@ -11,6 +9,8 @@ class ProfilePatientsScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final String doctorId;
   final String doctorFirstName;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   const ProfilePatientsScreen({
     super.key,
     required this.doctorId,
@@ -18,6 +18,8 @@ class ProfilePatientsScreen extends StatefulWidget {
     required this.accountVerification,
     required this.isSyndicateCardRequired,
     required this.doctorFirstName,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
   });
 
   @override
@@ -78,6 +80,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
   Widget build(BuildContext context) {
     ProfilePatientsCubit cubit = ProfilePatientsCubit.get(context);
     Size size = MediaQuery.of(context).size;
+    // log(sl<HomeCubit>().isSyndicateCardRequired);
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -131,6 +134,8 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                               patient.doctor!.isSyndicateCardRequired!,
                           doctorImage: patient.doctor!.image,
                           isOutcomeStatus: patient.sections!.outcomeStatus!,
+                          currentDoctorPoints: widget.currentDoctorPoints,
+                          currentDoctorRole: widget.currentDoctorRole,
                           submitStatus: patient.sections == null
                               ? false
                               : patient.sections!.submitStatus ?? false,
@@ -147,6 +152,8 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 doctorId: patient.doctor!.id.toString(),
                                 isSyndicateCardRequired:
                                     sl<HomeCubit>().isSyndicateCardRequired,
+                                currentDoctorRole: widget.currentDoctorRole,
+                                currentDoctorPoints: widget.currentDoctorPoints,
                               ),
                             );
                           },
@@ -158,9 +165,11 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 currentDoctorModel:
                                     sl<HomeCubit>().currentDoctorModel,
                                 verified: sl<HomeCubit>().accountVerification!,
+                                currentDoctorRole: widget.currentDoctorRole,
                                 patientName: patient.name.toString(),
                                 isSyndicateCardRequired:
                                     sl<HomeCubit>().isSyndicateCardRequired,
+                                currentDoctorPoints: widget.currentDoctorPoints,
                               ),
                             );
                           },
@@ -172,6 +181,8 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 patientId: patient.id.toString(),
                                 currentDoctorModel:
                                     sl<HomeCubit>().currentDoctorModel,
+                                currentDoctorPoints: widget.currentDoctorPoints,
+                                currentDoctorRole: widget.currentDoctorRole,
                               ),
                             );
                           },
