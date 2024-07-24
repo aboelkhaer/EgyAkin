@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class AllPatientSection extends StatelessWidget {

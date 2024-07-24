@@ -58,8 +58,11 @@ class PatientCard extends StatelessWidget {
             onTap: onTap,
             child: Container(
               width: 325.w,
-              height: 135.h,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+              height: 130.h,
+              padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                  ) +
+                  EdgeInsets.only(top: 10.h),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -209,9 +212,10 @@ class PatientCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Container(
-                          margin: EdgeInsets.symmetric(vertical: 8.h),
+                          // margin: EdgeInsets.symmetric(vertical: 8.h),
+                          margin: EdgeInsets.only(top: 0.h),
                           child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
                                 child: SizedBox(
@@ -253,6 +257,7 @@ class PatientCard extends StatelessWidget {
                             ],
                           ),
                         ),
+                        SizedBox(height: 5.h),
                       ],
                     ),
                   ),

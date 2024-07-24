@@ -15,7 +15,7 @@ export 'package:egy_akin/app/shared/custom_dialog.dart';
 export 'package:egy_akin/app/shared/custom_elevated_botton.dart';
 export 'package:egy_akin/app/shared/custom_text_form_field.dart';
 export 'package:egy_akin/app/shared/section_status_icon.dart';
-export 'package:egy_akin/app/shared/vertical_patient_card.dart';
+export 'package:egy_akin/app/shared/patient_card.dart';
 export 'package:egy_akin/app/utilities/enums.dart';
 export 'package:egy_akin/app/utilities/scroll_effect.dart';
 
