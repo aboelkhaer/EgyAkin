@@ -460,12 +460,33 @@ class RouteGenerator {
           ),
         );
       case AppRoutes.gfrCalculator:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<GfrCalculatorCubit>(
-            create: (context) => di.sl<GfrCalculatorCubit>(),
-            child: const GfrCalculatorScreen(),
-          ),
-        );
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<GfrCalculatorCubit>(
+                create: (context) => di.sl<GfrCalculatorCubit>(),
+                child: GfrCalculatorScreen(
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      // case AppRoutes.gfrCalculator:
+      //   return MaterialPageRoute(
+      //     builder: (_) => BlocProvider<GfrCalculatorCubit>(
+      //       create: (context) => di.sl<GfrCalculatorCubit>(),
+      //       child:  GfrCalculatorScreen(),
+      //     ),
+      //   );
       case AppRoutes.changePassword:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<ChangePasswordCubit>(

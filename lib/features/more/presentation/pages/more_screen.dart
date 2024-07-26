@@ -5,10 +5,12 @@ import '../../../../exports.dart';
 class MoreScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
+  final HomeModelResponse homeDataModel;
   const MoreScreen(
       {super.key,
       required this.currentDoctorModel,
-      required this.accountVerification});
+      required this.accountVerification,
+      required this.homeDataModel});
 
   @override
   State<MoreScreen> createState() => _MoreScreenState();
@@ -52,7 +54,9 @@ class _MoreScreenState extends State<MoreScreen> {
                   size: 15.r,
                 ),
                 onTap: () {
-                  navigatorKey.currentState?.pushNamed(AppRoutes.gfrCalculator);
+                  navigatorKey.currentState?.pushNamed(AppRoutes.gfrCalculator,
+                      arguments: AppRoutesArgs.gfrCalculatorRouteArgs(
+                          homeDataModel: widget.homeDataModel));
                 },
               ),
               SizedBox(height: 15.h),
@@ -64,7 +68,10 @@ class _MoreScreenState extends State<MoreScreen> {
                     fontSize: 13.sp),
               ),
               ListTile(
-                title: const Text('Change password'),
+                title: Text(
+                  'Change password',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
                 leading: Icon(
                   Icons.password,
                   color: Colors.grey.shade600,

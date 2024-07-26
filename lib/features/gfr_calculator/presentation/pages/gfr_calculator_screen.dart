@@ -1,7 +1,8 @@
 import '../../../../exports.dart';
 
 class GfrCalculatorScreen extends StatelessWidget {
-  const GfrCalculatorScreen({super.key});
+  final HomeModelResponse homeDataModel;
+  const GfrCalculatorScreen({super.key, required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -358,15 +359,34 @@ class GfrCalculatorScreen extends StatelessWidget {
                   onPressed: () => cubit.calculateGFR(context),
                   title: 'Calculate',
                 ),
-                // SizedBox(height: 20.h),
-                // Text(
-                //   'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
-                //   textAlign: TextAlign.center,
-                //   style: TextStyle(
-                //     fontSize: 12.0.sp,
-                //     color: Colors.red,
-                //   ),
-                // ),
+                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                  builder: (context, state) {
+                    // return state.maybeWhen(
+                    //   orElse: () {
+                    //     return const SizedBox.shrink();
+                    //   },
+                    //   loaded: () {
+                    //   if()
+                    //   },
+                    // );
+                    if (homeDataModel.role == 'Admin') {
+                      return Column(
+                        children: [
+                          SizedBox(height: 20.h),
+                          Text(
+                            'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 12.0.sp,
+                              color: Colors.red,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 SizedBox(height: 30.h),
                 Row(
                   children: [

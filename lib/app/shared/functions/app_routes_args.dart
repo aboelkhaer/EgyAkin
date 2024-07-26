@@ -198,4 +198,12 @@ class AppRoutesArgs {
       'currentDoctorPoints': currentDoctorPoints,
     };
   }
+
+  static Map<String, dynamic> gfrCalculatorRouteArgs({
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'homeDataModel': homeDataModel,
+    };
+  }
 }

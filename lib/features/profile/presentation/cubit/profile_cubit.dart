@@ -7,8 +7,11 @@ import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart'
 import 'package:egy_akin/features/profile/domain/usecases/upload_profile_image_usecase.dart';
 import 'package:egy_akin/features/profile/presentation/cubit/profile_state.dart';
 import 'package:egy_akin/injection_container.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 //! don't remove imports
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -24,27 +27,40 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(ProfileState.loaded(doctorModel, false));
   }
 
-  uploadProfileImage() async {
+  Future<void> uploadProfileImage() async {
     emit(const ProfileState.loading());
     final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      final pickedImageFile = File(pickedImage.path);
-      imagePicked = pickedImageFile;
-      final result = await _uploadProfileImageUsecase.excute(imagePicked!);
 
-      result.fold(
-        (l) {
-          emit(ProfileState.error(l.message));
-        },
-        (r) async {
-          log(r.image.toString());
-          await sl<AppPreferences>().updateDoctorImageData(r.image!);
-          emit(ProfileState.loaded(currentDoctor, true));
-        },
-      );
-    } else {
-      emit(ProfileState.loaded(currentDoctor, false));
+    try {
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        final pickedImageFile = File(pickedImage.path);
+        imagePicked = pickedImageFile;
+        final result = await _uploadProfileImageUsecase.excute(imagePicked!);
+
+        result.fold(
+          (l) {
+            emit(ProfileState.error(l.message));
+          },
+          (r) async {
+            log(r.image.toString());
+            await sl<AppPreferences>().updateDoctorImageData(r.image!);
+            emit(ProfileState.loaded(currentDoctor, true));
+          },
+        );
+      } else {
+        emit(ProfileState.loaded(currentDoctor, false));
+      }
+    } on PlatformException catch (e) {
+      if (e.code == 'photo_access_denied') {
+        emit(const ProfileState.error(
+            'Photo access denied. Please allow photo access from settings.'));
+        openAppSettings();
+      } else {
+        emit(ProfileState.error('An unexpected error occurred: ${e.message}'));
+      }
+    } catch (e) {
+      emit(ProfileState.error('An unexpected error occurred: $e'));
     }
   }
 

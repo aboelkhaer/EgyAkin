@@ -116,8 +116,10 @@ class RegisterForm extends StatelessWidget {
                   onChanged: (value) {
                     cubit.registerPhone = value;
                   },
-                  validator: (value) =>
-                      AppValidators.validatePhoneNumber(value!),
+                  // validator: (value) =>
+                  //     AppValidators.validatePhoneNumber(value!),
+                  validator: (value) => null,
+
                   textInputAction: TextInputAction.next,
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(11),
@@ -132,7 +134,8 @@ class RegisterForm extends StatelessWidget {
                   onChanged: (value) {
                     cubit.registerAge = value;
                   },
-                  validator: (value) => AppValidators.validateAge(value!),
+                  // validator: (value) => AppValidators.validateAge(value!),
+                  validator: (value) => null,
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -148,8 +151,9 @@ class RegisterForm extends StatelessWidget {
                     cubit.registerJop = value;
                   },
                   textInputType: TextInputType.text,
-                  validator: (value) =>
-                      AppValidators.fieldsIsEmptyValidation(value!),
+                  // validator: (value) =>
+                  //     AppValidators.fieldsIsEmptyValidation(value!),
+                  validator: (value) => null,
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -161,8 +165,9 @@ class RegisterForm extends StatelessWidget {
                     cubit.registerWorkplace = value;
                   },
                   textInputType: TextInputType.text,
-                  validator: (value) =>
-                      AppValidators.fieldsIsEmptyValidation(value!),
+                  // validator: (value) =>
+                  //     AppValidators.fieldsIsEmptyValidation(value!),
+                  validator: (value) => null,
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -178,8 +183,9 @@ class RegisterForm extends StatelessWidget {
                     cubit.registerRegistrationNumber = value;
                   },
                   textInputType: TextInputType.number,
-                  validator: (value) =>
-                      AppValidators.fieldsIsEmptyValidation(value!),
+                  // validator: (value) =>
+                  //     AppValidators.fieldsIsEmptyValidation(value!),
+                  validator: (value) => null,
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -198,8 +204,9 @@ class RegisterForm extends StatelessWidget {
                         cubit.registerSpecialty = value;
                       },
                       textInputType: TextInputType.text,
-                      validator: (value) =>
-                          AppValidators.fieldsIsEmptyValidation(value!),
+                      // validator: (value) =>
+                      //     AppValidators.fieldsIsEmptyValidation(value!),
+                      validator: (value) => null,
                       textInputAction: TextInputAction.next,
                     ),
                   ],
@@ -226,9 +233,10 @@ class RegisterForm extends StatelessWidget {
                     onChanged: (value) {
                       cubit.registerHighestDegree = value.toString();
                     },
-                    validator: (value) => value == null
-                        ? AppValidators.fieldsIsEmptyValidation('')
-                        : AppValidators.fieldsIsEmptyValidation(value),
+                    // validator: (value) => value == null
+                    //     ? AppValidators.fieldsIsEmptyValidation('')
+                    //     : AppValidators.fieldsIsEmptyValidation(value),
+                    validator: (value) => null,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(borderSide: BorderSide.none),
                     ),

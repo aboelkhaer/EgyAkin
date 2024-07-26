@@ -194,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return MoreScreen(
             currentDoctorModel: cubit.currentDoctorModel,
             accountVerification: cubit.accountVerification ?? true,
+            homeDataModel: cubit.homeDataModel,
           );
         },
       ),
