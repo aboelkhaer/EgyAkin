@@ -13,7 +13,7 @@ class GetProfilePatientsUsecase
   GetProfilePatientsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetProfilePatientsModelResponse>> excute(
+  Future<Either<Failure, GetProfilePatientsModelResponse>> execute(
       GetProfilePatientsUsecaseInput input) async {
     return await repository.getProfilePatients(
       page: input.page,

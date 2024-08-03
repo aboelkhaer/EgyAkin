@@ -8,6 +8,7 @@ class AllDoctorsPatientsScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
 
   const AllDoctorsPatientsScreen(
       {super.key,
@@ -15,7 +16,8 @@ class AllDoctorsPatientsScreen extends StatefulWidget {
       required this.accountVerification,
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   State<AllDoctorsPatientsScreen> createState() =>
@@ -126,6 +128,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          homeDataModel: widget.homeDataModel,
                           accountVerification: widget.accountVerification,
                           doctorId: patient.doctor!.id.toString(),
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
@@ -156,6 +159,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                                     widget.isSyndicateCardRequired,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 currentDoctorPoints: widget.currentDoctorPoints,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },
@@ -183,6 +187,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                                 currentDoctorModel: widget.currentDoctorModel,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },

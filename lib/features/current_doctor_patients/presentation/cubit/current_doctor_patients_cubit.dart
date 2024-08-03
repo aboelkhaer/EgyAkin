@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
@@ -11,7 +10,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   getCurrentDoctorPatients() async {
     emit(const CurrentDoctorPatientsState.loading());
 
-    final result = await _getCurrentDoctorPatientsUsecase.excute(_currentPage);
+    final result = await _getCurrentDoctorPatientsUsecase.execute(_currentPage);
     result.fold(
       (l) {
         emit(CurrentDoctorPatientsState.error(l.message));
@@ -32,7 +31,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
       loaded: (value) =>
           CurrentDoctorPatientsState.loaded(value.response, true),
     ));
-    final result = await _getCurrentDoctorPatientsUsecase.excute(_currentPage);
+    final result = await _getCurrentDoctorPatientsUsecase.execute(_currentPage);
     result.fold(
       (l) {
         _currentPage--;

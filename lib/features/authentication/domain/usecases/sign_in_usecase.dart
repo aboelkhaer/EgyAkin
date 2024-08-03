@@ -8,7 +8,7 @@ class SignInUsecase
   SignInUsecase(this.repository);
 
   @override
-  Future<Either<Failure, AuthenticationModelResponse>> excute(
+  Future<Either<Failure, AuthenticationModelResponse>> execute(
       SignInUseCaseInput input) async {
     return await repository.signIn(
       email: input.email,

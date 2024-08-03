@@ -15,6 +15,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const DoctorInfoViewScreen({
     super.key,
     required this.doctorId,
@@ -23,6 +24,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
     required this.accountVerification,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -106,7 +108,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               isLoadedScoreHistory, message, scoreHistory) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
-                              child: GestureDetector(
+                              child: InkWell(
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -118,6 +120,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     ),
                                   );
                                 },
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
                                 child: FadeIn(
                                   duration: const Duration(milliseconds: 300),
                                   child: CircleAvatar(
@@ -241,7 +245,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           },
                           loaded: (doctorInfo, isLoadingScoreHistory,
                               isLoadedScoreHistory, message, scoreHistory) {
-                            return GestureDetector(
+                            return InkWell(
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.profilePatients,
@@ -259,9 +263,12 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     doctorFirstName:
                                         doctorInfo.data!.firstName.toString(),
                                     currentDoctorRole: widget.currentDoctorRole,
+                                    homeDataModel: widget.homeDataModel,
                                   ),
                                 );
                               },
+                              splashColor: Colors.transparent,
+                              highlightColor: Colors.transparent,
                               child: Column(
                                 children: [
                                   BlocBuilder<DoctorInfoViewCubit,
@@ -300,7 +307,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                         );
                       },
                     ),
-                    GestureDetector(
+                    InkWell(
                       onTap: () {
                         showCustomBottomSheet(
                           context: context,
@@ -314,6 +321,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           },
                         );
                       },
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
                       child: Column(
                         children: [
                           BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(

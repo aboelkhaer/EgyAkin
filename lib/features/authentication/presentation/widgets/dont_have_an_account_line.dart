@@ -15,6 +15,7 @@ class DontHaveAnAccountLine extends StatelessWidget {
           style: TextStyle(
             color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
+            fontSize: 8.sp,
           ),
         ),
         const SizedBox(width: 4),
@@ -32,10 +33,11 @@ class DontHaveAnAccountLine extends StatelessWidget {
               color: Colors.blue,
               width: 1.0, // Underline thickness
             ))),
-            child: const Text(
+            child: Text(
               AppStrings.registerNow,
               style: TextStyle(
                 color: Colors.blue,
+                fontSize: 8.sp,
               ),
             ),
           ),

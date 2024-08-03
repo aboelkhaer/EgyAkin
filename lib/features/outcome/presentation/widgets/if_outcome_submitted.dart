@@ -12,6 +12,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
     required this.isSyndicateCardRequired,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
   final OutcomeCubit cubit;
   final String doctorId;
@@ -20,6 +21,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +71,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                 isSyndicateCardRequired:
                                     isSyndicateCardRequired,
                                 currentDoctorRole: currentDoctorRole,
+                                homeDataModel: homeDataModel,
                               ),
                             );
                           },

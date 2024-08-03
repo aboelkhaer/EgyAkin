@@ -9,6 +9,7 @@ class ProfileNameAndJob extends StatelessWidget {
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
 
   const ProfileNameAndJob({
     super.key,
@@ -17,6 +18,7 @@ class ProfileNameAndJob extends StatelessWidget {
     required this.accountVerification,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -222,6 +224,7 @@ class ProfileNameAndJob extends StatelessWidget {
                                 doctorFirstName:
                                     cubit.currentDoctor.firstName.toString(),
                                 currentDoctorRole: currentDoctorRole,
+                                homeDataModel: homeDataModel,
                               ),
                             );
                           },

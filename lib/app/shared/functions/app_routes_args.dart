@@ -6,12 +6,14 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required int currentDoctorPoints,
     required String currentDoctorRole,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'patientId': patientId,
       'currentDoctorModel': currentDoctorModel,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -35,11 +37,13 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -75,6 +79,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
@@ -82,6 +87,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -95,6 +101,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'accountVerification': verified,
@@ -106,6 +113,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -115,6 +123,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'accountVerification': accountVerification,
@@ -122,6 +131,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': currentDoctorPoints,
     };
   }
 
@@ -131,6 +141,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'accountVerification': accountVerification,
@@ -138,6 +149,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -149,6 +161,7 @@ class AppRoutesArgs {
     required String currentDoctorRole,
     required String doctorId,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'sectionModel': sectionModel,
@@ -158,6 +171,7 @@ class AppRoutesArgs {
       'doctorId': doctorId,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -168,6 +182,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'doctorId': doctorId,
@@ -176,6 +191,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -187,6 +203,7 @@ class AppRoutesArgs {
     required String doctorFirstName,
     required String currentDoctorRole,
     required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'doctorId': doctorId,
@@ -196,6 +213,7 @@ class AppRoutesArgs {
       'doctorFirstName': doctorFirstName,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -204,6 +222,16 @@ class AppRoutesArgs {
   }) {
     return {
       'homeDataModel': homeDataModel,
+    };
+  }
+
+  static Map<String, dynamic> sendConsultationRouteArgs({
+    required HomeModelResponse homeDataModel,
+    required DoctorModel currentDoctorModel,
+  }) {
+    return {
+      'homeDataModel': homeDataModel,
+      'currentDoctorModel': currentDoctorModel,
     };
   }
 }

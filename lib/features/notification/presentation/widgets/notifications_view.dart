@@ -8,6 +8,7 @@ class NotificationsView extends StatelessWidget {
   final String isSyndicateCardRequired;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   const NotificationsView(
       {super.key,
       required this.notificationsModel,
@@ -15,7 +16,8 @@ class NotificationsView extends StatelessWidget {
       required this.accountVerification,
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +36,7 @@ class NotificationsView extends StatelessWidget {
             currentDoctorRole: currentDoctorRole,
             currentDoctorPoints: currentDoctorPoints,
             isSyndicateCardRequired: isSyndicateCardRequired,
+            homeDataModel: homeDataModel,
           );
         },
       ),

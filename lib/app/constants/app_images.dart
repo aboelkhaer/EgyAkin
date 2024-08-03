@@ -21,4 +21,7 @@ class AppImages {
   static const String whiteEgyAkin = '$imagePath/white_egyakin.png';
   static const String blackEgyAkin = '$imagePath/black_egyakin.png';
   static const String verified = '$imagePath/verify.png';
+  static const String ckd = '$imagePath/ckd.png';
+  static const String mdrd = '$imagePath/mdrd.png';
+  static const String sobh = '$imagePath/sobh.png';
 }

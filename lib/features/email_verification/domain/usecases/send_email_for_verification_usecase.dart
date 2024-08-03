@@ -8,7 +8,7 @@ class SendEmailForVerificationUsecase
   SendEmailForVerificationUsecase(this.repository);
 
   @override
-  Future<Either<Failure, SendEmailForVerificationModelResponse>> excute(
+  Future<Either<Failure, SendEmailForVerificationModelResponse>> execute(
       NoParams input) async {
     return await repository.sendEmailForVerification();
   }

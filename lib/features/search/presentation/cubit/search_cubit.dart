@@ -24,7 +24,7 @@ class SearchCubit extends Cubit<SearchState> {
         doseValue = searchController.text;
       }
 
-      final result = await _getSearchHomeUsecase.excute(
+      final result = await _getSearchHomeUsecase.execute(
         GetSearchHomeUsecaseInput(patient: patientValue, dose: doseValue),
       );
       result.fold(

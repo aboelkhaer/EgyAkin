@@ -8,7 +8,7 @@ class GetPostCommentsUsecase
   GetPostCommentsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, PostCommentsModelResponse>> excute(
+  Future<Either<Failure, PostCommentsModelResponse>> execute(
       String postId) async {
     return await repository.getPostComments(postId);
   }

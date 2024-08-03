@@ -8,6 +8,7 @@ class SectionSubmitButton extends StatelessWidget {
   final bool finalSubmitStatus;
   final int currentDoctorPoints;
   final SectionModel sectionModel;
+  final HomeModelResponse homeDataModel;
   const SectionSubmitButton(
       {super.key,
       required this.doctorId,
@@ -16,7 +17,8 @@ class SectionSubmitButton extends StatelessWidget {
       required this.sectionModel,
       required this.patientId,
       required this.finalSubmitStatus,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +73,7 @@ class SectionSubmitButton extends StatelessWidget {
                             currentDoctorModel: currentDoctorModel,
                             currentDoctorRole: currentDoctorRole,
                             currentDoctorPoints: currentDoctorPoints,
+                            homeDataModel: homeDataModel,
                           ),
                         );
                       }

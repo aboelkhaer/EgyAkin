@@ -6,13 +6,15 @@ class CurrentDoctorPatientsScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const CurrentDoctorPatientsScreen(
       {super.key,
       required this.currentDoctorModel,
       required this.accountVerification,
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   State<CurrentDoctorPatientsScreen> createState() =>
@@ -118,6 +120,7 @@ class _CurrentDoctorPatientsScreenState
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
                           doctorId: patient.doctor!.id.toString(),
+                          homeDataModel: widget.homeDataModel,
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           drLastName:
                               patient.doctor!.lastName ?? AppStrings.empty,
@@ -147,6 +150,7 @@ class _CurrentDoctorPatientsScreenState
                                     widget.isSyndicateCardRequired,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 currentDoctorPoints: widget.currentDoctorPoints,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },
@@ -174,6 +178,7 @@ class _CurrentDoctorPatientsScreenState
                                 currentDoctorModel: widget.currentDoctorModel,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },

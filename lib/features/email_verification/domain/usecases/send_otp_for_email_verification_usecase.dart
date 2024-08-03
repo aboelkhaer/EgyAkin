@@ -8,7 +8,7 @@ class SendOTPForEmailVerificationUsecase
   SendOTPForEmailVerificationUsecase(this.repository);
 
   @override
-  Future<Either<Failure, SendOTPForEmailVerificationModelResponse>> excute(
+  Future<Either<Failure, SendOTPForEmailVerificationModelResponse>> execute(
       String otp) async {
     return await repository.sendOTPForEmailVerification(otp);
   }

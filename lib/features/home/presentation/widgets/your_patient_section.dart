@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class YourPatientSection extends StatelessWidget {
@@ -36,6 +35,7 @@ class YourPatientSection extends StatelessWidget {
                               homeData.isSyndicateCardRequired!,
                           currentDoctorPoints: int.parse(homeData.scoreValue!),
                           currentDoctorRole: homeData.role.toString(),
+                          homeDataModel: homeData,
                         ));
                   },
                 );
@@ -78,6 +78,7 @@ class YourPatientSection extends StatelessWidget {
                               patientName: patient.name ?? AppStrings.empty,
                               drFirstName:
                                   patient.doctor!.firstName ?? AppStrings.empty,
+                              homeDataModel: homeData,
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
                               accountVerification: homeData.verified!,
@@ -108,6 +109,7 @@ class YourPatientSection extends StatelessWidget {
                                       doctorId: patient.doctor!.id.toString(),
                                       isSyndicateCardRequired:
                                           homeData.isSyndicateCardRequired!,
+                                      homeDataModel: homeData,
                                       currentDoctorPoints:
                                           int.parse(homeData.scoreValue!),
                                       currentDoctorRole:
@@ -141,6 +143,7 @@ class YourPatientSection extends StatelessWidget {
                                         int.parse(homeData.scoreValue!),
                                     currentDoctorModel: currentDoctorModel,
                                     currentDoctorRole: homeData.role.toString(),
+                                    homeDataModel: homeData,
                                   ),
                                 );
                               },

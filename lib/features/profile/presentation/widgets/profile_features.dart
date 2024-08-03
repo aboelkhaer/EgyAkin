@@ -181,6 +181,7 @@ class ProfileFeatures extends StatelessWidget {
                             child: Icon(
                               _profileScreensData()[index].icon,
                               color: Colors.grey.shade800,
+                              size: 20.r,
                             ),
                           ),
                           SizedBox(width: 8.w),

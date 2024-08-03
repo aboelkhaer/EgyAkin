@@ -8,7 +8,7 @@ class RegisterUsecase
   RegisterUsecase(this.repository);
 
   @override
-  Future<Either<Failure, AuthenticationModelResponse>> excute(
+  Future<Either<Failure, AuthenticationModelResponse>> execute(
       DoctorModel doctorModel) async {
     return await repository.register(doctorModel: doctorModel);
   }

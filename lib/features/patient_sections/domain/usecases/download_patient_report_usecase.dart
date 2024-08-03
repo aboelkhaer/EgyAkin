@@ -9,7 +9,7 @@ class DownloadPatientReportUsecase
   DownloadPatientReportUsecase(this.repository);
 
   @override
-  Future<Either<Failure, DownloadPatientReportModelResponse>> excute(
+  Future<Either<Failure, DownloadPatientReportModelResponse>> execute(
       String patientId) async {
     return await repository.downloadPatientReport(patientId: patientId);
   }

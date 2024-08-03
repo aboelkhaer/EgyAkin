@@ -9,7 +9,7 @@ class FinalSubmitUsecase
   FinalSubmitUsecase(this.repository);
 
   @override
-  Future<Either<Failure, FinalSubmitModelResponse>> excute(
+  Future<Either<Failure, FinalSubmitModelResponse>> execute(
       String patientId) async {
     return await repository.finalSubmit(patientId: patientId);
   }

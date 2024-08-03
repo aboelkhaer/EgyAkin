@@ -20,6 +20,7 @@ class PatientCard extends StatelessWidget {
   final bool accountVerification;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   const PatientCard({
     super.key,
     required this.patientName,
@@ -39,6 +40,7 @@ class PatientCard extends StatelessWidget {
     required this.accountVerification,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -46,15 +48,14 @@ class PatientCard extends StatelessWidget {
     return Stack(
       children: [
         Card(
-          color: Colors.white, // Backgrond color
+          color: Colors.white,
           elevation: 0.8,
-
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
-            splashColor: AppColors.subBG, // Splash color
+            splashColor: AppColors.subBG,
             onTap: onTap,
             child: Container(
               width: 325.w,
@@ -96,6 +97,7 @@ class PatientCard extends StatelessWidget {
                                   accountVerification: accountVerification,
                                   currentDoctorRole: currentDoctorRole,
                                   currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
                                 ),
                               );
                             },

@@ -43,7 +43,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       emit(const AuthenticationState.loading());
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-      final result = await _signInUsecase.excute(
+      final result = await _signInUsecase.execute(
         SignInUseCaseInput(
           email: signInEmail,
           password: signInPassword,
@@ -86,7 +86,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final result = await _registerUsecase.excute(DoctorModel(
+        final result = await _registerUsecase.execute(DoctorModel(
           firstName: registerFirstName,
           lastName: registerLastName,
           email: registerEmail,

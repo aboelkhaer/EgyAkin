@@ -18,7 +18,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
     emit(const AddPatientState.loading());
     await Future.delayed(const Duration(
         milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-    final result = await _getPatientHistoryForAddPatientUsecase.excute('1');
+    final result = await _getPatientHistoryForAddPatientUsecase.execute('1');
     result.fold(
       (l) {
         emit(AddPatientState.error(l.message));
@@ -136,7 +136,43 @@ class AddPatientCubit extends Cubit<AddPatientState> {
             }
           }
         }
-        if (question.question == 'Age') {
+        if (question.question == 'Phone' &&
+            (question.answer != null ||
+                question.answer.toString().trim() != '')) {
+          String phoneNumber = formData[question.id.toString()];
+
+          if (phoneNumber.length != 11) {
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  'This question is required \n{${question.question}}',
+                  snackbarErrorCounter += 1),
+            ));
+            isValid = false;
+            break;
+          }
+          if (int.tryParse(phoneNumber) == null) {
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => AddPatientState.loaded(
+                  value.questions,
+                  false,
+                  0,
+                  false,
+                  'This question is required \n{${question.question}}',
+                  snackbarErrorCounter += 1),
+            ));
+            isValid = false;
+            break;
+          }
+        }
+        if (question.question == 'Age' &&
+            (question.answer != null ||
+                question.answer.toString().trim() != '')) {
           if (formData.containsKey(question.id.toString())) {
             String age = formData[question.id.toString()];
             if (int.tryParse(age) == null ||
@@ -174,39 +210,6 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           isValid = false;
           break;
         }
-
-        if (question.question == 'Phone') {
-          String phoneNumber = formData[question.id.toString()];
-
-          if (phoneNumber.length != 11) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  'This question is required \n{${question.question}}',
-                  snackbarErrorCounter += 1),
-            ));
-            isValid = false;
-            break;
-          }
-          if (int.tryParse(phoneNumber) == null) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  'This question is required \n{${question.question}}',
-                  snackbarErrorCounter += 1),
-            ));
-            isValid = false;
-            break;
-          }
-        }
       }
     }
 
@@ -219,7 +222,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-      final result = await _addPatientForFirstTimetUsecase.excute(formData);
+      final result = await _addPatientForFirstTimetUsecase.execute(formData);
       result.fold(
         (l) {
           emit(state.maybeMap(

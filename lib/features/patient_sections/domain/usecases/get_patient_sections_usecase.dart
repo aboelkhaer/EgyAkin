@@ -8,7 +8,7 @@ class GetPatientSectionsUsecase
   GetPatientSectionsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetPatientSectionsModelResponse>> excute(
+  Future<Either<Failure, GetPatientSectionsModelResponse>> execute(
       String patientId) async {
     return await repository.getPatientSections(patientId: patientId);
   }

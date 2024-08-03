@@ -15,7 +15,7 @@ class ChangePasswordCubit extends Cubit<ChangePasswordState> {
   changePassword() async {
     if (formKey.currentState!.validate()) {
       emit(const ChangePasswordState.loading());
-      final result = await _changePasswordUsecase.excute(
+      final result = await _changePasswordUsecase.execute(
         ChangePasswordUsecaseInput(
           oldPassword: oldPassword,
           newPassword: newPasswordController.text,

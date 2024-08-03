@@ -7,11 +7,13 @@ class AddPatientScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const AddPatientScreen({
     super.key,
     required this.currentDoctorModel,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -172,6 +174,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                 currentDoctorModel: widget.currentDoctorModel,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             )
                             .then(
@@ -260,9 +263,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                       ? [
                           LengthLimitingTextInputFormatter(14),
                         ]
-                      : [
-                          LengthLimitingTextInputFormatter(200),
-                        ],
+                      : questionList[index].question == 'Age'
+                          ? [
+                              LengthLimitingTextInputFormatter(3),
+                            ]
+                          : [
+                              LengthLimitingTextInputFormatter(200),
+                            ],
           onChanged: (val) {
             if (questionAnswer != val) {
               questionAnswer = val;

@@ -8,7 +8,7 @@ class SignOutUsecase implements BaseUseCase<NoParams, SignOutModelResponse> {
   SignOutUsecase(this.repository);
 
   @override
-  Future<Either<Failure, SignOutModelResponse>> excute(NoParams input) async {
+  Future<Either<Failure, SignOutModelResponse>> execute(NoParams input) async {
     return await repository.signOut();
   }
 }

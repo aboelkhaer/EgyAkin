@@ -21,7 +21,7 @@ class SplashCubit extends Cubit<SplashState> {
     }
     bool appFreeze = false;
     bool forceUpdate = false;
-    final result = await _getAppSettingsUsecase.excute(NoParams());
+    final result = await _getAppSettingsUsecase.execute(NoParams());
     result.fold(
       (l) {
         appFreeze = false;

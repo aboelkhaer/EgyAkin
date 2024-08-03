@@ -20,6 +20,7 @@ class SignInForm extends StatelessWidget {
           CustomTextFormField(
             title: AppStrings.email,
             enableSuggestions: true,
+            style: TextStyle(fontSize: 10.sp),
             textInputType: TextInputType.emailAddress,
             onChanged: (value) {
               cubit.signInEmail = value;
@@ -35,6 +36,7 @@ class SignInForm extends StatelessWidget {
                     (signInObscureText, signInVisiblePasswordIcon) {
                   return CustomTextFormField(
                     title: AppStrings.password,
+                    style: TextStyle(fontSize: 10.sp),
                     textInputType: TextInputType.visiblePassword,
                     onChanged: (value) {
                       cubit.signInPassword = value;
@@ -54,6 +56,7 @@ class SignInForm extends StatelessWidget {
                   return CustomTextFormField(
                     title: AppStrings.password,
                     textInputType: TextInputType.visiblePassword,
+                    style: TextStyle(fontSize: 10.sp),
                     onChanged: (value) {
                       cubit.signInPassword = value;
                     },
@@ -85,6 +88,7 @@ class SignInForm extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.grey.shade500,
                       fontWeight: FontWeight.w500,
+                      fontSize: 8.sp,
                     ),
                   ),
                 ),

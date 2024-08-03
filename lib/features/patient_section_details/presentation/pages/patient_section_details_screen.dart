@@ -20,6 +20,7 @@ class PatientSectionDetailsScreen extends StatefulWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final String doctorId;
+  final HomeModelResponse homeDataModel;
   const PatientSectionDetailsScreen(
       {super.key,
       required this.currentDoctorModel,
@@ -28,7 +29,8 @@ class PatientSectionDetailsScreen extends StatefulWidget {
       required this.patientId,
       required this.doctorId,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   State<PatientSectionDetailsScreen> createState() =>
@@ -218,13 +220,15 @@ class _PatientSectionDetailsScreenState
           ),
         ),
         SectionSubmitButton(
-            doctorId: widget.doctorId,
-            currentDoctorModel: widget.currentDoctorModel,
-            currentDoctorRole: widget.currentDoctorRole,
-            sectionModel: widget.sectionModel,
-            patientId: widget.patientId,
-            currentDoctorPoints: widget.currentDoctorPoints,
-            finalSubmitStatus: widget.finalSubmitStatus),
+          doctorId: widget.doctorId,
+          currentDoctorModel: widget.currentDoctorModel,
+          currentDoctorRole: widget.currentDoctorRole,
+          sectionModel: widget.sectionModel,
+          patientId: widget.patientId,
+          currentDoctorPoints: widget.currentDoctorPoints,
+          finalSubmitStatus: widget.finalSubmitStatus,
+          homeDataModel: widget.homeDataModel,
+        ),
         // widget.doctorId.toString() != widget.currentDoctorModel.id.toString()
         //     ? const SizedBox.shrink()
         //     : widget.finalSubmitStatus

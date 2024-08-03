@@ -11,7 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 //! don't remove imports
 
 class ProfileCubit extends Cubit<ProfileState> {
@@ -36,7 +35,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (pickedImage != null) {
         final pickedImageFile = File(pickedImage.path);
         imagePicked = pickedImageFile;
-        final result = await _uploadProfileImageUsecase.excute(imagePicked!);
+        final result = await _uploadProfileImageUsecase.execute(imagePicked!);
 
         result.fold(
           (l) {
@@ -66,7 +65,7 @@ class ProfileCubit extends Cubit<ProfileState> {
 
   signOut() async {
     emit(const ProfileState.signOutLoading());
-    final result = await _signOutUsecase.excute(NoParams());
+    final result = await _signOutUsecase.execute(NoParams());
 
     result.fold(
       (l) {

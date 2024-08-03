@@ -48,7 +48,7 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
   void resendOtp() async {
     countdown = AppStrings.resendTimer;
     startCountdown();
-    final result = await _sendEmailForVerificationUsecase.excute(NoParams());
+    final result = await _sendEmailForVerificationUsecase.execute(NoParams());
     result.fold(
       (l) => emit(EmailVerificationState.error(l.message)),
       (r) {
@@ -60,7 +60,7 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
   sendEmailForVerification() async {
     emit(const EmailVerificationState.loading());
 
-    final result = await _sendEmailForVerificationUsecase.excute(NoParams());
+    final result = await _sendEmailForVerificationUsecase.execute(NoParams());
     result.fold(
       (l) => emit(EmailVerificationState.error(l.message)),
       (r) {
@@ -74,7 +74,7 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
     emit(const EmailVerificationState.loading());
 
     final result = await _sendOTPForEmailVerificationUsecase
-        .excute('$pin1$pin2$pin3$pin4');
+        .execute('$pin1$pin2$pin3$pin4');
     result.fold(
       (l) => emit(EmailVerificationState.error(l.message)),
       (r) {

@@ -38,11 +38,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = HomeCubit.get(context);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light));
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        ),
+      ),
       body: Column(
         children: [
           BlocConsumer<HomeCubit, HomeState>(
@@ -63,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 orElse: () {
                   return Column(
                     children: [
-                      SizedBox(height: 50.h),
+                      SizedBox(height: 10.h),
                       Container(
                         padding: const EdgeInsets.all(20.0),
                         decoration: BoxDecoration(
@@ -85,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   return Column(
                     children: [
-                      SizedBox(height: 50.h),
+                      SizedBox(height: 10.h),
                       Container(
                         padding: const EdgeInsets.all(20.0),
                         decoration: BoxDecoration(
@@ -159,6 +164,7 @@ class _HomeScreenState extends State<HomeScreen> {
             currentDoctorPoints:
                 cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
             isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+            homeDataModel: cubit.homeDataModel,
           );
         },
       ),
@@ -170,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                 accountVerification: false,
                 currentDoctorRole: cubit.currentDoctorRole,
+                homeDataModel: cubit.homeDataModel,
                 currentDoctorPoints: cubit.doctorScore == null
                     ? 0
                     : int.parse(cubit.doctorScore!),
@@ -180,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return ProfileScreen(
                 isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                 accountVerification: cubit.accountVerification!,
+                homeDataModel: homeData,
                 currentDoctorPoints: cubit.doctorScore == null
                     ? 0
                     : int.parse(cubit.doctorScore!),

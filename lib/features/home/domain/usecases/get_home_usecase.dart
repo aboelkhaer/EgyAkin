@@ -7,7 +7,7 @@ class GetHomeUsecase implements BaseUseCase<NoParams, HomeModelResponse> {
   GetHomeUsecase(this.repository);
 
   @override
-  Future<Either<Failure, HomeModelResponse>> excute(NoParams input) async {
+  Future<Either<Failure, HomeModelResponse>> execute(NoParams input) async {
     return await repository.getHome();
   }
 }

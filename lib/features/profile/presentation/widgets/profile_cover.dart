@@ -5,6 +5,7 @@ class ProfileCover extends StatelessWidget {
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const ProfileCover({
     super.key,
     required this.cubit,
@@ -12,6 +13,7 @@ class ProfileCover extends StatelessWidget {
     required this.accountVerification,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   final ProfileCubit cubit;
@@ -59,6 +61,7 @@ class ProfileCover extends StatelessWidget {
                       accountVerification: accountVerification,
                       currentDoctorRole: currentDoctorRole,
                       currentDoctorPoints: currentDoctorPoints,
+                      homeDataModel: homeDataModel,
                     ),
                     SizedBox(height: 5.h),
                     SizedBox(height: 10.h),

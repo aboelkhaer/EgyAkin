@@ -8,7 +8,7 @@ class GetPatientCommentsUsecase
   GetPatientCommentsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetPatientCommentsModelResponse>> excute(
+  Future<Either<Failure, GetPatientCommentsModelResponse>> execute(
       String patientId) async {
     return await repository.getPatientComments(patientId);
   }

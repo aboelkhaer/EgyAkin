@@ -1,4 +1,3 @@
-
 import 'package:egy_akin/features/change_password/presentation/cubit/change_password_state.dart';
 
 import '../../../../exports.dart';
@@ -42,18 +41,28 @@ class ChangePasswordScreen extends StatelessWidget {
                         AppValidators.passwordValidateForRegister(value!),
                   ),
                   SizedBox(height: 5.h),
-                  FlutterPwValidator(
-                      controller: cubit.newPasswordController,
-                      minLength: 6,
-                      uppercaseCharCount: 1,
-                      numericCharCount: 2,
-                      specialCharCount: 1,
-                      width: 310.w,
-                      height: 100.h,
-                      onSuccess: () {},
-                      onFail: () {
-                        return null;
-                      }),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FlutterPwValidator(
+                            controller: cubit.newPasswordController,
+                            minLength: 6,
+                            uppercaseCharCount: 1,
+                            numericCharCount: 2,
+                            specialCharCount: 1,
+                            width: 200.w,
+                            height: 100.h,
+                            onSuccess: () {},
+                            onFail: () {
+                              return null;
+                            }),
+                      ),
+                      SizedBox(
+                        width: 10.w,
+                      ),
+                      const Expanded(child: SizedBox.shrink())
+                    ],
+                  ),
                 ],
               ),
             ),

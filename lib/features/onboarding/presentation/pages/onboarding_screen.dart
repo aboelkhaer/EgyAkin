@@ -121,10 +121,10 @@ class OnboardingScreen extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                const Text(
+                Text(
                   AppStrings.joinUs,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 10.sp,
                     color: AppColors.description,
                   ),
                 ),

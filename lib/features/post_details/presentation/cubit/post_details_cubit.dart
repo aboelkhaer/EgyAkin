@@ -16,7 +16,7 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
 
   getPostComments(String postId) async {
     emit(const PostDetailsState.loading());
-    final result = await _getPostCommentsUsecase.excute(postId);
+    final result = await _getPostCommentsUsecase.execute(postId);
 
     result.fold(
       (l) {
@@ -29,7 +29,7 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
   }
 
   void deletePostComment(String commentId) async {
-    final result = await _deletePostCommentUsecase.excute(commentId);
+    final result = await _deletePostCommentUsecase.execute(commentId);
 
     result.fold(
       (l) {
@@ -52,7 +52,7 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
   void addCommentOnPost(String postId) async {
     if (newComment.trim() != '') {
       emit(const PostDetailsState.loading());
-      final result = await _addCommentOnPostUsecase.excute(
+      final result = await _addCommentOnPostUsecase.execute(
         AddCommentOnPostUseCaseInput(
           postId: postId,
           content: newComment,
@@ -66,7 +66,7 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
         (result) async {
           newComment = '';
           final getCommentsResult =
-              await _getPostCommentsUsecase.excute(postId);
+              await _getPostCommentsUsecase.execute(postId);
           getCommentsResult.fold(
             (l) {
               emit(PostDetailsState.error(l.message));

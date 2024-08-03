@@ -86,7 +86,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     isResendBottonShow = false;
     countdown = AppStrings.resendTimer;
     startCountdown();
-    final result = await _sendEmailForResetPasswordUsecase.excute(email);
+    final result = await _sendEmailForResetPasswordUsecase.execute(email);
     result.fold(
       (l) => emit(ResetPasswordState.error(l.message)),
       (r) {
@@ -99,7 +99,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     if (firstStepFormKey.currentState!.validate()) {
       emit(const ResetPasswordState.loading());
 
-      final result = await _sendEmailForResetPasswordUsecase.excute(email);
+      final result = await _sendEmailForResetPasswordUsecase.execute(email);
       result.fold(
         (l) => emit(ResetPasswordState.error(l.message)),
         (r) {
@@ -123,7 +123,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       }
       emit(const ResetPasswordState.loading());
 
-      final result = await _verifyOTPForResetPasswordUsecase.excute(
+      final result = await _verifyOTPForResetPasswordUsecase.execute(
         VerifyOTPForResetPasswordUseCaseInput(
           email: email,
           otp: '$pin1$pin2$pin3$pin4',
@@ -143,7 +143,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     if (thirdStepFormKey.currentState!.validate()) {
       emit(const ResetPasswordState.loading());
 
-      final result = await _changePasswordForResetPasswordUsecase.excute(
+      final result = await _changePasswordForResetPasswordUsecase.execute(
         ChangePasswordForResetPasswordUseCaseInput(
           email: email,
           password: newPasswordController.text,

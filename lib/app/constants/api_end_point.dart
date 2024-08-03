@@ -48,4 +48,6 @@ class ApiEndPoint {
   static const doctorProfileGetScoreHistory =
       '$baseUrl/api/doctorProfileGetScoreHistory';
   static const uploadFileNew = '$baseUrl/api/uploadFileNew';
+  static const consultationDoctorSearch =
+      '$baseUrl/api/consultationDoctorSearch';
 }

@@ -5,12 +5,14 @@ class PatientSectionsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const PatientSectionsScreen({
     super.key,
     required this.patientId,
     required this.currentDoctorModel,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -99,17 +101,26 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
           },
         ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(
-        //     onPressed: () {
-        //       navigatorKey.currentState?.pushNamed(AppRoutes.sendConsultation);
-        //     },
-        //     icon: Icon(
-        //       Icons.chat_bubble_outline,
-        //       size: 20.r,
-        //     ),
-        //   ),
-        // ],
+        actions: [
+          Tooltip(
+            message: 'Send consultation',
+            child: IconButton(
+              onPressed: () {
+                navigatorKey.currentState?.pushNamed(
+                  AppRoutes.sendConsultation,
+                  arguments: AppRoutesArgs.sendConsultationRouteArgs(
+                    homeDataModel: widget.homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.chat_bubble_outline,
+                size: 20.r,
+              ),
+            ),
+          ),
+        ],
       ),
       body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
         listener: (context, state) {
@@ -254,6 +265,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                                           .currentDoctorRole,
                                                       currentDoctorPoints: widget
                                                           .currentDoctorPoints,
+                                                      homeDataModel:
+                                                          widget.homeDataModel,
                                                       doctorId: response
                                                           .doctorId
                                                           .toString()),

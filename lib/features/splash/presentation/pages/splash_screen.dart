@@ -201,31 +201,6 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       body: BlocListener<SplashCubit, SplashState>(
         listener: (context, state) {
-          // state.maybeWhen(
-          //   loaded: (isAuthentication, isWelcomed) {
-          //     if (_isUpToDate) {
-          //       if (isAuthentication && isWelcomed) {
-          //         return Navigator.of(context)
-          //             .pushReplacementNamed(AppRoutes.home, arguments: 0);
-          //       }
-          //       if (isWelcomed) {
-          //         log('welcome true');
-          //         return Navigator.of(context)
-          //             .pushReplacementNamed(AppRoutes.signIn);
-          //       }
-
-          //       log('welcome false');
-          //       return Navigator.of(context)
-          //           .pushReplacementNamed(AppRoutes.welcome);
-          //     }
-          //   },
-          //   orElse: () {
-          //     if (_isUpToDate) {
-          //       return navigatorKey.currentState
-          //           ?.pushReplacementNamed(AppRoutes.welcome);
-          //     }
-          //   },
-          // );
           _navigateToNextScreen();
         },
         child: SizedBox(

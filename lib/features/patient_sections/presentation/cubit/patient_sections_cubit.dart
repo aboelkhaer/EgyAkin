@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
 
@@ -22,7 +21,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
 
   getPatientSections(String patientId) async {
     emit(const PatientSectionsState.loading());
-    final result = await _getPatientSectionsUsecase.excute(patientId);
+    final result = await _getPatientSectionsUsecase.execute(patientId);
 
     result.fold(
       (l) {
@@ -42,7 +41,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
       loaded: (value) => PatientSectionsState.loaded(
           value.response, false, false, '', true, 0.0, '', false, false),
     ));
-    final result = await _deletePatientUsecase.excute(patientId);
+    final result = await _deletePatientUsecase.execute(patientId);
 
     result.fold(
       (l) {
@@ -76,7 +75,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         loaded: (value) => PatientSectionsState.loaded(
             value.response, false, false, '', true, 0.0, '', false, false),
       ));
-      final result = await _finalSubmitUsecase.excute(patientId);
+      final result = await _finalSubmitUsecase.execute(patientId);
 
       result.fold(
         (l) {
@@ -107,7 +106,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
           coloredButtonOnTap: () async {
             Navigator.of(context).pop();
             emit(const PatientSectionsState.loading());
-            final result = await _finalSubmitUsecase.excute(patientId);
+            final result = await _finalSubmitUsecase.execute(patientId);
 
             result.fold(
               (l) {
@@ -139,7 +138,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
       loaded: (value) => PatientSectionsState.loaded(
           value.response, false, false, '', false, 0.0, '', true, false),
     ));
-    final result = await _downloadPatientReportUsecase.excute(patientId);
+    final result = await _downloadPatientReportUsecase.execute(patientId);
 
     result.fold(
       (l) {

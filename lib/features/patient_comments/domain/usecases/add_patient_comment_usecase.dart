@@ -10,7 +10,7 @@ class AddPatientCommentsUsecase
   AddPatientCommentsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, AddPatientCommentsModelResponse>> excute(
+  Future<Either<Failure, AddPatientCommentsModelResponse>> execute(
       AddCommentUseCaseInput input) async {
     return await repository.addPatientComments(input.patientId, input.content);
   }

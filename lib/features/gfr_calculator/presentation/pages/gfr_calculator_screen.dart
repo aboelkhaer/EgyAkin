@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
+
 import '../../../../exports.dart';
 
 class GfrCalculatorScreen extends StatelessWidget {
@@ -51,6 +53,67 @@ class GfrCalculatorScreen extends StatelessWidget {
                                   cubit.changeEquationTypeValue(value!);
                                 },
                               ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: InkWell(
+                                          splashColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const FullScreenImage(
+                                                  imageUrl: AppImages.ckd,
+                                                  isLocal: true,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(8.0),
+                                                  topRight:
+                                                      Radius.circular(8.0),
+                                                  bottomLeft:
+                                                      Radius.circular(8.0),
+                                                  bottomRight:
+                                                      Radius.circular(8.0),
+                                                ),
+                                                child: Image.asset(
+                                                  AppImages.ckd,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.info_outline,
+                                  size: 20.r,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
                             ),
                             ListTile(
                               title: Text(
@@ -64,6 +127,67 @@ class GfrCalculatorScreen extends StatelessWidget {
                                   cubit.changeEquationTypeValue(value!);
                                 },
                               ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: InkWell(
+                                          splashColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const FullScreenImage(
+                                                  imageUrl: AppImages.sobh,
+                                                  isLocal: true,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(8.0),
+                                                  topRight:
+                                                      Radius.circular(8.0),
+                                                  bottomLeft:
+                                                      Radius.circular(8.0),
+                                                  bottomRight:
+                                                      Radius.circular(8.0),
+                                                ),
+                                                child: Image.asset(
+                                                  AppImages.sobh,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.info_outline,
+                                  size: 20.r,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
                             ),
                             ListTile(
                               title: Text(
@@ -76,6 +200,67 @@ class GfrCalculatorScreen extends StatelessWidget {
                                 onChanged: (String? value) {
                                   cubit.changeEquationTypeValue(value!);
                                 },
+                              ),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: InkWell(
+                                          splashColor: Colors.transparent,
+                                          highlightColor: Colors.transparent,
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const FullScreenImage(
+                                                  imageUrl: AppImages.mdrd,
+                                                  isLocal: true,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    const BorderRadius.only(
+                                                  topLeft: Radius.circular(8.0),
+                                                  topRight:
+                                                      Radius.circular(8.0),
+                                                  bottomLeft:
+                                                      Radius.circular(8.0),
+                                                  bottomRight:
+                                                      Radius.circular(8.0),
+                                                ),
+                                                child: Image.asset(
+                                                  AppImages.mdrd,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.info_outline,
+                                  size: 20.r,
+                                  color: Colors.grey.shade600,
+                                ),
                               ),
                             ),
                           ],
@@ -359,34 +544,26 @@ class GfrCalculatorScreen extends StatelessWidget {
                   onPressed: () => cubit.calculateGFR(context),
                   title: 'Calculate',
                 ),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    // return state.maybeWhen(
-                    //   orElse: () {
-                    //     return const SizedBox.shrink();
-                    //   },
-                    //   loaded: () {
-                    //   if()
-                    //   },
-                    // );
-                    if (homeDataModel.role == 'Admin') {
-                      return Column(
-                        children: [
-                          SizedBox(height: 20.h),
-                          Text(
-                            'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12.0.sp,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
+                // BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                //   builder: (context, state) {
+                //     if (homeDataModel.role == 'Admin') {
+                //       return Column(
+                //         children: [
+                //           SizedBox(height: 20.h),
+                //           Text(
+                //             'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
+                //             textAlign: TextAlign.center,
+                //             style: TextStyle(
+                //               fontSize: 12.0.sp,
+                //               color: Colors.red,
+                //             ),
+                //           ),
+                //         ],
+                //       );
+                //     }
+                //     return const SizedBox.shrink();
+                //   },
+                // ),
                 SizedBox(height: 30.h),
                 Row(
                   children: [

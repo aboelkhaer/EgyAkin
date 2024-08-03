@@ -11,7 +11,7 @@ class UpdateDoctorProfileUsecase
   UpdateDoctorProfileUsecase(this.repository);
 
   @override
-  Future<Either<Failure, UpdateDoctorProfileModelResponse>> excute(
+  Future<Either<Failure, UpdateDoctorProfileModelResponse>> execute(
       UpdateDoctorProfileUsecaseInput input) async {
     return await repository.updateDoctorProfile(
       firstName: input.firstName,

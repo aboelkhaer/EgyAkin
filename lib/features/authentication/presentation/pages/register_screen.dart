@@ -18,6 +18,7 @@ class RegisterScreen extends StatelessWidget {
                   children: [
                     const AuthImage(image: AppImages.register),
                     RegisterForm(cubit: cubit),
+                    SizedBox(height: 20.h),
                     Container(
                       height: 130.h,
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -25,6 +26,7 @@ class RegisterScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               BlocBuilder<AuthenticationCubit,
                                   AuthenticationState>(
@@ -35,12 +37,13 @@ class RegisterScreen extends StatelessWidget {
                                       cubit.isConfirmationChecked = value!;
                                       cubit.refreshScreen();
                                     },
+                                    visualDensity: VisualDensity.comfortable,
                                   );
                                 },
                               ),
                               Text(
                                 'I have read and agree to the ',
-                                style: TextStyle(fontSize: 11.5.sp),
+                                style: TextStyle(fontSize: 10.sp),
                               ),
                               GestureDetector(
                                 onTap: () async {
@@ -54,7 +57,7 @@ class RegisterScreen extends StatelessWidget {
                                 child: Text(
                                   'Privacy Policy',
                                   style: TextStyle(
-                                      color: Colors.blue, fontSize: 11.5.sp),
+                                      color: Colors.blue, fontSize: 10.sp),
                                 ),
                               ),
                             ],

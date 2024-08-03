@@ -10,7 +10,7 @@ class ChangePasswordForResetPasswordUsecase
   ChangePasswordForResetPasswordUsecase(this.repository);
 
   @override
-  Future<Either<Failure, ResetPasswordModelResponse>> excute(
+  Future<Either<Failure, ResetPasswordModelResponse>> execute(
       ChangePasswordForResetPasswordUseCaseInput input) async {
     return await repository.changePasswordForResetPassword(
         email: input.email, password: input.password);

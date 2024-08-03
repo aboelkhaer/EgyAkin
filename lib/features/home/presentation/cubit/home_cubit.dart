@@ -112,7 +112,7 @@ class HomeCubit extends Cubit<HomeState> {
     dotsPosition = 0;
     emit(const HomeState.loading());
 
-    final result = await _getHomeUsecase.excute(NoParams());
+    final result = await _getHomeUsecase.execute(NoParams());
     result.fold(
       (l) {
         emit(HomeState.error(l.message));
@@ -156,7 +156,7 @@ class HomeCubit extends Cubit<HomeState> {
     if (pickedImage != null) {
       final pickedImageFile = File(pickedImage.path);
       imagePicked = pickedImageFile;
-      final result = await _uploadSyndicateCardUsecase.excute(imagePicked!);
+      final result = await _uploadSyndicateCardUsecase.execute(imagePicked!);
 
       result.fold(
         (l) {

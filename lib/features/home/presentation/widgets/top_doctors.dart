@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class TopDoctors extends StatelessWidget {
@@ -56,6 +55,7 @@ class TopDoctors extends StatelessWidget {
                                 isSyndicateCardRequired:
                                     homeData.isSyndicateCardRequired.toString(),
                                 currentDoctorRole: homeData.role.toString(),
+                                homeDataModel: homeData,
                               ),
                             );
                           },

@@ -8,7 +8,7 @@ class UpdateNotificationUsecase
   UpdateNotificationUsecase(this.repository);
 
   @override
-  Future<Either<Failure, UpdateNotificationModelResponse>> excute(
+  Future<Either<Failure, UpdateNotificationModelResponse>> execute(
       NoParams input) async {
     return await repository.updateNotification();
   }

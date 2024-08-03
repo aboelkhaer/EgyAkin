@@ -9,7 +9,7 @@ class SubmitOutcomeUsecase
   SubmitOutcomeUsecase(this.repository);
 
   @override
-  Future<Either<Failure, SubmitOutcomeModelResponse>> excute(
+  Future<Either<Failure, SubmitOutcomeModelResponse>> execute(
       SubmitUseCaseInput input) async {
     return await repository.submitOutcome(
       input.patientId,

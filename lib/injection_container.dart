@@ -11,6 +11,10 @@ import 'package:egy_akin/features/profile_patients/data/repositories/profile_pat
 import 'package:egy_akin/features/profile_patients/domain/repositories/profile_patients_repo.dart';
 import 'package:egy_akin/features/profile_patients/domain/usecases/get_profile_patients_usecase.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
+import 'package:egy_akin/features/send_consultation/data/datasources/send_consultation_datasource.dart';
+import 'package:egy_akin/features/send_consultation/data/repositories/send_consultation_repo_impl.dart';
+import 'package:egy_akin/features/send_consultation/domain/repositories/send_consultation_repo.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/get_consultation_search_usecase.dart';
 import 'package:egy_akin/features/splash/data/datasources/splash_datasource.dart';
 import 'package:egy_akin/features/splash/data/repositories/splash_repo_impl.dart';
 import 'package:egy_akin/features/splash/domain/repositories/splash_repo.dart';
@@ -62,7 +66,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));
   sl.registerFactory(() => AboutUsCubit());
-  sl.registerFactory(() => SendConsultationCubit());
+  sl.registerFactory(() => SendConsultationCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -104,6 +108,8 @@ Future<void> diInit() async {
       () => ChangePasswordDataSourceImpl(sl()));
   sl.registerLazySingleton<ProfilePatientsDataSource>(
       () => ProfilePatientsDataSourceImpl(sl()));
+  sl.registerLazySingleton<SendConsultationDataSource>(
+      () => SendConsultationDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -148,6 +154,8 @@ Future<void> diInit() async {
       () => ChangePasswordRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ProfilePatientsRepository>(
       () => ProfilePatientsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<SendConsultationRepository>(
+      () => SendConsultationRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -296,5 +304,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetScoreHistoryUsecase>()) {
     sl.registerFactory<GetScoreHistoryUsecase>(
         () => GetScoreHistoryUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetConsultationSearchUsecase>()) {
+    sl.registerFactory<GetConsultationSearchUsecase>(
+        () => GetConsultationSearchUsecase(sl()));
   }
 }

@@ -8,7 +8,7 @@ class GetOutcomeUsecase
   GetOutcomeUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetOutcomeModelResponse>> excute(
+  Future<Either<Failure, GetOutcomeModelResponse>> execute(
       GetOutcomeUsecaseInput input) async {
     return await repository.getOutcome(input.sectionId, input.patientId);
   }

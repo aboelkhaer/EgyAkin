@@ -10,7 +10,7 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
   getCurrentDoctorPatients(String doctorId) async {
     emit(const DoctorInfoViewState.loading());
 
-    final result = await _getDoctorInfoViewUsecase.excute(doctorId);
+    final result = await _getDoctorInfoViewUsecase.execute(doctorId);
     result.fold(
       (l) {
         emit(DoctorInfoViewState.error(l.message));

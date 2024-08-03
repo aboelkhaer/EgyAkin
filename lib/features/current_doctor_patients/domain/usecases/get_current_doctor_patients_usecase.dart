@@ -9,7 +9,7 @@ class GetCurrentDoctorPatientsUsecase
   GetCurrentDoctorPatientsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetDoctorPatientsModelResponse>> excute(
+  Future<Either<Failure, GetDoctorPatientsModelResponse>> execute(
       int page) async {
     return await repository.getCurrentDoctorPatients(page);
   }

@@ -9,7 +9,7 @@ class AddContactUsUsecase
   AddContactUsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, ContactUsModelResponseModelResponse>> excute(
+  Future<Either<Failure, ContactUsModelResponseModelResponse>> execute(
       String message) async {
     return await repository.addContactUs(message);
   }

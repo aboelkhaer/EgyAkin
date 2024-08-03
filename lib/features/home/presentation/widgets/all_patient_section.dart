@@ -35,6 +35,7 @@ class AllPatientSection extends StatelessWidget {
                               homeData.isSyndicateCardRequired!,
                           currentDoctorRole: homeData.role.toString(),
                           currentDoctorPoints: int.parse(homeData.scoreValue!),
+                          homeDataModel: homeData,
                         ));
                   },
                 );
@@ -75,6 +76,7 @@ class AllPatientSection extends StatelessWidget {
                               drFirstName:
                                   patient.doctor!.firstName ?? AppStrings.empty,
                               doctorId: patient.doctor!.id.toString(),
+                              homeDataModel: homeData,
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
                               updatedAt: patient.updatedAt ?? AppStrings.empty,
@@ -107,6 +109,7 @@ class AllPatientSection extends StatelessWidget {
                                     currentDoctorRole: homeData.role.toString(),
                                     currentDoctorPoints:
                                         int.parse(homeData.scoreValue!),
+                                    homeDataModel: homeData,
                                   ),
                                 );
                               },
@@ -138,6 +141,7 @@ class AllPatientSection extends StatelessWidget {
                                     currentDoctorPoints:
                                         int.parse(homeData.scoreValue!),
                                     currentDoctorModel: currentDoctorModel,
+                                    homeDataModel: homeData,
                                   ),
                                 );
                               },

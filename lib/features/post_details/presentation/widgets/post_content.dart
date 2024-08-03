@@ -9,14 +9,18 @@ class PostContent extends StatelessWidget {
     return Row(
       children: [
         Flexible(
-          child: HtmlWidget(content, onTapUrl: (url) {
-            launchURL(
-                url: url,
-                onError: (error) {
-                  showErrorDialog(context, error);
-                });
-            return true;
-          }),
+          child: HtmlWidget(
+            content,
+            onTapUrl: (url) {
+              launchURL(
+                  url: url,
+                  onError: (error) {
+                    showErrorDialog(context, error);
+                  });
+              return true;
+            },
+            textStyle: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+          ),
         ),
       ],
     );

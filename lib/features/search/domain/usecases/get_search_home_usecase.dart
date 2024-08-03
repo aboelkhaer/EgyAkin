@@ -8,7 +8,7 @@ class GetSearchHomeUsecase
   GetSearchHomeUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetSearchModelResponse>> excute(
+  Future<Either<Failure, GetSearchModelResponse>> execute(
       GetSearchHomeUsecaseInput input) async {
     return await repository.getSearchHome(
         patient: input.patient, dose: input.dose);

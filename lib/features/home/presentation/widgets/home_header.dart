@@ -229,6 +229,7 @@ class HomeHeader extends StatelessWidget {
                             currentDoctorRole: homeData.role.toString(),
                             currentDoctorPoints:
                                 int.parse(homeData.scoreValue!),
+                            homeDataModel: homeData,
                           ),
                         );
                       }

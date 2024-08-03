@@ -41,7 +41,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
   getPatientSectionDetails(String sectionId, String patientId) async {
     emit(const PatientSectionDetailsState.loading());
-    final result = await _getPatientSectionDetailsUsecase.excute(
+    final result = await _getPatientSectionDetailsUsecase.execute(
         GetPatientSectionDetailsUsecaseInput(
             patientId: patientId, sectionId: sectionId));
 
@@ -253,7 +253,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.questions, true, false, '', snackbarErrorCounter += 1),
       ));
 
-      final result = await _updatePatientSectionDetailsUsecase.excute(
+      final result = await _updatePatientSectionDetailsUsecase.execute(
           UpdatePatientSectionDetailsUsecaseInput(
               patientId: patientId, sectionId: sectionId, map: formData));
 

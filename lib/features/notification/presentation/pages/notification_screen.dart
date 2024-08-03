@@ -6,6 +6,7 @@ class NotificationScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
 
   const NotificationScreen({
     super.key,
@@ -14,6 +15,7 @@ class NotificationScreen extends StatefulWidget {
     required this.isSyndicateCardRequired,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -110,6 +112,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                               widget.accountVerification,
                                           isSyndicateCardRequired:
                                               widget.isSyndicateCardRequired,
+                                          homeDataModel: widget.homeDataModel,
                                         ),
                                       ],
                                     );
@@ -172,6 +175,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                               widget.accountVerification,
                                           isSyndicateCardRequired:
                                               widget.isSyndicateCardRequired,
+                                          homeDataModel: widget.homeDataModel,
                                         ),
                                       ],
                                     );

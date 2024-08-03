@@ -10,7 +10,7 @@ class GetAppSettingsUsecase
   GetAppSettingsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetAppSettingsModelResponse>> excute(
+  Future<Either<Failure, GetAppSettingsModelResponse>> execute(
       NoParams input) async {
     return await repository.getAppSettings();
   }

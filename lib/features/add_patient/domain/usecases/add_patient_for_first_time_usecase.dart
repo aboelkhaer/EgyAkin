@@ -9,7 +9,7 @@ class AddPatientForFirstTimetUsecase
   AddPatientForFirstTimetUsecase(this.repository);
 
   @override
-  Future<Either<Failure, AddPatientForFirstTimeModelResponse>> excute(
+  Future<Either<Failure, AddPatientForFirstTimeModelResponse>> execute(
     Map<String, dynamic> map,
   ) async {
     return await repository.addPatientForFirstTime(map: map);

@@ -117,12 +117,12 @@ class PostsSliderAndDots extends StatelessWidget {
                                                               .posts![index]
                                                               .title
                                                               .toString()),
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color:
                                                               AppColors.title,
-                                                          fontSize: 16),
+                                                          fontSize: 12.sp),
                                                       maxLines: 2,
                                                       overflow:
                                                           TextOverflow.ellipsis,
@@ -145,12 +145,12 @@ class PostsSliderAndDots extends StatelessWidget {
                                                               .toString(),
                                                         ),
                                                       ).documentElement!.text,
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: AppColors
                                                               .description,
-                                                          fontSize: 13),
+                                                          fontSize: 8.sp),
                                                       maxLines: 4,
                                                       overflow:
                                                           TextOverflow.ellipsis,

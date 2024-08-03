@@ -8,7 +8,7 @@ class GetAllNotificationUsecase
   GetAllNotificationUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetAllNotificationsModelResponse>> excute(
+  Future<Either<Failure, GetAllNotificationsModelResponse>> execute(
       int page) async {
     return await repository.getAllNotifications(page);
   }

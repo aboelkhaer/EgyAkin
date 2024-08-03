@@ -15,7 +15,7 @@ class ContactUsCubit extends Cubit<ContactUsState> {
     if (formKey.currentState!.validate()) {
       emit(const ContactUsState.loading());
 
-      final result = await _addContactUsUsecase.excute(feedback);
+      final result = await _addContactUsUsecase.execute(feedback);
       result.fold(
         (l) {
           emit(ContactUsState.error(l.message));

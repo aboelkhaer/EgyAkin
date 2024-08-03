@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import '../../../../exports.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -9,6 +10,7 @@ class CheckNotificationType extends StatelessWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final String isSyndicateCardRequired;
+  final HomeModelResponse homeDataModel;
 
   const CheckNotificationType(
       {super.key,
@@ -17,7 +19,8 @@ class CheckNotificationType extends StatelessWidget {
       required this.accountVerification,
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +35,7 @@ class CheckNotificationType extends StatelessWidget {
                 currentDoctorRole: currentDoctorRole,
                 currentDoctorPoints: currentDoctorPoints,
                 currentDoctorModel: currentDoctorModel,
+                homeDataModel: homeDataModel,
               ),
             );
             context.read<NotificationCubit>().getAllNotifications();
@@ -58,24 +62,45 @@ class CheckNotificationType extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(80.r),
-                          child: CircleAvatar(
-                            radius: 20.r,
-                            backgroundColor: AppColors.primary.withOpacity(0.8),
-                            child:
-                                notificationModel.patient!.doctor!.image == null
-                                    ? Text(
-                                        notificationModel
-                                            .patient!.doctor!.firstName![0]
-                                            .toUpperCase(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16.sp),
-                                      )
-                                    : CustomCachedNetworkImage(
-                                        imageUrl: notificationModel
-                                            .patient!.doctor!.image
-                                            .toString(),
-                                      ),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.patient!.doctor!.image ==
+                                      null
+                                  ? Text(
+                                      notificationModel
+                                          .patient!.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .patient!.doctor!.image
+                                          .toString(),
+                                    ),
+                            ),
                           ),
                         ),
                       ),
@@ -92,8 +117,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text:
                                           'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)}',
-                                      style: const TextStyle(
-                                          color: AppColors.title),
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp),
                                       children: <TextSpan>[
                                         const TextSpan(
                                           text: ' creates ',
@@ -183,10 +209,11 @@ class CheckNotificationType extends StatelessWidget {
                 children: [
                   Flexible(
                     child: RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         text: 'On the linked patient, someone has made a ',
-                        style: TextStyle(color: AppColors.title),
-                        children: <TextSpan>[
+                        style:
+                            TextStyle(color: AppColors.title, fontSize: 12.sp),
+                        children: const <TextSpan>[
                           TextSpan(
                             text: '${AppStrings.comment}.',
                             style: TextStyle(
@@ -234,6 +261,7 @@ class CheckNotificationType extends StatelessWidget {
                 doctorId: notificationModel.patient!.doctor!.id.toString(),
                 currentDoctorModel: currentDoctorModel,
                 isSyndicateCardRequired: isSyndicateCardRequired,
+                homeDataModel: homeDataModel,
                 currentDoctorRole: currentDoctorRole,
                 currentDoctorPoints: currentDoctorPoints,
               ),
@@ -247,10 +275,11 @@ class CheckNotificationType extends StatelessWidget {
                 children: [
                   Flexible(
                     child: RichText(
-                      text: const TextSpan(
+                      text: TextSpan(
                         text: 'On the linked patient, someone has made an ',
-                        style: TextStyle(color: AppColors.title),
-                        children: <TextSpan>[
+                        style:
+                            TextStyle(color: AppColors.title, fontSize: 12.sp),
+                        children: const <TextSpan>[
                           TextSpan(
                             text: '${AppStrings.outcome}.',
                             style: TextStyle(

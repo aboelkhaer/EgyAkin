@@ -94,6 +94,7 @@ class HomeTab extends StatelessWidget {
                                 currentDoctorPoints:
                                     int.parse(homeData.scoreValue!),
                                 currentDoctorRole: homeData.role.toString(),
+                                homeDataModel: homeData,
                               );
                             },
                           );

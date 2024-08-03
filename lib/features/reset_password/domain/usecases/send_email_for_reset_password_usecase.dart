@@ -8,7 +8,7 @@ class SendEmailForResetPasswordUsecase
   SendEmailForResetPasswordUsecase(this.repository);
 
   @override
-  Future<Either<Failure, ResetPasswordModelResponse>> excute(
+  Future<Either<Failure, ResetPasswordModelResponse>> execute(
       String email) async {
     return await repository.sendEmailForResetPassword(email: email);
   }

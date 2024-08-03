@@ -9,7 +9,7 @@ class GetDoctorInfoViewUsecase
   GetDoctorInfoViewUsecase(this.repository);
 
   @override
-  Future<Either<Failure, DoctorInfoViewModelResponse>> excute(
+  Future<Either<Failure, DoctorInfoViewModelResponse>> execute(
       String doctorId) async {
     return await repository.getDoctorInfo(doctorId);
   }

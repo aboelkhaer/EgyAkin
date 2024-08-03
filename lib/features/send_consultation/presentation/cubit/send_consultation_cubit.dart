@@ -1,31 +1,42 @@
+import 'package:egy_akin/features/send_consultation/domain/usecases/get_consultation_search_usecase.dart';
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 
 import '../../../../exports.dart';
 
 class SendConsultationCubit extends Cubit<SendConsultationState> {
-  SendConsultationCubit() : super(const SendConsultationState.initial());
+  SendConsultationCubit(this._getConsultationSearchUsecase)
+      : super(const SendConsultationState.loaded(false, false, '', null));
+  final GetConsultationSearchUsecase _getConsultationSearchUsecase;
   static SendConsultationCubit get(context) => BlocProvider.of(context);
-  int currentStep = 0;
-  List<Step> getSteps() {
-    return [
-      Step(
-        state: currentStep > 0 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 0,
-        title: const Text(AppStrings.email),
-        content: Container(),
-      ),
-      Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: const Text(AppStrings.verify),
-        content: Container(),
-      ),
-      Step(
-        state: StepState.complete,
-        isActive: currentStep >= 2,
-        title: const Text(AppStrings.password),
-        content: Container(),
-      ),
-    ];
+  TextEditingController searchController = TextEditingController();
+  List<String> doctorsIds = ['7'];
+
+  getConsultationSearch() async {
+    if (searchController.text.trim().isNotEmpty) {
+      emit(state.maybeMap(
+        orElse: () => state,
+        loaded: (value) =>
+            const SendConsultationState.loaded(true, false, '', null),
+      ));
+
+      final result =
+          await _getConsultationSearchUsecase.execute(searchController.text);
+      searchController.clear();
+      result.fold(
+        (l) {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) =>
+                SendConsultationState.loaded(false, false, l.message, null),
+          ));
+        },
+        (r) {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => SendConsultationState.loaded(false, true, '', r),
+          ));
+        },
+      );
+    }
   }
 }

@@ -31,7 +31,8 @@ class CustomOutlineBotton extends StatelessWidget {
         child: Text(
           title,
           style: TextStyle(
-              color: isFlatBotton ? Colors.grey.shade600 : AppColors.primary),
+              color: isFlatBotton ? Colors.grey.shade600 : AppColors.primary,
+              fontSize: 12.sp),
         ),
       ),
     );

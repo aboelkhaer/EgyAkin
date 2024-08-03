@@ -4,8 +4,13 @@ import '../../../../exports.dart';
 
 class FullScreenImage extends StatelessWidget {
   final String imageUrl;
+  final bool isLocal;
 
-  const FullScreenImage({super.key, required this.imageUrl});
+  const FullScreenImage({
+    super.key,
+    required this.imageUrl,
+    this.isLocal = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,9 @@ class FullScreenImage extends StatelessWidget {
           children: [
             Center(
               child: PhotoView(
-                imageProvider: CachedNetworkImageProvider(imageUrl),
+                imageProvider: isLocal
+                    ? AssetImage(imageUrl) as ImageProvider
+                    : CachedNetworkImageProvider(imageUrl),
                 backgroundDecoration: BoxDecoration(
                   color: Colors.black.withOpacity(1),
                 ),

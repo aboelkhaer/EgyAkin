@@ -9,7 +9,7 @@ class DeletePatientCommentsUsecase
   DeletePatientCommentsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, DeletePatientCommentsModelResponse>> excute(
+  Future<Either<Failure, DeletePatientCommentsModelResponse>> execute(
       String commentId) async {
     return await repository.deletePatientComments(commentId);
   }

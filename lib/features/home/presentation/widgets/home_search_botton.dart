@@ -6,6 +6,7 @@ class HomeSearchBotton extends StatelessWidget {
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const HomeSearchBotton({
     super.key,
     required this.currentDoctorModel,
@@ -13,6 +14,7 @@ class HomeSearchBotton extends StatelessWidget {
     required this.isSyndicateCardRequired,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -27,6 +29,7 @@ class HomeSearchBotton extends StatelessWidget {
             isSyndicateCardRequired: isSyndicateCardRequired,
             currentDoctorRole: currentDoctorRole,
             currentDoctorPoints: currentDoctorPoints,
+            homeDataModel: homeDataModel,
           ),
         );
       },

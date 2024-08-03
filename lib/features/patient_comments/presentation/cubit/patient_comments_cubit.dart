@@ -14,7 +14,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
 
   getPatientComments(String patientId) async {
     emit(const PatientCommentsState.loading());
-    final result = await _getPatientCommentsUsecase.excute(patientId);
+    final result = await _getPatientCommentsUsecase.execute(patientId);
 
     result.fold(
       (l) {
@@ -28,7 +28,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
 
   addPatientComments({required String patientId}) async {
     emit(const PatientCommentsState.loading());
-    final result = await _addPatientCommentsUsecase.excute(
+    final result = await _addPatientCommentsUsecase.execute(
         AddCommentUseCaseInput(patientId: patientId, content: newComment));
 
     result.fold(
@@ -38,7 +38,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
       (result) async {
         newComment = '';
         final getCommentsResult =
-            await _getPatientCommentsUsecase.excute(patientId);
+            await _getPatientCommentsUsecase.execute(patientId);
         getCommentsResult.fold(
           (l) {
             emit(PatientCommentsState.error(l.message));
@@ -67,7 +67,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
   }
 
   void deletePatientComment(String commentId) async {
-    final result = await _deletePatientCommentsUsecase.excute(commentId);
+    final result = await _deletePatientCommentsUsecase.execute(commentId);
 
     result.fold(
       (l) {

@@ -9,7 +9,7 @@ class DeletePatientUsecase
   DeletePatientUsecase(this.repository);
 
   @override
-  Future<Either<Failure, DeletePatientModelResponse>> excute(
+  Future<Either<Failure, DeletePatientModelResponse>> execute(
       String patientId) async {
     return await repository.deletePatient(patientId: patientId);
   }

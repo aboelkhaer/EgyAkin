@@ -6,6 +6,7 @@ class SearchScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
 
   const SearchScreen({
     super.key,
@@ -14,6 +15,7 @@ class SearchScreen extends StatefulWidget {
     required this.isSyndicateCardRequired,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -296,6 +298,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         updatedAt: patient.updatedAt ??
                                             AppStrings.empty,
                                         doctorId: patient.doctor!.id.toString(),
+                                        homeDataModel: widget.homeDataModel,
                                         drFirstName:
                                             patient.doctor!.firstName ??
                                                 AppStrings.empty,
@@ -354,6 +357,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   widget.currentDoctorPoints,
                                               currentDoctorRole: sl<HomeCubit>()
                                                   .currentDoctorRole,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
                                             ),
                                           );
                                         },

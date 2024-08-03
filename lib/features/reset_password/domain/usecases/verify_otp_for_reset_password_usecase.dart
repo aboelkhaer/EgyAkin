@@ -10,7 +10,7 @@ class VerifyOTPForResetPasswordUsecase
   VerifyOTPForResetPasswordUsecase(this.repository);
 
   @override
-  Future<Either<Failure, ResetPasswordModelResponse>> excute(
+  Future<Either<Failure, ResetPasswordModelResponse>> execute(
       VerifyOTPForResetPasswordUseCaseInput input) async {
     return await repository.verifyOTPForResetPassword(
         email: input.email, otp: input.otp);

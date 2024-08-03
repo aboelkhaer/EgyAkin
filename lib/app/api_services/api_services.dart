@@ -20,6 +20,7 @@ import 'package:egy_akin/features/patient_sections/data/models/download_patient_
 import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
 import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/get_consultation_search_model_response.dart';
 import 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 
 import 'package:retrofit/http.dart';
@@ -240,5 +241,10 @@ abstract class ApiServices {
   Future<GetDoctorProfileScoreModelResponse> getDoctorProfileScoreHistory(
     @Query('page') int pageNumber,
     @Path("doctorId") String doctorId,
+  );
+
+  @POST('${ApiEndPoint.consultationDoctorSearch}/{searchContent}')
+  Future<GetConsultationSearchModelResponse> consultationDoctorSearch(
+    @Path("searchContent") String searchContent,
   );
 }

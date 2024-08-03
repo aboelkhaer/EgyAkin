@@ -11,7 +11,7 @@ class GetScoreHistoryUsecase
   GetScoreHistoryUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetDoctorProfileScoreModelResponse>> excute(
+  Future<Either<Failure, GetDoctorProfileScoreModelResponse>> execute(
       GetScoreHistoryUsecaseInput input) async {
     return await repository.getScoreHistory(
         page: input.page, doctorId: input.doctorId);

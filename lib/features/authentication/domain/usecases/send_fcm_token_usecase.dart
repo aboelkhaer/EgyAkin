@@ -9,7 +9,7 @@ class SendFCMTokenUsecase
   SendFCMTokenUsecase(this.repository);
 
   @override
-  Future<Either<Failure, SendFCMTokenModelResponse>> excute(
+  Future<Either<Failure, SendFCMTokenModelResponse>> execute(
       String fcmToken) async {
     return await repository.sendFCMToken(fcmToken: fcmToken);
   }

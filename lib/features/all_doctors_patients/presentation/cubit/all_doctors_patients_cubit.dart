@@ -13,7 +13,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   getCurrentDoctorPatients() async {
     emit(const AllDoctorsPatientsState.loading());
 
-    final result = await _getAllDoctorsPatientsUsecase.excute(_currentPage);
+    final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
     result.fold(
       (l) {
         emit(AllDoctorsPatientsState.error(l.message));
@@ -33,7 +33,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       orElse: () => state,
       loaded: (value) => AllDoctorsPatientsState.loaded(value.response, true),
     ));
-    final result = await _getAllDoctorsPatientsUsecase.excute(_currentPage);
+    final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
     result.fold(
       (l) {
         _currentPage--;

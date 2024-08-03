@@ -1,4 +1,3 @@
-
 import 'package:egy_akin/features/profile_patients/presentation/cubit/profile_patients_state.dart';
 
 import '../../../../exports.dart';
@@ -11,6 +10,7 @@ class ProfilePatientsScreen extends StatefulWidget {
   final String doctorFirstName;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
   const ProfilePatientsScreen({
     super.key,
     required this.doctorId,
@@ -20,6 +20,7 @@ class ProfilePatientsScreen extends StatefulWidget {
     required this.doctorFirstName,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
+    required this.homeDataModel,
   });
 
   @override
@@ -123,6 +124,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          homeDataModel: widget.homeDataModel,
                           doctorId: patient.doctor!.id.toString(),
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
                           accountVerification: widget.accountVerification,
@@ -150,6 +152,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 currentDoctorModel:
                                     sl<HomeCubit>().currentDoctorModel,
                                 doctorId: patient.doctor!.id.toString(),
+                                homeDataModel: widget.homeDataModel,
                                 isSyndicateCardRequired:
                                     sl<HomeCubit>().isSyndicateCardRequired,
                                 currentDoctorRole: widget.currentDoctorRole,
@@ -183,6 +186,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                     sl<HomeCubit>().currentDoctorModel,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },

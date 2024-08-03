@@ -11,7 +11,7 @@ class UpdatePatientSectionDetailsUsecase
   UpdatePatientSectionDetailsUsecase(this.repository);
 
   @override
-  Future<Either<Failure, UpdatePatientSectionDetailsModelResponse>> excute(
+  Future<Either<Failure, UpdatePatientSectionDetailsModelResponse>> execute(
       UpdatePatientSectionDetailsUsecaseInput input) async {
     return await repository.updatePatientSectionDetails(
         input.sectionId, input.patientId, input.map);

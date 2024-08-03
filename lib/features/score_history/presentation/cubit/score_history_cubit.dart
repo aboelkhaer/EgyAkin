@@ -16,7 +16,7 @@ class ScoreHistoryCubit extends Cubit<ScoreHistoryState> {
   getScoreHistory(String doctorId) async {
     emit(const ScoreHistoryState.loading());
 
-    final result = await _getScoreHistoryUsecase.excute(
+    final result = await _getScoreHistoryUsecase.execute(
         GetScoreHistoryUsecaseInput(doctorId: doctorId, page: _currentPage));
     result.fold(
       (l) {
@@ -34,7 +34,7 @@ class ScoreHistoryCubit extends Cubit<ScoreHistoryState> {
       orElse: () => state,
       loaded: (value) => ScoreHistoryState.loaded(value.scoreHistory, true),
     ));
-    final result = await _getScoreHistoryUsecase.excute(
+    final result = await _getScoreHistoryUsecase.execute(
         GetScoreHistoryUsecaseInput(doctorId: doctorId, page: _currentPage));
     result.fold(
       (l) {

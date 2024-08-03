@@ -10,7 +10,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   ScrollController? scrollController;
 
   updateNotification() async {
-    final result = await _updateNotificationUsecase.excute(NoParams());
+    final result = await _updateNotificationUsecase.execute(NoParams());
 
     result.fold(
       (l) {
@@ -31,7 +31,7 @@ class NotificationCubit extends Cubit<NotificationState> {
   getAllNotifications() async {
     emit(const NotificationState.loading());
     currentPage = 1;
-    final result = await _getAllNotificationUsecase.excute(currentPage);
+    final result = await _getAllNotificationUsecase.execute(currentPage);
 
     result.fold(
       (l) {
@@ -52,7 +52,7 @@ class NotificationCubit extends Cubit<NotificationState> {
       orElse: () => state,
       loaded: (value) => NotificationState.loaded(value.notificationData, true),
     ));
-    final result = await _getAllNotificationUsecase.excute(currentPage);
+    final result = await _getAllNotificationUsecase.execute(currentPage);
     result.fold(
       (l) {
         currentPage--;

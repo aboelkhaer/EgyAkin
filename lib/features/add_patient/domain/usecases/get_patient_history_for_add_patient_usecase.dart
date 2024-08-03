@@ -9,7 +9,7 @@ class GetPatientHistoryForAddPatientUsecase
   GetPatientHistoryForAddPatientUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetPatientHistoryForAddPatientModelResponse>> excute(
+  Future<Either<Failure, GetPatientHistoryForAddPatientModelResponse>> execute(
     String sectionId,
   ) async {
     return await repository.getPatientHistoryForAddPatient(

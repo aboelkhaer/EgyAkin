@@ -10,7 +10,7 @@ class AddCommentOnPostUsecase
   AddCommentOnPostUsecase(this.repository);
 
   @override
-  Future<Either<Failure, AddCommentOnPostModelResponse>> excute(
+  Future<Either<Failure, AddCommentOnPostModelResponse>> execute(
       AddCommentOnPostUseCaseInput input) async {
     return await repository.addCommentOnPost(input.postId, input.content);
   }

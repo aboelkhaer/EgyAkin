@@ -34,7 +34,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
     await Future.delayed(const Duration(
         milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
     final result = await _getOutcomeUsecase
-        .excute(GetOutcomeUsecaseInput(sectionId: '8', patientId: patientId));
+        .execute(GetOutcomeUsecaseInput(sectionId: '8', patientId: patientId));
     result.fold(
       (l) {
         emit(OutcomeState.error(l.message));
@@ -257,7 +257,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
             value.response, false, '', value.snackbarErrorCounter, true),
       ));
 
-      final result = await _submitOutcomeUsecase.excute(
+      final result = await _submitOutcomeUsecase.execute(
         SubmitUseCaseInput(
           patientId: patientId,
           sectionId: '8',

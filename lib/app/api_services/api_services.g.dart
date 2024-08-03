@@ -6,7 +6,7 @@ part of 'api_services.dart';
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
 
 class _ApiServices implements ApiServices {
   _ApiServices(
@@ -43,8 +43,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = SignOutModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = SignOutModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -78,8 +78,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AuthenticationModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = AuthenticationModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -107,8 +107,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AuthenticationModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = AuthenticationModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -135,8 +135,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetAllDoctorsPatientsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetAllDoctorsPatientsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -165,8 +165,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetProfilePatientsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetProfilePatientsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -193,8 +193,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetDoctorPatientsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetDoctorPatientsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -226,8 +226,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetSearchModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetSearchModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -273,8 +273,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UpdateDoctorProfileModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = UpdateDoctorProfileModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -301,8 +301,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetPatientSectionsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetPatientSectionsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -331,8 +331,9 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetPatientSectionDetailsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value =
+        GetPatientSectionDetailsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -358,8 +359,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DeletePatientModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = DeletePatientModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -390,9 +391,9 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
+    final _value =
         UpdatePatientSectionDetailsModelResponse.fromJson(_result.data!);
-    return value;
+    return _value;
   }
 
   @override
@@ -419,9 +420,9 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
+    final _value =
         GetPatientHistoryForAddPatientModelResponse.fromJson(_result.data!);
-    return value;
+    return _value;
   }
 
   @override
@@ -449,8 +450,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AddPatientForFirstTimeModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = AddPatientForFirstTimeModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -481,8 +482,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = SubmitOutcomeModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = SubmitOutcomeModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -511,8 +512,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetOutcomeModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetOutcomeModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -538,8 +539,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = FinalSubmitModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = FinalSubmitModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -566,8 +567,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetPatientCommentsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetPatientCommentsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -599,8 +600,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AddPatientCommentsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = AddPatientCommentsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -627,8 +628,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DeletePatientCommentsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = DeletePatientCommentsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -655,8 +656,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ContactUsModelResponseModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = ContactUsModelResponseModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -682,8 +683,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = PostCommentsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = PostCommentsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -710,8 +711,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DeletePostCommentModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = DeletePostCommentModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -738,8 +739,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetAllNotificationsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetAllNotificationsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -765,8 +766,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UpdateNotificationModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = UpdateNotificationModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -798,8 +799,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = AddCommentOnPostModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = AddCommentOnPostModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -826,8 +827,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ResetPasswordModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -859,8 +860,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ResetPasswordModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -892,8 +893,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ResetPasswordModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -919,8 +920,9 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = SendEmailForVerificationModelResponse.fromJson(_result.data!);
-    return value;
+    final _value =
+        SendEmailForVerificationModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -947,9 +949,9 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value =
+    final _value =
         SendOTPForEmailVerificationModelResponse.fromJson(_result.data!);
-    return value;
+    return _value;
   }
 
   @override
@@ -975,8 +977,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = HomeModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = HomeModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1010,8 +1012,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UploadProfileImageModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = UploadProfileImageModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1037,8 +1039,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DoctorInfoViewModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = DoctorInfoViewModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1065,8 +1067,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = DownloadPatientReportModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = DownloadPatientReportModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1092,8 +1094,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetAppSettingsModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetAppSettingsModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1128,8 +1130,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = UploadSyndicateCardModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = UploadSyndicateCardModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1161,8 +1163,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = ChangePasswordModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = ChangePasswordModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1188,8 +1190,8 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = SendFCMTokenModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = SendFCMTokenModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   @override
@@ -1218,8 +1220,36 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final value = GetDoctorProfileScoreModelResponse.fromJson(_result.data!);
-    return value;
+    final _value = GetDoctorProfileScoreModelResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<GetConsultationSearchModelResponse> consultationDoctorSearch(
+      String searchContent) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetConsultationSearchModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/consultationDoctorSearch/${searchContent}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = GetConsultationSearchModelResponse.fromJson(_result.data!);
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

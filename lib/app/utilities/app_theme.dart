@@ -7,6 +7,7 @@ class Themes {
       iconTheme: IconThemeData(
         color: Colors.white,
       ),
+      surfaceTintColor: Colors.transparent,
       backgroundColor: AppColors.primary,
       centerTitle: true,
       titleTextStyle: TextStyle(

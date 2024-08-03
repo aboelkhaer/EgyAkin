@@ -66,7 +66,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
         loaded: (value) => DoctorProfileViewState.loaded(
             value.currentDoctorModel, false, '', true, false),
       ));
-      final result = await _updateDoctorProfileUsecase.excute(
+      final result = await _updateDoctorProfileUsecase.execute(
         UpdateDoctorProfileUsecaseInput(
           firstName: firstName,
           lastName: lastName,

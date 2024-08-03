@@ -10,7 +10,7 @@ class UploadProfileImageUsecase
   UploadProfileImageUsecase(this.repository);
 
   @override
-  Future<Either<Failure, UploadProfileImageModelResponse>> excute(
+  Future<Either<Failure, UploadProfileImageModelResponse>> execute(
       File image) async {
     return await repository.uploadProfileImage(image: image);
   }

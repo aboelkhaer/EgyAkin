@@ -6,13 +6,15 @@ class ProfileScreen extends StatelessWidget {
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final HomeModelResponse homeDataModel;
 
   const ProfileScreen(
       {super.key,
       required this.isSyndicateCardRequired,
       required this.accountVerification,
       required this.currentDoctorRole,
-      required this.currentDoctorPoints});
+      required this.currentDoctorPoints,
+      required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
             accountVerification: accountVerification,
             currentDoctorRole: currentDoctorRole,
             currentDoctorPoints: currentDoctorPoints,
+            homeDataModel: homeDataModel,
           ),
           SizedBox(height: 20.h),
           ProfileFeatures(cubit: cubit),

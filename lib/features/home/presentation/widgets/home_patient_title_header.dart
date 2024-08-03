@@ -35,7 +35,7 @@ class HomePatientTitleHeader extends StatelessWidget {
             Text(
               leftArrow,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 8.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade700,
               ),
@@ -51,7 +51,7 @@ class HomePatientTitleHeader extends StatelessWidget {
             Text(
               rightArrow,
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 8.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey.shade700,
               ),

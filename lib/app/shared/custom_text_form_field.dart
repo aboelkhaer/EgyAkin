@@ -81,7 +81,7 @@ class CustomTextFormField extends StatelessWidget {
               const EdgeInsets.only(left: 11, right: 3, top: 14, bottom: 14),
           counterText: '',
           hintText: title,
-          hintStyle: TextStyle(color: Colors.grey, fontSize: 13.sp),
+          hintStyle: TextStyle(color: Colors.grey, fontSize: 10.sp),
           errorStyle: isOTP
               ? const TextStyle(height: 0, fontSize: 0)
               : const TextStyle(fontSize: 9, height: 0.3),
