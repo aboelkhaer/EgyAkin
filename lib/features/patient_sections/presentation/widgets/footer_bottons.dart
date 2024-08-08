@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class FooterButtons extends StatelessWidget {
@@ -69,9 +68,7 @@ class FooterButtons extends StatelessWidget {
                       currentDoctorRole != 'Admin' &&
                       currentDoctorPoints < 200
                   ? const SizedBox.shrink()
-                  : const SizedBox(
-                      width: 10,
-                    ),
+                  : const SizedBox(width: 10),
               Expanded(
                 child: SizedBox(
                   height: 50,
@@ -88,7 +85,11 @@ class FooterButtons extends StatelessWidget {
                             cubit.finalSubmit(patientId, context);
                           },
                           title: AppStrings.finalSubmit,
-                          isDisable: doctorId == currentDoctorId ? false : true,
+                          isDisable: currentDoctorRole == 'Admin'
+                              ? false
+                              : doctorId == currentDoctorId
+                                  ? false
+                                  : true,
                         ),
                 ),
               ),

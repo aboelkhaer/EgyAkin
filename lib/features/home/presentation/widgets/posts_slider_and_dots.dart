@@ -50,6 +50,7 @@ class PostsSliderAndDots extends StatelessWidget {
                                   doctorModel: cubit.currentDoctorModel,
                                   verified: homeData.verified!,
                                   currentDoctorRole: homeData.role.toString(),
+                                  homeDataModel: homeData,
                                   isSyndicateCardRequired:
                                       homeData.isSyndicateCardRequired!),
                             );

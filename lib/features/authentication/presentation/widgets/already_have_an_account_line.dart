@@ -25,14 +25,16 @@ class AlreadyHaveAnAccountLine extends StatelessWidget {
           },
           child: Container(
             padding: const EdgeInsets.only(
-              bottom: 1, // Space between underline and text
+              bottom: 1,
             ),
             decoration: const BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-              color: Colors.blue,
-              width: 1.0, // Underline thickness
-            ))),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.blue,
+                  width: 1.0,
+                ),
+              ),
+            ),
             child: Text(
               AppStrings.signInNow,
               style: TextStyle(

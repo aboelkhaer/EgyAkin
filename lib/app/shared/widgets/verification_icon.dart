@@ -22,15 +22,15 @@ class VerificationIcon extends StatelessWidget {
           child: Image.asset(
             AppImages.verified,
             height: isSmaller
-                ? 18
+                ? 14.r
                 : isPatientCard
-                    ? 18
-                    : 20,
+                    ? 14.r
+                    : 16.r,
             width: isSmaller
-                ? 18
+                ? 14.r
                 : isPatientCard
-                    ? 18
-                    : 20,
+                    ? 14.r
+                    : 16.r,
             color: isPatientCard ? Colors.grey.shade400 : Colors.green.shade600,
           ),
         ),

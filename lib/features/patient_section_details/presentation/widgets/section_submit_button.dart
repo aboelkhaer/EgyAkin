@@ -91,8 +91,9 @@ class SectionSubmitButton extends StatelessWidget {
                           );
                         },
                         title: AppStrings.submit,
-                        isDisable: doctorId.toString() ==
-                                    currentDoctorModel.id.toString() &&
+                        isDisable: (doctorId.toString() ==
+                                        currentDoctorModel.id.toString() ||
+                                    currentDoctorRole == 'Admin') &&
                                 cubit.formData.isNotEmpty
                             ? false
                             : true,
@@ -119,8 +120,9 @@ class SectionSubmitButton extends StatelessWidget {
                             );
                           },
                           title: AppStrings.submit,
-                          isDisable: doctorId.toString() ==
-                                      currentDoctorModel.id.toString() &&
+                          isDisable: (doctorId.toString() ==
+                                          currentDoctorModel.id.toString() ||
+                                      currentDoctorRole == 'Admin') &&
                                   cubit.formData.isNotEmpty
                               ? false
                               : true,

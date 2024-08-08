@@ -23,6 +23,7 @@ class AppRoutesArgs {
     required bool verified,
     required String isSyndicateCardRequired,
     required String currentDoctorRole,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'postModel': postModel,
@@ -30,6 +31,7 @@ class AppRoutesArgs {
       'accountVerification': verified,
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -55,6 +57,7 @@ class AppRoutesArgs {
     required String isSyndicateCardRequired,
     required int currentDoctorPoints,
     required String currentDoctorRole,
+    required HomeModelResponse homeDataModel,
   }) {
     return {
       'patientId': patientId,
@@ -64,6 +67,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorPoints': currentDoctorPoints,
       'currentDoctorRole': currentDoctorRole,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -131,7 +135,7 @@ class AppRoutesArgs {
       'isSyndicateCardRequired': isSyndicateCardRequired,
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
-      'homeDataModel': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
     };
   }
 
@@ -226,6 +230,18 @@ class AppRoutesArgs {
   }
 
   static Map<String, dynamic> sendConsultationRouteArgs({
+    required HomeModelResponse homeDataModel,
+    required DoctorModel currentDoctorModel,
+    required String patientId,
+  }) {
+    return {
+      'homeDataModel': homeDataModel,
+      'currentDoctorModel': currentDoctorModel,
+      'patientId': patientId,
+    };
+  }
+
+  static Map<String, dynamic> consultationRouteArgs({
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
   }) {

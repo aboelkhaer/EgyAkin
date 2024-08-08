@@ -20,9 +20,9 @@ class FullScreenImage extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pop();
         },
-        onHorizontalDragStart: (details) {
-          Navigator.of(context).pop();
-        },
+        // onHorizontalDragStart: (details) {
+        //   Navigator.of(context).pop();
+        // },
         child: Stack(
           children: [
             Center(

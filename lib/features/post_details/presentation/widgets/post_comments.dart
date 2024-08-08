@@ -4,11 +4,13 @@ class PostComments extends StatelessWidget {
   final PostDetailsCubit cubit;
   final DoctorModel currentDoctorModel;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   const PostComments({
     super.key,
     required this.cubit,
     required this.currentDoctorModel,
     required this.currentDoctorRole,
+    required this.homeDataModel,
   });
 
   @override
@@ -55,6 +57,7 @@ class PostComments extends StatelessWidget {
                       commentModel: comments[index],
                       currentDoctorModel: currentDoctorModel,
                       currentDoctorRole: currentDoctorRole,
+                      homeDataModel: homeDataModel,
                       onDelete: () {
                         cubit.deletePostComment(comments[index].id.toString());
                       },

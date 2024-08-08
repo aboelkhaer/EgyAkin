@@ -13,7 +13,7 @@ animateToTopOfScreen(ScrollController scrollController) {
         curve: Curves.easeInOut,
       )
           .then((_) {
-        debugPrint('Animation to bottom of screen completed.');
+        debugPrint('Animation to top of screen completed.');
       }).catchError((error) {
         debugPrint('Error during animation: $error');
       });

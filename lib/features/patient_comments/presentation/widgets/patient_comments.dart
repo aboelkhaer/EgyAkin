@@ -7,6 +7,7 @@ class PatientComments extends StatelessWidget {
   final String patientId;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   const PatientComments({
     super.key,
     required this.cubit,
@@ -15,6 +16,7 @@ class PatientComments extends StatelessWidget {
     required this.patientId,
     required this.currentDoctorPoints,
     required this.currentDoctorRole,
+    required this.homeDataModel,
   });
 
   @override
@@ -71,6 +73,7 @@ class PatientComments extends StatelessWidget {
                         commentModel: comments[index],
                         currentDoctorModel: currentDoctorModel,
                         currentDoctorRole: currentDoctorRole,
+                        homeDataModel: homeDataModel,
                         onDelete: () {
                           cubit.deletePatientComment(
                               comments[index].id.toString());

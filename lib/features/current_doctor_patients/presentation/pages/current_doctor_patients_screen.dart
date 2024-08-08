@@ -166,6 +166,7 @@ class _CurrentDoctorPatientsScreenState
                                 currentDoctorRole: widget.currentDoctorRole,
                                 isSyndicateCardRequired:
                                     widget.isSyndicateCardRequired,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },

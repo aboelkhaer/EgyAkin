@@ -1,4 +1,4 @@
-import '../../exports.dart';
+import '../../../exports.dart';
 
 showCustomDialog(
     {required BuildContext context,
@@ -8,6 +8,8 @@ showCustomDialog(
     required String coloredButtonText,
     String? noColoredButtonText,
     bool isNoColorShow = true,
+    bool isWithTextField = false,
+    Function(String)? onChangedTextFormField,
     bool isColoredButtonDisable = false,
     required VoidCallback coloredButtonOnTap}) {
   Size size = MediaQuery.of(context).size;
@@ -19,12 +21,12 @@ showCustomDialog(
           child: Opacity(
             opacity: a1.value,
             child: AlertDialog(
-              backgroundColor: Colors.grey.shade100,
               shape:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
               title: Text(title),
               scrollable: true,
-              content: descriptionWidget(description),
+              content: descriptionWidget(
+                  description, isWithTextField, onChangedTextFormField),
               actions: [
                 isNoColorShow
                     ? TextButton(
@@ -42,7 +44,7 @@ showCustomDialog(
                         ))
                     : const SizedBox.shrink(),
                 SizedBox(
-                  width: size.width * 0.25,
+                  width: size.width * 0.23,
                   child: CustomElevatedButton(
                     onPressed: coloredButtonOnTap,
                     title: coloredButtonText,
@@ -64,13 +66,33 @@ showCustomDialog(
       });
 }
 
-Widget descriptionWidget(var description) {
+Widget descriptionWidget(var description, bool isWithTextField,
+    Function(String)? onChangedTextFormField) {
+  if (isWithTextField) {
+    return Column(
+      children: [
+        Text(
+          description,
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 10.h),
+        CustomTextFormField(
+          title: '',
+          textInputType: TextInputType.text,
+          autoFocus: true,
+          validator: (value) => null,
+          onChanged: onChangedTextFormField,
+        ),
+      ],
+    );
+  }
   if (description is String) {
     return Text(
       description,
       textAlign: TextAlign.center,
     );
   }
+
   if (description is List<dynamic>) {
     return SizedBox(
       height: 100,

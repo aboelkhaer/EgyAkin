@@ -2,17 +2,26 @@ import '../../../exports.dart';
 
 class CustomCachedNetworkImage extends StatelessWidget {
   final String imageUrl;
-  const CustomCachedNetworkImage({super.key, required this.imageUrl});
+  final double width;
+  final double height;
+  final BoxFit fit;
+  const CustomCachedNetworkImage({
+    super.key,
+    required this.imageUrl,
+    required this.width,
+    required this.height,
+    this.fit = BoxFit.cover,
+  });
 
   @override
   Widget build(BuildContext context) {
     try {
       return CachedNetworkImage(
         imageUrl: imageUrl,
-        width: 100.w,
-        height: 100.h,
+        width: width,
+        height: height,
         fadeInCurve: Curves.easeIn,
-        fit: BoxFit.cover,
+        fit: fit,
         placeholder: (context, url) => Lottie.asset(AppImages.imageLoader),
         errorWidget: (context, url, error) {
           return const SizedBox.shrink();

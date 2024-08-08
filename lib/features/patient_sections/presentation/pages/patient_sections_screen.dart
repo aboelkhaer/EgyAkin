@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../exports.dart';
 
 class PatientSectionsScreen extends StatefulWidget {
@@ -32,6 +34,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.dark));
     PatientSectionsCubit cubit = PatientSectionsCubit.get(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
@@ -104,19 +107,51 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         actions: [
           Tooltip(
             message: 'Send consultation',
-            child: IconButton(
-              onPressed: () {
-                navigatorKey.currentState?.pushNamed(
-                  AppRoutes.sendConsultation,
-                  arguments: AppRoutesArgs.sendConsultationRouteArgs(
-                    homeDataModel: widget.homeDataModel,
-                    currentDoctorModel: widget.currentDoctorModel,
+            // child: IconButton(
+            //   onPressed: () {
+            //     navigatorKey.currentState?.pushNamed(
+            //       AppRoutes.sendConsultation,
+            //       arguments: AppRoutesArgs.sendConsultationRouteArgs(
+            //         homeDataModel: widget.homeDataModel,
+            //         currentDoctorModel: widget.currentDoctorModel,
+            //         patientId: widget.patientId,
+            //       ),
+            //     );
+            //   },
+            //   icon: Icon(
+            //     Icons.chat_bubble_outline,
+            //     size: 20.r,
+            //   ),
+            // ),
+            child: Padding(
+              padding: EdgeInsets.only(right: 5.w),
+              child: InkWell(
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed(
+                    AppRoutes.sendConsultation,
+                    arguments: AppRoutesArgs.sendConsultationRouteArgs(
+                      homeDataModel: widget.homeDataModel,
+                      currentDoctorModel: widget.currentDoctorModel,
+                      patientId: widget.patientId,
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(20.r),
+                child: Container(
+                  height: 40.r,
+                  width: 40.r,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.transparent,
                   ),
-                );
-              },
-              icon: Icon(
-                Icons.chat_bubble_outline,
-                size: 20.r,
+                  child: Center(
+                    child: Image.asset(
+                      AppImages.consultation,
+                      height: 20.r,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -343,38 +378,39 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   ),
                                 );
                               }
+
                               if (((response.doctorId.toString() ==
-                                      widget.currentDoctorModel.id
-                                          .toString()) &&
-                                  (response.submitStatus != null &&
-                                      response.submitStatus!))) {
+                                          widget.currentDoctorModel.id
+                                              .toString()) &&
+                                      (response.submitStatus == true) ||
+                                  widget.currentDoctorRole == 'Admin')) {
                                 return FooterButtons(
                                   currentDoctorId:
                                       widget.currentDoctorModel.id.toString(),
-                                  doctorId: response.doctorId!,
-                                  patientName: response.patientName!,
+                                  doctorId: response.doctorId ?? '',
+                                  patientName: response.patientName ?? '',
                                   currentDoctorPoints:
                                       widget.currentDoctorPoints,
                                   cubit: cubit,
                                   patientId: widget.patientId,
-                                  finalSubmit: response.submitStatus!,
+                                  finalSubmit: response.submitStatus ?? false,
                                   currentDoctorRole: widget.currentDoctorRole,
                                 );
                               }
-                              if (widget.currentDoctorRole == 'Admin') {
-                                return FooterButtons(
-                                  currentDoctorId:
-                                      widget.currentDoctorModel.id.toString(),
-                                  doctorId: response.doctorId!,
-                                  patientName: response.patientName!,
-                                  currentDoctorPoints:
-                                      widget.currentDoctorPoints,
-                                  cubit: cubit,
-                                  patientId: widget.patientId,
-                                  finalSubmit: response.submitStatus!,
-                                  currentDoctorRole: widget.currentDoctorRole,
-                                );
-                              }
+                              // if (widget.currentDoctorRole == 'Admin') {
+                              //   return FooterButtons(
+                              //     currentDoctorId:
+                              //         widget.currentDoctorModel.id.toString(),
+                              //     doctorId: response.doctorId ?? '',
+                              //     patientName: response.patientName ?? '',
+                              //     currentDoctorPoints:
+                              //         widget.currentDoctorPoints,
+                              //     cubit: cubit,
+                              //     patientId: widget.patientId,
+                              //     finalSubmit: response.submitStatus ?? false,
+                              //     currentDoctorRole: widget.currentDoctorRole,
+                              //   );
+                              // }
 
                               return const SizedBox.shrink();
                             },

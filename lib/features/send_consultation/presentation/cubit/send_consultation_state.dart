@@ -6,8 +6,14 @@ part 'send_consultation_state.freezed.dart';
 abstract class SendConsultationState with _$SendConsultationState {
   const factory SendConsultationState.initial() = _Initial;
   const factory SendConsultationState.loading() = _Loading;
-  const factory SendConsultationState.loaded(bool isSearching, bool isSearched,
-      String message, GetConsultationSearchModelResponse? response) = _Loaded;
+  const factory SendConsultationState.loaded(
+      bool isSearching,
+      bool isSearched,
+      String message,
+      GetConsultationSearchModelResponse? response,
+      int counterChanges,
+      bool isSendingConsultation,
+      bool isSendedConsultation) = _Loaded;
 
   const factory SendConsultationState.error(String message) = _Error;
 }

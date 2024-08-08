@@ -96,6 +96,8 @@ class TopDoctors extends StatelessWidget {
                                             )
                                           : CustomCachedNetworkImage(
                                               imageUrl: doctor.image.toString(),
+                                              height: 100.h,
+                                              width: 100.w,
                                             ),
                                     ),
                                   ),

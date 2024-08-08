@@ -165,20 +165,17 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                       if (isAddedPatientSuccessfully) {
                         navigatorKey.currentState
                             ?.pushNamed(AppRoutes.home, arguments: 0);
-                        navigatorKey.currentState
-                            ?.pushNamed(
-                              AppRoutes.patientSections,
-                              arguments:
-                                  AppRoutesArgs.patientSectionsRouteArguments(
-                                patientId: patientId.toString(),
-                                currentDoctorModel: widget.currentDoctorModel,
-                                currentDoctorPoints: widget.currentDoctorPoints,
-                                currentDoctorRole: widget.currentDoctorRole,
-                                homeDataModel: widget.homeDataModel,
-                              ),
-                            )
-                            .then(
-                                (value) => context.read<HomeCubit>().getHome());
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.patientSections,
+                          arguments:
+                              AppRoutesArgs.patientSectionsRouteArguments(
+                            patientId: patientId.toString(),
+                            currentDoctorModel: widget.currentDoctorModel,
+                            currentDoctorPoints: widget.currentDoctorPoints,
+                            currentDoctorRole: widget.currentDoctorRole,
+                            homeDataModel: widget.homeDataModel,
+                          ),
+                        );
                       }
                       if (message.isNotEmpty) {
                         customSnackBar(context: context, message: message);
@@ -350,30 +347,44 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
           listContainOther: (answerMap[AppStrings.answers] as List<dynamic>),
           children: questionList[index].values!.map((value) {
-            return ChoiceChip(
-              label: Text(
-                value.toString(),
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold),
+            return Theme(
+              data: ThemeData(
+                chipTheme: ChipThemeData(
+                  selectedColor: AppColors.primary.withOpacity(0.7),
+                  checkmarkColor: Colors.white, // Change the checkmark color
+                  showCheckmark: true,
+
+                  labelStyle: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              backgroundColor: Colors.grey.shade400,
-              selected: (answerMap[AppStrings.answers] as List<dynamic>)
-                  .contains(value),
-              selectedColor: AppColors.primary.withOpacity(0.7),
-              onSelected: (selected) {
-                setState(() {
-                  if (selected) {
-                    (answerMap[AppStrings.answers] as List).add(value);
-                  } else {
-                    (answerMap[AppStrings.answers] as List).remove(value);
-                  }
-                });
-                cubit.formData[questionList[index].id.toString()] = {
-                  AppStrings.answers: (answerMap[AppStrings.answers] as List),
-                  AppStrings.otherField: answerMap[AppStrings.otherField],
-                };
-                log('map ${cubit.formData}');
-              },
+              child: ChoiceChip(
+                label: Text(
+                  value.toString(),
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+                backgroundColor: Colors.grey.shade400,
+                selected: (answerMap[AppStrings.answers] as List<dynamic>)
+                    .contains(value),
+                selectedColor: AppColors.primary.withOpacity(0.7),
+                onSelected: (selected) {
+                  setState(() {
+                    if (selected) {
+                      (answerMap[AppStrings.answers] as List).add(value);
+                    } else {
+                      (answerMap[AppStrings.answers] as List).remove(value);
+                    }
+                  });
+                  cubit.formData[questionList[index].id.toString()] = {
+                    AppStrings.answers: (answerMap[AppStrings.answers] as List),
+                    AppStrings.otherField: answerMap[AppStrings.otherField],
+                  };
+                  log('map ${cubit.formData}');
+                },
+              ),
             );
           }).toList(),
         );

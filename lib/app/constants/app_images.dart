@@ -24,4 +24,5 @@ class AppImages {
   static const String ckd = '$imagePath/ckd.png';
   static const String mdrd = '$imagePath/mdrd.png';
   static const String sobh = '$imagePath/sobh.png';
+  static const String consultation = '$imagePath/consultation.png';
 }

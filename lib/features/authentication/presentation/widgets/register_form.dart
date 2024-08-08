@@ -24,7 +24,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.firstName,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   textInputType: TextInputType.text,
                   onChanged: (value) {
                     cubit.registerFirstName = value;
@@ -39,7 +39,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.lastName,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerLastName = value;
                   },
@@ -55,7 +55,7 @@ class RegisterForm extends StatelessWidget {
           SizedBox(height: 5.h),
           CustomTextFormField(
             title: AppStrings.email,
-            style: TextStyle(fontSize: 10.sp),
+            style: TextStyle(fontSize: 12.sp),
             enableSuggestions: true,
             onChanged: (value) {
               cubit.registerEmail = value;
@@ -70,7 +70,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.password,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   textFormFieldController: cubit.registerPasswordController,
                   obscureText: true,
                   textInputType: TextInputType.visiblePassword,
@@ -83,7 +83,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.confirmPassword,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerPasswordConformation = value;
                   },
@@ -126,7 +126,7 @@ class RegisterForm extends StatelessWidget {
                 child: CustomTextFormField(
                   title: AppStrings.phone,
                   textInputType: TextInputType.phone,
-                  style: TextStyle(fontSize: 13.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerPhone = value;
                   },
@@ -145,7 +145,7 @@ class RegisterForm extends StatelessWidget {
                 child: CustomTextFormField(
                   title: AppStrings.age,
                   textInputType: TextInputType.number,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerAge = value;
                   },
@@ -162,7 +162,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.job,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerJop = value;
                   },
@@ -177,7 +177,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.workplace,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerWorkplace = value;
                   },
@@ -196,7 +196,7 @@ class RegisterForm extends StatelessWidget {
               Expanded(
                 child: CustomTextFormField(
                   title: AppStrings.fullRegisterationNumber,
-                  style: TextStyle(fontSize: 10.sp),
+                  style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerRegistrationNumber = value;
                   },
@@ -218,7 +218,7 @@ class RegisterForm extends StatelessWidget {
                     const SizedBox(height: 10),
                     CustomTextFormField(
                       title: AppStrings.specialty,
-                      style: TextStyle(fontSize: 10.sp),
+                      style: TextStyle(fontSize: 12.sp),
                       onChanged: (value) {
                         cubit.registerSpecialty = value;
                       },
@@ -244,14 +244,14 @@ class RegisterForm extends StatelessWidget {
                     hint: Text(
                       AppStrings.choose,
                       style: TextStyle(
-                          fontSize: 10.sp, color: Colors.grey.shade600),
+                          fontSize: 12.sp, color: Colors.grey.shade600),
                     ),
                     items: highestDegreeList.map((value) {
                       return DropdownMenuItem<String>(
                         value: value,
                         child: Text(
                           value,
-                          style: TextStyle(fontSize: 10.sp),
+                          style: TextStyle(fontSize: 12.sp),
                         ),
                       );
                     }).toList(),
@@ -269,7 +269,7 @@ class RegisterForm extends StatelessWidget {
                     ),
                     icon: Icon(Icons.arrow_drop_down,
                         color: Colors.grey.shade600),
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black),
+                    style: TextStyle(fontSize: 12.sp, color: Colors.black),
                     dropdownColor: Colors.white,
                   ),
                 ),

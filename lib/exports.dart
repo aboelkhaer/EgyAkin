@@ -287,3 +287,14 @@ export 'package:egy_akin/features/profile_patients/presentation/cubit/profile_pa
 export 'package:egy_akin/features/profile_patients/presentation/pages/profile_patients_screen.dart';
 export 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_cubit.dart';
 export 'package:egy_akin/features/send_consultation/presentation/pages/send_consultation_screen.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/widgets/admin_side.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
+export 'package:egy_akin/app/shared/functions/custom_bottom_sheet.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
+export 'package:egy_akin/features/doctor_info_view/presentation/widgets/information_tab.dart';
+export 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
+export 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
+export 'package:egy_akin/features/consultation/data/models/get_current_doctor_consultation_model_response.dart';
+export 'package:egy_akin/features/consultation/data/datasources/consultation_datasource.dart';
+export 'package:egy_akin/features/consultation/domain/repositories/consultation_repo.dart';

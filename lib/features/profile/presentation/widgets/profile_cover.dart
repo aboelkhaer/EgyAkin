@@ -53,7 +53,10 @@ class ProfileCover extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ProfileImage(cubit: cubit),
+                    ProfileImage(
+                      cubit: cubit,
+                      homeDataModel: homeDataModel,
+                    ),
                     SizedBox(height: 5.h),
                     ProfileNameAndJob(
                       cubit: cubit,

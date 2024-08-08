@@ -7,6 +7,7 @@ class CommentCard extends StatelessWidget {
   final CommentModel commentModel;
   final DoctorModel currentDoctorModel;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   final Function() onDelete;
   const CommentCard({
     super.key,
@@ -14,6 +15,7 @@ class CommentCard extends StatelessWidget {
     required this.currentDoctorModel,
     required this.onDelete,
     required this.currentDoctorRole,
+    required this.homeDataModel,
   });
 
   @override
@@ -55,34 +57,55 @@ class CommentCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.4),
-                          spreadRadius: 2,
-                          blurRadius: 9,
-                          offset: const Offset(0, 3),
+                  GestureDetector(
+                    onTap: () {
+                      navigatorKey.currentState?.pushNamed(
+                        AppRoutes.doctorInfoView,
+                        arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+                          doctorId: commentModel.doctor!.id.toString(),
+                          currentDoctorModel: currentDoctorModel,
+                          isSyndicateCardRequired:
+                              homeDataModel.isSyndicateCardRequired.toString(),
+                          accountVerification: homeDataModel.verified!,
+                          currentDoctorRole: currentDoctorRole,
+                          currentDoctorPoints:
+                              int.parse(homeDataModel.scoreValue!),
+                          homeDataModel: homeDataModel,
                         ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(80.r),
-                      child: CircleAvatar(
-                        radius: 20.r,
-                        backgroundColor: AppColors.primary.withOpacity(0.8),
-                        child: commentModel.doctor!.id == null
-                            ? Text(
-                                commentModel.doctor!.firstName![0]
-                                    .toUpperCase(),
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.sp),
-                              )
-                            : CustomCachedNetworkImage(
-                                imageUrl: commentModel.doctor!.image.toString(),
-                              ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.4),
+                            spreadRadius: 2,
+                            blurRadius: 9,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(80.r),
+                        child: CircleAvatar(
+                          radius: 20.r,
+                          backgroundColor: AppColors.primary.withOpacity(0.8),
+                          child: commentModel.doctor!.id == null
+                              ? Text(
+                                  commentModel.doctor!.firstName![0]
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.sp),
+                                )
+                              : CustomCachedNetworkImage(
+                                  imageUrl:
+                                      commentModel.doctor!.image.toString(),
+                                  height: 100.h,
+                                  width: 100.w,
+                                ),
+                        ),
                       ),
                     ),
                   ),

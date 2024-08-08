@@ -64,6 +64,8 @@ class HomeHeader extends StatelessWidget {
                                     : CustomCachedNetworkImage(
                                         imageUrl: cubit.currentDoctorModel.image
                                             .toString(),
+                                        height: 100.h,
+                                        width: 100.w,
                                       ),
                               ),
                             );
@@ -97,6 +99,8 @@ class HomeHeader extends StatelessWidget {
                                     : CustomCachedNetworkImage(
                                         imageUrl:
                                             currentDoctorModel.image.toString(),
+                                        height: 100.h,
+                                        width: 100.w,
                                       ),
                               ),
                             );

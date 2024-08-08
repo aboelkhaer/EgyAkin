@@ -1,11 +1,3 @@
-import 'package:egy_akin/app/shared/functions/custom_bottom_sheet.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/widgets/achievements_tab.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
-import 'package:egy_akin/features/doctor_info_view/presentation/widgets/information_tab.dart';
-import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
-import 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
-
 import '../../../../exports.dart';
 
 class DoctorInfoViewScreen extends StatefulWidget {
@@ -45,9 +37,17 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
     DoctorInfoViewCubit cubit = DoctorInfoViewCubit.get(context);
 
     return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        ),
+      ),
       body: Column(
         children: [
-          SizedBox(height: 60.h),
+          SizedBox(height: 20.h),
           Row(
             children: [
               SizedBox(width: 20.w),
@@ -141,6 +141,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                         : CustomCachedNetworkImage(
                                             imageUrl: doctorInfo.data!.image
                                                 .toString(),
+                                            height: 100.h,
+                                            width: 100.w,
                                           ),
                                   ),
                                 ),
@@ -389,11 +391,14 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                       ],
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: TabBarView(
                       children: [
-                        InformationTab(),
-                        AchievementsTab(),
+                        InformationTab(
+                          homeDataModel: widget.homeDataModel,
+                          currentDoctorModel: widget.currentDoctorModel,
+                        ),
+                        const AchievementsTab(),
                       ],
                     ),
                   ),

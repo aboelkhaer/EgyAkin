@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class PatientCommentsScreen extends StatefulWidget {
@@ -9,6 +8,7 @@ class PatientCommentsScreen extends StatefulWidget {
   final String isSyndicateCardRequired;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
 
   const PatientCommentsScreen({
     super.key,
@@ -19,6 +19,7 @@ class PatientCommentsScreen extends StatefulWidget {
     required this.isSyndicateCardRequired,
     required this.currentDoctorPoints,
     required this.currentDoctorRole,
+    required this.homeDataModel,
   });
 
   @override
@@ -62,6 +63,7 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
               patientId: widget.patientId,
               currentDoctorPoints: widget.currentDoctorPoints,
               currentDoctorRole: widget.currentDoctorRole,
+              homeDataModel: widget.homeDataModel,
             ),
           ),
           Positioned(

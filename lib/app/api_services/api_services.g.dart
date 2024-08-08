@@ -1252,6 +1252,70 @@ class _ApiServices implements ApiServices {
     return _value;
   }
 
+  @override
+  Future<SendConsultationModelResponse> sendConsultation(
+    String patientId,
+    String message,
+    List<String> doctorsIDS,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'patient_id': patientId,
+      'consult_message': message,
+      'consult_doctor_ids': doctorsIDS,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SendConsultationModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/consultations',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = SendConsultationModelResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<GetCurrentDoctorConsultationModelResponse>
+      getCurrentDoctorConsultation() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetCurrentDoctorConsultationModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/consultations/sent',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value =
+        GetCurrentDoctorConsultationModelResponse.fromJson(_result.data!);
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

@@ -50,4 +50,6 @@ class ApiEndPoint {
   static const uploadFileNew = '$baseUrl/api/uploadFileNew';
   static const consultationDoctorSearch =
       '$baseUrl/api/consultationDoctorSearch';
+  static const createConsultation = '$baseUrl/api/consultations';
+  static const getCurrentDoctorConsultation = '$baseUrl/api/consultations/sent';
 }

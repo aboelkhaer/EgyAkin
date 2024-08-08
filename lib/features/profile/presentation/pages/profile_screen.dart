@@ -33,7 +33,10 @@ class ProfileScreen extends StatelessWidget {
             homeDataModel: homeDataModel,
           ),
           SizedBox(height: 20.h),
-          ProfileFeatures(cubit: cubit),
+          ProfileFeatures(
+            cubit: cubit,
+            homeDataModel: homeDataModel,
+          ),
         ],
       ),
     );

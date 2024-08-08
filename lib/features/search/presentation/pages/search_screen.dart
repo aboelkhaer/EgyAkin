@@ -334,6 +334,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   widget.currentDoctorModel,
                                               currentDoctorRole:
                                                   widget.currentDoctorRole,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
                                               verified:
                                                   widget.accountVerification,
                                               patientName:

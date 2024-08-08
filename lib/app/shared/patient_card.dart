@@ -114,6 +114,8 @@ class PatientCard extends StatelessWidget {
                                     )
                                   : CustomCachedNetworkImage(
                                       imageUrl: doctorImage.toString(),
+                                      height: 100.h,
+                                      width: 100.w,
                                     ),
                             ),
                           ),

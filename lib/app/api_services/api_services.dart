@@ -21,6 +21,7 @@ import 'package:egy_akin/features/patient_sections/data/models/final_submit_mode
 import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
 import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_consultation_search_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/send_consultation_model_response.dart';
 import 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 
 import 'package:retrofit/http.dart';
@@ -247,4 +248,15 @@ abstract class ApiServices {
   Future<GetConsultationSearchModelResponse> consultationDoctorSearch(
     @Path("searchContent") String searchContent,
   );
+
+  @POST(ApiEndPoint.createConsultation)
+  Future<SendConsultationModelResponse> sendConsultation(
+    @Field("patient_id") String patientId,
+    @Field("consult_message") String message,
+    @Field("consult_doctor_ids") List<String> doctorsIDS,
+  );
+
+  @GET(ApiEndPoint.getCurrentDoctorConsultation)
+  Future<GetCurrentDoctorConsultationModelResponse>
+      getCurrentDoctorConsultation();
 }

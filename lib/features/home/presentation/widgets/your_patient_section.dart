@@ -127,6 +127,7 @@ class YourPatientSection extends StatelessWidget {
                                     patientName: patient.name.toString(),
                                     currentDoctorPoints:
                                         int.parse(homeData.scoreValue!),
+                                    homeDataModel: homeData,
                                     isSyndicateCardRequired:
                                         homeData.isSyndicateCardRequired!,
                                     currentDoctorRole: homeData.role.toString(),

@@ -1,9 +1,12 @@
-import 'package:egy_akin/features/doctor_info_view/presentation/cubit/doctor_info_view_state.dart';
-
 import '../../../../exports.dart';
 
 class InformationTab extends StatelessWidget {
-  const InformationTab({super.key});
+  final DoctorModel currentDoctorModel;
+  final HomeModelResponse homeDataModel;
+  const InformationTab(
+      {super.key,
+      required this.currentDoctorModel,
+      required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,8 @@ class InformationTab extends StatelessWidget {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding:
+                    const EdgeInsets.all(20.0) + EdgeInsets.only(bottom: 50.h),
                 child: Column(
                   children: [
                     Row(
@@ -170,7 +174,11 @@ class InformationTab extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 30.h),
+                    SizedBox(height: 10.h),
+                    AdminSide(
+                      homeDataModel: homeDataModel,
+                      doctorInfo: doctorInfo,
+                    ),
                   ],
                 ),
               ),

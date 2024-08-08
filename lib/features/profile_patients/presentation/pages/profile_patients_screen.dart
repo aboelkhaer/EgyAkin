@@ -168,6 +168,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 currentDoctorModel:
                                     sl<HomeCubit>().currentDoctorModel,
                                 verified: sl<HomeCubit>().accountVerification!,
+                                homeDataModel: widget.homeDataModel,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 patientName: patient.name.toString(),
                                 isSyndicateCardRequired:

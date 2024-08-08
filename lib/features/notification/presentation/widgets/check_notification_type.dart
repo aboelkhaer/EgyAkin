@@ -99,6 +99,8 @@ class CheckNotificationType extends StatelessWidget {
                                       imageUrl: notificationModel
                                           .patient!.doctor!.image
                                           .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
                                     ),
                             ),
                           ),
@@ -195,6 +197,7 @@ class CheckNotificationType extends StatelessWidget {
                 currentDoctorModel: currentDoctorModel,
                 verified: accountVerification,
                 patientName: notificationModel.patient!.name.toString(),
+                homeDataModel: homeDataModel,
                 currentDoctorPoints: currentDoctorPoints,
                 isSyndicateCardRequired: isSyndicateCardRequired,
                 currentDoctorRole: currentDoctorRole,

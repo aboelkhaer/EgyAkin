@@ -15,7 +15,7 @@ class DontHaveAnAccountLine extends StatelessWidget {
           style: TextStyle(
             color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
-            fontSize: 8.sp,
+            fontSize: 10.sp,
           ),
         ),
         const SizedBox(width: 4),
@@ -28,16 +28,18 @@ class DontHaveAnAccountLine extends StatelessWidget {
               bottom: 1, // Space between underline and text
             ),
             decoration: const BoxDecoration(
-                border: Border(
-                    bottom: BorderSide(
-              color: Colors.blue,
-              width: 1.0, // Underline thickness
-            ))),
+              border: Border(
+                bottom: BorderSide(
+                  color: Colors.blue,
+                  width: 1.0, // Underline thickness
+                ),
+              ),
+            ),
             child: Text(
               AppStrings.registerNow,
               style: TextStyle(
                 color: Colors.blue,
-                fontSize: 8.sp,
+                fontSize: 10.sp,
               ),
             ),
           ),

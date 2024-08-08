@@ -127,6 +127,7 @@ class AllPatientSection extends StatelessWidget {
                                               int.parse(homeData.scoreValue!),
                                           currentDoctorRole:
                                               homeData.role.toString(),
+                                          homeDataModel: homeData,
                                           isSyndicateCardRequired: homeData
                                               .isSyndicateCardRequired!),
                                 );

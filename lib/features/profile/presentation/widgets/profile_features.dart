@@ -4,7 +4,9 @@ import '../../../../exports.dart';
 
 class ProfileFeatures extends StatelessWidget {
   final ProfileCubit cubit;
-  const ProfileFeatures({super.key, required this.cubit});
+  final HomeModelResponse homeDataModel;
+  const ProfileFeatures(
+      {super.key, required this.cubit, required this.homeDataModel});
 
   @override
   Widget build(BuildContext context) {
@@ -238,12 +240,17 @@ class ProfileFeatures extends StatelessWidget {
       //   description: 'Explore your accomplishments.',
       //   onTap: () {},
       // ),
-      // ProfileScreens(
-      //   icon: Icons.chat_bubble_outline,
-      //   title: 'Consultation',
-      //   description: 'Initiate or view consultations.',
-      //   onTap: () {},
-      // ),
+      ProfileScreens(
+        icon: Icons.chat_bubble_outline,
+        title: 'Consultation',
+        description: 'Initiate or view consultations.',
+        onTap: () {
+          navigatorKey.currentState?.pushNamed(AppRoutes.consultation,
+              arguments: AppRoutesArgs.consultationRouteArgs(
+                  homeDataModel: homeDataModel,
+                  currentDoctorModel: cubit.currentDoctor));
+        },
+      ),
       ProfileScreens(
           icon: Icons.exit_to_app_outlined,
           title: 'Sign out',

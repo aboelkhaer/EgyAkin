@@ -3,6 +3,9 @@ import 'package:egy_akin/features/change_password/data/datasources/change_passwo
 import 'package:egy_akin/features/change_password/data/repositories/change_password_repo_impl.dart';
 import 'package:egy_akin/features/change_password/domain/repositories/change_password_repo.dart';
 import 'package:egy_akin/features/change_password/domain/usecases/change_password_usecase.dart';
+import 'package:egy_akin/features/consultation/data/repositories/consultation_repo_impl.dart';
+import 'package:egy_akin/features/consultation/domain/usecases/get_current_doctor_consultation_usecase.dart';
+import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
@@ -15,6 +18,7 @@ import 'package:egy_akin/features/send_consultation/data/datasources/send_consul
 import 'package:egy_akin/features/send_consultation/data/repositories/send_consultation_repo_impl.dart';
 import 'package:egy_akin/features/send_consultation/domain/repositories/send_consultation_repo.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/get_consultation_search_usecase.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/send_consultation_usecase.dart';
 import 'package:egy_akin/features/splash/data/datasources/splash_datasource.dart';
 import 'package:egy_akin/features/splash/data/repositories/splash_repo_impl.dart';
 import 'package:egy_akin/features/splash/domain/repositories/splash_repo.dart';
@@ -66,7 +70,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));
   sl.registerFactory(() => AboutUsCubit());
-  sl.registerFactory(() => SendConsultationCubit(sl()));
+  sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
+  sl.registerFactory(() => ConsultationCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -110,6 +115,9 @@ Future<void> diInit() async {
       () => ProfilePatientsDataSourceImpl(sl()));
   sl.registerLazySingleton<SendConsultationDataSource>(
       () => SendConsultationDataSourceImpl(sl()));
+
+  sl.registerLazySingleton<ConsultationDataSource>(
+      () => ConsultationDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -156,6 +164,8 @@ Future<void> diInit() async {
       () => ProfilePatientsRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<SendConsultationRepository>(
       () => SendConsultationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ConsultationRepository>(
+      () => ConsultationRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -308,5 +318,17 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetConsultationSearchUsecase>()) {
     sl.registerFactory<GetConsultationSearchUsecase>(
         () => GetConsultationSearchUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendConsultationUsecase>()) {
+    sl.registerFactory<SendConsultationUsecase>(
+        () => SendConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendConsultationUsecase>()) {
+    sl.registerFactory<SendConsultationUsecase>(
+        () => SendConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetCurrentDoctorConsultationUsecase>()) {
+    sl.registerFactory<GetCurrentDoctorConsultationUsecase>(
+        () => GetCurrentDoctorConsultationUsecase(sl()));
   }
 }

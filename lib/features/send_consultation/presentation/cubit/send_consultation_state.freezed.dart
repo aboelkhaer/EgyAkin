@@ -20,8 +20,14 @@ mixin _$SendConsultationState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)
+    required TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,8 +36,14 @@ mixin _$SendConsultationState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult? Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -40,8 +52,14 @@ mixin _$SendConsultationState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -133,8 +151,14 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)
+    required TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -146,8 +170,14 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult? Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -159,8 +189,14 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -253,8 +289,14 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)
+    required TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -266,8 +308,14 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult? Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -279,8 +327,14 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -343,7 +397,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       {bool isSearching,
       bool isSearched,
       String message,
-      GetConsultationSearchModelResponse? response});
+      GetConsultationSearchModelResponse? response,
+      int counterChanges,
+      bool isSendingConsultation,
+      bool isSendedConsultation});
 
   $GetConsultationSearchModelResponseCopyWith<$Res>? get response;
 }
@@ -363,6 +420,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isSearched = null,
     Object? message = null,
     Object? response = freezed,
+    Object? counterChanges = null,
+    Object? isSendingConsultation = null,
+    Object? isSendedConsultation = null,
   }) {
     return _then(_$LoadedImpl(
       null == isSearching
@@ -381,6 +441,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.response
           : response // ignore: cast_nullable_to_non_nullable
               as GetConsultationSearchModelResponse?,
+      null == counterChanges
+          ? _value.counterChanges
+          : counterChanges // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == isSendingConsultation
+          ? _value.isSendingConsultation
+          : isSendingConsultation // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSendedConsultation
+          ? _value.isSendedConsultation
+          : isSendedConsultation // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -402,7 +474,13 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(
-      this.isSearching, this.isSearched, this.message, this.response);
+      this.isSearching,
+      this.isSearched,
+      this.message,
+      this.response,
+      this.counterChanges,
+      this.isSendingConsultation,
+      this.isSendedConsultation);
 
   @override
   final bool isSearching;
@@ -412,10 +490,16 @@ class _$LoadedImpl implements _Loaded {
   final String message;
   @override
   final GetConsultationSearchModelResponse? response;
+  @override
+  final int counterChanges;
+  @override
+  final bool isSendingConsultation;
+  @override
+  final bool isSendedConsultation;
 
   @override
   String toString() {
-    return 'SendConsultationState.loaded(isSearching: $isSearching, isSearched: $isSearched, message: $message, response: $response)';
+    return 'SendConsultationState.loaded(isSearching: $isSearching, isSearched: $isSearched, message: $message, response: $response, counterChanges: $counterChanges, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation)';
   }
 
   @override
@@ -429,12 +513,18 @@ class _$LoadedImpl implements _Loaded {
                 other.isSearched == isSearched) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.response, response) ||
-                other.response == response));
+                other.response == response) &&
+            (identical(other.counterChanges, counterChanges) ||
+                other.counterChanges == counterChanges) &&
+            (identical(other.isSendingConsultation, isSendingConsultation) ||
+                other.isSendingConsultation == isSendingConsultation) &&
+            (identical(other.isSendedConsultation, isSendedConsultation) ||
+                other.isSendedConsultation == isSendedConsultation));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, isSearching, isSearched, message, response);
+  int get hashCode => Object.hash(runtimeType, isSearching, isSearched, message,
+      response, counterChanges, isSendingConsultation, isSendedConsultation);
 
   @JsonKey(ignore: true)
   @override
@@ -447,12 +537,19 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)
+    required TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(isSearching, isSearched, message, response);
+    return loaded(isSearching, isSearched, message, response, counterChanges,
+        isSendingConsultation, isSendedConsultation);
   }
 
   @override
@@ -460,12 +557,19 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult? Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(isSearching, isSearched, message, response);
+    return loaded?.call(isSearching, isSearched, message, response,
+        counterChanges, isSendingConsultation, isSendedConsultation);
   }
 
   @override
@@ -473,14 +577,21 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(isSearching, isSearched, message, response);
+      return loaded(isSearching, isSearched, message, response, counterChanges,
+          isSendingConsultation, isSendedConsultation);
     }
     return orElse();
   }
@@ -528,12 +639,18 @@ abstract class _Loaded implements SendConsultationState {
       final bool isSearching,
       final bool isSearched,
       final String message,
-      final GetConsultationSearchModelResponse? response) = _$LoadedImpl;
+      final GetConsultationSearchModelResponse? response,
+      final int counterChanges,
+      final bool isSendingConsultation,
+      final bool isSendedConsultation) = _$LoadedImpl;
 
   bool get isSearching;
   bool get isSearched;
   String get message;
   GetConsultationSearchModelResponse? get response;
+  int get counterChanges;
+  bool get isSendingConsultation;
+  bool get isSendedConsultation;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -605,8 +722,14 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)
+    required TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -618,8 +741,14 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult? Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -631,8 +760,14 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(bool isSearching, bool isSearched, String message,
-            GetConsultationSearchModelResponse? response)?
+    TResult Function(
+            bool isSearching,
+            bool isSearched,
+            String message,
+            GetConsultationSearchModelResponse? response,
+            int counterChanges,
+            bool isSendingConsultation,
+            bool isSendedConsultation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

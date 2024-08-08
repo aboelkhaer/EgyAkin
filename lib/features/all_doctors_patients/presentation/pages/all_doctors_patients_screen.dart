@@ -175,6 +175,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                                 isSyndicateCardRequired:
                                     widget.isSyndicateCardRequired,
                                 currentDoctorRole: widget.currentDoctorRole,
+                                homeDataModel: widget.homeDataModel,
                               ),
                             );
                           },

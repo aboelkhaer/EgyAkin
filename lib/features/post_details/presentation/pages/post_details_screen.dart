@@ -8,6 +8,7 @@ class PostDetailsScreen extends StatefulWidget {
   final bool accountVerification;
   final String isSyndicateCardRequired;
   final String currentDoctorRole;
+  final HomeModelResponse homeDataModel;
   const PostDetailsScreen({
     super.key,
     required this.postModel,
@@ -15,6 +16,7 @@ class PostDetailsScreen extends StatefulWidget {
     required this.accountVerification,
     required this.isSyndicateCardRequired,
     required this.currentDoctorRole,
+    required this.homeDataModel,
   });
 
   @override
@@ -108,6 +110,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                           cubit: cubit,
                           currentDoctorModel: widget.currentDoctorModel,
                           currentDoctorRole: widget.currentDoctorRole,
+                          homeDataModel: widget.homeDataModel,
                         ),
                       ],
                     ),

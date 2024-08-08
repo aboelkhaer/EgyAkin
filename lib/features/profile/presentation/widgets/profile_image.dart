@@ -2,9 +2,11 @@ import '../../../../exports.dart';
 
 class ProfileImage extends StatelessWidget {
   final ProfileCubit cubit;
+  final HomeModelResponse homeDataModel;
   const ProfileImage({
     super.key,
     required this.cubit,
+    required this.homeDataModel,
   });
 
   @override
@@ -37,29 +39,49 @@ class ProfileImage extends StatelessWidget {
                   builder: (context, state) {
                     return state.maybeWhen(
                       orElse: () {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(80.r),
-                          child: CachedNetworkImage(
-                            imageUrl: cubit.currentDoctor.image.toString(),
-                            width: 100.w,
-                            height: 100.h,
-                            fadeInDuration: const Duration(milliseconds: 200),
-                            fadeInCurve: Curves.easeIn,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) =>
-                                Lottie.asset(AppImages.imageLoader),
-                            errorWidget: (context, url, error) {
-                              return Container(
-                                color: Colors.transparent,
-                                child: const Center(
-                                  child: Icon(
-                                    Icons.error_outline,
-                                    color: AppColors.primary,
-                                    size: 40.0,
+                        return GestureDetector(
+                          onTap: () {
+                            navigatorKey.currentState?.pushNamed(
+                              AppRoutes.doctorInfoView,
+                              arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+                                doctorId: cubit.currentDoctor.id.toString(),
+                                currentDoctorModel: cubit.currentDoctor,
+                                isSyndicateCardRequired: homeDataModel
+                                    .isSyndicateCardRequired
+                                    .toString(),
+                                accountVerification: homeDataModel.verified!,
+                                currentDoctorRole:
+                                    homeDataModel.role.toString(),
+                                currentDoctorPoints:
+                                    int.parse(homeDataModel.scoreValue!),
+                                homeDataModel: homeDataModel,
+                              ),
+                            );
+                          },
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(80.r),
+                            child: CachedNetworkImage(
+                              imageUrl: cubit.currentDoctor.image.toString(),
+                              width: 100.w,
+                              height: 100.h,
+                              fadeInDuration: const Duration(milliseconds: 200),
+                              fadeInCurve: Curves.easeIn,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Lottie.asset(AppImages.imageLoader),
+                              errorWidget: (context, url, error) {
+                                return Container(
+                                  color: Colors.transparent,
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.error_outline,
+                                      color: AppColors.primary,
+                                      size: 40.0,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
                         );
                       },
@@ -79,30 +101,76 @@ class ProfileImage extends StatelessWidget {
                                   height: 100.h,
                                 ),
                               )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(80.r),
-                                child: CachedNetworkImage(
-                                  imageUrl: doctorModel.image.toString(),
-                                  width: 100.w,
-                                  height: 100.h,
-                                  fadeInDuration:
-                                      const Duration(milliseconds: 200),
-                                  fadeInCurve: Curves.easeIn,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) =>
-                                      Lottie.asset(AppImages.imageLoader),
-                                  errorWidget: (context, url, error) {
-                                    return Container(
-                                      color: Colors.transparent,
-                                      child: const Center(
-                                        child: Icon(
-                                          Icons.error_outline,
-                                          color: AppColors.primary,
-                                          size: 40.0,
-                                        ),
+                            : GestureDetector(
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.doctorInfoView,
+                                    arguments:
+                                        AppRoutesArgs.doctorInfoViewRouteArgs(
+                                      doctorId:
+                                          cubit.currentDoctor.id.toString(),
+                                      currentDoctorModel: cubit.currentDoctor,
+                                      isSyndicateCardRequired: homeDataModel
+                                          .isSyndicateCardRequired
+                                          .toString(),
+                                      accountVerification:
+                                          homeDataModel.verified!,
+                                      currentDoctorRole:
+                                          homeDataModel.role.toString(),
+                                      currentDoctorPoints:
+                                          int.parse(homeDataModel.scoreValue!),
+                                      homeDataModel: homeDataModel,
+                                    ),
+                                  );
+                                },
+                                child: GestureDetector(
+                                  onTap: () {
+                                    navigatorKey.currentState?.pushNamed(
+                                      AppRoutes.doctorInfoView,
+                                      arguments:
+                                          AppRoutesArgs.doctorInfoViewRouteArgs(
+                                        doctorId:
+                                            cubit.currentDoctor.id.toString(),
+                                        currentDoctorModel: cubit.currentDoctor,
+                                        isSyndicateCardRequired: homeDataModel
+                                            .isSyndicateCardRequired
+                                            .toString(),
+                                        accountVerification:
+                                            homeDataModel.verified!,
+                                        currentDoctorRole:
+                                            homeDataModel.role.toString(),
+                                        currentDoctorPoints: int.parse(
+                                            homeDataModel.scoreValue!),
+                                        homeDataModel: homeDataModel,
                                       ),
                                     );
                                   },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(80.r),
+                                    child: CachedNetworkImage(
+                                      imageUrl: doctorModel.image.toString(),
+                                      width: 100.w,
+                                      height: 100.h,
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 200),
+                                      fadeInCurve: Curves.easeIn,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Lottie.asset(AppImages.imageLoader),
+                                      errorWidget: (context, url, error) {
+                                        return Container(
+                                          color: Colors.transparent,
+                                          child: const Center(
+                                            child: Icon(
+                                              Icons.error_outline,
+                                              color: AppColors.primary,
+                                              size: 40.0,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 ),
                               );
                       },
