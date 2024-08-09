@@ -1,17 +1,20 @@
 import 'package:egy_akin/features/consultation/domain/usecases/get_current_doctor_consultation_usecase.dart';
+import 'package:egy_akin/features/consultation/domain/usecases/get_received_consultation_usecase.dart';
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_state.dart';
 
 import '../../../../exports.dart';
 
 class ConsultationCubit extends Cubit<ConsultationState> {
-  ConsultationCubit(this._getCurrentDoctorConsultationUsecase)
+  ConsultationCubit(this._getCurrentDoctorConsultationUsecase,
+      this._getReceivedConsultationUsecase)
       : super(const ConsultationState.initial());
   final GetCurrentDoctorConsultationUsecase
       _getCurrentDoctorConsultationUsecase;
+  final GetReceivedConsultationUsecase _getReceivedConsultationUsecase;
   static ConsultationCubit get(context) => BlocProvider.of(context);
 
-  getCurrentDoctorPatients() async {
-    emit(const ConsultationState.loading());
+  getCurrentDoctorConsultations() async {
+    emit(const ConsultationState.myConsultationsLoading());
 
     final result =
         await _getCurrentDoctorConsultationUsecase.execute(NoParams());
@@ -20,7 +23,21 @@ class ConsultationCubit extends Cubit<ConsultationState> {
         emit(ConsultationState.error(l.message));
       },
       (response) async {
-        emit(ConsultationState.loaded(response));
+        emit(ConsultationState.myConsultationsLoaded(response));
+      },
+    );
+  }
+
+  getReceivedConsultations() async {
+    emit(const ConsultationState.receivedConsultationsLoading());
+
+    final result = await _getReceivedConsultationUsecase.execute(NoParams());
+    result.fold(
+      (l) {
+        emit(ConsultationState.error(l.message));
+      },
+      (response) async {
+        emit(ConsultationState.receivedConsultationsLoaded(response));
       },
     );
   }

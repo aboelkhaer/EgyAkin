@@ -181,17 +181,20 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                             ),
                             doctorInfo.data!.isSyndicateCardRequired ==
                                     'Verified'
-                                ? Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 3),
-                                    child: FadeIn(
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      child: Image.asset(
-                                        AppImages.verified,
-                                        height: 20,
-                                        width: 20,
-                                        color: Colors.green.shade600,
+                                ? Tooltip(
+                                    message: 'Verified',
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 3),
+                                      child: FadeIn(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        child: Image.asset(
+                                          AppImages.verified,
+                                          height: 20,
+                                          width: 20,
+                                          color: Colors.green.shade600,
+                                        ),
                                       ),
                                     ),
                                   )

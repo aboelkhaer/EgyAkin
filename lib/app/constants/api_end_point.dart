@@ -52,4 +52,5 @@ class ApiEndPoint {
       '$baseUrl/api/consultationDoctorSearch';
   static const createConsultation = '$baseUrl/api/consultations';
   static const getCurrentDoctorConsultation = '$baseUrl/api/consultations/sent';
+  static const getReceivedConsultation = '$baseUrl/api/consultations/received';
 }

@@ -19,33 +19,48 @@ mixin _$ConsultationState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() myConsultationsLoading,
     required TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)
-        loaded,
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? myConsultationsLoading,
     TResult? Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? myConsultationsLoading,
     TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -53,24 +68,38 @@ mixin _$ConsultationState {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -134,11 +163,16 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() myConsultationsLoading,
     required TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)
-        loaded,
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -148,11 +182,16 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? myConsultationsLoading,
     TResult? Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -162,11 +201,16 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? myConsultationsLoading,
     TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -180,8 +224,14 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -191,8 +241,12 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -202,8 +256,12 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -219,35 +277,38 @@ abstract class _Initial implements ConsultationState {
 }
 
 /// @nodoc
-abstract class _$$LoadingImplCopyWith<$Res> {
-  factory _$$LoadingImplCopyWith(
-          _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
-      __$$LoadingImplCopyWithImpl<$Res>;
+abstract class _$$MyConsultationsLoadingImplCopyWith<$Res> {
+  factory _$$MyConsultationsLoadingImplCopyWith(
+          _$MyConsultationsLoadingImpl value,
+          $Res Function(_$MyConsultationsLoadingImpl) then) =
+      __$$MyConsultationsLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$ConsultationStateCopyWithImpl<$Res, _$LoadingImpl>
-    implements _$$LoadingImplCopyWith<$Res> {
-  __$$LoadingImplCopyWithImpl(
-      _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
+class __$$MyConsultationsLoadingImplCopyWithImpl<$Res>
+    extends _$ConsultationStateCopyWithImpl<$Res, _$MyConsultationsLoadingImpl>
+    implements _$$MyConsultationsLoadingImplCopyWith<$Res> {
+  __$$MyConsultationsLoadingImplCopyWithImpl(
+      _$MyConsultationsLoadingImpl _value,
+      $Res Function(_$MyConsultationsLoadingImpl) _then)
       : super(_value, _then);
 }
 
 /// @nodoc
 
-class _$LoadingImpl implements _Loading {
-  const _$LoadingImpl();
+class _$MyConsultationsLoadingImpl implements _MyConsultationsLoading {
+  const _$MyConsultationsLoadingImpl();
 
   @override
   String toString() {
-    return 'ConsultationState.loading()';
+    return 'ConsultationState.myConsultationsLoading()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$MyConsultationsLoadingImpl);
   }
 
   @override
@@ -257,44 +318,59 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() myConsultationsLoading,
     required TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)
-        loaded,
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
     required TResult Function(String message) error,
   }) {
-    return loading();
+    return myConsultationsLoading();
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? myConsultationsLoading,
     TResult? Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult? Function(String message)? error,
   }) {
-    return loading?.call();
+    return myConsultationsLoading?.call();
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? myConsultationsLoading,
     TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
-    if (loading != null) {
-      return loading();
+    if (myConsultationsLoading != null) {
+      return myConsultationsLoading();
     }
     return orElse();
   }
@@ -303,63 +379,76 @@ class _$LoadingImpl implements _Loading {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
     required TResult Function(_Error value) error,
   }) {
-    return loading(this);
+    return myConsultationsLoading(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult? Function(_Error value)? error,
   }) {
-    return loading?.call(this);
+    return myConsultationsLoading?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (loading != null) {
-      return loading(this);
+    if (myConsultationsLoading != null) {
+      return myConsultationsLoading(this);
     }
     return orElse();
   }
 }
 
-abstract class _Loading implements ConsultationState {
-  const factory _Loading() = _$LoadingImpl;
+abstract class _MyConsultationsLoading implements ConsultationState {
+  const factory _MyConsultationsLoading() = _$MyConsultationsLoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$LoadedImplCopyWith<$Res> {
-  factory _$$LoadedImplCopyWith(
-          _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
-      __$$LoadedImplCopyWithImpl<$Res>;
+abstract class _$$MyConsultationsLoadedImplCopyWith<$Res> {
+  factory _$$MyConsultationsLoadedImplCopyWith(
+          _$MyConsultationsLoadedImpl value,
+          $Res Function(_$MyConsultationsLoadedImpl) then) =
+      __$$MyConsultationsLoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {GetCurrentDoctorConsultationModelResponse allCurrentDoctorConsultation});
-
-  $GetCurrentDoctorConsultationModelResponseCopyWith<$Res>
-      get allCurrentDoctorConsultation;
+      {List<GetCurrentDoctorConsultationModelResponse>
+          allCurrentDoctorConsultation});
 }
 
 /// @nodoc
-class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$ConsultationStateCopyWithImpl<$Res, _$LoadedImpl>
-    implements _$$LoadedImplCopyWith<$Res> {
-  __$$LoadedImplCopyWithImpl(
-      _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
+class __$$MyConsultationsLoadedImplCopyWithImpl<$Res>
+    extends _$ConsultationStateCopyWithImpl<$Res, _$MyConsultationsLoadedImpl>
+    implements _$$MyConsultationsLoadedImplCopyWith<$Res> {
+  __$$MyConsultationsLoadedImplCopyWithImpl(_$MyConsultationsLoadedImpl _value,
+      $Res Function(_$MyConsultationsLoadedImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -367,100 +456,117 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? allCurrentDoctorConsultation = null,
   }) {
-    return _then(_$LoadedImpl(
+    return _then(_$MyConsultationsLoadedImpl(
       null == allCurrentDoctorConsultation
-          ? _value.allCurrentDoctorConsultation
+          ? _value._allCurrentDoctorConsultation
           : allCurrentDoctorConsultation // ignore: cast_nullable_to_non_nullable
-              as GetCurrentDoctorConsultationModelResponse,
+              as List<GetCurrentDoctorConsultationModelResponse>,
     ));
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $GetCurrentDoctorConsultationModelResponseCopyWith<$Res>
-      get allCurrentDoctorConsultation {
-    return $GetCurrentDoctorConsultationModelResponseCopyWith<$Res>(
-        _value.allCurrentDoctorConsultation, (value) {
-      return _then(_value.copyWith(allCurrentDoctorConsultation: value));
-    });
   }
 }
 
 /// @nodoc
 
-class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.allCurrentDoctorConsultation);
+class _$MyConsultationsLoadedImpl implements _MyConsultationsLoaded {
+  const _$MyConsultationsLoadedImpl(
+      final List<GetCurrentDoctorConsultationModelResponse>
+          allCurrentDoctorConsultation)
+      : _allCurrentDoctorConsultation = allCurrentDoctorConsultation;
 
+  final List<GetCurrentDoctorConsultationModelResponse>
+      _allCurrentDoctorConsultation;
   @override
-  final GetCurrentDoctorConsultationModelResponse allCurrentDoctorConsultation;
+  List<GetCurrentDoctorConsultationModelResponse>
+      get allCurrentDoctorConsultation {
+    if (_allCurrentDoctorConsultation is EqualUnmodifiableListView)
+      return _allCurrentDoctorConsultation;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allCurrentDoctorConsultation);
+  }
 
   @override
   String toString() {
-    return 'ConsultationState.loaded(allCurrentDoctorConsultation: $allCurrentDoctorConsultation)';
+    return 'ConsultationState.myConsultationsLoaded(allCurrentDoctorConsultation: $allCurrentDoctorConsultation)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LoadedImpl &&
-            (identical(other.allCurrentDoctorConsultation,
-                    allCurrentDoctorConsultation) ||
-                other.allCurrentDoctorConsultation ==
-                    allCurrentDoctorConsultation));
+            other is _$MyConsultationsLoadedImpl &&
+            const DeepCollectionEquality().equals(
+                other._allCurrentDoctorConsultation,
+                _allCurrentDoctorConsultation));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, allCurrentDoctorConsultation);
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_allCurrentDoctorConsultation));
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
+  _$$MyConsultationsLoadedImplCopyWith<_$MyConsultationsLoadedImpl>
+      get copyWith => __$$MyConsultationsLoadedImplCopyWithImpl<
+          _$MyConsultationsLoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() myConsultationsLoading,
     required TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)
-        loaded,
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(allCurrentDoctorConsultation);
+    return myConsultationsLoaded(allCurrentDoctorConsultation);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? myConsultationsLoading,
     TResult? Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(allCurrentDoctorConsultation);
+    return myConsultationsLoaded?.call(allCurrentDoctorConsultation);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? myConsultationsLoading,
     TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
-    if (loaded != null) {
-      return loaded(allCurrentDoctorConsultation);
+    if (myConsultationsLoaded != null) {
+      return myConsultationsLoaded(allCurrentDoctorConsultation);
     }
     return orElse();
   }
@@ -469,49 +575,426 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
     required TResult Function(_Error value) error,
   }) {
-    return loaded(this);
+    return myConsultationsLoaded(this);
   }
 
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult? Function(_Error value)? error,
   }) {
-    return loaded?.call(this);
+    return myConsultationsLoaded?.call(this);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
-    if (loaded != null) {
-      return loaded(this);
+    if (myConsultationsLoaded != null) {
+      return myConsultationsLoaded(this);
     }
     return orElse();
   }
 }
 
-abstract class _Loaded implements ConsultationState {
-  const factory _Loaded(
-      final GetCurrentDoctorConsultationModelResponse
-          allCurrentDoctorConsultation) = _$LoadedImpl;
+abstract class _MyConsultationsLoaded implements ConsultationState {
+  const factory _MyConsultationsLoaded(
+      final List<GetCurrentDoctorConsultationModelResponse>
+          allCurrentDoctorConsultation) = _$MyConsultationsLoadedImpl;
 
-  GetCurrentDoctorConsultationModelResponse get allCurrentDoctorConsultation;
+  List<GetCurrentDoctorConsultationModelResponse>
+      get allCurrentDoctorConsultation;
   @JsonKey(ignore: true)
-  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$MyConsultationsLoadedImplCopyWith<_$MyConsultationsLoadedImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ReceivedConsultationsLoadingImplCopyWith<$Res> {
+  factory _$$ReceivedConsultationsLoadingImplCopyWith(
+          _$ReceivedConsultationsLoadingImpl value,
+          $Res Function(_$ReceivedConsultationsLoadingImpl) then) =
+      __$$ReceivedConsultationsLoadingImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ReceivedConsultationsLoadingImplCopyWithImpl<$Res>
+    extends _$ConsultationStateCopyWithImpl<$Res,
+        _$ReceivedConsultationsLoadingImpl>
+    implements _$$ReceivedConsultationsLoadingImplCopyWith<$Res> {
+  __$$ReceivedConsultationsLoadingImplCopyWithImpl(
+      _$ReceivedConsultationsLoadingImpl _value,
+      $Res Function(_$ReceivedConsultationsLoadingImpl) _then)
+      : super(_value, _then);
+}
+
+/// @nodoc
+
+class _$ReceivedConsultationsLoadingImpl
+    implements _ReceivedConsultationsLoading {
+  const _$ReceivedConsultationsLoadingImpl();
+
+  @override
+  String toString() {
+    return 'ConsultationState.receivedConsultationsLoading()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReceivedConsultationsLoadingImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() myConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
+    required TResult Function(String message) error,
+  }) {
+    return receivedConsultationsLoading();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? myConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)?
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
+    TResult? Function(String message)? error,
+  }) {
+    return receivedConsultationsLoading?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? myConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)?
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (receivedConsultationsLoading != null) {
+      return receivedConsultationsLoading();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return receivedConsultationsLoading(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return receivedConsultationsLoading?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (receivedConsultationsLoading != null) {
+      return receivedConsultationsLoading(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ReceivedConsultationsLoading implements ConsultationState {
+  const factory _ReceivedConsultationsLoading() =
+      _$ReceivedConsultationsLoadingImpl;
+}
+
+/// @nodoc
+abstract class _$$ReceivedConsultationsLoadedImplCopyWith<$Res> {
+  factory _$$ReceivedConsultationsLoadedImplCopyWith(
+          _$ReceivedConsultationsLoadedImpl value,
+          $Res Function(_$ReceivedConsultationsLoadedImpl) then) =
+      __$$ReceivedConsultationsLoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {List<GetCurrentDoctorConsultationModelResponse>
+          allReceivedConsultation});
+}
+
+/// @nodoc
+class __$$ReceivedConsultationsLoadedImplCopyWithImpl<$Res>
+    extends _$ConsultationStateCopyWithImpl<$Res,
+        _$ReceivedConsultationsLoadedImpl>
+    implements _$$ReceivedConsultationsLoadedImplCopyWith<$Res> {
+  __$$ReceivedConsultationsLoadedImplCopyWithImpl(
+      _$ReceivedConsultationsLoadedImpl _value,
+      $Res Function(_$ReceivedConsultationsLoadedImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? allReceivedConsultation = null,
+  }) {
+    return _then(_$ReceivedConsultationsLoadedImpl(
+      null == allReceivedConsultation
+          ? _value._allReceivedConsultation
+          : allReceivedConsultation // ignore: cast_nullable_to_non_nullable
+              as List<GetCurrentDoctorConsultationModelResponse>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ReceivedConsultationsLoadedImpl
+    implements _ReceivedConsultationsLoaded {
+  const _$ReceivedConsultationsLoadedImpl(
+      final List<GetCurrentDoctorConsultationModelResponse>
+          allReceivedConsultation)
+      : _allReceivedConsultation = allReceivedConsultation;
+
+  final List<GetCurrentDoctorConsultationModelResponse>
+      _allReceivedConsultation;
+  @override
+  List<GetCurrentDoctorConsultationModelResponse> get allReceivedConsultation {
+    if (_allReceivedConsultation is EqualUnmodifiableListView)
+      return _allReceivedConsultation;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allReceivedConsultation);
+  }
+
+  @override
+  String toString() {
+    return 'ConsultationState.receivedConsultationsLoaded(allReceivedConsultation: $allReceivedConsultation)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ReceivedConsultationsLoadedImpl &&
+            const DeepCollectionEquality().equals(
+                other._allReceivedConsultation, _allReceivedConsultation));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_allReceivedConsultation));
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ReceivedConsultationsLoadedImplCopyWith<_$ReceivedConsultationsLoadedImpl>
+      get copyWith => __$$ReceivedConsultationsLoadedImplCopyWithImpl<
+          _$ReceivedConsultationsLoadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() myConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
+    required TResult Function(String message) error,
+  }) {
+    return receivedConsultationsLoaded(allReceivedConsultation);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? myConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)?
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
+    TResult? Function(String message)? error,
+  }) {
+    return receivedConsultationsLoaded?.call(allReceivedConsultation);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? myConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allCurrentDoctorConsultation)?
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (receivedConsultationsLoaded != null) {
+      return receivedConsultationsLoaded(allReceivedConsultation);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return receivedConsultationsLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return receivedConsultationsLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (receivedConsultationsLoaded != null) {
+      return receivedConsultationsLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _ReceivedConsultationsLoaded implements ConsultationState {
+  const factory _ReceivedConsultationsLoaded(
+      final List<GetCurrentDoctorConsultationModelResponse>
+          allReceivedConsultation) = _$ReceivedConsultationsLoadedImpl;
+
+  List<GetCurrentDoctorConsultationModelResponse> get allReceivedConsultation;
+  @JsonKey(ignore: true)
+  _$$ReceivedConsultationsLoadedImplCopyWith<_$ReceivedConsultationsLoadedImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -579,11 +1062,16 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function() myConsultationsLoading,
     required TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)
-        loaded,
+        myConsultationsLoaded,
+    required TResult Function() receivedConsultationsLoading,
+    required TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)
+        receivedConsultationsLoaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -593,11 +1081,16 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function()? myConsultationsLoading,
     TResult? Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult? Function()? receivedConsultationsLoading,
+    TResult? Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -607,11 +1100,16 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function()? myConsultationsLoading,
     TResult Function(
-            GetCurrentDoctorConsultationModelResponse
+            List<GetCurrentDoctorConsultationModelResponse>
                 allCurrentDoctorConsultation)?
-        loaded,
+        myConsultationsLoaded,
+    TResult Function()? receivedConsultationsLoading,
+    TResult Function(
+            List<GetCurrentDoctorConsultationModelResponse>
+                allReceivedConsultation)?
+        receivedConsultationsLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -625,8 +1123,14 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(_Initial value) initial,
-    required TResult Function(_Loading value) loading,
-    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_MyConsultationsLoading value)
+        myConsultationsLoading,
+    required TResult Function(_MyConsultationsLoaded value)
+        myConsultationsLoaded,
+    required TResult Function(_ReceivedConsultationsLoading value)
+        receivedConsultationsLoading,
+    required TResult Function(_ReceivedConsultationsLoaded value)
+        receivedConsultationsLoaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -636,8 +1140,12 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(_Initial value)? initial,
-    TResult? Function(_Loading value)? loading,
-    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult? Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult? Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult? Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -647,8 +1155,12 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(_Initial value)? initial,
-    TResult Function(_Loading value)? loading,
-    TResult Function(_Loaded value)? loaded,
+    TResult Function(_MyConsultationsLoading value)? myConsultationsLoading,
+    TResult Function(_MyConsultationsLoaded value)? myConsultationsLoaded,
+    TResult Function(_ReceivedConsultationsLoading value)?
+        receivedConsultationsLoading,
+    TResult Function(_ReceivedConsultationsLoaded value)?
+        receivedConsultationsLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

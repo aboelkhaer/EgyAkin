@@ -598,8 +598,7 @@ class RouteGenerator {
               args.containsKey('currentDoctorModel')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<ConsultationCubit>(
-                create: (context) =>
-                    di.sl<ConsultationCubit>()..getCurrentDoctorPatients(),
+                create: (context) => di.sl<ConsultationCubit>(),
                 child: ConsultationScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,

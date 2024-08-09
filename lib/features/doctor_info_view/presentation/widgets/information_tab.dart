@@ -66,11 +66,13 @@ class InformationTab extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(width: 60.w),
-                        SelectableText(
-                          doctorInfo.data!.workingplace.toString(),
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade600),
+                        Flexible(
+                          child: SelectableText(
+                            doctorInfo.data!.workingplace.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey.shade600),
+                          ),
                         ),
                       ],
                     ),

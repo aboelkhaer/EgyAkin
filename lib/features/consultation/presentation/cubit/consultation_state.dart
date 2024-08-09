@@ -5,10 +5,18 @@ part 'consultation_state.freezed.dart';
 @freezed
 abstract class ConsultationState with _$ConsultationState {
   const factory ConsultationState.initial() = _Initial;
-  const factory ConsultationState.loading() = _Loading;
+  const factory ConsultationState.myConsultationsLoading() =
+      _MyConsultationsLoading;
 
-  const factory ConsultationState.loaded(
-      GetCurrentDoctorConsultationModelResponse
-          allCurrentDoctorConsultation) = _Loaded;
+  const factory ConsultationState.myConsultationsLoaded(
+      List<GetCurrentDoctorConsultationModelResponse>
+          allCurrentDoctorConsultation) = _MyConsultationsLoaded;
+  const factory ConsultationState.receivedConsultationsLoading() =
+      _ReceivedConsultationsLoading;
+
+  const factory ConsultationState.receivedConsultationsLoaded(
+      List<GetCurrentDoctorConsultationModelResponse>
+          allReceivedConsultation) = _ReceivedConsultationsLoaded;
+
   const factory ConsultationState.error(String message) = _Error;
 }

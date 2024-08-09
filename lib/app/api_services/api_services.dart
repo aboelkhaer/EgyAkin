@@ -257,6 +257,10 @@ abstract class ApiServices {
   );
 
   @GET(ApiEndPoint.getCurrentDoctorConsultation)
-  Future<GetCurrentDoctorConsultationModelResponse>
+  Future<List<GetCurrentDoctorConsultationModelResponse>>
       getCurrentDoctorConsultation();
+
+  @GET(ApiEndPoint.getReceivedConsultation)
+  Future<List<GetCurrentDoctorConsultationModelResponse>>
+      getReceivedConsultation();
 }

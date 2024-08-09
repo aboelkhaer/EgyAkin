@@ -298,3 +298,5 @@ export 'package:egy_akin/features/score_history/presentation/pages/score_history
 export 'package:egy_akin/features/consultation/data/models/get_current_doctor_consultation_model_response.dart';
 export 'package:egy_akin/features/consultation/data/datasources/consultation_datasource.dart';
 export 'package:egy_akin/features/consultation/domain/repositories/consultation_repo.dart';
+export 'package:egy_akin/features/consultation/presentation/widgets/my_consultations_tab.dart';
+export 'package:egy_akin/features/consultation/presentation/widgets/received_tab.dart';

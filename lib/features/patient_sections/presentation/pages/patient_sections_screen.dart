@@ -107,22 +107,6 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         actions: [
           Tooltip(
             message: 'Send consultation',
-            // child: IconButton(
-            //   onPressed: () {
-            //     navigatorKey.currentState?.pushNamed(
-            //       AppRoutes.sendConsultation,
-            //       arguments: AppRoutesArgs.sendConsultationRouteArgs(
-            //         homeDataModel: widget.homeDataModel,
-            //         currentDoctorModel: widget.currentDoctorModel,
-            //         patientId: widget.patientId,
-            //       ),
-            //     );
-            //   },
-            //   icon: Icon(
-            //     Icons.chat_bubble_outline,
-            //     size: 20.r,
-            //   ),
-            // ),
             child: Padding(
               padding: EdgeInsets.only(right: 5.w),
               child: InkWell(

@@ -1288,14 +1288,14 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetCurrentDoctorConsultationModelResponse>
+  Future<List<GetCurrentDoctorConsultationModelResponse>>
       getCurrentDoctorConsultation() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetCurrentDoctorConsultationModelResponse>(Options(
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<GetCurrentDoctorConsultationModelResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -1311,8 +1311,41 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    final _value =
-        GetCurrentDoctorConsultationModelResponse.fromJson(_result.data!);
+    var _value = _result.data!
+        .map((dynamic i) => GetCurrentDoctorConsultationModelResponse.fromJson(
+            i as Map<String, dynamic>))
+        .toList();
+    return _value;
+  }
+
+  @override
+  Future<List<GetCurrentDoctorConsultationModelResponse>>
+      getReceivedConsultation() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _result = await _dio.fetch<List<dynamic>>(
+        _setStreamType<List<GetCurrentDoctorConsultationModelResponse>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/consultations/received',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    var _value = _result.data!
+        .map((dynamic i) => GetCurrentDoctorConsultationModelResponse.fromJson(
+            i as Map<String, dynamic>))
+        .toList();
     return _value;
   }
 
