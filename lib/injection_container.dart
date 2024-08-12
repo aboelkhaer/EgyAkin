@@ -7,6 +7,10 @@ import 'package:egy_akin/features/consultation/data/repositories/consultation_re
 import 'package:egy_akin/features/consultation/domain/usecases/get_current_doctor_consultation_usecase.dart';
 import 'package:egy_akin/features/consultation/domain/usecases/get_received_consultation_usecase.dart';
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
+import 'package:egy_akin/features/consultation_details/data/datasources/consultation_details_datasource.dart';
+import 'package:egy_akin/features/consultation_details/data/repositories/consultation_details_repo_impl.dart';
+import 'package:egy_akin/features/consultation_details/domain/usecases/get_consultation_details_usecase.dart';
+import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
@@ -73,6 +77,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => AboutUsCubit());
   sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
+  sl.registerFactory(() => ConsultationDetailsCubit(sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -119,6 +124,8 @@ Future<void> diInit() async {
 
   sl.registerLazySingleton<ConsultationDataSource>(
       () => ConsultationDataSourceImpl(sl()));
+  sl.registerLazySingleton<ConsultationDetailsDataSource>(
+      () => ConsultationDetailsDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -167,6 +174,8 @@ Future<void> diInit() async {
       () => SendConsultationRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ConsultationRepository>(
       () => ConsultationRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ConsultationDetailsRepository>(
+      () => ConsultationDetailsRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -335,5 +344,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetReceivedConsultationUsecase>()) {
     sl.registerFactory<GetReceivedConsultationUsecase>(
         () => GetReceivedConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetConsultationDetailsUsecase>()) {
+    sl.registerFactory<GetConsultationDetailsUsecase>(
+        () => GetConsultationDetailsUsecase(sl()));
   }
 }

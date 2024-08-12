@@ -42,11 +42,17 @@ class ConsultationScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const Expanded(
+            Expanded(
               child: TabBarView(
                 children: [
-                  MyConsultationsTab(),
-                  ReceivedTab(),
+                  MyConsultationsTab(
+                    currentDoctorModel: currentDoctorModel,
+                    homeDataModel: homeDataModel,
+                  ),
+                  ReceivedTab(
+                    currentDoctorModel: currentDoctorModel,
+                    homeDataModel: homeDataModel,
+                  ),
                 ],
               ),
             ),

@@ -97,10 +97,13 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          timeago
-                              .format(DateTime.parse(
-                                  doctorInfo.data!.emailVerifiedAt.toString()))
-                              .toString(),
+                          doctorInfo.data!.emailVerifiedAt == null
+                              ? 'No data'
+                              : timeago
+                                  .format(DateTime.parse(doctorInfo
+                                      .data!.emailVerifiedAt
+                                      .toString()))
+                                  .toString(),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,

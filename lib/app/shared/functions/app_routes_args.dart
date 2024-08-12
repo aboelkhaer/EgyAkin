@@ -250,4 +250,16 @@ class AppRoutesArgs {
       'currentDoctorModel': currentDoctorModel,
     };
   }
+
+  static Map<String, dynamic> consultationDetailsRouteArgs({
+    required HomeModelResponse homeDataModel,
+    required DoctorModel currentDoctorModel,
+    required String consultationId,
+  }) {
+    return {
+      'homeDataModel': homeDataModel,
+      'currentDoctorModel': currentDoctorModel,
+      'consultationId': consultationId,
+    };
+  }
 }

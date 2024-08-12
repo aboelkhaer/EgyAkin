@@ -1,9 +1,16 @@
-import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
+import 'package:egy_akin/features/consultation/presentation/widgets/consultation_list.dart';
 
 import '../../../../exports.dart';
 
 class ReceivedTab extends StatefulWidget {
-  const ReceivedTab({super.key});
+  final DoctorModel currentDoctorModel;
+  final HomeModelResponse homeDataModel;
+
+  const ReceivedTab({
+    super.key,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
+  });
 
   @override
   State<ReceivedTab> createState() => _ReceivedTabState();
@@ -18,6 +25,27 @@ class _ReceivedTabState extends State<ReceivedTab> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return BlocConsumer<ConsultationCubit, ConsultationState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+        return state.maybeWhen(
+          orElse: () {
+            return const SizedBox.shrink();
+          },
+          receivedConsultationsLoading: () {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+          receivedConsultationsLoaded: (consultations) {
+            return ConsultationList(
+              consultations: consultations,
+              currentDoctorModel: widget.currentDoctorModel,
+              homeDataModel: widget.homeDataModel,
+            );
+          },
+        );
+      },
+    );
   }
 }

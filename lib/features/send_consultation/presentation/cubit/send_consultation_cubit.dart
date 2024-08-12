@@ -43,7 +43,7 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
 
       final result =
           await _getConsultationSearchUsecase.execute(searchController.text);
-      searchController.clear();
+      // searchController.clear();
       result.fold(
         (l) {
           emit(state.maybeMap(

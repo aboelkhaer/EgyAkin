@@ -174,10 +174,10 @@ class PostsSliderAndDots extends StatelessWidget {
                                                               .toString(),
                                                         ))
                                                         .toString(),
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       color:
                                                           AppColors.description,
-                                                      fontSize: 10,
+                                                      fontSize: 9.sp,
                                                     ),
                                                   ),
                                                 ],

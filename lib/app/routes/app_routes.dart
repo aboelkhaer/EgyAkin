@@ -1,5 +1,7 @@
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
+import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
+import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -33,6 +35,7 @@ class AppRoutes {
   static const String aboutUs = '/aboutUs';
   static const String sendConsultation = '/sendConsultation';
   static const String consultation = '/consultation';
+  static const String consultationDetails = '/consultationDetails';
 }
 
 class RouteGenerator {
@@ -602,6 +605,30 @@ class RouteGenerator {
                 child: ConsultationScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.consultationDetails:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<ConsultationDetailsCubit>(
+                create: (context) => di.sl<ConsultationDetailsCubit>(),
+                child: ConsultationDetailsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  consultationId: args['consultationId'] as String,
                 ),
               ),
             );

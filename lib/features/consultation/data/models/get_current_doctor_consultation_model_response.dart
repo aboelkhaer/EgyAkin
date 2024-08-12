@@ -8,32 +8,21 @@ part 'get_current_doctor_consultation_model_response.g.dart';
 class GetCurrentDoctorConsultationModelResponse
     with _$GetCurrentDoctorConsultationModelResponse {
   const factory GetCurrentDoctorConsultationModelResponse({
-    int? id,
+    String? id,
     @JsonKey(name: 'doctor_id') String? doctorId,
     @JsonKey(name: 'patient_id') String? patientId,
-    @JsonKey(name: 'consult_message') String? consultMessage,
+    @JsonKey(name: 'doctor_fname') String? doctorFirstName,
+    @JsonKey(name: 'doctor_lname') String? doctorLastName,
+    String? image,
+    String? workingplace,
+    bool? isVerified,
+    @JsonKey(name: 'patient_name') String? patientName,
     String? status,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
-    @JsonKey(name: 'consultation_doctors')
-    List<ConsultationDoctorsModelResponse>? consultationDoctors,
+    @JsonKey(name: 'consult_message') String? consultMessage,
   }) = _GetCurrentDoctorConsultationModelResponse;
   factory GetCurrentDoctorConsultationModelResponse.fromJson(
           Map<String, dynamic> json) =>
       _$GetCurrentDoctorConsultationModelResponseFromJson(json);
-}
-
-@freezed
-class ConsultationDoctorsModelResponse with _$ConsultationDoctorsModelResponse {
-  const factory ConsultationDoctorsModelResponse({
-    int? id,
-    @JsonKey(name: 'doctor_id') String? doctorId,
-    String? reply,
-    String? status,
-    @JsonKey(name: 'created_at') String? createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  }) = _ConsultationDoctorsModelResponse;
-  factory ConsultationDoctorsModelResponse.fromJson(
-          Map<String, dynamic> json) =>
-      _$ConsultationDoctorsModelResponseFromJson(json);
 }
