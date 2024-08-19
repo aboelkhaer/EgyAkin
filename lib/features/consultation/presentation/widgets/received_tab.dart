@@ -42,6 +42,7 @@ class _ReceivedTabState extends State<ReceivedTab> {
               consultations: consultations,
               currentDoctorModel: widget.currentDoctorModel,
               homeDataModel: widget.homeDataModel,
+              isReceivedConsultation: true,
             );
           },
         );

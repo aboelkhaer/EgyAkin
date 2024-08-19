@@ -1350,14 +1350,14 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<List<GetConsultationDetailsModelResponse>> getConsultationDetails(
+  Future<GetConsultationDetailsModelResponse> getConsultationDetails(
       String consultationId) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<GetConsultationDetailsModelResponse>>(Options(
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetConsultationDetailsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -1373,10 +1373,37 @@ class _ApiServices implements ApiServices {
               _dio.options.baseUrl,
               baseUrl,
             ))));
-    var _value = _result.data!
-        .map((dynamic i) => GetConsultationDetailsModelResponse.fromJson(
-            i as Map<String, dynamic>))
-        .toList();
+    final _value = GetConsultationDetailsModelResponse.fromJson(_result.data!);
+    return _value;
+  }
+
+  @override
+  Future<AddConsultationReplyModelResponse> addConsultationReply(
+    String consultationId,
+    String reply,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'reply': reply};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<AddConsultationReplyModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://api.egyakin.com/api/consultations/${consultationId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final _value = AddConsultationReplyModelResponse.fromJson(_result.data!);
     return _value;
   }
 

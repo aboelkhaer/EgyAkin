@@ -1,4 +1,3 @@
-
 import '../../../../exports.dart';
 
 class AboutUsScreen extends StatelessWidget {
@@ -85,8 +84,13 @@ class AboutUsScreen extends StatelessWidget {
 
 
          <h2>Developer Information</h2>
-    <p>This application was developed by Mohamed Ibrahiem and EgyAkin Team.</p>
-    
+     <ul>
+            <li><strong>Mohamed Ibrahiem:</strong> Software Engineer specializing in backend development. Mohamed is responsible for the backend architecture and integration of the application, contact with <a href="mailto:mohamedco215@gmail.com">mohamedco215@gmail.com</a></li>
+            
+        </ul>
+          <ul>
+            <li><strong>Aboelkhaer Fadel:</strong> Software Engineer with expertise in mobile application development. Aboelkhaer focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaerfadel@gmail.com">aboelkhaerfadel@gmail.com</a></li>
+         </ul>
         <p>Thank you for choosing EgyAkin.</p>
           </div>
               </body>

@@ -8,6 +8,10 @@ abstract class ConsultationDetailsState with _$ConsultationDetailsState {
   const factory ConsultationDetailsState.loading() = _Loading;
 
   const factory ConsultationDetailsState.loaded(
-      List<GetConsultationDetailsModelResponse> consultDetails) = _Loaded;
+      GetConsultationDetailsModelResponse consultDetails,
+      String newCommentValue,
+      bool isSendingConsultation,
+      bool isSendedConsultation,
+      String message) = _Loaded;
   const factory ConsultationDetailsState.error(String message) = _Error;
 }

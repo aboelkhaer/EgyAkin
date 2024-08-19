@@ -145,16 +145,16 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.outcome,
                               arguments: AppRoutesArgs.outcomeRouteArgs(
-                                verified: sl<HomeCubit>().accountVerification!,
+                                verified: widget.homeDataModel.verified!,
                                 outcomeStatus: patient.sections!.outcomeStatus!,
                                 patientName: patient.name.toString(),
                                 patientId: patient.id.toString(),
-                                currentDoctorModel:
-                                    sl<HomeCubit>().currentDoctorModel,
+                                currentDoctorModel: widget.currentDoctorModel,
                                 doctorId: patient.doctor!.id.toString(),
                                 homeDataModel: widget.homeDataModel,
-                                isSyndicateCardRequired:
-                                    sl<HomeCubit>().isSyndicateCardRequired,
+                                isSyndicateCardRequired: widget
+                                    .homeDataModel.isSyndicateCardRequired
+                                    .toString(),
                                 currentDoctorRole: widget.currentDoctorRole,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                               ),
@@ -165,14 +165,14 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                               AppRoutes.comments,
                               arguments: AppRoutesArgs.patientCommentsRouteArgs(
                                 patientId: patient.id.toString(),
-                                currentDoctorModel:
-                                    sl<HomeCubit>().currentDoctorModel,
-                                verified: sl<HomeCubit>().accountVerification!,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                verified: widget.homeDataModel.verified!,
                                 homeDataModel: widget.homeDataModel,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 patientName: patient.name.toString(),
-                                isSyndicateCardRequired:
-                                    sl<HomeCubit>().isSyndicateCardRequired,
+                                isSyndicateCardRequired: widget
+                                    .homeDataModel.isSyndicateCardRequired
+                                    .toString(),
                                 currentDoctorPoints: widget.currentDoctorPoints,
                               ),
                             );
@@ -183,8 +183,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                               arguments:
                                   AppRoutesArgs.patientSectionsRouteArguments(
                                 patientId: patient.id.toString(),
-                                currentDoctorModel:
-                                    sl<HomeCubit>().currentDoctorModel,
+                                currentDoctorModel: widget.currentDoctorModel,
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 homeDataModel: widget.homeDataModel,

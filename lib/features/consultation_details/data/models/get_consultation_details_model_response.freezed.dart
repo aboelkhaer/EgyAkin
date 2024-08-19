@@ -33,7 +33,14 @@ mixin _$GetConsultationDetailsModelResponse {
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'consultation_doctors')
+  @JsonKey(name: 'patient_name')
+  String? get patientName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'doctor_fname')
+  String? get doctorFirstName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'doctor_lname')
+  String? get doctorLastName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'patient_info')
+  PatientHomeDataModel? get patientModel => throw _privateConstructorUsedError;
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors =>
       throw _privateConstructorUsedError;
 
@@ -60,8 +67,13 @@ abstract class $GetConsultationDetailsModelResponseCopyWith<$Res> {
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'consultation_doctors')
+      @JsonKey(name: 'patient_name') String? patientName,
+      @JsonKey(name: 'doctor_fname') String? doctorFirstName,
+      @JsonKey(name: 'doctor_lname') String? doctorLastName,
+      @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
       List<DoctorsConsultationDetailsModelResponse>? consultationDoctors});
+
+  $PatientHomeDataModelCopyWith<$Res>? get patientModel;
 }
 
 /// @nodoc
@@ -85,6 +97,10 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
     Object? status = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? patientName = freezed,
+    Object? doctorFirstName = freezed,
+    Object? doctorLastName = freezed,
+    Object? patientModel = freezed,
     Object? consultationDoctors = freezed,
   }) {
     return _then(_value.copyWith(
@@ -116,11 +132,39 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      patientName: freezed == patientName
+          ? _value.patientName
+          : patientName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      doctorFirstName: freezed == doctorFirstName
+          ? _value.doctorFirstName
+          : doctorFirstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      doctorLastName: freezed == doctorLastName
+          ? _value.doctorLastName
+          : doctorLastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      patientModel: freezed == patientModel
+          ? _value.patientModel
+          : patientModel // ignore: cast_nullable_to_non_nullable
+              as PatientHomeDataModel?,
       consultationDoctors: freezed == consultationDoctors
           ? _value.consultationDoctors
           : consultationDoctors // ignore: cast_nullable_to_non_nullable
               as List<DoctorsConsultationDetailsModelResponse>?,
     ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PatientHomeDataModelCopyWith<$Res>? get patientModel {
+    if (_value.patientModel == null) {
+      return null;
+    }
+
+    return $PatientHomeDataModelCopyWith<$Res>(_value.patientModel!, (value) {
+      return _then(_value.copyWith(patientModel: value) as $Val);
+    });
   }
 }
 
@@ -141,8 +185,14 @@ abstract class _$$GetConsultationDetailsModelResponseImplCopyWith<$Res>
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'consultation_doctors')
+      @JsonKey(name: 'patient_name') String? patientName,
+      @JsonKey(name: 'doctor_fname') String? doctorFirstName,
+      @JsonKey(name: 'doctor_lname') String? doctorLastName,
+      @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
       List<DoctorsConsultationDetailsModelResponse>? consultationDoctors});
+
+  @override
+  $PatientHomeDataModelCopyWith<$Res>? get patientModel;
 }
 
 /// @nodoc
@@ -165,6 +215,10 @@ class __$$GetConsultationDetailsModelResponseImplCopyWithImpl<$Res>
     Object? status = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
+    Object? patientName = freezed,
+    Object? doctorFirstName = freezed,
+    Object? doctorLastName = freezed,
+    Object? patientModel = freezed,
     Object? consultationDoctors = freezed,
   }) {
     return _then(_$GetConsultationDetailsModelResponseImpl(
@@ -196,6 +250,22 @@ class __$$GetConsultationDetailsModelResponseImplCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      patientName: freezed == patientName
+          ? _value.patientName
+          : patientName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      doctorFirstName: freezed == doctorFirstName
+          ? _value.doctorFirstName
+          : doctorFirstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      doctorLastName: freezed == doctorLastName
+          ? _value.doctorLastName
+          : doctorLastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      patientModel: freezed == patientModel
+          ? _value.patientModel
+          : patientModel // ignore: cast_nullable_to_non_nullable
+              as PatientHomeDataModel?,
       consultationDoctors: freezed == consultationDoctors
           ? _value._consultationDoctors
           : consultationDoctors // ignore: cast_nullable_to_non_nullable
@@ -216,7 +286,10 @@ class _$GetConsultationDetailsModelResponseImpl
       this.status,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'consultation_doctors')
+      @JsonKey(name: 'patient_name') this.patientName,
+      @JsonKey(name: 'doctor_fname') this.doctorFirstName,
+      @JsonKey(name: 'doctor_lname') this.doctorLastName,
+      @JsonKey(name: 'patient_info') this.patientModel,
       final List<DoctorsConsultationDetailsModelResponse>? consultationDoctors})
       : _consultationDoctors = consultationDoctors;
 
@@ -243,9 +316,20 @@ class _$GetConsultationDetailsModelResponseImpl
   @override
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
+  @override
+  @JsonKey(name: 'patient_name')
+  final String? patientName;
+  @override
+  @JsonKey(name: 'doctor_fname')
+  final String? doctorFirstName;
+  @override
+  @JsonKey(name: 'doctor_lname')
+  final String? doctorLastName;
+  @override
+  @JsonKey(name: 'patient_info')
+  final PatientHomeDataModel? patientModel;
   final List<DoctorsConsultationDetailsModelResponse>? _consultationDoctors;
   @override
-  @JsonKey(name: 'consultation_doctors')
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors {
     final value = _consultationDoctors;
     if (value == null) return null;
@@ -257,7 +341,7 @@ class _$GetConsultationDetailsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetConsultationDetailsModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, consultMessage: $consultMessage, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultationDoctors: $consultationDoctors)';
+    return 'GetConsultationDetailsModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, consultMessage: $consultMessage, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, patientName: $patientName, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, patientModel: $patientModel, consultationDoctors: $consultationDoctors)';
   }
 
   @override
@@ -277,6 +361,14 @@ class _$GetConsultationDetailsModelResponseImpl
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
+            (identical(other.patientName, patientName) ||
+                other.patientName == patientName) &&
+            (identical(other.doctorFirstName, doctorFirstName) ||
+                other.doctorFirstName == doctorFirstName) &&
+            (identical(other.doctorLastName, doctorLastName) ||
+                other.doctorLastName == doctorLastName) &&
+            (identical(other.patientModel, patientModel) ||
+                other.patientModel == patientModel) &&
             const DeepCollectionEquality()
                 .equals(other._consultationDoctors, _consultationDoctors));
   }
@@ -292,6 +384,10 @@ class _$GetConsultationDetailsModelResponseImpl
       status,
       createdAt,
       updatedAt,
+      patientName,
+      doctorFirstName,
+      doctorLastName,
+      patientModel,
       const DeepCollectionEquality().hash(_consultationDoctors));
 
   @JsonKey(ignore: true)
@@ -320,7 +416,10 @@ abstract class _GetConsultationDetailsModelResponse
       final String? status,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      @JsonKey(name: 'consultation_doctors')
+      @JsonKey(name: 'patient_name') final String? patientName,
+      @JsonKey(name: 'doctor_fname') final String? doctorFirstName,
+      @JsonKey(name: 'doctor_lname') final String? doctorLastName,
+      @JsonKey(name: 'patient_info') final PatientHomeDataModel? patientModel,
       final List<DoctorsConsultationDetailsModelResponse>?
           consultationDoctors}) = _$GetConsultationDetailsModelResponseImpl;
 
@@ -348,7 +447,18 @@ abstract class _GetConsultationDetailsModelResponse
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
   @override
-  @JsonKey(name: 'consultation_doctors')
+  @JsonKey(name: 'patient_name')
+  String? get patientName;
+  @override
+  @JsonKey(name: 'doctor_fname')
+  String? get doctorFirstName;
+  @override
+  @JsonKey(name: 'doctor_lname')
+  String? get doctorLastName;
+  @override
+  @JsonKey(name: 'patient_info')
+  PatientHomeDataModel? get patientModel;
+  @override
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors;
   @override
   @JsonKey(ignore: true)

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
 import 'package:egy_akin/features/authentication/data/models/send_fcm_token_model_response.dart';
 import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
+import 'package:egy_akin/features/consultation_details/data/models/add_consultation_reply_model_response.dart';
 import 'package:egy_akin/features/consultation_details/data/models/get_consultation_details_model_response.dart';
 import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
 import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
@@ -266,7 +267,13 @@ abstract class ApiServices {
       getReceivedConsultation();
 
   @GET('${ApiEndPoint.getConsultationDetails}/{consultationId}')
-  Future<List<GetConsultationDetailsModelResponse>> getConsultationDetails(
+  Future<GetConsultationDetailsModelResponse> getConsultationDetails(
     @Path("consultationId") String consultationId,
+  );
+
+  @PUT('${ApiEndPoint.addConsultationReply}/{consultationId}')
+  Future<AddConsultationReplyModelResponse> addConsultationReply(
+    @Path("consultationId") String consultationId,
+    @Field("reply") String reply,
   );
 }

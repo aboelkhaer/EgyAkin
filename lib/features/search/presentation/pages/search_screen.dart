@@ -357,8 +357,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   widget.currentDoctorModel,
                                               currentDoctorPoints:
                                                   widget.currentDoctorPoints,
-                                              currentDoctorRole: sl<HomeCubit>()
-                                                  .currentDoctorRole,
+                                              currentDoctorRole: widget
+                                                  .homeDataModel.role
+                                                  .toString(),
                                               homeDataModel:
                                                   widget.homeDataModel,
                                             ),

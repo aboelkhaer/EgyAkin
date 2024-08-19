@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_annotation_target
+import 'package:egy_akin/features/home/data/models/home_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_consultation_details_model_response.freezed.dart';
 part 'get_consultation_details_model_response.g.dart';
@@ -14,7 +15,10 @@ class GetConsultationDetailsModelResponse
     String? status,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
-    @JsonKey(name: 'consultation_doctors')
+    @JsonKey(name: 'patient_name') String? patientName,
+    @JsonKey(name: 'doctor_fname') String? doctorFirstName,
+    @JsonKey(name: 'doctor_lname') String? doctorLastName,
+    @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
     List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
   }) = _GetConsultationDetailsModelResponse;
   factory GetConsultationDetailsModelResponse.fromJson(

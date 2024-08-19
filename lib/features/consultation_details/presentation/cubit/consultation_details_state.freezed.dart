@@ -21,7 +21,11 @@ mixin _$ConsultationDetailsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<GetConsultationDetailsModelResponse> consultDetails)
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,7 +34,12 @@ mixin _$ConsultationDetailsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult? Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -39,7 +48,12 @@ mixin _$ConsultationDetailsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -132,7 +146,11 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<GetConsultationDetailsModelResponse> consultDetails)
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -144,7 +162,12 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult? Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -156,7 +179,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -250,7 +278,11 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<GetConsultationDetailsModelResponse> consultDetails)
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -262,7 +294,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult? Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -274,7 +311,12 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -333,7 +375,14 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<GetConsultationDetailsModelResponse> consultDetails});
+  $Res call(
+      {GetConsultationDetailsModelResponse consultDetails,
+      String newCommentValue,
+      bool isSendingConsultation,
+      bool isSendedConsultation,
+      String message});
+
+  $GetConsultationDetailsModelResponseCopyWith<$Res> get consultDetails;
 }
 
 /// @nodoc
@@ -348,34 +397,65 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? consultDetails = null,
+    Object? newCommentValue = null,
+    Object? isSendingConsultation = null,
+    Object? isSendedConsultation = null,
+    Object? message = null,
   }) {
     return _then(_$LoadedImpl(
       null == consultDetails
-          ? _value._consultDetails
+          ? _value.consultDetails
           : consultDetails // ignore: cast_nullable_to_non_nullable
-              as List<GetConsultationDetailsModelResponse>,
+              as GetConsultationDetailsModelResponse,
+      null == newCommentValue
+          ? _value.newCommentValue
+          : newCommentValue // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isSendingConsultation
+          ? _value.isSendingConsultation
+          : isSendingConsultation // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSendedConsultation
+          ? _value.isSendedConsultation
+          : isSendedConsultation // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $GetConsultationDetailsModelResponseCopyWith<$Res> get consultDetails {
+    return $GetConsultationDetailsModelResponseCopyWith<$Res>(
+        _value.consultDetails, (value) {
+      return _then(_value.copyWith(consultDetails: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(
-      final List<GetConsultationDetailsModelResponse> consultDetails)
-      : _consultDetails = consultDetails;
+  const _$LoadedImpl(this.consultDetails, this.newCommentValue,
+      this.isSendingConsultation, this.isSendedConsultation, this.message);
 
-  final List<GetConsultationDetailsModelResponse> _consultDetails;
   @override
-  List<GetConsultationDetailsModelResponse> get consultDetails {
-    if (_consultDetails is EqualUnmodifiableListView) return _consultDetails;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_consultDetails);
-  }
+  final GetConsultationDetailsModelResponse consultDetails;
+  @override
+  final String newCommentValue;
+  @override
+  final bool isSendingConsultation;
+  @override
+  final bool isSendedConsultation;
+  @override
+  final String message;
 
   @override
   String toString() {
-    return 'ConsultationDetailsState.loaded(consultDetails: $consultDetails)';
+    return 'ConsultationDetailsState.loaded(consultDetails: $consultDetails, newCommentValue: $newCommentValue, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation, message: $message)';
   }
 
   @override
@@ -383,13 +463,20 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality()
-                .equals(other._consultDetails, _consultDetails));
+            (identical(other.consultDetails, consultDetails) ||
+                other.consultDetails == consultDetails) &&
+            (identical(other.newCommentValue, newCommentValue) ||
+                other.newCommentValue == newCommentValue) &&
+            (identical(other.isSendingConsultation, isSendingConsultation) ||
+                other.isSendingConsultation == isSendingConsultation) &&
+            (identical(other.isSendedConsultation, isSendedConsultation) ||
+                other.isSendedConsultation == isSendedConsultation) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_consultDetails));
+  int get hashCode => Object.hash(runtimeType, consultDetails, newCommentValue,
+      isSendingConsultation, isSendedConsultation, message);
 
   @JsonKey(ignore: true)
   @override
@@ -403,11 +490,16 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<GetConsultationDetailsModelResponse> consultDetails)
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(consultDetails);
+    return loaded(consultDetails, newCommentValue, isSendingConsultation,
+        isSendedConsultation, message);
   }
 
   @override
@@ -415,11 +507,17 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult? Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(consultDetails);
+    return loaded?.call(consultDetails, newCommentValue, isSendingConsultation,
+        isSendedConsultation, message);
   }
 
   @override
@@ -427,13 +525,19 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(consultDetails);
+      return loaded(consultDetails, newCommentValue, isSendingConsultation,
+          isSendedConsultation, message);
     }
     return orElse();
   }
@@ -478,10 +582,17 @@ class _$LoadedImpl implements _Loaded {
 
 abstract class _Loaded implements ConsultationDetailsState {
   const factory _Loaded(
-          final List<GetConsultationDetailsModelResponse> consultDetails) =
-      _$LoadedImpl;
+      final GetConsultationDetailsModelResponse consultDetails,
+      final String newCommentValue,
+      final bool isSendingConsultation,
+      final bool isSendedConsultation,
+      final String message) = _$LoadedImpl;
 
-  List<GetConsultationDetailsModelResponse> get consultDetails;
+  GetConsultationDetailsModelResponse get consultDetails;
+  String get newCommentValue;
+  bool get isSendingConsultation;
+  bool get isSendedConsultation;
+  String get message;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -554,7 +665,11 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<GetConsultationDetailsModelResponse> consultDetails)
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -566,7 +681,12 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult? Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -578,7 +698,12 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<GetConsultationDetailsModelResponse> consultDetails)?
+    TResult Function(
+            GetConsultationDetailsModelResponse consultDetails,
+            String newCommentValue,
+            bool isSendingConsultation,
+            bool isSendedConsultation,
+            String message)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

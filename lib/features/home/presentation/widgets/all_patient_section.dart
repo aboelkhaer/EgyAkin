@@ -80,7 +80,10 @@ class AllPatientSection extends StatelessWidget {
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
                               updatedAt: patient.updatedAt ?? AppStrings.empty,
-                              accountVerification: homeData.verified!,
+                              accountVerification:
+                                  patient.doctor!.emailVerifiedAt == null
+                                      ? false
+                                      : true,
                               hospital: patient.hospital ?? AppStrings.empty,
                               currentDoctorModel: currentDoctorModel,
                               currentDoctorPoints:

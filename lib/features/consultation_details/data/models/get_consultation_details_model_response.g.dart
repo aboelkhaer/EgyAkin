@@ -17,7 +17,14 @@ _$GetConsultationDetailsModelResponseImpl
           status: json['status'] as String?,
           createdAt: json['created_at'] as String?,
           updatedAt: json['updated_at'] as String?,
-          consultationDoctors: (json['consultation_doctors'] as List<dynamic>?)
+          patientName: json['patient_name'] as String?,
+          doctorFirstName: json['doctor_fname'] as String?,
+          doctorLastName: json['doctor_lname'] as String?,
+          patientModel: json['patient_info'] == null
+              ? null
+              : PatientHomeDataModel.fromJson(
+                  json['patient_info'] as Map<String, dynamic>),
+          consultationDoctors: (json['consultationDoctors'] as List<dynamic>?)
               ?.map((e) => DoctorsConsultationDetailsModelResponse.fromJson(
                   e as Map<String, dynamic>))
               .toList(),
@@ -33,7 +40,11 @@ Map<String, dynamic> _$$GetConsultationDetailsModelResponseImplToJson(
       'status': instance.status,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
-      'consultation_doctors': instance.consultationDoctors,
+      'patient_name': instance.patientName,
+      'doctor_fname': instance.doctorFirstName,
+      'doctor_lname': instance.doctorLastName,
+      'patient_info': instance.patientModel,
+      'consultationDoctors': instance.consultationDoctors,
     };
 
 _$DoctorsConsultationDetailsModelResponseImpl

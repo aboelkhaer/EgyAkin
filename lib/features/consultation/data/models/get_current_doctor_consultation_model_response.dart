@@ -15,7 +15,7 @@ class GetCurrentDoctorConsultationModelResponse
     @JsonKey(name: 'doctor_lname') String? doctorLastName,
     String? image,
     String? workingplace,
-    bool? isVerified,
+    @JsonKey(name: 'isSyndicateCard') String? isSyndicateCard,
     @JsonKey(name: 'patient_name') String? patientName,
     String? status,
     @JsonKey(name: 'created_at') String? createdAt,

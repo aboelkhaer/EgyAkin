@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/consultation_details/data/datasources/consultation_details_datasource.dart';
+import 'package:egy_akin/features/consultation_details/data/models/add_consultation_reply_model_response.dart';
 import '../../../../exports.dart';
 
 class ConsultationDetailsRepositoryImpl extends ConsultationDetailsRepository {
@@ -10,7 +11,7 @@ class ConsultationDetailsRepositoryImpl extends ConsultationDetailsRepository {
       this.consultationDetailsDataSource, this.networkInfo);
 
   @override
-  Future<Either<Failure, List<GetConsultationDetailsModelResponse>>>
+  Future<Either<Failure, GetConsultationDetailsModelResponse>>
       getConsultationDetails(String consultationId) async {
     if (await networkInfo.isConnected) {
       try {
@@ -18,6 +19,25 @@ class ConsultationDetailsRepositoryImpl extends ConsultationDetailsRepository {
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await consultationDetailsDataSource
             .getConsultationDetails(consultationId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, AddConsultationReplyModelResponse>>
+      addConsultationReply(
+          {required String consultationId, required String reply}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await consultationDetailsDataSource
+            .addConsultationReply(consultationId: consultationId, reply: reply);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

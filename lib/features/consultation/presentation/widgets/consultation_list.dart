@@ -5,13 +5,15 @@ import '../../../../exports.dart';
 class ConsultationList extends StatelessWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final bool isReceivedConsultation;
 
   final List<GetCurrentDoctorConsultationModelResponse> consultations;
   const ConsultationList(
       {super.key,
       required this.consultations,
       required this.currentDoctorModel,
-      required this.homeDataModel});
+      required this.homeDataModel,
+      required this.isReceivedConsultation});
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +39,25 @@ class ConsultationList extends StatelessWidget {
                   arguments: AppRoutesArgs.consultationDetailsRouteArgs(
                     homeDataModel: homeDataModel,
                     currentDoctorModel: currentDoctorModel,
-                    consultationId: consult.id.toString(),
+                    consultation: consult,
+                    isReceivedConsultation: isReceivedConsultation,
                   ),
                 );
               },
               child: Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
                                   decoration: BoxDecoration(
@@ -69,7 +75,28 @@ class ConsultationList extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(80.r),
                                     child: GestureDetector(
                                       onTap: () {
-                                        // Handle the onTap event
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.doctorInfoView,
+                                          arguments: AppRoutesArgs
+                                              .doctorInfoViewRouteArgs(
+                                            doctorId:
+                                                consult.doctorId.toString(),
+                                            currentDoctorModel:
+                                                currentDoctorModel,
+                                            isSyndicateCardRequired:
+                                                homeDataModel
+                                                    .isSyndicateCardRequired
+                                                    .toString(),
+                                            accountVerification:
+                                                homeDataModel.verified!,
+                                            currentDoctorRole:
+                                                homeDataModel.role!,
+                                            currentDoctorPoints: int.parse(
+                                                homeDataModel.scoreValue
+                                                    .toString()),
+                                            homeDataModel: homeDataModel,
+                                          ),
+                                        );
                                       },
                                       child: CircleAvatar(
                                         radius: 20.r,
@@ -91,25 +118,67 @@ class ConsultationList extends StatelessWidget {
                                     Row(
                                       children: [
                                         SizedBox(
-                                          // width: 100.w,
-                                          child: Text(
-                                            doctorName(
-                                              firstName:
-                                                  consult.doctorFirstName,
-                                              lastName: consult.doctorLastName,
-                                              role: '',
-                                            ),
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
+                                          width: 190.w,
+                                          // child: RichText(
+                                          //   text: TextSpan(
+                                          //     text: 'Dr. Moatz',
+                                          //     style: TextStyle(
+                                          //       color: Colors.green,
+                                          //       fontWeight: FontWeight.bold,
+                                          //       fontSize: 12.sp,
+                                          //     ),
+                                          //     children: [
+                                          //       TextSpan(
+                                          //         text:
+                                          //             ' has requested a consultation for this patient.',
+                                          //         style: TextStyle(
+                                          //           fontWeight: FontWeight.bold,
+                                          //           fontSize: 12.sp,
+                                          //           color: Colors.grey.shade600,
+                                          //         ),
+                                          //       ),
+                                          //     ],
+                                          //   ),
+                                          // ),
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                doctorName(
+                                                  firstName:
+                                                      consult.doctorFirstName,
+                                                  lastName:
+                                                      consult.doctorLastName,
+                                                  role: '',
+                                                ),
+                                                style: TextStyle(
+                                                  color: Colors.green,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12.sp,
+                                                ),
+                                              ),
+                                              if (consult.isSyndicateCard ==
+                                                  'Verified')
+                                                const VerificationIcon(
+                                                  duration: 300,
+                                                ),
+                                            ],
                                           ),
                                         ),
-                                        SizedBox(width: 4.w),
-                                        if (consult.isVerified!)
-                                          const VerificationIcon(),
                                       ],
+                                    ),
+                                    SizedBox(height: 3.h),
+                                    SizedBox(
+                                      width: 190.w,
+                                      child: Text(
+                                        '${consult.consultMessage}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12.sp,
+                                          color: Colors.grey.shade500,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
                                     SizedBox(height: 8.h),
                                     Container(

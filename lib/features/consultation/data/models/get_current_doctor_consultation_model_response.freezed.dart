@@ -33,7 +33,8 @@ mixin _$GetCurrentDoctorConsultationModelResponse {
   String? get doctorLastName => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
   String? get workingplace => throw _privateConstructorUsedError;
-  bool? get isVerified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'isSyndicateCard')
+  String? get isSyndicateCard => throw _privateConstructorUsedError;
   @JsonKey(name: 'patient_name')
   String? get patientName => throw _privateConstructorUsedError;
   String? get status => throw _privateConstructorUsedError;
@@ -67,7 +68,7 @@ abstract class $GetCurrentDoctorConsultationModelResponseCopyWith<$Res> {
       @JsonKey(name: 'doctor_lname') String? doctorLastName,
       String? image,
       String? workingplace,
-      bool? isVerified,
+      @JsonKey(name: 'isSyndicateCard') String? isSyndicateCard,
       @JsonKey(name: 'patient_name') String? patientName,
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
@@ -97,7 +98,7 @@ class _$GetCurrentDoctorConsultationModelResponseCopyWithImpl<$Res,
     Object? doctorLastName = freezed,
     Object? image = freezed,
     Object? workingplace = freezed,
-    Object? isVerified = freezed,
+    Object? isSyndicateCard = freezed,
     Object? patientName = freezed,
     Object? status = freezed,
     Object? createdAt = freezed,
@@ -133,10 +134,10 @@ class _$GetCurrentDoctorConsultationModelResponseCopyWithImpl<$Res,
           ? _value.workingplace
           : workingplace // ignore: cast_nullable_to_non_nullable
               as String?,
-      isVerified: freezed == isVerified
-          ? _value.isVerified
-          : isVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
+      isSyndicateCard: freezed == isSyndicateCard
+          ? _value.isSyndicateCard
+          : isSyndicateCard // ignore: cast_nullable_to_non_nullable
+              as String?,
       patientName: freezed == patientName
           ? _value.patientName
           : patientName // ignore: cast_nullable_to_non_nullable
@@ -178,7 +179,7 @@ abstract class _$$GetCurrentDoctorConsultationModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'doctor_lname') String? doctorLastName,
       String? image,
       String? workingplace,
-      bool? isVerified,
+      @JsonKey(name: 'isSyndicateCard') String? isSyndicateCard,
       @JsonKey(name: 'patient_name') String? patientName,
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
@@ -206,7 +207,7 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
     Object? doctorLastName = freezed,
     Object? image = freezed,
     Object? workingplace = freezed,
-    Object? isVerified = freezed,
+    Object? isSyndicateCard = freezed,
     Object? patientName = freezed,
     Object? status = freezed,
     Object? createdAt = freezed,
@@ -242,10 +243,10 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
           ? _value.workingplace
           : workingplace // ignore: cast_nullable_to_non_nullable
               as String?,
-      isVerified: freezed == isVerified
-          ? _value.isVerified
-          : isVerified // ignore: cast_nullable_to_non_nullable
-              as bool?,
+      isSyndicateCard: freezed == isSyndicateCard
+          ? _value.isSyndicateCard
+          : isSyndicateCard // ignore: cast_nullable_to_non_nullable
+              as String?,
       patientName: freezed == patientName
           ? _value.patientName
           : patientName // ignore: cast_nullable_to_non_nullable
@@ -283,7 +284,7 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       @JsonKey(name: 'doctor_lname') this.doctorLastName,
       this.image,
       this.workingplace,
-      this.isVerified,
+      @JsonKey(name: 'isSyndicateCard') this.isSyndicateCard,
       @JsonKey(name: 'patient_name') this.patientName,
       this.status,
       @JsonKey(name: 'created_at') this.createdAt,
@@ -313,7 +314,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
   @override
   final String? workingplace;
   @override
-  final bool? isVerified;
+  @JsonKey(name: 'isSyndicateCard')
+  final String? isSyndicateCard;
   @override
   @JsonKey(name: 'patient_name')
   final String? patientName;
@@ -331,7 +333,7 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'GetCurrentDoctorConsultationModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, image: $image, workingplace: $workingplace, isVerified: $isVerified, patientName: $patientName, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultMessage: $consultMessage)';
+    return 'GetCurrentDoctorConsultationModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, image: $image, workingplace: $workingplace, isSyndicateCard: $isSyndicateCard, patientName: $patientName, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultMessage: $consultMessage)';
   }
 
   @override
@@ -347,7 +349,7 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       ..add(DiagnosticsProperty('doctorLastName', doctorLastName))
       ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('workingplace', workingplace))
-      ..add(DiagnosticsProperty('isVerified', isVerified))
+      ..add(DiagnosticsProperty('isSyndicateCard', isSyndicateCard))
       ..add(DiagnosticsProperty('patientName', patientName))
       ..add(DiagnosticsProperty('status', status))
       ..add(DiagnosticsProperty('createdAt', createdAt))
@@ -372,8 +374,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
             (identical(other.image, image) || other.image == image) &&
             (identical(other.workingplace, workingplace) ||
                 other.workingplace == workingplace) &&
-            (identical(other.isVerified, isVerified) ||
-                other.isVerified == isVerified) &&
+            (identical(other.isSyndicateCard, isSyndicateCard) ||
+                other.isSyndicateCard == isSyndicateCard) &&
             (identical(other.patientName, patientName) ||
                 other.patientName == patientName) &&
             (identical(other.status, status) || other.status == status) &&
@@ -396,7 +398,7 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       doctorLastName,
       image,
       workingplace,
-      isVerified,
+      isSyndicateCard,
       patientName,
       status,
       createdAt,
@@ -431,7 +433,7 @@ abstract class _GetCurrentDoctorConsultationModelResponse
           @JsonKey(name: 'doctor_lname') final String? doctorLastName,
           final String? image,
           final String? workingplace,
-          final bool? isVerified,
+          @JsonKey(name: 'isSyndicateCard') final String? isSyndicateCard,
           @JsonKey(name: 'patient_name') final String? patientName,
           final String? status,
           @JsonKey(name: 'created_at') final String? createdAt,
@@ -462,7 +464,8 @@ abstract class _GetCurrentDoctorConsultationModelResponse
   @override
   String? get workingplace;
   @override
-  bool? get isVerified;
+  @JsonKey(name: 'isSyndicateCard')
+  String? get isSyndicateCard;
   @override
   @JsonKey(name: 'patient_name')
   String? get patientName;

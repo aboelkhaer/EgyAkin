@@ -54,6 +54,32 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
+                          'ID:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 60.w),
+                        SelectableText(
+                          doctorInfo.data!.id.toString(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 15.h),
+                    Row(
+                      children: [
+                        Text(
                           'Join us:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,

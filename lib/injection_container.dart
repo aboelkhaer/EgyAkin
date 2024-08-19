@@ -9,6 +9,7 @@ import 'package:egy_akin/features/consultation/domain/usecases/get_received_cons
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 import 'package:egy_akin/features/consultation_details/data/datasources/consultation_details_datasource.dart';
 import 'package:egy_akin/features/consultation_details/data/repositories/consultation_details_repo_impl.dart';
+import 'package:egy_akin/features/consultation_details/domain/usecases/add_consultation_reply_usecase.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/get_consultation_details_usecase.dart';
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
@@ -77,7 +78,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => AboutUsCubit());
   sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
-  sl.registerFactory(() => ConsultationDetailsCubit(sl()));
+  sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -348,5 +349,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetConsultationDetailsUsecase>()) {
     sl.registerFactory<GetConsultationDetailsUsecase>(
         () => GetConsultationDetailsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddConsultationReplyUsecase>()) {
+    sl.registerFactory<AddConsultationReplyUsecase>(
+        () => AddConsultationReplyUsecase(sl()));
   }
 }

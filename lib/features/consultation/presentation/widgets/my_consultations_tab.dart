@@ -42,6 +42,7 @@ class _MyConsultationsTabState extends State<MyConsultationsTab> {
               consultations: consultations,
               currentDoctorModel: widget.currentDoctorModel,
               homeDataModel: widget.homeDataModel,
+              isReceivedConsultation: false,
             );
           },
         );
