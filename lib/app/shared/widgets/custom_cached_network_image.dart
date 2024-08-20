@@ -24,7 +24,7 @@ class CustomCachedNetworkImage extends StatelessWidget {
         fit: fit,
         placeholder: (context, url) => Lottie.asset(AppImages.imageLoader),
         errorWidget: (context, url, error) {
-          return const SizedBox.shrink();
+          return Lottie.asset(AppImages.imageLoader);
         },
       );
     } catch (error) {

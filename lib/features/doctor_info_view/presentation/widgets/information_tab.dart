@@ -42,7 +42,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.job.toString(),
+                          doctorInfo!.data!.job.toString(),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),

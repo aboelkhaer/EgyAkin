@@ -61,7 +61,10 @@ class CustomTextFormField extends StatelessWidget {
         controller: textFormFieldController,
         initialValue: initialValue,
         keyboardType: textInputType,
-        inputFormatters: inputFormatters,
+        inputFormatters: inputFormatters ??
+            [
+              LengthLimitingTextInputFormatter(500),
+            ],
         enableSuggestions: enableSuggestions,
         onTapOutside: (event) => FocusScope.of(context).unfocus(),
         enabled: enabled,

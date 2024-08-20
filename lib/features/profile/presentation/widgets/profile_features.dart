@@ -13,7 +13,7 @@ class ProfileFeatures extends StatelessWidget {
     return Column(
       children: [
         ...List.generate(
-          _profileScreensData().length,
+          _profileScreensData(context).length,
           (index) => BlocConsumer<ProfileCubit, ProfileState>(
             listener: (context, state) {
               state.maybeWhen(
@@ -33,7 +33,7 @@ class ProfileFeatures extends StatelessWidget {
               return state.maybeWhen(
                 orElse: () {
                   return GestureDetector(
-                    onTap: _profileScreensData()[index].onTap,
+                    onTap: _profileScreensData(context)[index].onTap,
                     child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(
@@ -53,27 +53,30 @@ class ProfileFeatures extends StatelessWidget {
                               ),
                             ),
                             child: Icon(
-                              _profileScreensData()[index].icon,
+                              _profileScreensData(context)[index].icon,
                               color: Colors.grey.shade800,
                             ),
                           ),
                           SizedBox(width: 8.w),
                           Column(
                             crossAxisAlignment:
-                                _profileScreensData()[index].isHaveDescription
+                                _profileScreensData(context)[index]
+                                        .isHaveDescription
                                     ? CrossAxisAlignment.start
                                     : CrossAxisAlignment.center,
                             children: [
                               Text(
-                                _profileScreensData()[index].title,
+                                _profileScreensData(context)[index].title,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
                                 ),
                               ),
-                              _profileScreensData()[index].isHaveDescription
+                              _profileScreensData(context)[index]
+                                      .isHaveDescription
                                   ? Text(
-                                      _profileScreensData()[index].description,
+                                      _profileScreensData(context)[index]
+                                          .description,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 10.sp,
@@ -89,9 +92,10 @@ class ProfileFeatures extends StatelessWidget {
                 },
                 signOutLoading: () {
                   return GestureDetector(
-                    onTap: _profileScreensData()[index].title == 'Sign out'
-                        ? () {}
-                        : _profileScreensData()[index].onTap,
+                    onTap:
+                        _profileScreensData(context)[index].title == 'Sign out'
+                            ? () {}
+                            : _profileScreensData(context)[index].onTap,
                     child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(
@@ -100,7 +104,8 @@ class ProfileFeatures extends StatelessWidget {
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
-                      child: _profileScreensData()[index].title == 'Sign out'
+                      child: _profileScreensData(context)[index].title ==
+                              'Sign out'
                           ? const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -122,29 +127,29 @@ class ProfileFeatures extends StatelessWidget {
                                     ),
                                   ),
                                   child: Icon(
-                                    _profileScreensData()[index].icon,
+                                    _profileScreensData(context)[index].icon,
                                     color: Colors.grey.shade800,
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
                                 Column(
                                   crossAxisAlignment:
-                                      _profileScreensData()[index]
+                                      _profileScreensData(context)[index]
                                               .isHaveDescription
                                           ? CrossAxisAlignment.start
                                           : CrossAxisAlignment.center,
                                   children: [
                                     Text(
-                                      _profileScreensData()[index].title,
+                                      _profileScreensData(context)[index].title,
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 12.sp,
                                       ),
                                     ),
-                                    _profileScreensData()[index]
+                                    _profileScreensData(context)[index]
                                             .isHaveDescription
                                         ? Text(
-                                            _profileScreensData()[index]
+                                            _profileScreensData(context)[index]
                                                 .description,
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w500,
@@ -161,7 +166,7 @@ class ProfileFeatures extends StatelessWidget {
                 },
                 loaded: (doctorModel, isLoadedImage) {
                   return GestureDetector(
-                    onTap: _profileScreensData()[index].onTap,
+                    onTap: _profileScreensData(context)[index].onTap,
                     child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(
@@ -181,7 +186,7 @@ class ProfileFeatures extends StatelessWidget {
                               ),
                             ),
                             child: Icon(
-                              _profileScreensData()[index].icon,
+                              _profileScreensData(context)[index].icon,
                               color: Colors.grey.shade800,
                               size: 20.r,
                             ),
@@ -189,20 +194,23 @@ class ProfileFeatures extends StatelessWidget {
                           SizedBox(width: 8.w),
                           Column(
                             crossAxisAlignment:
-                                _profileScreensData()[index].isHaveDescription
+                                _profileScreensData(context)[index]
+                                        .isHaveDescription
                                     ? CrossAxisAlignment.start
                                     : CrossAxisAlignment.center,
                             children: [
                               Text(
-                                _profileScreensData()[index].title,
+                                _profileScreensData(context)[index].title,
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
                                 ),
                               ),
-                              _profileScreensData()[index].isHaveDescription
+                              _profileScreensData(context)[index]
+                                      .isHaveDescription
                                   ? Text(
-                                      _profileScreensData()[index].description,
+                                      _profileScreensData(context)[index]
+                                          .description,
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 10.sp,
@@ -224,7 +232,7 @@ class ProfileFeatures extends StatelessWidget {
     );
   }
 
-  List<ProfileScreens> _profileScreensData() {
+  List<ProfileScreens> _profileScreensData(context) {
     return <ProfileScreens>[
       ProfileScreens(
         icon: Icons.person_outline,
@@ -234,12 +242,6 @@ class ProfileFeatures extends StatelessWidget {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
       ),
-      // ProfileScreens(
-      //   icon: Icons.emoji_events_outlined,
-      //   title: 'Achievements',
-      //   description: 'Explore your accomplishments.',
-      //   onTap: () {},
-      // ),
       ProfileScreens(
         icon: Icons.chat_bubble_outline,
         title: 'Consultation',
@@ -249,6 +251,25 @@ class ProfileFeatures extends StatelessWidget {
               arguments: AppRoutesArgs.consultationRouteArgs(
                   homeDataModel: homeDataModel,
                   currentDoctorModel: cubit.currentDoctor));
+        },
+      ),
+      ProfileScreens(
+        icon: Icons.emoji_events_outlined,
+        title: 'Achievements',
+        description: 'Explore your accomplishments.',
+        onTap: () {
+          showCustomBottomSheet(
+            context: context,
+            builder: (context) {
+              return BlocProvider(
+                create: (context) => DoctorInfoViewCubit(sl(), sl()),
+                child: AchievementsTab(
+                  isProfileFeature: true,
+                  currentDoctorId: cubit.currentDoctor.id.toString(),
+                ),
+              );
+            },
+          );
         },
       ),
       ProfileScreens(

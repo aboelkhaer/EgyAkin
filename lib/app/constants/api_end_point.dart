@@ -55,4 +55,7 @@ class ApiEndPoint {
   static const getReceivedConsultation = '$baseUrl/api/consultations/received';
   static const getConsultationDetails = '$baseUrl/api/consultations';
   static const addConsultationReply = '$baseUrl/api/consultations';
+  static String getAchievements(String doctorId) {
+    return '$baseUrl/api/users/$doctorId/achievements';
+  }
 }

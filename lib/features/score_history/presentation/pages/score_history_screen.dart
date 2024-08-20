@@ -1,5 +1,4 @@
 import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
-import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_state.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';

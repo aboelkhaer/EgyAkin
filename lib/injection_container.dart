@@ -12,6 +12,7 @@ import 'package:egy_akin/features/consultation_details/data/repositories/consult
 import 'package:egy_akin/features/consultation_details/domain/usecases/add_consultation_reply_usecase.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/get_consultation_details_usecase.dart';
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
+import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_achievements_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
@@ -69,7 +70,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
-  sl.registerFactory(() => DoctorInfoViewCubit(sl()));
+  sl.registerFactory(() => DoctorInfoViewCubit(sl(), sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
   sl.registerFactory(() => ChangePasswordCubit(sl()));
@@ -353,5 +354,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<AddConsultationReplyUsecase>()) {
     sl.registerFactory<AddConsultationReplyUsecase>(
         () => AddConsultationReplyUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAchievementsUsecase>()) {
+    sl.registerFactory<GetAchievementsUsecase>(
+        () => GetAchievementsUsecase(sl()));
   }
 }

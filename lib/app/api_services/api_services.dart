@@ -7,6 +7,7 @@ import 'package:egy_akin/features/change_password/data/models/change_password_mo
 import 'package:egy_akin/features/consultation_details/data/models/add_consultation_reply_model_response.dart';
 import 'package:egy_akin/features/consultation_details/data/models/get_consultation_details_model_response.dart';
 import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/get_achievements_model_response.dart';
 import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
@@ -275,5 +276,10 @@ abstract class ApiServices {
   Future<AddConsultationReplyModelResponse> addConsultationReply(
     @Path("consultationId") String consultationId,
     @Field("reply") String reply,
+  );
+
+  @GET('${ApiEndPoint.updateProfile}/{doctorId}/achievements')
+  Future<List<GetAchievementsModelResponse>> getAchievements(
+    @Path("doctorId") String doctorId,
   );
 }

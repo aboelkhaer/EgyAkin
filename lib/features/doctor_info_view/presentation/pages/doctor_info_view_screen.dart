@@ -26,9 +26,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
 class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
   @override
   void initState() {
-    context
-        .read<DoctorInfoViewCubit>()
-        .getCurrentDoctorPatients(widget.doctorId);
+    context.read<DoctorInfoViewCubit>().getDoctorInfo(widget.doctorId);
     super.initState();
   }
 
@@ -128,7 +126,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     radius: 45.r,
                                     backgroundColor:
                                         AppColors.primary.withOpacity(0.8),
-                                    child: doctorInfo.data!.image == null
+                                    child: doctorInfo!.data!.image == null
                                         ? Text(
                                             doctorInfo.data!.firstName == null
                                                 ? ''
@@ -167,13 +165,13 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           ),
                         );
                       },
-                      loaded: (doctorInfo, isLoadingScoreHistory,
-                          isLoadedScoreHistory, message, scoreHistory) {
+                      loaded: (doctorInfo, isLoadingAchievements,
+                          isLoadedAchievements, message, achievements) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Dr.${capitalizeFirstText(doctorInfo.data!.firstName!)} ${capitalizeFirstText(doctorInfo.data!.lastName!)}',
+                              'Dr.${capitalizeFirstText(doctorInfo!.data!.firstName!)} ${capitalizeFirstText(doctorInfo.data!.lastName!)}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -222,7 +220,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           isLoadedScoreHistory, message, scoreHistory) {
                         return Text(
                           capitalizeFirstText(
-                              doctorInfo.data!.specialty ?? AppStrings.empty),
+                              doctorInfo!.data!.specialty ?? AppStrings.empty),
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
@@ -266,7 +264,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     isSyndicateCardRequired:
                                         widget.isSyndicateCardRequired,
                                     doctorFirstName:
-                                        doctorInfo.data!.firstName.toString(),
+                                        doctorInfo!.data!.firstName.toString(),
                                     currentDoctorRole: widget.currentDoctorRole,
                                     homeDataModel: widget.homeDataModel,
                                   ),
@@ -289,7 +287,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                             message,
                                             scoreHistory) {
                                           return Text(
-                                              doctorInfo.patientCount
+                                              doctorInfo!.patientCount
                                                   .toString(),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
@@ -341,7 +339,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     isLoadedScoreHistory,
                                     message,
                                     scoreHistory) {
-                                  return Text(doctorInfo.scoreValue.toString(),
+                                  return Text(doctorInfo!.scoreValue.toString(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 14.sp));
@@ -401,7 +399,11 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           homeDataModel: widget.homeDataModel,
                           currentDoctorModel: widget.currentDoctorModel,
                         ),
-                        const AchievementsTab(),
+                        AchievementsTab(
+                          isProfileFeature: false,
+                          currentDoctorId:
+                              widget.currentDoctorModel.id.toString(),
+                        ),
                       ],
                     ),
                   ),

@@ -62,7 +62,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           RefreshIndicator(
             onRefresh: () async {
               await _cubit.getAllNotifications();
-              await _cubit.loadMoreNotifications();
+              // await _cubit.loadMoreNotifications();
             },
             color: AppColors.primary,
             child: Container(

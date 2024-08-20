@@ -21,11 +21,11 @@ mixin _$DoctorInfoViewState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)
+            List<GetAchievementsModelResponse>? achievements)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -35,11 +35,11 @@ mixin _$DoctorInfoViewState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -49,11 +49,11 @@ mixin _$DoctorInfoViewState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -151,11 +151,11 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)
+            List<GetAchievementsModelResponse>? achievements)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -168,11 +168,11 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -185,11 +185,11 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -289,11 +289,11 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)
+            List<GetAchievementsModelResponse>? achievements)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -306,11 +306,11 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -323,11 +323,11 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -387,14 +387,13 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {DoctorInfoViewModelResponse doctorInfo,
-      bool isLoadingScoreHistory,
-      bool isLoadedScoreHistory,
+      {DoctorInfoViewModelResponse? doctorInfo,
+      bool isLoadingAchievements,
+      bool isLoadedAchievements,
       String message,
-      GetDoctorProfileScoreModelResponse? scoreHistory});
+      List<GetAchievementsModelResponse>? achievements});
 
-  $DoctorInfoViewModelResponseCopyWith<$Res> get doctorInfo;
-  $GetDoctorProfileScoreModelResponseCopyWith<$Res>? get scoreHistory;
+  $DoctorInfoViewModelResponseCopyWith<$Res>? get doctorInfo;
 }
 
 /// @nodoc
@@ -408,55 +407,46 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? doctorInfo = null,
-    Object? isLoadingScoreHistory = null,
-    Object? isLoadedScoreHistory = null,
+    Object? doctorInfo = freezed,
+    Object? isLoadingAchievements = null,
+    Object? isLoadedAchievements = null,
     Object? message = null,
-    Object? scoreHistory = freezed,
+    Object? achievements = freezed,
   }) {
     return _then(_$LoadedImpl(
-      null == doctorInfo
+      freezed == doctorInfo
           ? _value.doctorInfo
           : doctorInfo // ignore: cast_nullable_to_non_nullable
-              as DoctorInfoViewModelResponse,
-      null == isLoadingScoreHistory
-          ? _value.isLoadingScoreHistory
-          : isLoadingScoreHistory // ignore: cast_nullable_to_non_nullable
+              as DoctorInfoViewModelResponse?,
+      null == isLoadingAchievements
+          ? _value.isLoadingAchievements
+          : isLoadingAchievements // ignore: cast_nullable_to_non_nullable
               as bool,
-      null == isLoadedScoreHistory
-          ? _value.isLoadedScoreHistory
-          : isLoadedScoreHistory // ignore: cast_nullable_to_non_nullable
+      null == isLoadedAchievements
+          ? _value.isLoadedAchievements
+          : isLoadedAchievements // ignore: cast_nullable_to_non_nullable
               as bool,
       null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
-      freezed == scoreHistory
-          ? _value.scoreHistory
-          : scoreHistory // ignore: cast_nullable_to_non_nullable
-              as GetDoctorProfileScoreModelResponse?,
+      freezed == achievements
+          ? _value._achievements
+          : achievements // ignore: cast_nullable_to_non_nullable
+              as List<GetAchievementsModelResponse>?,
     ));
   }
 
   @override
   @pragma('vm:prefer-inline')
-  $DoctorInfoViewModelResponseCopyWith<$Res> get doctorInfo {
-    return $DoctorInfoViewModelResponseCopyWith<$Res>(_value.doctorInfo,
-        (value) {
-      return _then(_value.copyWith(doctorInfo: value));
-    });
-  }
-
-  @override
-  @pragma('vm:prefer-inline')
-  $GetDoctorProfileScoreModelResponseCopyWith<$Res>? get scoreHistory {
-    if (_value.scoreHistory == null) {
+  $DoctorInfoViewModelResponseCopyWith<$Res>? get doctorInfo {
+    if (_value.doctorInfo == null) {
       return null;
     }
 
-    return $GetDoctorProfileScoreModelResponseCopyWith<$Res>(
-        _value.scoreHistory!, (value) {
-      return _then(_value.copyWith(scoreHistory: value));
+    return $DoctorInfoViewModelResponseCopyWith<$Res>(_value.doctorInfo!,
+        (value) {
+      return _then(_value.copyWith(doctorInfo: value));
     });
   }
 }
@@ -464,23 +454,35 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
-  const _$LoadedImpl(this.doctorInfo, this.isLoadingScoreHistory,
-      this.isLoadedScoreHistory, this.message, this.scoreHistory);
+  const _$LoadedImpl(
+      this.doctorInfo,
+      this.isLoadingAchievements,
+      this.isLoadedAchievements,
+      this.message,
+      final List<GetAchievementsModelResponse>? achievements)
+      : _achievements = achievements;
 
   @override
-  final DoctorInfoViewModelResponse doctorInfo;
+  final DoctorInfoViewModelResponse? doctorInfo;
   @override
-  final bool isLoadingScoreHistory;
+  final bool isLoadingAchievements;
   @override
-  final bool isLoadedScoreHistory;
+  final bool isLoadedAchievements;
   @override
   final String message;
+  final List<GetAchievementsModelResponse>? _achievements;
   @override
-  final GetDoctorProfileScoreModelResponse? scoreHistory;
+  List<GetAchievementsModelResponse>? get achievements {
+    final value = _achievements;
+    if (value == null) return null;
+    if (_achievements is EqualUnmodifiableListView) return _achievements;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo, isLoadingScoreHistory: $isLoadingScoreHistory, isLoadedScoreHistory: $isLoadedScoreHistory, message: $message, scoreHistory: $scoreHistory)';
+    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo, isLoadingAchievements: $isLoadingAchievements, isLoadedAchievements: $isLoadedAchievements, message: $message, achievements: $achievements)';
   }
 
   @override
@@ -489,10 +491,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     properties
       ..add(DiagnosticsProperty('type', 'DoctorInfoViewState.loaded'))
       ..add(DiagnosticsProperty('doctorInfo', doctorInfo))
-      ..add(DiagnosticsProperty('isLoadingScoreHistory', isLoadingScoreHistory))
-      ..add(DiagnosticsProperty('isLoadedScoreHistory', isLoadedScoreHistory))
+      ..add(DiagnosticsProperty('isLoadingAchievements', isLoadingAchievements))
+      ..add(DiagnosticsProperty('isLoadedAchievements', isLoadedAchievements))
       ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('scoreHistory', scoreHistory));
+      ..add(DiagnosticsProperty('achievements', achievements));
   }
 
   @override
@@ -502,18 +504,23 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             other is _$LoadedImpl &&
             (identical(other.doctorInfo, doctorInfo) ||
                 other.doctorInfo == doctorInfo) &&
-            (identical(other.isLoadingScoreHistory, isLoadingScoreHistory) ||
-                other.isLoadingScoreHistory == isLoadingScoreHistory) &&
-            (identical(other.isLoadedScoreHistory, isLoadedScoreHistory) ||
-                other.isLoadedScoreHistory == isLoadedScoreHistory) &&
+            (identical(other.isLoadingAchievements, isLoadingAchievements) ||
+                other.isLoadingAchievements == isLoadingAchievements) &&
+            (identical(other.isLoadedAchievements, isLoadedAchievements) ||
+                other.isLoadedAchievements == isLoadedAchievements) &&
             (identical(other.message, message) || other.message == message) &&
-            (identical(other.scoreHistory, scoreHistory) ||
-                other.scoreHistory == scoreHistory));
+            const DeepCollectionEquality()
+                .equals(other._achievements, _achievements));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, doctorInfo,
-      isLoadingScoreHistory, isLoadedScoreHistory, message, scoreHistory);
+  int get hashCode => Object.hash(
+      runtimeType,
+      doctorInfo,
+      isLoadingAchievements,
+      isLoadedAchievements,
+      message,
+      const DeepCollectionEquality().hash(_achievements));
 
   @JsonKey(ignore: true)
   @override
@@ -527,16 +534,16 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)
+            List<GetAchievementsModelResponse>? achievements)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
-        message, scoreHistory);
+    return loaded(doctorInfo, isLoadingAchievements, isLoadedAchievements,
+        message, achievements);
   }
 
   @override
@@ -545,16 +552,16 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
-        message, scoreHistory);
+    return loaded?.call(doctorInfo, isLoadingAchievements, isLoadedAchievements,
+        message, achievements);
   }
 
   @override
@@ -563,18 +570,18 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
-          message, scoreHistory);
+      return loaded(doctorInfo, isLoadingAchievements, isLoadedAchievements,
+          message, achievements);
     }
     return orElse();
   }
@@ -619,17 +626,17 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
 
 abstract class _Loaded implements DoctorInfoViewState {
   const factory _Loaded(
-      final DoctorInfoViewModelResponse doctorInfo,
-      final bool isLoadingScoreHistory,
-      final bool isLoadedScoreHistory,
+      final DoctorInfoViewModelResponse? doctorInfo,
+      final bool isLoadingAchievements,
+      final bool isLoadedAchievements,
       final String message,
-      final GetDoctorProfileScoreModelResponse? scoreHistory) = _$LoadedImpl;
+      final List<GetAchievementsModelResponse>? achievements) = _$LoadedImpl;
 
-  DoctorInfoViewModelResponse get doctorInfo;
-  bool get isLoadingScoreHistory;
-  bool get isLoadedScoreHistory;
+  DoctorInfoViewModelResponse? get doctorInfo;
+  bool get isLoadingAchievements;
+  bool get isLoadedAchievements;
   String get message;
-  GetDoctorProfileScoreModelResponse? get scoreHistory;
+  List<GetAchievementsModelResponse>? get achievements;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -710,11 +717,11 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)
+            List<GetAchievementsModelResponse>? achievements)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -727,11 +734,11 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -744,11 +751,11 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            DoctorInfoViewModelResponse doctorInfo,
-            bool isLoadingScoreHistory,
-            bool isLoadedScoreHistory,
+            DoctorInfoViewModelResponse? doctorInfo,
+            bool isLoadingAchievements,
+            bool isLoadedAchievements,
             String message,
-            GetDoctorProfileScoreModelResponse? scoreHistory)?
+            List<GetAchievementsModelResponse>? achievements)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

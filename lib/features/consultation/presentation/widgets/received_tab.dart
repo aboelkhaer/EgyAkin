@@ -26,7 +26,14 @@ class _ReceivedTabState extends State<ReceivedTab> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ConsultationCubit, ConsultationState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        state.maybeWhen(
+          orElse: () {},
+          error: (message) {
+            customSnackBar(context: context, message: message);
+          },
+        );
+      },
       builder: (context, state) {
         return state.maybeWhen(
           orElse: () {

@@ -25,6 +25,7 @@ showCustomDialog(
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
               title: Text(title),
               scrollable: true,
+              backgroundColor: Colors.white,
               content: descriptionWidget(
                   description, isWithTextField, onChangedTextFormField),
               actions: [

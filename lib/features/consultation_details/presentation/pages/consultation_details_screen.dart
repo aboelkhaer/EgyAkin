@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_state.dart';
+import 'package:readmore/readmore.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../exports.dart';
@@ -44,6 +45,9 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
         listener: (context, state) {
           state.maybeWhen(
             orElse: () {},
+            error: (message) {
+              customSnackBar(context: context, message: message);
+            },
             loaded: (consultDetails, newCommentValue, isSendingConsultation,
                 isSendedConsultation, message) {
               if (message != '') {
@@ -80,15 +84,28 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                           decoration: BoxDecoration(
                               color: AppColors.primary.withOpacity(0.15),
                               borderRadius: BorderRadius.circular(10)),
-                          child: Text(
+                          child: ReadMoreText(
                             '${consultDetails.consultMessage}',
+                            trimMode: TrimMode.Line,
+                            trimLines: 2,
+                            colorClickableText: Colors.blue,
+                            trimCollapsedText: ' See more ',
+                            trimExpandedText: ' See less ',
+                            moreStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue,
+                              fontSize: 11.sp,
+                            ),
+                            lessStyle: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue,
+                              fontSize: 11.sp,
+                            ),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 12.sp,
                               color: Colors.grey.shade700,
                             ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Container(

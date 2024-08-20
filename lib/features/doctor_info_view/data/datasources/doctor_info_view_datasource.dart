@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/get_achievements_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
 
 import '../../../../exports.dart';
@@ -7,6 +8,7 @@ abstract class DoctorInfoViewDataSource {
   Future<DoctorInfoViewModelResponse> getDoctorInfoView(String doctorId);
   Future<GetDoctorProfileScoreModelResponse> getScoreHistory(
       int page, String doctorId);
+  Future<List<GetAchievementsModelResponse>> getAchievements(String doctorId);
 }
 
 class DoctorInfoViewDataSourceImpl implements DoctorInfoViewDataSource {
@@ -23,5 +25,11 @@ class DoctorInfoViewDataSourceImpl implements DoctorInfoViewDataSource {
   Future<GetDoctorProfileScoreModelResponse> getScoreHistory(
       int page, String doctorId) async {
     return await _apiServices.getDoctorProfileScoreHistory(page, doctorId);
+  }
+
+  @override
+  Future<List<GetAchievementsModelResponse>> getAchievements(
+      String doctorId) async {
+    return await _apiServices.getAchievements(doctorId);
   }
 }
