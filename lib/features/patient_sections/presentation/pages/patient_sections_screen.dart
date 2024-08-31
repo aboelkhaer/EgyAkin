@@ -34,7 +34,6 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.dark));
     PatientSectionsCubit cubit = PatientSectionsCubit.get(context);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
@@ -105,40 +104,65 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         ),
         centerTitle: true,
         actions: [
-          Tooltip(
-            message: 'Send consultation',
-            child: Padding(
-              padding: EdgeInsets.only(right: 5.w),
-              child: InkWell(
-                onTap: () {
-                  navigatorKey.currentState?.pushNamed(
-                    AppRoutes.sendConsultation,
-                    arguments: AppRoutesArgs.sendConsultationRouteArgs(
-                      homeDataModel: widget.homeDataModel,
-                      currentDoctorModel: widget.currentDoctorModel,
-                      patientId: widget.patientId,
-                    ),
-                  );
+          BlocBuilder<PatientSectionsCubit, PatientSectionsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
                 },
-                borderRadius: BorderRadius.circular(20.r),
-                child: Container(
-                  height: 40.r,
-                  width: 40.r,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.transparent,
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      AppImages.consultation,
-                      height: 20.r,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+                loaded: (response,
+                    isDelete,
+                    isFinalSubmit,
+                    message,
+                    isLoading,
+                    reportProgress,
+                    filePath,
+                    isDownloadingReport,
+                    isDownloadedReport) {
+                  if ((response.doctorId.toString() ==
+                          widget.currentDoctorModel.id.toString()) ||
+                      widget.currentDoctorRole == 'Admin') {
+                    return Tooltip(
+                      message: 'Send consultation',
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 5.w),
+                        child: InkWell(
+                          onTap: () {
+                            navigatorKey.currentState?.pushNamed(
+                              AppRoutes.sendConsultation,
+                              arguments:
+                                  AppRoutesArgs.sendConsultationRouteArgs(
+                                homeDataModel: widget.homeDataModel,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                patientId: widget.patientId,
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: Container(
+                            height: 40.r,
+                            width: 40.r,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.transparent,
+                            ),
+                            child: Center(
+                              child: Image.asset(
+                                AppImages.consultation,
+                                height: 20.r,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              );
+            },
+          )
         ],
       ),
       body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(

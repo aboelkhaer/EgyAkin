@@ -51,6 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
         elevation: 0,
         backgroundColor: AppColors.transparent,
         iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       floatingActionButton: SizedBox(
         height: 50.w,

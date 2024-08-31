@@ -1,5 +1,3 @@
-import 'package:egy_akin/app/shared/functions/doctor_name.dart';
-
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -17,7 +15,9 @@ class HomeHeader extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () async {
-            cubit.tabsController.jumpToTab(2);
+            if (cubit.tabsController.index != 2) {
+              cubit.tabsController.jumpToTab(2);
+            }
             cubit.hideHomeHeader();
           },
           child: Row(

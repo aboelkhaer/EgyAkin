@@ -55,6 +55,7 @@ class _AchievementsTabState extends State<AchievementsTab> {
               return const Expanded(
                 child: Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CircularProgressIndicator(),
                     ],
@@ -65,11 +66,18 @@ class _AchievementsTabState extends State<AchievementsTab> {
                 message, achievements) {
               if (isLoadedAchievements) {
                 return achievements!.isEmpty
-                    ? Center(
-                        child: Image.asset(
-                          AppImages.notFound,
-                          width: 150.w,
-                          height: 150.h,
+                    ? Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                AppImages.notFound,
+                                width: 150.w,
+                                height: 150.h,
+                              ),
+                            ],
+                          ),
                         ),
                       )
                     : Expanded(

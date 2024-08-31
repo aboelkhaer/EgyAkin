@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit = context.read<HomeCubit>();
 
-      if (!_cubit!.isClosed) {
+      if (_cubit != null && !_cubit!.isClosed) {
         _cubit!.scrollController = ScrollController();
       }
     });
@@ -157,14 +157,23 @@ class _HomeScreenState extends State<HomeScreen> {
       HomeTab(cubit: cubit),
       BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          return NotificationScreen(
-            currentDoctorModel: cubit.currentDoctorModel,
-            accountVerification: cubit.accountVerification!,
-            currentDoctorRole: cubit.currentDoctorRole,
-            currentDoctorPoints:
-                cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
-            isSyndicateCardRequired: cubit.isSyndicateCardRequired,
-            homeDataModel: cubit.homeDataModel,
+          return state.maybeWhen(
+            orElse: () {
+              return const SizedBox.shrink();
+            },
+            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
+                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              return NotificationScreen(
+                currentDoctorModel: cubit.currentDoctorModel,
+                accountVerification: cubit.accountVerification ?? false,
+                currentDoctorRole: cubit.currentDoctorRole,
+                currentDoctorPoints: cubit.doctorScore == null
+                    ? 0
+                    : int.parse(cubit.doctorScore!),
+                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+                homeDataModel: cubit.homeDataModel,
+              );
+            },
           );
         },
       ),
@@ -184,14 +193,27 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
                 isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
-              return ProfileScreen(
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
-                accountVerification: cubit.accountVerification!,
-                homeDataModel: homeData,
-                currentDoctorPoints: cubit.doctorScore == null
-                    ? 0
-                    : int.parse(cubit.doctorScore!),
-                currentDoctorRole: homeData.role.toString(),
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loaded: (homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message) {
+                  return ProfileScreen(
+                    isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+                    accountVerification: cubit.accountVerification!,
+                    homeDataModel: homeData,
+                    currentDoctorPoints: cubit.doctorScore == null
+                        ? 0
+                        : int.parse(cubit.doctorScore!),
+                    currentDoctorRole: homeData.role.toString(),
+                  );
+                },
               );
             },
           );

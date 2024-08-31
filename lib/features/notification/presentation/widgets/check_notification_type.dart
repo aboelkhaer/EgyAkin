@@ -187,6 +187,168 @@ class CheckNotificationType extends StatelessWidget {
             ],
           ),
         );
+      case 'Consultation':
+        return GestureDetector(
+          onTap: () {
+            // navigatorKey.currentState?.pushNamed(
+            //   AppRoutes.patientSections,
+            //   arguments: AppRoutesArgs.patientSectionsRouteArguments(
+            //     patientId: notificationModel.patient!.id.toString(),
+            //     currentDoctorRole: currentDoctorRole,
+            //     currentDoctorPoints: currentDoctorPoints,
+            //     currentDoctorModel: currentDoctorModel,
+            //     homeDataModel: homeDataModel,
+            //   ),
+            // );
+            // context.read<NotificationCubit>().getAllNotifications();
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.patient!.doctor!.image ==
+                                      null
+                                  ? Text(
+                                      notificationModel
+                                          .patient!.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .patient!.doctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text:
+                                          'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)}',
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp),
+                                      children: <TextSpan>[
+                                        const TextSpan(
+                                          text: ' is seeking your advice ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        const TextSpan(text: 'for his patient'),
+                                        const TextSpan(
+                                            text: ' at ',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                        TextSpan(
+                                            text:
+                                                '${notificationModel.patient!.hospital}'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
       case AppStrings.comment:
         return GestureDetector(
           onTap: () {
