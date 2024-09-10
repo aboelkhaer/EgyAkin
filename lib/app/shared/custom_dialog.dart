@@ -8,8 +8,10 @@ showCustomDialog(
     required String coloredButtonText,
     String? noColoredButtonText,
     bool isNoColorShow = true,
+    TextInputType textInputType = TextInputType.text,
     bool isWithTextField = false,
     Function(String)? onChangedTextFormField,
+    int? textFormFieldMaxLines,
     bool isColoredButtonDisable = false,
     required VoidCallback coloredButtonOnTap}) {
   Size size = MediaQuery.of(context).size;
@@ -26,8 +28,8 @@ showCustomDialog(
               title: Text(title),
               scrollable: true,
               backgroundColor: Colors.white,
-              content: descriptionWidget(
-                  description, isWithTextField, onChangedTextFormField),
+              content: descriptionWidget(description, isWithTextField,
+                  onChangedTextFormField, textFormFieldMaxLines, textInputType),
               actions: [
                 isNoColorShow
                     ? TextButton(
@@ -67,8 +69,12 @@ showCustomDialog(
       });
 }
 
-Widget descriptionWidget(var description, bool isWithTextField,
-    Function(String)? onChangedTextFormField) {
+Widget descriptionWidget(
+    var description,
+    bool isWithTextField,
+    Function(String)? onChangedTextFormField,
+    int? textFormFieldMaxLines,
+    TextInputType textInputType) {
   if (isWithTextField) {
     return Column(
       children: [
@@ -77,12 +83,16 @@ Widget descriptionWidget(var description, bool isWithTextField,
           textAlign: TextAlign.center,
         ),
         SizedBox(height: 10.h),
-        CustomTextFormField(
-          title: '',
-          textInputType: TextInputType.text,
-          autoFocus: true,
-          validator: (value) => null,
-          onChanged: onChangedTextFormField,
+        SizedBox(
+          height: 70.h,
+          child: CustomTextFormField(
+            title: '',
+            textInputType: textInputType,
+            autoFocus: true,
+            validator: (value) => null,
+            maxLines: textFormFieldMaxLines,
+            onChanged: onChangedTextFormField,
+          ),
         ),
       ],
     );

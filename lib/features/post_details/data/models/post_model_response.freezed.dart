@@ -27,6 +27,8 @@ mixin _$PostModel {
   bool? get hidden => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'post_type')
+  String? get postType => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,6 +49,7 @@ abstract class $PostModelCopyWith<$Res> {
       String? image,
       bool? hidden,
       @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'post_type') String? postType,
       DoctorModel? doctor});
 
   $DoctorModelCopyWith<$Res>? get doctor;
@@ -71,6 +74,7 @@ class _$PostModelCopyWithImpl<$Res, $Val extends PostModel>
     Object? image = freezed,
     Object? hidden = freezed,
     Object? updatedAt = freezed,
+    Object? postType = freezed,
     Object? doctor = freezed,
   }) {
     return _then(_value.copyWith(
@@ -97,6 +101,10 @@ class _$PostModelCopyWithImpl<$Res, $Val extends PostModel>
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postType: freezed == postType
+          ? _value.postType
+          : postType // ignore: cast_nullable_to_non_nullable
               as String?,
       doctor: freezed == doctor
           ? _value.doctor
@@ -133,6 +141,7 @@ abstract class _$$PostModelImplCopyWith<$Res>
       String? image,
       bool? hidden,
       @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'post_type') String? postType,
       DoctorModel? doctor});
 
   @override
@@ -156,6 +165,7 @@ class __$$PostModelImplCopyWithImpl<$Res>
     Object? image = freezed,
     Object? hidden = freezed,
     Object? updatedAt = freezed,
+    Object? postType = freezed,
     Object? doctor = freezed,
   }) {
     return _then(_$PostModelImpl(
@@ -183,6 +193,10 @@ class __$$PostModelImplCopyWithImpl<$Res>
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
               as String?,
+      postType: freezed == postType
+          ? _value.postType
+          : postType // ignore: cast_nullable_to_non_nullable
+              as String?,
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
@@ -201,6 +215,7 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
       this.image,
       this.hidden,
       @JsonKey(name: 'updated_at') this.updatedAt,
+      @JsonKey(name: 'post_type') this.postType,
       this.doctor});
 
   factory _$PostModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -220,11 +235,14 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
+  @JsonKey(name: 'post_type')
+  final String? postType;
+  @override
   final DoctorModel? doctor;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'PostModel(id: $id, title: $title, content: $content, image: $image, hidden: $hidden, updatedAt: $updatedAt, doctor: $doctor)';
+    return 'PostModel(id: $id, title: $title, content: $content, image: $image, hidden: $hidden, updatedAt: $updatedAt, postType: $postType, doctor: $doctor)';
   }
 
   @override
@@ -238,6 +256,7 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
       ..add(DiagnosticsProperty('image', image))
       ..add(DiagnosticsProperty('hidden', hidden))
       ..add(DiagnosticsProperty('updatedAt', updatedAt))
+      ..add(DiagnosticsProperty('postType', postType))
       ..add(DiagnosticsProperty('doctor', doctor));
   }
 
@@ -253,13 +272,15 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
             (identical(other.hidden, hidden) || other.hidden == hidden) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
+            (identical(other.postType, postType) ||
+                other.postType == postType) &&
             (identical(other.doctor, doctor) || other.doctor == doctor));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, title, content, image, hidden, updatedAt, doctor);
+  int get hashCode => Object.hash(runtimeType, id, title, content, image,
+      hidden, updatedAt, postType, doctor);
 
   @JsonKey(ignore: true)
   @override
@@ -283,6 +304,7 @@ abstract class _PostModel implements PostModel {
       final String? image,
       final bool? hidden,
       @JsonKey(name: 'updated_at') final String? updatedAt,
+      @JsonKey(name: 'post_type') final String? postType,
       final DoctorModel? doctor}) = _$PostModelImpl;
 
   factory _PostModel.fromJson(Map<String, dynamic> json) =
@@ -301,6 +323,9 @@ abstract class _PostModel implements PostModel {
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+  @override
+  @JsonKey(name: 'post_type')
+  String? get postType;
   @override
   DoctorModel? get doctor;
   @override

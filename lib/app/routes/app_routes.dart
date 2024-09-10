@@ -606,6 +606,7 @@ class RouteGenerator {
                 child: ConsultationScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialTab: args['initialTab'] as int,
                 ),
               ),
             );
@@ -623,7 +624,8 @@ class RouteGenerator {
 
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel') &&
-              args.containsKey('consultation') &&
+              args.containsKey('consultationId') &&
+              args.containsKey('patientName') &&
               args.containsKey('isReceivedConsultation')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<ConsultationDetailsCubit>(
@@ -631,8 +633,8 @@ class RouteGenerator {
                 child: ConsultationDetailsScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
-                  consultation: args['consultation']
-                      as GetCurrentDoctorConsultationModelResponse,
+                  consultationId: args['consultationId'] as String,
+                  patientName: args['patientName'] as String,
                   isReceivedConsultation:
                       args['isReceivedConsultation'] as bool,
                 ),

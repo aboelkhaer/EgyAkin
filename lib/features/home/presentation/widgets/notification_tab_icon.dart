@@ -58,6 +58,7 @@ class NotificationTabIcon extends StatelessWidget {
               if (context.read<HomeCubit>().tabsController.index != 1) {
                 context.read<HomeCubit>().tabsController.jumpToTab(1);
               }
+
               context.read<HomeCubit>().hideHomeHeader();
               if (int.parse(homeData.unreadCount!) > 0) {
                 context.read<NotificationCubit>().getAllNotifications();
@@ -70,13 +71,13 @@ class NotificationTabIcon extends StatelessWidget {
               }
             },
             onLongPress: () {
-              context.read<NotificationCubit>().getAllNotifications();
-              Future.delayed(
-                const Duration(milliseconds: 300),
-                () {
-                  context.read<HomeCubit>().getHome();
-                },
-              );
+              // context.read<NotificationCubit>().getAllNotifications();
+              // context.read<HomeCubit>().getHome();
+              // Future.delayed(
+              //   const Duration(milliseconds: 300),
+              //   () {
+              //   },
+              // );
             },
             child: Stack(
               alignment: Alignment.center,

@@ -1,7 +1,3 @@
-import 'dart:developer';
-
-import 'package:egy_akin/features/splash/domain/usecases/get_app_settings_usecase.dart';
-
 import '../../../../exports.dart';
 
 class SplashCubit extends Cubit<SplashState> {
@@ -32,7 +28,6 @@ class SplashCubit extends Cubit<SplashState> {
         forceUpdate = result.forceUpdate!;
       },
     );
-    log('$appFreeze moatz123');
 
     emit(SplashState.loaded(
         isAuthentication, isWelcomed, appFreeze, forceUpdate));

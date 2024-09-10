@@ -80,7 +80,7 @@ class _PatientSectionDetailsScreenState
             },
             loaded: (questions, isSubmitLoading, isSubmitted, message,
                 snackbarErrorCounter) {
-              if (widget.currentDoctorRole == 'Admin') {
+              if (widget.currentDoctorRole == AppStrings.roleAdmin) {
                 return buildSectionForm(
                     size: size,
                     cubit: cubit,
@@ -206,7 +206,7 @@ class _PatientSectionDetailsScreenState
                   },
                 ),
               ),
-              widget.currentDoctorRole == 'Admin'
+              widget.currentDoctorRole == AppStrings.roleAdmin
                   ? Container(height: 90)
                   : widget.doctorId.toString() !=
                           widget.currentDoctorModel.id.toString()

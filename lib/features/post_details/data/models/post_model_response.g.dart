@@ -14,6 +14,7 @@ _$PostModelImpl _$$PostModelImplFromJson(Map<String, dynamic> json) =>
       image: json['image'] as String?,
       hidden: json['hidden'] as bool?,
       updatedAt: json['updated_at'] as String?,
+      postType: json['post_type'] as String?,
       doctor: json['doctor'] == null
           ? null
           : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
@@ -27,5 +28,6 @@ Map<String, dynamic> _$$PostModelImplToJson(_$PostModelImpl instance) =>
       'image': instance.image,
       'hidden': instance.hidden,
       'updated_at': instance.updatedAt,
+      'post_type': instance.postType,
       'doctor': instance.doctor,
     };

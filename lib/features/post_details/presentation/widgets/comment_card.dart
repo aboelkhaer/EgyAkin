@@ -33,7 +33,7 @@ class CommentCard extends StatelessWidget {
         onLongPress: () {
           if (commentModel.doctor!.id.toString() ==
                   currentDoctorModel.id.toString() ||
-              currentDoctorRole == 'Admin') {
+              currentDoctorRole == AppStrings.roleAdmin) {
             showCustomDialog(
                 context: context,
                 title: 'Delete',

@@ -3,10 +3,12 @@ import '../../../../exports.dart';
 class ConsultationScreen extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
+  final int initialTab;
   const ConsultationScreen(
       {super.key,
       required this.homeDataModel,
-      required this.currentDoctorModel});
+      required this.currentDoctorModel,
+      required this.initialTab});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +18,7 @@ class ConsultationScreen extends StatelessWidget {
       ),
       body: DefaultTabController(
         length: 2,
+        initialIndex: initialTab,
         child: Column(
           children: [
             ColoredBox(

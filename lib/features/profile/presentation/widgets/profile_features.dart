@@ -247,10 +247,14 @@ class ProfileFeatures extends StatelessWidget {
         title: 'Consultation',
         description: 'Initiate or view consultations.',
         onTap: () {
-          navigatorKey.currentState?.pushNamed(AppRoutes.consultation,
-              arguments: AppRoutesArgs.consultationRouteArgs(
-                  homeDataModel: homeDataModel,
-                  currentDoctorModel: cubit.currentDoctor));
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.consultation,
+            arguments: AppRoutesArgs.consultationRouteArgs(
+              homeDataModel: homeDataModel,
+              currentDoctorModel: cubit.currentDoctor,
+              initialTab: 0,
+            ),
+          );
         },
       ),
       ProfileScreens(

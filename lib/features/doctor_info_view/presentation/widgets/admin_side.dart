@@ -11,7 +11,7 @@ class AdminSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return homeDataModel.role == 'Admin'
+    return homeDataModel.role == AppStrings.roleAdmin
         ? Stack(
             children: [
               Container(

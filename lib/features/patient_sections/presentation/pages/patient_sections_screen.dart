@@ -121,7 +121,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                     isDownloadedReport) {
                   if ((response.doctorId.toString() ==
                           widget.currentDoctorModel.id.toString()) ||
-                      widget.currentDoctorRole == 'Admin') {
+                      widget.currentDoctorRole == AppStrings.roleAdmin) {
                     return Tooltip(
                       message: 'Send consultation',
                       child: Padding(
@@ -391,7 +391,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                           widget.currentDoctorModel.id
                                               .toString()) &&
                                       (response.submitStatus == true) ||
-                                  widget.currentDoctorRole == 'Admin')) {
+                                  widget.currentDoctorRole ==
+                                      AppStrings.roleAdmin)) {
                                 return FooterButtons(
                                   currentDoctorId:
                                       widget.currentDoctorModel.id.toString(),

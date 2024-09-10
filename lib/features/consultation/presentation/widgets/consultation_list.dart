@@ -39,7 +39,8 @@ class ConsultationList extends StatelessWidget {
                   arguments: AppRoutesArgs.consultationDetailsRouteArgs(
                     homeDataModel: homeDataModel,
                     currentDoctorModel: currentDoctorModel,
-                    consultation: consult,
+                    patientName: consult.patientName.toString(),
+                    consultationId: consult.id.toString(),
                     isReceivedConsultation: isReceivedConsultation,
                   ),
                 );

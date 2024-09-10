@@ -244,23 +244,27 @@ class AppRoutesArgs {
   static Map<String, dynamic> consultationRouteArgs({
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
+    required int initialTab,
   }) {
     return {
       'homeDataModel': homeDataModel,
       'currentDoctorModel': currentDoctorModel,
+      'initialTab': initialTab,
     };
   }
 
   static Map<String, dynamic> consultationDetailsRouteArgs({
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
-    required GetCurrentDoctorConsultationModelResponse consultation,
     required bool isReceivedConsultation,
+    required String consultationId,
+    required String patientName,
   }) {
     return {
       'homeDataModel': homeDataModel,
       'currentDoctorModel': currentDoctorModel,
-      'consultation': consultation,
+      'consultationId': consultationId,
+      'patientName': patientName,
       'isReceivedConsultation': isReceivedConsultation,
     };
   }

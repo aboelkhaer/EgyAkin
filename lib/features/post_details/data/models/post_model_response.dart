@@ -14,6 +14,7 @@ class PostModel with _$PostModel {
     String? image,
     bool? hidden,
     @JsonKey(name: 'updated_at') String? updatedAt,
+    @JsonKey(name: 'post_type') String? postType,
     DoctorModel? doctor,
   }) = _PostModel;
   factory PostModel.fromJson(Map<String, dynamic> json) =>

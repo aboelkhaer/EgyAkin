@@ -190,6 +190,24 @@ class CheckNotificationType extends StatelessWidget {
       case 'Consultation':
         return GestureDetector(
           onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.consultation,
+              arguments: AppRoutesArgs.consultationRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                initialTab: 1,
+              ),
+            );
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.consultationDetails,
+              arguments: AppRoutesArgs.consultationDetailsRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                patientName: notificationModel.patient!.name.toString(),
+                consultationId: notificationModel.typeId.toString(),
+                isReceivedConsultation: true,
+              ),
+            );
             // navigatorKey.currentState?.pushNamed(
             //   AppRoutes.patientSections,
             //   arguments: AppRoutesArgs.patientSectionsRouteArguments(
@@ -294,12 +312,15 @@ class CheckNotificationType extends StatelessWidget {
                                         ),
                                         const TextSpan(text: 'for his patient'),
                                         const TextSpan(
-                                            text: ' at ',
+                                            text: ' : ',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold)),
                                         TextSpan(
                                             text:
-                                                '${notificationModel.patient!.hospital}'),
+                                                '${notificationModel.patient!.name}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            )),
                                       ],
                                     ),
                                   ),

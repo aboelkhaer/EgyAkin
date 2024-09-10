@@ -8,16 +8,18 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class ConsultationDetailsScreen extends StatefulWidget {
-  final GetCurrentDoctorConsultationModelResponse consultation;
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final String patientName;
+  final String consultationId;
   final bool isReceivedConsultation;
   const ConsultationDetailsScreen(
       {super.key,
-      required this.consultation,
       required this.currentDoctorModel,
       required this.homeDataModel,
-      required this.isReceivedConsultation});
+      required this.isReceivedConsultation,
+      required this.consultationId,
+      required this.patientName});
 
   @override
   State<ConsultationDetailsScreen> createState() =>
@@ -30,7 +32,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
     super.initState();
     context
         .read<ConsultationDetailsCubit>()
-        .getConsultationDetails(widget.consultation.id.toString());
+        .getConsultationDetails(widget.consultationId.toString());
   }
 
   @override
@@ -39,7 +41,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
     log(widget.isReceivedConsultation.toString());
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.consultation.patientName.toString()),
+        title: Text(widget.patientName.toString()),
       ),
       body: BlocConsumer<ConsultationDetailsCubit, ConsultationDetailsState>(
         listener: (context, state) {
@@ -54,7 +56,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                 customSnackBar(context: context, message: message);
               }
               if (isSendedConsultation) {
-                cubit.getConsultationDetails(widget.consultation.id.toString());
+                cubit.getConsultationDetails(widget.consultationId.toString());
               }
             },
           );

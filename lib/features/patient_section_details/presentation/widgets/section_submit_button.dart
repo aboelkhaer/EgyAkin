@@ -23,7 +23,7 @@ class SectionSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
-    if (currentDoctorRole == 'Admin' ||
+    if (currentDoctorRole == AppStrings.roleAdmin ||
         (doctorId.toString() == currentDoctorModel.id.toString() &&
             !finalSubmitStatus)) {
       return Positioned(
@@ -93,7 +93,8 @@ class SectionSubmitButton extends StatelessWidget {
                         title: AppStrings.submit,
                         isDisable: (doctorId.toString() ==
                                         currentDoctorModel.id.toString() ||
-                                    currentDoctorRole == 'Admin') &&
+                                    currentDoctorRole ==
+                                        AppStrings.roleAdmin) &&
                                 cubit.formData.isNotEmpty
                             ? false
                             : true,
@@ -122,7 +123,8 @@ class SectionSubmitButton extends StatelessWidget {
                           title: AppStrings.submit,
                           isDisable: (doctorId.toString() ==
                                           currentDoctorModel.id.toString() ||
-                                      currentDoctorRole == 'Admin') &&
+                                      currentDoctorRole ==
+                                          AppStrings.roleAdmin) &&
                                   cubit.formData.isNotEmpty
                               ? false
                               : true,

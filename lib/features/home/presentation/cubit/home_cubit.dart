@@ -23,7 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselController carouselController = CarouselController();
-  ScrollController? scrollController;
+  ScrollController scrollController = ScrollController();
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();

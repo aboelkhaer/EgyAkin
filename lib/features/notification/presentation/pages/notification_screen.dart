@@ -55,14 +55,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    NotificationCubit cubit = NotificationCubit.get(context);
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
           RefreshIndicator(
             onRefresh: () async {
+              animateToTopOfScreen(cubit.scrollController!);
               await _cubit.getAllNotifications();
-              // await _cubit.loadMoreNotifications();
             },
             color: AppColors.primary,
             child: Container(
@@ -125,9 +126,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         builder: (context, state) {
                           return state.maybeWhen(
                             orElse: () {
-                              return const SizedBox.shrink();
-                            },
-                            loading: () {
                               return const SizedBox.shrink();
                             },
                             loaded: (notificationData, isSeeMore) {

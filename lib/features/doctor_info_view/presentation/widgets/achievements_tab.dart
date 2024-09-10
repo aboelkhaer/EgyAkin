@@ -134,10 +134,9 @@ class _AchievementsTabState extends State<AchievementsTab> {
                                           isNoColorShow: false,
                                         );
                                       },
-                                      icon: Icon(
-                                        Icons.info,
-                                        color: AppColors.primary,
-                                        size: 20.r,
+                                      icon: Image.asset(
+                                        AppImages.info,
+                                        width: 25.w,
                                       ),
                                     ),
                                   ),

@@ -19,9 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit = context.read<HomeCubit>();
 
-      if (_cubit != null && !_cubit!.isClosed) {
-        _cubit!.scrollController = ScrollController();
-      }
+      // if (_cubit != null && !_cubit!.isClosed) {
+      //   _cubit!.scrollController = ScrollController();
+      // }
     });
 
     context.read<HomeCubit>().tabsController.jumpToTab(widget.page);
@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     if (_cubit != null && !_cubit!.isClosed) {
-      _cubit!.scrollController!.dispose();
+      _cubit!.scrollController.dispose();
     }
     super.dispose();
   }

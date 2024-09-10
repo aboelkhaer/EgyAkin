@@ -38,6 +38,8 @@ class SendConsultationScreen extends StatelessWidget {
                     title: 'Consultation',
                     noColoredButtonText: 'Cancel',
                     isWithTextField: true,
+                    textFormFieldMaxLines: 3,
+                    textInputType: TextInputType.multiline,
                     onChangedTextFormField: (value) {
                       cubit.consultMessage = value;
                     },

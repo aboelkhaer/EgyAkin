@@ -47,6 +47,7 @@ class NotificationsModel with _$NotificationsModel {
     int? id,
     bool? read,
     String? type,
+    @JsonKey(name: 'type_id') String? typeId,
     @JsonKey(name: 'created_at') String? createdAt,
     PatientNotificationModel? patient,
   }) = _NotificationsModel;

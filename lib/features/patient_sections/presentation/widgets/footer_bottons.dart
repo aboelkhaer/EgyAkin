@@ -32,7 +32,7 @@ class FooterButtons extends StatelessWidget {
           child: Row(
             children: [
               finalSubmit &&
-                      currentDoctorRole != 'Admin' &&
+                      currentDoctorRole != AppStrings.roleAdmin &&
                       currentDoctorPoints < 200
                   ? const SizedBox.shrink()
                   : Expanded(
@@ -56,7 +56,7 @@ class FooterButtons extends StatelessWidget {
                           },
                           title: 'Delete',
                           isDelete: true,
-                          isDisable: currentDoctorRole == 'Admin'
+                          isDisable: currentDoctorRole == AppStrings.roleAdmin
                               ? false
                               : doctorId == currentDoctorId
                                   ? false
@@ -65,7 +65,7 @@ class FooterButtons extends StatelessWidget {
                       ),
                     ),
               finalSubmit &&
-                      currentDoctorRole != 'Admin' &&
+                      currentDoctorRole != AppStrings.roleAdmin &&
                       currentDoctorPoints < 200
                   ? const SizedBox.shrink()
                   : const SizedBox(width: 10),
@@ -85,7 +85,7 @@ class FooterButtons extends StatelessWidget {
                             cubit.finalSubmit(patientId, context);
                           },
                           title: AppStrings.finalSubmit,
-                          isDisable: currentDoctorRole == 'Admin'
+                          isDisable: currentDoctorRole == AppStrings.roleAdmin
                               ? false
                               : doctorId == currentDoctorId
                                   ? false

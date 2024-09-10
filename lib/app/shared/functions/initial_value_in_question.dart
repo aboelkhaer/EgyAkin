@@ -11,7 +11,7 @@ String initialValueInQuestions({
   if (answer == null) return '';
   if (question == AppStrings.nationalID) {
     if (currentDoctorId.trim() == doctorId.trim() ||
-        currentDoctorRole == 'Admin') {
+        currentDoctorRole == AppStrings.roleAdmin) {
       return questionAnswerInForm ?? answer;
     }
     if (currentDoctorId.trim() != doctorId.trim()) {
