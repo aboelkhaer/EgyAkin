@@ -63,7 +63,7 @@ class NotificationTabIcon extends StatelessWidget {
               if (int.parse(homeData.unreadCount!) > 0) {
                 context.read<NotificationCubit>().getAllNotifications();
                 Future.delayed(
-                  const Duration(milliseconds: 300),
+                  const Duration(milliseconds: 100),
                   () {
                     context.read<HomeCubit>().getHome();
                   },
@@ -71,13 +71,14 @@ class NotificationTabIcon extends StatelessWidget {
               }
             },
             onLongPress: () {
-              // context.read<NotificationCubit>().getAllNotifications();
-              // context.read<HomeCubit>().getHome();
-              // Future.delayed(
-              //   const Duration(milliseconds: 300),
-              //   () {
-              //   },
-              // );
+              context.read<NotificationCubit>().getAllNotifications();
+
+              Future.delayed(
+                const Duration(milliseconds: 300),
+                () {
+                  context.read<HomeCubit>().getHome();
+                },
+              );
             },
             child: Stack(
               alignment: Alignment.center,

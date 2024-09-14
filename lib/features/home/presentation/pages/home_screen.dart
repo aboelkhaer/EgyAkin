@@ -155,25 +155,16 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     return [
       HomeTab(cubit: cubit),
-      BlocBuilder<HomeCubit, HomeState>(
+      BlocBuilder<NotificationCubit, NotificationState>(
         builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const SizedBox.shrink();
-            },
-            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
-              return NotificationScreen(
-                currentDoctorModel: cubit.currentDoctorModel,
-                accountVerification: cubit.accountVerification ?? false,
-                currentDoctorRole: cubit.currentDoctorRole,
-                currentDoctorPoints: cubit.doctorScore == null
-                    ? 0
-                    : int.parse(cubit.doctorScore!),
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
-                homeDataModel: cubit.homeDataModel,
-              );
-            },
+          return NotificationScreen(
+            currentDoctorModel: cubit.currentDoctorModel,
+            accountVerification: cubit.accountVerification ?? false,
+            currentDoctorRole: cubit.currentDoctorRole,
+            currentDoctorPoints:
+                cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
+            isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+            homeDataModel: cubit.homeDataModel,
           );
         },
       ),
