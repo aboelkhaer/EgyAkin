@@ -70,13 +70,16 @@ class HomeHeader extends StatelessWidget {
                               ),
                             );
                           },
-                          loaded: (homeData,
-                              currentDoctorModel,
-                              dotsPosition,
-                              homeIndex,
-                              isUploadingSyndicateCard,
-                              isUploadedSyndicateCard,
-                              message) {
+                          loaded: (
+                            homeData,
+                            currentDoctorModel,
+                            dotsPosition,
+                            homeIndex,
+                            isUploadingSyndicateCard,
+                            isUploadedSyndicateCard,
+                            message,
+                            checkUpdateMessageCounter,
+                          ) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
                               child: CircleAvatar(
@@ -121,13 +124,16 @@ class HomeHeader extends StatelessWidget {
                         listener: (context, state) {
                           state.maybeWhen(
                             orElse: () {},
-                            loaded: (homeData,
-                                currentDoctorModel,
-                                dotsPosition,
-                                homeIndex,
-                                isUploadingSyndicateCard,
-                                isUploadedSyndicateCard,
-                                message) {
+                            loaded: (
+                              homeData,
+                              currentDoctorModel,
+                              dotsPosition,
+                              homeIndex,
+                              isUploadingSyndicateCard,
+                              isUploadedSyndicateCard,
+                              message,
+                              checkUpdateMessageCounter,
+                            ) {
                               context
                                   .read<ProfileCubit>()
                                   .getDoctorDataFromHomeCubit(
@@ -161,13 +167,16 @@ class HomeHeader extends StatelessWidget {
                             orElse: () {
                               return const SizedBox.shrink();
                             },
-                            loaded: (homeData,
-                                currentDoctorModel,
-                                dotsPosition,
-                                homeIndex,
-                                isUploadingSyndicateCard,
-                                isUploadedSyndicateCard,
-                                message) {
+                            loaded: (
+                              homeData,
+                              currentDoctorModel,
+                              dotsPosition,
+                              homeIndex,
+                              isUploadingSyndicateCard,
+                              isUploadedSyndicateCard,
+                              message,
+                              checkUpdateMessageCounter,
+                            ) {
                               if (homeData.isSyndicateCardRequired ==
                                   'Verified') {
                                 return const VerificationIcon(
@@ -217,8 +226,16 @@ class HomeHeader extends StatelessWidget {
                   ),
                 );
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              loaded: (
+                homeData,
+                currentDoctorModel,
+                dotsPosition,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+              ) {
                 return Tooltip(
                   message: 'Add patient',
                   child: IconButton(

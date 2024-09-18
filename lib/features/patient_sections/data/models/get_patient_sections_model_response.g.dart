@@ -36,7 +36,7 @@ _$SectionModelImpl _$$SectionModelImplFromJson(Map<String, dynamic> json) =>
     _$SectionModelImpl(
       sectionId: (json['section_id'] as num?)?.toInt(),
       sectionStatus: json['section_status'] as bool?,
-      updatedAt: json['updated_at'] as String?,
+      updatedAt: json['updated_at'],
       sectionName: json['section_name'] as String?,
     );
 
@@ -70,9 +70,9 @@ Map<String, dynamic> _$$GFRModelImplToJson(_$GFRModelImpl instance) =>
 
 _$EquationModelImpl _$$EquationModelImplFromJson(Map<String, dynamic> json) =>
     _$EquationModelImpl(
-      currentGFR: json['current_GFR'] as String?,
-      basalCreatinine: json['basal_creatinine_GFR'] as String?,
-      creatinineOnDischarge: json['creatinine_on_discharge_GFR'] as String?,
+      currentGFR: json['current_GFR'],
+      basalCreatinine: json['basal_creatinine_GFR'],
+      creatinineOnDischarge: json['creatinine_on_discharge_GFR'],
     );
 
 Map<String, dynamic> _$$EquationModelImplToJson(_$EquationModelImpl instance) =>

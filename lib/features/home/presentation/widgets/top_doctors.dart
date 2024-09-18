@@ -27,13 +27,16 @@ class TopDoctors extends StatelessWidget {
                     isTopDoctor: true,
                   );
                 },
-                loaded: (homeData,
-                    currentDoctorModel,
-                    dotsPosition,
-                    homeIndex,
-                    isUploadingSyndicateCard,
-                    isUploadedSyndicateCard,
-                    message) {
+                loaded: (
+                  homeData,
+                  currentDoctorModel,
+                  dotsPosition,
+                  homeIndex,
+                  isUploadingSyndicateCard,
+                  isUploadedSyndicateCard,
+                  message,
+                  checkUpdateMessageCounter,
+                ) {
                   return FadeIn(
                     duration: const Duration(seconds: 2),
                     child: ListView.builder(

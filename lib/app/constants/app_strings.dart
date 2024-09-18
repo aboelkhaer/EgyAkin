@@ -32,6 +32,7 @@ class AppStrings {
   static const String appName = 'EgyAkin';
   static const String somethingWentWrong = 'Something went wrong.';
   static const String roleAdmin = 'Admin';
+  static const String roleUser = 'User';
 
   static const String passwordMustBeAtLeast6Chars =
       'Password must be at least 6 chars';

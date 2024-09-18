@@ -1,17 +1,21 @@
 import 'package:egy_akin/app/shared/functions/convert_dynamic_list_to_string_list.dart';
+import 'package:egy_akin/app/shared/functions/hide_email.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import '../../../../exports.dart';
+import 'dart:ui' as ui;
 
 class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
   final List<QuestionModel> questionList;
   final String currentDoctorId;
   final String doctorId;
+  final bool isAllDataOpen;
   const BuildSectionDetailsIfFinalSubmitTrue({
     super.key,
     required this.questionList,
     required this.currentDoctorId,
     required this.doctorId,
+    required this.isAllDataOpen,
   });
 
   @override
@@ -19,8 +23,10 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
     return ListView.builder(
       itemCount: questionList.length,
       physics: const BouncingScrollPhysics(),
+      padding: EdgeInsets.only(bottom: 70.h),
       itemBuilder: (context, index) {
         var question = questionList[index];
+        String answerText = getAnswerText(question.answer);
 
         return Container(
           margin: const EdgeInsets.all(16),
@@ -64,12 +70,38 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                                         ? question.answer ?? '...'
                                         : hideNationalId(
                                             question.answer ?? '...')
-                                    : question.answer ?? '...',
+                                    : question.question == 'Name'
+                                        ? currentDoctorId == doctorId
+                                            ? question.answer ?? '...'
+                                            : isAllDataOpen
+                                                ? question.answer ?? '...'
+                                                : convertTextToSymbols(
+                                                    question.answer)
+                                        : question.question == 'Phone'
+                                            ? currentDoctorId == doctorId
+                                                ? question.answer ?? '...'
+                                                : isAllDataOpen
+                                                    ? question.answer ?? '...'
+                                                    : hideNationalId(
+                                                        question.answer)
+                                            : question.question == 'Email'
+                                                ? currentDoctorId == doctorId
+                                                    ? question.answer ?? '...'
+                                                    : isAllDataOpen
+                                                        ? question.answer ??
+                                                            '...'
+                                                        : hideEmail(
+                                                            question.answer)
+                                                : question.answer ?? '...',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.grey.shade900,
                           fontSize: 15,
                         ),
+                        textDirection:
+                            RegExp(r'[\u0600-\u06FF]').hasMatch(answerText)
+                                ? ui.TextDirection.rtl
+                                : ui.TextDirection.ltr,
                       ),
               ),
             ],
@@ -77,5 +109,18 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+String getAnswerText(dynamic answer) {
+  if (answer is String) {
+    return answer; // If it's already a string, return it.
+  } else if (answer is Map<String, dynamic>) {
+    // If it's a Map, attempt to retrieve the string.
+    return answer.values.isNotEmpty
+        ? answer.values.first.toString()
+        : ''; // Adjust this based on your expected key.
+  } else {
+    return ''; // Return a default value if the type is unexpected.
   }
 }

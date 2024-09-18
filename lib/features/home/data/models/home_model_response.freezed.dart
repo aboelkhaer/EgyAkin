@@ -24,6 +24,8 @@ mixin _$HomeModelResponse {
   bool? get verified => throw _privateConstructorUsedError;
   String? get unreadCount => throw _privateConstructorUsedError;
   String? get isSyndicateCardRequired => throw _privateConstructorUsedError;
+  @JsonKey(name: 'app_update_message')
+  dynamic get appUpdateMessage => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_patient_count')
   String? get doctorPatientCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'all_patient_count')
@@ -51,6 +53,7 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       bool? verified,
       String? unreadCount,
       String? isSyndicateCardRequired,
+      @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
       @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
@@ -77,6 +80,7 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? verified = freezed,
     Object? unreadCount = freezed,
     Object? isSyndicateCardRequired = freezed,
+    Object? appUpdateMessage = freezed,
     Object? doctorPatientCount = freezed,
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
@@ -100,6 +104,10 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
           ? _value.isSyndicateCardRequired
           : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
+      appUpdateMessage: freezed == appUpdateMessage
+          ? _value.appUpdateMessage
+          : appUpdateMessage // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       doctorPatientCount: freezed == doctorPatientCount
           ? _value.doctorPatientCount
           : doctorPatientCount // ignore: cast_nullable_to_non_nullable
@@ -149,6 +157,7 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       bool? verified,
       String? unreadCount,
       String? isSyndicateCardRequired,
+      @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
       @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
@@ -174,6 +183,7 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? verified = freezed,
     Object? unreadCount = freezed,
     Object? isSyndicateCardRequired = freezed,
+    Object? appUpdateMessage = freezed,
     Object? doctorPatientCount = freezed,
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
@@ -197,6 +207,10 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
           ? _value.isSyndicateCardRequired
           : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
               as String?,
+      appUpdateMessage: freezed == appUpdateMessage
+          ? _value.appUpdateMessage
+          : appUpdateMessage // ignore: cast_nullable_to_non_nullable
+              as dynamic,
       doctorPatientCount: freezed == doctorPatientCount
           ? _value.doctorPatientCount
           : doctorPatientCount // ignore: cast_nullable_to_non_nullable
@@ -231,6 +245,7 @@ class _$HomeModelResponseImpl
       this.verified,
       this.unreadCount,
       this.isSyndicateCardRequired,
+      @JsonKey(name: 'app_update_message') this.appUpdateMessage,
       @JsonKey(name: 'doctor_patient_count') this.doctorPatientCount,
       @JsonKey(name: 'all_patient_count') this.allPatientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
@@ -249,6 +264,9 @@ class _$HomeModelResponseImpl
   @override
   final String? isSyndicateCardRequired;
   @override
+  @JsonKey(name: 'app_update_message')
+  final dynamic appUpdateMessage;
+  @override
   @JsonKey(name: 'doctor_patient_count')
   final String? doctorPatientCount;
   @override
@@ -265,7 +283,7 @@ class _$HomeModelResponseImpl
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
   }
 
   @override
@@ -278,6 +296,7 @@ class _$HomeModelResponseImpl
       ..add(DiagnosticsProperty('unreadCount', unreadCount))
       ..add(DiagnosticsProperty(
           'isSyndicateCardRequired', isSyndicateCardRequired))
+      ..add(DiagnosticsProperty('appUpdateMessage', appUpdateMessage))
       ..add(DiagnosticsProperty('doctorPatientCount', doctorPatientCount))
       ..add(DiagnosticsProperty('allPatientCount', allPatientCount))
       ..add(DiagnosticsProperty('scoreValue', scoreValue))
@@ -298,6 +317,8 @@ class _$HomeModelResponseImpl
             (identical(
                     other.isSyndicateCardRequired, isSyndicateCardRequired) ||
                 other.isSyndicateCardRequired == isSyndicateCardRequired) &&
+            const DeepCollectionEquality()
+                .equals(other.appUpdateMessage, appUpdateMessage) &&
             (identical(other.doctorPatientCount, doctorPatientCount) ||
                 other.doctorPatientCount == doctorPatientCount) &&
             (identical(other.allPatientCount, allPatientCount) ||
@@ -316,6 +337,7 @@ class _$HomeModelResponseImpl
       verified,
       unreadCount,
       isSyndicateCardRequired,
+      const DeepCollectionEquality().hash(appUpdateMessage),
       doctorPatientCount,
       allPatientCount,
       scoreValue,
@@ -343,6 +365,7 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       final bool? verified,
       final String? unreadCount,
       final String? isSyndicateCardRequired,
+      @JsonKey(name: 'app_update_message') final dynamic appUpdateMessage,
       @JsonKey(name: 'doctor_patient_count') final String? doctorPatientCount,
       @JsonKey(name: 'all_patient_count') final String? allPatientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
@@ -360,6 +383,9 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   String? get unreadCount;
   @override
   String? get isSyndicateCardRequired;
+  @override
+  @JsonKey(name: 'app_update_message')
+  dynamic get appUpdateMessage;
   @override
   @JsonKey(name: 'doctor_patient_count')
   String? get doctorPatientCount;

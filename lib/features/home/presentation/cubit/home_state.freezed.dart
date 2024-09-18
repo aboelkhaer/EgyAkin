@@ -27,7 +27,8 @@ mixin _$HomeState {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)
+            String message,
+            int checkUpdateMessageCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -43,7 +44,8 @@ mixin _$HomeState {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -59,7 +61,8 @@ mixin _$HomeState {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -162,7 +165,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)
+            String message,
+            int checkUpdateMessageCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -181,7 +185,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -200,7 +205,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -306,7 +312,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)
+            String message,
+            int checkUpdateMessageCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -325,7 +332,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -344,7 +352,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -410,7 +419,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       int homeIndex,
       bool isUploadingSyndicateCard,
       bool isUploadedSyndicateCard,
-      String message});
+      String message,
+      int checkUpdateMessageCounter});
 
   $HomeModelResponseCopyWith<$Res> get homeData;
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
@@ -434,6 +444,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isUploadingSyndicateCard = null,
     Object? isUploadedSyndicateCard = null,
     Object? message = null,
+    Object? checkUpdateMessageCounter = null,
   }) {
     return _then(_$LoadedImpl(
       null == homeData
@@ -464,6 +475,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      null == checkUpdateMessageCounter
+          ? _value.checkUpdateMessageCounter
+          : checkUpdateMessageCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -494,7 +509,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       this.homeIndex,
       this.isUploadingSyndicateCard,
       this.isUploadedSyndicateCard,
-      this.message);
+      this.message,
+      this.checkUpdateMessageCounter);
 
   @override
   final HomeModelResponse homeData;
@@ -510,10 +526,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   final bool isUploadedSyndicateCard;
   @override
   final String message;
+  @override
+  final int checkUpdateMessageCounter;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message)';
+    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message, checkUpdateMessageCounter: $checkUpdateMessageCounter)';
   }
 
   @override
@@ -529,7 +547,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
           'isUploadingSyndicateCard', isUploadingSyndicateCard))
       ..add(DiagnosticsProperty(
           'isUploadedSyndicateCard', isUploadedSyndicateCard))
-      ..add(DiagnosticsProperty('message', message));
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty(
+          'checkUpdateMessageCounter', checkUpdateMessageCounter));
   }
 
   @override
@@ -551,7 +571,10 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             (identical(
                     other.isUploadedSyndicateCard, isUploadedSyndicateCard) ||
                 other.isUploadedSyndicateCard == isUploadedSyndicateCard) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.checkUpdateMessageCounter,
+                    checkUpdateMessageCounter) ||
+                other.checkUpdateMessageCounter == checkUpdateMessageCounter));
   }
 
   @override
@@ -563,7 +586,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       homeIndex,
       isUploadingSyndicateCard,
       isUploadedSyndicateCard,
-      message);
+      message,
+      checkUpdateMessageCounter);
 
   @JsonKey(ignore: true)
   @override
@@ -583,12 +607,20 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)
+            String message,
+            int checkUpdateMessageCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex,
-        isUploadingSyndicateCard, isUploadedSyndicateCard, message);
+    return loaded(
+        homeData,
+        currentDoctorModel,
+        dotsPosition,
+        homeIndex,
+        isUploadingSyndicateCard,
+        isUploadedSyndicateCard,
+        message,
+        checkUpdateMessageCounter);
   }
 
   @override
@@ -603,12 +635,20 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(homeData, currentDoctorModel, dotsPosition, homeIndex,
-        isUploadingSyndicateCard, isUploadedSyndicateCard, message);
+    return loaded?.call(
+        homeData,
+        currentDoctorModel,
+        dotsPosition,
+        homeIndex,
+        isUploadingSyndicateCard,
+        isUploadedSyndicateCard,
+        message,
+        checkUpdateMessageCounter);
   }
 
   @override
@@ -623,14 +663,22 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(homeData, currentDoctorModel, dotsPosition, homeIndex,
-          isUploadingSyndicateCard, isUploadedSyndicateCard, message);
+      return loaded(
+          homeData,
+          currentDoctorModel,
+          dotsPosition,
+          homeIndex,
+          isUploadingSyndicateCard,
+          isUploadedSyndicateCard,
+          message,
+          checkUpdateMessageCounter);
     }
     return orElse();
   }
@@ -681,7 +729,8 @@ abstract class _Loaded implements HomeState {
       final int homeIndex,
       final bool isUploadingSyndicateCard,
       final bool isUploadedSyndicateCard,
-      final String message) = _$LoadedImpl;
+      final String message,
+      final int checkUpdateMessageCounter) = _$LoadedImpl;
 
   HomeModelResponse get homeData;
   DoctorModel get currentDoctorModel;
@@ -690,6 +739,7 @@ abstract class _Loaded implements HomeState {
   bool get isUploadingSyndicateCard;
   bool get isUploadedSyndicateCard;
   String get message;
+  int get checkUpdateMessageCounter;
   @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
@@ -776,7 +826,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)
+            String message,
+            int checkUpdateMessageCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -795,7 +846,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -814,7 +866,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             int homeIndex,
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
-            String message)?
+            String message,
+            int checkUpdateMessageCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

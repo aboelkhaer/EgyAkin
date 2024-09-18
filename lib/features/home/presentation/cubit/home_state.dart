@@ -14,6 +14,7 @@ abstract class HomeState with _$HomeState {
       int homeIndex,
       bool isUploadingSyndicateCard,
       bool isUploadedSyndicateCard,
-      String message) = _Loaded;
+      String message,
+      int checkUpdateMessageCounter) = _Loaded;
   const factory HomeState.error(String message) = _Error;
 }

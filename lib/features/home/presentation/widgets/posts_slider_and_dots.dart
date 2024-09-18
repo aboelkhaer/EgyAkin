@@ -22,8 +22,16 @@ class PostsSliderAndDots extends StatelessWidget {
                   child: Lottie.asset(AppImages.imageLoader),
                 );
               },
-              loaded: (homeData, dotsPosition, notificationData, homeIndex,
-                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              loaded: (
+                homeData,
+                dotsPosition,
+                notificationData,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+              ) {
                 return FadeIn(
                   duration: const Duration(seconds: 2),
                   child: CarouselSlider.builder(
@@ -70,8 +78,16 @@ class PostsSliderAndDots extends StatelessWidget {
               orElse: () {
                 return const SizedBox.shrink();
               },
-              loaded: (homeData, dotsPosition, notificationData, homeIndex,
-                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              loaded: (
+                homeData,
+                dotsPosition,
+                notificationData,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+              ) {
                 return homeData.data!.posts!.isEmpty
                     ? const SizedBox.shrink()
                     : DotsIndicator(

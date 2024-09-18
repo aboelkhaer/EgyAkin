@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'dart:ui' as ui;
 import '../../../../exports.dart';
 
 class PatientSectionsScreen extends StatefulWidget {
@@ -7,10 +6,12 @@ class PatientSectionsScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final bool isAllDataOpen;
   final HomeModelResponse homeDataModel;
   const PatientSectionsScreen({
     super.key,
     required this.patientId,
+    required this.isAllDataOpen,
     required this.currentDoctorModel,
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
@@ -94,9 +95,22 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   isDownloadingReport,
                   isDownloadedReport) {
                 return Text(
-                  response.patientName.toString(),
+                  (widget.currentDoctorModel.id.toString() ==
+                              response.doctorId.toString() ||
+                          widget.homeDataModel.role == AppStrings.roleAdmin)
+                      ? response.patientName.toString()
+                      : widget.isAllDataOpen
+                          ? response.patientName.toString()
+                          : convertTextToSymbols(
+                              response.patientName.toString()),
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  textDirection: RegExp(r'[\u0600-\u06FF]')
+                          .hasMatch(response.patientName.toString())
+                      ? ui.TextDirection.rtl
+                      : ui.TextDirection.ltr,
                 );
               },
             );
@@ -296,23 +310,23 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                               AppRoutes.patientSectionDetails,
                                               arguments: AppRoutesArgs
                                                   .patientSectionDetailsRouteArgs(
-                                                      sectionModel: section,
-                                                      currentDoctorModel: widget
-                                                          .currentDoctorModel,
-                                                      finalSubmitStatus:
-                                                          response
-                                                              .submitStatus!,
-                                                      patientId:
-                                                          widget.patientId,
-                                                      currentDoctorRole: widget
-                                                          .currentDoctorRole,
-                                                      currentDoctorPoints: widget
-                                                          .currentDoctorPoints,
-                                                      homeDataModel:
-                                                          widget.homeDataModel,
-                                                      doctorId: response
-                                                          .doctorId
-                                                          .toString()),
+                                                sectionModel: section,
+                                                currentDoctorModel:
+                                                    widget.currentDoctorModel,
+                                                finalSubmitStatus:
+                                                    response.submitStatus!,
+                                                patientId: widget.patientId,
+                                                currentDoctorRole:
+                                                    widget.currentDoctorRole,
+                                                currentDoctorPoints:
+                                                    widget.currentDoctorPoints,
+                                                homeDataModel:
+                                                    widget.homeDataModel,
+                                                doctorId: response.doctorId
+                                                    .toString(),
+                                                isAllDataOpen:
+                                                    widget.isAllDataOpen,
+                                              ),
                                             );
                                           },
                                           updatedAt: section.updatedAt ?? '',

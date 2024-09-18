@@ -107,13 +107,16 @@ class CheckIfVerified extends StatelessWidget {
                       listener: (context, state) {
                         state.maybeWhen(
                           orElse: () {},
-                          loaded: (homeData,
-                              currentDoctorModel,
-                              dotsPosition,
-                              homeIndex,
-                              isUploadingSyndicateCard,
-                              isUploadedSyndicateCard,
-                              message) {
+                          loaded: (
+                            homeData,
+                            currentDoctorModel,
+                            dotsPosition,
+                            homeIndex,
+                            isUploadingSyndicateCard,
+                            isUploadedSyndicateCard,
+                            message,
+                            checkUpdateMessageCounter,
+                          ) {
                             if (message.isNotEmpty) {
                               customSnackBar(
                                   context: context, message: message);
@@ -126,13 +129,16 @@ class CheckIfVerified extends StatelessWidget {
                           orElse: () {
                             return const SizedBox.shrink();
                           },
-                          loaded: (homeData,
-                              currentDoctorModel,
-                              dotsPosition,
-                              homeIndex,
-                              isUploadingSyndicateCard,
-                              isUploadedSyndicateCard,
-                              message) {
+                          loaded: (
+                            homeData,
+                            currentDoctorModel,
+                            dotsPosition,
+                            homeIndex,
+                            isUploadingSyndicateCard,
+                            isUploadedSyndicateCard,
+                            message,
+                            checkUpdateMessageCounter,
+                          ) {
                             if (isUploadingSyndicateCard) {
                               return Row(
                                 children: [

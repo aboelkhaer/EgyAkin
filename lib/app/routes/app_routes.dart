@@ -90,11 +90,8 @@ class RouteGenerator {
             builder: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider<HomeCubit>(
-                    create: (context) => di.sl<HomeCubit>()
-                      ..getDoctorDataFromLocal()
-                      ..getHome()
-                    // ..getNotifications(),
-                    ),
+                    create: (context) =>
+                        di.sl<HomeCubit>()..getDoctorDataFromLocal()),
                 BlocProvider<NotificationCubit>(
                   create: (context) =>
                       di.sl<NotificationCubit>()..getAllNotifications(),
@@ -196,7 +193,8 @@ class RouteGenerator {
               args.containsKey('patientId') &&
               args.containsKey('currentDoctorRole') &&
               args.containsKey('currentDoctorPoints') &&
-              args.containsKey('homeDataModel')) {
+              args.containsKey('homeDataModel') &&
+              args.containsKey('isAllDataOpen')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientSectionsCubit>(
                 create: (context) => di.sl<PatientSectionsCubit>(),
@@ -206,6 +204,7 @@ class RouteGenerator {
                   currentDoctorRole: args['currentDoctorRole'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  isAllDataOpen: args['isAllDataOpen'] as bool,
                 ),
               ),
             );
@@ -403,7 +402,8 @@ class RouteGenerator {
               args.containsKey('doctorId') &&
               args.containsKey('currentDoctorRole') &&
               args.containsKey('currentDoctorPoints') &&
-              args.containsKey('homeDataModel')) {
+              args.containsKey('homeDataModel') &&
+              args.containsKey('isAllDataOpen')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<PatientSectionDetailsCubit>(
                 create: (context) => di.sl<PatientSectionDetailsCubit>(),
@@ -416,6 +416,7 @@ class RouteGenerator {
                   doctorId: args['doctorId'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  isAllDataOpen: args['isAllDataOpen'] as bool,
                 ),
               ),
             );

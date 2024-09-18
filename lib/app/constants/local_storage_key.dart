@@ -18,4 +18,6 @@ class AppLocalStrings {
   static const String fcmTokenKey = 'fcmTokenKey';
   static const String currentDoctorRegistrationNumber =
       'currentDoctorRegistrationNumber';
+  static const String isUpdateMessageHidden = 'isUpdateMessageHidden';
+  static const String userAppVersion = 'userAppVersion';
 }

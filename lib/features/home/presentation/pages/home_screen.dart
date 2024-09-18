@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
 
 import '../../../../exports.dart';
@@ -18,10 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _cubit = context.read<HomeCubit>();
-
-      // if (_cubit != null && !_cubit!.isClosed) {
-      //   _cubit!.scrollController = ScrollController();
-      // }
     });
 
     context.read<HomeCubit>().tabsController.jumpToTab(widget.page);
@@ -54,13 +51,28 @@ class _HomeScreenState extends State<HomeScreen> {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
-                loaded: (homeData,
-                    currentDoctorModel,
-                    dotsPosition,
-                    homeIndex,
-                    isUploadingSyndicateCard,
-                    isUploadedSyndicateCard,
-                    message) {},
+                loaded: (
+                  homeData,
+                  currentDoctorModel,
+                  dotsPosition,
+                  homeIndex,
+                  isUploadingSyndicateCard,
+                  isUploadedSyndicateCard,
+                  message,
+                  checkUpdateMessageCounter,
+                ) {
+                  if (checkUpdateMessageCounter == 1) {
+                    if (cubit.isUpdateMessageHidden == false) {
+                      showUpdateDialog(
+                        context: context,
+                        onDismissed: () {
+                          cubit.setUpdateMessageStatusToLocal();
+                        },
+                      );
+                      cubit.checkUpdateMessageCounter++;
+                    }
+                  }
+                },
               );
             },
             builder: (context, state) {
@@ -83,8 +95,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   );
                 },
-                loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                    isUploadingSyndicateCard, isUploadedSyndicateCar, message) {
+                loaded: (
+                  homeData,
+                  currentDoctorModel,
+                  dotsPosition,
+                  homeIndex,
+                  isUploadingSyndicateCard,
+                  isUploadedSyndicateCar,
+                  message,
+                  checkUpdateMessageCounter,
+                ) {
                   if (homeIndex == 2) {
                     return const SizedBox.shrink();
                   }
@@ -182,19 +202,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     : int.parse(cubit.doctorScore!),
               );
             },
-            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+            loaded: (
+              homeData,
+              currentDoctorModel,
+              dotsPosition,
+              homeIndex,
+              isUploadingSyndicateCard,
+              isUploadedSyndicateCard,
+              message,
+              checkUpdateMessageCounter,
+            ) {
               return state.maybeWhen(
                 orElse: () {
                   return const SizedBox.shrink();
                 },
-                loaded: (homeData,
-                    currentDoctorModel,
-                    dotsPosition,
-                    homeIndex,
-                    isUploadingSyndicateCard,
-                    isUploadedSyndicateCard,
-                    message) {
+                loaded: (
+                  homeData,
+                  currentDoctorModel,
+                  dotsPosition,
+                  homeIndex,
+                  isUploadingSyndicateCard,
+                  isUploadedSyndicateCard,
+                  message,
+                  checkUpdateMessageCounter,
+                ) {
                   return ProfileScreen(
                     isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                     accountVerification: cubit.accountVerification!,

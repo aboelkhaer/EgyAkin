@@ -74,6 +74,7 @@ class SectionSubmitButton extends StatelessWidget {
                             currentDoctorRole: currentDoctorRole,
                             currentDoctorPoints: currentDoctorPoints,
                             homeDataModel: homeDataModel,
+                            isAllDataOpen: false,
                           ),
                         );
                       }

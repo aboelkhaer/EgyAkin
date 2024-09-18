@@ -23,7 +23,7 @@ class SectionModel with _$SectionModel {
   const factory SectionModel({
     @JsonKey(name: 'section_id') int? sectionId,
     @JsonKey(name: 'section_status') bool? sectionStatus,
-    @JsonKey(name: 'updated_at') String? updatedAt,
+    @JsonKey(name: 'updated_at') dynamic updatedAt,
     @JsonKey(name: 'section_name') String? sectionName,
   }) = _SectionModel;
   factory SectionModel.fromJson(Map<String, dynamic> json) =>
@@ -44,9 +44,9 @@ class GFRModel with _$GFRModel {
 @freezed
 class EquationModel with _$EquationModel {
   const factory EquationModel({
-    @JsonKey(name: 'current_GFR') String? currentGFR,
-    @JsonKey(name: 'basal_creatinine_GFR') String? basalCreatinine,
-    @JsonKey(name: 'creatinine_on_discharge_GFR') String? creatinineOnDischarge,
+    @JsonKey(name: 'current_GFR') dynamic currentGFR,
+    @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
+    @JsonKey(name: 'creatinine_on_discharge_GFR') dynamic creatinineOnDischarge,
   }) = _EquationModel;
   factory EquationModel.fromJson(Map<String, dynamic> json) =>
       _$EquationModelFromJson(json);

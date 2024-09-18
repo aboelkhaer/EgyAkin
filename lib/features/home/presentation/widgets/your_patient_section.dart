@@ -18,8 +18,16 @@ class YourPatientSection extends StatelessWidget {
                     rightArrow: '',
                     onTap: () {});
               },
-              loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                  isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+              loaded: (
+                homeData,
+                currentDoctorModel,
+                dotsPosition,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+              ) {
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
                   patientCount: homeData.doctorPatientCount.toString(),
@@ -49,8 +57,16 @@ class YourPatientSection extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: true);
             },
-            loaded: (homeData, currentDoctorModel, dotsPosition, homeIndex,
-                isUploadingSyndicateCard, isUploadedSyndicateCard, message) {
+            loaded: (
+              homeData,
+              currentDoctorModel,
+              dotsPosition,
+              homeIndex,
+              isUploadingSyndicateCard,
+              isUploadedSyndicateCard,
+              message,
+              checkUpdateMessageCounter,
+            ) {
               return FadeIn(
                 duration: const Duration(seconds: 2),
                 child: SizedBox(
@@ -78,6 +94,7 @@ class YourPatientSection extends StatelessWidget {
                               patientName: patient.name ?? AppStrings.empty,
                               drFirstName:
                                   patient.doctor!.firstName ?? AppStrings.empty,
+                              isAllDataOpen: false,
                               homeDataModel: homeData,
                               drLastName:
                                   patient.doctor!.lastName ?? AppStrings.empty,
@@ -145,6 +162,7 @@ class YourPatientSection extends StatelessWidget {
                                     currentDoctorModel: currentDoctorModel,
                                     currentDoctorRole: homeData.role.toString(),
                                     homeDataModel: homeData,
+                                    isAllDataOpen: false,
                                   ),
                                 );
                               },

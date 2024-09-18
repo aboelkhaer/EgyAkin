@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
@@ -73,6 +74,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       },
       (r) async {
         await sl<AppPreferences>().removeDoctorData();
+        // await sl<AppPreferences>()
+        //     .setBool(AppLocalStrings.isUpdateMessageHidden, false);
         emit(const ProfileState.signOutLoaded());
       },
     );

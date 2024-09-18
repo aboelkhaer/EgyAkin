@@ -119,6 +119,7 @@ class _CurrentDoctorPatientsScreenState
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          isAllDataOpen: false,
                           doctorId: patient.doctor!.id.toString(),
                           homeDataModel: widget.homeDataModel,
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
@@ -180,6 +181,7 @@ class _CurrentDoctorPatientsScreenState
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 homeDataModel: widget.homeDataModel,
+                                isAllDataOpen: false,
                               ),
                             );
                           },

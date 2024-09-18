@@ -18,16 +18,19 @@ class _SplashScreenState extends State<SplashScreen>
   late AnimationController animationController;
   late Animation<double> animation;
   bool _isUpToDate = true;
-  // NotificationServices notificationServices = NotificationServices();
+  String currentUserVersion = '';
 
   @override
   void initState() {
+    super.initState();
     animationController = AnimationController(
         vsync: this, duration: const Duration(seconds: AppStrings.splashDelay));
     animation = Tween(
       begin: 0.0,
       end: 1.0,
     ).animate(animationController);
+
+    // Initialize notification services and other setups
     sl<NotificationServices>().requestNotificationPermisions();
     sl<NotificationServices>().forgroundMessage();
     sl<NotificationServices>().firebaseInit(context);
@@ -36,7 +39,6 @@ class _SplashScreenState extends State<SplashScreen>
       debugPrint(value);
     });
     sl<NotificationServices>().isRefreshToken();
-    super.initState();
   }
 
   @override
@@ -46,10 +48,24 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> checkForUpdates() async {
+    await getCurrentVersion(); // Ensure version is fetched before update check
+    await sl<AppPreferences>().setData('userAppVersion', currentUserVersion);
+
     if (Theme.of(context).platform == TargetPlatform.android) {
-      _checkForAndroidUpdate();
+      await _checkForAndroidUpdate();
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-      _checkForiOSUpdate();
+      await _checkForiOSUpdate();
+    }
+  }
+
+  Future<void> getCurrentVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      setState(() {
+        currentUserVersion = packageInfo.version;
+      });
+    } catch (e) {
+      debugPrint('Failed to get package info: $e');
     }
   }
 
@@ -62,7 +78,11 @@ class _SplashScreenState extends State<SplashScreen>
           await InAppUpdate.performImmediateUpdate();
         } else if (updateInfo.flexibleUpdateAllowed) {
           await InAppUpdate.startFlexibleUpdate();
+          _showForceUpdateDialog(); // Show the forced update dialog
         }
+        // Print and store the version information
+        debugPrint(
+            'Android update version: ${updateInfo.availableVersionCode}');
       }
     } catch (e) {
       debugPrint('Failed to check for updates on Android: $e');
@@ -77,6 +97,10 @@ class _SplashScreenState extends State<SplashScreen>
     final bundleId = packageInfo.packageName;
 
     debugPrint('Current version: $currentVersion');
+    setState(() {
+      currentUserVersion = currentVersion;
+    });
+
     debugPrint('Bundle ID: $bundleId');
 
     try {
@@ -91,8 +115,12 @@ class _SplashScreenState extends State<SplashScreen>
           debugPrint('App Store version: $appStoreVersion');
 
           if (appStoreVersion != currentVersion) {
-            _isUpToDate = false; // Update available
-            _showUpdateDialog();
+            _isUpToDate = false;
+
+            _showForceUpdateDialog(); // Show the forced update dialog
+
+            // Print and store the version information
+            debugPrint('iOS update version: $appStoreVersion');
           }
         } else {
           debugPrint('No results found in App Store response');
@@ -105,29 +133,36 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
-  void _showUpdateDialog() {
+  void _showForceUpdateDialog() {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible:
+          false, // Prevent dismissal by tapping outside or pressing the back button
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Update Available'),
+          title: const Text('Mandatory Update'),
           backgroundColor: Colors.grey.shade100,
           content: const Text(
-              'A new version of the app is available. Please update to continue.'),
+              'A new version of the app is available. You must update to continue using it.'),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
-                const url =
-                    'https://apps.apple.com/app/id1234567890'; // Replace with your actual App Store ID
-                if (await canLaunch(url)) {
-                  await launch(url);
-                } else {
-                  _showErrorDialog(
-                      'Could not launch the App Store. Please try again later.');
+                if (Theme.of(context).platform == TargetPlatform.android) {
+                  // Complete the flexible update if needed
+                  await InAppUpdate.completeFlexibleUpdate();
+                } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+                  const url =
+                      'https://apps.apple.com/app/id1234567890'; // Replace with your App Store URL
+                  if (await canLaunch(url)) {
+                    await launch(url); // Launch the App Store for iOS update
+                  } else {
+                    _showErrorDialog(
+                        'Could not launch the App Store. Please try again later.');
+                  }
                 }
+                // Close the app or block further interaction until the update is applied
               },
-              child: const Text('Update'),
+              child: const Text('Update Now'),
             ),
           ],
         );

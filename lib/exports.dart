@@ -336,3 +336,4 @@ export 'package:egy_akin/features/splash/data/datasources/splash_datasource.dart
 export 'package:egy_akin/features/splash/data/repositories/splash_repo_impl.dart';
 export 'package:egy_akin/features/splash/domain/repositories/splash_repo.dart';
 export 'package:egy_akin/features/splash/domain/usecases/get_app_settings_usecase.dart';
+export 'package:egy_akin/app/shared/functions/convert_text_to_symbols.dart';

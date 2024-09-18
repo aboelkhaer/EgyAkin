@@ -124,6 +124,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                           patientName: patient.name ?? AppStrings.empty,
                           drFirstName:
                               patient.doctor!.firstName ?? AppStrings.empty,
+                          isAllDataOpen: false,
                           homeDataModel: widget.homeDataModel,
                           doctorId: patient.doctor!.id.toString(),
                           updatedAt: patient.updatedAt ?? AppStrings.empty,
@@ -187,6 +188,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 currentDoctorPoints: widget.currentDoctorPoints,
                                 currentDoctorRole: widget.currentDoctorRole,
                                 homeDataModel: widget.homeDataModel,
+                                isAllDataOpen: false,
                               ),
                             );
                           },

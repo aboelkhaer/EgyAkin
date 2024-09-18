@@ -1,10 +1,12 @@
 import 'package:timeago/timeago.dart' as timeago;
 import '../../exports.dart';
+import 'dart:ui' as ui;
 
 class PatientCard extends StatelessWidget {
   final String patientName;
   final String drFirstName;
   final String drLastName;
+  final bool isAllDataOpen;
   final VoidCallback onTap;
   final String updatedAt;
   final String hospital;
@@ -25,6 +27,7 @@ class PatientCard extends StatelessWidget {
     required this.patientName,
     required this.drFirstName,
     required this.drLastName,
+    required this.isAllDataOpen,
     required this.onAddCommentTap,
     required this.isOutcomeStatus,
     required this.hospital,
@@ -136,11 +139,24 @@ class PatientCard extends StatelessWidget {
                                     children: [
                                       Flexible(
                                         child: Text(
-                                          patientName,
+                                          (currentDoctorModel.id.toString() ==
+                                                      doctorId ||
+                                                  homeDataModel.role ==
+                                                      AppStrings.roleAdmin)
+                                              ? patientName
+                                              : isAllDataOpen
+                                                  ? patientName
+                                                  : convertTextToSymbols(
+                                                      patientName),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: AppColors.title,
                                           ),
+                                          textDirection:
+                                              RegExp(r'[\u0600-\u06FF]')
+                                                      .hasMatch(patientName)
+                                                  ? ui.TextDirection.rtl
+                                                  : ui.TextDirection.ltr,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),

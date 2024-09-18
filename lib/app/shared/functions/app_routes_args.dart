@@ -4,6 +4,7 @@ class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments({
     required String patientId,
     required DoctorModel currentDoctorModel,
+    required bool isAllDataOpen,
     required int currentDoctorPoints,
     required String currentDoctorRole,
     required HomeModelResponse homeDataModel,
@@ -14,6 +15,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'isAllDataOpen': isAllDataOpen,
     };
   }
 
@@ -166,6 +168,7 @@ class AppRoutesArgs {
     required String doctorId,
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
+    required bool isAllDataOpen,
   }) {
     return {
       'sectionModel': sectionModel,
@@ -176,6 +179,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'isAllDataOpen': isAllDataOpen,
     };
   }
 

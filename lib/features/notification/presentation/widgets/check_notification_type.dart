@@ -36,6 +36,7 @@ class CheckNotificationType extends StatelessWidget {
                 currentDoctorPoints: currentDoctorPoints,
                 currentDoctorModel: currentDoctorModel,
                 homeDataModel: homeDataModel,
+                isAllDataOpen: false,
               ),
             );
             context.read<NotificationCubit>().getAllNotifications();

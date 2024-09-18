@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/hide_email.dart';
 import 'package:egy_akin/exports.dart';
 
 String initialValueInQuestions({
@@ -5,6 +6,7 @@ String initialValueInQuestions({
   required dynamic answer,
   required String currentDoctorId,
   required String doctorId,
+  required bool isAllDataOpen,
   required dynamic questionAnswerInForm,
   required String currentDoctorRole,
 }) {
@@ -18,6 +20,28 @@ String initialValueInQuestions({
       return hideNationalId(answer);
     }
   }
+  if (question == 'Name') {
+    if (currentDoctorId.trim() != doctorId.trim() &&
+        currentDoctorRole != AppStrings.roleAdmin &&
+        isAllDataOpen == false) {
+      return convertTextToSymbols(answer);
+    }
+  }
+  if (question == 'Phone') {
+    if (currentDoctorId.trim() != doctorId.trim() &&
+        currentDoctorRole != AppStrings.roleAdmin &&
+        isAllDataOpen == false) {
+      return hideNationalId(answer);
+    }
+  }
+  if (question == 'Email') {
+    if (currentDoctorId.trim() != doctorId.trim() &&
+        currentDoctorRole != AppStrings.roleAdmin &&
+        isAllDataOpen == false) {
+      return hideEmail(answer);
+    }
+  }
+
   if (questionAnswerInForm != null) {
     return questionAnswerInForm;
   }

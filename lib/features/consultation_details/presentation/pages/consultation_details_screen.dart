@@ -118,6 +118,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                             drFirstName: consultDetails
                                 .patientModel!.doctor!.firstName
                                 .toString(),
+                            isAllDataOpen: true,
                             drLastName: consultDetails
                                 .patientModel!.doctor!.lastName
                                 .toString(),
@@ -212,6 +213,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                       widget.homeDataModel.scoreValue!),
                                   currentDoctorModel: widget.currentDoctorModel,
                                   homeDataModel: widget.homeDataModel,
+                                  isAllDataOpen: true,
                                 ),
                               );
                             },

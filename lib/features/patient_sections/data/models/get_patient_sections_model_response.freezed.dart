@@ -316,7 +316,7 @@ mixin _$SectionModel {
   @JsonKey(name: 'section_status')
   bool? get sectionStatus => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
-  String? get updatedAt => throw _privateConstructorUsedError;
+  dynamic get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'section_name')
   String? get sectionName => throw _privateConstructorUsedError;
 
@@ -335,7 +335,7 @@ abstract class $SectionModelCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'section_id') int? sectionId,
       @JsonKey(name: 'section_status') bool? sectionStatus,
-      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'updated_at') dynamic updatedAt,
       @JsonKey(name: 'section_name') String? sectionName});
 }
 
@@ -369,7 +369,7 @@ class _$SectionModelCopyWithImpl<$Res, $Val extends SectionModel>
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       sectionName: freezed == sectionName
           ? _value.sectionName
           : sectionName // ignore: cast_nullable_to_non_nullable
@@ -389,7 +389,7 @@ abstract class _$$SectionModelImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'section_id') int? sectionId,
       @JsonKey(name: 'section_status') bool? sectionStatus,
-      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'updated_at') dynamic updatedAt,
       @JsonKey(name: 'section_name') String? sectionName});
 }
 
@@ -421,7 +421,7 @@ class __$$SectionModelImplCopyWithImpl<$Res>
       updatedAt: freezed == updatedAt
           ? _value.updatedAt
           : updatedAt // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       sectionName: freezed == sectionName
           ? _value.sectionName
           : sectionName // ignore: cast_nullable_to_non_nullable
@@ -450,7 +450,7 @@ class _$SectionModelImpl implements _SectionModel {
   final bool? sectionStatus;
   @override
   @JsonKey(name: 'updated_at')
-  final String? updatedAt;
+  final dynamic updatedAt;
   @override
   @JsonKey(name: 'section_name')
   final String? sectionName;
@@ -469,16 +469,15 @@ class _$SectionModelImpl implements _SectionModel {
                 other.sectionId == sectionId) &&
             (identical(other.sectionStatus, sectionStatus) ||
                 other.sectionStatus == sectionStatus) &&
-            (identical(other.updatedAt, updatedAt) ||
-                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other.updatedAt, updatedAt) &&
             (identical(other.sectionName, sectionName) ||
                 other.sectionName == sectionName));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, sectionId, sectionStatus, updatedAt, sectionName);
+  int get hashCode => Object.hash(runtimeType, sectionId, sectionStatus,
+      const DeepCollectionEquality().hash(updatedAt), sectionName);
 
   @JsonKey(ignore: true)
   @override
@@ -498,7 +497,7 @@ abstract class _SectionModel implements SectionModel {
   const factory _SectionModel(
           {@JsonKey(name: 'section_id') final int? sectionId,
           @JsonKey(name: 'section_status') final bool? sectionStatus,
-          @JsonKey(name: 'updated_at') final String? updatedAt,
+          @JsonKey(name: 'updated_at') final dynamic updatedAt,
           @JsonKey(name: 'section_name') final String? sectionName}) =
       _$SectionModelImpl;
 
@@ -513,7 +512,7 @@ abstract class _SectionModel implements SectionModel {
   bool? get sectionStatus;
   @override
   @JsonKey(name: 'updated_at')
-  String? get updatedAt;
+  dynamic get updatedAt;
   @override
   @JsonKey(name: 'section_name')
   String? get sectionName;
@@ -747,11 +746,11 @@ EquationModel _$EquationModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EquationModel {
   @JsonKey(name: 'current_GFR')
-  String? get currentGFR => throw _privateConstructorUsedError;
+  dynamic get currentGFR => throw _privateConstructorUsedError;
   @JsonKey(name: 'basal_creatinine_GFR')
-  String? get basalCreatinine => throw _privateConstructorUsedError;
+  dynamic get basalCreatinine => throw _privateConstructorUsedError;
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  String? get creatinineOnDischarge => throw _privateConstructorUsedError;
+  dynamic get creatinineOnDischarge => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -766,10 +765,10 @@ abstract class $EquationModelCopyWith<$Res> {
       _$EquationModelCopyWithImpl<$Res, EquationModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_GFR') String? currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') String? basalCreatinine,
+      {@JsonKey(name: 'current_GFR') dynamic currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      String? creatinineOnDischarge});
+      dynamic creatinineOnDischarge});
 }
 
 /// @nodoc
@@ -793,15 +792,15 @@ class _$EquationModelCopyWithImpl<$Res, $Val extends EquationModel>
       currentGFR: freezed == currentGFR
           ? _value.currentGFR
           : currentGFR // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       basalCreatinine: freezed == basalCreatinine
           ? _value.basalCreatinine
           : basalCreatinine // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       creatinineOnDischarge: freezed == creatinineOnDischarge
           ? _value.creatinineOnDischarge
           : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
     ) as $Val);
   }
 }
@@ -815,10 +814,10 @@ abstract class _$$EquationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_GFR') String? currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') String? basalCreatinine,
+      {@JsonKey(name: 'current_GFR') dynamic currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      String? creatinineOnDischarge});
+      dynamic creatinineOnDischarge});
 }
 
 /// @nodoc
@@ -840,15 +839,15 @@ class __$$EquationModelImplCopyWithImpl<$Res>
       currentGFR: freezed == currentGFR
           ? _value.currentGFR
           : currentGFR // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       basalCreatinine: freezed == basalCreatinine
           ? _value.basalCreatinine
           : basalCreatinine // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
       creatinineOnDischarge: freezed == creatinineOnDischarge
           ? _value.creatinineOnDischarge
           : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as dynamic,
     ));
   }
 }
@@ -867,13 +866,13 @@ class _$EquationModelImpl implements _EquationModel {
 
   @override
   @JsonKey(name: 'current_GFR')
-  final String? currentGFR;
+  final dynamic currentGFR;
   @override
   @JsonKey(name: 'basal_creatinine_GFR')
-  final String? basalCreatinine;
+  final dynamic basalCreatinine;
   @override
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  final String? creatinineOnDischarge;
+  final dynamic creatinineOnDischarge;
 
   @override
   String toString() {
@@ -885,18 +884,21 @@ class _$EquationModelImpl implements _EquationModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EquationModelImpl &&
-            (identical(other.currentGFR, currentGFR) ||
-                other.currentGFR == currentGFR) &&
-            (identical(other.basalCreatinine, basalCreatinine) ||
-                other.basalCreatinine == basalCreatinine) &&
-            (identical(other.creatinineOnDischarge, creatinineOnDischarge) ||
-                other.creatinineOnDischarge == creatinineOnDischarge));
+            const DeepCollectionEquality()
+                .equals(other.currentGFR, currentGFR) &&
+            const DeepCollectionEquality()
+                .equals(other.basalCreatinine, basalCreatinine) &&
+            const DeepCollectionEquality()
+                .equals(other.creatinineOnDischarge, creatinineOnDischarge));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, currentGFR, basalCreatinine, creatinineOnDischarge);
+      runtimeType,
+      const DeepCollectionEquality().hash(currentGFR),
+      const DeepCollectionEquality().hash(basalCreatinine),
+      const DeepCollectionEquality().hash(creatinineOnDischarge));
 
   @JsonKey(ignore: true)
   @override
@@ -914,23 +916,23 @@ class _$EquationModelImpl implements _EquationModel {
 
 abstract class _EquationModel implements EquationModel {
   const factory _EquationModel(
-      {@JsonKey(name: 'current_GFR') final String? currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') final String? basalCreatinine,
+      {@JsonKey(name: 'current_GFR') final dynamic currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') final dynamic basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      final String? creatinineOnDischarge}) = _$EquationModelImpl;
+      final dynamic creatinineOnDischarge}) = _$EquationModelImpl;
 
   factory _EquationModel.fromJson(Map<String, dynamic> json) =
       _$EquationModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'current_GFR')
-  String? get currentGFR;
+  dynamic get currentGFR;
   @override
   @JsonKey(name: 'basal_creatinine_GFR')
-  String? get basalCreatinine;
+  dynamic get basalCreatinine;
   @override
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  String? get creatinineOnDischarge;
+  dynamic get creatinineOnDischarge;
   @override
   @JsonKey(ignore: true)
   _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>

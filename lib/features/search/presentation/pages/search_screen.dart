@@ -300,6 +300,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             AppStrings.empty,
                                         doctorId: patient.doctor!.id.toString(),
                                         homeDataModel: widget.homeDataModel,
+                                        isAllDataOpen: false,
                                         drFirstName:
                                             patient.doctor!.firstName ??
                                                 AppStrings.empty,
@@ -324,7 +325,33 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 false,
                                         isOutcomeStatus:
                                             patient.sections!.outcomeStatus!,
-                                        onOutcomeTap: () {},
+                                        onOutcomeTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.outcome,
+                                            arguments:
+                                                AppRoutesArgs.outcomeRouteArgs(
+                                              verified:
+                                                  widget.accountVerification,
+                                              outcomeStatus: patient
+                                                  .sections!.outcomeStatus!,
+                                              patientName:
+                                                  patient.name.toString(),
+                                              patientId: patient.id.toString(),
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              doctorId:
+                                                  patient.doctor!.id.toString(),
+                                              isSyndicateCardRequired: widget
+                                                  .isSyndicateCardRequired,
+                                              currentDoctorRole:
+                                                  widget.currentDoctorRole,
+                                              currentDoctorPoints:
+                                                  widget.currentDoctorPoints,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                            ),
+                                          );
+                                        },
                                         onAddCommentTap: () {
                                           navigatorKey.currentState?.pushNamed(
                                             AppRoutes.comments,
@@ -363,6 +390,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   .toString(),
                                               homeDataModel:
                                                   widget.homeDataModel,
+                                              isAllDataOpen: false,
                                             ),
                                           );
                                         },

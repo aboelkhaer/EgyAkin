@@ -1,4 +1,5 @@
 import '../../exports.dart';
+import 'dart:ui' as ui;
 
 class CustomTextFormField extends StatelessWidget {
   final String title;
@@ -61,6 +62,11 @@ class CustomTextFormField extends StatelessWidget {
         controller: textFormFieldController,
         initialValue: initialValue,
         keyboardType: textInputType,
+        textDirection: initialValue == null
+            ? ui.TextDirection.ltr
+            : RegExp(r'[\u0600-\u06FF]').hasMatch(initialValue!)
+                ? ui.TextDirection.rtl
+                : ui.TextDirection.ltr,
         inputFormatters: inputFormatters ??
             [
               LengthLimitingTextInputFormatter(500),

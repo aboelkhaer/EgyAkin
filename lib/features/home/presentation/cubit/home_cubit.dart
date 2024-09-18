@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:carousel_slider/carousel_controller.dart';
+import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
@@ -10,8 +12,10 @@ import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_use
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 import 'package:egy_akin/injection_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class HomeCubit extends Cubit<HomeState> {
@@ -34,6 +38,8 @@ class HomeCubit extends Cubit<HomeState> {
   bool isUnreadNotification = false;
   String isSyndicateCardRequired = '';
   String currentDoctorRole = '';
+  String currentUserVersion = '';
+  bool getCurrentUserVersion = false;
   HomeModelResponse homeDataModel = const HomeModelResponse();
 
   final GlobalKey addPatientKey = GlobalKey();
@@ -44,30 +50,60 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => HomeState.loaded(
-          value.homeData,
-          value.currentDoctorModel,
-          value.dotsPosition,
-          value.homeIndex,
-          value.isUploadingSyndicateCard,
-          value.isUploadedSyndicateCard,
-          ''),
+        value.homeData,
+        value.currentDoctorModel,
+        value.dotsPosition,
+        value.homeIndex,
+        value.isUploadingSyndicateCard,
+        value.isUploadedSyndicateCard,
+        '',
+        checkUpdateMessageCounter,
+      ),
     ));
+  }
+
+  bool isUpdateMessageHidden = true;
+
+  int checkUpdateMessageCounter = 0;
+
+  getUpdateMessageStatusFromLocal() async {
+    if (checkUpdateMessageCounter == 0) {
+      isUpdateMessageHidden = (await sl<AppPreferences>()
+              .getBool(AppLocalStrings.isUpdateMessageHidden)) ??
+          false;
+      checkUpdateMessageCounter++;
+    }
+  }
+
+  setUpdateMessageStatusToLocal() async {
+    isUpdateMessageHidden = true;
+    (await sl<AppPreferences>()
+        .setBool(AppLocalStrings.isUpdateMessageHidden, true));
   }
 
   getDoctorDataFromLocal() async {
     currentDoctorModel = (await sl<AppPreferences>().getDoctorData())!;
+    if (getCurrentUserVersion == false) {
+      currentUserVersion = (await sl<AppPreferences>()
+          .getString(AppLocalStrings.userAppVersion))!;
+      getCurrentUserVersion = true;
+
+      log('$currentUserVersion moatz123');
+    }
 
     // emit(const HomeState.loading());
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => HomeState.loaded(
-          value.homeData,
-          currentDoctorModel,
-          dotsPosition,
-          value.homeIndex,
-          value.isUploadingSyndicateCard,
-          value.isUploadedSyndicateCard,
-          ''),
+        value.homeData,
+        currentDoctorModel,
+        dotsPosition,
+        value.homeIndex,
+        value.isUploadingSyndicateCard,
+        value.isUploadedSyndicateCard,
+        '',
+        checkUpdateMessageCounter,
+      ),
     ));
     getHome();
   }
@@ -82,13 +118,15 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => HomeState.loaded(
-          value.homeData,
-          value.currentDoctorModel,
-          value.dotsPosition,
-          tabsController.index,
-          value.isUploadingSyndicateCard,
-          value.isUploadedSyndicateCard,
-          ''),
+        value.homeData,
+        value.currentDoctorModel,
+        value.dotsPosition,
+        tabsController.index,
+        value.isUploadingSyndicateCard,
+        value.isUploadedSyndicateCard,
+        '',
+        checkUpdateMessageCounter,
+      ),
     ));
   }
 
@@ -104,6 +142,7 @@ class HomeCubit extends Cubit<HomeState> {
                 value.isUploadingSyndicateCard,
                 value.isUploadedSyndicateCard,
                 '',
+                checkUpdateMessageCounter,
               )),
     );
   }
@@ -111,6 +150,7 @@ class HomeCubit extends Cubit<HomeState> {
   getHome() async {
     dotsPosition = 0;
     emit(const HomeState.loading());
+    getUpdateMessageStatusFromLocal();
 
     final result = await _getHomeUsecase.execute(NoParams());
     result.fold(
@@ -129,81 +169,155 @@ class HomeCubit extends Cubit<HomeState> {
         isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
         currentDoctorRole = homeData.role.toString();
         homeDataModel = homeData;
-        emit(HomeState.loaded(homeData, currentDoctorModel, dotsPosition,
-            tabsController.index, false, false, ''));
+
+        emit(
+          HomeState.loaded(
+            homeData,
+            currentDoctorModel,
+            dotsPosition,
+            tabsController.index,
+            false,
+            false,
+            '',
+            checkUpdateMessageCounter,
+          ),
+        );
       },
     );
   }
 
   File? imagePicked;
 
-  uploadSyndicateCard() async {
+  Future<void> uploadSyndicateCard() async {
     emit(
       state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => HomeState.loaded(
-                value.homeData,
-                value.currentDoctorModel,
-                value.dotsPosition,
-                tabsController.index,
-                true,
-                false,
-                '',
-              )),
+        orElse: () => state,
+        loaded: (value) => HomeState.loaded(
+          value.homeData,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          tabsController.index,
+          true,
+          false,
+          '',
+          checkUpdateMessageCounter,
+        ),
+      ),
     );
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      final pickedImageFile = File(pickedImage.path);
-      imagePicked = pickedImageFile;
-      final result = await _uploadSyndicateCardUsecase.execute(imagePicked!);
 
-      result.fold(
-        (l) {
-          emit(
-            state.maybeMap(
+    final picker = ImagePicker();
+
+    try {
+      final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+      if (pickedImage != null) {
+        final pickedImageFile = File(pickedImage.path);
+        imagePicked = pickedImageFile;
+        final result = await _uploadSyndicateCardUsecase.execute(imagePicked!);
+
+        result.fold(
+          (l) {
+            emit(
+              state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => HomeState.loaded(
-                      value.homeData,
-                      value.currentDoctorModel,
-                      value.dotsPosition,
-                      tabsController.index,
-                      false,
-                      false,
-                      l.message,
-                    )),
-          );
-        },
-        (r) async {
-          // log(r.image.toString());
-          emit(
-            state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => HomeState.loaded(
-                      value.homeData,
-                      value.currentDoctorModel,
-                      value.dotsPosition,
-                      tabsController.index,
-                      false,
-                      true,
-                      r.message!,
-                    )),
-          );
-        },
-      );
-    } else {
-      emit(
-        state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => HomeState.loaded(
                   value.homeData,
                   value.currentDoctorModel,
                   value.dotsPosition,
                   tabsController.index,
                   false,
                   false,
-                  '',
-                )),
+                  l.message,
+                  checkUpdateMessageCounter,
+                ),
+              ),
+            );
+          },
+          (r) async {
+            emit(
+              state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => HomeState.loaded(
+                  value.homeData,
+                  value.currentDoctorModel,
+                  value.dotsPosition,
+                  tabsController.index,
+                  false,
+                  true,
+                  r.message!,
+                  checkUpdateMessageCounter,
+                ),
+              ),
+            );
+          },
+        );
+      } else {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => HomeState.loaded(
+              value.homeData,
+              value.currentDoctorModel,
+              value.dotsPosition,
+              tabsController.index,
+              false,
+              false,
+              '',
+              checkUpdateMessageCounter,
+            ),
+          ),
+        );
+      }
+    } on PlatformException catch (e) {
+      if (e.code == 'photo_access_denied') {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => HomeState.loaded(
+              value.homeData,
+              value.currentDoctorModel,
+              value.dotsPosition,
+              tabsController.index,
+              false,
+              false,
+              'Photo access denied. Please allow photo access from settings.',
+              checkUpdateMessageCounter,
+            ),
+          ),
+        );
+
+        openAppSettings();
+      } else {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => HomeState.loaded(
+              value.homeData,
+              value.currentDoctorModel,
+              value.dotsPosition,
+              tabsController.index,
+              false,
+              false,
+              'An unexpected error occurred: ${e.message}',
+              checkUpdateMessageCounter,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => HomeState.loaded(
+            value.homeData,
+            value.currentDoctorModel,
+            value.dotsPosition,
+            tabsController.index,
+            false,
+            false,
+            'An unexpected error occurred: $e',
+            checkUpdateMessageCounter,
+          ),
+        ),
       );
     }
   }

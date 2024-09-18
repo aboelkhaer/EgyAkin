@@ -174,6 +174,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                             currentDoctorPoints: widget.currentDoctorPoints,
                             currentDoctorRole: widget.currentDoctorRole,
                             homeDataModel: widget.homeDataModel,
+                            isAllDataOpen: false,
                           ),
                         );
                       }

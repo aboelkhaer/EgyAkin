@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 
 import '../../../../exports.dart';
@@ -34,13 +37,16 @@ class HomeTab extends StatelessWidget {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: () {},
-                  loaded: (homeData,
-                      currentDoctorModel,
-                      dotsPosition,
-                      homeIndex,
-                      isUploadingSyndicateCard,
-                      isUploadedSyndicateCard,
-                      message) {},
+                  loaded: (
+                    homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message,
+                    checkUpdateMessageCounter,
+                  ) {},
                   error: (message) {
                     customSnackBar(message: message, context: context);
                   },
@@ -48,13 +54,16 @@ class HomeTab extends StatelessWidget {
               },
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (homeData,
-                      currentDoctorModel,
-                      dotsPosition,
-                      homeIndex,
-                      isUploadingSyndicateCard,
-                      isUploadedSyndicateCard,
-                      message) {
+                  loaded: (
+                    homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message,
+                    checkUpdateMessageCounter,
+                  ) {
                     return CheckIfVerified(
                       verified: homeData.verified!,
                       isSyndicateCardRequired:
@@ -81,13 +90,16 @@ class HomeTab extends StatelessWidget {
                             orElse: () {
                               return const SizedBox.shrink();
                             },
-                            loaded: (homeData,
-                                currentDoctorModel,
-                                dotsPosition,
-                                homeIndex,
-                                isUploadingSyndicateCard,
-                                isUploadedSyndicateCard,
-                                message) {
+                            loaded: (
+                              homeData,
+                              currentDoctorModel,
+                              dotsPosition,
+                              homeIndex,
+                              isUploadingSyndicateCard,
+                              isUploadedSyndicateCard,
+                              message,
+                              checkUpdateMessageCounter,
+                            ) {
                               return HomeSearchBotton(
                                 currentDoctorModel: currentDoctorModel,
                                 verified: homeData.verified!,
@@ -102,6 +114,19 @@ class HomeTab extends StatelessWidget {
                           );
                         },
                       ),
+                      // CustomElevatedButton(
+                      //     onPressed: () {
+                      //       showUpdateDialog(
+                      //         context: context,
+                      //         isUpdateMessageSeen: cubit.isUpdateMessageSeen,
+                      //         onDismissed: () {
+                      //           context
+                      //               .read<HomeCubit>()
+                      //               .setUpdateMessageStatusToLocal();
+                      //         },
+                      //       );
+                      //     },
+                      //     title: 'hello'),
                       PostsSliderAndDots(cubit: cubit),
                       SizedBox(height: 10.h),
                       const TopDoctors(),
