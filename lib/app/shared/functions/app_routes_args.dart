@@ -191,6 +191,7 @@ class AppRoutesArgs {
     required String currentDoctorRole,
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
+    required int initialIndex,
   }) {
     return {
       'doctorId': doctorId,
@@ -200,6 +201,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'initialIndex': initialIndex,
     };
   }
 

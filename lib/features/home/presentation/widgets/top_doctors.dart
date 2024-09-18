@@ -55,6 +55,7 @@ class TopDoctors extends StatelessWidget {
                                 currentDoctorPoints:
                                     int.parse(homeData.scoreValue!),
                                 accountVerification: homeData.verified!,
+                                initialIndex: 0,
                                 isSyndicateCardRequired:
                                     homeData.isSyndicateCardRequired.toString(),
                                 currentDoctorRole: homeData.role.toString(),

@@ -225,6 +225,7 @@ class SendConsultationScreen extends StatelessWidget {
                                                           doctorId: doctorModel
                                                               .id
                                                               .toString(),
+                                                          initialIndex: 0,
                                                           currentDoctorModel:
                                                               currentDoctorModel,
                                                           isSyndicateCardRequired:
@@ -411,6 +412,7 @@ class SendConsultationScreen extends StatelessWidget {
                                       isSyndicateCardRequired: homeDataModel
                                           .isSyndicateCardRequired
                                           .toString(),
+                                      initialIndex: 0,
                                       accountVerification:
                                           homeDataModel.verified!,
                                       currentDoctorRole:
@@ -458,6 +460,7 @@ class SendConsultationScreen extends StatelessWidget {
                                                           doctorId: doctorModel
                                                               .id
                                                               .toString(),
+                                                          initialIndex: 0,
                                                           currentDoctorModel:
                                                               currentDoctorModel,
                                                           isSyndicateCardRequired:

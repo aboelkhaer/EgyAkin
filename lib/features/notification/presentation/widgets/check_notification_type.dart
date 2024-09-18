@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:egy_akin/features/notification/presentation/widgets/achievement_check.dart';
+
 import '../../../../exports.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -72,6 +74,7 @@ class CheckNotificationType extends StatelessWidget {
                                   doctorId: notificationModel
                                       .patient!.doctor!.id
                                       .toString(),
+                                  initialIndex: 0,
                                   currentDoctorModel: currentDoctorModel,
                                   isSyndicateCardRequired:
                                       isSyndicateCardRequired,
@@ -255,6 +258,7 @@ class CheckNotificationType extends StatelessWidget {
                                   currentDoctorModel: currentDoctorModel,
                                   isSyndicateCardRequired:
                                       isSyndicateCardRequired,
+                                  initialIndex: 0,
                                   accountVerification: accountVerification,
                                   currentDoctorRole: currentDoctorRole,
                                   currentDoctorPoints: currentDoctorPoints,
@@ -326,6 +330,172 @@ class CheckNotificationType extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'Achievement':
+        return GestureDetector(
+          onTap: () {
+            if (currentDoctorModel.id.toString() ==
+                notificationModel.patient!.doctor!.id.toString()) {
+              showCustomBottomSheet(
+                context: context,
+                builder: (context) {
+                  return BlocProvider(
+                    create: (context) => DoctorInfoViewCubit(sl(), sl()),
+                    child: AchievementsTab(
+                      isProfileFeature: true,
+                      currentDoctorId: currentDoctorModel.id.toString(),
+                    ),
+                  );
+                },
+              );
+            }
+            if (currentDoctorModel.id.toString() !=
+                notificationModel.patient!.doctor!.id.toString()) {
+              navigatorKey.currentState?.pushNamed(
+                AppRoutes.doctorInfoView,
+                arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+                  doctorId: notificationModel.patient!.doctor!.id.toString(),
+                  currentDoctorModel: currentDoctorModel,
+                  isSyndicateCardRequired: isSyndicateCardRequired,
+                  accountVerification: accountVerification,
+                  currentDoctorRole: currentDoctorRole,
+                  currentDoctorPoints: currentDoctorPoints,
+                  homeDataModel: homeDataModel,
+                  initialIndex: 1,
+                ),
+              );
+            }
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  initialIndex: 0,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.patient!.doctor!.image ==
+                                      null
+                                  ? Text(
+                                      notificationModel
+                                          .patient!.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .patient!.doctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                AchievementCheck(
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorId:
+                                      currentDoctorModel.id.toString(),
+                                  notificationDoctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  notificationDoctorName: notificationModel
+                                      .patient!.doctor!.firstName
+                                      .toString(),
+                                )
                               ],
                             ),
                             SizedBox(height: 5.h),

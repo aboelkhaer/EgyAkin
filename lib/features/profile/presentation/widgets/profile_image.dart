@@ -55,6 +55,7 @@ class ProfileImage extends StatelessWidget {
                                 currentDoctorPoints:
                                     int.parse(homeDataModel.scoreValue!),
                                 homeDataModel: homeDataModel,
+                                initialIndex: 0,
                               ),
                             );
                           },
@@ -109,6 +110,7 @@ class ProfileImage extends StatelessWidget {
                                         AppRoutesArgs.doctorInfoViewRouteArgs(
                                       doctorId:
                                           cubit.currentDoctor.id.toString(),
+                                      initialIndex: 0,
                                       currentDoctorModel: cubit.currentDoctor,
                                       isSyndicateCardRequired: homeDataModel
                                           .isSyndicateCardRequired
@@ -132,6 +134,7 @@ class ProfileImage extends StatelessWidget {
                                         doctorId:
                                             cubit.currentDoctor.id.toString(),
                                         currentDoctorModel: cubit.currentDoctor,
+                                        initialIndex: 0,
                                         isSyndicateCardRequired: homeDataModel
                                             .isSyndicateCardRequired
                                             .toString(),

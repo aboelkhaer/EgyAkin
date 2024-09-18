@@ -8,6 +8,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
+  final int initialIndex;
   const DoctorInfoViewScreen({
     super.key,
     required this.doctorId,
@@ -17,6 +18,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
     required this.homeDataModel,
+    required this.initialIndex,
   });
 
   @override
@@ -365,6 +367,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
           const SizedBox(height: 20),
           Expanded(
             child: DefaultTabController(
+              initialIndex: widget.initialIndex,
               length: 2,
               child: Column(
                 children: [

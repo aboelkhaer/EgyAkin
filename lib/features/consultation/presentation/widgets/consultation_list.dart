@@ -80,6 +80,7 @@ class ConsultationList extends StatelessWidget {
                                           AppRoutes.doctorInfoView,
                                           arguments: AppRoutesArgs
                                               .doctorInfoViewRouteArgs(
+                                            initialIndex: 0,
                                             doctorId:
                                                 consult.doctorId.toString(),
                                             currentDoctorModel:

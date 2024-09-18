@@ -458,7 +458,8 @@ class RouteGenerator {
               args.containsKey('accountVerification') &&
               args.containsKey('currentDoctorRole') &&
               args.containsKey('currentDoctorPoints') &&
-              args.containsKey('homeDataModel')) {
+              args.containsKey('homeDataModel') &&
+              args.containsKey('initialIndex')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<DoctorInfoViewCubit>(
                 create: (context) => di.sl<DoctorInfoViewCubit>(),
@@ -471,6 +472,7 @@ class RouteGenerator {
                   currentDoctorRole: args['currentDoctorRole'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialIndex: args['initialIndex'] as int,
                 ),
               ),
             );

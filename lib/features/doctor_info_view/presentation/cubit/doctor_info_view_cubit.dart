@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_achievements_usecase.dart';
-
 import '../../../../exports.dart';
 
 class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {

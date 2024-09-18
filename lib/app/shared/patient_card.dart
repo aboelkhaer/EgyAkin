@@ -100,6 +100,7 @@ class PatientCard extends StatelessWidget {
                                   currentDoctorRole: currentDoctorRole,
                                   currentDoctorPoints: currentDoctorPoints,
                                   homeDataModel: homeDataModel,
+                                  initialIndex: 0,
                                 ),
                               );
                             },

@@ -326,6 +326,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                                 .toString()),
                                                         homeDataModel: widget
                                                             .homeDataModel,
+                                                        initialIndex: 0,
                                                       ),
                                                     );
                                                   },

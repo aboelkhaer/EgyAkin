@@ -72,6 +72,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                     isSyndicateCardRequired,
                                 currentDoctorRole: currentDoctorRole,
                                 homeDataModel: homeDataModel,
+                                initialIndex: 0,
                               ),
                             );
                           },
