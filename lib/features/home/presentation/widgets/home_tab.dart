@@ -1,6 +1,3 @@
-import 'dart:developer';
-
-import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 
 import '../../../../exports.dart';
@@ -46,6 +43,7 @@ class HomeTab extends StatelessWidget {
                     isUploadedSyndicateCard,
                     message,
                     checkUpdateMessageCounter,
+                    isUserBlocked,
                   ) {},
                   error: (message) {
                     customSnackBar(message: message, context: context);
@@ -63,6 +61,7 @@ class HomeTab extends StatelessWidget {
                     isUploadedSyndicateCard,
                     message,
                     checkUpdateMessageCounter,
+                    isUserBlocked,
                   ) {
                     return CheckIfVerified(
                       verified: homeData.verified!,
@@ -99,6 +98,7 @@ class HomeTab extends StatelessWidget {
                               isUploadedSyndicateCard,
                               message,
                               checkUpdateMessageCounter,
+                              isUserBlocked,
                             ) {
                               return HomeSearchBotton(
                                 currentDoctorModel: currentDoctorModel,

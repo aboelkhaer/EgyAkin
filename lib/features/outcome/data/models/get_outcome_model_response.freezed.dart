@@ -26,8 +26,12 @@ mixin _$GetOutcomeModelResponse {
   @JsonKey(name: 'Submitter')
   OutcomeSubmitterModel? get submitter => throw _privateConstructorUsedError;
 
+  /// Serializes this GetOutcomeModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetOutcomeModelResponseCopyWith<GetOutcomeModelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -57,6 +61,8 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -80,6 +86,8 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $OutcomeSubmitterModelCopyWith<$Res>? get submitter {
@@ -121,6 +129,8 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetOutcomeModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -147,9 +157,7 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GetOutcomeModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _GetOutcomeModelResponse {
+class _$GetOutcomeModelResponseImpl implements _GetOutcomeModelResponse {
   const _$GetOutcomeModelResponseImpl(
       {this.value,
       final List<QuestionModel>? data,
@@ -176,18 +184,8 @@ class _$GetOutcomeModelResponseImpl
   final OutcomeSubmitterModel? submitter;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetOutcomeModelResponse(value: $value, data: $data, submitter: $submitter)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetOutcomeModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('submitter', submitter));
   }
 
   @override
@@ -201,12 +199,14 @@ class _$GetOutcomeModelResponseImpl
                 other.submitter == submitter));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value,
       const DeepCollectionEquality().hash(_data), submitter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetOutcomeModelResponseImplCopyWith<_$GetOutcomeModelResponseImpl>
@@ -238,8 +238,11 @@ abstract class _GetOutcomeModelResponse implements GetOutcomeModelResponse {
   @override
   @JsonKey(name: 'Submitter')
   OutcomeSubmitterModel? get submitter;
+
+  /// Create a copy of GetOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetOutcomeModelResponseImplCopyWith<_$GetOutcomeModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -254,8 +257,12 @@ mixin _$OutcomeSubmitterModel {
   String? get name => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
 
+  /// Serializes this OutcomeSubmitterModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of OutcomeSubmitterModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $OutcomeSubmitterModelCopyWith<OutcomeSubmitterModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -280,6 +287,8 @@ class _$OutcomeSubmitterModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of OutcomeSubmitterModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -320,6 +329,8 @@ class __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>
       $Res Function(_$OutcomeSubmitterModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of OutcomeSubmitterModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -341,9 +352,7 @@ class __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$OutcomeSubmitterModelImpl
-    with DiagnosticableTreeMixin
-    implements _OutcomeSubmitterModel {
+class _$OutcomeSubmitterModelImpl implements _OutcomeSubmitterModel {
   const _$OutcomeSubmitterModelImpl({this.name, this.image});
 
   factory _$OutcomeSubmitterModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -355,17 +364,8 @@ class _$OutcomeSubmitterModelImpl
   final String? image;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'OutcomeSubmitterModel(name: $name, image: $image)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'OutcomeSubmitterModel'))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('image', image));
   }
 
   @override
@@ -377,11 +377,13 @@ class _$OutcomeSubmitterModelImpl
             (identical(other.image, image) || other.image == image));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, image);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OutcomeSubmitterModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$OutcomeSubmitterModelImplCopyWith<_$OutcomeSubmitterModelImpl>
@@ -407,8 +409,11 @@ abstract class _OutcomeSubmitterModel implements OutcomeSubmitterModel {
   String? get name;
   @override
   String? get image;
+
+  /// Create a copy of OutcomeSubmitterModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$OutcomeSubmitterModelImplCopyWith<_$OutcomeSubmitterModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

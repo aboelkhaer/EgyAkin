@@ -4,7 +4,7 @@ class OnboardingCubit extends Cubit<OnboardingState> {
   OnboardingCubit() : super(const OnboardingState.changed(0));
   static OnboardingCubit get(context) => BlocProvider.of(context);
 
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
   int dotsPosition = 0;
   PageController dotsController = PageController();
 

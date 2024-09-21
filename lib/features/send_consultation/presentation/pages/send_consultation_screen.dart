@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/functions/animate_to_right_end_of_screen.dart';
-import 'package:egy_akin/app/shared/functions/doctor_name.dart';
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 
 import '../../../../exports.dart';

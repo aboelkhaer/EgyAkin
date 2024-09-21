@@ -63,7 +63,7 @@ class _AchievementsTabState extends State<AchievementsTab> {
                 ),
               );
             }, loaded: (doctorInfo, isLoadingAchievements, isLoadedAchievements,
-                message, achievements) {
+                message, achievements, changesCounter) {
               if (isLoadedAchievements) {
                 return achievements!.isEmpty
                     ? Expanded(

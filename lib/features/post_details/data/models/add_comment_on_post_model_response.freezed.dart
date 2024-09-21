@@ -24,8 +24,12 @@ mixin _$AddCommentOnPostModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this AddCommentOnPostModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AddCommentOnPostModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AddCommentOnPostModelResponseCopyWith<AddCommentOnPostModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$AddCommentOnPostModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AddCommentOnPostModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -93,6 +99,8 @@ class __$$AddCommentOnPostModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$AddCommentOnPostModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AddCommentOnPostModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -141,11 +149,13 @@ class _$AddCommentOnPostModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AddCommentOnPostModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AddCommentOnPostModelResponseImplCopyWith<
@@ -174,8 +184,11 @@ abstract class _AddCommentOnPostModelResponse
   bool? get value;
   @override
   String? get message;
+
+  /// Create a copy of AddCommentOnPostModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddCommentOnPostModelResponseImplCopyWith<
           _$AddCommentOnPostModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

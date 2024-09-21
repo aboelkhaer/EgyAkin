@@ -25,7 +25,8 @@ mixin _$DoctorInfoViewState {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -39,7 +40,8 @@ mixin _$DoctorInfoViewState {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -53,7 +55,8 @@ mixin _$DoctorInfoViewState {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -102,6 +105,9 @@ class _$DoctorInfoViewStateCopyWithImpl<$Res, $Val extends DoctorInfoViewState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -118,22 +124,19 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
+class _$InitialImpl implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DoctorInfoViewState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'DoctorInfoViewState.initial'));
   }
 
   @override
@@ -155,7 +158,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -172,7 +176,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -189,7 +194,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -256,22 +262,19 @@ class __$$LoadingImplCopyWithImpl<$Res>
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
+class _$LoadingImpl implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DoctorInfoViewState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'DoctorInfoViewState.loading'));
   }
 
   @override
@@ -293,7 +296,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -310,7 +314,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -327,7 +332,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -391,7 +397,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isLoadingAchievements,
       bool isLoadedAchievements,
       String message,
-      List<GetAchievementsModelResponse>? achievements});
+      List<GetAchievementsModelResponse>? achievements,
+      int changesCounter});
 
   $DoctorInfoViewModelResponseCopyWith<$Res>? get doctorInfo;
 }
@@ -404,6 +411,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -412,6 +421,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isLoadedAchievements = null,
     Object? message = null,
     Object? achievements = freezed,
+    Object? changesCounter = null,
   }) {
     return _then(_$LoadedImpl(
       freezed == doctorInfo
@@ -434,9 +444,15 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value._achievements
           : achievements // ignore: cast_nullable_to_non_nullable
               as List<GetAchievementsModelResponse>?,
+      null == changesCounter
+          ? _value.changesCounter
+          : changesCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorInfoViewModelResponseCopyWith<$Res>? get doctorInfo {
@@ -453,13 +469,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(
       this.doctorInfo,
       this.isLoadingAchievements,
       this.isLoadedAchievements,
       this.message,
-      final List<GetAchievementsModelResponse>? achievements)
+      final List<GetAchievementsModelResponse>? achievements,
+      this.changesCounter)
       : _achievements = achievements;
 
   @override
@@ -481,20 +498,11 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo, isLoadingAchievements: $isLoadingAchievements, isLoadedAchievements: $isLoadedAchievements, message: $message, achievements: $achievements)';
-  }
+  final int changesCounter;
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DoctorInfoViewState.loaded'))
-      ..add(DiagnosticsProperty('doctorInfo', doctorInfo))
-      ..add(DiagnosticsProperty('isLoadingAchievements', isLoadingAchievements))
-      ..add(DiagnosticsProperty('isLoadedAchievements', isLoadedAchievements))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty('achievements', achievements));
+  String toString() {
+    return 'DoctorInfoViewState.loaded(doctorInfo: $doctorInfo, isLoadingAchievements: $isLoadingAchievements, isLoadedAchievements: $isLoadedAchievements, message: $message, achievements: $achievements, changesCounter: $changesCounter)';
   }
 
   @override
@@ -510,7 +518,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
                 other.isLoadedAchievements == isLoadedAchievements) &&
             (identical(other.message, message) || other.message == message) &&
             const DeepCollectionEquality()
-                .equals(other._achievements, _achievements));
+                .equals(other._achievements, _achievements) &&
+            (identical(other.changesCounter, changesCounter) ||
+                other.changesCounter == changesCounter));
   }
 
   @override
@@ -520,9 +530,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       isLoadingAchievements,
       isLoadedAchievements,
       message,
-      const DeepCollectionEquality().hash(_achievements));
+      const DeepCollectionEquality().hash(_achievements),
+      changesCounter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -538,12 +551,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(doctorInfo, isLoadingAchievements, isLoadedAchievements,
-        message, achievements);
+        message, achievements, changesCounter);
   }
 
   @override
@@ -556,12 +570,13 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(doctorInfo, isLoadingAchievements, isLoadedAchievements,
-        message, achievements);
+        message, achievements, changesCounter);
   }
 
   @override
@@ -574,14 +589,15 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(doctorInfo, isLoadingAchievements, isLoadedAchievements,
-          message, achievements);
+          message, achievements, changesCounter);
     }
     return orElse();
   }
@@ -630,14 +646,19 @@ abstract class _Loaded implements DoctorInfoViewState {
       final bool isLoadingAchievements,
       final bool isLoadedAchievements,
       final String message,
-      final List<GetAchievementsModelResponse>? achievements) = _$LoadedImpl;
+      final List<GetAchievementsModelResponse>? achievements,
+      final int changesCounter) = _$LoadedImpl;
 
   DoctorInfoViewModelResponse? get doctorInfo;
   bool get isLoadingAchievements;
   bool get isLoadedAchievements;
   String get message;
   List<GetAchievementsModelResponse>? get achievements;
-  @JsonKey(ignore: true)
+  int get changesCounter;
+
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -659,6 +680,8 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -675,23 +698,15 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
+class _$ErrorImpl implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DoctorInfoViewState.error(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DoctorInfoViewState.error'))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -705,7 +720,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -721,7 +738,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -738,7 +756,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -755,7 +774,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isLoadingAchievements,
             bool isLoadedAchievements,
             String message,
-            List<GetAchievementsModelResponse>? achievements)?
+            List<GetAchievementsModelResponse>? achievements,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -808,7 +828,10 @@ abstract class _Error implements DoctorInfoViewState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DoctorInfoViewState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

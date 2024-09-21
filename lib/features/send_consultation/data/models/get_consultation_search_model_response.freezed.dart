@@ -25,8 +25,12 @@ mixin _$GetConsultationSearchModelResponse {
   List<DoctorModelInConsultationModelResponse>? get data =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetConsultationSearchModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetConsultationSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetConsultationSearchModelResponseCopyWith<
           GetConsultationSearchModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -54,6 +58,8 @@ class _$GetConsultationSearchModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetConsultationSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -95,6 +101,8 @@ class __$$GetConsultationSearchModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetConsultationSearchModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetConsultationSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -117,7 +125,6 @@ class __$$GetConsultationSearchModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetConsultationSearchModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetConsultationSearchModelResponse {
   const _$GetConsultationSearchModelResponseImpl(
       {this.value, final List<DoctorModelInConsultationModelResponse>? data})
@@ -140,17 +147,8 @@ class _$GetConsultationSearchModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetConsultationSearchModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetConsultationSearchModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -162,12 +160,14 @@ class _$GetConsultationSearchModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, value, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetConsultationSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetConsultationSearchModelResponseImplCopyWith<
@@ -198,8 +198,11 @@ abstract class _GetConsultationSearchModelResponse
   bool? get value;
   @override
   List<DoctorModelInConsultationModelResponse>? get data;
+
+  /// Create a copy of GetConsultationSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetConsultationSearchModelResponseImplCopyWith<
           _$GetConsultationSearchModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -230,8 +233,12 @@ mixin _$DoctorModelInConsultationModelResponse {
   String? get patientsCount => throw _privateConstructorUsedError;
   String? get score => throw _privateConstructorUsedError;
 
+  /// Serializes this DoctorModelInConsultationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DoctorModelInConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DoctorModelInConsultationModelResponseCopyWith<
           DoctorModelInConsultationModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -271,6 +278,8 @@ class _$DoctorModelInConsultationModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DoctorModelInConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -374,6 +383,8 @@ class __$$DoctorModelInConsultationModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$DoctorModelInConsultationModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DoctorModelInConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -446,7 +457,6 @@ class __$$DoctorModelInConsultationModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$DoctorModelInConsultationModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _DoctorModelInConsultationModelResponse {
   const _$DoctorModelInConsultationModelResponseImpl(
       {this.id,
@@ -496,29 +506,8 @@ class _$DoctorModelInConsultationModelResponseImpl
   final String? score;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DoctorModelInConsultationModelResponse(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, specialty: $specialty, workingplace: $workingplace, image: $image, syndicateCard: $syndicateCard, isSyndicateCardRequired: $isSyndicateCardRequired, patientsCount: $patientsCount, score: $score)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(
-          DiagnosticsProperty('type', 'DoctorModelInConsultationModelResponse'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('firstName', firstName))
-      ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('phone', phone))
-      ..add(DiagnosticsProperty('specialty', specialty))
-      ..add(DiagnosticsProperty('workingplace', workingplace))
-      ..add(DiagnosticsProperty('image', image))
-      ..add(DiagnosticsProperty('syndicateCard', syndicateCard))
-      ..add(DiagnosticsProperty(
-          'isSyndicateCardRequired', isSyndicateCardRequired))
-      ..add(DiagnosticsProperty('patientsCount', patientsCount))
-      ..add(DiagnosticsProperty('score', score));
   }
 
   @override
@@ -548,7 +537,7 @@ class _$DoctorModelInConsultationModelResponseImpl
             (identical(other.score, score) || other.score == score));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -565,7 +554,9 @@ class _$DoctorModelInConsultationModelResponseImpl
       patientsCount,
       score);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DoctorModelInConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DoctorModelInConsultationModelResponseImplCopyWith<
@@ -630,8 +621,11 @@ abstract class _DoctorModelInConsultationModelResponse
   String? get patientsCount;
   @override
   String? get score;
+
+  /// Create a copy of DoctorModelInConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DoctorModelInConsultationModelResponseImplCopyWith<
           _$DoctorModelInConsultationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

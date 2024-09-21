@@ -25,8 +25,12 @@ mixin _$GetPatientHistoryForAddPatientModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this GetPatientHistoryForAddPatientModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetPatientHistoryForAddPatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetPatientHistoryForAddPatientModelResponseCopyWith<
           GetPatientHistoryForAddPatientModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -55,6 +59,8 @@ class _$GetPatientHistoryForAddPatientModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetPatientHistoryForAddPatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -98,6 +104,8 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetPatientHistoryForAddPatientModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetPatientHistoryForAddPatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -120,7 +128,6 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetPatientHistoryForAddPatientModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetPatientHistoryForAddPatientModelResponse {
   const _$GetPatientHistoryForAddPatientModelResponseImpl(
       {this.value, final List<QuestionModel>? data})
@@ -143,18 +150,8 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetPatientHistoryForAddPatientModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty(
-          'type', 'GetPatientHistoryForAddPatientModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -166,12 +163,14 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, value, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetPatientHistoryForAddPatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetPatientHistoryForAddPatientModelResponseImplCopyWith<
@@ -203,8 +202,11 @@ abstract class _GetPatientHistoryForAddPatientModelResponse
   bool? get value;
   @override
   List<QuestionModel>? get data;
+
+  /// Create a copy of GetPatientHistoryForAddPatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetPatientHistoryForAddPatientModelResponseImplCopyWith<
           _$GetPatientHistoryForAddPatientModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -227,8 +229,12 @@ mixin _$QuestionModel {
   String? get updatedAt => throw _privateConstructorUsedError;
   dynamic get answer => throw _privateConstructorUsedError;
 
+  /// Serializes this QuestionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of QuestionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $QuestionModelCopyWith<QuestionModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -260,6 +266,8 @@ class _$QuestionModelCopyWithImpl<$Res, $Val extends QuestionModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of QuestionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -336,6 +344,8 @@ class __$$QuestionModelImplCopyWithImpl<$Res>
       _$QuestionModelImpl _value, $Res Function(_$QuestionModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of QuestionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -387,9 +397,7 @@ class __$$QuestionModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$QuestionModelImpl
-    with DiagnosticableTreeMixin
-    implements _QuestionModel {
+class _$QuestionModelImpl implements _QuestionModel {
   const _$QuestionModelImpl(
       {this.id,
       this.question,
@@ -432,23 +440,8 @@ class _$QuestionModelImpl
   final dynamic answer;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'QuestionModel(id: $id, question: $question, values: $values, type: $type, keyboardType: $keyboardType, mandatory: $mandatory, updatedAt: $updatedAt, answer: $answer)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'QuestionModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('question', question))
-      ..add(DiagnosticsProperty('values', values))
-      ..add(DiagnosticsProperty('type', type))
-      ..add(DiagnosticsProperty('keyboardType', keyboardType))
-      ..add(DiagnosticsProperty('mandatory', mandatory))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('answer', answer));
   }
 
   @override
@@ -470,7 +463,7 @@ class _$QuestionModelImpl
             const DeepCollectionEquality().equals(other.answer, answer));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -483,7 +476,9 @@ class _$QuestionModelImpl
       updatedAt,
       const DeepCollectionEquality().hash(answer));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of QuestionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$QuestionModelImplCopyWith<_$QuestionModelImpl> get copyWith =>
@@ -529,8 +524,11 @@ abstract class _QuestionModel implements QuestionModel {
   String? get updatedAt;
   @override
   dynamic get answer;
+
+  /// Create a copy of QuestionModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$QuestionModelImplCopyWith<_$QuestionModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class AdminSide extends StatelessWidget {
@@ -11,6 +10,8 @@ class AdminSide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DoctorInfoViewCubit cubit = DoctorInfoViewCubit.get(context);
+
     return homeDataModel.role == AppStrings.roleAdmin
         ? Stack(
             children: [
@@ -114,7 +115,19 @@ class AdminSide extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
                           ),
-                        )
+                        ),
+                        const Spacer(),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: Switch(
+                            value: cubit.doctorVerifiedEmail,
+                            onChanged: (value) {
+                              cubit.verifyDoctorEmail(
+                                  doctorInfo.data!.id.toString());
+                            },
+                            activeColor: AppColors.primary,
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 8.h),
@@ -130,34 +143,6 @@ class AdminSide extends StatelessWidget {
                                       .data!.emailVerifiedAt
                                       .toString()))
                                   .toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 15.h),
-                    Row(
-                      children: [
-                        Text(
-                          'Blocked:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SizedBox(width: 60.w),
-                        SelectableText(
-                          doctorInfo.data!.blocked.toString() == 'false'
-                              ? 'No'
-                              : 'Yes',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
@@ -192,14 +177,28 @@ class AdminSide extends StatelessWidget {
                     ),
                     SizedBox(height: 15.h),
                     Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Syndicate card status:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 14.sp,
+                            fontSize: 14
+                                .sp, // Adjust font size based on your responsiveness setup
                           ),
-                        )
+                        ),
+                        const Spacer(),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: Switch(
+                            value: cubit.isSyndicateCardVerified,
+                            onChanged: (value) {
+                              cubit.changeSyndicateCardStatus(
+                                  doctorInfo.data!.id.toString());
+                            },
+                            activeColor: AppColors.primary,
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 8.h),
@@ -272,6 +271,46 @@ class AdminSide extends StatelessWidget {
                               )
                             ],
                           ),
+                    SizedBox(height: 15.h),
+                    Row(
+                      children: [
+                        Text(
+                          'Blocked:',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        const Spacer(),
+                        Transform.scale(
+                          scale: 0.8,
+                          child: Switch(
+                            value: cubit.doctorBlocked,
+                            onChanged: (value) {
+                              cubit.changeBlockUserStatus(
+                                  doctorInfo.data!.id.toString());
+                            },
+                            activeColor: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(width: 60.w),
+                        SelectableText(
+                          doctorInfo.data!.blocked.toString() == 'false'
+                              ? 'No'
+                              : 'Yes',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 15.h),
                   ],
                 ),

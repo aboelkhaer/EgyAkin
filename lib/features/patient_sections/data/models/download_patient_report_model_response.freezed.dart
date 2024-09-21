@@ -24,8 +24,12 @@ mixin _$DownloadPatientReportModelResponse {
   @JsonKey(name: 'pdf_url')
   String? get pdfUrl => throw _privateConstructorUsedError;
 
+  /// Serializes this DownloadPatientReportModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DownloadPatientReportModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DownloadPatientReportModelResponseCopyWith<
           DownloadPatientReportModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -53,6 +57,8 @@ class _$DownloadPatientReportModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DownloadPatientReportModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -89,6 +95,8 @@ class __$$DownloadPatientReportModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$DownloadPatientReportModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DownloadPatientReportModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -131,11 +139,13 @@ class _$DownloadPatientReportModelResponseImpl
             (identical(other.pdfUrl, pdfUrl) || other.pdfUrl == pdfUrl));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, pdfUrl);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DownloadPatientReportModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DownloadPatientReportModelResponseImplCopyWith<
@@ -164,8 +174,11 @@ abstract class _DownloadPatientReportModelResponse
   @override
   @JsonKey(name: 'pdf_url')
   String? get pdfUrl;
+
+  /// Create a copy of DownloadPatientReportModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DownloadPatientReportModelResponseImplCopyWith<
           _$DownloadPatientReportModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

@@ -28,8 +28,12 @@ mixin _$GFRCalculatorModelResponse {
   String? get weight => throw _privateConstructorUsedError;
   String? get height => throw _privateConstructorUsedError;
 
+  /// Serializes this GFRCalculatorModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GFRCalculatorModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GFRCalculatorModelResponseCopyWith<GFRCalculatorModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -61,6 +65,8 @@ class _$GFRCalculatorModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GFRCalculatorModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -128,6 +134,8 @@ class __$$GFRCalculatorModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GFRCalculatorModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GFRCalculatorModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -215,12 +223,14 @@ class _$GFRCalculatorModelResponseImpl implements _GFRCalculatorModelResponse {
             (identical(other.height, height) || other.height == height));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, age, creatinine, gender, equationType, weight, height);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GFRCalculatorModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GFRCalculatorModelResponseImplCopyWith<_$GFRCalculatorModelResponseImpl>
@@ -260,8 +270,11 @@ abstract class _GFRCalculatorModelResponse
   String? get weight;
   @override
   String? get height;
+
+  /// Create a copy of GFRCalculatorModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GFRCalculatorModelResponseImplCopyWith<_$GFRCalculatorModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -282,8 +295,12 @@ mixin _$GFRCalculatorHistoryModelResponse {
   String? get height => throw _privateConstructorUsedError;
   String? get equationType => throw _privateConstructorUsedError;
 
+  /// Serializes this GFRCalculatorHistoryModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GFRCalculatorHistoryModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GFRCalculatorHistoryModelResponseCopyWith<GFRCalculatorHistoryModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -318,6 +335,8 @@ class _$GFRCalculatorHistoryModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GFRCalculatorHistoryModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -397,6 +416,8 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GFRCalculatorHistoryModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GFRCalculatorHistoryModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -503,12 +524,14 @@ class _$GFRCalculatorHistoryModelResponseImpl
                 other.equationType == equationType));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, age, creatinine, gender, result,
       date, weight, height, equationType);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GFRCalculatorHistoryModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GFRCalculatorHistoryModelResponseImplCopyWith<
@@ -556,8 +579,11 @@ abstract class _GFRCalculatorHistoryModelResponse
   String? get height;
   @override
   String? get equationType;
+
+  /// Create a copy of GFRCalculatorHistoryModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GFRCalculatorHistoryModelResponseImplCopyWith<
           _$GFRCalculatorHistoryModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

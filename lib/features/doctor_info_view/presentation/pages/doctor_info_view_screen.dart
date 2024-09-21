@@ -104,8 +104,14 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               ),
                             );
                           },
-                          loaded: (doctorInfo, isLoadingScoreHistory,
-                              isLoadedScoreHistory, message, scoreHistory) {
+                          loaded: (
+                            doctorInfo,
+                            isLoadingScoreHistory,
+                            isLoadedScoreHistory,
+                            message,
+                            scoreHistory,
+                            changesCounter,
+                          ) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
                               child: InkWell(
@@ -167,8 +173,14 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           ),
                         );
                       },
-                      loaded: (doctorInfo, isLoadingAchievements,
-                          isLoadedAchievements, message, achievements) {
+                      loaded: (
+                        doctorInfo,
+                        isLoadingAchievements,
+                        isLoadedAchievements,
+                        message,
+                        achievements,
+                        changesCounter,
+                      ) {
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -218,8 +230,12 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               color: Colors.grey.shade600),
                         );
                       },
-                      loaded: (doctorInfo, isLoadingScoreHistory,
-                          isLoadedScoreHistory, message, scoreHistory) {
+                      loaded: (doctorInfo,
+                          isLoadingScoreHistory,
+                          isLoadedScoreHistory,
+                          message,
+                          scoreHistory,
+                          changesCounter) {
                         return Text(
                           capitalizeFirstText(
                               doctorInfo!.data!.specialty ?? AppStrings.empty),
@@ -248,8 +264,14 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               ),
                             );
                           },
-                          loaded: (doctorInfo, isLoadingScoreHistory,
-                              isLoadedScoreHistory, message, scoreHistory) {
+                          loaded: (
+                            doctorInfo,
+                            isLoadingScoreHistory,
+                            isLoadedScoreHistory,
+                            message,
+                            scoreHistory,
+                            changesCounter,
+                          ) {
                             return InkWell(
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
@@ -287,7 +309,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                             isLoadingScoreHistory,
                                             isLoadedScoreHistory,
                                             message,
-                                            scoreHistory) {
+                                            scoreHistory,
+                                            changesCounter) {
                                           return Text(
                                               doctorInfo!.patientCount
                                                   .toString(),
@@ -336,11 +359,14 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                 orElse: () {
                                   return const SizedBox.shrink();
                                 },
-                                loaded: (doctorInfo,
-                                    isLoadingScoreHistory,
-                                    isLoadedScoreHistory,
-                                    message,
-                                    scoreHistory) {
+                                loaded: (
+                                  doctorInfo,
+                                  isLoadingScoreHistory,
+                                  isLoadedScoreHistory,
+                                  message,
+                                  scoreHistory,
+                                  changesCounter,
+                                ) {
                                   return Text(doctorInfo!.scoreValue.toString(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,

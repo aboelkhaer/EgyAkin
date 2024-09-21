@@ -30,8 +30,12 @@ mixin _$GetAllDoctorsPatientsModelResponse {
   GetAllDoctorsPatientDataModelResponse? get data =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetAllDoctorsPatientsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetAllDoctorsPatientsModelResponseCopyWith<
           GetAllDoctorsPatientsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -66,6 +70,8 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -99,6 +105,8 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $GetAllDoctorsPatientDataModelResponseCopyWith<$Res>? get data {
@@ -143,6 +151,8 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetAllDoctorsPatientsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -180,7 +190,6 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetAllDoctorsPatientsModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetAllDoctorsPatientsModelResponse {
   const _$GetAllDoctorsPatientsModelResponseImpl(
       {this.value,
@@ -207,20 +216,8 @@ class _$GetAllDoctorsPatientsModelResponseImpl
   final GetAllDoctorsPatientDataModelResponse? data;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetAllDoctorsPatientsModelResponse(value: $value, verified: $verified, scoreValue: $scoreValue, patientCount: $patientCount, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetAllDoctorsPatientsModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('verified', verified))
-      ..add(DiagnosticsProperty('scoreValue', scoreValue))
-      ..add(DiagnosticsProperty('patientCount', patientCount))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -238,12 +235,14 @@ class _$GetAllDoctorsPatientsModelResponseImpl
             (identical(other.data, data) || other.data == data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, value, verified, scoreValue, patientCount, data);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetAllDoctorsPatientsModelResponseImplCopyWith<
@@ -285,8 +284,11 @@ abstract class _GetAllDoctorsPatientsModelResponse
   String? get patientCount;
   @override
   GetAllDoctorsPatientDataModelResponse? get data;
+
+  /// Create a copy of GetAllDoctorsPatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetAllDoctorsPatientsModelResponseImplCopyWith<
           _$GetAllDoctorsPatientsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -319,8 +321,12 @@ mixin _$GetAllDoctorsPatientDataModelResponse {
   int? get to => throw _privateConstructorUsedError;
   int? get total => throw _privateConstructorUsedError;
 
+  /// Serializes this GetAllDoctorsPatientDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetAllDoctorsPatientDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetAllDoctorsPatientDataModelResponseCopyWith<
           GetAllDoctorsPatientDataModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -361,6 +367,8 @@ class _$GetAllDoctorsPatientDataModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetAllDoctorsPatientDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -470,6 +478,8 @@ class __$$GetAllDoctorsPatientDataModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetAllDoctorsPatientDataModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetAllDoctorsPatientDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -547,7 +557,6 @@ class __$$GetAllDoctorsPatientDataModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetAllDoctorsPatientDataModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetAllDoctorsPatientDataModelResponse {
   const _$GetAllDoctorsPatientDataModelResponseImpl(
       {@JsonKey(name: 'current_page') this.currentPage,
@@ -620,29 +629,8 @@ class _$GetAllDoctorsPatientDataModelResponseImpl
   final int? total;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetAllDoctorsPatientDataModelResponse(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(
-          DiagnosticsProperty('type', 'GetAllDoctorsPatientDataModelResponse'))
-      ..add(DiagnosticsProperty('currentPage', currentPage))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('firstPageUrl', firstPageUrl))
-      ..add(DiagnosticsProperty('from', from))
-      ..add(DiagnosticsProperty('lastPage', lastPage))
-      ..add(DiagnosticsProperty('lastPageUrl', lastPageUrl))
-      ..add(DiagnosticsProperty('links', links))
-      ..add(DiagnosticsProperty('nextPageUrl', nextPageUrl))
-      ..add(DiagnosticsProperty('path', path))
-      ..add(DiagnosticsProperty('perPage', perPage))
-      ..add(DiagnosticsProperty('prevPageUrl', prevPageUrl))
-      ..add(DiagnosticsProperty('to', to))
-      ..add(DiagnosticsProperty('total', total));
   }
 
   @override
@@ -671,7 +659,7 @@ class _$GetAllDoctorsPatientDataModelResponseImpl
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -689,7 +677,9 @@ class _$GetAllDoctorsPatientDataModelResponseImpl
       to,
       total);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetAllDoctorsPatientDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetAllDoctorsPatientDataModelResponseImplCopyWith<
@@ -758,8 +748,11 @@ abstract class _GetAllDoctorsPatientDataModelResponse
   int? get to;
   @override
   int? get total;
+
+  /// Create a copy of GetAllDoctorsPatientDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetAllDoctorsPatientDataModelResponseImplCopyWith<
           _$GetAllDoctorsPatientDataModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

@@ -116,6 +116,7 @@ class CheckIfVerified extends StatelessWidget {
                             isUploadedSyndicateCard,
                             message,
                             checkUpdateMessageCounter,
+                            isUserBlocked,
                           ) {
                             if (message.isNotEmpty) {
                               customSnackBar(
@@ -138,6 +139,7 @@ class CheckIfVerified extends StatelessWidget {
                             isUploadedSyndicateCard,
                             message,
                             checkUpdateMessageCounter,
+                            isUserBlocked,
                           ) {
                             if (isUploadingSyndicateCard) {
                               return Row(

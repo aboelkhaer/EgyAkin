@@ -23,8 +23,12 @@ AddPatientCommentsModelResponse _$AddPatientCommentsModelResponseFromJson(
 mixin _$AddPatientCommentsModelResponse {
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this AddPatientCommentsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AddPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AddPatientCommentsModelResponseCopyWith<AddPatientCommentsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$AddPatientCommentsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AddPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +93,8 @@ class __$$AddPatientCommentsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$AddPatientCommentsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AddPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -104,7 +112,6 @@ class __$$AddPatientCommentsModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AddPatientCommentsModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _AddPatientCommentsModelResponse {
   const _$AddPatientCommentsModelResponseImpl({this.message});
 
@@ -116,16 +123,8 @@ class _$AddPatientCommentsModelResponseImpl
   final String? message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AddPatientCommentsModelResponse(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AddPatientCommentsModelResponse'))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -136,11 +135,13 @@ class _$AddPatientCommentsModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AddPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AddPatientCommentsModelResponseImplCopyWith<
@@ -166,8 +167,11 @@ abstract class _AddPatientCommentsModelResponse
 
   @override
   String? get message;
+
+  /// Create a copy of AddPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddPatientCommentsModelResponseImplCopyWith<
           _$AddPatientCommentsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

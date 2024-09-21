@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/get_score_history_usecase.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_state.dart';
 
 import '../../../../exports.dart';

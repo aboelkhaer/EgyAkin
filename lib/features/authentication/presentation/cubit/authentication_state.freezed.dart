@@ -108,6 +108,9 @@ class _$AuthenticationStateCopyWithImpl<$Res, $Val extends AuthenticationState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -124,22 +127,19 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
+class _$InitialImpl implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'AuthenticationState.initial'));
   }
 
   @override
@@ -268,22 +268,19 @@ class __$$LoadingImplCopyWithImpl<$Res>
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
+class _$LoadingImpl implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'AuthenticationState.loading'));
   }
 
   @override
@@ -418,6 +415,8 @@ class __$$ChangePasswordVisibilityImplCopyWithImpl<$Res>
       $Res Function(_$ChangePasswordVisibilityImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -439,9 +438,7 @@ class __$$ChangePasswordVisibilityImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ChangePasswordVisibilityImpl
-    with DiagnosticableTreeMixin
-    implements _ChangePasswordVisibility {
+class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
   const _$ChangePasswordVisibilityImpl(
       this.signInObscureText, this.signInVisiblePasswordIcon);
 
@@ -451,19 +448,8 @@ class _$ChangePasswordVisibilityImpl
   final bool signInVisiblePasswordIcon;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.changePasswordVisibility(signInObscureText: $signInObscureText, signInVisiblePasswordIcon: $signInVisiblePasswordIcon)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty(
-          'type', 'AuthenticationState.changePasswordVisibility'))
-      ..add(DiagnosticsProperty('signInObscureText', signInObscureText))
-      ..add(DiagnosticsProperty(
-          'signInVisiblePasswordIcon', signInVisiblePasswordIcon));
   }
 
   @override
@@ -482,7 +468,9 @@ class _$ChangePasswordVisibilityImpl
   int get hashCode =>
       Object.hash(runtimeType, signInObscureText, signInVisiblePasswordIcon);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ChangePasswordVisibilityImplCopyWith<_$ChangePasswordVisibilityImpl>
@@ -598,7 +586,10 @@ abstract class _ChangePasswordVisibility implements AuthenticationState {
 
   bool get signInObscureText;
   bool get signInVisiblePasswordIcon;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ChangePasswordVisibilityImplCopyWith<_$ChangePasswordVisibilityImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -620,6 +611,8 @@ class __$$CheckConfirmationImplCopyWithImpl<$Res>
       $Res Function(_$CheckConfirmationImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -636,26 +629,15 @@ class __$$CheckConfirmationImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$CheckConfirmationImpl
-    with DiagnosticableTreeMixin
-    implements _CheckConfirmation {
+class _$CheckConfirmationImpl implements _CheckConfirmation {
   const _$CheckConfirmationImpl(this.changedCounter);
 
   @override
   final int changedCounter;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.checkConfirmation(changedCounter: $changedCounter)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(
-          DiagnosticsProperty('type', 'AuthenticationState.checkConfirmation'))
-      ..add(DiagnosticsProperty('changedCounter', changedCounter));
   }
 
   @override
@@ -670,7 +652,9 @@ class _$CheckConfirmationImpl
   @override
   int get hashCode => Object.hash(runtimeType, changedCounter);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CheckConfirmationImplCopyWith<_$CheckConfirmationImpl> get copyWith =>
@@ -781,7 +765,10 @@ abstract class _CheckConfirmation implements AuthenticationState {
       _$CheckConfirmationImpl;
 
   int get changedCounter;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CheckConfirmationImplCopyWith<_$CheckConfirmationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -808,6 +795,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -831,6 +820,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     ));
   }
 
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $AuthenticationModelResponseCopyWith<$Res> get doctorData {
@@ -843,7 +834,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(
       this.doctorData, this.isSignInSuccess, this.isRegisterSuccess);
 
@@ -855,18 +846,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   final bool isRegisterSuccess;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.loaded(doctorData: $doctorData, isSignInSuccess: $isSignInSuccess, isRegisterSuccess: $isRegisterSuccess)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AuthenticationState.loaded'))
-      ..add(DiagnosticsProperty('doctorData', doctorData))
-      ..add(DiagnosticsProperty('isSignInSuccess', isSignInSuccess))
-      ..add(DiagnosticsProperty('isRegisterSuccess', isRegisterSuccess));
   }
 
   @override
@@ -886,7 +867,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   int get hashCode =>
       Object.hash(runtimeType, doctorData, isSignInSuccess, isRegisterSuccess);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -998,7 +981,10 @@ abstract class _Loaded implements AuthenticationState {
   AuthenticationModelResponse get doctorData;
   bool get isSignInSuccess;
   bool get isRegisterSuccess;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1020,6 +1006,8 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1036,23 +1024,15 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
+class _$ErrorImpl implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationState.error(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AuthenticationState.error'))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -1066,7 +1046,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -1175,7 +1157,10 @@ abstract class _Error implements AuthenticationState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

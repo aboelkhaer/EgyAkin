@@ -26,8 +26,12 @@ mixin _$AuthenticationModelResponse {
   @JsonKey(name: 'data')
   DoctorModel? get doctorModel => throw _privateConstructorUsedError;
 
+  /// Serializes this AuthenticationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $AuthenticationModelResponseCopyWith<AuthenticationModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -59,6 +63,8 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -82,6 +88,8 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get doctorModel {
@@ -123,6 +131,8 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$AuthenticationModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -150,7 +160,6 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$AuthenticationModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _AuthenticationModelResponse {
   const _$AuthenticationModelResponseImpl(
       {this.value, this.token, @JsonKey(name: 'data') this.doctorModel});
@@ -168,18 +177,8 @@ class _$AuthenticationModelResponseImpl
   final DoctorModel? doctorModel;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'AuthenticationModelResponse(value: $value, token: $token, doctorModel: $doctorModel)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'AuthenticationModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('token', token))
-      ..add(DiagnosticsProperty('doctorModel', doctorModel));
   }
 
   @override
@@ -193,11 +192,13 @@ class _$AuthenticationModelResponseImpl
                 other.doctorModel == doctorModel));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, token, doctorModel);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$AuthenticationModelResponseImplCopyWith<_$AuthenticationModelResponseImpl>
@@ -230,8 +231,11 @@ abstract class _AuthenticationModelResponse
   @override
   @JsonKey(name: 'data')
   DoctorModel? get doctorModel;
+
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthenticationModelResponseImplCopyWith<_$AuthenticationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -281,8 +285,12 @@ mixin _$DoctorModel {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
 
+  /// Serializes this DoctorModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DoctorModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DoctorModelCopyWith<DoctorModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -333,6 +341,8 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DoctorModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -523,6 +533,8 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
       _$DoctorModelImpl _value, $Res Function(_$DoctorModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DoctorModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -669,7 +681,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
+class _$DoctorModelImpl implements _DoctorModel {
   const _$DoctorModelImpl(
       {this.id,
       @JsonKey(name: 'name') this.firstName,
@@ -778,43 +790,8 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
   final String? updatedAt;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'DoctorModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('firstName', firstName))
-      ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('email', email))
-      ..add(DiagnosticsProperty('age', age))
-      ..add(DiagnosticsProperty('fcmToken', fcmToken))
-      ..add(DiagnosticsProperty('specialty', specialty))
-      ..add(DiagnosticsProperty('token', token))
-      ..add(DiagnosticsProperty('password', password))
-      ..add(DiagnosticsProperty('workingplace', workingplace))
-      ..add(DiagnosticsProperty(
-          'isSyndicateCardRequired', isSyndicateCardRequired))
-      ..add(DiagnosticsProperty('phone', phone))
-      ..add(DiagnosticsProperty('job', job))
-      ..add(DiagnosticsProperty('gender', gender))
-      ..add(DiagnosticsProperty('image', image))
-      ..add(DiagnosticsProperty('passwordConfirmation', passwordConfirmation))
-      ..add(DiagnosticsProperty('syndicateCard', syndicateCard))
-      ..add(DiagnosticsProperty('patientsCount', patientsCount))
-      ..add(DiagnosticsProperty('highestdegree', highestdegree))
-      ..add(DiagnosticsProperty('registrationNumber', registrationNumber))
-      ..add(DiagnosticsProperty('emailVerifiedAt', emailVerifiedAt))
-      ..add(DiagnosticsProperty('phoneVerifiedAt', phoneVerifiedAt))
-      ..add(DiagnosticsProperty('blocked', blocked))
-      ..add(DiagnosticsProperty('limited', limited))
-      ..add(DiagnosticsProperty('patients', patients))
-      ..add(DiagnosticsProperty('createdAt', createdAt))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt));
   }
 
   @override
@@ -868,7 +845,7 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -901,7 +878,9 @@ class _$DoctorModelImpl with DiagnosticableTreeMixin implements _DoctorModel {
         updatedAt
       ]);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DoctorModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DoctorModelImplCopyWith<_$DoctorModelImpl> get copyWith =>
@@ -981,8 +960,8 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   String? get gender;
   @override
-  String? get image;
-  @override // String? score,
+  String? get image; // String? score,
+  @override
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation;
   @override
@@ -1014,8 +993,11 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+
+  /// Create a copy of DoctorModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DoctorModelImplCopyWith<_$DoctorModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

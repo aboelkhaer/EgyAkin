@@ -17,7 +17,7 @@ class InformationTab extends StatelessWidget {
             return const SizedBox.shrink();
           },
           loaded: (doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
-              message, scoreHistory) {
+              message, scoreHistory, changesCounter) {
             return SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Padding(

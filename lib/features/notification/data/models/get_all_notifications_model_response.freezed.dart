@@ -28,8 +28,12 @@ mixin _$GetAllNotificationsModelResponse {
   RecentNotificationForPagenationModel? get recentRecords =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetAllNotificationsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetAllNotificationsModelResponseCopyWith<GetAllNotificationsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -62,6 +66,8 @@ class _$GetAllNotificationsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -90,6 +96,8 @@ class _$GetAllNotificationsModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $RecentNotificationForPagenationModelCopyWith<$Res>? get recentRecords {
@@ -133,6 +141,8 @@ class __$$GetAllNotificationsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetAllNotificationsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -213,12 +223,14 @@ class _$GetAllNotificationsModelResponseImpl
                 other.recentRecords == recentRecords));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, unreadCount,
       const DeepCollectionEquality().hash(_todayRecords), recentRecords);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetAllNotificationsModelResponseImplCopyWith<
@@ -255,8 +267,11 @@ abstract class _GetAllNotificationsModelResponse
   List<NotificationsModel>? get todayRecords;
   @override
   RecentNotificationForPagenationModel? get recentRecords;
+
+  /// Create a copy of GetAllNotificationsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetAllNotificationsModelResponseImplCopyWith<
           _$GetAllNotificationsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -289,8 +304,12 @@ mixin _$RecentNotificationForPagenationModel {
   int? get to => throw _privateConstructorUsedError;
   int? get total => throw _privateConstructorUsedError;
 
+  /// Serializes this RecentNotificationForPagenationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RecentNotificationForPagenationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RecentNotificationForPagenationModelCopyWith<
           RecentNotificationForPagenationModel>
       get copyWith => throw _privateConstructorUsedError;
@@ -331,6 +350,8 @@ class _$RecentNotificationForPagenationModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of RecentNotificationForPagenationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -440,6 +461,8 @@ class __$$RecentNotificationForPagenationModelImplCopyWithImpl<$Res>
       $Res Function(_$RecentNotificationForPagenationModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RecentNotificationForPagenationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -619,7 +642,7 @@ class _$RecentNotificationForPagenationModelImpl
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -637,7 +660,9 @@ class _$RecentNotificationForPagenationModelImpl
       to,
       total);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RecentNotificationForPagenationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RecentNotificationForPagenationModelImplCopyWith<
@@ -706,8 +731,11 @@ abstract class _RecentNotificationForPagenationModel
   int? get to;
   @override
   int? get total;
+
+  /// Create a copy of RecentNotificationForPagenationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RecentNotificationForPagenationModelImplCopyWith<
           _$RecentNotificationForPagenationModelImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -728,8 +756,12 @@ mixin _$NotificationsModel {
   String? get createdAt => throw _privateConstructorUsedError;
   PatientNotificationModel? get patient => throw _privateConstructorUsedError;
 
+  /// Serializes this NotificationsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $NotificationsModelCopyWith<NotificationsModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -761,6 +793,8 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -799,6 +833,8 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     ) as $Val);
   }
 
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PatientNotificationModelCopyWith<$Res>? get patient {
@@ -840,6 +876,8 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
       $Res Function(_$NotificationsModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -927,12 +965,14 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.patient, patient) || other.patient == patient));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, read, type, typeId, createdAt, patient);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$NotificationsModelImplCopyWith<_$NotificationsModelImpl> get copyWith =>
@@ -973,8 +1013,11 @@ abstract class _NotificationsModel implements NotificationsModel {
   String? get createdAt;
   @override
   PatientNotificationModel? get patient;
+
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NotificationsModelImplCopyWith<_$NotificationsModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -994,8 +1037,12 @@ mixin _$PatientNotificationModel {
   SectionsNotificationDataModel? get sections =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this PatientNotificationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PatientNotificationModelCopyWith<PatientNotificationModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1029,6 +1076,8 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1067,6 +1116,8 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get doctor {
@@ -1079,6 +1130,8 @@ class _$PatientNotificationModelCopyWithImpl<$Res,
     });
   }
 
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SectionsNotificationDataModelCopyWith<$Res>? get sections {
@@ -1126,6 +1179,8 @@ class __$$PatientNotificationModelImplCopyWithImpl<$Res>
       $Res Function(_$PatientNotificationModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1213,12 +1268,14 @@ class _$PatientNotificationModelImpl implements _PatientNotificationModel {
                 other.sections == sections));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, hospital, governorate, doctor, sections);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PatientNotificationModelImplCopyWith<_$PatientNotificationModelImpl>
@@ -1258,8 +1315,11 @@ abstract class _PatientNotificationModel implements PatientNotificationModel {
   DoctorModel? get doctor;
   @override
   SectionsNotificationDataModel? get sections;
+
+  /// Create a copy of PatientNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PatientNotificationModelImplCopyWith<_$PatientNotificationModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1278,8 +1338,12 @@ mixin _$SectionsNotificationDataModel {
   bool? get outcomeStatus => throw _privateConstructorUsedError;
   String? get workingplace => throw _privateConstructorUsedError;
 
+  /// Serializes this SectionsNotificationDataModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SectionsNotificationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SectionsNotificationDataModelCopyWith<SectionsNotificationDataModel>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1310,6 +1374,8 @@ class _$SectionsNotificationDataModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SectionsNotificationDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1365,6 +1431,8 @@ class __$$SectionsNotificationDataModelImplCopyWithImpl<$Res>
       $Res Function(_$SectionsNotificationDataModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SectionsNotificationDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1438,12 +1506,14 @@ class _$SectionsNotificationDataModelImpl
                 other.workingplace == workingplace));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, submitStatus, outcomeStatus, workingplace);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SectionsNotificationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SectionsNotificationDataModelImplCopyWith<
@@ -1480,8 +1550,11 @@ abstract class _SectionsNotificationDataModel
   bool? get outcomeStatus;
   @override
   String? get workingplace;
+
+  /// Create a copy of SectionsNotificationDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SectionsNotificationDataModelImplCopyWith<
           _$SectionsNotificationDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -1497,8 +1570,12 @@ mixin _$Link {
   String get label => throw _privateConstructorUsedError;
   bool get active => throw _privateConstructorUsedError;
 
+  /// Serializes this Link to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Link
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $LinkCopyWith<Link> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1520,6 +1597,8 @@ class _$LinkCopyWithImpl<$Res, $Val extends Link>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Link
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1561,6 +1640,8 @@ class __$$LinkImplCopyWithImpl<$Res>
   __$$LinkImplCopyWithImpl(_$LinkImpl _value, $Res Function(_$LinkImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Link
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1616,12 +1697,14 @@ class _$LinkImpl implements _Link {
             (identical(other.active, active) || other.active == active));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(url), label, active);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Link
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LinkImplCopyWith<_$LinkImpl> get copyWith =>
@@ -1649,8 +1732,11 @@ abstract class _Link implements Link {
   String get label;
   @override
   bool get active;
+
+  /// Create a copy of Link
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LinkImplCopyWith<_$LinkImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

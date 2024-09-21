@@ -24,8 +24,12 @@ SendOTPForEmailVerificationModelResponse
 mixin _$SendOTPForEmailVerificationModelResponse {
   bool? get success => throw _privateConstructorUsedError;
 
+  /// Serializes this SendOTPForEmailVerificationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SendOTPForEmailVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SendOTPForEmailVerificationModelResponseCopyWith<
           SendOTPForEmailVerificationModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -54,6 +58,8 @@ class _$SendOTPForEmailVerificationModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SendOTPForEmailVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -90,6 +96,8 @@ class __$$SendOTPForEmailVerificationModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$SendOTPForEmailVerificationModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SendOTPForEmailVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -130,11 +138,13 @@ class _$SendOTPForEmailVerificationModelResponseImpl
             (identical(other.success, success) || other.success == success));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, success);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SendOTPForEmailVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SendOTPForEmailVerificationModelResponseImplCopyWith<
@@ -162,8 +172,11 @@ abstract class _SendOTPForEmailVerificationModelResponse
 
   @override
   bool? get success;
+
+  /// Create a copy of SendOTPForEmailVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SendOTPForEmailVerificationModelResponseImplCopyWith<
           _$SendOTPForEmailVerificationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

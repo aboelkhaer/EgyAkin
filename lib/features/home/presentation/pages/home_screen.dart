@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
 
@@ -60,8 +63,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   isUploadedSyndicateCard,
                   message,
                   checkUpdateMessageCounter,
+                  isUserBlocked,
                 ) {
                   if (checkUpdateMessageCounter == 1) {
+                    if (homeData.isUserBlocked == true) {
+                      showBlockedDialog(
+                        context: context,
+                        onDismissed: () {
+                          cubit.signOut();
+                        },
+                      );
+                      cubit.checkUpdateMessageCounter++;
+                    }
                     if (cubit.isUpdateMessageHidden == false) {
                       showUpdateDialog(
                         context: context,
@@ -71,6 +84,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                       cubit.checkUpdateMessageCounter++;
                     }
+                  }
+                  if (isUserBlocked) {
+                    navigatorKey.currentState
+                        ?.pushReplacementNamed(AppRoutes.signIn);
                   }
                 },
               );
@@ -104,6 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isUploadedSyndicateCar,
                   message,
                   checkUpdateMessageCounter,
+                  isUserBlocked,
                 ) {
                   if (homeIndex == 2) {
                     return const SizedBox.shrink();
@@ -211,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
               isUploadedSyndicateCard,
               message,
               checkUpdateMessageCounter,
+              isUserBlocked,
             ) {
               return state.maybeWhen(
                 orElse: () {
@@ -225,6 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isUploadedSyndicateCard,
                   message,
                   checkUpdateMessageCounter,
+                  isUserBlocked,
                 ) {
                   return ProfileScreen(
                     isSyndicateCardRequired: cubit.isSyndicateCardRequired,

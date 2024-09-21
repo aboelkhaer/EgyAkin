@@ -31,6 +31,7 @@ class PostsSliderAndDots extends StatelessWidget {
                 isUploadedSyndicateCard,
                 message,
                 checkUpdateMessageCounter,
+                isUserBlocked,
               ) {
                 return FadeIn(
                   duration: const Duration(seconds: 2),
@@ -87,6 +88,7 @@ class PostsSliderAndDots extends StatelessWidget {
                 isUploadedSyndicateCard,
                 message,
                 checkUpdateMessageCounter,
+                isUserBlocked,
               ) {
                 return homeData.data!.posts!.isEmpty
                     ? const SizedBox.shrink()

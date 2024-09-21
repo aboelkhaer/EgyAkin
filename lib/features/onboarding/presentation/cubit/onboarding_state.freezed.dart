@@ -50,7 +50,9 @@ mixin _$OnboardingState {
   }) =>
       throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OnboardingState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $OnboardingStateCopyWith<OnboardingState> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -74,6 +76,8 @@ class _$OnboardingStateCopyWithImpl<$Res, $Val extends OnboardingState>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of OnboardingState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -107,6 +111,8 @@ class __$$ChangedImplCopyWithImpl<$Res>
       _$ChangedImpl _value, $Res Function(_$ChangedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of OnboardingState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -146,7 +152,9 @@ class _$ChangedImpl implements _Changed {
   @override
   int get hashCode => Object.hash(runtimeType, dotsPosition);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of OnboardingState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ChangedImplCopyWith<_$ChangedImpl> get copyWith =>
@@ -214,8 +222,11 @@ abstract class _Changed implements OnboardingState {
 
   @override
   int get dotsPosition;
+
+  /// Create a copy of OnboardingState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ChangedImplCopyWith<_$ChangedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

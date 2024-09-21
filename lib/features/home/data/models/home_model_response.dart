@@ -16,6 +16,7 @@ class HomeModelResponse with _$HomeModelResponse {
     @JsonKey(name: 'all_patient_count') String? allPatientCount,
     @JsonKey(name: 'score_value') String? scoreValue,
     @JsonKey(name: 'role') String? role,
+    @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
     HomeDataModelResponse? data,
   }) = _HomeModelResponse;
   factory HomeModelResponse.fromJson(Map<String, dynamic> json) =>

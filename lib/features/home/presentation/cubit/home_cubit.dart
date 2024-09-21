@@ -10,6 +10,7 @@ import 'package:egy_akin/features/home/data/models/home_model_response.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
+import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/injection_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,14 +23,16 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit(
     this._getHomeUsecase,
     this._uploadSyndicateCardUsecase,
+    this._signOutUsecase,
   ) : super(const HomeState.initial());
   static HomeCubit get(context) => BlocProvider.of(context);
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
-  CarouselController carouselController = CarouselController();
+  CarouselSliderController carouselController = CarouselSliderController();
   ScrollController scrollController = ScrollController();
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
+  final SignOutUsecase _signOutUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
   bool? accountVerification;
@@ -40,6 +43,7 @@ class HomeCubit extends Cubit<HomeState> {
   String currentDoctorRole = '';
   String currentUserVersion = '';
   bool getCurrentUserVersion = false;
+
   HomeModelResponse homeDataModel = const HomeModelResponse();
 
   final GlobalKey addPatientKey = GlobalKey();
@@ -58,6 +62,7 @@ class HomeCubit extends Cubit<HomeState> {
         value.isUploadedSyndicateCard,
         '',
         checkUpdateMessageCounter,
+        false,
       ),
     ));
   }
@@ -103,6 +108,7 @@ class HomeCubit extends Cubit<HomeState> {
         value.isUploadedSyndicateCard,
         '',
         checkUpdateMessageCounter,
+        false,
       ),
     ));
     getHome();
@@ -126,6 +132,7 @@ class HomeCubit extends Cubit<HomeState> {
         value.isUploadedSyndicateCard,
         '',
         checkUpdateMessageCounter,
+        false,
       ),
     ));
   }
@@ -143,6 +150,7 @@ class HomeCubit extends Cubit<HomeState> {
                 value.isUploadedSyndicateCard,
                 '',
                 checkUpdateMessageCounter,
+                false,
               )),
     );
   }
@@ -180,6 +188,7 @@ class HomeCubit extends Cubit<HomeState> {
             false,
             '',
             checkUpdateMessageCounter,
+            false,
           ),
         );
       },
@@ -201,6 +210,7 @@ class HomeCubit extends Cubit<HomeState> {
           false,
           '',
           checkUpdateMessageCounter,
+          false,
         ),
       ),
     );
@@ -228,6 +238,7 @@ class HomeCubit extends Cubit<HomeState> {
                   false,
                   l.message,
                   checkUpdateMessageCounter,
+                  false,
                 ),
               ),
             );
@@ -245,6 +256,7 @@ class HomeCubit extends Cubit<HomeState> {
                   true,
                   r.message!,
                   checkUpdateMessageCounter,
+                  false,
                 ),
               ),
             );
@@ -263,6 +275,7 @@ class HomeCubit extends Cubit<HomeState> {
               false,
               '',
               checkUpdateMessageCounter,
+              false,
             ),
           ),
         );
@@ -281,6 +294,7 @@ class HomeCubit extends Cubit<HomeState> {
               false,
               'Photo access denied. Please allow photo access from settings.',
               checkUpdateMessageCounter,
+              false,
             ),
           ),
         );
@@ -299,6 +313,7 @@ class HomeCubit extends Cubit<HomeState> {
               false,
               'An unexpected error occurred: ${e.message}',
               checkUpdateMessageCounter,
+              false,
             ),
           ),
         );
@@ -316,9 +331,39 @@ class HomeCubit extends Cubit<HomeState> {
             false,
             'An unexpected error occurred: $e',
             checkUpdateMessageCounter,
+            false,
           ),
         ),
       );
     }
+  }
+
+  signOut() async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => HomeState.loaded(
+          value.homeData,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          tabsController.index,
+          value.isUploadingSyndicateCard,
+          value.isUploadedSyndicateCard,
+          '',
+          checkUpdateMessageCounter,
+          true,
+        ),
+      ),
+    );
+    final result = await _signOutUsecase.execute(NoParams());
+
+    result.fold(
+      (l) {
+        debugPrint(l.message);
+      },
+      (r) async {
+        await sl<AppPreferences>().removeDoctorData();
+      },
+    );
   }
 }

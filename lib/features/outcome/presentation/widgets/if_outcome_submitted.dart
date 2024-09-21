@@ -1,5 +1,3 @@
-import 'package:egy_akin/app/shared/functions/doctor_name.dart';
-
 import '../../../../exports.dart';
 
 class IfOutcomeSubmitted extends StatelessWidget {

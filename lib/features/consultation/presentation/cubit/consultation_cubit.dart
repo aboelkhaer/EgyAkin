@@ -1,7 +1,3 @@
-import 'package:egy_akin/features/consultation/domain/usecases/get_current_doctor_consultation_usecase.dart';
-import 'package:egy_akin/features/consultation/domain/usecases/get_received_consultation_usecase.dart';
-import 'package:egy_akin/features/consultation/presentation/cubit/consultation_state.dart';
-
 import '../../../../exports.dart';
 
 class ConsultationCubit extends Cubit<ConsultationState> {

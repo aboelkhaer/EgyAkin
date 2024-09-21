@@ -122,6 +122,9 @@ class _$ConsultationStateCopyWithImpl<$Res, $Val extends ConsultationState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -138,6 +141,9 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -292,6 +298,9 @@ class __$$MyConsultationsLoadingImplCopyWithImpl<$Res>
       _$MyConsultationsLoadingImpl _value,
       $Res Function(_$MyConsultationsLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -451,6 +460,8 @@ class __$$MyConsultationsLoadedImplCopyWithImpl<$Res>
       $Res Function(_$MyConsultationsLoadedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -503,7 +514,9 @@ class _$MyConsultationsLoadedImpl implements _MyConsultationsLoaded {
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_allCurrentDoctorConsultation));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MyConsultationsLoadedImplCopyWith<_$MyConsultationsLoadedImpl>
@@ -630,7 +643,10 @@ abstract class _MyConsultationsLoaded implements ConsultationState {
 
   List<GetCurrentDoctorConsultationModelResponse>
       get allCurrentDoctorConsultation;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MyConsultationsLoadedImplCopyWith<_$MyConsultationsLoadedImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -652,6 +668,9 @@ class __$$ReceivedConsultationsLoadingImplCopyWithImpl<$Res>
       _$ReceivedConsultationsLoadingImpl _value,
       $Res Function(_$ReceivedConsultationsLoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -815,6 +834,8 @@ class __$$ReceivedConsultationsLoadedImplCopyWithImpl<$Res>
       $Res Function(_$ReceivedConsultationsLoadedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -866,7 +887,9 @@ class _$ReceivedConsultationsLoadedImpl
   int get hashCode => Object.hash(runtimeType,
       const DeepCollectionEquality().hash(_allReceivedConsultation));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ReceivedConsultationsLoadedImplCopyWith<_$ReceivedConsultationsLoadedImpl>
@@ -992,7 +1015,10 @@ abstract class _ReceivedConsultationsLoaded implements ConsultationState {
           allReceivedConsultation) = _$ReceivedConsultationsLoadedImpl;
 
   List<GetCurrentDoctorConsultationModelResponse> get allReceivedConsultation;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ReceivedConsultationsLoadedImplCopyWith<_$ReceivedConsultationsLoadedImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -1014,6 +1040,8 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1052,7 +1080,9 @@ class _$ErrorImpl implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -1175,7 +1205,10 @@ abstract class _Error implements ConsultationState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

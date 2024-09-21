@@ -31,8 +31,12 @@ mixin _$GetAchievementsModelResponse {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
 
+  /// Serializes this GetAchievementsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetAchievementsModelResponseCopyWith<GetAchievementsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -66,6 +70,8 @@ class _$GetAchievementsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -139,6 +145,8 @@ class __$$GetAchievementsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetAchievementsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -239,12 +247,14 @@ class _$GetAchievementsModelResponseImpl
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, name, description, score, image, createdAt, updatedAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetAchievementsModelResponseImplCopyWith<
@@ -291,8 +301,11 @@ abstract class _GetAchievementsModelResponse
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+
+  /// Create a copy of GetAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetAchievementsModelResponseImplCopyWith<
           _$GetAchievementsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -315,8 +328,12 @@ mixin _$PivotAchievementsModelResponse {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
 
+  /// Serializes this PivotAchievementsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PivotAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PivotAchievementsModelResponseCopyWith<PivotAchievementsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -348,6 +365,8 @@ class _$PivotAchievementsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PivotAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -409,6 +428,8 @@ class __$$PivotAchievementsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$PivotAchievementsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PivotAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -494,12 +515,14 @@ class _$PivotAchievementsModelResponseImpl
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, userId, achievementId, achieved, createdAt, updatedAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PivotAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PivotAchievementsModelResponseImplCopyWith<
@@ -542,8 +565,11 @@ abstract class _PivotAchievementsModelResponse
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+
+  /// Create a copy of PivotAchievementsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PivotAchievementsModelResponseImplCopyWith<
           _$PivotAchievementsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

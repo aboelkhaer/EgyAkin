@@ -24,8 +24,12 @@ mixin _$SubmitOutcomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this SubmitOutcomeModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SubmitOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SubmitOutcomeModelResponseCopyWith<SubmitOutcomeModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$SubmitOutcomeModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SubmitOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class __$$SubmitOutcomeModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$SubmitOutcomeModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SubmitOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -113,9 +121,7 @@ class __$$SubmitOutcomeModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SubmitOutcomeModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _SubmitOutcomeModelResponse {
+class _$SubmitOutcomeModelResponseImpl implements _SubmitOutcomeModelResponse {
   const _$SubmitOutcomeModelResponseImpl({this.value, this.message});
 
   factory _$SubmitOutcomeModelResponseImpl.fromJson(
@@ -128,17 +134,8 @@ class _$SubmitOutcomeModelResponseImpl
   final String? message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'SubmitOutcomeModelResponse(value: $value, message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SubmitOutcomeModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -150,11 +147,13 @@ class _$SubmitOutcomeModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SubmitOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SubmitOutcomeModelResponseImplCopyWith<_$SubmitOutcomeModelResponseImpl>
@@ -182,8 +181,11 @@ abstract class _SubmitOutcomeModelResponse
   bool? get value;
   @override
   String? get message;
+
+  /// Create a copy of SubmitOutcomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SubmitOutcomeModelResponseImplCopyWith<_$SubmitOutcomeModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

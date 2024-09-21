@@ -45,8 +45,12 @@ mixin _$GetCurrentDoctorConsultationModelResponse {
   @JsonKey(name: 'consult_message')
   String? get consultMessage => throw _privateConstructorUsedError;
 
+  /// Serializes this GetCurrentDoctorConsultationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetCurrentDoctorConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetCurrentDoctorConsultationModelResponseCopyWith<
           GetCurrentDoctorConsultationModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -88,6 +92,8 @@ class _$GetCurrentDoctorConsultationModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetCurrentDoctorConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -197,6 +203,8 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetCurrentDoctorConsultationModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetCurrentDoctorConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -274,7 +282,6 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetCurrentDoctorConsultationModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetCurrentDoctorConsultationModelResponse {
   const _$GetCurrentDoctorConsultationModelResponseImpl(
       {this.id,
@@ -332,29 +339,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
   final String? consultMessage;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetCurrentDoctorConsultationModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, image: $image, workingplace: $workingplace, isSyndicateCard: $isSyndicateCard, patientName: $patientName, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultMessage: $consultMessage)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty(
-          'type', 'GetCurrentDoctorConsultationModelResponse'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('doctorId', doctorId))
-      ..add(DiagnosticsProperty('patientId', patientId))
-      ..add(DiagnosticsProperty('doctorFirstName', doctorFirstName))
-      ..add(DiagnosticsProperty('doctorLastName', doctorLastName))
-      ..add(DiagnosticsProperty('image', image))
-      ..add(DiagnosticsProperty('workingplace', workingplace))
-      ..add(DiagnosticsProperty('isSyndicateCard', isSyndicateCard))
-      ..add(DiagnosticsProperty('patientName', patientName))
-      ..add(DiagnosticsProperty('status', status))
-      ..add(DiagnosticsProperty('createdAt', createdAt))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('consultMessage', consultMessage));
   }
 
   @override
@@ -387,7 +373,7 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
                 other.consultMessage == consultMessage));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -405,7 +391,9 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       updatedAt,
       consultMessage);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetCurrentDoctorConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetCurrentDoctorConsultationModelResponseImplCopyWith<
@@ -480,8 +468,11 @@ abstract class _GetCurrentDoctorConsultationModelResponse
   @override
   @JsonKey(name: 'consult_message')
   String? get consultMessage;
+
+  /// Create a copy of GetCurrentDoctorConsultationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetCurrentDoctorConsultationModelResponseImplCopyWith<
           _$GetCurrentDoctorConsultationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

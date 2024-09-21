@@ -1,6 +1,5 @@
-import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/get_achievements_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 
 import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
@@ -14,4 +13,14 @@ abstract class DoctorInfoViewRepository {
 
   Future<Either<Failure, List<GetAchievementsModelResponse>>> getAchievements(
       String doctorId);
+  Future<Either<Failure, SyndicateCardVerifyModelResponse>>
+      changeSyndicateCardStatus({
+    required String status,
+    required String doctorId,
+  });
+
+  Future<Either<Failure, BlockUserModelResponse>> blockUser(
+      {required String doctorId, required bool status});
+  Future<Either<Failure, VerifyUserEmailModelResponse>> verifyDoctorEmail(
+      {required String doctorId, required String? timestamp});
 }

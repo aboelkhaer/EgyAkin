@@ -15,6 +15,7 @@ abstract class HomeState with _$HomeState {
       bool isUploadingSyndicateCard,
       bool isUploadedSyndicateCard,
       String message,
-      int checkUpdateMessageCounter) = _Loaded;
+      int checkUpdateMessageCounter,
+      bool isUserBlocked) = _Loaded;
   const factory HomeState.error(String message) = _Error;
 }

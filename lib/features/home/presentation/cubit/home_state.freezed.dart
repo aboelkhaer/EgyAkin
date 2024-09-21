@@ -28,7 +28,8 @@ mixin _$HomeState {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -45,7 +46,8 @@ mixin _$HomeState {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -62,7 +64,8 @@ mixin _$HomeState {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -110,6 +113,9 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -126,22 +132,19 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
+class _$InitialImpl implements _Initial {
   const _$InitialImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HomeState.initial()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'HomeState.initial'));
   }
 
   @override
@@ -166,7 +169,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -186,7 +190,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -206,7 +211,8 @@ class _$InitialImpl with DiagnosticableTreeMixin implements _Initial {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -273,22 +279,19 @@ class __$$LoadingImplCopyWithImpl<$Res>
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
+class _$LoadingImpl implements _Loading {
   const _$LoadingImpl();
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HomeState.loading()';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'HomeState.loading'));
   }
 
   @override
@@ -313,7 +316,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -333,7 +337,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -353,7 +358,8 @@ class _$LoadingImpl with DiagnosticableTreeMixin implements _Loading {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -420,7 +426,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isUploadingSyndicateCard,
       bool isUploadedSyndicateCard,
       String message,
-      int checkUpdateMessageCounter});
+      int checkUpdateMessageCounter,
+      bool isUserBlocked});
 
   $HomeModelResponseCopyWith<$Res> get homeData;
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
@@ -434,6 +441,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -445,6 +454,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isUploadedSyndicateCard = null,
     Object? message = null,
     Object? checkUpdateMessageCounter = null,
+    Object? isUserBlocked = null,
   }) {
     return _then(_$LoadedImpl(
       null == homeData
@@ -479,9 +489,15 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.checkUpdateMessageCounter
           : checkUpdateMessageCounter // ignore: cast_nullable_to_non_nullable
               as int,
+      null == isUserBlocked
+          ? _value.isUserBlocked
+          : isUserBlocked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HomeModelResponseCopyWith<$Res> get homeData {
@@ -490,6 +506,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     });
   }
 
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res> get currentDoctorModel {
@@ -501,7 +519,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
+class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(
       this.homeData,
       this.currentDoctorModel,
@@ -510,7 +528,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       this.isUploadingSyndicateCard,
       this.isUploadedSyndicateCard,
       this.message,
-      this.checkUpdateMessageCounter);
+      this.checkUpdateMessageCounter,
+      this.isUserBlocked);
 
   @override
   final HomeModelResponse homeData;
@@ -528,28 +547,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
   final String message;
   @override
   final int checkUpdateMessageCounter;
+  @override
+  final bool isUserBlocked;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message, checkUpdateMessageCounter: $checkUpdateMessageCounter)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HomeState.loaded'))
-      ..add(DiagnosticsProperty('homeData', homeData))
-      ..add(DiagnosticsProperty('currentDoctorModel', currentDoctorModel))
-      ..add(DiagnosticsProperty('dotsPosition', dotsPosition))
-      ..add(DiagnosticsProperty('homeIndex', homeIndex))
-      ..add(DiagnosticsProperty(
-          'isUploadingSyndicateCard', isUploadingSyndicateCard))
-      ..add(DiagnosticsProperty(
-          'isUploadedSyndicateCard', isUploadedSyndicateCard))
-      ..add(DiagnosticsProperty('message', message))
-      ..add(DiagnosticsProperty(
-          'checkUpdateMessageCounter', checkUpdateMessageCounter));
+  String toString() {
+    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message, checkUpdateMessageCounter: $checkUpdateMessageCounter, isUserBlocked: $isUserBlocked)';
   }
 
   @override
@@ -574,7 +577,9 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             (identical(other.message, message) || other.message == message) &&
             (identical(other.checkUpdateMessageCounter,
                     checkUpdateMessageCounter) ||
-                other.checkUpdateMessageCounter == checkUpdateMessageCounter));
+                other.checkUpdateMessageCounter == checkUpdateMessageCounter) &&
+            (identical(other.isUserBlocked, isUserBlocked) ||
+                other.isUserBlocked == isUserBlocked));
   }
 
   @override
@@ -587,9 +592,12 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
       isUploadingSyndicateCard,
       isUploadedSyndicateCard,
       message,
-      checkUpdateMessageCounter);
+      checkUpdateMessageCounter,
+      isUserBlocked);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -608,7 +616,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -620,7 +629,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         isUploadingSyndicateCard,
         isUploadedSyndicateCard,
         message,
-        checkUpdateMessageCounter);
+        checkUpdateMessageCounter,
+        isUserBlocked);
   }
 
   @override
@@ -636,7 +646,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -648,7 +659,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
         isUploadingSyndicateCard,
         isUploadedSyndicateCard,
         message,
-        checkUpdateMessageCounter);
+        checkUpdateMessageCounter,
+        isUserBlocked);
   }
 
   @override
@@ -664,7 +676,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -678,7 +691,8 @@ class _$LoadedImpl with DiagnosticableTreeMixin implements _Loaded {
           isUploadingSyndicateCard,
           isUploadedSyndicateCard,
           message,
-          checkUpdateMessageCounter);
+          checkUpdateMessageCounter,
+          isUserBlocked);
     }
     return orElse();
   }
@@ -730,7 +744,8 @@ abstract class _Loaded implements HomeState {
       final bool isUploadingSyndicateCard,
       final bool isUploadedSyndicateCard,
       final String message,
-      final int checkUpdateMessageCounter) = _$LoadedImpl;
+      final int checkUpdateMessageCounter,
+      final bool isUserBlocked) = _$LoadedImpl;
 
   HomeModelResponse get homeData;
   DoctorModel get currentDoctorModel;
@@ -740,7 +755,11 @@ abstract class _Loaded implements HomeState {
   bool get isUploadedSyndicateCard;
   String get message;
   int get checkUpdateMessageCounter;
-  @JsonKey(ignore: true)
+  bool get isUserBlocked;
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -762,6 +781,8 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -778,23 +799,15 @@ class __$$ErrorImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
+class _$ErrorImpl implements _Error {
   const _$ErrorImpl(this.message);
 
   @override
   final String message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HomeState.error(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HomeState.error'))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -808,7 +821,9 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -827,7 +842,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -847,7 +863,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -867,7 +884,8 @@ class _$ErrorImpl with DiagnosticableTreeMixin implements _Error {
             bool isUploadingSyndicateCard,
             bool isUploadedSyndicateCard,
             String message,
-            int checkUpdateMessageCounter)?
+            int checkUpdateMessageCounter,
+            bool isUserBlocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -920,7 +938,10 @@ abstract class _Error implements HomeState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

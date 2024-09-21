@@ -23,8 +23,12 @@ DeletePostCommentModelResponse _$DeletePostCommentModelResponseFromJson(
 mixin _$DeletePostCommentModelResponse {
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this DeletePostCommentModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DeletePostCommentModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DeletePostCommentModelResponseCopyWith<DeletePostCommentModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$DeletePostCommentModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DeletePostCommentModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +93,8 @@ class __$$DeletePostCommentModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$DeletePostCommentModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DeletePostCommentModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -127,11 +135,13 @@ class _$DeletePostCommentModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DeletePostCommentModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DeletePostCommentModelResponseImplCopyWith<
@@ -157,8 +167,11 @@ abstract class _DeletePostCommentModelResponse
 
   @override
   String? get message;
+
+  /// Create a copy of DeletePostCommentModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DeletePostCommentModelResponseImplCopyWith<
           _$DeletePostCommentModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_state.dart';
 import 'package:readmore/readmore.dart';
 import 'package:timeago/timeago.dart' as timeago;

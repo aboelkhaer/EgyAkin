@@ -34,10 +34,16 @@ mixin _$HomeModelResponse {
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'role')
   String? get role => throw _privateConstructorUsedError;
+  @JsonKey(name: 'isUserBlocked')
+  bool? get isUserBlocked => throw _privateConstructorUsedError;
   HomeDataModelResponse? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this HomeModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HomeModelResponseCopyWith<HomeModelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -58,6 +64,7 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
+      @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
       HomeDataModelResponse? data});
 
   $HomeDataModelResponseCopyWith<$Res>? get data;
@@ -73,6 +80,8 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -85,6 +94,7 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
+    Object? isUserBlocked = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -124,6 +134,10 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String?,
+      isUserBlocked: freezed == isUserBlocked
+          ? _value.isUserBlocked
+          : isUserBlocked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -131,6 +145,8 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     ) as $Val);
   }
 
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $HomeDataModelResponseCopyWith<$Res>? get data {
@@ -162,6 +178,7 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
+      @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
       HomeDataModelResponse? data});
 
   @override
@@ -176,6 +193,8 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$HomeModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -188,6 +207,7 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
+    Object? isUserBlocked = freezed,
     Object? data = freezed,
   }) {
     return _then(_$HomeModelResponseImpl(
@@ -227,6 +247,10 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String?,
+      isUserBlocked: freezed == isUserBlocked
+          ? _value.isUserBlocked
+          : isUserBlocked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -237,9 +261,7 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HomeModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _HomeModelResponse {
+class _$HomeModelResponseImpl implements _HomeModelResponse {
   const _$HomeModelResponseImpl(
       {this.value,
       this.verified,
@@ -250,6 +272,7 @@ class _$HomeModelResponseImpl
       @JsonKey(name: 'all_patient_count') this.allPatientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
       @JsonKey(name: 'role') this.role,
+      @JsonKey(name: 'isUserBlocked') this.isUserBlocked,
       this.data});
 
   factory _$HomeModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -279,29 +302,14 @@ class _$HomeModelResponseImpl
   @JsonKey(name: 'role')
   final String? role;
   @override
+  @JsonKey(name: 'isUserBlocked')
+  final bool? isUserBlocked;
+  @override
   final HomeDataModelResponse? data;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HomeModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('verified', verified))
-      ..add(DiagnosticsProperty('unreadCount', unreadCount))
-      ..add(DiagnosticsProperty(
-          'isSyndicateCardRequired', isSyndicateCardRequired))
-      ..add(DiagnosticsProperty('appUpdateMessage', appUpdateMessage))
-      ..add(DiagnosticsProperty('doctorPatientCount', doctorPatientCount))
-      ..add(DiagnosticsProperty('allPatientCount', allPatientCount))
-      ..add(DiagnosticsProperty('scoreValue', scoreValue))
-      ..add(DiagnosticsProperty('role', role))
-      ..add(DiagnosticsProperty('data', data));
+  String toString() {
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, isUserBlocked: $isUserBlocked, data: $data)';
   }
 
   @override
@@ -326,10 +334,12 @@ class _$HomeModelResponseImpl
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
             (identical(other.role, role) || other.role == role) &&
+            (identical(other.isUserBlocked, isUserBlocked) ||
+                other.isUserBlocked == isUserBlocked) &&
             (identical(other.data, data) || other.data == data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -342,9 +352,12 @@ class _$HomeModelResponseImpl
       allPatientCount,
       scoreValue,
       role,
+      isUserBlocked,
       data);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HomeModelResponseImplCopyWith<_$HomeModelResponseImpl> get copyWith =>
@@ -370,6 +383,7 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       @JsonKey(name: 'all_patient_count') final String? allPatientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
       @JsonKey(name: 'role') final String? role,
+      @JsonKey(name: 'isUserBlocked') final bool? isUserBlocked,
       final HomeDataModelResponse? data}) = _$HomeModelResponseImpl;
 
   factory _HomeModelResponse.fromJson(Map<String, dynamic> json) =
@@ -399,9 +413,15 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @JsonKey(name: 'role')
   String? get role;
   @override
-  HomeDataModelResponse? get data;
+  @JsonKey(name: 'isUserBlocked')
+  bool? get isUserBlocked;
   @override
-  @JsonKey(ignore: true)
+  HomeDataModelResponse? get data;
+
+  /// Create a copy of HomeModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HomeModelResponseImplCopyWith<_$HomeModelResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -422,8 +442,12 @@ mixin _$HomeDataModelResponse {
   List<DoctorModel>? get topDoctors => throw _privateConstructorUsedError;
   List<PostModel>? get posts => throw _privateConstructorUsedError;
 
+  /// Serializes this HomeDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of HomeDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $HomeDataModelResponseCopyWith<HomeDataModelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -453,6 +477,8 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of HomeDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -508,6 +534,8 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$HomeDataModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of HomeDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -539,9 +567,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$HomeDataModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _HomeDataModelResponse {
+class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
   const _$HomeDataModelResponseImpl(
       {@JsonKey(name: 'all_patients')
       final List<PatientHomeDataModel>? allPatients,
@@ -600,19 +626,8 @@ class _$HomeDataModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, posts: $posts)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'HomeDataModelResponse'))
-      ..add(DiagnosticsProperty('allPatients', allPatients))
-      ..add(DiagnosticsProperty('currentPatients', currentPatients))
-      ..add(DiagnosticsProperty('topDoctors', topDoctors))
-      ..add(DiagnosticsProperty('posts', posts));
   }
 
   @override
@@ -629,7 +644,7 @@ class _$HomeDataModelResponseImpl
             const DeepCollectionEquality().equals(other._posts, _posts));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -638,7 +653,9 @@ class _$HomeDataModelResponseImpl
       const DeepCollectionEquality().hash(_topDoctors),
       const DeepCollectionEquality().hash(_posts));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of HomeDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$HomeDataModelResponseImplCopyWith<_$HomeDataModelResponseImpl>
@@ -675,8 +692,11 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   List<DoctorModel>? get topDoctors;
   @override
   List<PostModel>? get posts;
+
+  /// Create a copy of HomeDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$HomeDataModelResponseImplCopyWith<_$HomeDataModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -695,8 +715,12 @@ mixin _$PatientHomeDataModel {
   DoctorModel? get doctor => throw _privateConstructorUsedError;
   SectionHomeDataModel? get sections => throw _privateConstructorUsedError;
 
+  /// Serializes this PatientHomeDataModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PatientHomeDataModelCopyWith<PatientHomeDataModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -730,6 +754,8 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -768,6 +794,8 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get doctor {
@@ -780,6 +808,8 @@ class _$PatientHomeDataModelCopyWithImpl<$Res,
     });
   }
 
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SectionHomeDataModelCopyWith<$Res>? get sections {
@@ -823,6 +853,8 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
       $Res Function(_$PatientHomeDataModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -864,9 +896,7 @@ class __$$PatientHomeDataModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PatientHomeDataModelImpl
-    with DiagnosticableTreeMixin
-    implements _PatientHomeDataModel {
+class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
   const _$PatientHomeDataModelImpl(
       {this.id,
       this.name,
@@ -893,21 +923,8 @@ class _$PatientHomeDataModelImpl
   final SectionHomeDataModel? sections;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'PatientHomeDataModel(id: $id, name: $name, hospital: $hospital, updatedAt: $updatedAt, doctor: $doctor, sections: $sections)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PatientHomeDataModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('name', name))
-      ..add(DiagnosticsProperty('hospital', hospital))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('doctor', doctor))
-      ..add(DiagnosticsProperty('sections', sections));
   }
 
   @override
@@ -926,12 +943,14 @@ class _$PatientHomeDataModelImpl
                 other.sections == sections));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, name, hospital, updatedAt, doctor, sections);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PatientHomeDataModelImplCopyWith<_$PatientHomeDataModelImpl>
@@ -972,8 +991,11 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   DoctorModel? get doctor;
   @override
   SectionHomeDataModel? get sections;
+
+  /// Create a copy of PatientHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PatientHomeDataModelImplCopyWith<_$PatientHomeDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -991,8 +1013,12 @@ mixin _$SectionHomeDataModel {
   @JsonKey(name: 'outcome_status')
   bool? get outcomeStatus => throw _privateConstructorUsedError;
 
+  /// Serializes this SectionHomeDataModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SectionHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SectionHomeDataModelCopyWith<SectionHomeDataModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1020,6 +1046,8 @@ class _$SectionHomeDataModelCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SectionHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1066,6 +1094,8 @@ class __$$SectionHomeDataModelImplCopyWithImpl<$Res>
       $Res Function(_$SectionHomeDataModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SectionHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1092,9 +1122,7 @@ class __$$SectionHomeDataModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SectionHomeDataModelImpl
-    with DiagnosticableTreeMixin
-    implements _SectionHomeDataModel {
+class _$SectionHomeDataModelImpl implements _SectionHomeDataModel {
   const _$SectionHomeDataModelImpl(
       {@JsonKey(name: 'patient_id') this.patientId,
       @JsonKey(name: 'submit_status') this.submitStatus,
@@ -1114,18 +1142,8 @@ class _$SectionHomeDataModelImpl
   final bool? outcomeStatus;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'SectionHomeDataModel(patientId: $patientId, submitStatus: $submitStatus, outcomeStatus: $outcomeStatus)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SectionHomeDataModel'))
-      ..add(DiagnosticsProperty('patientId', patientId))
-      ..add(DiagnosticsProperty('submitStatus', submitStatus))
-      ..add(DiagnosticsProperty('outcomeStatus', outcomeStatus));
   }
 
   @override
@@ -1141,12 +1159,14 @@ class _$SectionHomeDataModelImpl
                 other.outcomeStatus == outcomeStatus));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, patientId, submitStatus, outcomeStatus);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SectionHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SectionHomeDataModelImplCopyWith<_$SectionHomeDataModelImpl>
@@ -1181,8 +1201,11 @@ abstract class _SectionHomeDataModel implements SectionHomeDataModel {
   @override
   @JsonKey(name: 'outcome_status')
   bool? get outcomeStatus;
+
+  /// Create a copy of SectionHomeDataModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SectionHomeDataModelImplCopyWith<_$SectionHomeDataModelImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

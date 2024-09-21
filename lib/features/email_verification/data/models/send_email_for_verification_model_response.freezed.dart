@@ -23,8 +23,12 @@ SendEmailForVerificationModelResponse
 mixin _$SendEmailForVerificationModelResponse {
   bool? get success => throw _privateConstructorUsedError;
 
+  /// Serializes this SendEmailForVerificationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SendEmailForVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SendEmailForVerificationModelResponseCopyWith<
           SendEmailForVerificationModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -52,6 +56,8 @@ class _$SendEmailForVerificationModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SendEmailForVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -88,6 +94,8 @@ class __$$SendEmailForVerificationModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$SendEmailForVerificationModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SendEmailForVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -128,11 +136,13 @@ class _$SendEmailForVerificationModelResponseImpl
             (identical(other.success, success) || other.success == success));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, success);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SendEmailForVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SendEmailForVerificationModelResponseImplCopyWith<
@@ -159,8 +169,11 @@ abstract class _SendEmailForVerificationModelResponse
 
   @override
   bool? get success;
+
+  /// Create a copy of SendEmailForVerificationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SendEmailForVerificationModelResponseImplCopyWith<
           _$SendEmailForVerificationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

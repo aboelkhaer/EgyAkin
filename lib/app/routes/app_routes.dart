@@ -1,6 +1,4 @@
-import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
-import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_cubit.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 
 import '../../exports.dart';

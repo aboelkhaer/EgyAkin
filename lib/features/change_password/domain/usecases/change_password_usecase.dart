@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
-import 'package:egy_akin/features/change_password/domain/repositories/change_password_repo.dart';
 import '../../../../exports.dart';
 
 class ChangePasswordUsecase

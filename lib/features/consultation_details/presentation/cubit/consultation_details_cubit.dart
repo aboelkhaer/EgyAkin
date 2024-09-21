@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/consultation_details/domain/usecases/add_consultation_reply_usecase.dart';
-import 'package:egy_akin/features/consultation_details/domain/usecases/get_consultation_details_usecase.dart';
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_state.dart';
 
 import '../../../../exports.dart';

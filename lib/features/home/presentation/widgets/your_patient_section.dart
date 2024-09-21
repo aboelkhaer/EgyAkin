@@ -27,6 +27,7 @@ class YourPatientSection extends StatelessWidget {
                 isUploadedSyndicateCard,
                 message,
                 checkUpdateMessageCounter,
+                isUserBlocked,
               ) {
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
@@ -66,6 +67,7 @@ class YourPatientSection extends StatelessWidget {
               isUploadedSyndicateCard,
               message,
               checkUpdateMessageCounter,
+              isUserBlocked,
             ) {
               return FadeIn(
                 duration: const Duration(seconds: 2),

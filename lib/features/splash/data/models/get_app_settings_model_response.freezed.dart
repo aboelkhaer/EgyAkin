@@ -26,8 +26,12 @@ mixin _$GetAppSettingsModelResponse {
   @JsonKey(name: 'force_update')
   bool? get forceUpdate => throw _privateConstructorUsedError;
 
+  /// Serializes this GetAppSettingsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetAppSettingsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetAppSettingsModelResponseCopyWith<GetAppSettingsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -56,6 +60,8 @@ class _$GetAppSettingsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetAppSettingsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -99,6 +105,8 @@ class __$$GetAppSettingsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetAppSettingsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetAppSettingsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -153,11 +161,13 @@ class _$GetAppSettingsModelResponseImpl
                 other.forceUpdate == forceUpdate));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, appFreeze, forceUpdate);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetAppSettingsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetAppSettingsModelResponseImplCopyWith<_$GetAppSettingsModelResponseImpl>
@@ -188,8 +198,11 @@ abstract class _GetAppSettingsModelResponse
   @override
   @JsonKey(name: 'force_update')
   bool? get forceUpdate;
+
+  /// Create a copy of GetAppSettingsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetAppSettingsModelResponseImplCopyWith<_$GetAppSettingsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

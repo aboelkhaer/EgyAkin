@@ -75,7 +75,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      BlocBuilder<NotificationCubit, NotificationState>(
+                      BlocConsumer<NotificationCubit, NotificationState>(
+                        listener: (context, state) {
+                          state.maybeWhen(
+                            orElse: () {},
+                            error: (message) {
+                              customSnackBar(
+                                  context: context, message: message);
+                            },
+                          );
+                        },
                         builder: (context, state) {
                           return state.maybeWhen(
                             orElse: () {

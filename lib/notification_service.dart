@@ -10,7 +10,7 @@ class NotificationServices {
 
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
-    return token!;
+    return token.toString();
   }
 
   void isRefreshToken() async {

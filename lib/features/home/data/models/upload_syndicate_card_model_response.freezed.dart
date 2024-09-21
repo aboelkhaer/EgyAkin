@@ -23,8 +23,12 @@ UploadSyndicateCardModelResponse _$UploadSyndicateCardModelResponseFromJson(
 mixin _$UploadSyndicateCardModelResponse {
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this UploadSyndicateCardModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UploadSyndicateCardModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UploadSyndicateCardModelResponseCopyWith<UploadSyndicateCardModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$UploadSyndicateCardModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UploadSyndicateCardModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +93,8 @@ class __$$UploadSyndicateCardModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$UploadSyndicateCardModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UploadSyndicateCardModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -127,11 +135,13 @@ class _$UploadSyndicateCardModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UploadSyndicateCardModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UploadSyndicateCardModelResponseImplCopyWith<
@@ -158,8 +168,11 @@ abstract class _UploadSyndicateCardModelResponse
 
   @override
   String? get message;
+
+  /// Create a copy of UploadSyndicateCardModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UploadSyndicateCardModelResponseImplCopyWith<
           _$UploadSyndicateCardModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

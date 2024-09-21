@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -39,6 +38,9 @@ class _SplashScreenState extends State<SplashScreen>
       debugPrint(value);
     });
     sl<NotificationServices>().isRefreshToken();
+
+    // Perform check for updates
+    checkForUpdates();
   }
 
   @override
@@ -51,6 +53,8 @@ class _SplashScreenState extends State<SplashScreen>
     await getCurrentVersion(); // Ensure version is fetched before update check
     await sl<AppPreferences>().setData('userAppVersion', currentUserVersion);
 
+    if (!mounted) return; // Check if widget is still mounted before continuing
+
     if (Theme.of(context).platform == TargetPlatform.android) {
       await _checkForAndroidUpdate();
     } else if (Theme.of(context).platform == TargetPlatform.iOS) {
@@ -61,6 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> getCurrentVersion() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
+      if (!mounted) return; // Avoid calling setState if widget is not mounted
       setState(() {
         currentUserVersion = packageInfo.version;
       });
@@ -80,14 +85,13 @@ class _SplashScreenState extends State<SplashScreen>
           await InAppUpdate.startFlexibleUpdate();
           _showForceUpdateDialog(); // Show the forced update dialog
         }
-        // Print and store the version information
-        debugPrint(
-            'Android update version: ${updateInfo.availableVersionCode}');
       }
     } catch (e) {
-      debugPrint('Failed to check for updates on Android: $e');
-      _showErrorDialog(
-          'Failed to check for updates on Android. Please try again later.');
+      if (mounted) {
+        debugPrint('Failed to check for updates on Android: $e');
+        _showErrorDialog(
+            'Failed to check for updates on Android. Please try again later.');
+      }
     }
   }
 
@@ -96,71 +100,57 @@ class _SplashScreenState extends State<SplashScreen>
     final currentVersion = packageInfo.version;
     final bundleId = packageInfo.packageName;
 
-    debugPrint('Current version: $currentVersion');
+    if (!mounted) return;
     setState(() {
       currentUserVersion = currentVersion;
     });
-
-    debugPrint('Bundle ID: $bundleId');
 
     try {
       final response = await http
           .get(Uri.parse('https://itunes.apple.com/lookup?bundleId=$bundleId'));
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        debugPrint('API response: $jsonData');
-
         if (jsonData['resultCount'] > 0 && jsonData['results'].isNotEmpty) {
           final appStoreVersion = jsonData['results'][0]['version'];
-          debugPrint('App Store version: $appStoreVersion');
 
           if (appStoreVersion != currentVersion) {
             _isUpToDate = false;
-
-            _showForceUpdateDialog(); // Show the forced update dialog
-
-            // Print and store the version information
-            debugPrint('iOS update version: $appStoreVersion');
+            _showForceUpdateDialog();
           }
-        } else {
-          debugPrint('No results found in App Store response');
         }
-      } else {
-        debugPrint('Failed to fetch App Store data: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error occurred while checking for iOS update: $e');
+      if (mounted) {
+        debugPrint('Error occurred while checking for iOS update: $e');
+      }
     }
   }
 
   void _showForceUpdateDialog() {
+    if (!mounted) return;
     showDialog(
       context: context,
-      barrierDismissible:
-          false, // Prevent dismissal by tapping outside or pressing the back button
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Mandatory Update'),
-          backgroundColor: Colors.grey.shade100,
           content: const Text(
               'A new version of the app is available. You must update to continue using it.'),
           actions: <Widget>[
             TextButton(
               onPressed: () async {
                 if (Theme.of(context).platform == TargetPlatform.android) {
-                  // Complete the flexible update if needed
                   await InAppUpdate.completeFlexibleUpdate();
                 } else if (Theme.of(context).platform == TargetPlatform.iOS) {
                   const url =
                       'https://apps.apple.com/app/id1234567890'; // Replace with your App Store URL
                   if (await canLaunch(url)) {
-                    await launch(url); // Launch the App Store for iOS update
+                    await launch(url);
                   } else {
                     _showErrorDialog(
                         'Could not launch the App Store. Please try again later.');
                   }
                 }
-                // Close the app or block further interaction until the update is applied
               },
               child: const Text('Update Now'),
             ),
@@ -171,6 +161,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _showErrorDialog(String message) {
+    if (!mounted) return;
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -194,7 +185,6 @@ class _SplashScreenState extends State<SplashScreen>
   void _navigateToNextScreen() {
     if (_isUpToDate) {
       final SplashCubit cubit = SplashCubit.get(context);
-
       cubit.state.maybeWhen(
         loaded: (isAuthentication, isWelcomed, isAppFreeze, isForceUpdate) {
           if (isAppFreeze) {
@@ -210,10 +200,8 @@ class _SplashScreenState extends State<SplashScreen>
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);
           } else if (isWelcomed) {
-            log('welcome true');
             Navigator.of(context).pushReplacementNamed(AppRoutes.signIn);
           } else {
-            log('welcome false');
             Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
           }
         },
@@ -222,17 +210,11 @@ class _SplashScreenState extends State<SplashScreen>
         },
       );
     }
-    // If the app is not up-to-date, the update dialog will already be shown
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light));
     animationController.forward();
-    // ignore: unused_local_variable
-    SplashCubit cubit = SplashCubit.get(context);
     return Scaffold(
       body: BlocListener<SplashCubit, SplashState>(
         listener: (context, state) {

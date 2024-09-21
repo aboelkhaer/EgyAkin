@@ -58,4 +58,8 @@ class ApiEndPoint {
   static String getAchievements(String doctorId) {
     return '$baseUrl/api/users/$doctorId/achievements';
   }
+
+  static const syndicateCardVerifyRequest = '$baseUrl/api/users';
+  static const blockDoctor = '$baseUrl/api/users';
+  static const verifyDoctorEmail = '$baseUrl/api/users';
 }

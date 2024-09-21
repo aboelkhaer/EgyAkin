@@ -24,8 +24,12 @@ mixin _$DeletePatientModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this DeletePatientModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DeletePatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DeletePatientModelResponseCopyWith<DeletePatientModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$DeletePatientModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DeletePatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -92,6 +98,8 @@ class __$$DeletePatientModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$DeletePatientModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DeletePatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -139,11 +147,13 @@ class _$DeletePatientModelResponseImpl implements _DeletePatientModelResponse {
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DeletePatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DeletePatientModelResponseImplCopyWith<_$DeletePatientModelResponseImpl>
@@ -171,8 +181,11 @@ abstract class _DeletePatientModelResponse
   bool? get value;
   @override
   String? get message;
+
+  /// Create a copy of DeletePatientModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DeletePatientModelResponseImplCopyWith<_$DeletePatientModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

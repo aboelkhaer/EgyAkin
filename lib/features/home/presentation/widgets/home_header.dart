@@ -79,6 +79,7 @@ class HomeHeader extends StatelessWidget {
                             isUploadedSyndicateCard,
                             message,
                             checkUpdateMessageCounter,
+                            isUserBlocked,
                           ) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
@@ -133,6 +134,7 @@ class HomeHeader extends StatelessWidget {
                               isUploadedSyndicateCard,
                               message,
                               checkUpdateMessageCounter,
+                              isUserBlocked,
                             ) {
                               context
                                   .read<ProfileCubit>()
@@ -176,6 +178,7 @@ class HomeHeader extends StatelessWidget {
                               isUploadedSyndicateCard,
                               message,
                               checkUpdateMessageCounter,
+                              isUserBlocked,
                             ) {
                               if (homeData.isSyndicateCardRequired ==
                                   'Verified') {
@@ -235,6 +238,7 @@ class HomeHeader extends StatelessWidget {
                 isUploadedSyndicateCard,
                 message,
                 checkUpdateMessageCounter,
+                isUserBlocked,
               ) {
                 return Tooltip(
                   message: 'Add patient',

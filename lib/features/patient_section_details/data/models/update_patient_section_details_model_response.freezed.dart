@@ -24,8 +24,12 @@ UpdatePatientSectionDetailsModelResponse
 mixin _$UpdatePatientSectionDetailsModelResponse {
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this UpdatePatientSectionDetailsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UpdatePatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UpdatePatientSectionDetailsModelResponseCopyWith<
           UpdatePatientSectionDetailsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -54,6 +58,8 @@ class _$UpdatePatientSectionDetailsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UpdatePatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -90,6 +96,8 @@ class __$$UpdatePatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$UpdatePatientSectionDetailsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UpdatePatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -130,11 +138,13 @@ class _$UpdatePatientSectionDetailsModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UpdatePatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UpdatePatientSectionDetailsModelResponseImplCopyWith<
@@ -162,8 +172,11 @@ abstract class _UpdatePatientSectionDetailsModelResponse
 
   @override
   String? get message;
+
+  /// Create a copy of UpdatePatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdatePatientSectionDetailsModelResponseImplCopyWith<
           _$UpdatePatientSectionDetailsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

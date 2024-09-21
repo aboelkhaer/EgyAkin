@@ -1,4 +1,3 @@
-import 'package:egy_akin/app/shared/functions/doctor_name.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../exports.dart';

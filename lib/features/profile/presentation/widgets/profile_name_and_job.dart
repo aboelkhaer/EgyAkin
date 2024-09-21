@@ -1,7 +1,4 @@
-import 'package:egy_akin/app/shared/functions/custom_bottom_sheet.dart';
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/score_history/presentation/cubit/score_history_cubit.dart';
-import 'package:egy_akin/features/score_history/presentation/pages/score_history_screen.dart';
 
 class ProfileNameAndJob extends StatelessWidget {
   final ProfileCubit cubit;

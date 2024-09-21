@@ -31,8 +31,12 @@ mixin _$PostModel {
   String? get postType => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
 
+  /// Serializes this PostModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PostModelCopyWith<PostModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -65,6 +69,8 @@ class _$PostModelCopyWithImpl<$Res, $Val extends PostModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -113,6 +119,8 @@ class _$PostModelCopyWithImpl<$Res, $Val extends PostModel>
     ) as $Val);
   }
 
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get doctor {
@@ -156,6 +164,8 @@ class __$$PostModelImplCopyWithImpl<$Res>
       _$PostModelImpl _value, $Res Function(_$PostModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -207,7 +217,7 @@ class __$$PostModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
+class _$PostModelImpl implements _PostModel {
   const _$PostModelImpl(
       {this.id,
       this.title,
@@ -241,23 +251,8 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
   final DoctorModel? doctor;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'PostModel(id: $id, title: $title, content: $content, image: $image, hidden: $hidden, updatedAt: $updatedAt, postType: $postType, doctor: $doctor)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PostModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('content', content))
-      ..add(DiagnosticsProperty('image', image))
-      ..add(DiagnosticsProperty('hidden', hidden))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('postType', postType))
-      ..add(DiagnosticsProperty('doctor', doctor));
   }
 
   @override
@@ -277,12 +272,14 @@ class _$PostModelImpl with DiagnosticableTreeMixin implements _PostModel {
             (identical(other.doctor, doctor) || other.doctor == doctor));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, title, content, image,
       hidden, updatedAt, postType, doctor);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PostModelImplCopyWith<_$PostModelImpl> get copyWith =>
@@ -328,8 +325,11 @@ abstract class _PostModel implements PostModel {
   String? get postType;
   @override
   DoctorModel? get doctor;
+
+  /// Create a copy of PostModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PostModelImplCopyWith<_$PostModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

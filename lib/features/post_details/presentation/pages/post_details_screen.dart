@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/presentation/widgets/full_screen_image.dart';
-
 import '../../../../exports.dart';
 
 class PostDetailsScreen extends StatefulWidget {

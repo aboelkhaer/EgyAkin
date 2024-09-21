@@ -24,8 +24,12 @@ mixin _$UpdateDoctorProfileModelResponse {
   DoctorModel? get data => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this UpdateDoctorProfileModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $UpdateDoctorProfileModelResponseCopyWith<UpdateDoctorProfileModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -54,6 +58,8 @@ class _$UpdateDoctorProfileModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -72,6 +78,8 @@ class _$UpdateDoctorProfileModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get data {
@@ -110,6 +118,8 @@ class __$$UpdateDoctorProfileModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$UpdateDoctorProfileModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -132,7 +142,6 @@ class __$$UpdateDoctorProfileModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$UpdateDoctorProfileModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _UpdateDoctorProfileModelResponse {
   const _$UpdateDoctorProfileModelResponseImpl({this.data, this.message});
 
@@ -146,17 +155,8 @@ class _$UpdateDoctorProfileModelResponseImpl
   final String? message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'UpdateDoctorProfileModelResponse(data: $data, message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'UpdateDoctorProfileModelResponse'))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -168,11 +168,13 @@ class _$UpdateDoctorProfileModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, data, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$UpdateDoctorProfileModelResponseImplCopyWith<
@@ -202,8 +204,11 @@ abstract class _UpdateDoctorProfileModelResponse
   DoctorModel? get data;
   @override
   String? get message;
+
+  /// Create a copy of UpdateDoctorProfileModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdateDoctorProfileModelResponseImplCopyWith<
           _$UpdateDoctorProfileModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

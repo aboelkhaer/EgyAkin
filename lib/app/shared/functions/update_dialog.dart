@@ -23,8 +23,9 @@ void showUpdateDialog({
                 ),
               ),
               SizedBox(height: 15.h),
-              const Text('What\'s New',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              Text('What\'s New',
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp)),
               SizedBox(height: 5.h),
               HtmlWidget(
                 '''<ul><li><strong>Doctor Consultations</strong>: Doctors can now consult one or more colleagues for advice on their patients.</li><li><strong>User Achievements</strong>: Earn achievements by adding a set number of patients or completing specific outcomes.</li></ul>''',
@@ -37,7 +38,7 @@ void showUpdateDialog({
                   return true;
                 },
                 textStyle:
-                    TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                    TextStyle(fontSize: 11.sp, color: Colors.grey.shade600),
               ),
             ],
           ),

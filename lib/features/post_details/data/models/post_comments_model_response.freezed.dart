@@ -24,8 +24,12 @@ mixin _$PostCommentsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   List<CommentModel>? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this PostCommentsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of PostCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $PostCommentsModelResponseCopyWith<PostCommentsModelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -50,6 +54,8 @@ class _$PostCommentsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of PostCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -91,6 +97,8 @@ class __$$PostCommentsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$PostCommentsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of PostCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -112,9 +120,7 @@ class __$$PostCommentsModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$PostCommentsModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _PostCommentsModelResponse {
+class _$PostCommentsModelResponseImpl implements _PostCommentsModelResponse {
   const _$PostCommentsModelResponseImpl(
       {this.value, final List<CommentModel>? data})
       : _data = data;
@@ -135,17 +141,8 @@ class _$PostCommentsModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'PostCommentsModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'PostCommentsModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -157,12 +154,14 @@ class _$PostCommentsModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, value, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of PostCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$PostCommentsModelResponseImplCopyWith<_$PostCommentsModelResponseImpl>
@@ -189,8 +188,11 @@ abstract class _PostCommentsModelResponse implements PostCommentsModelResponse {
   bool? get value;
   @override
   List<CommentModel>? get data;
+
+  /// Create a copy of PostCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PostCommentsModelResponseImplCopyWith<_$PostCommentsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -207,8 +209,12 @@ mixin _$CommentModel {
   String? get updatedAt => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
 
+  /// Serializes this CommentModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $CommentModelCopyWith<CommentModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -238,6 +244,8 @@ class _$CommentModelCopyWithImpl<$Res, $Val extends CommentModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -266,6 +274,8 @@ class _$CommentModelCopyWithImpl<$Res, $Val extends CommentModel>
     ) as $Val);
   }
 
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $DoctorModelCopyWith<$Res>? get doctor {
@@ -305,6 +315,8 @@ class __$$CommentModelImplCopyWithImpl<$Res>
       _$CommentModelImpl _value, $Res Function(_$CommentModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -336,7 +348,7 @@ class __$$CommentModelImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$CommentModelImpl with DiagnosticableTreeMixin implements _CommentModel {
+class _$CommentModelImpl implements _CommentModel {
   const _$CommentModelImpl(
       {this.id,
       this.content,
@@ -357,19 +369,8 @@ class _$CommentModelImpl with DiagnosticableTreeMixin implements _CommentModel {
   final DoctorModel? doctor;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'CommentModel(id: $id, content: $content, updatedAt: $updatedAt, doctor: $doctor)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'CommentModel'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('content', content))
-      ..add(DiagnosticsProperty('updatedAt', updatedAt))
-      ..add(DiagnosticsProperty('doctor', doctor));
   }
 
   @override
@@ -384,11 +385,13 @@ class _$CommentModelImpl with DiagnosticableTreeMixin implements _CommentModel {
             (identical(other.doctor, doctor) || other.doctor == doctor));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, content, updatedAt, doctor);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$CommentModelImplCopyWith<_$CommentModelImpl> get copyWith =>
@@ -421,8 +424,11 @@ abstract class _CommentModel implements CommentModel {
   String? get updatedAt;
   @override
   DoctorModel? get doctor;
+
+  /// Create a copy of CommentModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CommentModelImplCopyWith<_$CommentModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

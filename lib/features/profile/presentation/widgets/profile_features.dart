@@ -266,7 +266,8 @@ class ProfileFeatures extends StatelessWidget {
             context: context,
             builder: (context) {
               return BlocProvider(
-                create: (context) => DoctorInfoViewCubit(sl(), sl()),
+                create: (context) =>
+                    DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl()),
                 child: AchievementsTab(
                   isProfileFeature: true,
                   currentDoctorId: cubit.currentDoctor.id.toString(),

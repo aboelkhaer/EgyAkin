@@ -31,8 +31,12 @@ mixin _$GetPatientSectionsModelResponse {
   GFRModel? get gfr => throw _privateConstructorUsedError;
   List<SectionModel>? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this GetPatientSectionsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetPatientSectionsModelResponseCopyWith<GetPatientSectionsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -67,6 +71,8 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -105,6 +111,8 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $GFRModelCopyWith<$Res>? get gfr {
@@ -149,6 +157,8 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetPatientSectionsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -249,12 +259,14 @@ class _$GetPatientSectionsModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, submitStatus, patientName,
       doctorId, gfr, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetPatientSectionsModelResponseImplCopyWith<
@@ -298,8 +310,11 @@ abstract class _GetPatientSectionsModelResponse
   GFRModel? get gfr;
   @override
   List<SectionModel>? get data;
+
+  /// Create a copy of GetPatientSectionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetPatientSectionsModelResponseImplCopyWith<
           _$GetPatientSectionsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -320,8 +335,12 @@ mixin _$SectionModel {
   @JsonKey(name: 'section_name')
   String? get sectionName => throw _privateConstructorUsedError;
 
+  /// Serializes this SectionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SectionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SectionModelCopyWith<SectionModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -349,6 +368,8 @@ class _$SectionModelCopyWithImpl<$Res, $Val extends SectionModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SectionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -401,6 +422,8 @@ class __$$SectionModelImplCopyWithImpl<$Res>
       _$SectionModelImpl _value, $Res Function(_$SectionModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SectionModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -474,12 +497,14 @@ class _$SectionModelImpl implements _SectionModel {
                 other.sectionName == sectionName));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, sectionId, sectionStatus,
       const DeepCollectionEquality().hash(updatedAt), sectionName);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SectionModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SectionModelImplCopyWith<_$SectionModelImpl> get copyWith =>
@@ -516,8 +541,11 @@ abstract class _SectionModel implements SectionModel {
   @override
   @JsonKey(name: 'section_name')
   String? get sectionName;
+
+  /// Create a copy of SectionModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SectionModelImplCopyWith<_$SectionModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -532,8 +560,12 @@ mixin _$GFRModel {
   EquationModel? get sobh => throw _privateConstructorUsedError;
   EquationModel? get mdrd => throw _privateConstructorUsedError;
 
+  /// Serializes this GFRModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GFRModelCopyWith<GFRModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -560,6 +592,8 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -583,6 +617,8 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
     ) as $Val);
   }
 
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $EquationModelCopyWith<$Res>? get ckd {
@@ -595,6 +631,8 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
     });
   }
 
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $EquationModelCopyWith<$Res>? get sobh {
@@ -607,6 +645,8 @@ class _$GFRModelCopyWithImpl<$Res, $Val extends GFRModel>
     });
   }
 
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $EquationModelCopyWith<$Res>? get mdrd {
@@ -646,6 +686,8 @@ class __$$GFRModelImplCopyWithImpl<$Res>
       _$GFRModelImpl _value, $Res Function(_$GFRModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -700,11 +742,13 @@ class _$GFRModelImpl implements _GFRModel {
             (identical(other.mdrd, mdrd) || other.mdrd == mdrd));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, ckd, sobh, mdrd);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GFRModelImplCopyWith<_$GFRModelImpl> get copyWith =>
@@ -733,8 +777,11 @@ abstract class _GFRModel implements GFRModel {
   EquationModel? get sobh;
   @override
   EquationModel? get mdrd;
+
+  /// Create a copy of GFRModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GFRModelImplCopyWith<_$GFRModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -752,8 +799,12 @@ mixin _$EquationModel {
   @JsonKey(name: 'creatinine_on_discharge_GFR')
   dynamic get creatinineOnDischarge => throw _privateConstructorUsedError;
 
+  /// Serializes this EquationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $EquationModelCopyWith<EquationModel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -781,6 +832,8 @@ class _$EquationModelCopyWithImpl<$Res, $Val extends EquationModel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -828,6 +881,8 @@ class __$$EquationModelImplCopyWithImpl<$Res>
       _$EquationModelImpl _value, $Res Function(_$EquationModelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -892,7 +947,7 @@ class _$EquationModelImpl implements _EquationModel {
                 .equals(other.creatinineOnDischarge, creatinineOnDischarge));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -900,7 +955,9 @@ class _$EquationModelImpl implements _EquationModel {
       const DeepCollectionEquality().hash(basalCreatinine),
       const DeepCollectionEquality().hash(creatinineOnDischarge));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>
@@ -933,8 +990,11 @@ abstract class _EquationModel implements EquationModel {
   @override
   @JsonKey(name: 'creatinine_on_discharge_GFR')
   dynamic get creatinineOnDischarge;
+
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

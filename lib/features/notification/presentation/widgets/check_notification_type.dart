@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:egy_akin/features/notification/presentation/widgets/achievement_check.dart';
 
 import '../../../../exports.dart';
@@ -384,7 +382,8 @@ class CheckNotificationType extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return BlocProvider(
-                    create: (context) => DoctorInfoViewCubit(sl(), sl()),
+                    create: (context) =>
+                        DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl()),
                     child: AchievementsTab(
                       isProfileFeature: true,
                       currentDoctorId: currentDoctorModel.id.toString(),

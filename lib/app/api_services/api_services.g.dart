@@ -12,6 +12,7 @@ class _ApiServices implements ApiServices {
   _ApiServices(
     this._dio, {
     this.baseUrl,
+    this.errorLogger,
   }) {
     baseUrl ??= 'https://api.egyakin.com';
   }
@@ -20,30 +21,38 @@ class _ApiServices implements ApiServices {
 
   String? baseUrl;
 
+  final ParseErrorLogger? errorLogger;
+
   @override
   Future<SignOutModelResponse> signOut() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SignOutModelResponse>(Options(
+    final _options = _setStreamType<SignOutModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/logout',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = SignOutModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/logout',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SignOutModelResponse _value;
+    try {
+      _value = SignOutModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -61,24 +70,30 @@ class _ApiServices implements ApiServices {
       'password': password,
       'fcmToken': fcmToken,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AuthenticationModelResponse>(Options(
+    final _options = _setStreamType<AuthenticationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/login',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = AuthenticationModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/login',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthenticationModelResponse _value;
+    try {
+      _value = AuthenticationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -90,24 +105,30 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(doctorModel);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AuthenticationModelResponse>(Options(
+    final _options = _setStreamType<AuthenticationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/register',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = AuthenticationModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/register',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthenticationModelResponse _value;
+    try {
+      _value = AuthenticationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -118,24 +139,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAllDoctorsPatientsModelResponse>(Options(
+    final _options = _setStreamType<GetAllDoctorsPatientsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/allPatientsNew',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetAllDoctorsPatientsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/allPatientsNew',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetAllDoctorsPatientsModelResponse _value;
+    try {
+      _value = GetAllDoctorsPatientsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -148,24 +175,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetProfilePatientsModelResponse>(Options(
+    final _options = _setStreamType<GetProfilePatientsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/doctorProfileGetPatients/${doctorId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetProfilePatientsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/doctorProfileGetPatients/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetProfilePatientsModelResponse _value;
+    try {
+      _value = GetProfilePatientsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -176,24 +209,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetDoctorPatientsModelResponse>(Options(
+    final _options = _setStreamType<GetDoctorPatientsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/currentPatientsNew',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetDoctorPatientsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/currentPatientsNew',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetDoctorPatientsModelResponse _value;
+    try {
+      _value = GetDoctorPatientsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -209,24 +248,30 @@ class _ApiServices implements ApiServices {
       'patient': patient,
       'dose': dose,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetSearchModelResponse>(Options(
+    final _options = _setStreamType<GetSearchModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/searchNew',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetSearchModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/searchNew',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetSearchModelResponse _value;
+    try {
+      _value = GetSearchModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -256,24 +301,30 @@ class _ApiServices implements ApiServices {
       'job': job,
       'highestdegree': highestDegree,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UpdateDoctorProfileModelResponse>(Options(
+    final _options = _setStreamType<UpdateDoctorProfileModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/users',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = UpdateDoctorProfileModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/users',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateDoctorProfileModelResponse _value;
+    try {
+      _value = UpdateDoctorProfileModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -284,24 +335,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetPatientSectionsModelResponse>(Options(
+    final _options = _setStreamType<GetPatientSectionsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/showSections/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetPatientSectionsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/showSections/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPatientSectionsModelResponse _value;
+    try {
+      _value = GetPatientSectionsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -314,7 +371,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<GetPatientSectionDetailsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
@@ -330,9 +387,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value =
-        GetPatientSectionDetailsModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPatientSectionDetailsModelResponse _value;
+    try {
+      _value = GetPatientSectionDetailsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -342,24 +405,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DeletePatientModelResponse>(Options(
+    final _options = _setStreamType<DeletePatientModelResponse>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/patient/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = DeletePatientModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/patient/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DeletePatientModelResponse _value;
+    try {
+      _value = DeletePatientModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -374,7 +443,7 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(map);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<UpdatePatientSectionDetailsModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
@@ -390,9 +459,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value =
-        UpdatePatientSectionDetailsModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdatePatientSectionDetailsModelResponse _value;
+    try {
+      _value = UpdatePatientSectionDetailsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -403,7 +478,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<GetPatientHistoryForAddPatientModelResponse>(Options(
       method: 'GET',
       headers: _headers,
@@ -419,9 +494,16 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value =
-        GetPatientHistoryForAddPatientModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPatientHistoryForAddPatientModelResponse _value;
+    try {
+      _value =
+          GetPatientHistoryForAddPatientModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -433,7 +515,7 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(map);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<AddPatientForFirstTimeModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -449,8 +531,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value = AddPatientForFirstTimeModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AddPatientForFirstTimeModelResponse _value;
+    try {
+      _value = AddPatientForFirstTimeModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -465,24 +554,30 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(map);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SubmitOutcomeModelResponse>(Options(
+    final _options = _setStreamType<SubmitOutcomeModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = SubmitOutcomeModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SubmitOutcomeModelResponse _value;
+    try {
+      _value = SubmitOutcomeModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -495,24 +590,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetOutcomeModelResponse>(Options(
+    final _options = _setStreamType<GetOutcomeModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetOutcomeModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetOutcomeModelResponse _value;
+    try {
+      _value = GetOutcomeModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -522,24 +623,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<FinalSubmitModelResponse>(Options(
+    final _options = _setStreamType<FinalSubmitModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/submitStatus/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = FinalSubmitModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/submitStatus/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late FinalSubmitModelResponse _value;
+    try {
+      _value = FinalSubmitModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -550,24 +657,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetPatientCommentsModelResponse>(Options(
+    final _options = _setStreamType<GetPatientCommentsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/comment/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetPatientCommentsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/comment/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPatientCommentsModelResponse _value;
+    try {
+      _value = GetPatientCommentsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -583,24 +696,30 @@ class _ApiServices implements ApiServices {
       'patient_id': patientId,
       'content': content,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AddPatientCommentsModelResponse>(Options(
+    final _options = _setStreamType<AddPatientCommentsModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/comment',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = AddPatientCommentsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/comment',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AddPatientCommentsModelResponse _value;
+    try {
+      _value = AddPatientCommentsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -611,24 +730,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DeletePatientCommentsModelResponse>(Options(
+    final _options = _setStreamType<DeletePatientCommentsModelResponse>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/comment/${commentId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = DeletePatientCommentsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/comment/${commentId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DeletePatientCommentsModelResponse _value;
+    try {
+      _value = DeletePatientCommentsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -639,7 +764,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'message': message};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<ContactUsModelResponseModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -655,8 +780,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value = ContactUsModelResponseModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ContactUsModelResponseModelResponse _value;
+    try {
+      _value = ContactUsModelResponseModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -666,24 +798,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PostCommentsModelResponse>(Options(
+    final _options = _setStreamType<PostCommentsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/Postcomments/${postId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = PostCommentsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/Postcomments/${postId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late PostCommentsModelResponse _value;
+    try {
+      _value = PostCommentsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -694,24 +832,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DeletePostCommentModelResponse>(Options(
+    final _options = _setStreamType<DeletePostCommentModelResponse>(Options(
       method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/Postcomments/${commentId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = DeletePostCommentModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/Postcomments/${commentId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DeletePostCommentModelResponse _value;
+    try {
+      _value = DeletePostCommentModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -722,24 +866,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAllNotificationsModelResponse>(Options(
+    final _options = _setStreamType<GetAllNotificationsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/shownotification',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetAllNotificationsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/shownotification',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetAllNotificationsModelResponse _value;
+    try {
+      _value = GetAllNotificationsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -749,24 +899,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UpdateNotificationModelResponse>(Options(
+    final _options = _setStreamType<UpdateNotificationModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/notification',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = UpdateNotificationModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/notification',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UpdateNotificationModelResponse _value;
+    try {
+      _value = UpdateNotificationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -782,24 +938,30 @@ class _ApiServices implements ApiServices {
       'post_id': postId,
       'content': content,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AddCommentOnPostModelResponse>(Options(
+    final _options = _setStreamType<AddCommentOnPostModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/Postcomments',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = AddCommentOnPostModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/Postcomments',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AddCommentOnPostModelResponse _value;
+    try {
+      _value = AddCommentOnPostModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -810,24 +972,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'email': email};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ResetPasswordModelResponse>(Options(
+    final _options = _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/forgotpassword',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/forgotpassword',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ResetPasswordModelResponse _value;
+    try {
+      _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -843,24 +1011,30 @@ class _ApiServices implements ApiServices {
       'email': email,
       'otp': otp,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ResetPasswordModelResponse>(Options(
+    final _options = _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/resetpasswordverification',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/resetpasswordverification',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ResetPasswordModelResponse _value;
+    try {
+      _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -876,24 +1050,30 @@ class _ApiServices implements ApiServices {
       'email': email,
       'password': newPassword,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ResetPasswordModelResponse>(Options(
+    final _options = _setStreamType<ResetPasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/resetpassword',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = ResetPasswordModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/resetpassword',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ResetPasswordModelResponse _value;
+    try {
+      _value = ResetPasswordModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -903,7 +1083,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<SendEmailForVerificationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -919,9 +1099,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value =
-        SendEmailForVerificationModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SendEmailForVerificationModelResponse _value;
+    try {
+      _value = SendEmailForVerificationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -932,7 +1118,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'otp': otp};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<SendOTPForEmailVerificationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -948,9 +1134,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value =
-        SendOTPForEmailVerificationModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SendOTPForEmailVerificationModelResponse _value;
+    try {
+      _value = SendOTPForEmailVerificationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -960,24 +1152,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio
-        .fetch<Map<String, dynamic>>(_setStreamType<HomeModelResponse>(Options(
+    final _options = _setStreamType<HomeModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/homeNew',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = HomeModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/homeNew',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late HomeModelResponse _value;
+    try {
+      _value = HomeModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -994,25 +1192,31 @@ class _ApiServices implements ApiServices {
         filename: image.path.split(Platform.pathSeparator).last,
       ),
     ));
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UploadProfileImageModelResponse>(Options(
+    final _options = _setStreamType<UploadProfileImageModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
       contentType: 'multipart/form-data',
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/upload-profile-image',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = UploadProfileImageModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/upload-profile-image',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UploadProfileImageModelResponse _value;
+    try {
+      _value = UploadProfileImageModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1022,24 +1226,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DoctorInfoViewModelResponse>(Options(
+    final _options = _setStreamType<DoctorInfoViewModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/showAnotherProfile/${doctorId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = DoctorInfoViewModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/showAnotherProfile/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DoctorInfoViewModelResponse _value;
+    try {
+      _value = DoctorInfoViewModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1050,24 +1260,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<DownloadPatientReportModelResponse>(Options(
+    final _options = _setStreamType<DownloadPatientReportModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/generatePDF/${patientId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = DownloadPatientReportModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/generatePDF/${patientId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late DownloadPatientReportModelResponse _value;
+    try {
+      _value = DownloadPatientReportModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1077,24 +1293,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAppSettingsModelResponse>(Options(
+    final _options = _setStreamType<GetAppSettingsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/settings',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetAppSettingsModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/settings',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetAppSettingsModelResponse _value;
+    try {
+      _value = GetAppSettingsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1112,25 +1334,31 @@ class _ApiServices implements ApiServices {
         filename: image.path.split(Platform.pathSeparator).last,
       ),
     ));
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<UploadSyndicateCardModelResponse>(Options(
+    final _options = _setStreamType<UploadSyndicateCardModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
       contentType: 'multipart/form-data',
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/uploadSyndicateCard',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = UploadSyndicateCardModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/uploadSyndicateCard',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late UploadSyndicateCardModelResponse _value;
+    try {
+      _value = UploadSyndicateCardModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1146,24 +1374,30 @@ class _ApiServices implements ApiServices {
       'current_password': oldPassword,
       'new_password': newPassword,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ChangePasswordModelResponse>(Options(
+    final _options = _setStreamType<ChangePasswordModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/changePassword',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = ChangePasswordModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/changePassword',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late ChangePasswordModelResponse _value;
+    try {
+      _value = ChangePasswordModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1173,24 +1407,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'token': fcmToken};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SendFCMTokenModelResponse>(Options(
+    final _options = _setStreamType<SendFCMTokenModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/storeFCM',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = SendFCMTokenModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/storeFCM',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SendFCMTokenModelResponse _value;
+    try {
+      _value = SendFCMTokenModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1203,24 +1443,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetDoctorProfileScoreModelResponse>(Options(
+    final _options = _setStreamType<GetDoctorProfileScoreModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/doctorProfileGetScoreHistory/${doctorId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetDoctorProfileScoreModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/doctorProfileGetScoreHistory/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetDoctorProfileScoreModelResponse _value;
+    try {
+      _value = GetDoctorProfileScoreModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1231,24 +1477,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetConsultationSearchModelResponse>(Options(
+    final _options = _setStreamType<GetConsultationSearchModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/consultationDoctorSearch/${searchContent}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = GetConsultationSearchModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/consultationDoctorSearch/${searchContent}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetConsultationSearchModelResponse _value;
+    try {
+      _value = GetConsultationSearchModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1266,24 +1518,30 @@ class _ApiServices implements ApiServices {
       'consult_message': message,
       'consult_doctor_ids': doctorsIDS,
     };
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<SendConsultationModelResponse>(Options(
+    final _options = _setStreamType<SendConsultationModelResponse>(Options(
       method: 'POST',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/consultations',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = SendConsultationModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/consultations',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SendConsultationModelResponse _value;
+    try {
+      _value = SendConsultationModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1294,7 +1552,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
+    final _options =
         _setStreamType<List<GetCurrentDoctorConsultationModelResponse>>(Options(
       method: 'GET',
       headers: _headers,
@@ -1310,11 +1568,19 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    var _value = _result.data!
-        .map((dynamic i) => GetCurrentDoctorConsultationModelResponse.fromJson(
-            i as Map<String, dynamic>))
-        .toList();
+            )));
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<GetCurrentDoctorConsultationModelResponse> _value;
+    try {
+      _value = _result.data!
+          .map((dynamic i) =>
+              GetCurrentDoctorConsultationModelResponse.fromJson(
+                  i as Map<String, dynamic>))
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1325,7 +1591,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
+    final _options =
         _setStreamType<List<GetCurrentDoctorConsultationModelResponse>>(Options(
       method: 'GET',
       headers: _headers,
@@ -1341,11 +1607,19 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    var _value = _result.data!
-        .map((dynamic i) => GetCurrentDoctorConsultationModelResponse.fromJson(
-            i as Map<String, dynamic>))
-        .toList();
+            )));
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<GetCurrentDoctorConsultationModelResponse> _value;
+    try {
+      _value = _result.data!
+          .map((dynamic i) =>
+              GetCurrentDoctorConsultationModelResponse.fromJson(
+                  i as Map<String, dynamic>))
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1356,7 +1630,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
+    final _options =
         _setStreamType<GetConsultationDetailsModelResponse>(Options(
       method: 'GET',
       headers: _headers,
@@ -1372,8 +1646,15 @@ class _ApiServices implements ApiServices {
                 baseUrl: _combineBaseUrls(
               _dio.options.baseUrl,
               baseUrl,
-            ))));
-    final _value = GetConsultationDetailsModelResponse.fromJson(_result.data!);
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetConsultationDetailsModelResponse _value;
+    try {
+      _value = GetConsultationDetailsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1386,24 +1667,30 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'reply': reply};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<AddConsultationReplyModelResponse>(Options(
+    final _options = _setStreamType<AddConsultationReplyModelResponse>(Options(
       method: 'PUT',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/consultations/${consultationId}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final _value = AddConsultationReplyModelResponse.fromJson(_result.data!);
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/consultations/${consultationId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AddConsultationReplyModelResponse _value;
+    try {
+      _value = AddConsultationReplyModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 
@@ -1414,27 +1701,141 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<List<dynamic>>(
-        _setStreamType<List<GetAchievementsModelResponse>>(Options(
+    final _options = _setStreamType<List<GetAchievementsModelResponse>>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
-            .compose(
-              _dio.options,
-              'https://api.egyakin.com/api/users/${doctorId}/achievements',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    var _value = _result.data!
-        .map((dynamic i) =>
-            GetAchievementsModelResponse.fromJson(i as Map<String, dynamic>))
-        .toList();
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/users/${doctorId}/achievements',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<GetAchievementsModelResponse> _value;
+    try {
+      _value = _result.data!
+          .map((dynamic i) =>
+              GetAchievementsModelResponse.fromJson(i as Map<String, dynamic>))
+          .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<SyndicateCardVerifyModelResponse> changeSyndicateCardStatus(
+    String status,
+    String doctorId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'isSyndicateCardRequired': status};
+    final _options = _setStreamType<SyndicateCardVerifyModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/users/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late SyndicateCardVerifyModelResponse _value;
+    try {
+      _value = SyndicateCardVerifyModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<BlockUserModelResponse> blockDoctor(
+    bool status,
+    String doctorId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'blocked': status};
+    final _options = _setStreamType<BlockUserModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/users/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late BlockUserModelResponse _value;
+    try {
+      _value = BlockUserModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<VerifyUserEmailModelResponse> verifyDoctorEmail(
+    dynamic timestamp,
+    String doctorId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'email_verified_at': timestamp};
+    final _options = _setStreamType<VerifyUserEmailModelResponse>(Options(
+      method: 'PUT',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/users/${doctorId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late VerifyUserEmailModelResponse _value;
+    try {
+      _value = VerifyUserEmailModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
     return _value;
   }
 

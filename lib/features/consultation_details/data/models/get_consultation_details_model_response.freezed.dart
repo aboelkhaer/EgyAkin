@@ -44,8 +44,12 @@ mixin _$GetConsultationDetailsModelResponse {
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetConsultationDetailsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetConsultationDetailsModelResponseCopyWith<
           GetConsultationDetailsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -87,6 +91,8 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -155,6 +161,8 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $PatientHomeDataModelCopyWith<$Res>? get patientModel {
@@ -205,6 +213,8 @@ class __$$GetConsultationDetailsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetConsultationDetailsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -373,7 +383,7 @@ class _$GetConsultationDetailsModelResponseImpl
                 .equals(other._consultationDoctors, _consultationDoctors));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -390,7 +400,9 @@ class _$GetConsultationDetailsModelResponseImpl
       patientModel,
       const DeepCollectionEquality().hash(_consultationDoctors));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetConsultationDetailsModelResponseImplCopyWith<
@@ -460,8 +472,11 @@ abstract class _GetConsultationDetailsModelResponse
   PatientHomeDataModel? get patientModel;
   @override
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors;
+
+  /// Create a copy of GetConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetConsultationDetailsModelResponseImplCopyWith<
           _$GetConsultationDetailsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -495,8 +510,12 @@ mixin _$DoctorsConsultationDetailsModelResponse {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
 
+  /// Serializes this DoctorsConsultationDetailsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of DoctorsConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $DoctorsConsultationDetailsModelResponseCopyWith<
           DoctorsConsultationDetailsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -537,6 +556,8 @@ class _$DoctorsConsultationDetailsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of DoctorsConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -640,6 +661,8 @@ class __$$DoctorsConsultationDetailsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$DoctorsConsultationDetailsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of DoctorsConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -796,7 +819,7 @@ class _$DoctorsConsultationDetailsModelResponseImpl
                 other.updatedAt == updatedAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -813,7 +836,9 @@ class _$DoctorsConsultationDetailsModelResponseImpl
       createdAt,
       updatedAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of DoctorsConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$DoctorsConsultationDetailsModelResponseImplCopyWith<
@@ -882,8 +907,11 @@ abstract class _DoctorsConsultationDetailsModelResponse
   @override
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
+
+  /// Create a copy of DoctorsConsultationDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DoctorsConsultationDetailsModelResponseImplCopyWith<
           _$DoctorsConsultationDetailsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

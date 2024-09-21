@@ -1,33 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
-import 'package:egy_akin/features/authentication/data/models/send_fcm_token_model_response.dart';
-import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
-import 'package:egy_akin/features/consultation_details/data/models/add_consultation_reply_model_response.dart';
-import 'package:egy_akin/features/consultation_details/data/models/get_consultation_details_model_response.dart';
-import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/get_achievements_model_response.dart';
-import 'package:egy_akin/features/current_doctor_patients/data/models/get_current_doctor_patients_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/doctor_info_view_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
-import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
-import 'package:egy_akin/features/home/data/models/upload_syndicate_card_model_response.dart';
-import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
-import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
-import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
-import 'package:egy_akin/features/patient_section_details/data/models/get_patient_section_model_response.dart';
-import 'package:egy_akin/features/patient_section_details/data/models/update_patient_section_details_model_response.dart';
-import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
-import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
-import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
-import 'package:egy_akin/features/post_details/data/models/delete_post_comment_model_response.dart';
-import 'package:egy_akin/features/profile_patients/data/models/get_profile_patients_model_response.dart';
-import 'package:egy_akin/features/send_consultation/data/models/get_consultation_search_model_response.dart';
-import 'package:egy_akin/features/send_consultation/data/models/send_consultation_model_response.dart';
-import 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
-
-import 'package:retrofit/http.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
+import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
+import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
 
@@ -280,6 +256,24 @@ abstract class ApiServices {
 
   @GET('${ApiEndPoint.updateProfile}/{doctorId}/achievements')
   Future<List<GetAchievementsModelResponse>> getAchievements(
+    @Path("doctorId") String doctorId,
+  );
+
+  @PUT('${ApiEndPoint.syndicateCardVerifyRequest}/{doctorId}')
+  Future<SyndicateCardVerifyModelResponse> changeSyndicateCardStatus(
+    @Field("isSyndicateCardRequired") String status,
+    @Path("doctorId") String doctorId,
+  );
+
+  @PUT('${ApiEndPoint.blockDoctor}/{doctorId}')
+  Future<BlockUserModelResponse> blockDoctor(
+    @Field("blocked") bool status,
+    @Path("doctorId") String doctorId,
+  );
+
+  @PUT('${ApiEndPoint.verifyDoctorEmail}/{doctorId}')
+  Future<VerifyUserEmailModelResponse> verifyDoctorEmail(
+    @Field("email_verified_at") dynamic timestamp,
     @Path("doctorId") String doctorId,
   );
 }

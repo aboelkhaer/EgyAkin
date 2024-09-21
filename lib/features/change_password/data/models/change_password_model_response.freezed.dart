@@ -23,8 +23,12 @@ ChangePasswordModelResponse _$ChangePasswordModelResponseFromJson(
 mixin _$ChangePasswordModelResponse {
   String? get message => throw _privateConstructorUsedError;
 
+  /// Serializes this ChangePasswordModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of ChangePasswordModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ChangePasswordModelResponseCopyWith<ChangePasswordModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -51,6 +55,8 @@ class _$ChangePasswordModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ChangePasswordModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -87,6 +93,8 @@ class __$$ChangePasswordModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$ChangePasswordModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ChangePasswordModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -104,7 +112,6 @@ class __$$ChangePasswordModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$ChangePasswordModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _ChangePasswordModelResponse {
   const _$ChangePasswordModelResponseImpl({this.message});
 
@@ -116,16 +123,8 @@ class _$ChangePasswordModelResponseImpl
   final String? message;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'ChangePasswordModelResponse(message: $message)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'ChangePasswordModelResponse'))
-      ..add(DiagnosticsProperty('message', message));
   }
 
   @override
@@ -136,11 +135,13 @@ class _$ChangePasswordModelResponseImpl
             (identical(other.message, message) || other.message == message));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ChangePasswordModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ChangePasswordModelResponseImplCopyWith<_$ChangePasswordModelResponseImpl>
@@ -165,8 +166,11 @@ abstract class _ChangePasswordModelResponse
 
   @override
   String? get message;
+
+  /// Create a copy of ChangePasswordModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ChangePasswordModelResponseImplCopyWith<_$ChangePasswordModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

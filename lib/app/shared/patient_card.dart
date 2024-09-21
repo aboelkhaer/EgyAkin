@@ -60,7 +60,7 @@ class PatientCard extends StatelessWidget {
             splashColor: AppColors.subBG,
             onTap: onTap,
             child: Container(
-              width: 325.w,
+              width: 300.w,
               height: 130.h,
               padding: EdgeInsets.symmetric(
                     horizontal: 16.w,

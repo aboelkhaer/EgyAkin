@@ -24,8 +24,12 @@ mixin _$GetSearchModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   GetSearchDataModelResponse? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this GetSearchModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetSearchModelResponseCopyWith<GetSearchModelResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$GetSearchModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -70,6 +76,8 @@ class _$GetSearchModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $GetSearchDataModelResponseCopyWith<$Res>? get data {
@@ -108,6 +116,8 @@ class __$$GetSearchModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetSearchModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -129,9 +139,7 @@ class __$$GetSearchModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GetSearchModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _GetSearchModelResponse {
+class _$GetSearchModelResponseImpl implements _GetSearchModelResponse {
   const _$GetSearchModelResponseImpl({this.value, this.data});
 
   factory _$GetSearchModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -143,17 +151,8 @@ class _$GetSearchModelResponseImpl
   final GetSearchDataModelResponse? data;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetSearchModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetSearchModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -165,11 +164,13 @@ class _$GetSearchModelResponseImpl
             (identical(other.data, data) || other.data == data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, data);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetSearchModelResponseImplCopyWith<_$GetSearchModelResponseImpl>
@@ -196,8 +197,11 @@ abstract class _GetSearchModelResponse implements GetSearchModelResponse {
   bool? get value;
   @override
   GetSearchDataModelResponse? get data;
+
+  /// Create a copy of GetSearchModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetSearchModelResponseImplCopyWith<_$GetSearchModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -214,8 +218,12 @@ mixin _$GetSearchDataModelResponse {
   List<SearchDataForDosesModelResponse>? get doses =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetSearchDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetSearchDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetSearchDataModelResponseCopyWith<GetSearchDataModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -243,6 +251,8 @@ class _$GetSearchDataModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetSearchDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -286,6 +296,8 @@ class __$$GetSearchDataModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetSearchDataModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetSearchDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -307,9 +319,7 @@ class __$$GetSearchDataModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GetSearchDataModelResponseImpl
-    with DiagnosticableTreeMixin
-    implements _GetSearchDataModelResponse {
+class _$GetSearchDataModelResponseImpl implements _GetSearchDataModelResponse {
   const _$GetSearchDataModelResponseImpl(
       {final List<PatientHomeDataModel>? patients,
       final List<SearchDataForDosesModelResponse>? doses})
@@ -341,17 +351,8 @@ class _$GetSearchDataModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetSearchDataModelResponse(patients: $patients, doses: $doses)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetSearchDataModelResponse'))
-      ..add(DiagnosticsProperty('patients', patients))
-      ..add(DiagnosticsProperty('doses', doses));
   }
 
   @override
@@ -363,14 +364,16 @@ class _$GetSearchDataModelResponseImpl
             const DeepCollectionEquality().equals(other._doses, _doses));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
       const DeepCollectionEquality().hash(_patients),
       const DeepCollectionEquality().hash(_doses));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetSearchDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetSearchDataModelResponseImplCopyWith<_$GetSearchDataModelResponseImpl>
@@ -399,8 +402,11 @@ abstract class _GetSearchDataModelResponse
   List<PatientHomeDataModel>? get patients;
   @override
   List<SearchDataForDosesModelResponse>? get doses;
+
+  /// Create a copy of GetSearchDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetSearchDataModelResponseImplCopyWith<_$GetSearchDataModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -419,8 +425,12 @@ mixin _$SearchDataForDosesModelResponse {
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
 
+  /// Serializes this SearchDataForDosesModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SearchDataForDosesModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SearchDataForDosesModelResponseCopyWith<SearchDataForDosesModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -452,6 +462,8 @@ class _$SearchDataForDosesModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SearchDataForDosesModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -513,6 +525,8 @@ class __$$SearchDataForDosesModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$SearchDataForDosesModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SearchDataForDosesModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -550,7 +564,6 @@ class __$$SearchDataForDosesModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$SearchDataForDosesModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _SearchDataForDosesModelResponse {
   const _$SearchDataForDosesModelResponseImpl(
       {this.id,
@@ -576,20 +589,8 @@ class _$SearchDataForDosesModelResponseImpl
   final String? createdAt;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'SearchDataForDosesModelResponse(id: $id, title: $title, description: $description, dose: $dose, createdAt: $createdAt)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'SearchDataForDosesModelResponse'))
-      ..add(DiagnosticsProperty('id', id))
-      ..add(DiagnosticsProperty('title', title))
-      ..add(DiagnosticsProperty('description', description))
-      ..add(DiagnosticsProperty('dose', dose))
-      ..add(DiagnosticsProperty('createdAt', createdAt));
   }
 
   @override
@@ -606,12 +607,14 @@ class _$SearchDataForDosesModelResponseImpl
                 other.createdAt == createdAt));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, title, description, dose, createdAt);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SearchDataForDosesModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SearchDataForDosesModelResponseImplCopyWith<
@@ -651,8 +654,11 @@ abstract class _SearchDataForDosesModelResponse
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;
+
+  /// Create a copy of SearchDataForDosesModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SearchDataForDosesModelResponseImplCopyWith<
           _$SearchDataForDosesModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

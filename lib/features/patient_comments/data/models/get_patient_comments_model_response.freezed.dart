@@ -24,8 +24,12 @@ mixin _$GetPatientCommentsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   List<CommentModel>? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this GetPatientCommentsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetPatientCommentsModelResponseCopyWith<GetPatientCommentsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -52,6 +56,8 @@ class _$GetPatientCommentsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -93,6 +99,8 @@ class __$$GetPatientCommentsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetPatientCommentsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -115,7 +123,6 @@ class __$$GetPatientCommentsModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetPatientCommentsModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetPatientCommentsModelResponse {
   const _$GetPatientCommentsModelResponseImpl(
       {this.value, final List<CommentModel>? data})
@@ -138,17 +145,8 @@ class _$GetPatientCommentsModelResponseImpl
   }
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetPatientCommentsModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetPatientCommentsModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -160,12 +158,14 @@ class _$GetPatientCommentsModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, value, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetPatientCommentsModelResponseImplCopyWith<
@@ -194,8 +194,11 @@ abstract class _GetPatientCommentsModelResponse
   bool? get value;
   @override
   List<CommentModel>? get data;
+
+  /// Create a copy of GetPatientCommentsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetPatientCommentsModelResponseImplCopyWith<
           _$GetPatientCommentsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

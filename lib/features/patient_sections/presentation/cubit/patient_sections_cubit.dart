@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/patient_sections/domain/usecases/download_patient_report_usecase.dart';
 
 import '../../../../exports.dart';
 

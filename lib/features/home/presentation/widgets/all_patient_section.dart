@@ -28,6 +28,7 @@ class AllPatientSection extends StatelessWidget {
                 isUploadedSyndicateCard,
                 message,
                 checkUpdateMessageCounter,
+                isUserBlocked,
               ) {
                 return HomePatientTitleHeader(
                   title: AppStrings.allPatients,
@@ -66,6 +67,7 @@ class AllPatientSection extends StatelessWidget {
               isUploadedSyndicateCard,
               message,
               checkUpdateMessageCounter,
+              isUserBlocked,
             ) {
               return FadeIn(
                 child: SizedBox(

@@ -24,8 +24,12 @@ mixin _$GetPatientSectionDetailsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
 
+  /// Serializes this GetPatientSectionDetailsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetPatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetPatientSectionDetailsModelResponseCopyWith<
           GetPatientSectionDetailsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -53,6 +57,8 @@ class _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetPatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -94,6 +100,8 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetPatientSectionDetailsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetPatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -151,12 +159,14 @@ class _$GetPatientSectionDetailsModelResponseImpl
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, value, const DeepCollectionEquality().hash(_data));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetPatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetPatientSectionDetailsModelResponseImplCopyWith<
@@ -186,8 +196,11 @@ abstract class _GetPatientSectionDetailsModelResponse
   bool? get value;
   @override
   List<QuestionModel>? get data;
+
+  /// Create a copy of GetPatientSectionDetailsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetPatientSectionDetailsModelResponseImplCopyWith<
           _$GetPatientSectionDetailsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

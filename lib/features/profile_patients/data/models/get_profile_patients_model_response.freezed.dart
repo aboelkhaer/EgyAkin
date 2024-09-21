@@ -25,8 +25,12 @@ mixin _$GetProfilePatientsModelResponse {
   GetProfilePatientsDataModelResponse? get data =>
       throw _privateConstructorUsedError;
 
+  /// Serializes this GetProfilePatientsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetProfilePatientsModelResponseCopyWith<GetProfilePatientsModelResponse>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -55,6 +59,8 @@ class _$GetProfilePatientsModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -73,6 +79,8 @@ class _$GetProfilePatientsModelResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $GetProfilePatientsDataModelResponseCopyWith<$Res>? get data {
@@ -112,6 +120,8 @@ class __$$GetProfilePatientsModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetProfilePatientsModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -134,7 +144,6 @@ class __$$GetProfilePatientsModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetProfilePatientsModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetProfilePatientsModelResponse {
   const _$GetProfilePatientsModelResponseImpl({this.value, this.data});
 
@@ -148,17 +157,8 @@ class _$GetProfilePatientsModelResponseImpl
   final GetProfilePatientsDataModelResponse? data;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetProfilePatientsModelResponse(value: $value, data: $data)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetProfilePatientsModelResponse'))
-      ..add(DiagnosticsProperty('value', value))
-      ..add(DiagnosticsProperty('data', data));
   }
 
   @override
@@ -170,11 +170,13 @@ class _$GetProfilePatientsModelResponseImpl
             (identical(other.data, data) || other.data == data));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, data);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetProfilePatientsModelResponseImplCopyWith<
@@ -204,8 +206,11 @@ abstract class _GetProfilePatientsModelResponse
   bool? get value;
   @override
   GetProfilePatientsDataModelResponse? get data;
+
+  /// Create a copy of GetProfilePatientsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetProfilePatientsModelResponseImplCopyWith<
           _$GetProfilePatientsModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
@@ -238,8 +243,12 @@ mixin _$GetProfilePatientsDataModelResponse {
   int? get to => throw _privateConstructorUsedError;
   int? get total => throw _privateConstructorUsedError;
 
+  /// Serializes this GetProfilePatientsDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of GetProfilePatientsDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $GetProfilePatientsDataModelResponseCopyWith<
           GetProfilePatientsDataModelResponse>
       get copyWith => throw _privateConstructorUsedError;
@@ -280,6 +289,8 @@ class _$GetProfilePatientsDataModelResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of GetProfilePatientsDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -389,6 +400,8 @@ class __$$GetProfilePatientsDataModelResponseImplCopyWithImpl<$Res>
       $Res Function(_$GetProfilePatientsDataModelResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of GetProfilePatientsDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -466,7 +479,6 @@ class __$$GetProfilePatientsDataModelResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GetProfilePatientsDataModelResponseImpl
-    with DiagnosticableTreeMixin
     implements _GetProfilePatientsDataModelResponse {
   const _$GetProfilePatientsDataModelResponseImpl(
       {@JsonKey(name: 'current_page') this.currentPage,
@@ -539,28 +551,8 @@ class _$GetProfilePatientsDataModelResponseImpl
   final int? total;
 
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+  String toString() {
     return 'GetProfilePatientsDataModelResponse(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
-  }
-
-  @override
-  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
-    properties
-      ..add(DiagnosticsProperty('type', 'GetProfilePatientsDataModelResponse'))
-      ..add(DiagnosticsProperty('currentPage', currentPage))
-      ..add(DiagnosticsProperty('data', data))
-      ..add(DiagnosticsProperty('firstPageUrl', firstPageUrl))
-      ..add(DiagnosticsProperty('from', from))
-      ..add(DiagnosticsProperty('lastPage', lastPage))
-      ..add(DiagnosticsProperty('lastPageUrl', lastPageUrl))
-      ..add(DiagnosticsProperty('links', links))
-      ..add(DiagnosticsProperty('nextPageUrl', nextPageUrl))
-      ..add(DiagnosticsProperty('path', path))
-      ..add(DiagnosticsProperty('perPage', perPage))
-      ..add(DiagnosticsProperty('prevPageUrl', prevPageUrl))
-      ..add(DiagnosticsProperty('to', to))
-      ..add(DiagnosticsProperty('total', total));
   }
 
   @override
@@ -589,7 +581,7 @@ class _$GetProfilePatientsDataModelResponseImpl
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -607,7 +599,9 @@ class _$GetProfilePatientsDataModelResponseImpl
       to,
       total);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of GetProfilePatientsDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$GetProfilePatientsDataModelResponseImplCopyWith<
@@ -676,8 +670,11 @@ abstract class _GetProfilePatientsDataModelResponse
   int? get to;
   @override
   int? get total;
+
+  /// Create a copy of GetProfilePatientsDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetProfilePatientsDataModelResponseImplCopyWith<
           _$GetProfilePatientsDataModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;

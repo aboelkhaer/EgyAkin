@@ -143,6 +143,29 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             break;
           }
         }
+        if (question.question == 'Name') {
+          if (formData.containsKey(question.id.toString())) {
+            String name = formData[question.id.toString()];
+
+            // Regular expression for checking only English alphabetic characters
+            RegExp englishCharRegex = RegExp(r'^[a-zA-Z]+$');
+
+            if (!englishCharRegex.hasMatch(name)) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Name should contain only English letters',
+                    snackbarErrorCounter += 1),
+              ));
+
+              isValid = false;
+              break;
+            }
+          }
+        }
         if (question.type == AppStrings.questionTypeString) {
           if (question.question == 'National ID') {
             String nationalID = question.answer;
