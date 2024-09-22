@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_not_submitted.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_submitted.dart';
+import 'dart:ui' as ui;
 
 import '../../../../exports.dart';
 
@@ -50,9 +51,13 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
           children: [
             Flexible(
               child: Text(
-                widget.patientName,
+                convertTextToSymbols(widget.patientName),
                 style: TextStyle(fontSize: 14.sp),
                 overflow: TextOverflow.ellipsis,
+                textDirection:
+                    RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
+                        ? ui.TextDirection.rtl
+                        : ui.TextDirection.ltr,
               ),
             ),
             Text(

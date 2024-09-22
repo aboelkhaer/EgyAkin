@@ -43,7 +43,7 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.age.toString(),
+                          doctorInfo.data!.age ?? 'no data',
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
@@ -137,7 +137,7 @@ class AdminSide extends StatelessWidget {
                         SizedBox(width: 60.w),
                         SelectableText(
                           doctorInfo.data!.emailVerifiedAt == null
-                              ? 'No data'
+                              ? 'no data'
                               : timeago
                                   .format(DateTime.parse(doctorInfo
                                       .data!.emailVerifiedAt
@@ -168,7 +168,7 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.registrationNumber ?? 'No Data',
+                          doctorInfo.data!.registrationNumber ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),

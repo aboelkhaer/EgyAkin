@@ -173,34 +173,20 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 state.maybeWhen(
                   orElse: () {},
                   loaded: (response, isSubmitedOutcome, message, _,
-                      isSubmitedOutcomeLoading) {
-                    // if (isAddedPatientSuccessfully) {
-                    //   navigatorKey.currentState
-                    //       ?.pushNamed(AppRoutes.home, arguments: 0);
-                    //   navigatorKey.currentState
-                    //       ?.pushNamed(
-                    //         AppRoutes.patientSections,
-                    //         arguments:
-                    //             AppRoutesArgs.patientSectionsRouteArguments(
-                    //           patientId: patientId.toString(),
-                    //           currentDoctorModel: widget.currentDoctorModel,
-                    //         ),
-                    //       )
-                    //       .then(
-                    //           (value) => context.read<HomeCubit>().getHome());
-                    // }
-                  },
+                      isSubmitedOutcomeLoading) {},
                   error: (message) {
-                    showCustomDialog(
-                      context: context,
-                      title: 'Attention!',
-                      description: message,
-                      coloredButtonText: 'Cancel',
-                      isNoColorShow: false,
-                      coloredButtonOnTap: () {
-                        Navigator.of(context).pop();
-                      },
-                    );
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showCustomDialog(
+                        context: context,
+                        title: 'Attention!',
+                        description: message,
+                        coloredButtonText: 'Cancel',
+                        isNoColorShow: false,
+                        coloredButtonOnTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    });
                   },
                 );
               },

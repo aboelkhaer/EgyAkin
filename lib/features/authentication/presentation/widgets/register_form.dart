@@ -132,7 +132,8 @@ class RegisterForm extends StatelessWidget {
                   },
                   // validator: (value) =>
                   //     AppValidators.validatePhoneNumber(value!),
-                  validator: (value) => null,
+                  validator: (value) =>
+                      AppValidators.validatePhoneNumber(value ?? ''),
 
                   textInputAction: TextInputAction.next,
                   inputFormatters: [
@@ -150,7 +151,7 @@ class RegisterForm extends StatelessWidget {
                     cubit.registerAge = value;
                   },
                   // validator: (value) => AppValidators.validateAge(value!),
-                  validator: (value) => null,
+                  validator: (value) => AppValidators.validateAge(value ?? ''),
                   textInputAction: TextInputAction.next,
                 ),
               ),

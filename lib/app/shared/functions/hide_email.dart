@@ -1,5 +1,5 @@
-String hideEmail(String email) {
-  if (email.isEmpty) return '';
+String hideEmail(String? email) {
+  if (email == null || email.isEmpty) return '...';
 
   // Split the email into local part and domain
   var parts = email.split('@');

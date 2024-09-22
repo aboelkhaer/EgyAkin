@@ -81,7 +81,7 @@ class AppValidators {
   static String? validateAge(String value) {
     // Check if the entered value is a number
     if (int.tryParse(value) == null) {
-      return 'Please enter a valid number';
+      return 'Enter a valid number';
     }
 
     int age = int.parse(value);
@@ -97,12 +97,12 @@ class AppValidators {
   static String? validatePhoneNumber(String value) {
     // Check if the entered value is a number
     if (int.tryParse(value) == null) {
-      return 'Please enter a valid phone number';
+      return 'Enter a valid phone';
     }
 
     // Check if the length is exactly 11 digits
     if (value.length != 11) {
-      return 'Phone number must be 11 digits';
+      return 'Phone must be 11 digits';
     }
 
     return null; // Return null for a valid phone number

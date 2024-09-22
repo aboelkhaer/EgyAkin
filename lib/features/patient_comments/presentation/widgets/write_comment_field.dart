@@ -58,6 +58,29 @@ class WriteCommentField extends StatelessWidget {
                           }
                         },
                         onFieldSubmitted: (val) {
+                          if (!accountVerification) {
+                            showCustomDialog(
+                              context: context,
+                              title: AppStrings.emailVerification,
+                              description: AppStrings
+                                  .toAddCommentYouMustVerifyYourEmailAddress,
+                              noColoredButtonOnTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              coloredButtonText: AppStrings.verify,
+                              noColoredButtonText: AppStrings.cancel,
+                              coloredButtonOnTap: () {
+                                Navigator.of(context).pop();
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.emailVerification,
+                                  arguments:
+                                      AppRoutesArgs.emailVerificationRouteArgs(
+                                          currentDoctorModel:
+                                              currentDoctorModel),
+                                );
+                              },
+                            );
+                          }
                           if (accountVerification &&
                               isSyndicateCardRequired != 'Required' &&
                               isSyndicateCardRequired != 'Pending') {
@@ -129,6 +152,33 @@ class WriteCommentField extends StatelessWidget {
                                     children: [
                                       IconButton(
                                         onPressed: () {
+                                          if (!accountVerification) {
+                                            showCustomDialog(
+                                              context: context,
+                                              title:
+                                                  AppStrings.emailVerification,
+                                              description: AppStrings
+                                                  .toAddCommentYouMustVerifyYourEmailAddress,
+                                              noColoredButtonOnTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              coloredButtonText:
+                                                  AppStrings.verify,
+                                              noColoredButtonText:
+                                                  AppStrings.cancel,
+                                              coloredButtonOnTap: () {
+                                                Navigator.of(context).pop();
+                                                navigatorKey.currentState
+                                                    ?.pushNamed(
+                                                  AppRoutes.emailVerification,
+                                                  arguments: AppRoutesArgs
+                                                      .emailVerificationRouteArgs(
+                                                          currentDoctorModel:
+                                                              currentDoctorModel),
+                                                );
+                                              },
+                                            );
+                                          }
                                           if (accountVerification &&
                                               isSyndicateCardRequired !=
                                                   'Required' &&

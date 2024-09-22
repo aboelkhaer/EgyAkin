@@ -169,6 +169,14 @@ class HomeHeader extends StatelessWidget {
                             orElse: () {
                               return const SizedBox.shrink();
                             },
+                            loading: () {
+                              if (cubit.isSyndicateCardRequired == 'Verified') {
+                                return const VerificationIcon(
+                                  duration: 300,
+                                );
+                              }
+                              return const SizedBox.shrink();
+                            },
                             loaded: (
                               homeData,
                               currentDoctorModel,

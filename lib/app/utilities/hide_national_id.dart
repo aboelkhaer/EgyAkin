@@ -1,4 +1,5 @@
-String hideNationalId(String nationalID) {
+String hideNationalId(String? nationalID) {
+  if (nationalID == null) return '...';
   if (nationalID.isEmpty || nationalID.length < 3) {
     String maskedNationalID = '*' * nationalID.length;
     return maskedNationalID;

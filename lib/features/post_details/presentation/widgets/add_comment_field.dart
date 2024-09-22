@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import '../../../../exports.dart';
 
@@ -53,83 +54,7 @@ class AddCommentField extends StatelessWidget {
                         onChanged: (val) {
                           cubit.newComment = val;
                         },
-                        onFieldSubmitted: (val) {
-                          //   if (controller.homeController
-                          //       .currentDoctorVerification.value) {
-                          //     controller.addCommentOnPost(
-                          //       postId: postModel.id.toString(),
-                          //     );
-                          //   } else {
-                          //     showCustomDialog(
-                          //       context: context,
-                          //       title: 'Email verification',
-                          //       description:
-                          //           'To add comment you must verify your email address',
-                          //       noColoredBottonOnTap: () {
-                          //         Get.back();
-                          //       },
-                          //       coloredBottonText: 'Verify',
-                          //       noColoredBottonText: 'Cancel',
-                          //       coloredBottonOnTap: () {
-                          //         Get.offAndToNamed(
-                          //             AppRoutes.emailVerification);
-                          //       },
-                          //     );
-                          //   }
-                          if (accountVerification &&
-                              isSyndicateCardRequired != 'Required') {
-                            cubit.addCommentOnPost(postModel.id.toString());
-                          } else {
-                            if (isSyndicateCardRequired != 'Required') {
-                              showCustomDialog(
-                                context: context,
-                                title: AppStrings.emailVerification,
-                                description: AppStrings
-                                    .toAddCommentYouMustVerifyYourEmailAddress,
-                                noColoredButtonOnTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                coloredButtonText: AppStrings.verify,
-                                noColoredButtonText: AppStrings.cancel,
-                                coloredButtonOnTap: () {
-                                  Navigator.of(context).pop();
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.emailVerification,
-                                    arguments: AppRoutesArgs
-                                        .emailVerificationRouteArgs(
-                                            currentDoctorModel:
-                                                currentDoctorModel),
-                                  );
-                                },
-                              );
-                            }
-                          }
-                          if (accountVerification &&
-                              isSyndicateCardRequired == 'Required') {
-                            showCustomDialog(
-                              context: context,
-                              title: 'Syndicate Card Verification',
-                              description: AppStrings
-                                  .toAddCommentYouMustVerifyYourSyndicateCard,
-                              noColoredButtonOnTap: () {
-                                Navigator.of(context).pop();
-                              },
-                              coloredButtonText: AppStrings.verify,
-                              noColoredButtonText: AppStrings.cancel,
-                              coloredButtonOnTap: () {
-                                Navigator.of(context).pop();
-                                // navigatorKey.currentState
-                                //     ?.pushNamed(
-                                //   AppRoutes.emailVerification,
-                                //   arguments: AppRoutesArgs
-                                //       .emailVerificationRouteArgs(
-                                //           currentDoctorModel:
-                                //               currentDoctorModel),
-                                // );
-                              },
-                            );
-                          }
-                        },
+                        onFieldSubmitted: (val) {},
                         textInputAction: TextInputAction.done,
                         validator: (val) {
                           return null;
@@ -143,79 +68,7 @@ class AddCommentField extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(
-                          onPressed: () {
-                            // if (accountVerification) {
-                            //   cubit.addCommentOnPost(postModel.id.toString());
-                            // } else {
-                            //   showCustomDialog(
-                            //     context: context,
-                            //     title: 'Email verification',
-                            //     description:
-                            //         'To add comment you must verify your email address',
-                            //     noColoredButtonOnTap: () {
-                            //       Navigator.of(context).pop();
-                            //     },
-                            //     coloredButtonText: 'Verify',
-                            //     noColoredButtonText: 'Cancel',
-                            //     coloredButtonOnTap: () {
-                            //       // Get.offAndToNamed(AppRoutes.emailVerification);
-                            //     },
-                            //   );
-                            // }
-                            if (accountVerification &&
-                                isSyndicateCardRequired != 'Required') {
-                              cubit.addCommentOnPost(postModel.id.toString());
-                            } else {
-                              if (isSyndicateCardRequired != 'Required') {
-                                showCustomDialog(
-                                  context: context,
-                                  title: AppStrings.emailVerification,
-                                  description: AppStrings
-                                      .toAddCommentYouMustVerifyYourEmailAddress,
-                                  noColoredButtonOnTap: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  coloredButtonText: AppStrings.verify,
-                                  noColoredButtonText: AppStrings.cancel,
-                                  coloredButtonOnTap: () {
-                                    Navigator.of(context).pop();
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.emailVerification,
-                                      arguments: AppRoutesArgs
-                                          .emailVerificationRouteArgs(
-                                              currentDoctorModel:
-                                                  currentDoctorModel),
-                                    );
-                                  },
-                                );
-                              }
-                            }
-                            if (accountVerification &&
-                                isSyndicateCardRequired == 'Required') {
-                              showCustomDialog(
-                                context: context,
-                                title: 'Syndicate Card Verification',
-                                description: AppStrings
-                                    .toAddCommentYouMustVerifyYourSyndicateCard,
-                                noColoredButtonOnTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                coloredButtonText: AppStrings.verify,
-                                noColoredButtonText: AppStrings.cancel,
-                                coloredButtonOnTap: () {
-                                  Navigator.of(context).pop();
-                                  // navigatorKey.currentState
-                                  //     ?.pushNamed(
-                                  //   AppRoutes.emailVerification,
-                                  //   arguments: AppRoutesArgs
-                                  //       .emailVerificationRouteArgs(
-                                  //           currentDoctorModel:
-                                  //               currentDoctorModel),
-                                  // );
-                                },
-                              );
-                            }
-                          },
+                          onPressed: () {},
                           icon: Icon(
                             Icons.send_outlined,
                             size: 30,
@@ -262,28 +115,29 @@ class AddCommentField extends StatelessWidget {
                           cubit.newComment = val;
                         },
                         onFieldSubmitted: (val) {
-                          //   if (controller.homeController
-                          //       .currentDoctorVerification.value) {
-                          //     controller.addCommentOnPost(
-                          //       postId: postModel.id.toString(),
-                          //     );
-                          //   } else {
-                          //     showCustomDialog(
-                          //       context: context,
-                          //       title: 'Email verification',
-                          //       description:
-                          //           'To add comment you must verify your email address',
-                          //       noColoredBottonOnTap: () {
-                          //         Get.back();
-                          //       },
-                          //       coloredBottonText: 'Verify',
-                          //       noColoredBottonText: 'Cancel',
-                          //       coloredBottonOnTap: () {
-                          //         Get.offAndToNamed(
-                          //             AppRoutes.emailVerification);
-                          //       },
-                          //     );
-                          //   }
+                          if (!accountVerification) {
+                            showCustomDialog(
+                              context: context,
+                              title: AppStrings.emailVerification,
+                              description: AppStrings
+                                  .toAddCommentYouMustVerifyYourEmailAddress,
+                              noColoredButtonOnTap: () {
+                                Navigator.of(context).pop();
+                              },
+                              coloredButtonText: AppStrings.verify,
+                              noColoredButtonText: AppStrings.cancel,
+                              coloredButtonOnTap: () {
+                                Navigator.of(context).pop();
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.emailVerification,
+                                  arguments:
+                                      AppRoutesArgs.emailVerificationRouteArgs(
+                                          currentDoctorModel:
+                                              currentDoctorModel),
+                                );
+                              },
+                            );
+                          }
                           if (accountVerification &&
                               isSyndicateCardRequired != 'Required' &&
                               isSyndicateCardRequired != 'Pending') {
@@ -348,6 +202,29 @@ class AddCommentField extends StatelessWidget {
                       children: [
                         IconButton(
                           onPressed: () {
+                            if (!accountVerification) {
+                              showCustomDialog(
+                                context: context,
+                                title: AppStrings.emailVerification,
+                                description: AppStrings
+                                    .toAddCommentYouMustVerifyYourEmailAddress,
+                                noColoredButtonOnTap: () {
+                                  Navigator.of(context).pop();
+                                },
+                                coloredButtonText: AppStrings.verify,
+                                noColoredButtonText: AppStrings.cancel,
+                                coloredButtonOnTap: () {
+                                  Navigator.of(context).pop();
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.emailVerification,
+                                    arguments: AppRoutesArgs
+                                        .emailVerificationRouteArgs(
+                                            currentDoctorModel:
+                                                currentDoctorModel),
+                                  );
+                                },
+                              );
+                            }
                             if (accountVerification &&
                                 isSyndicateCardRequired != 'Required' &&
                                 isSyndicateCardRequired != 'Pending') {

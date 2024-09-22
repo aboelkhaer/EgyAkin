@@ -6,7 +6,7 @@ class VerificationIcon extends StatelessWidget {
   final bool isSmaller;
   const VerificationIcon({
     super.key,
-    this.duration = 2000,
+    this.duration = 500,
     this.isPatientCard = false,
     this.isSmaller = false,
   });

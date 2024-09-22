@@ -42,7 +42,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo!.data!.job.toString(),
+                          doctorInfo!.data!.job ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -68,7 +68,7 @@ class InformationTab extends StatelessWidget {
                         SizedBox(width: 60.w),
                         Flexible(
                           child: SelectableText(
-                            doctorInfo.data!.workingplace.toString(),
+                            doctorInfo.data!.workingplace ?? 'no data',
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600),
@@ -94,7 +94,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.specialty.toString(),
+                          doctorInfo.data!.specialty ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -119,7 +119,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.highestdegree.toString(),
+                          doctorInfo.data!.highestdegree ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -144,7 +144,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.email.toString(),
+                          doctorInfo.data!.email ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -169,7 +169,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.phone.toString(),
+                          doctorInfo.data!.phone ?? 'no data',
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),

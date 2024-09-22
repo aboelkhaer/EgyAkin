@@ -145,7 +145,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       children: [
                                         SizedBox(height: 100.h),
                                         Image.asset(
-                                          AppImages.noNetwork,
+                                          AppImages.notFound,
                                           width: 150.w,
                                           height: 150.h,
                                         ),

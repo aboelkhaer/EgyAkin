@@ -126,9 +126,10 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
               size: size,
               cubit: cubit,
               currentDoctorModel: widget.currentDoctorModel,
-              accountVerification: widget.accountVerification,
+              accountVerification: widget.homeDataModel.verified ?? false,
               postModel: widget.postModel,
-              isSyndicateCardRequired: widget.isSyndicateCardRequired,
+              isSyndicateCardRequired:
+                  widget.homeDataModel.isSyndicateCardRequired.toString(),
             ),
           ),
         ],

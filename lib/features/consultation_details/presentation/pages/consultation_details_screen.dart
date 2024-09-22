@@ -629,6 +629,46 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                       children: [
                                                         IconButton(
                                                           onPressed: () {
+                                                            if (!widget
+                                                                .homeDataModel
+                                                                .verified!) {
+                                                              showCustomDialog(
+                                                                context:
+                                                                    context,
+                                                                title: AppStrings
+                                                                    .emailVerification,
+                                                                description:
+                                                                    AppStrings
+                                                                        .toAddConsultationYouMustVerifyYourEmailAddress,
+                                                                noColoredButtonOnTap:
+                                                                    () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                coloredButtonText:
+                                                                    AppStrings
+                                                                        .verify,
+                                                                noColoredButtonText:
+                                                                    AppStrings
+                                                                        .cancel,
+                                                                coloredButtonOnTap:
+                                                                    () {
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                  navigatorKey
+                                                                      .currentState
+                                                                      ?.pushNamed(
+                                                                    AppRoutes
+                                                                        .emailVerification,
+                                                                    arguments: AppRoutesArgs.emailVerificationRouteArgs(
+                                                                        currentDoctorModel:
+                                                                            widget.currentDoctorModel),
+                                                                  );
+                                                                },
+                                                              );
+                                                            }
                                                             if (widget
                                                                     .homeDataModel
                                                                     .verified! &&
@@ -661,7 +701,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                                       .emailVerification,
                                                                   description:
                                                                       AppStrings
-                                                                          .toAddCommentYouMustVerifyYourEmailAddress,
+                                                                          .toAddConsultationYouMustVerifyYourSyndicateCard,
                                                                   noColoredButtonOnTap:
                                                                       () {
                                                                     Navigator.of(
@@ -707,7 +747,8 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                                 title:
                                                                     'Syndicate card verification',
                                                                 description:
-                                                                    'To add consultation you must verify your syndicate card.',
+                                                                    AppStrings
+                                                                        .toAddConsultationYouMustVerifyYourSyndicateCard,
                                                                 noColoredButtonOnTap:
                                                                     () {
                                                                   Navigator.of(

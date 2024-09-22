@@ -17,11 +17,12 @@ void showBlockedDialog({
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
+              SizedBox(height: 10.h),
               Text(
                 'You are blocked!',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 12.sp,
+                  fontSize: 14.sp,
                   color: AppColors.title,
                 ),
               ),
@@ -29,7 +30,7 @@ void showBlockedDialog({
               Text(
                 'Please contact support if you think this is a mistake.',
                 style: TextStyle(
-                  fontSize: 10.sp,
+                  fontSize: 12.sp,
                   color: AppColors.title, // Assuming you have a subtitle color
                 ),
               ),
@@ -50,7 +51,7 @@ void showBlockedDialog({
                 child: Text(
                   'support@egyakin.com', // Use your support email
                   style: TextStyle(
-                    fontSize: 10.sp,
+                    fontSize: 12.sp,
                     color: AppColors
                         .primary, // Highlight the email in primary color
                     decoration: TextDecoration.underline,

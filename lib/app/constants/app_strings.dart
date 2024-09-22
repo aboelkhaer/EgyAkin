@@ -68,6 +68,10 @@ class AppStrings {
   static const String emailVerification = 'Email verification';
   static const String toAddCommentYouMustVerifyYourEmailAddress =
       'To add comment you must verify your email address';
+  static const String toAddConsultationYouMustVerifyYourEmailAddress =
+      'To add consultation you must verify your email address';
+  static const String toAddConsultationYouMustVerifyYourSyndicateCard =
+      'To add consultation you must verify your syndicate card';
   static const String toAddCommentYouMustVerifyYourSyndicateCard =
       'To add comment you must verify your syndicate card';
   static const String verify = 'Verify';

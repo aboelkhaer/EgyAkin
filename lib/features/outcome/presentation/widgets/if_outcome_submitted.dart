@@ -119,10 +119,12 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(
-                                          '${response[index].question}:',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
+                                        Flexible(
+                                          child: Text(
+                                            '${response[index].question}:',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ],
