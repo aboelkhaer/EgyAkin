@@ -13,7 +13,8 @@ abstract class PatientSectionDetailsState with _$PatientSectionDetailsState {
       String message,
       int snackbarErrorCounter,
       bool isChooseFilesLoading,
-      bool isChooseFilesLoaded) = Loaded;
+      bool isChooseFilesLoaded,
+      double uploadFilesProgress) = Loaded;
 
   const factory PatientSectionDetailsState.error(String message) = _Error;
 }

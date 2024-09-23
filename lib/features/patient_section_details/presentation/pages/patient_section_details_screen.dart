@@ -90,6 +90,7 @@ class _PatientSectionDetailsScreenState
               snackbarErrorCounter,
               isChooseFilesLoading,
               isChooseFilesLoaded,
+              uploadFilesProgress,
             ) {
               if (widget.currentDoctorRole == AppStrings.roleAdmin) {
                 return buildSectionForm(
@@ -478,13 +479,16 @@ class _PatientSectionDetailsScreenState
                               ),
                             );
                           },
-                          loaded: (questions,
-                              isSubmitLoading,
-                              isSubmitted,
-                              message,
-                              snackbarErrorCounter,
-                              isChooseFilesLoading,
-                              isChooseFilesLoaded) {
+                          loaded: (
+                            questions,
+                            isSubmitLoading,
+                            isSubmitted,
+                            message,
+                            snackbarErrorCounter,
+                            isChooseFilesLoading,
+                            isChooseFilesLoaded,
+                            uploadFilesProgress,
+                          ) {
                             if (cubit.questionIndexWhichDoctorClicked ==
                                 index.toString()) {
                               if (isChooseFilesLoading) {

@@ -45,6 +45,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         snackbarErrorCounter,
         false,
         false,
+        0.0,
       ));
     }
   }
@@ -69,6 +70,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           0,
           false,
           false,
+          0.0,
         ));
       },
     );
@@ -85,6 +87,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         snackbarErrorCounter += 1,
         false,
         false,
+        0.0,
       ),
     ));
   }
@@ -128,6 +131,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
 
@@ -150,6 +154,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 snackbarErrorCounter += 1,
                 false,
                 false,
+                0.0,
               ),
             ));
             isValid = false;
@@ -169,6 +174,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 snackbarErrorCounter += 1,
                 false,
                 false,
+                0.0,
               ),
             ));
 
@@ -194,6 +200,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
 
@@ -217,6 +224,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
 
@@ -234,6 +242,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
 
@@ -257,6 +266,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
 
@@ -279,6 +289,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
               isValid = false;
@@ -296,6 +307,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   snackbarErrorCounter += 1,
                   false,
                   false,
+                  0.0,
                 ),
               ));
               isValid = false;
@@ -314,6 +326,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               snackbarErrorCounter += 1,
               false,
               false,
+              0.0,
             ),
           ));
 
@@ -334,6 +347,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           snackbarErrorCounter += 1,
           false,
           false,
+          0.0,
         ),
       ));
 
@@ -353,6 +367,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               snackbarErrorCounter += 1,
               false,
               false,
+              0.0,
             ),
           ));
         },
@@ -367,6 +382,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               snackbarErrorCounter += 1,
               false,
               false,
+              0.0,
             ),
           ));
         },
@@ -386,6 +402,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         snackbarErrorCounter += 1,
         true,
         false,
+        0.0,
       ),
     ));
 
@@ -416,6 +433,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           snackbarErrorCounter += 1,
           false,
           true,
+          0.0,
         ),
       ));
     }
@@ -429,6 +447,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         snackbarErrorCounter += 1,
         false,
         false,
+        0.0,
       ),
     ));
   }

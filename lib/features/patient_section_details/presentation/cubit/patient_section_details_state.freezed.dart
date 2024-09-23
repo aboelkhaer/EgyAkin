@@ -27,7 +27,8 @@ mixin _$PatientSectionDetailsState {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -43,7 +44,8 @@ mixin _$PatientSectionDetailsState {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -59,7 +61,8 @@ mixin _$PatientSectionDetailsState {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -165,7 +168,8 @@ class _$InitialImpl implements _Initial {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -184,7 +188,8 @@ class _$InitialImpl implements _Initial {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -203,7 +208,8 @@ class _$InitialImpl implements _Initial {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -306,7 +312,8 @@ class _$LoadingImpl implements _Loading {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -325,7 +332,8 @@ class _$LoadingImpl implements _Loading {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -344,7 +352,8 @@ class _$LoadingImpl implements _Loading {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -410,7 +419,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       String message,
       int snackbarErrorCounter,
       bool isChooseFilesLoading,
-      bool isChooseFilesLoaded});
+      bool isChooseFilesLoaded,
+      double uploadFilesProgress});
 }
 
 /// @nodoc
@@ -433,6 +443,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? snackbarErrorCounter = null,
     Object? isChooseFilesLoading = null,
     Object? isChooseFilesLoaded = null,
+    Object? uploadFilesProgress = null,
   }) {
     return _then(_$LoadedImpl(
       null == questions
@@ -463,6 +474,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isChooseFilesLoaded
           : isChooseFilesLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == uploadFilesProgress
+          ? _value.uploadFilesProgress
+          : uploadFilesProgress // ignore: cast_nullable_to_non_nullable
+              as double,
     ));
   }
 }
@@ -477,7 +492,8 @@ class _$LoadedImpl implements Loaded {
       this.message,
       this.snackbarErrorCounter,
       this.isChooseFilesLoading,
-      this.isChooseFilesLoaded)
+      this.isChooseFilesLoaded,
+      this.uploadFilesProgress)
       : _questions = questions;
 
   final List<QuestionModel> _questions;
@@ -500,10 +516,12 @@ class _$LoadedImpl implements Loaded {
   final bool isChooseFilesLoading;
   @override
   final bool isChooseFilesLoaded;
+  @override
+  final double uploadFilesProgress;
 
   @override
   String toString() {
-    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isChooseFilesLoading: $isChooseFilesLoading, isChooseFilesLoaded: $isChooseFilesLoaded)';
+    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isChooseFilesLoading: $isChooseFilesLoading, isChooseFilesLoaded: $isChooseFilesLoaded, uploadFilesProgress: $uploadFilesProgress)';
   }
 
   @override
@@ -523,7 +541,9 @@ class _$LoadedImpl implements Loaded {
             (identical(other.isChooseFilesLoading, isChooseFilesLoading) ||
                 other.isChooseFilesLoading == isChooseFilesLoading) &&
             (identical(other.isChooseFilesLoaded, isChooseFilesLoaded) ||
-                other.isChooseFilesLoaded == isChooseFilesLoaded));
+                other.isChooseFilesLoaded == isChooseFilesLoaded) &&
+            (identical(other.uploadFilesProgress, uploadFilesProgress) ||
+                other.uploadFilesProgress == uploadFilesProgress));
   }
 
   @override
@@ -535,7 +555,8 @@ class _$LoadedImpl implements Loaded {
       message,
       snackbarErrorCounter,
       isChooseFilesLoading,
-      isChooseFilesLoaded);
+      isChooseFilesLoaded,
+      uploadFilesProgress);
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -557,12 +578,20 @@ class _$LoadedImpl implements Loaded {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(questions, isSubmitLoading, isSubmitted, message,
-        snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
+    return loaded(
+        questions,
+        isSubmitLoading,
+        isSubmitted,
+        message,
+        snackbarErrorCounter,
+        isChooseFilesLoading,
+        isChooseFilesLoaded,
+        uploadFilesProgress);
   }
 
   @override
@@ -577,12 +606,20 @@ class _$LoadedImpl implements Loaded {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(questions, isSubmitLoading, isSubmitted, message,
-        snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
+    return loaded?.call(
+        questions,
+        isSubmitLoading,
+        isSubmitted,
+        message,
+        snackbarErrorCounter,
+        isChooseFilesLoading,
+        isChooseFilesLoaded,
+        uploadFilesProgress);
   }
 
   @override
@@ -597,14 +634,22 @@ class _$LoadedImpl implements Loaded {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(questions, isSubmitLoading, isSubmitted, message,
-          snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
+      return loaded(
+          questions,
+          isSubmitLoading,
+          isSubmitted,
+          message,
+          snackbarErrorCounter,
+          isChooseFilesLoading,
+          isChooseFilesLoaded,
+          uploadFilesProgress);
     }
     return orElse();
   }
@@ -655,7 +700,8 @@ abstract class Loaded implements PatientSectionDetailsState {
       final String message,
       final int snackbarErrorCounter,
       final bool isChooseFilesLoading,
-      final bool isChooseFilesLoaded) = _$LoadedImpl;
+      final bool isChooseFilesLoaded,
+      final double uploadFilesProgress) = _$LoadedImpl;
 
   List<QuestionModel> get questions;
   bool get isSubmitLoading;
@@ -664,6 +710,7 @@ abstract class Loaded implements PatientSectionDetailsState {
   int get snackbarErrorCounter;
   bool get isChooseFilesLoading;
   bool get isChooseFilesLoaded;
+  double get uploadFilesProgress;
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -749,7 +796,8 @@ class _$ErrorImpl implements _Error {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -768,7 +816,8 @@ class _$ErrorImpl implements _Error {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -787,7 +836,8 @@ class _$ErrorImpl implements _Error {
             String message,
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
-            bool isChooseFilesLoaded)?
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

@@ -61,6 +61,7 @@ class SectionSubmitButton extends StatelessWidget {
                       snackbarErrorCounter,
                       isChooseFilesLoading,
                       isChooseFilesLoaded,
+                      uploadFilesProgress,
                     ) {
                       if (message.isNotEmpty) {
                         customSnackBar(context: context, message: message);
@@ -116,6 +117,7 @@ class SectionSubmitButton extends StatelessWidget {
                       snackbarErrorCounter,
                       isChooseFilesLoading,
                       isChooseFilesLoaded,
+                      uploadFilesProgress,
                     ) {
                       if (isSubmitLoading) {
                         return const Column(
