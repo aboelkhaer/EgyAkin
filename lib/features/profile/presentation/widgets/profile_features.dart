@@ -106,15 +106,18 @@ class ProfileFeatures extends StatelessWidget {
                           borderRadius: BorderRadius.circular(10)),
                       child: _profileScreensData(context)[index].title ==
                               'Sign out'
-                          ? const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(
-                                  height: 25,
-                                  width: 25,
-                                  child: CircularProgressIndicator(),
-                                )
-                              ],
+                          ? Container(
+                              padding: const EdgeInsets.all(3),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 25,
+                                    width: 25,
+                                    child: CircularProgressIndicator(),
+                                  )
+                                ],
+                              ),
                             )
                           : Row(
                               children: [
@@ -267,7 +270,7 @@ class ProfileFeatures extends StatelessWidget {
             builder: (context) {
               return BlocProvider(
                 create: (context) =>
-                    DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl()),
+                    DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()),
                 child: AchievementsTab(
                   isProfileFeature: true,
                   currentDoctorId: cubit.currentDoctor.id.toString(),

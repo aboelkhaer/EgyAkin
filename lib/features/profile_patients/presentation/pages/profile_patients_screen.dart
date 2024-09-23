@@ -105,96 +105,117 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                         ishorizontal: false);
                   },
                   loaded: (data, isSeeMore) {
-                    return ListView.builder(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      controller: cubit.scrollController,
-                      scrollDirection: Axis.vertical,
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 20,
-                        right: 20,
-                        bottom: 50,
-                      ),
-                      itemCount: data.data!.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        var patient = data.data!.data![index];
+                    return data.data!.data!.isEmpty
+                        ? Center(
+                            child: Image.asset(
+                              AppImages.notFound,
+                              width: 150.h,
+                              height: 200.h,
+                            ),
+                          )
+                        : ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            controller: cubit.scrollController,
+                            scrollDirection: Axis.vertical,
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                              top: 20,
+                              right: 20,
+                              bottom: 50,
+                            ),
+                            itemCount: data.data!.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              var patient = data.data!.data![index];
 
-                        return PatientCard(
-                          patientName: patient.name ?? AppStrings.empty,
-                          drFirstName:
-                              patient.doctor!.firstName ?? AppStrings.empty,
-                          isAllDataOpen: false,
-                          homeDataModel: widget.homeDataModel,
-                          doctorId: patient.doctor!.id.toString(),
-                          updatedAt: patient.updatedAt ?? AppStrings.empty,
-                          accountVerification: widget.accountVerification,
-                          drLastName:
-                              patient.doctor!.lastName ?? AppStrings.empty,
-                          hospital: patient.hospital ?? AppStrings.empty,
-                          currentDoctorModel: widget.currentDoctorModel,
-                          isSyndicateCardRequired:
-                              patient.doctor!.isSyndicateCardRequired!,
-                          doctorImage: patient.doctor!.image,
-                          isOutcomeStatus: patient.sections!.outcomeStatus!,
-                          currentDoctorPoints: widget.currentDoctorPoints,
-                          currentDoctorRole: widget.currentDoctorRole,
-                          submitStatus: patient.sections == null
-                              ? false
-                              : patient.sections!.submitStatus ?? false,
-                          onOutcomeTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.outcome,
-                              arguments: AppRoutesArgs.outcomeRouteArgs(
-                                verified: widget.homeDataModel.verified!,
-                                outcomeStatus: patient.sections!.outcomeStatus!,
-                                patientName: patient.name.toString(),
-                                patientId: patient.id.toString(),
-                                currentDoctorModel: widget.currentDoctorModel,
-                                doctorId: patient.doctor!.id.toString(),
-                                homeDataModel: widget.homeDataModel,
-                                isSyndicateCardRequired: widget
-                                    .homeDataModel.isSyndicateCardRequired
-                                    .toString(),
-                                currentDoctorRole: widget.currentDoctorRole,
-                                currentDoctorPoints: widget.currentDoctorPoints,
-                              ),
-                            );
-                          },
-                          onAddCommentTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.comments,
-                              arguments: AppRoutesArgs.patientCommentsRouteArgs(
-                                patientId: patient.id.toString(),
-                                currentDoctorModel: widget.currentDoctorModel,
-                                verified: widget.homeDataModel.verified!,
-                                homeDataModel: widget.homeDataModel,
-                                currentDoctorRole: widget.currentDoctorRole,
-                                patientName: patient.name.toString(),
-                                isSyndicateCardRequired: widget
-                                    .homeDataModel.isSyndicateCardRequired
-                                    .toString(),
-                                currentDoctorPoints: widget.currentDoctorPoints,
-                              ),
-                            );
-                          },
-                          onTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.patientSections,
-                              arguments:
-                                  AppRoutesArgs.patientSectionsRouteArguments(
-                                patientId: patient.id.toString(),
-                                currentDoctorModel: widget.currentDoctorModel,
-                                currentDoctorPoints: widget.currentDoctorPoints,
-                                currentDoctorRole: widget.currentDoctorRole,
-                                homeDataModel: widget.homeDataModel,
+                              return PatientCard(
+                                patientName: patient.name ?? AppStrings.empty,
+                                drFirstName: patient.doctor!.firstName ??
+                                    AppStrings.empty,
                                 isAllDataOpen: false,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    );
+                                homeDataModel: widget.homeDataModel,
+                                doctorId: patient.doctor!.id.toString(),
+                                updatedAt:
+                                    patient.updatedAt ?? AppStrings.empty,
+                                accountVerification: widget.accountVerification,
+                                drLastName: patient.doctor!.lastName ??
+                                    AppStrings.empty,
+                                hospital: patient.hospital ?? AppStrings.empty,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                isSyndicateCardRequired:
+                                    patient.doctor!.isSyndicateCardRequired!,
+                                doctorImage: patient.doctor!.image,
+                                isOutcomeStatus:
+                                    patient.sections!.outcomeStatus!,
+                                currentDoctorPoints: widget.currentDoctorPoints,
+                                currentDoctorRole: widget.currentDoctorRole,
+                                submitStatus: patient.sections == null
+                                    ? false
+                                    : patient.sections!.submitStatus ?? false,
+                                onOutcomeTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.outcome,
+                                    arguments: AppRoutesArgs.outcomeRouteArgs(
+                                      verified: widget.homeDataModel.verified!,
+                                      outcomeStatus:
+                                          patient.sections!.outcomeStatus!,
+                                      patientName: patient.name.toString(),
+                                      patientId: patient.id.toString(),
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      doctorId: patient.doctor!.id.toString(),
+                                      homeDataModel: widget.homeDataModel,
+                                      isSyndicateCardRequired: widget
+                                          .homeDataModel.isSyndicateCardRequired
+                                          .toString(),
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                    ),
+                                  );
+                                },
+                                onAddCommentTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.comments,
+                                    arguments:
+                                        AppRoutesArgs.patientCommentsRouteArgs(
+                                      patientId: patient.id.toString(),
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      verified: widget.homeDataModel.verified!,
+                                      homeDataModel: widget.homeDataModel,
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
+                                      patientName: patient.name.toString(),
+                                      isSyndicateCardRequired: widget
+                                          .homeDataModel.isSyndicateCardRequired
+                                          .toString(),
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                    ),
+                                  );
+                                },
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.patientSections,
+                                    arguments: AppRoutesArgs
+                                        .patientSectionsRouteArguments(
+                                      patientId: patient.id.toString(),
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
+                                      homeDataModel: widget.homeDataModel,
+                                      isAllDataOpen: false,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
                   },
                 );
               },

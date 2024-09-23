@@ -20,11 +20,11 @@ class AppStrings {
   // static const String initialEmail = '';
   // static const String initialPassword = '';
 
-  static const int splashDelay = 3;
+  static const int splashDelay = 1;
   static const int snackBarDelay = 5;
   static const int delayForAPIRequestInMilliseconds = 300;
 
-  static const int apiTimeOut = 120;
+  static const int apiTimeOut = 240;
   static const int resendTimer = 180;
   static const String applicationJson = "application/json";
   static const String contentType = "content-type";

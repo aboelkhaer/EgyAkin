@@ -6,17 +6,19 @@ import '../../../../exports.dart';
 
 class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
   DoctorInfoViewCubit(
-      this._getDoctorInfoViewUsecase,
-      this._getAchievementsUsecase,
-      this._changeSyndicateCardStatusUsecase,
-      this._blockUserUsecase,
-      this._verifyUserEmailUsecase)
-      : super(const DoctorInfoViewState.initial());
+    this._getDoctorInfoViewUsecase,
+    this._getAchievementsUsecase,
+    this._changeSyndicateCardStatusUsecase,
+    this._blockUserUsecase,
+    this._verifyUserEmailUsecase,
+    this._homeCubit,
+  ) : super(const DoctorInfoViewState.initial());
   final GetDoctorInfoViewUsecase _getDoctorInfoViewUsecase;
   final GetAchievementsUsecase _getAchievementsUsecase;
   final ChangeSyndicateCardStatusUsecase _changeSyndicateCardStatusUsecase;
   final BlockUserUsecase _blockUserUsecase;
   final VerifyUserEmailUsecase _verifyUserEmailUsecase;
+  final HomeCubit _homeCubit;
   static DoctorInfoViewCubit get(context) => BlocProvider.of(context);
   int changesCounter = 0;
   bool isSyndicateCardVerified = false;
@@ -98,6 +100,44 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     result.fold((l) {
       debugPrint(l.message);
     }, (response) async {
+      debugPrint(response.message);
+    });
+  }
+
+  Future<void> rejectSyndicateCard(String doctorId) async {
+    changesCounter++;
+
+    // Update doctorInfo and emit the state in DoctorInfoViewCubit
+    final updatedDoctorModel = updatedDoctor.data!.copyWith(
+      isSyndicateCardRequired: 'Required',
+      syndicateCard: null,
+    );
+    final updatedDoctorInfo = updatedDoctor.copyWith(data: updatedDoctorModel);
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => DoctorInfoViewState.loaded(
+        updatedDoctorInfo,
+        value.isLoadingAchievements,
+        value.isLoadedAchievements,
+        '',
+        value.achievements,
+        changesCounter,
+      ),
+    ));
+
+    // Execute your use case to change syndicate card status
+    final result = await _changeSyndicateCardStatusUsecase.execute(
+      ChangeSyndicateCardStatusUsecaseInput(
+          status: 'Required', doctorId: doctorId),
+    );
+
+    result.fold((l) {
+      debugPrint(l.message);
+    }, (response) async {
+      // Remove the doctor from HomeCubit's data
+      await _homeCubit.removeDoctorInDoctorsActivation(doctorId);
+
       debugPrint(response.message);
     });
   }
@@ -246,48 +286,4 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
       },
     );
   }
-
-  // getScoreHistory(String doctorId) async {
-  //   emit(
-  //     state.maybeMap(
-  //       orElse: () => state,
-  //       loaded: (value) => DoctorInfoViewState.loaded(
-  //         value.doctorInfo,
-  //         true,
-  //         false,
-  //         '',
-  //         null,
-  //       ),
-  //     ),
-  //   );
-
-  //   final result = await _getScoreHistoryUsecase.excute(
-  //       GetScoreHistoryUsecaseInput(doctorId: doctorId, page: _currentPage));
-  //   result.fold(
-  //     (l) {
-  //       emit(state.maybeMap(
-  //         orElse: () => state,
-  //         loaded: (value) => DoctorInfoViewState.loaded(
-  //           value.doctorInfo,
-  //           false,
-  //           false,
-  //           l.message,
-  //           null,
-  //         ),
-  //       ));
-  //     },
-  //     (response) async {
-  //       emit(state.maybeMap(
-  //         orElse: () => state,
-  //         loaded: (value) => DoctorInfoViewState.loaded(
-  //           value.doctorInfo,
-  //           false,
-  //           true,
-  //           '',
-  //           response,
-  //         ),
-  //       ));
-  //     },
-  //   );
-  // }
 }

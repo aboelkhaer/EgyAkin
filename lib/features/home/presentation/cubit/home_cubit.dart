@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
+import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
 import 'package:egy_akin/features/home/data/models/home_model_response.dart';
@@ -44,7 +45,15 @@ class HomeCubit extends Cubit<HomeState> {
   String currentUserVersion = '';
   bool getCurrentUserVersion = false;
 
-  HomeModelResponse homeDataModel = const HomeModelResponse();
+  HomeModelResponse homeDataModel = const HomeModelResponse(
+    data: HomeDataModelResponse(
+      allPatients: [],
+      currentPatients: [],
+      topDoctors: [],
+      pendingSyndicateCard: [],
+      posts: [],
+    ),
+  );
 
   final GlobalKey addPatientKey = GlobalKey();
   final GlobalKey topDoctorKey = GlobalKey();
@@ -65,6 +74,51 @@ class HomeCubit extends Cubit<HomeState> {
         false,
       ),
     ));
+  }
+
+  removeDoctorInDoctorsActivation(String doctorId) async {
+    if (homeDataModel.data == null ||
+        homeDataModel.data!.pendingSyndicateCard == null) {
+      debugPrint('No data or pendingSyndicateCard is null');
+      return;
+    }
+
+    debugPrint(
+        'Before removal: ${homeDataModel.data!.pendingSyndicateCard!.length}');
+    debugPrint(
+        'Doctors before removal: ${homeDataModel.data!.pendingSyndicateCard!.map((d) => d.id)}');
+
+    // Filter out the doctor with the matching doctorId
+    final updatedDoctorsActivation = homeDataModel.data!.pendingSyndicateCard!
+        .where((doctor) => doctor.id.toString() != doctorId)
+        .toList();
+
+    debugPrint('After removal: ${updatedDoctorsActivation.length}');
+
+    // Update homeDataModel with the new list of pendingSyndicateCard
+    homeDataModel = homeDataModel.copyWith(
+      data: homeDataModel.data!.copyWith(
+        pendingSyndicateCard: updatedDoctorsActivation,
+      ),
+    );
+
+    // Emit the updated state with the new homeDataModel
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => HomeState.loaded(
+          homeDataModel,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          tabsController.index,
+          value.isUploadingSyndicateCard,
+          value.isUploadedSyndicateCard,
+          '',
+          value.checkUpdateMessageCounter,
+          value.isUserBlocked,
+        ),
+      ),
+    );
   }
 
   bool isUpdateMessageHidden = true;
@@ -96,7 +150,7 @@ class HomeCubit extends Cubit<HomeState> {
       log('$currentUserVersion moatz123');
     }
 
-    // emit(const HomeState.loading());
+    // Safely emit state only if the Cubit is not closed
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => HomeState.loaded(
@@ -111,14 +165,7 @@ class HomeCubit extends Cubit<HomeState> {
         false,
       ),
     ));
-    getHome();
   }
-
-  // @override
-  // Future<void> close() {
-  //   scrollController.dispose();
-  //   return super.close();
-  // }
 
   hideHomeHeader() {
     emit(state.maybeMap(
@@ -137,47 +184,53 @@ class HomeCubit extends Cubit<HomeState> {
     ));
   }
 
-  changeDotsPositions() {
+  void changeDotsPositions() {
     emit(
       state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => HomeState.loaded(
-                value.homeData,
-                value.currentDoctorModel,
-                dotsPosition,
-                tabsController.index,
-                value.isUploadingSyndicateCard,
-                value.isUploadedSyndicateCard,
-                '',
-                checkUpdateMessageCounter,
-                false,
-              )),
+        orElse: () => state,
+        loaded: (value) => HomeState.loaded(
+          value.homeData,
+          value.currentDoctorModel,
+          dotsPosition, // Update dotsPosition
+          tabsController.index,
+          value.isUploadingSyndicateCard,
+          value.isUploadedSyndicateCard,
+          '',
+          checkUpdateMessageCounter,
+          false,
+        ),
+      ),
     );
   }
 
-  getHome() async {
+  Future<void> getHome() async {
     dotsPosition = 0;
     emit(const HomeState.loading());
+
+    // Get doctor data from local storage and update messages
+    getDoctorDataFromLocal();
     getUpdateMessageStatusFromLocal();
 
+    // Fetch home data from the use case
     final result = await _getHomeUsecase.execute(NoParams());
+
     result.fold(
       (l) {
-        emit(HomeState.error(l.message));
+        if (!isClosed) {
+          emit(HomeState.error(l.message));
+        }
       },
       (homeData) async {
+        // Update the relevant data
         accountVerification = homeData.verified!;
-        if (int.parse(homeData.unreadCount!) > 0) {
-          isUnreadNotification = true;
-        } else {
-          isUnreadNotification = false;
-        }
+        isUnreadNotification = int.parse(homeData.unreadCount!) > 0;
         doctorPatientCount = homeData.doctorPatientCount.toString();
         doctorScore = homeData.scoreValue.toString();
         isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
         currentDoctorRole = homeData.role.toString();
         homeDataModel = homeData;
 
+        // Only emit new state if the Cubit is still active
         emit(
           HomeState.loaded(
             homeData,
@@ -222,6 +275,32 @@ class HomeCubit extends Cubit<HomeState> {
       if (pickedImage != null) {
         final pickedImageFile = File(pickedImage.path);
         imagePicked = pickedImageFile;
+
+        // Optimize the image before uploading
+        try {
+          File optimizedImage = await optimizeImage(imagePicked!);
+          imagePicked = optimizedImage; // Update with the optimized image
+        } catch (e) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => HomeState.loaded(
+                value.homeData,
+                value.currentDoctorModel,
+                value.dotsPosition,
+                tabsController.index,
+                false,
+                false,
+                'Failed to optimize image: $e',
+                checkUpdateMessageCounter,
+                false,
+              ),
+            ),
+          );
+          return;
+        }
+
+        // Proceed with uploading the optimized image
         final result = await _uploadSyndicateCardUsecase.execute(imagePicked!);
 
         result.fold(
@@ -244,11 +323,13 @@ class HomeCubit extends Cubit<HomeState> {
             );
           },
           (r) async {
+            final updatedHomeDataModel =
+                homeDataModel.copyWith(isSyndicateCardRequired: 'Pending');
             emit(
               state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => HomeState.loaded(
-                  value.homeData,
+                  updatedHomeDataModel,
                   value.currentDoctorModel,
                   value.dotsPosition,
                   tabsController.index,

@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/data/models/get_doctor_profile_score_history_model_response.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_state.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
@@ -111,88 +110,99 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
                     return const Center(child: CircularProgressIndicator());
                   },
                   loaded: (scoreHistory, isSeeMore) {
-                    return ListView.builder(
-                      itemCount: scoreHistory.data!.length,
-                      controller: cubit.scrollController,
-                      itemBuilder: (context, index) {
-                        ScoreModel scoreModel = scoreHistory.data![index];
-                        return Container(
-                          padding: const EdgeInsets.only(
-                              bottom: 5, left: 20, right: 20),
-                          child: Card(
-                            color: Colors.white,
-                            elevation: 0.8,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                    return scoreHistory.data!.isEmpty
+                        ? Center(
+                            child: Image.asset(
+                              AppImages.notFound,
+                              width: 100.h,
+                              height: 150.h,
                             ),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColors.primary.withOpacity(0.8),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        scoreModel.action.toString(),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
+                          )
+                        : ListView.builder(
+                            itemCount: scoreHistory.data!.length,
+                            controller: cubit.scrollController,
+                            itemBuilder: (context, index) {
+                              ScoreModel scoreModel = scoreHistory.data![index];
+                              return Container(
+                                padding: const EdgeInsets.only(
+                                    bottom: 5, left: 20, right: 20),
+                                child: Card(
+                                  color: Colors.white,
+                                  elevation: 0.8,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: AppColors.primary.withOpacity(0.8),
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              scoreModel.action.toString(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  int.parse(scoreModel.score!) >
+                                                          1
+                                                      ? 'Points:'
+                                                      : 'Point:',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 2),
+                                                Text(
+                                                  '${scoreModel.score}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            int.parse(scoreModel.score!) > 1
-                                                ? 'Points:'
-                                                : 'Point:',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
+                                        SizedBox(height: 3.h),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              timeago
+                                                  .format(DateTime.parse(
+                                                    scoreModel.updateAt
+                                                        .toString(),
+                                                  ))
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 10.sp),
                                             ),
-                                          ),
-                                          const SizedBox(width: 2),
-                                          Text(
-                                            '${scoreModel.score}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: 3.h),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        timeago
-                                            .format(DateTime.parse(
-                                              scoreModel.updateAt.toString(),
-                                            ))
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 10.sp),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
+                                ),
+                              );
+                            },
+                          );
                   },
                 );
               },

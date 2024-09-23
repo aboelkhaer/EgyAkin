@@ -88,8 +88,7 @@ class RouteGenerator {
             builder: (_) => MultiBlocProvider(
               providers: [
                 BlocProvider<HomeCubit>(
-                    create: (context) =>
-                        di.sl<HomeCubit>()..getDoctorDataFromLocal()),
+                    create: (context) => di.sl<HomeCubit>()..getHome()),
                 BlocProvider<NotificationCubit>(
                   create: (context) =>
                       di.sl<NotificationCubit>()..getAllNotifications(),
@@ -459,8 +458,13 @@ class RouteGenerator {
               args.containsKey('homeDataModel') &&
               args.containsKey('initialIndex')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<DoctorInfoViewCubit>(
-                create: (context) => di.sl<DoctorInfoViewCubit>(),
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<DoctorInfoViewCubit>(
+                      create: (context) => di.sl<DoctorInfoViewCubit>()),
+                  BlocProvider<HomeCubit>(
+                      create: (context) => di.sl<HomeCubit>()),
+                ],
                 child: DoctorInfoViewScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   doctorId: args['doctorId'] as String,

@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
+import 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
 
 import '../../../../exports.dart';
 
@@ -129,6 +130,10 @@ class HomeTab extends StatelessWidget {
                       //     title: 'hello'),
                       PostsSliderAndDots(cubit: cubit),
                       SizedBox(height: 10.h),
+
+                      const DoctorsActivation(),
+                      SizedBox(height: 10.h),
+
                       const TopDoctors(),
                       const YourPatientSection(),
                       const AllPatientSection(),

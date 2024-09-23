@@ -53,8 +53,15 @@ class SectionSubmitButton extends StatelessWidget {
                 listener: (context, state) {
                   state.maybeWhen(
                     orElse: () {},
-                    loaded: (questions, isSubmitLoading, isSubmitted, message,
-                        snackbarErrorCounter) {
+                    loaded: (
+                      questions,
+                      isSubmitLoading,
+                      isSubmitted,
+                      message,
+                      snackbarErrorCounter,
+                      isChooseFilesLoading,
+                      isChooseFilesLoaded,
+                    ) {
                       if (message.isNotEmpty) {
                         customSnackBar(context: context, message: message);
                       }
@@ -101,8 +108,15 @@ class SectionSubmitButton extends StatelessWidget {
                             : true,
                       );
                     },
-                    loaded: (questions, isSubmitLoading, isSubmitted, message,
-                        snackbarErrorCounter) {
+                    loaded: (
+                      questions,
+                      isSubmitLoading,
+                      isSubmitted,
+                      message,
+                      snackbarErrorCounter,
+                      isChooseFilesLoading,
+                      isChooseFilesLoaded,
+                    ) {
                       if (isSubmitLoading) {
                         return const Column(
                           children: [

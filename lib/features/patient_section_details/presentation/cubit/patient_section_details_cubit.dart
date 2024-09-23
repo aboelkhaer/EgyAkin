@@ -1,10 +1,13 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/get_patient_section_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,7 +38,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       questionModelList =
           updatedQuestionModelList; // Replace the old list with the new list
       emit(PatientSectionDetailsState.loaded(
-          updatedQuestionModelList, false, false, '', snackbarErrorCounter));
+        updatedQuestionModelList,
+        false,
+        false,
+        '',
+        snackbarErrorCounter,
+        false,
+        false,
+      ));
     }
   }
 
@@ -52,7 +62,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       (response) async {
         questionModelList = response.data!;
         emit(PatientSectionDetailsState.loaded(
-            response.data!, false, false, '', 0));
+          response.data!,
+          false,
+          false,
+          '',
+          0,
+          false,
+          false,
+        ));
       },
     );
   }
@@ -61,7 +78,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => PatientSectionDetailsState.loaded(
-          value.questions, false, false, '', snackbarErrorCounter += 1),
+        value.questions,
+        false,
+        false,
+        '',
+        snackbarErrorCounter += 1,
+        false,
+        false,
+      ),
     ));
   }
 
@@ -97,11 +121,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'You must select at least one choice. \n{${question.question}}',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'You must select at least one choice. \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
 
               isValid = false;
@@ -116,11 +143,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  AppStrings.somethingWentWrong,
-                  snackbarErrorCounter += 1),
+                value.questions,
+                false,
+                false,
+                AppStrings.somethingWentWrong,
+                snackbarErrorCounter += 1,
+                false,
+                false,
+              ),
             ));
             isValid = false;
             break;
@@ -132,11 +162,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'You must add "Others" field in \n{${question.question}}',
-                  snackbarErrorCounter += 1),
+                value.questions,
+                false,
+                false,
+                'You must add "Others" field in \n{${question.question}}',
+                snackbarErrorCounter += 1,
+                false,
+                false,
+              ),
             ));
 
             isValid = false;
@@ -148,17 +181,20 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             String name = formData[question.id.toString()];
 
             // Regular expression for checking only English alphabetic characters
-            RegExp englishCharRegex = RegExp(r'^[a-zA-Z]+$');
+            RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
 
             if (!englishCharRegex.hasMatch(name)) {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'Name should contain only English letters',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'Name should contain only English letters',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
 
               isValid = false;
@@ -174,11 +210,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'National ID should have 14 digits',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'National ID should have 14 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
 
               isValid = false;
@@ -188,11 +227,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'National ID should have 14 digits',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'National ID should have 14 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
 
               isValid = false;
@@ -208,11 +250,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'Age should be less than 120',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'Age should be less than 120',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
 
               isValid = false;
@@ -227,11 +272,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'Phone should have 11 digits',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'Phone should have 11 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
               isValid = false;
               break;
@@ -241,11 +289,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    'Phone should have 11 digits',
-                    snackbarErrorCounter += 1),
+                  value.questions,
+                  false,
+                  false,
+                  'Phone should have 11 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                ),
               ));
               isValid = false;
               break;
@@ -256,11 +307,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => PatientSectionDetailsState.loaded(
-                value.questions,
-                false,
-                false,
-                'This question is required \n{${question.question}}',
-                snackbarErrorCounter += 1),
+              value.questions,
+              false,
+              false,
+              'This question is required \n{${question.question}}',
+              snackbarErrorCounter += 1,
+              false,
+              false,
+            ),
           ));
 
           isValid = false;
@@ -273,7 +327,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => PatientSectionDetailsState.loaded(
-            value.questions, true, false, '', snackbarErrorCounter += 1),
+          value.questions,
+          true,
+          false,
+          '',
+          snackbarErrorCounter += 1,
+          false,
+          false,
+        ),
       ));
 
       final result = await _updatePatientSectionDetailsUsecase.execute(
@@ -285,25 +346,90 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => PatientSectionDetailsState.loaded(
-                value.questions,
-                false,
-                false,
-                l.message,
-                snackbarErrorCounter += 1),
+              value.questions,
+              false,
+              false,
+              l.message,
+              snackbarErrorCounter += 1,
+              false,
+              false,
+            ),
           ));
         },
         (response) async {
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => PatientSectionDetailsState.loaded(
-                value.questions,
-                false,
-                true,
-                response.message.toString(),
-                snackbarErrorCounter += 1),
+              value.questions,
+              false,
+              true,
+              response.message.toString(),
+              snackbarErrorCounter += 1,
+              false,
+              false,
+            ),
           ));
         },
       );
     } else {}
+  }
+
+  String questionIndexWhichDoctorClicked = '';
+  pickFilesForQuestions(int questionIndex) async {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        value.questions,
+        value.isSubmitLoading,
+        value.isSubmitted,
+        '',
+        snackbarErrorCounter += 1,
+        true,
+        false,
+      ),
+    ));
+
+    // Pick multiple files
+    FilePickerResult? result;
+    result = await FilePicker.platform.pickFiles(allowMultiple: true);
+    if (result != null && result.files.isNotEmpty) {
+      List<Map<String, String>> filesList = [];
+
+      for (var pickedFile in result.files) {
+        File file = File(pickedFile.path!);
+        String fileName = pickedFile.name;
+        String fileData = base64Encode(await file.readAsBytes());
+
+        filesList.add({"file_name": fileName, "file_data": fileData});
+      }
+
+      formData[questionModelList[questionIndex].id.toString()] = filesList;
+
+      log(formData[questionModelList[questionIndex].id.toString()].toString());
+      emit(state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => PatientSectionDetailsState.loaded(
+          value.questions,
+          value.isSubmitLoading,
+          value.isSubmitted,
+          '',
+          snackbarErrorCounter += 1,
+          false,
+          true,
+        ),
+      ));
+    }
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        value.questions,
+        value.isSubmitLoading,
+        value.isSubmitted,
+        '',
+        snackbarErrorCounter += 1,
+        false,
+        false,
+      ),
+    ));
   }
 }

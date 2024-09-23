@@ -440,6 +440,8 @@ mixin _$HomeDataModelResponse {
   List<PatientHomeDataModel>? get currentPatients =>
       throw _privateConstructorUsedError;
   List<DoctorModel>? get topDoctors => throw _privateConstructorUsedError;
+  List<DoctorModel>? get pendingSyndicateCard =>
+      throw _privateConstructorUsedError;
   List<PostModel>? get posts => throw _privateConstructorUsedError;
 
   /// Serializes this HomeDataModelResponse to a JSON map.
@@ -463,6 +465,7 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       @JsonKey(name: 'current_patient')
       List<PatientHomeDataModel>? currentPatients,
       List<DoctorModel>? topDoctors,
+      List<DoctorModel>? pendingSyndicateCard,
       List<PostModel>? posts});
 }
 
@@ -485,6 +488,7 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? allPatients = freezed,
     Object? currentPatients = freezed,
     Object? topDoctors = freezed,
+    Object? pendingSyndicateCard = freezed,
     Object? posts = freezed,
   }) {
     return _then(_value.copyWith(
@@ -499,6 +503,10 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
       topDoctors: freezed == topDoctors
           ? _value.topDoctors
           : topDoctors // ignore: cast_nullable_to_non_nullable
+              as List<DoctorModel>?,
+      pendingSyndicateCard: freezed == pendingSyndicateCard
+          ? _value.pendingSyndicateCard
+          : pendingSyndicateCard // ignore: cast_nullable_to_non_nullable
               as List<DoctorModel>?,
       posts: freezed == posts
           ? _value.posts
@@ -522,6 +530,7 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'current_patient')
       List<PatientHomeDataModel>? currentPatients,
       List<DoctorModel>? topDoctors,
+      List<DoctorModel>? pendingSyndicateCard,
       List<PostModel>? posts});
 }
 
@@ -542,6 +551,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? allPatients = freezed,
     Object? currentPatients = freezed,
     Object? topDoctors = freezed,
+    Object? pendingSyndicateCard = freezed,
     Object? posts = freezed,
   }) {
     return _then(_$HomeDataModelResponseImpl(
@@ -556,6 +566,10 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
       topDoctors: freezed == topDoctors
           ? _value._topDoctors
           : topDoctors // ignore: cast_nullable_to_non_nullable
+              as List<DoctorModel>?,
+      pendingSyndicateCard: freezed == pendingSyndicateCard
+          ? _value._pendingSyndicateCard
+          : pendingSyndicateCard // ignore: cast_nullable_to_non_nullable
               as List<DoctorModel>?,
       posts: freezed == posts
           ? _value._posts
@@ -574,10 +588,12 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'current_patient')
       final List<PatientHomeDataModel>? currentPatients,
       final List<DoctorModel>? topDoctors,
+      final List<DoctorModel>? pendingSyndicateCard,
       final List<PostModel>? posts})
       : _allPatients = allPatients,
         _currentPatients = currentPatients,
         _topDoctors = topDoctors,
+        _pendingSyndicateCard = pendingSyndicateCard,
         _posts = posts;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -615,6 +631,17 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<DoctorModel>? _pendingSyndicateCard;
+  @override
+  List<DoctorModel>? get pendingSyndicateCard {
+    final value = _pendingSyndicateCard;
+    if (value == null) return null;
+    if (_pendingSyndicateCard is EqualUnmodifiableListView)
+      return _pendingSyndicateCard;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<PostModel>? _posts;
   @override
   List<PostModel>? get posts {
@@ -627,7 +654,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, posts: $posts)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts)';
   }
 
   @override
@@ -641,6 +668,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
                 .equals(other._currentPatients, _currentPatients) &&
             const DeepCollectionEquality()
                 .equals(other._topDoctors, _topDoctors) &&
+            const DeepCollectionEquality()
+                .equals(other._pendingSyndicateCard, _pendingSyndicateCard) &&
             const DeepCollectionEquality().equals(other._posts, _posts));
   }
 
@@ -651,6 +680,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_allPatients),
       const DeepCollectionEquality().hash(_currentPatients),
       const DeepCollectionEquality().hash(_topDoctors),
+      const DeepCollectionEquality().hash(_pendingSyndicateCard),
       const DeepCollectionEquality().hash(_posts));
 
   /// Create a copy of HomeDataModelResponse
@@ -677,6 +707,7 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
       @JsonKey(name: 'current_patient')
       final List<PatientHomeDataModel>? currentPatients,
       final List<DoctorModel>? topDoctors,
+      final List<DoctorModel>? pendingSyndicateCard,
       final List<PostModel>? posts}) = _$HomeDataModelResponseImpl;
 
   factory _HomeDataModelResponse.fromJson(Map<String, dynamic> json) =
@@ -690,6 +721,8 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   List<PatientHomeDataModel>? get currentPatients;
   @override
   List<DoctorModel>? get topDoctors;
+  @override
+  List<DoctorModel>? get pendingSyndicateCard;
   @override
   List<PostModel>? get posts;
 

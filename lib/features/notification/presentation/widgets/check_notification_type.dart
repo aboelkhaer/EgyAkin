@@ -383,7 +383,7 @@ class CheckNotificationType extends StatelessWidget {
                 builder: (context) {
                   return BlocProvider(
                     create: (context) =>
-                        DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl()),
+                        DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()),
                     child: AchievementsTab(
                       isProfileFeature: true,
                       currentDoctorId: currentDoctorModel.id.toString(),

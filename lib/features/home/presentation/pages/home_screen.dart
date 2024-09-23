@@ -29,7 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    if (_cubit != null && !_cubit!.isClosed) {
+    if (_cubit != null &&
+        !_cubit!.isClosed &&
+        _cubit!.scrollController.hasClients) {
       _cubit!.scrollController.dispose();
     }
     super.dispose();

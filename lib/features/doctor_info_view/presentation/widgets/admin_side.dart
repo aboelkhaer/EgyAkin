@@ -224,7 +224,27 @@ class AdminSide extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
                           ),
-                        )
+                        ),
+                        const Spacer(),
+                        doctorInfo.data!.isSyndicateCardRequired == 'Pending'
+                            ? InkWell(
+                                onTap: () {
+                                  cubit.rejectSyndicateCard(
+                                      doctorInfo.data!.id.toString());
+                                },
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                child: Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: const Text(
+                                    'Reject',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              )
+                            : const SizedBox.shrink(),
                       ],
                     ),
                     SizedBox(height: 8.h),

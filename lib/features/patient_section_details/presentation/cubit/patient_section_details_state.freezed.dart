@@ -25,7 +25,9 @@ mixin _$PatientSectionDetailsState {
             bool isSubmitLoading,
             bool isSubmitted,
             String message,
-            int snackbarErrorCounter)
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -34,8 +36,14 @@ mixin _$PatientSectionDetailsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -44,8 +52,14 @@ mixin _$PatientSectionDetailsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -149,7 +163,9 @@ class _$InitialImpl implements _Initial {
             bool isSubmitLoading,
             bool isSubmitted,
             String message,
-            int snackbarErrorCounter)
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -161,8 +177,14 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -174,8 +196,14 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -276,7 +304,9 @@ class _$LoadingImpl implements _Loading {
             bool isSubmitLoading,
             bool isSubmitted,
             String message,
-            int snackbarErrorCounter)
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -288,8 +318,14 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -301,8 +337,14 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -366,7 +408,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isSubmitLoading,
       bool isSubmitted,
       String message,
-      int snackbarErrorCounter});
+      int snackbarErrorCounter,
+      bool isChooseFilesLoading,
+      bool isChooseFilesLoaded});
 }
 
 /// @nodoc
@@ -387,6 +431,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isSubmitted = null,
     Object? message = null,
     Object? snackbarErrorCounter = null,
+    Object? isChooseFilesLoading = null,
+    Object? isChooseFilesLoaded = null,
   }) {
     return _then(_$LoadedImpl(
       null == questions
@@ -409,6 +455,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.snackbarErrorCounter
           : snackbarErrorCounter // ignore: cast_nullable_to_non_nullable
               as int,
+      null == isChooseFilesLoading
+          ? _value.isChooseFilesLoading
+          : isChooseFilesLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isChooseFilesLoaded
+          ? _value.isChooseFilesLoaded
+          : isChooseFilesLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -416,8 +470,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements Loaded {
-  const _$LoadedImpl(final List<QuestionModel> questions, this.isSubmitLoading,
-      this.isSubmitted, this.message, this.snackbarErrorCounter)
+  const _$LoadedImpl(
+      final List<QuestionModel> questions,
+      this.isSubmitLoading,
+      this.isSubmitted,
+      this.message,
+      this.snackbarErrorCounter,
+      this.isChooseFilesLoading,
+      this.isChooseFilesLoaded)
       : _questions = questions;
 
   final List<QuestionModel> _questions;
@@ -436,10 +496,14 @@ class _$LoadedImpl implements Loaded {
   final String message;
   @override
   final int snackbarErrorCounter;
+  @override
+  final bool isChooseFilesLoading;
+  @override
+  final bool isChooseFilesLoaded;
 
   @override
   String toString() {
-    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter)';
+    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isChooseFilesLoading: $isChooseFilesLoading, isChooseFilesLoaded: $isChooseFilesLoaded)';
   }
 
   @override
@@ -455,7 +519,11 @@ class _$LoadedImpl implements Loaded {
                 other.isSubmitted == isSubmitted) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.snackbarErrorCounter, snackbarErrorCounter) ||
-                other.snackbarErrorCounter == snackbarErrorCounter));
+                other.snackbarErrorCounter == snackbarErrorCounter) &&
+            (identical(other.isChooseFilesLoading, isChooseFilesLoading) ||
+                other.isChooseFilesLoading == isChooseFilesLoading) &&
+            (identical(other.isChooseFilesLoaded, isChooseFilesLoaded) ||
+                other.isChooseFilesLoaded == isChooseFilesLoaded));
   }
 
   @override
@@ -465,7 +533,9 @@ class _$LoadedImpl implements Loaded {
       isSubmitLoading,
       isSubmitted,
       message,
-      snackbarErrorCounter);
+      snackbarErrorCounter,
+      isChooseFilesLoading,
+      isChooseFilesLoaded);
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -485,12 +555,14 @@ class _$LoadedImpl implements Loaded {
             bool isSubmitLoading,
             bool isSubmitted,
             String message,
-            int snackbarErrorCounter)
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(
-        questions, isSubmitLoading, isSubmitted, message, snackbarErrorCounter);
+    return loaded(questions, isSubmitLoading, isSubmitted, message,
+        snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
   }
 
   @override
@@ -498,13 +570,19 @@ class _$LoadedImpl implements Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(
-        questions, isSubmitLoading, isSubmitted, message, snackbarErrorCounter);
+    return loaded?.call(questions, isSubmitLoading, isSubmitted, message,
+        snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
   }
 
   @override
@@ -512,15 +590,21 @@ class _$LoadedImpl implements Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(questions, isSubmitLoading, isSubmitted, message,
-          snackbarErrorCounter);
+          snackbarErrorCounter, isChooseFilesLoading, isChooseFilesLoaded);
     }
     return orElse();
   }
@@ -569,13 +653,17 @@ abstract class Loaded implements PatientSectionDetailsState {
       final bool isSubmitLoading,
       final bool isSubmitted,
       final String message,
-      final int snackbarErrorCounter) = _$LoadedImpl;
+      final int snackbarErrorCounter,
+      final bool isChooseFilesLoading,
+      final bool isChooseFilesLoaded) = _$LoadedImpl;
 
   List<QuestionModel> get questions;
   bool get isSubmitLoading;
   bool get isSubmitted;
   String get message;
   int get snackbarErrorCounter;
+  bool get isChooseFilesLoading;
+  bool get isChooseFilesLoaded;
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -659,7 +747,9 @@ class _$ErrorImpl implements _Error {
             bool isSubmitLoading,
             bool isSubmitted,
             String message,
-            int snackbarErrorCounter)
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -671,8 +761,14 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -684,8 +780,14 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<QuestionModel> questions, bool isSubmitLoading,
-            bool isSubmitted, String message, int snackbarErrorCounter)?
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

@@ -53,6 +53,9 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       topDoctors: (json['topDoctors'] as List<dynamic>?)
           ?.map((e) => DoctorModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      pendingSyndicateCard: (json['pendingSyndicateCard'] as List<dynamic>?)
+          ?.map((e) => DoctorModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       posts: (json['posts'] as List<dynamic>?)
           ?.map((e) => PostModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -64,6 +67,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'all_patients': instance.allPatients,
       'current_patient': instance.currentPatients,
       'topDoctors': instance.topDoctors,
+      'pendingSyndicateCard': instance.pendingSyndicateCard,
       'posts': instance.posts,
     };
 

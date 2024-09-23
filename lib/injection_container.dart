@@ -28,6 +28,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
   sl.registerFactory(() => HomeCubit(sl(), sl(), sl()));
+  // sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl()));
+
   sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
@@ -42,7 +44,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
-  sl.registerFactory(() => DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(
+      () => DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
   sl.registerFactory(() => ChangePasswordCubit(sl()));

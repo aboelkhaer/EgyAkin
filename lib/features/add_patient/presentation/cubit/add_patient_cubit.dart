@@ -107,7 +107,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
             String name = formData[question.id.toString()];
 
             // Regular expression for checking only English alphabetic characters
-            RegExp englishCharRegex = RegExp(r'^[a-zA-Z]+$');
+            RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
 
             if (!englishCharRegex.hasMatch(name)) {
               emit(state.maybeMap(

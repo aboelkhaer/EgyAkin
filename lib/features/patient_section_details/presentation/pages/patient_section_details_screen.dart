@@ -82,8 +82,15 @@ class _PatientSectionDetailsScreenState
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: false);
             },
-            loaded: (questions, isSubmitLoading, isSubmitted, message,
-                snackbarErrorCounter) {
+            loaded: (
+              questions,
+              isSubmitLoading,
+              isSubmitted,
+              message,
+              snackbarErrorCounter,
+              isChooseFilesLoading,
+              isChooseFilesLoaded,
+            ) {
               if (widget.currentDoctorRole == AppStrings.roleAdmin) {
                 return buildSectionForm(
                     size: size,
@@ -453,41 +460,62 @@ class _PatientSectionDetailsScreenState
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                      // Pick multiple files
-                      FilePickerResult? result;
-                      result = await FilePicker.platform
-                          .pickFiles(allowMultiple: true);
-                      if (result != null && result.files.isNotEmpty) {
-                        List<Map<String, String>> filesList = [];
-
-                        for (var pickedFile in result.files) {
-                          File file = File(pickedFile.path!);
-                          String fileName = pickedFile.name;
-                          String fileData =
-                              base64Encode(await file.readAsBytes());
-
-                          filesList.add(
-                              {"file_name": fileName, "file_data": fileData});
-                        }
-
-                        setState(() {
-                          cubit.formData[cubit.questionModelList[index].id
-                              .toString()] = filesList;
-                        });
-
-                        log(cubit.formData[
-                                cubit.questionModelList[index].id.toString()]
-                            .toString());
-                      }
+                      cubit.questionIndexWhichDoctorClicked = index.toString();
+                      cubit.pickFilesForQuestions(index);
                     },
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
-                    child: const SizedBox(
-                      height: 50,
-                      child: Icon(
-                        Icons.cloud_upload_outlined,
-                        color: AppColors.primary,
-                      ),
+                    child: BlocBuilder<PatientSectionDetailsCubit,
+                        PatientSectionDetailsState>(
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return const SizedBox(
+                              height: 50,
+                              child: Icon(
+                                Icons.cloud_upload_outlined,
+                                color: AppColors.primary,
+                              ),
+                            );
+                          },
+                          loaded: (questions,
+                              isSubmitLoading,
+                              isSubmitted,
+                              message,
+                              snackbarErrorCounter,
+                              isChooseFilesLoading,
+                              isChooseFilesLoaded) {
+                            if (cubit.questionIndexWhichDoctorClicked ==
+                                index.toString()) {
+                              if (isChooseFilesLoading) {
+                                return const SizedBox(
+                                  height: 50,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        height: 25,
+                                        width: 25,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 3,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                            }
+
+                            return const SizedBox(
+                              height: 50,
+                              child: Icon(
+                                Icons.cloud_upload_outlined,
+                                color: AppColors.primary,
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -525,13 +553,6 @@ class _PatientSectionDetailsScreenState
               ),
             BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
               builder: (context, state) {
-                //  cubit.formData[cubit.questionModelList[index].id.toString()] ==
-                //             null ||
-                //         cubit.formData[
-                //                 cubit.questionModelList[index].id.toString()] ==
-                //             []
-                //     ? FileListWhenSubmit(files: filesList)
-                //     : const SizedBox.shrink(),
                 if (cubit.formData[
                             cubit.questionModelList[index].id.toString()] ==
                         null ||
