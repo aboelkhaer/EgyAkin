@@ -16,26 +16,35 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  HomeCubit? cubit;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Safely obtain the cubit from context when dependencies change
+    cubit = context.read<HomeCubit>();
+  }
+
   @override
   void initState() {
     super.initState();
-    final cubit = context.read<HomeCubit>();
-    cubit.getHome();
-    cubit.tabsController.jumpToTab(widget.page);
+    cubit = context.read<HomeCubit>();
+
+    cubit!.getHome();
+    cubit!.tabsController.jumpToTab(widget.page);
   }
 
   @override
   void dispose() {
-    final cubit = context.read<HomeCubit>();
-    if (!cubit.isClosed) {
-      cubit.scrollController.dispose();
+    if (cubit!.isClosed) {
+      cubit!.scrollController.dispose();
     }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    HomeCubit cubit = HomeCubit.get(context);
+    // HomeCubit cubit = HomeCubit.get(context);
 
     return Scaffold(
       appBar: PreferredSize(
@@ -68,19 +77,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       showBlockedDialog(
                         context: context,
                         onDismissed: () {
-                          cubit.signOut();
+                          cubit!.signOut();
                         },
                       );
-                      cubit.checkUpdateMessageCounter++;
+                      cubit!.checkUpdateMessageCounter++;
                     }
-                    if (cubit.isUpdateMessageHidden == false) {
+                    if (cubit!.isUpdateMessageHidden == false) {
                       showUpdateDialog(
                         context: context,
                         onDismissed: () {
-                          cubit.setUpdateMessageStatusToLocal();
+                          cubit!.setUpdateMessageStatusToLocal();
                         },
                       );
-                      cubit.checkUpdateMessageCounter++;
+                      cubit!.checkUpdateMessageCounter++;
                     }
                   }
                   if (isUserBlocked) {
@@ -105,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        child: HomeHeader(cubit: cubit),
+                        child: HomeHeader(cubit: cubit!),
                       ),
                     ],
                   );
@@ -126,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        child: HomeHeader(cubit: cubit),
+                        child: HomeHeader(cubit: cubit!),
                       ),
                     ],
                   );
@@ -157,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                        child: HomeHeader(cubit: cubit),
+                        child: HomeHeader(cubit: cubit!),
                       ),
                     ],
                   );
@@ -168,11 +177,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: PersistentTabView(
               context,
-              controller: cubit.tabsController,
+              controller: cubit!.tabsController,
               items: _navBarsItems(),
-              screens: _buildScreens(cubit),
+              screens: _buildScreens(cubit!),
               onItemSelected: (value) {
-                cubit.hideHomeHeader(value);
+                cubit!.hideHomeHeader(value);
               },
               confineInSafeArea: true,
               backgroundColor: Colors.white,
