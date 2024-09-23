@@ -27,8 +27,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => WelcomeCubit());
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => HomeCubit(sl(), sl(), sl()));
-  // sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl()));
+  // sl.registerFactory(() => HomeCubit(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl()));
 
   sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));

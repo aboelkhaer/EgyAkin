@@ -17,8 +17,8 @@ class HomeHeader extends StatelessWidget {
           onTap: () async {
             if (cubit.tabsController.index != 2) {
               cubit.tabsController.jumpToTab(2);
+              cubit.hideHomeHeader(2);
             }
-            cubit.hideHomeHeader();
           },
           child: Row(
             children: [
@@ -169,7 +169,7 @@ class HomeHeader extends StatelessWidget {
                             orElse: () {
                               return const SizedBox.shrink();
                             },
-                            loading: () {
+                            loading: (tabIndex) {
                               if (cubit.isSyndicateCardRequired == 'Verified') {
                                 return const VerificationIcon(
                                   duration: 300,

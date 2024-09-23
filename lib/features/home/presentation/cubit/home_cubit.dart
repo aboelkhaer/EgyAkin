@@ -167,9 +167,10 @@ class HomeCubit extends Cubit<HomeState> {
     ));
   }
 
-  hideHomeHeader() {
+  hideHomeHeader(int tabIndex) {
     emit(state.maybeMap(
       orElse: () => state,
+      loading: (value) => HomeState.loading(tabIndex),
       loaded: (value) => HomeState.loaded(
         value.homeData,
         value.currentDoctorModel,
@@ -204,8 +205,10 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   Future<void> getHome() async {
+    if (isClosed) return; // Prevents further execution
+
     dotsPosition = 0;
-    emit(const HomeState.loading());
+    emit(HomeState.loading(tabsController.index));
 
     // Get doctor data from local storage and update messages
     getDoctorDataFromLocal();

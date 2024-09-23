@@ -19,7 +19,7 @@ mixin _$HomeState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function(int tabIndex) loading,
     required TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -37,7 +37,7 @@ mixin _$HomeState {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function(int tabIndex)? loading,
     TResult? Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -55,7 +55,7 @@ mixin _$HomeState {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function(int tabIndex)? loading,
     TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -160,7 +160,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function(int tabIndex) loading,
     required TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -181,7 +181,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function(int tabIndex)? loading,
     TResult? Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -202,7 +202,7 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function(int tabIndex)? loading,
     TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -270,6 +270,8 @@ abstract class _$$LoadingImplCopyWith<$Res> {
   factory _$$LoadingImplCopyWith(
           _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
       __$$LoadingImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int tabIndex});
 }
 
 /// @nodoc
@@ -282,32 +284,58 @@ class __$$LoadingImplCopyWithImpl<$Res>
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tabIndex = null,
+  }) {
+    return _then(_$LoadingImpl(
+      null == tabIndex
+          ? _value.tabIndex
+          : tabIndex // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$LoadingImpl implements _Loading {
-  const _$LoadingImpl();
+  const _$LoadingImpl(this.tabIndex);
+
+  @override
+  final int tabIndex;
 
   @override
   String toString() {
-    return 'HomeState.loading()';
+    return 'HomeState.loading(tabIndex: $tabIndex)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$LoadingImpl &&
+            (identical(other.tabIndex, tabIndex) ||
+                other.tabIndex == tabIndex));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, tabIndex);
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadingImplCopyWith<_$LoadingImpl> get copyWith =>
+      __$$LoadingImplCopyWithImpl<_$LoadingImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function(int tabIndex) loading,
     required TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -321,14 +349,14 @@ class _$LoadingImpl implements _Loading {
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loading();
+    return loading(tabIndex);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function(int tabIndex)? loading,
     TResult? Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -342,14 +370,14 @@ class _$LoadingImpl implements _Loading {
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loading?.call();
+    return loading?.call(tabIndex);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function(int tabIndex)? loading,
     TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -365,7 +393,7 @@ class _$LoadingImpl implements _Loading {
     required TResult orElse(),
   }) {
     if (loading != null) {
-      return loading();
+      return loading(tabIndex);
     }
     return orElse();
   }
@@ -409,7 +437,15 @@ class _$LoadingImpl implements _Loading {
 }
 
 abstract class _Loading implements HomeState {
-  const factory _Loading() = _$LoadingImpl;
+  const factory _Loading(final int tabIndex) = _$LoadingImpl;
+
+  int get tabIndex;
+
+  /// Create a copy of HomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadingImplCopyWith<_$LoadingImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -607,7 +643,7 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function(int tabIndex) loading,
     required TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -637,7 +673,7 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function(int tabIndex)? loading,
     TResult? Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -667,7 +703,7 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function(int tabIndex)? loading,
     TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -833,7 +869,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
+    required TResult Function(int tabIndex) loading,
     required TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -854,7 +890,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
+    TResult? Function(int tabIndex)? loading,
     TResult? Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,
@@ -875,7 +911,7 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
+    TResult Function(int tabIndex)? loading,
     TResult Function(
             HomeModelResponse homeData,
             DoctorModel currentDoctorModel,

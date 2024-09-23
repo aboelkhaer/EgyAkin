@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
+import 'package:egy_akin/features/home/presentation/widgets/profile_tab_icon.dart';
 import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
 
 import '../../../../exports.dart';
@@ -15,24 +16,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  HomeCubit? _cubit;
-
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit = context.read<HomeCubit>();
-    });
-
-    context.read<HomeCubit>().tabsController.jumpToTab(widget.page);
+    final cubit = context.read<HomeCubit>();
+    cubit.getHome();
+    cubit.tabsController.jumpToTab(widget.page);
   }
 
   @override
   void dispose() {
-    if (_cubit != null &&
-        !_cubit!.isClosed &&
-        _cubit!.scrollController.hasClients) {
-      _cubit!.scrollController.dispose();
+    final cubit = context.read<HomeCubit>();
+    if (!cubit.isClosed) {
+      cubit.scrollController.dispose();
     }
     super.dispose();
   }
@@ -114,6 +110,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   );
                 },
+                loading: (tabIndex) {
+                  if (tabIndex == 2) {
+                    return const SizedBox.shrink();
+                  }
+                  return Column(
+                    children: [
+                      SizedBox(height: 10.h),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey.shade300,
+                            ),
+                          ),
+                        ),
+                        child: HomeHeader(cubit: cubit),
+                      ),
+                    ],
+                  );
+                },
                 loaded: (
                   homeData,
                   currentDoctorModel,
@@ -146,7 +163,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               );
-              // return cubit.hideHomeHeader(cubit);
             },
           ),
           Expanded(
@@ -156,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
               items: _navBarsItems(),
               screens: _buildScreens(cubit),
               onItemSelected: (value) {
-                cubit.hideHomeHeader();
+                cubit.hideHomeHeader(value);
               },
               confineInSafeArea: true,
               backgroundColor: Colors.white,
@@ -290,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: Colors.grey,
       ),
       PersistentBottomNavBarItem(
-        icon: const Icon(Icons.person),
+        icon: const ProfileTabIcon(),
         title: ('Profile'),
         activeColorPrimary: AppColors.primary,
         inactiveColorPrimary: Colors.grey,

@@ -10,6 +10,8 @@ import 'package:egy_akin/injection_container.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 //! don't remove imports
 
@@ -34,7 +36,17 @@ class ProfileCubit extends Cubit<ProfileState> {
       final pickedImage = await picker.pickImage(source: ImageSource.gallery);
       if (pickedImage != null) {
         final pickedImageFile = File(pickedImage.path);
-        imagePicked = pickedImageFile;
+
+        // Optimize the picked image
+        File optimizedImage;
+        try {
+          optimizedImage = await optimizeImage(pickedImageFile);
+          imagePicked = optimizedImage; // Update with the optimized image
+        } catch (e) {
+          emit(ProfileState.error('Failed to optimize image: $e'));
+          return;
+        }
+
         final result = await _uploadProfileImageUsecase.execute(imagePicked!);
 
         result.fold(

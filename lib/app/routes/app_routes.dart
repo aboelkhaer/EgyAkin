@@ -87,8 +87,10 @@ class RouteGenerator {
           return MaterialPageRoute(
             builder: (_) => MultiBlocProvider(
               providers: [
-                BlocProvider<HomeCubit>(
-                    create: (context) => di.sl<HomeCubit>()..getHome()),
+                // BlocProvider<HomeCubit>(
+                //     create: (context) => di.sl<HomeCubit>()..getHome()),
+                BlocProvider.value(value: di.sl<HomeCubit>()),
+
                 BlocProvider<NotificationCubit>(
                   create: (context) =>
                       di.sl<NotificationCubit>()..getAllNotifications(),

@@ -70,9 +70,9 @@ class NotificationTabIcon extends StatelessWidget {
             onTap: () {
               if (context.read<HomeCubit>().tabsController.index != 1) {
                 context.read<HomeCubit>().tabsController.jumpToTab(1);
+                context.read<HomeCubit>().hideHomeHeader(1);
               }
 
-              context.read<HomeCubit>().hideHomeHeader();
               if (int.parse(homeData.unreadCount!) > 0) {
                 context.read<NotificationCubit>().getAllNotifications();
                 Future.delayed(
