@@ -704,8 +704,7 @@ class CheckNotificationType extends StatelessWidget {
                                 AppRoutes.doctorInfoView,
                                 arguments:
                                     AppRoutesArgs.doctorInfoViewRouteArgs(
-                                  doctorId: notificationModel
-                                      .patient!.doctor!.id
+                                  doctorId: notificationModel.typeDoctor!.id
                                       .toString(),
                                   initialIndex: 0,
                                   currentDoctorModel: currentDoctorModel,
@@ -723,23 +722,40 @@ class CheckNotificationType extends StatelessWidget {
                               radius: 20.r,
                               backgroundColor:
                                   AppColors.primary.withOpacity(0.8),
-                              child: notificationModel.patient!.doctor!.image ==
-                                      null
-                                  ? Text(
-                                      notificationModel
-                                          .patient!.doctor!.firstName![0]
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp),
-                                    )
-                                  : CustomCachedNetworkImage(
-                                      imageUrl: notificationModel
-                                          .patient!.doctor!.image
-                                          .toString(),
-                                      height: 100.h,
-                                      width: 100.w,
-                                    ),
+                              child: notificationModel.typeDoctor != null
+                                  ? notificationModel.typeDoctor!.image == null
+                                      ? Text(
+                                          notificationModel
+                                              .typeDoctor!.firstName![0]
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.sp),
+                                        )
+                                      : CustomCachedNetworkImage(
+                                          imageUrl: notificationModel
+                                              .typeDoctor!.image
+                                              .toString(),
+                                          height: 100.h,
+                                          width: 100.w,
+                                        )
+                                  : notificationModel.patient!.doctor!.image ==
+                                          null
+                                      ? Text(
+                                          notificationModel
+                                              .patient!.doctor!.firstName![0]
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.sp),
+                                        )
+                                      : CustomCachedNetworkImage(
+                                          imageUrl: notificationModel
+                                              .patient!.doctor!.image
+                                              .toString(),
+                                          height: 100.h,
+                                          width: 100.w,
+                                        ),
                             ),
                           ),
                         ),
@@ -758,7 +774,8 @@ class CheckNotificationType extends StatelessWidget {
                                       text: notificationModel.content,
                                       style: TextStyle(
                                           color: AppColors.title,
-                                          fontSize: 12.sp),
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[
                                         // const TextSpan(
                                         //   text: ' creates ',
@@ -830,7 +847,7 @@ class CheckNotificationType extends StatelessWidget {
             navigatorKey.currentState?.pushNamed(
               AppRoutes.doctorInfoView,
               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-                doctorId: notificationModel.patient!.doctor!.id.toString(),
+                doctorId: notificationModel.typeDoctor!.id.toString(),
                 initialIndex: 0,
                 currentDoctorModel: currentDoctorModel,
                 isSyndicateCardRequired: isSyndicateCardRequired,
@@ -889,23 +906,48 @@ class CheckNotificationType extends StatelessWidget {
                               radius: 20.r,
                               backgroundColor:
                                   AppColors.primary.withOpacity(0.8),
-                              child: notificationModel.patient!.doctor!.image ==
-                                      null
-                                  ? Text(
-                                      notificationModel
-                                          .patient!.doctor!.firstName![0]
-                                          .toUpperCase(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.sp),
-                                    )
-                                  : CustomCachedNetworkImage(
-                                      imageUrl: notificationModel
-                                          .patient!.doctor!.image
-                                          .toString(),
-                                      height: 100.h,
-                                      width: 100.w,
-                                    ),
+                              child: notificationModel.patient != null
+                                  ? notificationModel.patient!.doctor!.image ==
+                                          null
+                                      ? Text(
+                                          notificationModel
+                                              .patient!.doctor!.firstName![0]
+                                              .toUpperCase(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.sp),
+                                        )
+                                      : CustomCachedNetworkImage(
+                                          imageUrl: notificationModel
+                                              .patient!.doctor!.image
+                                              .toString(),
+                                          height: 100.h,
+                                          width: 100.w,
+                                        )
+                                  : notificationModel.typeDoctor != null
+                                      ? notificationModel.typeDoctor!.image ==
+                                              null
+                                          ? Text(
+                                              notificationModel
+                                                  .typeDoctor!.firstName![0]
+                                                  .toUpperCase(),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16.sp),
+                                            )
+                                          : CustomCachedNetworkImage(
+                                              imageUrl: notificationModel
+                                                  .typeDoctor!.image
+                                                  .toString(),
+                                              height: 100.h,
+                                              width: 100.w,
+                                            )
+                                      : Text(
+                                          '',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16.sp),
+                                        ),
                             ),
                           ),
                         ),
@@ -922,7 +964,7 @@ class CheckNotificationType extends StatelessWidget {
                                   child: RichText(
                                     text: TextSpan(
                                       text:
-                                          'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)} has uploaded a new ',
+                                          'Dr. ${capitalizeFirstText(notificationModel.patient == null ? notificationModel.typeDoctor!.firstName! : notificationModel.patient!.doctor!.firstName!)} has uploaded a new ',
                                       style: TextStyle(
                                           color: AppColors.title,
                                           fontSize: 12.sp),

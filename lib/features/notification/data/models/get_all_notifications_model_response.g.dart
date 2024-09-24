@@ -86,6 +86,10 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
           ? null
           : PatientNotificationModel.fromJson(
               json['patient'] as Map<String, dynamic>),
+      typeDoctor: json['type_doctor'] == null
+          ? null
+          : TypeDoctorForNotificationModel.fromJson(
+              json['type_doctor'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$NotificationsModelImplToJson(
@@ -98,6 +102,29 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'type_id': instance.typeId,
       'created_at': instance.createdAt,
       'patient': instance.patient,
+      'type_doctor': instance.typeDoctor,
+    };
+
+_$TypeDoctorForNotificationModelImpl
+    _$$TypeDoctorForNotificationModelImplFromJson(Map<String, dynamic> json) =>
+        _$TypeDoctorForNotificationModelImpl(
+          id: (json['id'] as num?)?.toInt(),
+          firstName: json['name'] as String?,
+          lastName: json['lname'] as String?,
+          workingplace: json['workingplace'] as String?,
+          image: json['image'] as String?,
+          isSyndicateCardRequired: json['isSyndicateCardRequired'] as String?,
+        );
+
+Map<String, dynamic> _$$TypeDoctorForNotificationModelImplToJson(
+        _$TypeDoctorForNotificationModelImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.firstName,
+      'lname': instance.lastName,
+      'workingplace': instance.workingplace,
+      'image': instance.image,
+      'isSyndicateCardRequired': instance.isSyndicateCardRequired,
     };
 
 _$PatientNotificationModelImpl _$$PatientNotificationModelImplFromJson(

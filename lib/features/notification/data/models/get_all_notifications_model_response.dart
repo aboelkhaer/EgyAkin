@@ -51,9 +51,24 @@ class NotificationsModel with _$NotificationsModel {
     @JsonKey(name: 'type_id') String? typeId,
     @JsonKey(name: 'created_at') String? createdAt,
     PatientNotificationModel? patient,
+    @JsonKey(name: 'type_doctor') TypeDoctorForNotificationModel? typeDoctor,
   }) = _NotificationsModel;
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>
       _$NotificationsModelFromJson(json);
+}
+
+@freezed
+class TypeDoctorForNotificationModel with _$TypeDoctorForNotificationModel {
+  const factory TypeDoctorForNotificationModel({
+    int? id,
+    @JsonKey(name: 'name') String? firstName,
+    @JsonKey(name: 'lname') String? lastName,
+    String? workingplace,
+    String? image,
+    String? isSyndicateCardRequired,
+  }) = _TypeDoctorForNotificationModel;
+  factory TypeDoctorForNotificationModel.fromJson(Map<String, dynamic> json) =>
+      _$TypeDoctorForNotificationModelFromJson(json);
 }
 
 @freezed

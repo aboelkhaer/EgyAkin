@@ -756,6 +756,9 @@ mixin _$NotificationsModel {
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   PatientNotificationModel? get patient => throw _privateConstructorUsedError;
+  @JsonKey(name: 'type_doctor')
+  TypeDoctorForNotificationModel? get typeDoctor =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this NotificationsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -780,9 +783,12 @@ abstract class $NotificationsModelCopyWith<$Res> {
       String? content,
       @JsonKey(name: 'type_id') String? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
-      PatientNotificationModel? patient});
+      PatientNotificationModel? patient,
+      @JsonKey(name: 'type_doctor')
+      TypeDoctorForNotificationModel? typeDoctor});
 
   $PatientNotificationModelCopyWith<$Res>? get patient;
+  $TypeDoctorForNotificationModelCopyWith<$Res>? get typeDoctor;
 }
 
 /// @nodoc
@@ -807,6 +813,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? typeId = freezed,
     Object? createdAt = freezed,
     Object? patient = freezed,
+    Object? typeDoctor = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -837,6 +844,10 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
           ? _value.patient
           : patient // ignore: cast_nullable_to_non_nullable
               as PatientNotificationModel?,
+      typeDoctor: freezed == typeDoctor
+          ? _value.typeDoctor
+          : typeDoctor // ignore: cast_nullable_to_non_nullable
+              as TypeDoctorForNotificationModel?,
     ) as $Val);
   }
 
@@ -851,6 +862,21 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
 
     return $PatientNotificationModelCopyWith<$Res>(_value.patient!, (value) {
       return _then(_value.copyWith(patient: value) as $Val);
+    });
+  }
+
+  /// Create a copy of NotificationsModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $TypeDoctorForNotificationModelCopyWith<$Res>? get typeDoctor {
+    if (_value.typeDoctor == null) {
+      return null;
+    }
+
+    return $TypeDoctorForNotificationModelCopyWith<$Res>(_value.typeDoctor!,
+        (value) {
+      return _then(_value.copyWith(typeDoctor: value) as $Val);
     });
   }
 }
@@ -870,10 +896,14 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       String? content,
       @JsonKey(name: 'type_id') String? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
-      PatientNotificationModel? patient});
+      PatientNotificationModel? patient,
+      @JsonKey(name: 'type_doctor')
+      TypeDoctorForNotificationModel? typeDoctor});
 
   @override
   $PatientNotificationModelCopyWith<$Res>? get patient;
+  @override
+  $TypeDoctorForNotificationModelCopyWith<$Res>? get typeDoctor;
 }
 
 /// @nodoc
@@ -896,6 +926,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? typeId = freezed,
     Object? createdAt = freezed,
     Object? patient = freezed,
+    Object? typeDoctor = freezed,
   }) {
     return _then(_$NotificationsModelImpl(
       id: freezed == id
@@ -926,6 +957,10 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
           ? _value.patient
           : patient // ignore: cast_nullable_to_non_nullable
               as PatientNotificationModel?,
+      typeDoctor: freezed == typeDoctor
+          ? _value.typeDoctor
+          : typeDoctor // ignore: cast_nullable_to_non_nullable
+              as TypeDoctorForNotificationModel?,
     ));
   }
 }
@@ -940,7 +975,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       this.content,
       @JsonKey(name: 'type_id') this.typeId,
       @JsonKey(name: 'created_at') this.createdAt,
-      this.patient});
+      this.patient,
+      @JsonKey(name: 'type_doctor') this.typeDoctor});
 
   factory _$NotificationsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationsModelImplFromJson(json);
@@ -961,10 +997,13 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   final String? createdAt;
   @override
   final PatientNotificationModel? patient;
+  @override
+  @JsonKey(name: 'type_doctor')
+  final TypeDoctorForNotificationModel? typeDoctor;
 
   @override
   String toString() {
-    return 'NotificationsModel(id: $id, read: $read, type: $type, content: $content, typeId: $typeId, createdAt: $createdAt, patient: $patient)';
+    return 'NotificationsModel(id: $id, read: $read, type: $type, content: $content, typeId: $typeId, createdAt: $createdAt, patient: $patient, typeDoctor: $typeDoctor)';
   }
 
   @override
@@ -979,13 +1018,15 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.typeId, typeId) || other.typeId == typeId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.patient, patient) || other.patient == patient));
+            (identical(other.patient, patient) || other.patient == patient) &&
+            (identical(other.typeDoctor, typeDoctor) ||
+                other.typeDoctor == typeDoctor));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, read, type, content, typeId, createdAt, patient);
+  int get hashCode => Object.hash(runtimeType, id, read, type, content, typeId,
+      createdAt, patient, typeDoctor);
 
   /// Create a copy of NotificationsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1006,13 +1047,16 @@ class _$NotificationsModelImpl implements _NotificationsModel {
 
 abstract class _NotificationsModel implements NotificationsModel {
   const factory _NotificationsModel(
-      {final int? id,
-      final bool? read,
-      final String? type,
-      final String? content,
-      @JsonKey(name: 'type_id') final String? typeId,
-      @JsonKey(name: 'created_at') final String? createdAt,
-      final PatientNotificationModel? patient}) = _$NotificationsModelImpl;
+          {final int? id,
+          final bool? read,
+          final String? type,
+          final String? content,
+          @JsonKey(name: 'type_id') final String? typeId,
+          @JsonKey(name: 'created_at') final String? createdAt,
+          final PatientNotificationModel? patient,
+          @JsonKey(name: 'type_doctor')
+          final TypeDoctorForNotificationModel? typeDoctor}) =
+      _$NotificationsModelImpl;
 
   factory _NotificationsModel.fromJson(Map<String, dynamic> json) =
       _$NotificationsModelImpl.fromJson;
@@ -1033,6 +1077,9 @@ abstract class _NotificationsModel implements NotificationsModel {
   String? get createdAt;
   @override
   PatientNotificationModel? get patient;
+  @override
+  @JsonKey(name: 'type_doctor')
+  TypeDoctorForNotificationModel? get typeDoctor;
 
   /// Create a copy of NotificationsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1040,6 +1087,285 @@ abstract class _NotificationsModel implements NotificationsModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$NotificationsModelImplCopyWith<_$NotificationsModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+TypeDoctorForNotificationModel _$TypeDoctorForNotificationModelFromJson(
+    Map<String, dynamic> json) {
+  return _TypeDoctorForNotificationModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$TypeDoctorForNotificationModel {
+  int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'name')
+  String? get firstName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'lname')
+  String? get lastName => throw _privateConstructorUsedError;
+  String? get workingplace => throw _privateConstructorUsedError;
+  String? get image => throw _privateConstructorUsedError;
+  String? get isSyndicateCardRequired => throw _privateConstructorUsedError;
+
+  /// Serializes this TypeDoctorForNotificationModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of TypeDoctorForNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $TypeDoctorForNotificationModelCopyWith<TypeDoctorForNotificationModel>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $TypeDoctorForNotificationModelCopyWith<$Res> {
+  factory $TypeDoctorForNotificationModelCopyWith(
+          TypeDoctorForNotificationModel value,
+          $Res Function(TypeDoctorForNotificationModel) then) =
+      _$TypeDoctorForNotificationModelCopyWithImpl<$Res,
+          TypeDoctorForNotificationModel>;
+  @useResult
+  $Res call(
+      {int? id,
+      @JsonKey(name: 'name') String? firstName,
+      @JsonKey(name: 'lname') String? lastName,
+      String? workingplace,
+      String? image,
+      String? isSyndicateCardRequired});
+}
+
+/// @nodoc
+class _$TypeDoctorForNotificationModelCopyWithImpl<$Res,
+        $Val extends TypeDoctorForNotificationModel>
+    implements $TypeDoctorForNotificationModelCopyWith<$Res> {
+  _$TypeDoctorForNotificationModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of TypeDoctorForNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? workingplace = freezed,
+    Object? image = freezed,
+    Object? isSyndicateCardRequired = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workingplace: freezed == workingplace
+          ? _value.workingplace
+          : workingplace // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$TypeDoctorForNotificationModelImplCopyWith<$Res>
+    implements $TypeDoctorForNotificationModelCopyWith<$Res> {
+  factory _$$TypeDoctorForNotificationModelImplCopyWith(
+          _$TypeDoctorForNotificationModelImpl value,
+          $Res Function(_$TypeDoctorForNotificationModelImpl) then) =
+      __$$TypeDoctorForNotificationModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      @JsonKey(name: 'name') String? firstName,
+      @JsonKey(name: 'lname') String? lastName,
+      String? workingplace,
+      String? image,
+      String? isSyndicateCardRequired});
+}
+
+/// @nodoc
+class __$$TypeDoctorForNotificationModelImplCopyWithImpl<$Res>
+    extends _$TypeDoctorForNotificationModelCopyWithImpl<$Res,
+        _$TypeDoctorForNotificationModelImpl>
+    implements _$$TypeDoctorForNotificationModelImplCopyWith<$Res> {
+  __$$TypeDoctorForNotificationModelImplCopyWithImpl(
+      _$TypeDoctorForNotificationModelImpl _value,
+      $Res Function(_$TypeDoctorForNotificationModelImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of TypeDoctorForNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? firstName = freezed,
+    Object? lastName = freezed,
+    Object? workingplace = freezed,
+    Object? image = freezed,
+    Object? isSyndicateCardRequired = freezed,
+  }) {
+    return _then(_$TypeDoctorForNotificationModelImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      firstName: freezed == firstName
+          ? _value.firstName
+          : firstName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lastName: freezed == lastName
+          ? _value.lastName
+          : lastName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      workingplace: freezed == workingplace
+          ? _value.workingplace
+          : workingplace // ignore: cast_nullable_to_non_nullable
+              as String?,
+      image: freezed == image
+          ? _value.image
+          : image // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isSyndicateCardRequired: freezed == isSyndicateCardRequired
+          ? _value.isSyndicateCardRequired
+          : isSyndicateCardRequired // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$TypeDoctorForNotificationModelImpl
+    implements _TypeDoctorForNotificationModel {
+  const _$TypeDoctorForNotificationModelImpl(
+      {this.id,
+      @JsonKey(name: 'name') this.firstName,
+      @JsonKey(name: 'lname') this.lastName,
+      this.workingplace,
+      this.image,
+      this.isSyndicateCardRequired});
+
+  factory _$TypeDoctorForNotificationModelImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$TypeDoctorForNotificationModelImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  @JsonKey(name: 'name')
+  final String? firstName;
+  @override
+  @JsonKey(name: 'lname')
+  final String? lastName;
+  @override
+  final String? workingplace;
+  @override
+  final String? image;
+  @override
+  final String? isSyndicateCardRequired;
+
+  @override
+  String toString() {
+    return 'TypeDoctorForNotificationModel(id: $id, firstName: $firstName, lastName: $lastName, workingplace: $workingplace, image: $image, isSyndicateCardRequired: $isSyndicateCardRequired)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$TypeDoctorForNotificationModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.firstName, firstName) ||
+                other.firstName == firstName) &&
+            (identical(other.lastName, lastName) ||
+                other.lastName == lastName) &&
+            (identical(other.workingplace, workingplace) ||
+                other.workingplace == workingplace) &&
+            (identical(other.image, image) || other.image == image) &&
+            (identical(
+                    other.isSyndicateCardRequired, isSyndicateCardRequired) ||
+                other.isSyndicateCardRequired == isSyndicateCardRequired));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, firstName, lastName,
+      workingplace, image, isSyndicateCardRequired);
+
+  /// Create a copy of TypeDoctorForNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$TypeDoctorForNotificationModelImplCopyWith<
+          _$TypeDoctorForNotificationModelImpl>
+      get copyWith => __$$TypeDoctorForNotificationModelImplCopyWithImpl<
+          _$TypeDoctorForNotificationModelImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$TypeDoctorForNotificationModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _TypeDoctorForNotificationModel
+    implements TypeDoctorForNotificationModel {
+  const factory _TypeDoctorForNotificationModel(
+          {final int? id,
+          @JsonKey(name: 'name') final String? firstName,
+          @JsonKey(name: 'lname') final String? lastName,
+          final String? workingplace,
+          final String? image,
+          final String? isSyndicateCardRequired}) =
+      _$TypeDoctorForNotificationModelImpl;
+
+  factory _TypeDoctorForNotificationModel.fromJson(Map<String, dynamic> json) =
+      _$TypeDoctorForNotificationModelImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  @JsonKey(name: 'name')
+  String? get firstName;
+  @override
+  @JsonKey(name: 'lname')
+  String? get lastName;
+  @override
+  String? get workingplace;
+  @override
+  String? get image;
+  @override
+  String? get isSyndicateCardRequired;
+
+  /// Create a copy of TypeDoctorForNotificationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$TypeDoctorForNotificationModelImplCopyWith<
+          _$TypeDoctorForNotificationModelImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 PatientNotificationModel _$PatientNotificationModelFromJson(
