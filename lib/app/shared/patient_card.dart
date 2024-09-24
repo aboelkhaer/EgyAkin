@@ -101,6 +101,7 @@ class PatientCard extends StatelessWidget {
                                   currentDoctorPoints: currentDoctorPoints,
                                   homeDataModel: homeDataModel,
                                   initialIndex: 0,
+                                  isNavigateToTheButtonOfInformationTab: false,
                                 ),
                               );
                             },

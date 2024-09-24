@@ -71,6 +71,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                 currentDoctorRole: currentDoctorRole,
                                 homeDataModel: homeDataModel,
                                 initialIndex: 0,
+                                isNavigateToTheButtonOfInformationTab: false,
                               ),
                             );
                           },

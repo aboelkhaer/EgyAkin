@@ -71,6 +71,7 @@ class CommentCard extends StatelessWidget {
                               int.parse(homeDataModel.scoreValue!),
                           homeDataModel: homeDataModel,
                           initialIndex: 0,
+                          isNavigateToTheButtonOfInformationTab: false,
                         ),
                       );
                     },

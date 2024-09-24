@@ -19,6 +19,7 @@ class InformationTab extends StatelessWidget {
           loaded: (doctorInfo, isLoadingScoreHistory, isLoadedScoreHistory,
               message, scoreHistory, changesCounter) {
             return SingleChildScrollView(
+              controller: context.read<DoctorInfoViewCubit>().scrollController,
               physics: const BouncingScrollPhysics(),
               child: Padding(
                 padding:

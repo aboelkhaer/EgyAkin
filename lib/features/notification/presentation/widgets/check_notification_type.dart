@@ -80,6 +80,7 @@ class CheckNotificationType extends StatelessWidget {
                                   currentDoctorRole: currentDoctorRole,
                                   currentDoctorPoints: currentDoctorPoints,
                                   homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: false,
                                 ),
                               );
                             },
@@ -261,6 +262,7 @@ class CheckNotificationType extends StatelessWidget {
                                   currentDoctorRole: currentDoctorRole,
                                   currentDoctorPoints: currentDoctorPoints,
                                   homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: false,
                                 ),
                               );
                             },
@@ -405,6 +407,7 @@ class CheckNotificationType extends StatelessWidget {
                   currentDoctorPoints: currentDoctorPoints,
                   homeDataModel: homeDataModel,
                   initialIndex: 1,
+                  isNavigateToTheButtonOfInformationTab: false,
                 ),
               );
             }
@@ -448,6 +451,7 @@ class CheckNotificationType extends StatelessWidget {
                                   currentDoctorPoints: currentDoctorPoints,
                                   homeDataModel: homeDataModel,
                                   initialIndex: 0,
+                                  isNavigateToTheButtonOfInformationTab: false,
                                 ),
                               );
                             },
@@ -664,6 +668,317 @@ class CheckNotificationType extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'Other':
+        return GestureDetector(
+          onTap: () {},
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: false,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.patient!.doctor!.image ==
+                                      null
+                                  ? Text(
+                                      notificationModel
+                                          .patient!.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .patient!.doctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp),
+                                      children: const <TextSpan>[
+                                        // const TextSpan(
+                                        //   text: ' creates ',
+                                        //   style: TextStyle(
+                                        //     fontWeight: FontWeight.bold,
+                                        //     color: Colors.green,
+                                        //   ),
+                                        // ),
+                                        // const TextSpan(text: 'a new patient '),
+                                        // const TextSpan(
+                                        //     text: ' at ',
+                                        //     style: TextStyle(
+                                        //         fontWeight: FontWeight.bold)),
+                                        // TextSpan(
+                                        //     text:
+                                        //         '${notificationModel.patient!.hospital}'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'Syndicate Card':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.doctorInfoView,
+              arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+                doctorId: notificationModel.patient!.doctor!.id.toString(),
+                initialIndex: 0,
+                currentDoctorModel: currentDoctorModel,
+                isSyndicateCardRequired: isSyndicateCardRequired,
+                accountVerification: accountVerification,
+                currentDoctorRole: currentDoctorRole,
+                currentDoctorPoints: currentDoctorPoints,
+                homeDataModel: homeDataModel,
+                isNavigateToTheButtonOfInformationTab: true,
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel
+                                      .patient!.doctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.patient!.doctor!.image ==
+                                      null
+                                  ? Text(
+                                      notificationModel
+                                          .patient!.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .patient!.doctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text:
+                                          'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)} has uploaded a new ',
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp),
+                                      children: const <TextSpan>[
+                                        TextSpan(
+                                          text: ' Syndicate Card ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                        TextSpan(text: 'for approval.'),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
               ),
               SizedBox(height: 10.h),
             ],

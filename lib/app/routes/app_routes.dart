@@ -458,7 +458,8 @@ class RouteGenerator {
               args.containsKey('currentDoctorRole') &&
               args.containsKey('currentDoctorPoints') &&
               args.containsKey('homeDataModel') &&
-              args.containsKey('initialIndex')) {
+              args.containsKey('initialIndex') &&
+              args.containsKey('isNavigateToTheButtonOfInformationTab')) {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
@@ -477,6 +478,8 @@ class RouteGenerator {
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                   initialIndex: args['initialIndex'] as int,
+                  isNavigateToTheButtonOfInformationTab:
+                      args['isNavigateToTheButtonOfInformationTab'] as bool,
                 ),
               ),
             );

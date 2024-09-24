@@ -1,3 +1,7 @@
+import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
+import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
+import 'package:egy_akin/app/shared/functions/animate_to_position.dart';
+
 import '../../../../exports.dart';
 
 class DoctorInfoViewScreen extends StatefulWidget {
@@ -9,6 +13,8 @@ class DoctorInfoViewScreen extends StatefulWidget {
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
   final int initialIndex;
+  final bool isNavigateToTheButtonOfInformationTab;
+
   const DoctorInfoViewScreen({
     super.key,
     required this.doctorId,
@@ -19,6 +25,7 @@ class DoctorInfoViewScreen extends StatefulWidget {
     required this.currentDoctorPoints,
     required this.homeDataModel,
     required this.initialIndex,
+    required this.isNavigateToTheButtonOfInformationTab,
   });
 
   @override
@@ -29,6 +36,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
   @override
   void initState() {
     context.read<DoctorInfoViewCubit>().getDoctorInfo(widget.doctorId);
+
     super.initState();
   }
 
@@ -86,7 +94,22 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
+                    BlocConsumer<DoctorInfoViewCubit, DoctorInfoViewState>(
+                      listener: (context, state) {
+                        state.maybeWhen(
+                          orElse: () {},
+                          loaded: (doctorInfo,
+                              isLoadingAchievements,
+                              isLoadedAchievements,
+                              message,
+                              achievements,
+                              changesCounter) {
+                            if (widget.isNavigateToTheButtonOfInformationTab) {
+                              animateToIndex(cubit.scrollController, 7, 80.h);
+                            }
+                          },
+                        );
+                      },
                       builder: (context, state) {
                         return state.maybeWhen(
                           orElse: () {

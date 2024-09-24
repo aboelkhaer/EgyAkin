@@ -750,6 +750,7 @@ mixin _$NotificationsModel {
   int? get id => throw _privateConstructorUsedError;
   bool? get read => throw _privateConstructorUsedError;
   String? get type => throw _privateConstructorUsedError;
+  String? get content => throw _privateConstructorUsedError;
   @JsonKey(name: 'type_id')
   String? get typeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -776,6 +777,7 @@ abstract class $NotificationsModelCopyWith<$Res> {
       {int? id,
       bool? read,
       String? type,
+      String? content,
       @JsonKey(name: 'type_id') String? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
       PatientNotificationModel? patient});
@@ -801,6 +803,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? id = freezed,
     Object? read = freezed,
     Object? type = freezed,
+    Object? content = freezed,
     Object? typeId = freezed,
     Object? createdAt = freezed,
     Object? patient = freezed,
@@ -817,6 +820,10 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
               as String?,
       typeId: freezed == typeId
           ? _value.typeId
@@ -860,6 +867,7 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       {int? id,
       bool? read,
       String? type,
+      String? content,
       @JsonKey(name: 'type_id') String? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
       PatientNotificationModel? patient});
@@ -884,6 +892,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? read = freezed,
     Object? type = freezed,
+    Object? content = freezed,
     Object? typeId = freezed,
     Object? createdAt = freezed,
     Object? patient = freezed,
@@ -900,6 +909,10 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
       type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
               as String?,
       typeId: freezed == typeId
           ? _value.typeId
@@ -924,6 +937,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       {this.id,
       this.read,
       this.type,
+      this.content,
       @JsonKey(name: 'type_id') this.typeId,
       @JsonKey(name: 'created_at') this.createdAt,
       this.patient});
@@ -938,6 +952,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   @override
   final String? type;
   @override
+  final String? content;
+  @override
   @JsonKey(name: 'type_id')
   final String? typeId;
   @override
@@ -948,7 +964,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
 
   @override
   String toString() {
-    return 'NotificationsModel(id: $id, read: $read, type: $type, typeId: $typeId, createdAt: $createdAt, patient: $patient)';
+    return 'NotificationsModel(id: $id, read: $read, type: $type, content: $content, typeId: $typeId, createdAt: $createdAt, patient: $patient)';
   }
 
   @override
@@ -959,6 +975,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.read, read) || other.read == read) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.content, content) || other.content == content) &&
             (identical(other.typeId, typeId) || other.typeId == typeId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
@@ -967,8 +984,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, read, type, typeId, createdAt, patient);
+  int get hashCode => Object.hash(
+      runtimeType, id, read, type, content, typeId, createdAt, patient);
 
   /// Create a copy of NotificationsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -992,6 +1009,7 @@ abstract class _NotificationsModel implements NotificationsModel {
       {final int? id,
       final bool? read,
       final String? type,
+      final String? content,
       @JsonKey(name: 'type_id') final String? typeId,
       @JsonKey(name: 'created_at') final String? createdAt,
       final PatientNotificationModel? patient}) = _$NotificationsModelImpl;
@@ -1005,6 +1023,8 @@ abstract class _NotificationsModel implements NotificationsModel {
   bool? get read;
   @override
   String? get type;
+  @override
+  String? get content;
   @override
   @JsonKey(name: 'type_id')
   String? get typeId;

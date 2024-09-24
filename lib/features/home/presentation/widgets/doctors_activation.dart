@@ -84,6 +84,8 @@ class DoctorsActivation extends StatelessWidget {
                                         currentDoctorRole:
                                             cubit.homeDataModel.role.toString(),
                                         homeDataModel: cubit.homeDataModel,
+                                        isNavigateToTheButtonOfInformationTab:
+                                            true,
                                       ),
                                     );
                                   },

@@ -111,6 +111,8 @@ class ConsultationList extends StatelessWidget {
                                                           .scoreValue
                                                           .toString()),
                                                   homeDataModel: homeDataModel,
+                                                  isNavigateToTheButtonOfInformationTab:
+                                                      false,
                                                 ),
                                               );
                                             },

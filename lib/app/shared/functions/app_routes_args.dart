@@ -192,6 +192,7 @@ class AppRoutesArgs {
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
     required int initialIndex,
+    required bool isNavigateToTheButtonOfInformationTab,
   }) {
     return {
       'doctorId': doctorId,
@@ -202,6 +203,8 @@ class AppRoutesArgs {
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
       'initialIndex': initialIndex,
+      'isNavigateToTheButtonOfInformationTab':
+          isNavigateToTheButtonOfInformationTab,
     };
   }
 

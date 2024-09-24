@@ -61,6 +61,7 @@ class TopDoctors extends StatelessWidget {
                                     homeData.isSyndicateCardRequired.toString(),
                                 currentDoctorRole: homeData.role.toString(),
                                 homeDataModel: homeData,
+                                isNavigateToTheButtonOfInformationTab: false,
                               ),
                             );
                           },

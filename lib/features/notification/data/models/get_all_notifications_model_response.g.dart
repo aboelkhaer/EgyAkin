@@ -79,6 +79,7 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
       id: (json['id'] as num?)?.toInt(),
       read: json['read'] as bool?,
       type: json['type'] as String?,
+      content: json['content'] as String?,
       typeId: json['type_id'] as String?,
       createdAt: json['created_at'] as String?,
       patient: json['patient'] == null
@@ -93,6 +94,7 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'id': instance.id,
       'read': instance.read,
       'type': instance.type,
+      'content': instance.content,
       'type_id': instance.typeId,
       'created_at': instance.createdAt,
       'patient': instance.patient,

@@ -56,6 +56,7 @@ class ProfileImage extends StatelessWidget {
                                     int.parse(homeDataModel.scoreValue!),
                                 homeDataModel: homeDataModel,
                                 initialIndex: 0,
+                                isNavigateToTheButtonOfInformationTab: false,
                               ),
                             );
                           },
@@ -122,6 +123,8 @@ class ProfileImage extends StatelessWidget {
                                       currentDoctorPoints:
                                           int.parse(homeDataModel.scoreValue!),
                                       homeDataModel: homeDataModel,
+                                      isNavigateToTheButtonOfInformationTab:
+                                          false,
                                     ),
                                   );
                                 },
@@ -145,6 +148,8 @@ class ProfileImage extends StatelessWidget {
                                         currentDoctorPoints: int.parse(
                                             homeDataModel.scoreValue!),
                                         homeDataModel: homeDataModel,
+                                        isNavigateToTheButtonOfInformationTab:
+                                            false,
                                       ),
                                     );
                                   },

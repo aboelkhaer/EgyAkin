@@ -241,6 +241,8 @@ class SendConsultationScreen extends StatelessWidget {
                                                                       .scoreValue!),
                                                           homeDataModel:
                                                               homeDataModel,
+                                                          isNavigateToTheButtonOfInformationTab:
+                                                              false,
                                                         ),
                                                       );
                                                     },
@@ -417,6 +419,8 @@ class SendConsultationScreen extends StatelessWidget {
                                       currentDoctorPoints:
                                           int.parse(homeDataModel.scoreValue!),
                                       homeDataModel: homeDataModel,
+                                      isNavigateToTheButtonOfInformationTab:
+                                          false,
                                     ),
                                   );
                                 },
@@ -472,6 +476,8 @@ class SendConsultationScreen extends StatelessWidget {
                                                           currentDoctorRole:
                                                               homeDataModel
                                                                   .role!,
+                                                          isNavigateToTheButtonOfInformationTab:
+                                                              false,
                                                           currentDoctorPoints:
                                                               int.parse(
                                                                   homeDataModel

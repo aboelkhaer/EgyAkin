@@ -326,6 +326,8 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                         homeDataModel: widget
                                                             .homeDataModel,
                                                         initialIndex: 0,
+                                                        isNavigateToTheButtonOfInformationTab:
+                                                            false,
                                                       ),
                                                     );
                                                   },
