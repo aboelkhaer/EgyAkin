@@ -27,7 +27,6 @@ class ProfileTabIcon extends StatelessWidget {
         ) {
           return GestureDetector(
             onTap: () {
-              log('done');
               if (cubit.tabsController.index != 2) {
                 cubit.tabsController.jumpToTab(2);
                 cubit.hideHomeHeader(2);

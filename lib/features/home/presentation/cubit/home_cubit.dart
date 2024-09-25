@@ -44,6 +44,8 @@ class HomeCubit extends Cubit<HomeState> {
   String currentDoctorRole = '';
   String currentUserVersion = '';
   bool getCurrentUserVersion = false;
+  bool isBlockedDialogShown = false;
+  bool isUpdateDialogShown = false;
 
   HomeModelResponse homeDataModel = const HomeModelResponse(
     data: HomeDataModelResponse(

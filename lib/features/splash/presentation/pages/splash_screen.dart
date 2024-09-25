@@ -79,8 +79,8 @@ class _SplashScreenState extends State<SplashScreen>
     } catch (e) {
       if (mounted) {
         debugPrint('Failed to check for updates on Android: $e');
-        _showErrorDialog(
-            'Failed to check for updates on Android. Please try again later.');
+        // _showErrorDialog(
+        //     'Failed to check for updates on Android. Please try again later.');
       }
     }
   }

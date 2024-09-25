@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
+
 import '../../../../exports.dart';
 
 class HomeHeader extends StatelessWidget {
@@ -255,16 +257,27 @@ class HomeHeader extends StatelessWidget {
                       if (homeData.verified! &&
                           (homeData.isSyndicateCardRequired != 'Required' &&
                               homeData.isSyndicateCardRequired != 'Pending')) {
-                        navigatorKey.currentState?.pushNamed(
-                          AppRoutes.addPatient,
-                          arguments: AppRoutesArgs.addPatientRouteArgs(
-                            currentDoctorModel: cubit.currentDoctorModel,
-                            currentDoctorRole: homeData.role.toString(),
-                            currentDoctorPoints:
-                                int.parse(homeData.scoreValue!),
-                            homeDataModel: homeData,
-                          ),
-                        );
+                        if (homeData.isUserBlocked != true) {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.addPatient,
+                            arguments: AppRoutesArgs.addPatientRouteArgs(
+                              currentDoctorModel: cubit.currentDoctorModel,
+                              currentDoctorRole: homeData.role.toString(),
+                              currentDoctorPoints:
+                                  int.parse(homeData.scoreValue!),
+                              homeDataModel: homeData,
+                            ),
+                          );
+                        } else {
+                          showBlockedDialog(
+                            context: context,
+                            onDismissed: () {
+                              cubit.signOut();
+                              navigatorKey.currentState
+                                  ?.pushReplacementNamed(AppRoutes.signIn);
+                            },
+                          );
+                        }
                       }
                       if (!homeData.verified!) {
                         showCustomDialog(

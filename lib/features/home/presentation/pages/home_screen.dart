@@ -72,26 +72,28 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkUpdateMessageCounter,
                   isUserBlocked,
                 ) {
-                  if (checkUpdateMessageCounter == 1) {
-                    if (homeData.isUserBlocked == true) {
-                      showBlockedDialog(
-                        context: context,
-                        onDismissed: () {
-                          cubit!.signOut();
-                        },
-                      );
-                      cubit!.checkUpdateMessageCounter++;
-                    }
-                    if (cubit!.isUpdateMessageHidden == false) {
-                      showUpdateDialog(
-                        context: context,
-                        onDismissed: () {
-                          cubit!.setUpdateMessageStatusToLocal();
-                        },
-                      );
-                      cubit!.checkUpdateMessageCounter++;
-                    }
+                  if (cubit!.isUpdateMessageHidden == false &&
+                      cubit!.isUpdateDialogShown == false) {
+                    showUpdateDialog(
+                      context: context,
+                      onDismissed: () {
+                        cubit!.setUpdateMessageStatusToLocal();
+                      },
+                    );
+                    cubit!.isUpdateDialogShown = true;
                   }
+                  if (homeData.isUserBlocked == true &&
+                      cubit!.isBlockedDialogShown == false) {
+                    // Check if the user is blocked and if the dialog has not been shown yet
+                    showBlockedDialog(
+                      context: context,
+                      onDismissed: () {
+                        cubit!.signOut();
+                      },
+                    );
+                    cubit!.isBlockedDialogShown = true;
+                  }
+
                   if (isUserBlocked) {
                     navigatorKey.currentState
                         ?.pushReplacementNamed(AppRoutes.signIn);

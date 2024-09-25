@@ -10,23 +10,29 @@ class NotificationServices {
 
   NotificationServices() {
     _initializeLocalNotifications();
-    // createNotificationChannel();
+    createNotificationChannel();
   }
-  // Future<void> createNotificationChannel() async {
-  //   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-  //     'high_importance_channel', // Channel ID
-  //     'high_importance_channel', // Channel name
-  //     description:
-  //         'This channel is used for important notifications.', // Channel description
-  //     importance: Importance.max,
-  //     playSound: true,
-  //   );
+  Future<void> createNotificationChannel() async {
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // Channel ID
+      'high_importance_channel', // Channel name
+      description:
+          'This channel is used for important notifications.', // Channel description
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+      showBadge: true, // Shows badge for the app icon
 
-  //   await _localNotificationsPlugin
-  //       .resolvePlatformSpecificImplementation<
-  //           AndroidFlutterLocalNotificationsPlugin>()
-  //       ?.createNotificationChannel(channel);
-  // }
+      sound: const RawResourceAndroidNotificationSound('notification'),
+      vibrationPattern:
+          Int64List.fromList([0, 1000, 500, 1000]), // Vibration pattern
+    );
+
+    await _localNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+  }
 
   Future<String?> getDeviceToken() async {
     String? token = await _messaging.getToken();
@@ -153,6 +159,7 @@ class NotificationServices {
       playSound: true, // Ensure playSound is true
       channelShowBadge: true,
       enableVibration: true,
+      icon: '@mipmap/ic_launcher',
       sound: const RawResourceAndroidNotificationSound('notification'),
       vibrationPattern:
           Int64List.fromList([0, 1000, 500, 1000]), // Vibration pattern

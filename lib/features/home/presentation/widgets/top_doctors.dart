@@ -17,7 +17,7 @@ class TopDoctors extends StatelessWidget {
         Container(
           // color: Colors.red,
           margin: EdgeInsets.only(bottom: 10.h),
-          height: 120.h,
+          height: 105.h,
           child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               return state.maybeWhen(
