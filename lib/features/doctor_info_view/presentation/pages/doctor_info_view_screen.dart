@@ -105,7 +105,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               achievements,
                               changesCounter) {
                             if (widget.isNavigateToTheButtonOfInformationTab) {
-                              animateToIndex(cubit.scrollController, 7, 80.h);
+                              animateToIndex(cubit.scrollController, 7, 100.h);
                             }
                           },
                         );

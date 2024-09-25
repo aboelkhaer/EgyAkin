@@ -163,6 +163,7 @@ class PatientCard extends StatelessWidget {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
+                                      SizedBox(width: 5.w),
                                       Text(
                                         timeago
                                             .format(DateTime.parse(updatedAt))

@@ -37,7 +37,7 @@ class ShimmerLoadingPatientsCards extends StatelessWidget {
                         Container(
                           width: 50,
                           height: 50,
-                          padding: const EdgeInsets.all(20),
+                          // padding: const EdgeInsets.all(10),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Colors.white,
@@ -46,13 +46,13 @@ class ShimmerLoadingPatientsCards extends StatelessWidget {
                         SizedBox(height: 8.h),
                         Container(
                           color: Colors.white,
-                          width: 40.w,
+                          width: 40,
                           height: 10,
                         ),
                         SizedBox(height: 8.h),
                         Container(
                           color: Colors.white,
-                          width: 70.w,
+                          width: 70,
                           height: 10,
                         ),
                       ],

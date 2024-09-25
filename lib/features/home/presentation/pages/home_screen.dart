@@ -290,10 +290,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       BlocBuilder<HomeCubit, HomeState>(
         builder: (context, state) {
-          return MoreScreen(
-            currentDoctorModel: cubit.currentDoctorModel,
-            accountVerification: cubit.accountVerification ?? true,
-            homeDataModel: cubit.homeDataModel,
+          return state.maybeWhen(
+            orElse: () {
+              return MoreScreen(
+                currentDoctorModel: cubit.currentDoctorModel,
+                accountVerification: cubit.accountVerification ?? true,
+                homeDataModel: cubit.homeDataModel,
+              );
+            },
+            loaded: (homeData,
+                currentDoctorModel,
+                dotsPosition,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+                isUserBlocked) {
+              return MoreScreen(
+                currentDoctorModel: currentDoctorModel,
+                accountVerification: homeData.verified ?? true,
+                homeDataModel: homeData,
+              );
+            },
           );
         },
       ),

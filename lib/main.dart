@@ -1,15 +1,10 @@
-import 'exports.dart';
-import 'injection_container.dart' as di;
+import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/injection_container.dart' as di;
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
 }
-
-// Future printFCM() async {
-//   String? token = await FirebaseMessaging.instance.getToken();
-//   log(token.toString());
-// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,20 +13,47 @@ void main() async {
 
   await di.diInit();
   Bloc.observer = MyBlocObserver();
+
   runApp(const MyApp());
 }
 
 GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late NotificationServices notificationServices;
+
+  @override
+  void initState() {
+    super.initState();
+
+    notificationServices = NotificationServices();
+
+    // Call post frame callback to ensure context is available
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeNotificationServices();
+    });
+  }
+
+  Future<void> _initializeNotificationServices() async {
+    await notificationServices.requestNotificationPermissions();
+    notificationServices.firebaseInit(navigatorKey.currentContext!);
+    await notificationServices.getDeviceToken();
+  }
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Colors.transparent,
-        statusBarBrightness: Brightness.light));
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.light,
+    ));
 
     return ScreenUtilInit(
       designSize: const Size(360, 640),

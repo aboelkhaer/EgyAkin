@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../exports.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
@@ -12,7 +14,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   String fcmToken = '';
   getFCMToken() async {
     sl<NotificationServices>().getDeviceToken().then((value) {
-      fcmToken = value;
+      fcmToken = value.toString();
+      log('fcmToken: $fcmToken');
     });
   }
 

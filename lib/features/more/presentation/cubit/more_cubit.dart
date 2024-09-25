@@ -1,3 +1,4 @@
+import 'dart:developer';
 
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 
@@ -13,11 +14,12 @@ class MoreCubit extends Cubit<MoreState> {
     emit(const MoreState.loading());
 
     await notificationServices.getDeviceToken().then((value) {
-      fcmToken = value;
+      fcmToken = value.toString();
     });
-    // String? tokentest =
-    //     await sl<AppPreferences>().getString(AppLocalStrings.fcmTokenKey);
+    // // String? tokentest =
+    // //     await sl<AppPreferences>().getString(AppLocalStrings.fcmTokenKey);
     // fcmToken = tokentest!;
+    // log(fcmToken);
 
     emit(const MoreState.loaded());
   }

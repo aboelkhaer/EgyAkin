@@ -190,15 +190,20 @@ class _MoreScreenState extends State<MoreScreen> {
                   navigatorKey.currentState?.pushNamed(AppRoutes.aboutUs);
                 },
               ),
-              // BlocBuilder<MoreCubit, MoreState>(
-              //   builder: (context, state) {
-              //     return state.maybeWhen(
-              //       orElse: () {
-              //         return SelectableText(cubit.fcmToken);
-              //       },
-              //     );
-              //   },
-              // )
+              BlocBuilder<MoreCubit, MoreState>(
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return const SizedBox.shrink();
+                    },
+                    loaded: () {
+                      return widget.homeDataModel.role == 'Admin'
+                          ? SelectableText(cubit.fcmToken)
+                          : const SizedBox.shrink();
+                    },
+                  );
+                },
+              )
             ],
           ),
         ),

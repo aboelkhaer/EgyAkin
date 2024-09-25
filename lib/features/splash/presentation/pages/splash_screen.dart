@@ -29,16 +29,6 @@ class _SplashScreenState extends State<SplashScreen>
       end: 1.0,
     ).animate(animationController);
 
-    // Initialize notification services and other setups
-    sl<NotificationServices>().requestNotificationPermisions();
-    sl<NotificationServices>().forgroundMessage();
-    sl<NotificationServices>().firebaseInit(context);
-    sl<NotificationServices>().setupInteractMessage(context);
-    sl<NotificationServices>().getDeviceToken().then((value) {
-      debugPrint(value);
-    });
-    sl<NotificationServices>().isRefreshToken();
-
     // Perform check for updates
     checkForUpdates();
   }

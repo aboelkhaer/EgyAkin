@@ -36,7 +36,7 @@ class DoctorsActivation extends StatelessWidget {
                     onTap: () {}),
                 SizedBox(
                   // margin: EdgeInsets.only(bottom: 10.h),
-                  height: 80.h,
+                  height: 90.h,
                   child: BlocBuilder<HomeCubit, HomeState>(
                     builder: (context, state) {
                       return state.maybeWhen(
