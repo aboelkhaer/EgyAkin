@@ -3,13 +3,17 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/get_patient_section_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image/image.dart' as img;
+import 'dart:typed_data'; // Import Uint8List
 
 class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   PatientSectionDetailsCubit(this._getPatientSectionDetailsUsecase,
@@ -24,7 +28,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   Map<String, dynamic> formData = {};
   GlobalKey<FormState> sectionDetailsKeyForm = GlobalKey<FormState>();
   int snackbarErrorCounter = 0;
-
+  String removeFilesId = '';
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
     final updatedQuestionModelList =
@@ -390,8 +394,75 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     } else {}
   }
 
+  removeAllFilesInFilesQuestion({
+    required String patientId,
+    required String sectionId,
+    required String questionId,
+  }) async {
+    // Emit loading state to update UI immediately
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        value.questions,
+        value.isSubmitLoading,
+        value.isSubmitted,
+        '',
+        snackbarErrorCounter += 1,
+        value.isChooseFilesLoading,
+        value.isChooseFilesLoaded,
+        0.0,
+      ),
+    ));
+
+    // Remove the files from formData
+    formData.remove(questionId);
+
+    // Update questionModelList by assigning the result of map back to the list
+    questionModelList = questionModelList.map((question) {
+      if (question.id.toString() == questionId) {
+        // Clear the answer list for the matched question
+        return question.copyWith(answer: []);
+      }
+      return question;
+    }).toList();
+
+    // Emit the updated state with the modified questionModelList
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        questionModelList, // Pass the updated list
+        value.isSubmitLoading,
+        value.isSubmitted,
+        '',
+        snackbarErrorCounter += 1,
+        value.isChooseFilesLoading,
+        value.isChooseFilesLoaded,
+        0.0,
+      ),
+    ));
+
+    // Optional API call to update the backend
+    final getResponse = await _updatePatientSectionDetailsUsecase.execute(
+      UpdatePatientSectionDetailsUsecaseInput(
+        patientId: patientId,
+        sectionId: sectionId,
+        map: {questionId: []},
+      ),
+    );
+
+    getResponse.fold(
+      (l) {
+        // Handle failure if needed
+      },
+      (r) {
+        // Handle success if needed
+      },
+    );
+  }
+
   String questionIndexWhichDoctorClicked = '';
-  pickFilesForQuestions(int questionIndex) async {
+  pickFilesForQuestions(
+      int questionIndex, String patientId, String sectionId, context) async {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => PatientSectionDetailsState.loaded(
@@ -411,15 +482,89 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     result = await FilePicker.platform.pickFiles(allowMultiple: true);
     if (result != null && result.files.isNotEmpty) {
       List<Map<String, String>> filesList = [];
+      int totalSizeInBytes = 0;
 
+      // Validate each file
+      for (var pickedFile in result.files) {
+        File file = File(pickedFile.path!);
+        int fileSize = await file.length(); // Size in bytes
+        double fileSizeInMB = fileSize / (1024 * 1024); // Convert to MB
+
+        // Check if individual file exceeds 1MB
+        if (fileSizeInMB > 2) {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => PatientSectionDetailsState.loaded(
+              value.questions,
+              value.isSubmitLoading,
+              value.isSubmitted,
+              'File ${pickedFile.name} exceeds the 2MB limit.',
+              snackbarErrorCounter += 1,
+              false,
+              false,
+              0.0,
+            ),
+          ));
+          return;
+        }
+
+        // Add file size to the total
+        totalSizeInBytes += fileSize;
+      }
+
+      // Check if total size exceeds 5MB
+      double totalSizeInMB =
+          totalSizeInBytes / (1024 * 1024); // Convert total to MB
+      if (totalSizeInMB > 10) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionDetailsState.loaded(
+            value.questions,
+            value.isSubmitLoading,
+            value.isSubmitted,
+            'Total size of selected files exceeds 10MB.',
+            snackbarErrorCounter += 1,
+            false,
+            false,
+            0.0,
+          ),
+        ));
+        return;
+      }
+
+      // Process valid files
       for (var pickedFile in result.files) {
         File file = File(pickedFile.path!);
         String fileName = pickedFile.name;
-        String fileData = base64Encode(await file.readAsBytes());
 
-        filesList.add({"file_name": fileName, "file_data": fileData});
+        // Check if the file is an image by verifying the extension
+        if (fileName.endsWith('.jpg') ||
+            fileName.endsWith('.jpeg') ||
+            fileName.endsWith('.png') ||
+            fileName.endsWith('.gif') ||
+            fileName.endsWith('.bmp') ||
+            fileName.endsWith('.tiff') ||
+            fileName.endsWith('.webp')) {
+          // Read the image from the file
+          img.Image? image = img.decodeImage(file.readAsBytesSync());
+
+          if (image != null) {
+            // Compress the image by reducing its quality to 50%
+            List<int> compressedImageBytes = img.encodeJpg(image, quality: 40);
+
+            // Base64 encode the compressed image
+            String fileData = base64Encode(compressedImageBytes);
+
+            filesList.add({"file_name": fileName, "file_data": fileData});
+          }
+        } else {
+          // For non-image files, just read them as normal
+          String fileData = base64Encode(await file.readAsBytes());
+          filesList.add({"file_name": fileName, "file_data": fileData});
+        }
       }
 
+      // Store files in formData
       formData[questionModelList[questionIndex].id.toString()] = filesList;
 
       log(formData[questionModelList[questionIndex].id.toString()].toString());
@@ -436,7 +581,46 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           0.0,
         ),
       ));
+
+      // Show dialog with no dismiss while uploading
+      showDialog(
+        context: context,
+        barrierDismissible: false, // Prevent dismissing the dialog
+        builder: (BuildContext context) {
+          return const Dialog(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text("Uploading files..."),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+
+      // API call to upload files
+      final getResponse = await _updatePatientSectionDetailsUsecase.execute(
+          UpdatePatientSectionDetailsUsecaseInput(
+              patientId: patientId, sectionId: sectionId, map: formData));
+      getResponse.fold(
+        (l) {
+          Navigator.pop(context);
+          customSnackBar(context: context, message: l.message);
+        },
+        (response) async {
+          Navigator.pop(context);
+          customSnackBar(
+              context: context, message: response.message.toString());
+        },
+      );
     }
+
+    // Reset state after processing
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => PatientSectionDetailsState.loaded(

@@ -50,14 +50,21 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
         title: Row(
           children: [
             Flexible(
-              child: Text(
-                convertTextToSymbols(widget.patientName),
-                style: TextStyle(fontSize: 14.sp),
-                overflow: TextOverflow.ellipsis,
-                textDirection:
-                    RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
-                        ? ui.TextDirection.rtl
-                        : ui.TextDirection.ltr,
+              child: Tooltip(
+                message: widget.patientName,
+                child: Text(
+                  (widget.currentDoctorModel.id.toString() ==
+                              widget.doctorId.toString() ||
+                          widget.homeDataModel.role == AppStrings.roleAdmin)
+                      ? widget.patientName.toString()
+                      : convertTextToSymbols(widget.patientName),
+                  style: TextStyle(fontSize: 14.sp),
+                  overflow: TextOverflow.ellipsis,
+                  textDirection:
+                      RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
+                          ? ui.TextDirection.rtl
+                          : ui.TextDirection.ltr,
+                ),
               ),
             ),
             Text(

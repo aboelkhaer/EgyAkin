@@ -1,6 +1,4 @@
-import 'package:egy_akin/app/shared/functions/animate_to_bottom_of_screen.dart';
 import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
-import 'package:egy_akin/app/shared/functions/animate_to_position.dart';
 
 import '../../../../exports.dart';
 

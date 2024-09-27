@@ -26,6 +26,9 @@ class SectionSubmitButton extends StatelessWidget {
     if (currentDoctorRole == AppStrings.roleAdmin ||
         (doctorId.toString() == currentDoctorModel.id.toString() &&
             !finalSubmitStatus)) {
+      if (sectionModel.sectionId.toString() == '9') {
+        return const SizedBox.shrink();
+      }
       return Positioned(
         left: 0,
         right: 0,
