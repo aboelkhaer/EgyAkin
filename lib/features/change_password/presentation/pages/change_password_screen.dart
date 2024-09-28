@@ -25,6 +25,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     title: 'Old Password',
                     textInputType: TextInputType.visiblePassword,
                     obscureText: true,
+                    enableSuggestions: false,
                     validator: (value) =>
                         AppValidators.fieldsIsEmptyValidation(value!),
                     onChanged: (value) {
@@ -36,6 +37,7 @@ class ChangePasswordScreen extends StatelessWidget {
                     title: 'New Password',
                     textInputType: TextInputType.visiblePassword,
                     textFormFieldController: cubit.newPasswordController,
+                    enableSuggestions: false,
                     obscureText: true,
                     validator: (value) =>
                         AppValidators.passwordValidateForRegister(value!),

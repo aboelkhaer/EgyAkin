@@ -160,40 +160,42 @@ class AddPatientCubit extends Cubit<AddPatientState> {
             }
           }
         }
-        if (question.question == 'Phone' &&
-            (question.answer != null ||
-                question.answer.toString().trim() != '')) {
-          String phoneNumber = formData[question.id.toString()];
 
-          if (phoneNumber.length != 11) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  'This question is required \n{${question.question}}',
-                  snackbarErrorCounter += 1),
-            ));
-            isValid = false;
-            break;
-          }
-          if (int.tryParse(phoneNumber) == null) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  'This question is required \n{${question.question}}',
-                  snackbarErrorCounter += 1),
-            ));
-            isValid = false;
-            break;
+        if (question.question == 'Phone') {
+          if (formData.containsKey(question.id.toString())) {
+            String phoneNumber = formData[question.id.toString()];
+            if (phoneNumber.length != 11) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'Phone should have 11 digits',
+                    snackbarErrorCounter += 1),
+              ));
+
+              isValid = false;
+              break;
+            }
+            if (int.tryParse(phoneNumber) == null) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    'Phone should have 11 digits',
+                    snackbarErrorCounter += 1),
+              ));
+              isValid = false;
+              break;
+            }
           }
         }
+
         if (question.question == 'Age' &&
             (question.answer != null ||
                 question.answer.toString().trim() != '')) {

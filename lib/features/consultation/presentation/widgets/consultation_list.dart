@@ -150,7 +150,14 @@ class ConsultationList extends StatelessWidget {
                                                         role: '',
                                                       ),
                                                       style: TextStyle(
-                                                        color: Colors.green,
+                                                        color: currentDoctorModel
+                                                                    .id
+                                                                    .toString() ==
+                                                                consult.doctorId
+                                                                    .toString()
+                                                            ? Colors.green
+                                                            : Colors
+                                                                .grey.shade700,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 12.sp,

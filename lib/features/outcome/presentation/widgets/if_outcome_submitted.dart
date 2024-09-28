@@ -59,6 +59,7 @@ class IfOutcomeSubmitted extends StatelessWidget {
                         const SizedBox(width: 5),
                         GestureDetector(
                           onTap: () {
+                            // todo:
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.doctorInfoView,
                               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(

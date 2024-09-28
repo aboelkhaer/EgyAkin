@@ -15,16 +15,17 @@ class HomeTab extends StatelessWidget {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () {
+        animateToTopOfScreen(cubit.scrollController);
         // if (cubit.scrollController.hasClients) {
         //   cubit.scrollController.animateTo(0,
         //       duration: const Duration(milliseconds: 300),
         //       curve: Curves.easeInOut);
         // }
-        animateToTopOfScreen(cubit.scrollController);
 
         if (cubit.isUnreadNotification) {
           context.read<NotificationCubit>().getAllNotifications();
         }
+
         return cubit.getHome();
       },
       child: Container(

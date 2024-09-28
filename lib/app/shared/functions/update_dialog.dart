@@ -1,9 +1,16 @@
 import '../../../exports.dart';
 
+bool _isUpdateDialogOpen = false; // Flag to check if the update dialog is open
+
 void showUpdateDialog({
   required BuildContext context,
   required VoidCallback onDismissed, // Add a parameter for the action
 }) {
+  // Check if the dialog is already open
+  if (_isUpdateDialogOpen) return;
+
+  _isUpdateDialogOpen = true; // Set the flag to true when dialog opens
+
   showDialog(
     context: context,
     builder: (context) {
@@ -54,7 +61,7 @@ void showUpdateDialog({
       );
     },
   ).then((_) {
-    // Call the action when the dialog is dismissed
+    _isUpdateDialogOpen = false; // Reset the flag when dialog is dismissed
     onDismissed();
   });
 }

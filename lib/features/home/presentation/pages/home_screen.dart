@@ -31,7 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
     cubit = context.read<HomeCubit>();
 
     cubit!.getHome();
-    cubit!.tabsController.jumpToTab(widget.page);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        cubit!.tabsController.jumpToTab(widget.page);
+      }
+    });
   }
 
   @override
@@ -72,26 +77,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkUpdateMessageCounter,
                   isUserBlocked,
                 ) {
-                  if (cubit!.isUpdateMessageHidden == false &&
-                      cubit!.isUpdateDialogShown == false) {
+                  if (cubit!.isUpdateMessageHidden == false) {
                     showUpdateDialog(
                       context: context,
                       onDismissed: () {
                         cubit!.setUpdateMessageStatusToLocal();
                       },
                     );
-                    cubit!.isUpdateDialogShown = true;
                   }
-                  if (homeData.isUserBlocked == true &&
-                      cubit!.isBlockedDialogShown == false) {
-                    // Check if the user is blocked and if the dialog has not been shown yet
+
+                  if (homeData.isUserBlocked == true) {
                     showBlockedDialog(
                       context: context,
                       onDismissed: () {
                         cubit!.signOut();
                       },
                     );
-                    cubit!.isBlockedDialogShown = true;
                   }
 
                   if (isUserBlocked) {

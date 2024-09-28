@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart'; // Assuming you're using screenutil for responsive sizing
 import 'package:url_launcher/url_launcher.dart'; // To launch the email client
 
+bool _isDialogOpen = false; // Flag to check if the dialog is open
+
 void showBlockedDialog({
   required BuildContext context,
   required VoidCallback onDismissed, // Add a parameter for the action
 }) {
+  // Check if the dialog is already open
+  if (_isDialogOpen) return;
+
+  _isDialogOpen = true; // Set the flag to true when dialog opens
+
   showDialog(
     context: context,
     builder: (context) {
@@ -73,7 +80,7 @@ void showBlockedDialog({
       );
     },
   ).then((_) {
-    // Call the action when the dialog is dismissed
+    _isDialogOpen = false; // Reset the flag when dialog is dismissed
     onDismissed();
   });
 }

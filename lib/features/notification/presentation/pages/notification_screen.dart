@@ -83,6 +83,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               customSnackBar(
                                   context: context, message: message);
                             },
+                            loaded: (notificationData, isSeeMore) {
+                              context
+                                  .read<HomeCubit>()
+                                  .removeNotificationCount();
+                            },
                           );
                         },
                         builder: (context, state) {

@@ -5,6 +5,7 @@ class NotificationTabIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    HomeCubit cubit = HomeCubit.get(context);
     return BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
       return state.maybeWhen(
         orElse: () {
@@ -118,16 +119,18 @@ class NotificationTabIcon extends StatelessWidget {
                           left: 0,
                           right: 10.w,
                           top: 2.h,
-                          child: homeData.unreadCount == null ||
-                                  homeData.unreadCount.toString() == '0'
+                          child: cubit.homeDataModel.unreadCount == null ||
+                                  cubit.homeDataModel.unreadCount.toString() ==
+                                      '0'
                               ? const SizedBox.shrink()
                               : CircleAvatar(
                                   backgroundColor: Colors.red,
                                   radius: 5.r,
                                   child: Text(
-                                    homeData.unreadCount == null
+                                    cubit.homeDataModel.unreadCount == null
                                         ? ''
-                                        : homeData.unreadCount.toString(),
+                                        : cubit.homeDataModel.unreadCount
+                                            .toString(),
                                     style: TextStyle(
                                         fontSize: 7.sp, color: AppColors.white),
                                   ),

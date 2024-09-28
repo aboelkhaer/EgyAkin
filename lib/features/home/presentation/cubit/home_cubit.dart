@@ -44,8 +44,6 @@ class HomeCubit extends Cubit<HomeState> {
   String currentDoctorRole = '';
   String currentUserVersion = '';
   bool getCurrentUserVersion = false;
-  bool isBlockedDialogShown = false;
-  bool isUpdateDialogShown = false;
 
   HomeModelResponse homeDataModel = const HomeModelResponse(
     data: HomeDataModelResponse(
@@ -450,6 +448,27 @@ class HomeCubit extends Cubit<HomeState> {
       (r) async {
         await sl<AppPreferences>().removeDoctorData();
       },
+    );
+  }
+
+  removeNotificationCount() {
+    HomeModelResponse updatedHomeDataModel =
+        homeDataModel.copyWith(unreadCount: '0');
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => HomeState.loaded(
+          updatedHomeDataModel,
+          value.currentDoctorModel,
+          value.dotsPosition,
+          tabsController.index,
+          value.isUploadingSyndicateCard,
+          value.isUploadedSyndicateCard,
+          '',
+          checkUpdateMessageCounter,
+          value.isUserBlocked,
+        ),
+      ),
     );
   }
 }

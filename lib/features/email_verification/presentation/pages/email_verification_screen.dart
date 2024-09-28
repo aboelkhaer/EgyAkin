@@ -165,9 +165,14 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                           },
                         ),
                         changeEmailFunction: () {
-                          navigatorKey.currentState?.pushReplacementNamed(
+                          Future.delayed(Duration.zero, () {
+                            navigatorKey.currentState?.pushReplacementNamed(
                               AppRoutes.home,
-                              arguments: 0);
+                              arguments: 2,
+                            );
+                            navigatorKey.currentState
+                                ?.pushReplacementNamed(AppRoutes.doctorProfile);
+                          });
                         },
                       ),
                       const SizedBox(height: 50),

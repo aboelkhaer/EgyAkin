@@ -62,6 +62,7 @@ class SignInForm extends StatelessWidget {
                     },
                     textInputAction: TextInputAction.done,
                     obscureText: cubit.signInObscureText,
+                    enableSuggestions: false,
                     visiblePasswordIcon: cubit.signInVisiblePasswordIcon,
                     visiblePasswordIconFunction: () =>
                         cubit.showPasswordFunction(),
