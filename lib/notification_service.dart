@@ -113,6 +113,7 @@ class NotificationServices {
     RemoteNotification? notification = message.notification;
 
     if (notification != null) {
+      debugPrint("Notification id: ${notification.hashCode}");
       debugPrint("Notification title: ${notification.title}");
       debugPrint("Notification body: ${notification.body}");
 
@@ -141,9 +142,9 @@ class NotificationServices {
     String? notificationType = message.data['type'];
 
     if (notificationType == 'text') {
-      Navigator.of(context).pushNamed('/textScreen');
+      // Navigator.of(context).pushNamed('/textScreen');
     } else if (notificationType == 'alert') {
-      Navigator.of(context).pushNamed('/alertScreen');
+      // Navigator.of(context).pushNamed('/alertScreen');
     }
   }
 
@@ -168,9 +169,12 @@ class NotificationServices {
     const iOSDetails = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
-      presentSound: true, // Ensure this is true
-      sound: 'default', // Ensure sound is default or your custom sound name
+      presentSound: true,
+      // sound:
+      //     'notification',
       presentBanner: true,
+      interruptionLevel: InterruptionLevel.timeSensitive,
+      presentList: true,
     );
 
     final notificationDetails = NotificationDetails(
@@ -179,10 +183,10 @@ class NotificationServices {
     );
 
     await _localNotificationsPlugin.show(
-      int.parse(notificationId), // Unique ID for each notification
-      message.notification?.title ?? 'No Title',
-      message.notification?.body ?? 'No Body',
-      notificationDetails,
-    );
+        int.parse(notificationId), // Unique ID for each notification
+        message.notification?.title ?? 'No Title',
+        message.notification?.body ?? 'No Body',
+        notificationDetails,
+        payload: message.data.toString());
   }
 }

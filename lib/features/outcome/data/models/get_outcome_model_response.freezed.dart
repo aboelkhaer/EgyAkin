@@ -254,6 +254,7 @@ OutcomeSubmitterModel _$OutcomeSubmitterModelFromJson(
 
 /// @nodoc
 mixin _$OutcomeSubmitterModel {
+  String? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get image => throw _privateConstructorUsedError;
 
@@ -273,7 +274,7 @@ abstract class $OutcomeSubmitterModelCopyWith<$Res> {
           $Res Function(OutcomeSubmitterModel) then) =
       _$OutcomeSubmitterModelCopyWithImpl<$Res, OutcomeSubmitterModel>;
   @useResult
-  $Res call({String? name, String? image});
+  $Res call({String? id, String? name, String? image});
 }
 
 /// @nodoc
@@ -292,10 +293,15 @@ class _$OutcomeSubmitterModelCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = freezed,
     Object? image = freezed,
   }) {
     return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -317,7 +323,7 @@ abstract class _$$OutcomeSubmitterModelImplCopyWith<$Res>
       __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? name, String? image});
+  $Res call({String? id, String? name, String? image});
 }
 
 /// @nodoc
@@ -334,10 +340,15 @@ class __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = freezed,
     Object? name = freezed,
     Object? image = freezed,
   }) {
     return _then(_$OutcomeSubmitterModelImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String?,
       name: freezed == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
@@ -353,11 +364,13 @@ class __$$OutcomeSubmitterModelImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$OutcomeSubmitterModelImpl implements _OutcomeSubmitterModel {
-  const _$OutcomeSubmitterModelImpl({this.name, this.image});
+  const _$OutcomeSubmitterModelImpl({this.id, this.name, this.image});
 
   factory _$OutcomeSubmitterModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$OutcomeSubmitterModelImplFromJson(json);
 
+  @override
+  final String? id;
   @override
   final String? name;
   @override
@@ -365,7 +378,7 @@ class _$OutcomeSubmitterModelImpl implements _OutcomeSubmitterModel {
 
   @override
   String toString() {
-    return 'OutcomeSubmitterModel(name: $name, image: $image)';
+    return 'OutcomeSubmitterModel(id: $id, name: $name, image: $image)';
   }
 
   @override
@@ -373,13 +386,14 @@ class _$OutcomeSubmitterModelImpl implements _OutcomeSubmitterModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$OutcomeSubmitterModelImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.image, image) || other.image == image));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, name, image);
+  int get hashCode => Object.hash(runtimeType, id, name, image);
 
   /// Create a copy of OutcomeSubmitterModel
   /// with the given fields replaced by the non-null parameter values.
@@ -400,11 +414,15 @@ class _$OutcomeSubmitterModelImpl implements _OutcomeSubmitterModel {
 
 abstract class _OutcomeSubmitterModel implements OutcomeSubmitterModel {
   const factory _OutcomeSubmitterModel(
-      {final String? name, final String? image}) = _$OutcomeSubmitterModelImpl;
+      {final String? id,
+      final String? name,
+      final String? image}) = _$OutcomeSubmitterModelImpl;
 
   factory _OutcomeSubmitterModel.fromJson(Map<String, dynamic> json) =
       _$OutcomeSubmitterModelImpl.fromJson;
 
+  @override
+  String? get id;
   @override
   String? get name;
   @override

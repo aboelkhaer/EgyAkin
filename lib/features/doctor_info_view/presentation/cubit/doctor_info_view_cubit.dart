@@ -24,7 +24,7 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
   bool isSyndicateCardVerified = false;
   bool doctorBlocked = false;
   bool doctorVerifiedEmail = false;
-  ScrollController scrollController = ScrollController();
+  ScrollController doctorInfoViewScrollController = ScrollController();
 
   DoctorInfoViewModelResponse updatedDoctor =
       const DoctorInfoViewModelResponse();

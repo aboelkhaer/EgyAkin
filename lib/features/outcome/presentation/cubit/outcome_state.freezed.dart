@@ -21,11 +21,12 @@ mixin _$OutcomeState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -35,11 +36,12 @@ mixin _$OutcomeState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -49,11 +51,12 @@ mixin _$OutcomeState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -151,11 +154,12 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -168,11 +172,12 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -185,11 +190,12 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -286,11 +292,12 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -303,11 +310,12 @@ class _$LoadingImpl implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -320,11 +328,12 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -384,11 +393,14 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call(
-      {List<QuestionModel> response,
+      {List<QuestionModel> questionList,
       bool isSubmitedOutcome,
       String message,
       int snackbarErrorCounter,
-      bool isSubmitedOutcomeLoading});
+      bool isSubmitedOutcomeLoading,
+      OutcomeSubmitterModel submitter});
+
+  $OutcomeSubmitterModelCopyWith<$Res> get submitter;
 }
 
 /// @nodoc
@@ -404,16 +416,17 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? response = null,
+    Object? questionList = null,
     Object? isSubmitedOutcome = null,
     Object? message = null,
     Object? snackbarErrorCounter = null,
     Object? isSubmitedOutcomeLoading = null,
+    Object? submitter = null,
   }) {
     return _then(_$LoadedImpl(
-      null == response
-          ? _value._response
-          : response // ignore: cast_nullable_to_non_nullable
+      null == questionList
+          ? _value._questionList
+          : questionList // ignore: cast_nullable_to_non_nullable
               as List<QuestionModel>,
       null == isSubmitedOutcome
           ? _value.isSubmitedOutcome
@@ -431,23 +444,42 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSubmitedOutcomeLoading
           : isSubmitedOutcomeLoading // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == submitter
+          ? _value.submitter
+          : submitter // ignore: cast_nullable_to_non_nullable
+              as OutcomeSubmitterModel,
     ));
+  }
+
+  /// Create a copy of OutcomeState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $OutcomeSubmitterModelCopyWith<$Res> get submitter {
+    return $OutcomeSubmitterModelCopyWith<$Res>(_value.submitter, (value) {
+      return _then(_value.copyWith(submitter: value));
+    });
   }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(final List<QuestionModel> response, this.isSubmitedOutcome,
-      this.message, this.snackbarErrorCounter, this.isSubmitedOutcomeLoading)
-      : _response = response;
+  const _$LoadedImpl(
+      final List<QuestionModel> questionList,
+      this.isSubmitedOutcome,
+      this.message,
+      this.snackbarErrorCounter,
+      this.isSubmitedOutcomeLoading,
+      this.submitter)
+      : _questionList = questionList;
 
-  final List<QuestionModel> _response;
+  final List<QuestionModel> _questionList;
   @override
-  List<QuestionModel> get response {
-    if (_response is EqualUnmodifiableListView) return _response;
+  List<QuestionModel> get questionList {
+    if (_questionList is EqualUnmodifiableListView) return _questionList;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_response);
+    return EqualUnmodifiableListView(_questionList);
   }
 
   @override
@@ -458,10 +490,12 @@ class _$LoadedImpl implements _Loaded {
   final int snackbarErrorCounter;
   @override
   final bool isSubmitedOutcomeLoading;
+  @override
+  final OutcomeSubmitterModel submitter;
 
   @override
   String toString() {
-    return 'OutcomeState.loaded(response: $response, isSubmitedOutcome: $isSubmitedOutcome, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isSubmitedOutcomeLoading: $isSubmitedOutcomeLoading)';
+    return 'OutcomeState.loaded(questionList: $questionList, isSubmitedOutcome: $isSubmitedOutcome, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isSubmitedOutcomeLoading: $isSubmitedOutcomeLoading, submitter: $submitter)';
   }
 
   @override
@@ -469,7 +503,8 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality().equals(other._response, _response) &&
+            const DeepCollectionEquality()
+                .equals(other._questionList, _questionList) &&
             (identical(other.isSubmitedOutcome, isSubmitedOutcome) ||
                 other.isSubmitedOutcome == isSubmitedOutcome) &&
             (identical(other.message, message) || other.message == message) &&
@@ -477,17 +512,20 @@ class _$LoadedImpl implements _Loaded {
                 other.snackbarErrorCounter == snackbarErrorCounter) &&
             (identical(
                     other.isSubmitedOutcomeLoading, isSubmitedOutcomeLoading) ||
-                other.isSubmitedOutcomeLoading == isSubmitedOutcomeLoading));
+                other.isSubmitedOutcomeLoading == isSubmitedOutcomeLoading) &&
+            (identical(other.submitter, submitter) ||
+                other.submitter == submitter));
   }
 
   @override
   int get hashCode => Object.hash(
       runtimeType,
-      const DeepCollectionEquality().hash(_response),
+      const DeepCollectionEquality().hash(_questionList),
       isSubmitedOutcome,
       message,
       snackbarErrorCounter,
-      isSubmitedOutcomeLoading);
+      isSubmitedOutcomeLoading,
+      submitter);
 
   /// Create a copy of OutcomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -503,16 +541,17 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isSubmitedOutcome, message, snackbarErrorCounter,
-        isSubmitedOutcomeLoading);
+    return loaded(questionList, isSubmitedOutcome, message,
+        snackbarErrorCounter, isSubmitedOutcomeLoading, submitter);
   }
 
   @override
@@ -521,16 +560,17 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isSubmitedOutcome, message,
-        snackbarErrorCounter, isSubmitedOutcomeLoading);
+    return loaded?.call(questionList, isSubmitedOutcome, message,
+        snackbarErrorCounter, isSubmitedOutcomeLoading, submitter);
   }
 
   @override
@@ -539,18 +579,19 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isSubmitedOutcome, message, snackbarErrorCounter,
-          isSubmitedOutcomeLoading);
+      return loaded(questionList, isSubmitedOutcome, message,
+          snackbarErrorCounter, isSubmitedOutcomeLoading, submitter);
     }
     return orElse();
   }
@@ -595,17 +636,19 @@ class _$LoadedImpl implements _Loaded {
 
 abstract class _Loaded implements OutcomeState {
   const factory _Loaded(
-      final List<QuestionModel> response,
+      final List<QuestionModel> questionList,
       final bool isSubmitedOutcome,
       final String message,
       final int snackbarErrorCounter,
-      final bool isSubmitedOutcomeLoading) = _$LoadedImpl;
+      final bool isSubmitedOutcomeLoading,
+      final OutcomeSubmitterModel submitter) = _$LoadedImpl;
 
-  List<QuestionModel> get response;
+  List<QuestionModel> get questionList;
   bool get isSubmitedOutcome;
   String get message;
   int get snackbarErrorCounter;
   bool get isSubmitedOutcomeLoading;
+  OutcomeSubmitterModel get submitter;
 
   /// Create a copy of OutcomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -685,11 +728,12 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -702,11 +746,12 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -719,11 +764,12 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<QuestionModel> response,
+            List<QuestionModel> questionList,
             bool isSubmitedOutcome,
             String message,
             int snackbarErrorCounter,
-            bool isSubmitedOutcomeLoading)?
+            bool isSubmitedOutcomeLoading,
+            OutcomeSubmitterModel submitter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

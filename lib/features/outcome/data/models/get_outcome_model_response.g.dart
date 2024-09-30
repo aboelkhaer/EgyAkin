@@ -30,6 +30,7 @@ Map<String, dynamic> _$$GetOutcomeModelResponseImplToJson(
 _$OutcomeSubmitterModelImpl _$$OutcomeSubmitterModelImplFromJson(
         Map<String, dynamic> json) =>
     _$OutcomeSubmitterModelImpl(
+      id: json['id'] as String?,
       name: json['name'] as String?,
       image: json['image'] as String?,
     );
@@ -37,6 +38,7 @@ _$OutcomeSubmitterModelImpl _$$OutcomeSubmitterModelImplFromJson(
 Map<String, dynamic> _$$OutcomeSubmitterModelImplToJson(
         _$OutcomeSubmitterModelImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'image': instance.image,
     };

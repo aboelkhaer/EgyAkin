@@ -54,8 +54,14 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 listener: (context, state) {
                   state.maybeWhen(
                     orElse: () {},
-                    loaded: (response, isSubmitedOutcome, message, _,
-                        isSubmitedOutcomeLoading) {
+                    loaded: (
+                      response,
+                      isSubmitedOutcome,
+                      message,
+                      _,
+                      isSubmitedOutcomeLoading,
+                      submitterModel,
+                    ) {
                       if (isSubmitedOutcome) {
                         navigatorKey.currentState?.pushReplacementNamed(
                             AppRoutes.home,
@@ -78,8 +84,14 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                         ),
                       );
                     },
-                    loaded: (response, isSubmitedOutcome, message, _,
-                        isSubmitedOutcomeLoading) {
+                    loaded: (
+                      response,
+                      isSubmitedOutcome,
+                      message,
+                      _,
+                      isSubmitedOutcomeLoading,
+                      submitterModel,
+                    ) {
                       List<QuestionModel> questions = response;
                       if (isSubmitedOutcomeLoading) {
                         return const Expanded(
@@ -172,8 +184,14 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: () {},
-                  loaded: (response, isSubmitedOutcome, message, _,
-                      isSubmitedOutcomeLoading) {},
+                  loaded: (
+                    response,
+                    isSubmitedOutcome,
+                    message,
+                    _,
+                    isSubmitedOutcomeLoading,
+                    submitterModel,
+                  ) {},
                   error: (message) {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       showCustomDialog(
@@ -192,8 +210,14 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               },
               builder: (context, state) {
                 return state.maybeWhen(
-                  loaded: (response, isSubmitedOutcome, message,
-                      snackbarErrorCounter, isSubmitedOutcomeLoading) {
+                  loaded: (
+                    response,
+                    isSubmitedOutcome,
+                    message,
+                    snackbarErrorCounter,
+                    isSubmitedOutcomeLoading,
+                    submitterModel,
+                  ) {
                     if (isSubmitedOutcomeLoading) {
                       return const Row(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -23,7 +23,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   final UpdatePatientSectionDetailsUsecase _updatePatientSectionDetailsUsecase;
   static PatientSectionDetailsCubit get(context) => BlocProvider.of(context);
 
-  ScrollController scrollController = ScrollController();
+  ScrollController patientSectionDetailsScrollController = ScrollController();
   List<QuestionModel> questionModelList = [];
   Map<String, dynamic> formData = {};
   GlobalKey<FormState> sectionDetailsKeyForm = GlobalKey<FormState>();
@@ -97,84 +97,237 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   }
 
   updatePatientSectionDetails(String sectionId, String patientId) async {
-    bool isValid = true;
-    log(questionModelList.toString());
+    if (formData.isNotEmpty) {
+      bool isValid = true;
+      log(questionModelList.toString());
 
-    for (var question in questionModelList) {
-      // if (question.question == 'Hospital') {
-      //   log(question.toString());
-      // }
-      if (question.mandatory == true) {
-        if (question.type == 'multiple') {
-          Map myMap = question.answer;
-          // ??
-          //     {
-          //       "answers": [],
-          //       "other_field": '',
-          //     };
-          // Map myMap = formData[question.id.toString()] ??= {
-          //   "answers": [],
-          //   "other_field": ''
-          // };
+      for (var question in questionModelList) {
+        // if (question.question == 'Hospital') {
+        //   log(question.toString());
+        // }
+        if (question.mandatory == true) {
+          if (question.type == 'multiple') {
+            Map myMap = question.answer;
+            // ??
+            //     {
+            //       "answers": [],
+            //       "other_field": '',
+            //     };
+            // Map myMap = formData[question.id.toString()] ??= {
+            //   "answers": [],
+            //   "other_field": ''
+            // };
 
-          // Check if "answers" key is either null or an empty list
-          if (myMap.containsKey('answers')) {
-            dynamic answersValue = myMap['answers'];
+            // Check if "answers" key is either null or an empty list
+            if (myMap.containsKey('answers')) {
+              dynamic answersValue = myMap['answers'];
 
-            if (answersValue == null ||
-                (answersValue is List && answersValue.isEmpty)) {
-              debugPrint('"answers" key is either null or an empty list.');
+              if (answersValue == null ||
+                  (answersValue is List && answersValue.isEmpty)) {
+                debugPrint('"answers" key is either null or an empty list.');
 
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'You must select at least one choice. \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'You must select at least one choice. \n{${question.question}}',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
 
-              isValid = false;
-              break;
+                isValid = false;
+                break;
+              } else {
+                debugPrint(
+                    '"answers" key is present and has a non-empty list value: $answersValue');
+              }
             } else {
-              debugPrint(
-                  '"answers" key is present and has a non-empty list value: $answersValue');
-            }
-          } else {
-            debugPrint('"answers" key is not present in the map.');
+              debugPrint('"answers" key is not present in the map.');
 
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                  value.questions,
+                  false,
+                  false,
+                  AppStrings.somethingWentWrong,
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                  0.0,
+                ),
+              ));
+              isValid = false;
+              break;
+            }
+
+            if ((myMap['other_field'] == null ||
+                    myMap['other_field'].toString().isEmpty) &&
+                (myMap['answers'] as List).contains('Others')) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                  value.questions,
+                  false,
+                  false,
+                  'You must add "Others" field in \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                  0.0,
+                ),
+              ));
+
+              isValid = false;
+              break;
+            }
+          }
+          if (question.question == 'Name') {
+            if (formData.containsKey(question.id.toString())) {
+              String name = formData[question.id.toString()];
+
+              // Regular expression for checking only English alphabetic characters
+              RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
+
+              if (!englishCharRegex.hasMatch(name)) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Name should contain only English letters',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+
+                isValid = false;
+                break;
+              }
+            }
+          }
+          if (question.type == AppStrings.questionTypeString) {
+            if (question.question == 'National ID') {
+              String nationalID = question.answer;
+              log('moatz123 $nationalID');
+              if (nationalID.length != 14) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+
+                isValid = false;
+                break;
+              }
+              if (int.tryParse(nationalID) == null) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'National ID should have 14 digits',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+
+                isValid = false;
+                break;
+              }
+            }
+
+            if (question.question == 'Age') {
+              String age = question.answer;
+
+              if (int.tryParse(age) == null ||
+                  (int.parse(age) > 119 || int.parse(age) <= 0)) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Age should be less than 120',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+
+                isValid = false;
+                break;
+              }
+            }
+
+            if (question.question == 'Phone') {
+              String phoneNumber = question.answer;
+
+              if (phoneNumber.length != 11) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Phone should have 11 digits',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+                isValid = false;
+                break;
+              }
+
+              if (int.tryParse(phoneNumber) == null) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    'Phone should have 11 digits',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                  ),
+                ));
+                isValid = false;
+                break;
+              }
+            }
+          }
+          if (question.answer == null || question.answer == '') {
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => PatientSectionDetailsState.loaded(
                 value.questions,
                 false,
                 false,
-                AppStrings.somethingWentWrong,
-                snackbarErrorCounter += 1,
-                false,
-                false,
-                0.0,
-              ),
-            ));
-            isValid = false;
-            break;
-          }
-
-          if ((myMap['other_field'] == null ||
-                  myMap['other_field'].toString().isEmpty) &&
-              (myMap['answers'] as List).contains('Others')) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => PatientSectionDetailsState.loaded(
-                value.questions,
-                false,
-                false,
-                'You must add "Others" field in \n{${question.question}}',
+                'This question is required \n{${question.question}}',
                 snackbarErrorCounter += 1,
                 false,
                 false,
@@ -185,213 +338,76 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             isValid = false;
             break;
           }
-        }
-        if (question.question == 'Name') {
-          if (formData.containsKey(question.id.toString())) {
-            String name = formData[question.id.toString()];
-
-            // Regular expression for checking only English alphabetic characters
-            RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
-
-            if (!englishCharRegex.hasMatch(name)) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'Name should contain only English letters',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-
-              isValid = false;
-              break;
-            }
-          }
-        }
-        if (question.type == AppStrings.questionTypeString) {
-          if (question.question == 'National ID') {
-            String nationalID = question.answer;
-            log('moatz123 $nationalID');
-            if (nationalID.length != 14) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'National ID should have 14 digits',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-
-              isValid = false;
-              break;
-            }
-            if (int.tryParse(nationalID) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'National ID should have 14 digits',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-
-              isValid = false;
-              break;
-            }
-          }
-
-          if (question.question == 'Age') {
-            String age = question.answer;
-
-            if (int.tryParse(age) == null ||
-                (int.parse(age) > 119 || int.parse(age) <= 0)) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'Age should be less than 120',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-
-              isValid = false;
-              break;
-            }
-          }
-
-          if (question.question == 'Phone') {
-            String phoneNumber = question.answer;
-
-            if (phoneNumber.length != 11) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'Phone should have 11 digits',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-              isValid = false;
-              break;
-            }
-
-            if (int.tryParse(phoneNumber) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  'Phone should have 11 digits',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                ),
-              ));
-              isValid = false;
-              break;
-            }
-          }
-        }
-        if (question.answer == null || question.answer == '') {
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => PatientSectionDetailsState.loaded(
-              value.questions,
-              false,
-              false,
-              'This question is required \n{${question.question}}',
-              snackbarErrorCounter += 1,
-              false,
-              false,
-              0.0,
-            ),
-          ));
-
-          isValid = false;
-          break;
         }
       }
-    }
 
-    if (isValid == true) {
+      if (isValid == true) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionDetailsState.loaded(
+            value.questions,
+            true,
+            false,
+            '',
+            snackbarErrorCounter += 1,
+            false,
+            false,
+            0.0,
+          ),
+        ));
+
+        final result = await _updatePatientSectionDetailsUsecase.execute(
+            UpdatePatientSectionDetailsUsecaseInput(
+                patientId: patientId, sectionId: sectionId, map: formData));
+
+        result.fold(
+          (l) {
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => PatientSectionDetailsState.loaded(
+                value.questions,
+                false,
+                false,
+                l.message,
+                snackbarErrorCounter += 1,
+                false,
+                false,
+                0.0,
+              ),
+            ));
+          },
+          (response) async {
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => PatientSectionDetailsState.loaded(
+                value.questions,
+                false,
+                true,
+                response.message.toString(),
+                snackbarErrorCounter += 1,
+                false,
+                false,
+                0.0,
+              ),
+            ));
+          },
+        );
+      } else {}
+    } else {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => PatientSectionDetailsState.loaded(
           value.questions,
-          true,
           false,
-          '',
+          false,
+          'You should update any data to submit.',
           snackbarErrorCounter += 1,
           false,
           false,
           0.0,
         ),
       ));
-
-      final result = await _updatePatientSectionDetailsUsecase.execute(
-          UpdatePatientSectionDetailsUsecaseInput(
-              patientId: patientId, sectionId: sectionId, map: formData));
-
-      result.fold(
-        (l) {
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => PatientSectionDetailsState.loaded(
-              value.questions,
-              false,
-              false,
-              l.message,
-              snackbarErrorCounter += 1,
-              false,
-              false,
-              0.0,
-            ),
-          ));
-        },
-        (response) async {
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => PatientSectionDetailsState.loaded(
-              value.questions,
-              false,
-              true,
-              response.message.toString(),
-              snackbarErrorCounter += 1,
-              false,
-              false,
-              0.0,
-            ),
-          ));
-        },
-      );
-    } else {}
+    }
   }
 
   removeAllFilesInFilesQuestion({

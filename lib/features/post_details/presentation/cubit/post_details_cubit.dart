@@ -11,7 +11,7 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
   final GetPostCommentsUsecase _getPostCommentsUsecase;
   final DeletePostCommentUsecase _deletePostCommentUsecase;
   final AddCommentOnPostUsecase _addCommentOnPostUsecase;
-  ScrollController scrollController = ScrollController();
+  ScrollController postDetailsScrollController = ScrollController();
   String newComment = '';
 
   getPostComments(String postId) async {
@@ -74,8 +74,8 @@ class PostDetailsCubit extends Cubit<PostDetailsState> {
             (r) {
               emit(PostDetailsState.loaded(r.data!));
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (scrollController.hasClients) {
-                  animateToBottomOfScreen(scrollController);
+                if (postDetailsScrollController.hasClients) {
+                  animateToBottomOfScreen(postDetailsScrollController);
                 }
               });
             },

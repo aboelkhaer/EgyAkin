@@ -103,13 +103,14 @@ class SectionSubmitButton extends StatelessWidget {
                           );
                         },
                         title: AppStrings.submit,
-                        isDisable: (doctorId.toString() ==
-                                        currentDoctorModel.id.toString() ||
-                                    currentDoctorRole ==
-                                        AppStrings.roleAdmin) &&
-                                cubit.formData.isNotEmpty
-                            ? false
-                            : true,
+                        // isDisable: (doctorId.toString() ==
+                        //                 currentDoctorModel.id.toString() ||
+                        //             currentDoctorRole ==
+                        //                 AppStrings.roleAdmin) &&
+                        //         cubit.formData.isNotEmpty
+                        //     ? false
+                        //     : true,
+                        isDisable: false,
                       );
                     },
                     loaded: (
@@ -141,13 +142,14 @@ class SectionSubmitButton extends StatelessWidget {
                             );
                           },
                           title: AppStrings.submit,
-                          isDisable: (doctorId.toString() ==
-                                          currentDoctorModel.id.toString() ||
-                                      currentDoctorRole ==
-                                          AppStrings.roleAdmin) &&
-                                  cubit.formData.isNotEmpty
-                              ? false
-                              : true,
+                          // isDisable: (doctorId.toString() ==
+                          //                 currentDoctorModel.id.toString() ||
+                          //             currentDoctorRole ==
+                          //                 AppStrings.roleAdmin) &&
+                          //         cubit.formData.isNotEmpty
+                          //     ? false
+                          //     : true,
+                          isDisable: false,
                         );
                       }
                     },

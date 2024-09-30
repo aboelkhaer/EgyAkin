@@ -30,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselSliderController carouselController = CarouselSliderController();
-  ScrollController scrollController = ScrollController();
+  late ScrollController homeTabScrollController;
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   final SignOutUsecase _signOutUsecase;
@@ -452,6 +452,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   removeNotificationCount() {
+    log('done');
     HomeModelResponse updatedHomeDataModel =
         homeDataModel.copyWith(unreadCount: '0');
     emit(

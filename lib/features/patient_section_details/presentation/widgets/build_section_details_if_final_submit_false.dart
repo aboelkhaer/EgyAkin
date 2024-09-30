@@ -1,11 +1,5 @@
-import 'dart:developer';
-
-import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
-import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_question.dart';
-import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_submit_button.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
 
@@ -51,7 +45,7 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                 child: ListView.builder(
                   itemCount: widget.questions.length,
                   shrinkWrap: true,
-                  controller: cubit.scrollController,
+                  controller: cubit.patientSectionDetailsScrollController,
                   physics: const BouncingScrollPhysics(),
                   itemBuilder: (context, index) {
                     var questionModel = widget.questions[index];
@@ -222,16 +216,18 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                   },
                 ),
               ),
-              widget.homeDataModel.role == AppStrings.roleAdmin
-                  ? Container(height: 90)
-                  : widget.doctorId.toString() !=
-                          widget.currentDoctorModel.id.toString()
-                      ? const SizedBox.shrink()
-                      : widget.finalSubmitStatus
+              widget.sectionModel.sectionId.toString() == '9'
+                  ? const SizedBox.shrink()
+                  : widget.homeDataModel.role == AppStrings.roleAdmin
+                      ? Container(height: 90)
+                      : widget.doctorId.toString() !=
+                              widget.currentDoctorModel.id.toString()
                           ? const SizedBox.shrink()
-                          : Container(
-                              height: 90,
-                            ),
+                          : widget.finalSubmitStatus
+                              ? const SizedBox.shrink()
+                              : Container(
+                                  height: 90,
+                                ),
             ],
           ),
         ),

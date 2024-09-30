@@ -38,8 +38,14 @@ class IfOutcomeSubmitted extends StatelessWidget {
             orElse: () {
               return const ShimmerLoadingPatientsCards(ishorizontal: false);
             },
-            loaded: (response, isSubmitedOutcome, message, _,
-                isSubmitedOutcomeLoading) {
+            loaded: (
+              response,
+              isSubmitedOutcome,
+              message,
+              _,
+              isSubmitedOutcomeLoading,
+              submitterModel,
+            ) {
               return Column(
                 children: [
                   Container(
@@ -59,11 +65,10 @@ class IfOutcomeSubmitted extends StatelessWidget {
                         const SizedBox(width: 5),
                         GestureDetector(
                           onTap: () {
-                            // todo:
                             navigatorKey.currentState?.pushNamed(
                               AppRoutes.doctorInfoView,
                               arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-                                doctorId: doctorId,
+                                doctorId: submitterModel.id.toString(),
                                 currentDoctorModel: currentDoctorModel,
                                 accountVerification: accountVerification,
                                 currentDoctorPoints: currentDoctorPoints,
@@ -78,8 +83,8 @@ class IfOutcomeSubmitted extends StatelessWidget {
                           },
                           child: Text(
                             doctorName(
-                                firstName: cubit.submitterName,
-                                lastName: cubit.submitterName,
+                                firstName: submitterModel.name,
+                                lastName: submitterModel.name,
                                 role: currentDoctorRole),
                             // '',
                             style: TextStyle(
@@ -100,8 +105,14 @@ class IfOutcomeSubmitted extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           );
                         },
-                        loaded: (response, isSubmitedOutcome, message, _,
-                            isSubmitedOutcomeLoading) {
+                        loaded: (
+                          response,
+                          isSubmitedOutcome,
+                          message,
+                          _,
+                          isSubmitedOutcomeLoading,
+                          submitterModel,
+                        ) {
                           return ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),

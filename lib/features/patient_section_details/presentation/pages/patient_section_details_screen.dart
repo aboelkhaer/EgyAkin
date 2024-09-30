@@ -52,7 +52,7 @@ class _PatientSectionDetailsScreenState
       appBar: AppBar(
         title: GestureDetector(
             onTap: () {
-              animateToTopOfScreen(cubit.scrollController);
+              animateToTopOfScreen(cubit.patientSectionDetailsScrollController);
             },
             child: Text(
               widget.sectionModel.sectionName.toString(),

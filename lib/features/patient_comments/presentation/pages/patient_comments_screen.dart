@@ -39,8 +39,8 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final cubit = context.read<PatientCommentsCubit>();
-    if (!cubit.isClosed && cubit.scrollController.hasClients) {
-      cubit.scrollController.dispose();
+    if (!cubit.isClosed && cubit.patientCommentsScrollController.hasClients) {
+      cubit.patientCommentsScrollController.dispose();
     }
   }
 
@@ -58,7 +58,7 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
         fit: StackFit.expand,
         children: [
           SingleChildScrollView(
-            controller: cubit.scrollController,
+            controller: cubit.patientCommentsScrollController,
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [

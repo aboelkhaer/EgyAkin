@@ -30,14 +30,14 @@ class _SearchScreenState extends State<SearchScreen> {
     super.didChangeDependencies();
     cubit = context.read<SearchCubit>();
     if (!cubit!.isClosed) {
-      cubit!.scrollController = ScrollController();
+      cubit!.searchScrollController = ScrollController();
     }
   }
 
   @override
   void dispose() {
     if (cubit != null && !cubit!.isClosed) {
-      cubit!.scrollController!.dispose();
+      cubit!.searchScrollController!.dispose();
     }
     super.dispose();
   }
@@ -276,7 +276,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: Column(
                               children: [
                                 ListView.builder(
-                                  controller: cubit.scrollController,
+                                  controller: cubit.searchScrollController,
                                   itemCount: patients.length,
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
@@ -423,7 +423,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       )
                                     : const SizedBox.shrink(),
                                 ListView.builder(
-                                  controller: cubit.scrollController,
+                                  controller: cubit.searchScrollController,
                                   itemCount: doses!.length,
                                   physics: const NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,

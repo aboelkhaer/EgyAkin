@@ -8,9 +8,9 @@ class OutcomeCubit extends Cubit<OutcomeState> {
   static OutcomeCubit get(context) => BlocProvider.of(context);
   GlobalKey<FormState> outcomeFormKey = GlobalKey<FormState>();
   Map<String, dynamic> formData = {};
-  String submitterName = '';
   int snackbarErrorCounter = 0;
   List<QuestionModel> questionModelList = [];
+  OutcomeSubmitterModel submitterModel = const OutcomeSubmitterModel();
 
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
@@ -25,7 +25,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
       questionModelList =
           updatedQuestionModelList; // Replace the old list with the new list
       emit(OutcomeState.loaded(
-          questionModelList, false, '', snackbarErrorCounter, false));
+        questionModelList,
+        false,
+        '',
+        snackbarErrorCounter,
+        false,
+        submitterModel,
+      ));
     }
   }
 
@@ -39,12 +45,18 @@ class OutcomeCubit extends Cubit<OutcomeState> {
       (l) {
         emit(OutcomeState.error(l.message));
       },
-      (response) async {
-        questionModelList = response.data!;
-        submitterName = response.submitter!.name.toString();
+      (data) async {
+        questionModelList = data.data!;
+        submitterModel = data.submitter!;
 
         emit(OutcomeState.loaded(
-            questionModelList, false, '', snackbarErrorCounter, false));
+          questionModelList,
+          false,
+          '',
+          snackbarErrorCounter,
+          false,
+          submitterModel,
+        ));
       },
     );
   }
@@ -102,11 +114,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'You must select at least one choice. \n{${question.question}}',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'You must select at least one choice. \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
 
               isValid = false;
@@ -121,11 +135,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => OutcomeState.loaded(
-                  value.response,
-                  false,
-                  AppStrings.somethingWentWrong,
-                  snackbarErrorCounter += 1,
-                  false),
+                value.questionList,
+                false,
+                AppStrings.somethingWentWrong,
+                snackbarErrorCounter += 1,
+                false,
+                submitterModel,
+              ),
             ));
             isValid = false;
             break;
@@ -137,11 +153,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => OutcomeState.loaded(
-                  value.response,
-                  false,
-                  'You must add "Others" field in \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false),
+                value.questionList,
+                false,
+                'You must add "Others" field in \n{${question.question}}',
+                snackbarErrorCounter += 1,
+                false,
+                submitterModel,
+              ),
             ));
 
             isValid = false;
@@ -155,11 +173,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'National ID should have 14 digits',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'National ID should have 14 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
 
               isValid = false;
@@ -169,11 +189,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'National ID should have 14 digits',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'National ID should have 14 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
 
               isValid = false;
@@ -189,11 +211,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'Age should be less than 120',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'Age should be less than 120',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
 
               isValid = false;
@@ -208,11 +232,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'Phone should have 11 digits',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'Phone should have 11 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
               isValid = false;
               break;
@@ -222,11 +248,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               emit(state.maybeMap(
                 orElse: () => state,
                 loaded: (value) => OutcomeState.loaded(
-                    value.response,
-                    false,
-                    'Phone should have 11 digits',
-                    snackbarErrorCounter += 1,
-                    false),
+                  value.questionList,
+                  false,
+                  'Phone should have 11 digits',
+                  snackbarErrorCounter += 1,
+                  false,
+                  submitterModel,
+                ),
               ));
               isValid = false;
               break;
@@ -237,11 +265,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => OutcomeState.loaded(
-                value.response,
-                false,
-                'This question is required \n{${question.question}}',
-                snackbarErrorCounter += 1,
-                false),
+              value.questionList,
+              false,
+              'This question is required \n{${question.question}}',
+              snackbarErrorCounter += 1,
+              false,
+              submitterModel,
+            ),
           ));
 
           isValid = false;
@@ -254,7 +284,13 @@ class OutcomeCubit extends Cubit<OutcomeState> {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => OutcomeState.loaded(
-            value.response, false, '', value.snackbarErrorCounter, true),
+          value.questionList,
+          false,
+          '',
+          value.snackbarErrorCounter,
+          true,
+          submitterModel,
+        ),
       ));
 
       final result = await _submitOutcomeUsecase.execute(
@@ -268,8 +304,14 @@ class OutcomeCubit extends Cubit<OutcomeState> {
         (l) {
           emit(state.maybeMap(
             orElse: () => state,
-            loaded: (value) => OutcomeState.loaded(value.response, false,
-                l.message, value.snackbarErrorCounter, false),
+            loaded: (value) => OutcomeState.loaded(
+              value.questionList,
+              false,
+              l.message,
+              value.snackbarErrorCounter,
+              false,
+              submitterModel,
+            ),
           ));
         },
         (response) async {
@@ -277,8 +319,14 @@ class OutcomeCubit extends Cubit<OutcomeState> {
           //     [], true, response.message!, snackbarErrorCounter, false));
           emit(state.maybeMap(
             orElse: () => state,
-            loaded: (value) => OutcomeState.loaded(value.response, true,
-                response.message.toString(), value.snackbarErrorCounter, false),
+            loaded: (value) => OutcomeState.loaded(
+              value.questionList,
+              true,
+              response.message.toString(),
+              value.snackbarErrorCounter,
+              false,
+              submitterModel,
+            ),
           ));
         },
       );

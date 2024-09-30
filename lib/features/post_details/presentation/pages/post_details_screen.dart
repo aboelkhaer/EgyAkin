@@ -34,8 +34,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final cubit = context.read<PostDetailsCubit>();
-    if (!cubit.isClosed && cubit.scrollController.hasClients) {
-      cubit.scrollController.dispose();
+    if (!cubit.isClosed && cubit.postDetailsScrollController.hasClients) {
+      cubit.postDetailsScrollController.dispose();
     }
   }
 
@@ -53,7 +53,7 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                 cubit.getPostComments(widget.postModel.id.toString()),
             color: AppColors.primary,
             child: SingleChildScrollView(
-              controller: cubit.scrollController,
+              controller: cubit.postDetailsScrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [

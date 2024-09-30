@@ -2,9 +2,9 @@ import 'package:flutter/scheduler.dart';
 
 import '../../../exports.dart';
 
-animateToTopOfScreen(ScrollController scrollController) {
+void animateToTopOfScreen(ScrollController scrollController) {
   SchedulerBinding.instance.addPostFrameCallback((_) {
-    if (scrollController.hasClients) {
+    if (scrollController.hasClients && scrollController.positions.length == 1) {
       final maxScroll = scrollController.position.minScrollExtent;
       scrollController
           .animateTo(
@@ -17,8 +17,10 @@ animateToTopOfScreen(ScrollController scrollController) {
       }).catchError((error) {
         debugPrint('Error during animation: $error');
       });
-    } else {
+    } else if (!scrollController.hasClients) {
       debugPrint('ScrollController has no clients.');
+    } else {
+      debugPrint('ScrollController is attached to multiple positions.');
     }
   });
 }

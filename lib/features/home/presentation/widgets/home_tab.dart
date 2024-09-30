@@ -3,7 +3,7 @@ import 'package:egy_akin/features/home/presentation/widgets/doctors_activation.d
 
 import '../../../../exports.dart';
 
-class HomeTab extends StatelessWidget {
+class HomeTab extends StatefulWidget {
   final HomeCubit cubit;
   const HomeTab({
     super.key,
@@ -11,22 +11,41 @@ class HomeTab extends StatelessWidget {
   });
 
   @override
+  State<HomeTab> createState() => _HomeTabState();
+}
+
+class _HomeTabState extends State<HomeTab> {
+  @override
+  void initState() {
+    context.read<HomeCubit>().homeTabScrollController = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (context.read<HomeCubit>().isClosed) {
+      context.read<HomeCubit>().homeTabScrollController.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () {
-        animateToTopOfScreen(cubit.scrollController);
+        animateToTopOfScreen(widget.cubit.homeTabScrollController);
         // if (cubit.scrollController.hasClients) {
         //   cubit.scrollController.animateTo(0,
         //       duration: const Duration(milliseconds: 300),
         //       curve: Curves.easeInOut);
         // }
 
-        if (cubit.isUnreadNotification) {
+        if (widget.cubit.isUnreadNotification) {
           context.read<NotificationCubit>().getAllNotifications();
         }
 
-        return cubit.getHome();
+        return widget.cubit.getHome();
       },
       child: Container(
         color: Colors.grey.shade100,
@@ -77,7 +96,7 @@ class HomeTab extends StatelessWidget {
             ),
             Expanded(
               child: SingleChildScrollView(
-                controller: cubit.scrollController,
+                controller: widget.cubit.homeTabScrollController,
                 physics: const BouncingScrollPhysics(),
                 child: Padding(
                   padding:
@@ -129,7 +148,7 @@ class HomeTab extends StatelessWidget {
                       //       );
                       //     },
                       //     title: 'hello'),
-                      PostsSliderAndDots(cubit: cubit),
+                      PostsSliderAndDots(cubit: widget.cubit),
                       SizedBox(height: 10.h),
 
                       const DoctorsActivation(),

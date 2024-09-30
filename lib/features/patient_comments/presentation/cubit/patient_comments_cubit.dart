@@ -10,7 +10,7 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
   final DeletePatientCommentsUsecase _deletePatientCommentsUsecase;
   static PatientCommentsCubit get(context) => BlocProvider.of(context);
   String newComment = '';
-  ScrollController scrollController = ScrollController();
+  ScrollController patientCommentsScrollController = ScrollController();
 
   getPatientComments(String patientId) async {
     emit(const PatientCommentsState.loading());
@@ -46,8 +46,8 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
           (r) async {
             emit(PatientCommentsState.loaded(r.data!, '', false, false, ''));
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (scrollController.hasClients) {
-                animateToBottomOfScreen(scrollController);
+              if (patientCommentsScrollController.hasClients) {
+                animateToBottomOfScreen(patientCommentsScrollController);
               }
             });
           },

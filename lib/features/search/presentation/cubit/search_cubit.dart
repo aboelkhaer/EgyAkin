@@ -6,7 +6,7 @@ class SearchCubit extends Cubit<SearchState> {
   static SearchCubit get(context) => BlocProvider.of(context);
 
   TextEditingController searchController = TextEditingController();
-  ScrollController? scrollController;
+  ScrollController? searchScrollController;
 
   bool patientOrDoctorOrHospital = true;
   bool dose = false;

@@ -18,6 +18,7 @@ class GetOutcomeModelResponse with _$GetOutcomeModelResponse {
 @freezed
 class OutcomeSubmitterModel with _$OutcomeSubmitterModel {
   const factory OutcomeSubmitterModel({
+    String? id,
     String? name,
     String? image,
   }) = _OutcomeSubmitterModel;
