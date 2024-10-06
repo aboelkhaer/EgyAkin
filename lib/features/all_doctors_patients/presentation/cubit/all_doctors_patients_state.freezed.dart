@@ -21,7 +21,14 @@ mixin _$AllDoctorsPatientsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -31,7 +38,14 @@ mixin _$AllDoctorsPatientsState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -41,7 +55,14 @@ mixin _$AllDoctorsPatientsState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -140,7 +161,14 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -153,7 +181,14 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -166,7 +201,14 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -263,7 +305,14 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -276,7 +325,14 @@ class _$LoadingImpl implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -289,7 +345,14 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -348,9 +411,18 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({GetAllDoctorsPatientsModelResponse response, bool isSeeMore});
+  $Res call(
+      {GetAllDoctorsPatientsModelResponse response,
+      bool isSeeMore,
+      bool isFilterLoading,
+      bool isFilterLoaded,
+      String message,
+      GetFiltersOptionsModelResponse filters,
+      bool isApplyFilterLoading,
+      bool isApplyFilterLoaded});
 
   $GetAllDoctorsPatientsModelResponseCopyWith<$Res> get response;
+  $GetFiltersOptionsModelResponseCopyWith<$Res> get filters;
 }
 
 /// @nodoc
@@ -368,6 +440,12 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? response = null,
     Object? isSeeMore = null,
+    Object? isFilterLoading = null,
+    Object? isFilterLoaded = null,
+    Object? message = null,
+    Object? filters = null,
+    Object? isApplyFilterLoading = null,
+    Object? isApplyFilterLoaded = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -377,6 +455,30 @@ class __$$LoadedImplCopyWithImpl<$Res>
       null == isSeeMore
           ? _value.isSeeMore
           : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isFilterLoading
+          ? _value.isFilterLoading
+          : isFilterLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isFilterLoaded
+          ? _value.isFilterLoaded
+          : isFilterLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == filters
+          ? _value.filters
+          : filters // ignore: cast_nullable_to_non_nullable
+              as GetFiltersOptionsModelResponse,
+      null == isApplyFilterLoading
+          ? _value.isApplyFilterLoading
+          : isApplyFilterLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isApplyFilterLoaded
+          ? _value.isApplyFilterLoaded
+          : isApplyFilterLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -391,21 +493,52 @@ class __$$LoadedImplCopyWithImpl<$Res>
       return _then(_value.copyWith(response: value));
     });
   }
+
+  /// Create a copy of AllDoctorsPatientsState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetFiltersOptionsModelResponseCopyWith<$Res> get filters {
+    return $GetFiltersOptionsModelResponseCopyWith<$Res>(_value.filters,
+        (value) {
+      return _then(_value.copyWith(filters: value));
+    });
+  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.response, this.isSeeMore);
+  const _$LoadedImpl(
+      this.response,
+      this.isSeeMore,
+      this.isFilterLoading,
+      this.isFilterLoaded,
+      this.message,
+      this.filters,
+      this.isApplyFilterLoading,
+      this.isApplyFilterLoaded);
 
   @override
   final GetAllDoctorsPatientsModelResponse response;
   @override
   final bool isSeeMore;
+  @override
+  final bool isFilterLoading;
+  @override
+  final bool isFilterLoaded;
+  @override
+  final String message;
+  @override
+  final GetFiltersOptionsModelResponse filters;
+  @override
+  final bool isApplyFilterLoading;
+  @override
+  final bool isApplyFilterLoaded;
 
   @override
   String toString() {
-    return 'AllDoctorsPatientsState.loaded(response: $response, isSeeMore: $isSeeMore)';
+    return 'AllDoctorsPatientsState.loaded(response: $response, isSeeMore: $isSeeMore, isFilterLoading: $isFilterLoading, isFilterLoaded: $isFilterLoaded, message: $message, filters: $filters, isApplyFilterLoading: $isApplyFilterLoading, isApplyFilterLoaded: $isApplyFilterLoaded)';
   }
 
   @override
@@ -416,11 +549,30 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.response, response) ||
                 other.response == response) &&
             (identical(other.isSeeMore, isSeeMore) ||
-                other.isSeeMore == isSeeMore));
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.isFilterLoading, isFilterLoading) ||
+                other.isFilterLoading == isFilterLoading) &&
+            (identical(other.isFilterLoaded, isFilterLoaded) ||
+                other.isFilterLoaded == isFilterLoaded) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.filters, filters) || other.filters == filters) &&
+            (identical(other.isApplyFilterLoading, isApplyFilterLoading) ||
+                other.isApplyFilterLoading == isApplyFilterLoading) &&
+            (identical(other.isApplyFilterLoaded, isApplyFilterLoaded) ||
+                other.isApplyFilterLoaded == isApplyFilterLoaded));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, response, isSeeMore);
+  int get hashCode => Object.hash(
+      runtimeType,
+      response,
+      isSeeMore,
+      isFilterLoading,
+      isFilterLoaded,
+      message,
+      filters,
+      isApplyFilterLoading,
+      isApplyFilterLoaded);
 
   /// Create a copy of AllDoctorsPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -436,11 +588,19 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isSeeMore);
+    return loaded(response, isSeeMore, isFilterLoading, isFilterLoaded, message,
+        filters, isApplyFilterLoading, isApplyFilterLoaded);
   }
 
   @override
@@ -449,11 +609,19 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isSeeMore);
+    return loaded?.call(response, isSeeMore, isFilterLoading, isFilterLoaded,
+        message, filters, isApplyFilterLoading, isApplyFilterLoaded);
   }
 
   @override
@@ -462,13 +630,21 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isSeeMore);
+      return loaded(response, isSeeMore, isFilterLoading, isFilterLoaded,
+          message, filters, isApplyFilterLoading, isApplyFilterLoaded);
     }
     return orElse();
   }
@@ -512,11 +688,24 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements AllDoctorsPatientsState {
-  const factory _Loaded(final GetAllDoctorsPatientsModelResponse response,
-      final bool isSeeMore) = _$LoadedImpl;
+  const factory _Loaded(
+      final GetAllDoctorsPatientsModelResponse response,
+      final bool isSeeMore,
+      final bool isFilterLoading,
+      final bool isFilterLoaded,
+      final String message,
+      final GetFiltersOptionsModelResponse filters,
+      final bool isApplyFilterLoading,
+      final bool isApplyFilterLoaded) = _$LoadedImpl;
 
   GetAllDoctorsPatientsModelResponse get response;
   bool get isSeeMore;
+  bool get isFilterLoading;
+  bool get isFilterLoaded;
+  String get message;
+  GetFiltersOptionsModelResponse get filters;
+  bool get isApplyFilterLoading;
+  bool get isApplyFilterLoaded;
 
   /// Create a copy of AllDoctorsPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -596,7 +785,14 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -609,7 +805,14 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -622,7 +825,14 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            GetAllDoctorsPatientsModelResponse response, bool isSeeMore)?
+            GetAllDoctorsPatientsModelResponse response,
+            bool isSeeMore,
+            bool isFilterLoading,
+            bool isFilterLoaded,
+            String message,
+            GetFiltersOptionsModelResponse filters,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

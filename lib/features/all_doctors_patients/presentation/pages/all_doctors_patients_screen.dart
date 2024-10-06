@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
+import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
 
 import '../../../../exports.dart';
 
@@ -88,6 +89,44 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
             style: TextStyle(),
           ),
         ),
+        actions: [
+          BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return IconButton(
+                    onPressed: () {},
+                    icon: const Icon(Icons.filter_list),
+                  );
+                },
+                loaded: (response,
+                    isSeeMore,
+                    isFilterLoading,
+                    isFilterLoaded,
+                    message,
+                    filters,
+                    isApplyFilterLoading,
+                    isApplyFilterLoaded) {
+                  return IconButton(
+                    onPressed: () {
+                      showCustomBottomSheet(
+                        context: context,
+                        isFilter: true,
+                        builder: (context) {
+                          return BuildFilterWidget(
+                            filters: filters,
+                            cubit: cubit,
+                          );
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.filter_list),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -100,7 +139,14 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     return const ShimmerLoadingPatientsCards(
                         ishorizontal: false);
                   },
-                  loaded: (data, isSeeMore) {
+                  loaded: (data,
+                      isSeeMore,
+                      isFilterLoading,
+                      isFilterLoaded,
+                      message,
+                      filters,
+                      isApplyFilterLoading,
+                      isApplyFilterLoaded) {
                     return data.data!.data!.isEmpty
                         ? Center(
                             child: Image.asset(
@@ -221,7 +267,16 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                 orElse: () {
                   return const SizedBox.shrink();
                 },
-                loaded: (data, isSeeMore) {
+                loaded: (
+                  data,
+                  isSeeMore,
+                  isFilterLoading,
+                  isFilterLoaded,
+                  message,
+                  filters,
+                  isApplyFilterLoading,
+                  isApplyFilterLoaded,
+                ) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

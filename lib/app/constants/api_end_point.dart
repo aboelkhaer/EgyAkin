@@ -1,6 +1,9 @@
 class ApiEndPoint {
-  // static const baseUrl = 'https://egyakin.com';
-  static const baseUrl = 'https://api.egyakin.com';
+  //! test url
+  static const baseUrl = 'https://test.egyakin.com';
+
+  //! production url
+  // static const baseUrl = 'https://api.egyakin.com';
 
   static const home = '$baseUrl/api/homeNew';
   static const signIn = '$baseUrl/api/login';
@@ -13,7 +16,6 @@ class ApiEndPoint {
   static const sections = '$baseUrl/api/showSections';
   static const getPatientSectionDetails = '$baseUrl/api/patient';
   static const deletePatient = '$baseUrl/api/patient';
-  // Todo: return to patientsection ,    uploadFileNew
   static const updateSectionDetails = '$baseUrl/api/patientsection';
   static const getAddPatientsQuestions = '$baseUrl/api/questions';
   static const addPatientForFirstTime = '$baseUrl/api/patient';
@@ -62,4 +64,6 @@ class ApiEndPoint {
   static const syndicateCardVerifyRequest = '$baseUrl/api/users';
   static const blockDoctor = '$baseUrl/api/users';
   static const verifyDoctorEmail = '$baseUrl/api/users';
+  static const getPatientFilters = '$baseUrl/api/patientFilters';
+  static const applyPatientsFilter = '$baseUrl/api/patientFilters';
 }

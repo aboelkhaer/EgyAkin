@@ -1,4 +1,5 @@
-import 'package:egy_akin/features/all_doctors_patients/data/models/get_all_doctors_patients_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 
 import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
@@ -6,4 +7,7 @@ import 'package:dartz/dartz.dart';
 abstract class AllDoctorsPatientsRepository {
   Future<Either<Failure, GetAllDoctorsPatientsModelResponse>>
       getAllDoctorsPatients(int page);
+  Future<Either<Failure, GetFiltersOptionsModelResponse>> getFiltersOptions();
+  Future<Either<Failure, ApplyPatientFiltersModelResponse>>
+      applyPatientsFilters(Map<String, dynamic> map);
 }

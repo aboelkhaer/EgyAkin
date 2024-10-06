@@ -118,10 +118,10 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                             shrinkWrap: true,
                             controller: cubit.scrollController,
                             scrollDirection: Axis.vertical,
-                            padding: const EdgeInsets.only(
+                            padding: EdgeInsets.only(
                               left: 20,
                               top: 20,
-                              right: 20,
+                              right: size.width * 0.09,
                               bottom: 50,
                             ),
                             itemCount: data.data!.data!.length,

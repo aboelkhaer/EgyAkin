@@ -194,8 +194,17 @@ class _BuildQuestionState extends State<BuildQuestion> {
                     setState(() {
                       if (selected) {
                         answers.add(value);
+                        // Show other field if "Other" is selected
+                        if (value == AppStrings.others) {
+                          answerMap[AppStrings.otherField] =
+                              ''; // Reset other field if selected
+                        }
                       } else {
                         answers.remove(value);
+                        // Clear other field if "Other" is deselected
+                        if (value == AppStrings.others) {
+                          answerMap[AppStrings.otherField] = AppStrings.empty;
+                        }
                       }
 
                       cubit.formData[cubit.questionModelList[widget.index].id
@@ -207,7 +216,6 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                 : AppStrings.empty,
                       };
                       log('map ${cubit.formData}');
-                      // log('list answer ${questionList[index].answer}');
                     });
                   },
                 ),

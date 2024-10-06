@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -275,5 +277,13 @@ abstract class ApiServices {
   Future<VerifyUserEmailModelResponse> verifyDoctorEmail(
     @Field("email_verified_at") dynamic timestamp,
     @Path("doctorId") String doctorId,
+  );
+
+  @GET(ApiEndPoint.getPatientFilters)
+  Future<GetFiltersOptionsModelResponse> getFiltersOptions();
+
+  @POST(ApiEndPoint.applyPatientsFilter)
+  Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
+    @Body() Map<String, dynamic> map,
   );
 }

@@ -30,8 +30,7 @@ class BuildMultipleValueQuestion extends StatelessWidget {
           children: children,
         ),
         const SizedBox(height: 16),
-        listContainOther.contains('Others') ||
-                listContainOther.contains('Other')
+        listContainOther.contains('Others')
             ? CustomTextFormField(
                 title: 'Answer here',
                 initialValue: initialValue,

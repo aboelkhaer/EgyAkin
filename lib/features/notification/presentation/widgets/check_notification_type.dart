@@ -286,38 +286,6 @@ class CheckNotificationType extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                // Flexible(
-                                //   child: RichText(
-                                //     text: TextSpan(
-                                //       text:
-                                //           'Dr. ${capitalizeFirstText(notificationModel.typeDoctor!.firstName!)}',
-                                //       style: TextStyle(
-                                //           color: AppColors.title,
-                                //           fontSize: 12.sp),
-                                //       children: <TextSpan>[
-                                //         const TextSpan(
-                                //           text: ' is seeking your advice ',
-                                //           style: TextStyle(
-                                //             fontWeight: FontWeight.bold,
-                                //             color: Colors.green,
-                                //           ),
-                                //         ),
-                                //         const TextSpan(text: 'for his patient'),
-                                //         const TextSpan(
-                                //             text: ' : ',
-                                //             style: TextStyle(
-                                //                 fontWeight: FontWeight.bold)),
-                                //         TextSpan(
-                                //           text:
-                                //               '${notificationModel.patient!.name}',
-                                //           style: const TextStyle(
-                                //             fontWeight: FontWeight.bold,
-                                //           ),
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                // ),
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
@@ -326,23 +294,7 @@ class CheckNotificationType extends StatelessWidget {
                                           color: AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
-                                      children: const <TextSpan>[
-                                        // const TextSpan(
-                                        //   text: ' creates ',
-                                        //   style: TextStyle(
-                                        //     fontWeight: FontWeight.bold,
-                                        //     color: Colors.green,
-                                        //   ),
-                                        // ),
-                                        // const TextSpan(text: 'a new patient '),
-                                        // const TextSpan(
-                                        //     text: ' at ',
-                                        //     style: TextStyle(
-                                        //         fontWeight: FontWeight.bold)),
-                                        // TextSpan(
-                                        //     text:
-                                        //         '${notificationModel.patient!.hospital}'),
-                                      ],
+                                      children: const <TextSpan>[],
                                     ),
                                   ),
                                 ),
@@ -1009,8 +961,7 @@ class CheckNotificationType extends StatelessWidget {
                                 AppRoutes.doctorInfoView,
                                 arguments:
                                     AppRoutesArgs.doctorInfoViewRouteArgs(
-                                  doctorId: notificationModel
-                                      .patient!.doctor!.id
+                                  doctorId: notificationModel.typeDoctor!.id
                                       .toString(),
                                   initialIndex: 0,
                                   currentDoctorModel: currentDoctorModel,
