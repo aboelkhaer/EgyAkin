@@ -5,7 +5,7 @@ import '../../../../exports.dart';
 
 abstract class AllDoctorsPatientsDataSource {
   Future<GetAllDoctorsPatientsModelResponse> getAllDoctorPatients(int page);
-  Future<GetFiltersOptionsModelResponse> getFiltersOptions();
+
   Future<ApplyPatientFiltersModelResponse> applyPatientsFilters(
       Map<String, dynamic> map);
 }
@@ -19,11 +19,6 @@ class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
   Future<GetAllDoctorsPatientsModelResponse> getAllDoctorPatients(
       int page) async {
     return await _apiServices.getAllPatients(page);
-  }
-
-  @override
-  Future<GetFiltersOptionsModelResponse> getFiltersOptions() async {
-    return await _apiServices.getFiltersOptions();
   }
 
   @override

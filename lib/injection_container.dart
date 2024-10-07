@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/apply_patients_filters_usecase.dart';
-import 'package:egy_akin/features/all_doctors_patients/domain/usecases/get_filters_options_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
@@ -43,7 +42,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => OutcomeCubit(sl(), sl()));
   sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
   sl.registerFactory(() => PatientSectionDetailsCubit(sl(), sl()));
-  sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
   sl.registerFactory(
@@ -347,10 +346,7 @@ Future<void> diInit() async {
     sl.registerFactory<VerifyUserEmailUsecase>(
         () => VerifyUserEmailUsecase(sl()));
   }
-  if (!GetIt.I.isRegistered<GetFiltersOptionsUsecase>()) {
-    sl.registerFactory<GetFiltersOptionsUsecase>(
-        () => GetFiltersOptionsUsecase(sl()));
-  }
+
   if (!GetIt.I.isRegistered<ApplyPatientsFiltersUsecase>()) {
     sl.registerFactory<ApplyPatientsFiltersUsecase>(
         () => ApplyPatientsFiltersUsecase(sl()));

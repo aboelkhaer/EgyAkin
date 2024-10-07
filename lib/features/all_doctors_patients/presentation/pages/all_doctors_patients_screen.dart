@@ -99,14 +99,13 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     icon: const Icon(Icons.filter_list),
                   );
                 },
-                loaded: (response,
-                    isSeeMore,
-                    isFilterLoading,
-                    isFilterLoaded,
-                    message,
-                    filters,
-                    isApplyFilterLoading,
-                    isApplyFilterLoaded) {
+                loaded: (
+                  response,
+                  isSeeMore,
+                  message,
+                  isApplyFilterLoading,
+                  isApplyFilterLoaded,
+                ) {
                   return IconButton(
                     onPressed: () {
                       showCustomBottomSheet(
@@ -114,13 +113,28 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                         isFilter: true,
                         builder: (context) {
                           return BuildFilterWidget(
-                            filters: filters,
+                            filters: response.filters,
                             cubit: cubit,
                           );
                         },
                       );
                     },
-                    icon: const Icon(Icons.filter_list),
+                    icon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        cubit.totalPatientInFilter == 0
+                            ? const SizedBox.shrink()
+                            : Text(
+                                cubit.totalPatientInFilter.toString(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 9.sp,
+                                ),
+                              ),
+                        const Icon(Icons.filter_list),
+                      ],
+                    ),
                   );
                 },
               );
@@ -139,15 +153,14 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     return const ShimmerLoadingPatientsCards(
                         ishorizontal: false);
                   },
-                  loaded: (data,
-                      isSeeMore,
-                      isFilterLoading,
-                      isFilterLoaded,
-                      message,
-                      filters,
-                      isApplyFilterLoading,
-                      isApplyFilterLoaded) {
-                    return data.data!.data!.isEmpty
+                  loaded: (
+                    response,
+                    isSeeMore,
+                    message,
+                    isApplyFilterLoading,
+                    isApplyFilterLoaded,
+                  ) {
+                    return response.data!.data!.isEmpty
                         ? Center(
                             child: Image.asset(
                               AppImages.notFound,
@@ -155,106 +168,118 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                               height: 200.h,
                             ),
                           )
-                        : ListView.builder(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            controller: cubit.scrollController,
-                            scrollDirection: Axis.vertical,
-                            padding: EdgeInsets.only(
-                              left: 20,
-                              top: 20,
-                              right: size.width * 0.09,
-                              bottom: 50,
-                            ),
-                            itemCount: data.data!.data!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              var patient = data.data!.data![index];
-                              return PatientCard(
-                                patientName: patient.name ?? AppStrings.empty,
-                                drFirstName: patient.doctor!.firstName ??
-                                    AppStrings.empty,
-                                isAllDataOpen: false,
-                                homeDataModel: widget.homeDataModel,
-                                accountVerification: widget.accountVerification,
-                                doctorId: patient.doctor!.id.toString(),
-                                updatedAt:
-                                    patient.updatedAt ?? AppStrings.empty,
-                                drLastName: patient.doctor!.lastName ??
-                                    AppStrings.empty,
-                                hospital: patient.hospital ?? AppStrings.empty,
-                                currentDoctorModel: widget.currentDoctorModel,
-                                currentDoctorPoints: widget.currentDoctorPoints,
-                                currentDoctorRole: widget.currentDoctorRole,
-                                isSyndicateCardRequired:
-                                    patient.doctor!.isSyndicateCardRequired!,
-                                doctorImage: patient.doctor!.image,
-                                isOutcomeStatus:
-                                    patient.sections!.outcomeStatus!,
-                                submitStatus: patient.sections == null
-                                    ? false
-                                    : patient.sections!.submitStatus ?? false,
-                                onOutcomeTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.outcome,
-                                    arguments: AppRoutesArgs.outcomeRouteArgs(
-                                      verified: widget.accountVerification,
-                                      outcomeStatus:
-                                          patient.sections!.outcomeStatus!,
-                                      patientName: patient.name.toString(),
-                                      patientId: patient.id.toString(),
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      doctorId: patient.doctor!.id.toString(),
-                                      isSyndicateCardRequired:
-                                          widget.isSyndicateCardRequired,
-                                      currentDoctorRole:
-                                          widget.currentDoctorRole,
-                                      currentDoctorPoints:
-                                          widget.currentDoctorPoints,
-                                      homeDataModel: widget.homeDataModel,
-                                    ),
-                                  );
-                                },
-                                onAddCommentTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.comments,
-                                    arguments:
-                                        AppRoutesArgs.patientCommentsRouteArgs(
-                                      patientId: patient.id.toString(),
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      verified: widget.accountVerification,
-                                      patientName: patient.name.toString(),
-                                      currentDoctorPoints:
-                                          widget.currentDoctorPoints,
-                                      isSyndicateCardRequired:
-                                          widget.isSyndicateCardRequired,
-                                      currentDoctorRole:
-                                          widget.currentDoctorRole,
-                                      homeDataModel: widget.homeDataModel,
-                                    ),
-                                  );
-                                },
-                                onTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.patientSections,
-                                    arguments: AppRoutesArgs
-                                        .patientSectionsRouteArguments(
-                                      patientId: patient.id.toString(),
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      currentDoctorPoints:
-                                          widget.currentDoctorPoints,
-                                      currentDoctorRole:
-                                          widget.currentDoctorRole,
-                                      homeDataModel: widget.homeDataModel,
-                                      isAllDataOpen: false,
-                                    ),
+                        : isApplyFilterLoading
+                            ? const Center(
+                                child: CircularProgressIndicator(),
+                              )
+                            : ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                shrinkWrap: true,
+                                controller: cubit.scrollController,
+                                scrollDirection: Axis.vertical,
+                                padding: EdgeInsets.only(
+                                  left: 20,
+                                  top: 20,
+                                  right: size.width * 0.09,
+                                  bottom: 50,
+                                ),
+                                itemCount: response.data!.data!.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  var patient = response.data!.data![index];
+                                  return PatientCard(
+                                    patientName:
+                                        patient.name ?? AppStrings.empty,
+                                    drFirstName: patient.doctor!.firstName ??
+                                        AppStrings.empty,
+                                    isAllDataOpen: false,
+                                    homeDataModel: widget.homeDataModel,
+                                    accountVerification:
+                                        widget.accountVerification,
+                                    doctorId: patient.doctor!.id.toString(),
+                                    updatedAt:
+                                        patient.updatedAt ?? AppStrings.empty,
+                                    drLastName: patient.doctor!.lastName ??
+                                        AppStrings.empty,
+                                    hospital:
+                                        patient.hospital ?? AppStrings.empty,
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    currentDoctorPoints:
+                                        widget.currentDoctorPoints,
+                                    currentDoctorRole: widget.currentDoctorRole,
+                                    isSyndicateCardRequired: patient
+                                        .doctor!.isSyndicateCardRequired!,
+                                    doctorImage: patient.doctor!.image,
+                                    isOutcomeStatus:
+                                        patient.sections!.outcomeStatus!,
+                                    submitStatus: patient.sections == null
+                                        ? false
+                                        : patient.sections!.submitStatus ??
+                                            false,
+                                    onOutcomeTap: () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.outcome,
+                                        arguments:
+                                            AppRoutesArgs.outcomeRouteArgs(
+                                          verified: widget.accountVerification,
+                                          outcomeStatus:
+                                              patient.sections!.outcomeStatus!,
+                                          patientName: patient.name.toString(),
+                                          patientId: patient.id.toString(),
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          doctorId:
+                                              patient.doctor!.id.toString(),
+                                          isSyndicateCardRequired:
+                                              widget.isSyndicateCardRequired,
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
+                                          homeDataModel: widget.homeDataModel,
+                                        ),
+                                      );
+                                    },
+                                    onAddCommentTap: () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.comments,
+                                        arguments: AppRoutesArgs
+                                            .patientCommentsRouteArgs(
+                                          patientId: patient.id.toString(),
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          verified: widget.accountVerification,
+                                          patientName: patient.name.toString(),
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
+                                          isSyndicateCardRequired:
+                                              widget.isSyndicateCardRequired,
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          homeDataModel: widget.homeDataModel,
+                                        ),
+                                      );
+                                    },
+                                    onTap: () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.patientSections,
+                                        arguments: AppRoutesArgs
+                                            .patientSectionsRouteArguments(
+                                          patientId: patient.id.toString(),
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          homeDataModel: widget.homeDataModel,
+                                          isAllDataOpen: false,
+                                        ),
+                                      );
+                                    },
                                   );
                                 },
                               );
-                            },
-                          );
                   },
                 );
               },
@@ -268,12 +293,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   return const SizedBox.shrink();
                 },
                 loaded: (
-                  data,
+                  response,
                   isSeeMore,
-                  isFilterLoading,
-                  isFilterLoaded,
                   message,
-                  filters,
                   isApplyFilterLoading,
                   isApplyFilterLoaded,
                 ) {

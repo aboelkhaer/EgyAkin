@@ -11,10 +11,7 @@ abstract class AllDoctorsPatientsState with _$AllDoctorsPatientsState {
   const factory AllDoctorsPatientsState.loaded(
     GetAllDoctorsPatientsModelResponse response,
     bool isSeeMore,
-    bool isFilterLoading,
-    bool isFilterLoaded,
     String message,
-    GetFiltersOptionsModelResponse filters,
     bool isApplyFilterLoading,
     bool isApplyFilterLoaded,
   ) = _Loaded;

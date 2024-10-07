@@ -23,6 +23,9 @@ GetAllDoctorsPatientsModelResponse _$GetAllDoctorsPatientsModelResponseFromJson(
 mixin _$GetAllDoctorsPatientsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   bool? get verified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'filter')
+  List<GetFiltersOptionsDataModelResponse>? get filters =>
+      throw _privateConstructorUsedError;
   @JsonKey(name: 'score_value')
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'patient_count')
@@ -52,6 +55,8 @@ abstract class $GetAllDoctorsPatientsModelResponseCopyWith<$Res> {
   $Res call(
       {bool? value,
       bool? verified,
+      @JsonKey(name: 'filter')
+      List<GetFiltersOptionsDataModelResponse>? filters,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'patient_count') String? patientCount,
       GetAllDoctorsPatientDataModelResponse? data});
@@ -77,6 +82,7 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
   $Res call({
     Object? value = freezed,
     Object? verified = freezed,
+    Object? filters = freezed,
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? data = freezed,
@@ -90,6 +96,10 @@ class _$GetAllDoctorsPatientsModelResponseCopyWithImpl<$Res,
           ? _value.verified
           : verified // ignore: cast_nullable_to_non_nullable
               as bool?,
+      filters: freezed == filters
+          ? _value.filters
+          : filters // ignore: cast_nullable_to_non_nullable
+              as List<GetFiltersOptionsDataModelResponse>?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
@@ -133,6 +143,8 @@ abstract class _$$GetAllDoctorsPatientsModelResponseImplCopyWith<$Res>
   $Res call(
       {bool? value,
       bool? verified,
+      @JsonKey(name: 'filter')
+      List<GetFiltersOptionsDataModelResponse>? filters,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'patient_count') String? patientCount,
       GetAllDoctorsPatientDataModelResponse? data});
@@ -158,6 +170,7 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? value = freezed,
     Object? verified = freezed,
+    Object? filters = freezed,
     Object? scoreValue = freezed,
     Object? patientCount = freezed,
     Object? data = freezed,
@@ -171,6 +184,10 @@ class __$$GetAllDoctorsPatientsModelResponseImplCopyWithImpl<$Res>
           ? _value.verified
           : verified // ignore: cast_nullable_to_non_nullable
               as bool?,
+      filters: freezed == filters
+          ? _value._filters
+          : filters // ignore: cast_nullable_to_non_nullable
+              as List<GetFiltersOptionsDataModelResponse>?,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
@@ -194,9 +211,12 @@ class _$GetAllDoctorsPatientsModelResponseImpl
   const _$GetAllDoctorsPatientsModelResponseImpl(
       {this.value,
       this.verified,
+      @JsonKey(name: 'filter')
+      final List<GetFiltersOptionsDataModelResponse>? filters,
       @JsonKey(name: 'score_value') this.scoreValue,
       @JsonKey(name: 'patient_count') this.patientCount,
-      this.data});
+      this.data})
+      : _filters = filters;
 
   factory _$GetAllDoctorsPatientsModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -206,6 +226,17 @@ class _$GetAllDoctorsPatientsModelResponseImpl
   final bool? value;
   @override
   final bool? verified;
+  final List<GetFiltersOptionsDataModelResponse>? _filters;
+  @override
+  @JsonKey(name: 'filter')
+  List<GetFiltersOptionsDataModelResponse>? get filters {
+    final value = _filters;
+    if (value == null) return null;
+    if (_filters is EqualUnmodifiableListView) return _filters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   @JsonKey(name: 'score_value')
   final String? scoreValue;
@@ -217,7 +248,7 @@ class _$GetAllDoctorsPatientsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetAllDoctorsPatientsModelResponse(value: $value, verified: $verified, scoreValue: $scoreValue, patientCount: $patientCount, data: $data)';
+    return 'GetAllDoctorsPatientsModelResponse(value: $value, verified: $verified, filters: $filters, scoreValue: $scoreValue, patientCount: $patientCount, data: $data)';
   }
 
   @override
@@ -228,6 +259,7 @@ class _$GetAllDoctorsPatientsModelResponseImpl
             (identical(other.value, value) || other.value == value) &&
             (identical(other.verified, verified) ||
                 other.verified == verified) &&
+            const DeepCollectionEquality().equals(other._filters, _filters) &&
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
             (identical(other.patientCount, patientCount) ||
@@ -237,8 +269,14 @@ class _$GetAllDoctorsPatientsModelResponseImpl
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, value, verified, scoreValue, patientCount, data);
+  int get hashCode => Object.hash(
+      runtimeType,
+      value,
+      verified,
+      const DeepCollectionEquality().hash(_filters),
+      scoreValue,
+      patientCount,
+      data);
 
   /// Create a copy of GetAllDoctorsPatientsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -263,6 +301,8 @@ abstract class _GetAllDoctorsPatientsModelResponse
   const factory _GetAllDoctorsPatientsModelResponse(
           {final bool? value,
           final bool? verified,
+          @JsonKey(name: 'filter')
+          final List<GetFiltersOptionsDataModelResponse>? filters,
           @JsonKey(name: 'score_value') final String? scoreValue,
           @JsonKey(name: 'patient_count') final String? patientCount,
           final GetAllDoctorsPatientDataModelResponse? data}) =
@@ -276,6 +316,9 @@ abstract class _GetAllDoctorsPatientsModelResponse
   bool? get value;
   @override
   bool? get verified;
+  @override
+  @JsonKey(name: 'filter')
+  List<GetFiltersOptionsDataModelResponse>? get filters;
   @override
   @JsonKey(name: 'score_value')
   String? get scoreValue;

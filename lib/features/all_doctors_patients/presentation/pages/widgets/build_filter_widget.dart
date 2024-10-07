@@ -5,7 +5,7 @@ import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_o
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 class BuildFilterWidget extends StatefulWidget {
-  final GetFiltersOptionsModelResponse filters;
+  final List<GetFiltersOptionsDataModelResponse>? filters;
   final AllDoctorsPatientsCubit cubit;
   const BuildFilterWidget({
     super.key,
@@ -21,7 +21,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
   @override
   void initState() {
     super.initState();
-    widget.cubit.textFormFieldControllersInit(widget.filters.data!);
+    widget.cubit.textFormFieldControllersInit(widget.filters!);
   }
 
   @override
@@ -64,11 +64,11 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
               ),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.filters.data!.length,
+                  itemCount: widget.filters!.length,
                   padding: const EdgeInsets.symmetric(horizontal: 20) +
                       EdgeInsets.only(bottom: 60.h, top: 10),
                   itemBuilder: (context, index) {
-                    var filter = widget.filters.data![index];
+                    var filter = widget.filters![index];
 
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 20),
@@ -127,6 +127,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                   Expanded(
                     child: CustomElevatedButton(
                       onPressed: () {
+                        navigatorKey.currentState?.pop();
                         widget.cubit.applyPatientFilters();
                       },
                       title: 'Apply',

@@ -7,7 +7,6 @@ import 'package:dartz/dartz.dart';
 abstract class AllDoctorsPatientsRepository {
   Future<Either<Failure, GetAllDoctorsPatientsModelResponse>>
       getAllDoctorsPatients(int page);
-  Future<Either<Failure, GetFiltersOptionsModelResponse>> getFiltersOptions();
   Future<Either<Failure, ApplyPatientFiltersModelResponse>>
       applyPatientsFilters(Map<String, dynamic> map);
 }

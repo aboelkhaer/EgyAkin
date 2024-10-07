@@ -31,23 +31,6 @@ class AllDoctorsPatientsRepositoryImpl extends AllDoctorsPatientsRepository {
   }
 
   @override
-  Future<Either<Failure, GetFiltersOptionsModelResponse>>
-      getFiltersOptions() async {
-    if (await networkInfo.isConnected) {
-      try {
-        await Future.delayed(const Duration(
-            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await allDoctorsPatientsDataSource.getFiltersOptions();
-        return Right(response);
-      } catch (error) {
-        debugPrint(error.toString());
-        return Left(ErrorHandler.handle(error).failure);
-      }
-    }
-    return Left(DataSource.noInternetConnection.getFailure());
-  }
-
-  @override
   Future<Either<Failure, ApplyPatientFiltersModelResponse>>
       applyPatientsFilters(Map<String, dynamic> map) async {
     if (await networkInfo.isConnected) {

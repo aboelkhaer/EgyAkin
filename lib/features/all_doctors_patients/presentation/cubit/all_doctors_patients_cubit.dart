@@ -1,16 +1,14 @@
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/apply_patients_filters_usecase.dart';
-import 'package:egy_akin/features/all_doctors_patients/domain/usecases/get_filters_options_usecase.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 import '../../../../exports.dart';
 
 class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
-  AllDoctorsPatientsCubit(this._getAllDoctorsPatientsUsecase,
-      this._getFiltersOptionsUsecase, this._applyPatientsFiltersUsecase)
+  AllDoctorsPatientsCubit(
+      this._getAllDoctorsPatientsUsecase, this._applyPatientsFiltersUsecase)
       : super(const AllDoctorsPatientsState.initial());
   final GetAllDoctorsPatientsUsecase _getAllDoctorsPatientsUsecase;
-  final GetFiltersOptionsUsecase _getFiltersOptionsUsecase;
   final ApplyPatientsFiltersUsecase _applyPatientsFiltersUsecase;
   static AllDoctorsPatientsCubit get(context) => BlocProvider.of(context);
   Map<String, String> formData = {};
@@ -47,14 +45,11 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         emit(AllDoctorsPatientsState.loaded(
           r,
           false,
-          false,
-          false,
           '',
-          filtersOptions,
           false,
           false,
         ));
-        getPatientFilters();
+        // getPatientFilters();
       },
     );
   }
@@ -69,10 +64,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       loaded: (value) => AllDoctorsPatientsState.loaded(
         value.response,
         true,
-        false,
-        false,
         '',
-        filtersOptions,
         false,
         false,
       ),
@@ -91,10 +83,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
           loaded: (
             responseData,
             isSeeMore,
-            isFilterLoading,
-            isFilterLoaded,
             message,
-            filters,
             isApplyFilterLoading,
             isApplyFilterLoaded,
           ) {
@@ -115,10 +104,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             emit(AllDoctorsPatientsState.loaded(
               updatedData,
               false,
-              false,
-              false,
               '',
-              filtersOptions,
               false,
               false,
             ));
@@ -129,63 +115,64 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     );
   }
 
-  getPatientFilters() async {
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => AllDoctorsPatientsState.loaded(
-          value.response,
-          value.isSeeMore,
-          true,
-          false,
-          '',
-          filtersOptions,
-          false,
-          false,
-        ),
-      ),
-    );
+  // getPatientFilters() async {
+  //   emit(
+  //     state.maybeMap(
+  //       orElse: () => state,
+  //       loaded: (value) => AllDoctorsPatientsState.loaded(
+  //         value.response,
+  //         value.isSeeMore,
+  //         true,
+  //         false,
+  //         '',
+  //         filtersOptions,
+  //         false,
+  //         false,
+  //       ),
+  //     ),
+  //   );
 
-    final result = await _getFiltersOptionsUsecase.execute(NoParams());
+  //   final result = await _getFiltersOptionsUsecase.execute(NoParams());
 
-    result.fold(
-      (l) {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response,
-              value.isSeeMore,
-              false,
-              false,
-              l.message,
-              filtersOptions,
-              false,
-              false,
-            ),
-          ),
-        );
-      },
-      (r) async {
-        filtersOptions = r;
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response,
-              value.isSeeMore,
-              false,
-              true,
-              '',
-              filtersOptions,
-              false,
-              false,
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //   result.fold(
+  //     (l) {
+  //       emit(
+  //         state.maybeMap(
+  //           orElse: () => state,
+  //           loaded: (value) => AllDoctorsPatientsState.loaded(
+  //             value.response,
+  //             value.isSeeMore,
+  //             false,
+  //             false,
+  //             l.message,
+  //             filtersOptions,
+  //             false,
+  //             false,
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     (r) async {
+  //       filtersOptions = r;
+  //       emit(
+  //         state.maybeMap(
+  //           orElse: () => state,
+  //           loaded: (value) => AllDoctorsPatientsState.loaded(
+  //             value.response,
+  //             value.isSeeMore,
+  //             false,
+  //             true,
+  //             '',
+  //             filtersOptions,
+  //             false,
+  //             false,
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+  int totalPatientInFilter = 0;
 
   applyPatientFilters() async {
     emit(
@@ -194,10 +181,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         loaded: (value) => AllDoctorsPatientsState.loaded(
           value.response,
           value.isSeeMore,
-          false,
-          false,
           '',
-          value.filters,
           true,
           false,
         ),
@@ -214,10 +198,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             loaded: (value) => AllDoctorsPatientsState.loaded(
               value.response,
               value.isSeeMore,
-              false,
-              false,
               l.message,
-              value.filters,
               false,
               false,
             ),
@@ -225,20 +206,24 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         );
       },
       (r) async {
-        debugPrint(r.message);
+        totalPatientInFilter = r.pagination!.total!;
         emit(
           state.maybeMap(
             orElse: () => state,
-            loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response,
-              value.isSeeMore,
-              false,
-              false,
-              '',
-              value.filters,
-              false,
-              true,
-            ),
+            loaded: (value) {
+              var updatedData = value.response.copyWith(
+                data: value.response.data!.copyWith(
+                  data: r.data,
+                ),
+              );
+              return AllDoctorsPatientsState.loaded(
+                updatedData,
+                value.isSeeMore,
+                '',
+                false,
+                true,
+              );
+            },
           ),
         );
         // emit(AllDoctorsPatientsState.loaded(response, isSeeMore, isFilterLoading, isFilterLoaded, message, filters, isApplyFilterLoading, isApplyFilterLoaded))

@@ -279,9 +279,6 @@ abstract class ApiServices {
     @Path("doctorId") String doctorId,
   );
 
-  @GET(ApiEndPoint.getPatientFilters)
-  Future<GetFiltersOptionsModelResponse> getFiltersOptions();
-
   @POST(ApiEndPoint.applyPatientsFilter)
   Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
     @Body() Map<String, dynamic> map,
