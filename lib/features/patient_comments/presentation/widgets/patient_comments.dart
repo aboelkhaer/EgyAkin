@@ -2,11 +2,11 @@ import '../../../../exports.dart';
 
 class PatientComments extends StatelessWidget {
   final PatientCommentsCubit cubit;
-  final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final String patientId;
   final int currentDoctorPoints;
   final String currentDoctorRole;
+  final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   const PatientComments({
     super.key,

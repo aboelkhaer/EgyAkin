@@ -66,4 +66,7 @@ class ApiEndPoint {
   static const verifyDoctorEmail = '$baseUrl/api/users';
   static const getPatientFilters = '$baseUrl/api/patientFilters';
   static const applyPatientsFilter = '$baseUrl/api/patientFilters';
+  static const getAllFeeds = '$baseUrl/api/feed/posts';
+  static const addLikeOnPost = '$baseUrl/api/feed/posts';
+  static const saveOrUnsavePost = '$baseUrl/api/feed/posts';
 }

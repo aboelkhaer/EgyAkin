@@ -1,6 +1,6 @@
 import 'package:timeago/timeago.dart' as timeago;
-import '../../exports.dart';
 import 'dart:ui' as ui;
+import '../../exports.dart';
 
 class PatientCard extends StatelessWidget {
   final String patientName;

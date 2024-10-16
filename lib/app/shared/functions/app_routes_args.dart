@@ -277,4 +277,14 @@ class AppRoutesArgs {
       'isReceivedConsultation': isReceivedConsultation,
     };
   }
+
+  static Map<String, dynamic> communityRouteArgs({
+    required HomeModelResponse homeDataModel,
+    required DoctorModel currentDoctorModel,
+  }) {
+    return {
+      'homeDataModel': homeDataModel,
+      'currentDoctorModel': currentDoctorModel,
+    };
+  }
 }

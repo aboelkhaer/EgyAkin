@@ -362,3 +362,7 @@ export 'package:egy_akin/features/send_consultation/data/models/get_consultation
 export 'package:egy_akin/features/send_consultation/data/models/send_consultation_model_response.dart';
 export 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 export 'package:egy_akin/features/doctor_info_view/data/models/syndicate_card_verify_model_response.dart';
+export 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/news_tab.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/posts_tab.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/trending_tab.dart';

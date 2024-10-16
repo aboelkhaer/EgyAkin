@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
+import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 
@@ -34,6 +36,7 @@ class AppRoutes {
   static const String sendConsultation = '/sendConsultation';
   static const String consultation = '/consultation';
   static const String consultationDetails = '/consultationDetails';
+  static const String community = '/community';
 }
 
 class RouteGenerator {
@@ -647,6 +650,29 @@ class RouteGenerator {
                   patientName: args['patientName'] as String,
                   isReceivedConsultation:
                       args['isReceivedConsultation'] as bool,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.community:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<CommunityCubit>(
+                create: (context) => di.sl<CommunityCubit>(),
+                child: CommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
                 ),
               ),
             );

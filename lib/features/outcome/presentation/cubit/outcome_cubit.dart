@@ -92,16 +92,10 @@ class OutcomeCubit extends Cubit<OutcomeState> {
       // }
       if (question.mandatory == true) {
         if (question.type == 'multiple') {
-          Map myMap = question.answer;
-          // ??
-          //     {
-          //       "answers": [],
-          //       "other_field": '',
-          //     };
-          // Map myMap = formData[question.id.toString()] ??= {
-          //   "answers": [],
-          //   "other_field": ''
-          // };
+          Map myMap = formData[question.id.toString()] ??= {
+            "answers": [],
+            "other_field": ''
+          };
 
           // Check if "answers" key is either null or an empty list
           if (myMap.containsKey('answers')) {

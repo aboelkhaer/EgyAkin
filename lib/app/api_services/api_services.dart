@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
+import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
+import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
+import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -282,5 +285,22 @@ abstract class ApiServices {
   @POST(ApiEndPoint.applyPatientsFilter)
   Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
     @Body() Map<String, dynamic> map,
+  );
+
+  @GET(ApiEndPoint.getAllFeeds)
+  Future<GetPostsCommunityModelResponse> getAllFeeds(
+    @Query('page') int pageNumber,
+  );
+
+  @POST('${ApiEndPoint.addLikeOnPost}/{postId}/likeOrUnlikePost')
+  Future<AddLikeOnPostModelResponse> addLikeOrUnlikeOnPost(
+    @Path("postId") String postId,
+    @Field("status") String likeOrUnlike,
+  );
+
+  @POST('${ApiEndPoint.saveOrUnsavePost}/{postId}/saveOrUnsavePost')
+  Future<SaveOrUnsavePostModelResponse> saveOrUnsavePost(
+    @Path("postId") String postId,
+    @Field("status") String saveOrUnsave,
   );
 }

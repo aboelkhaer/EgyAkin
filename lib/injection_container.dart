@@ -1,5 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/apply_patients_filters_usecase.dart';
+import 'package:egy_akin/features/community/data/datasources/community_datasource.dart';
+import 'package:egy_akin/features/community/data/repositories/community_repo_impl.dart';
+import 'package:egy_akin/features/community/domain/repositories/community_repo.dart';
+import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
+import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
@@ -56,6 +63,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
+  sl.registerFactory(() => CommunityCubit(sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -104,6 +112,8 @@ Future<void> diInit() async {
       () => ConsultationDataSourceImpl(sl()));
   sl.registerLazySingleton<ConsultationDetailsDataSource>(
       () => ConsultationDetailsDataSourceImpl(sl()));
+  sl.registerLazySingleton<CommunityDatasource>(
+      () => CommunityDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -154,6 +164,8 @@ Future<void> diInit() async {
       () => ConsultationRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ConsultationDetailsRepository>(
       () => ConsultationDetailsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<CommunityRepository>(
+      () => CommunityRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -350,5 +362,15 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<ApplyPatientsFiltersUsecase>()) {
     sl.registerFactory<ApplyPatientsFiltersUsecase>(
         () => ApplyPatientsFiltersUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAllFeedsUsecase>()) {
+    sl.registerFactory<GetAllFeedsUsecase>(() => GetAllFeedsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddLikeOnPostUsecase>()) {
+    sl.registerFactory<AddLikeOnPostUsecase>(() => AddLikeOnPostUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SaveOrUnsavePostUsecase>()) {
+    sl.registerFactory<SaveOrUnsavePostUsecase>(
+        () => SaveOrUnsavePostUsecase(sl()));
   }
 }

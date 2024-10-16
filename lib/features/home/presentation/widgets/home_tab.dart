@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 import 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../../../../exports.dart';
 
@@ -68,6 +69,14 @@ class _HomeTabState extends State<HomeTab> {
                   ) {},
                   error: (message) {
                     customSnackBar(message: message, context: context);
+                    // todo fix crash here
+                    if (message == 'Unauthenticated.') {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        context.read<HomeCubit>().signOutForUnUnauthenticated();
+                        navigatorKey.currentState
+                            ?.pushReplacementNamed(AppRoutes.signIn);
+                      });
+                    }
                   },
                 );
               },
@@ -135,25 +144,22 @@ class _HomeTabState extends State<HomeTab> {
                           );
                         },
                       ),
-                      // CustomElevatedButton(
-                      //     onPressed: () {
-                      //       showUpdateDialog(
-                      //         context: context,
-                      //         isUpdateMessageSeen: cubit.isUpdateMessageSeen,
-                      //         onDismissed: () {
-                      //           context
-                      //               .read<HomeCubit>()
-                      //               .setUpdateMessageStatusToLocal();
-                      //         },
-                      //       );
-                      //     },
-                      //     title: 'hello'),
                       PostsSliderAndDots(cubit: widget.cubit),
                       SizedBox(height: 10.h),
-
+                      TextButton(
+                          onPressed: () {
+                            navigatorKey.currentState?.pushNamed(
+                              AppRoutes.community,
+                              arguments: AppRoutesArgs.communityRouteArgs(
+                                homeDataModel: widget.cubit.homeDataModel,
+                                currentDoctorModel:
+                                    widget.cubit.currentDoctorModel,
+                              ),
+                            );
+                          },
+                          child: const Text('hello')),
                       const DoctorsActivation(),
                       SizedBox(height: 10.h),
-
                       const TopDoctors(),
                       const YourPatientSection(),
                       const AllPatientSection(),

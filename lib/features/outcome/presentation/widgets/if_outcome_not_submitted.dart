@@ -43,7 +43,6 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     OutcomeCubit cubit = OutcomeCubit.get(context);
-    log(widget.isSyndicateCardRequired);
     return Stack(
       children: [
         Form(

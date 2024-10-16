@@ -451,6 +451,10 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+  signOutForUnUnauthenticated() async {
+    await sl<AppPreferences>().removeDoctorData();
+  }
+
   removeNotificationCount() {
     log('done');
     HomeModelResponse updatedHomeDataModel =

@@ -74,14 +74,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkUpdateMessageCounter,
                   isUserBlocked,
                 ) {
-                  if (cubit!.isUpdateMessageHidden == false) {
-                    showUpdateDialog(
-                      context: context,
-                      onDismissed: () {
-                        cubit!.setUpdateMessageStatusToLocal();
-                      },
-                    );
-                  }
+                  // if (cubit!.isUpdateMessageHidden == false) {
+                  //   showUpdateDialog(
+                  //     context: context,
+                  //     onDismissed: () {
+                  //       cubit!.setUpdateMessageStatusToLocal();
+                  //     },
+                  //   );
+                  // }
 
                   if (homeData.isUserBlocked == true) {
                     showBlockedDialog(
