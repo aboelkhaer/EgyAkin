@@ -119,6 +119,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
 
   applyPatientFilters() async {
     currentPageInFilter = 1;
+    isLastPageFilter = false;
 
     emit(
       state.maybeMap(
