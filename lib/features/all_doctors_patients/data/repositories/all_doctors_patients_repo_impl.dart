@@ -32,13 +32,13 @@ class AllDoctorsPatientsRepositoryImpl extends AllDoctorsPatientsRepository {
 
   @override
   Future<Either<Failure, ApplyPatientFiltersModelResponse>>
-      applyPatientsFilters(Map<String, dynamic> map) async {
+      applyPatientsFilters(Map<String, dynamic> map, int page) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response =
-            await allDoctorsPatientsDataSource.applyPatientsFilters(map);
+            await allDoctorsPatientsDataSource.applyPatientsFilters(map, page);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

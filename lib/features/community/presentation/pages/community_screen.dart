@@ -150,6 +150,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                     labelStyle: const TextStyle(fontWeight: FontWeight.w500),
                     unselectedLabelColor: Colors.grey.shade500,
                     dividerColor: Colors.transparent,
+                    overlayColor: WidgetStateProperty.all(Colors.transparent),
                     indicator: BoxDecoration(
                       color: AppColors.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),

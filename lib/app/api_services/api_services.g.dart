@@ -1841,9 +1841,11 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
-      Map<String, dynamic> map) async {
+    Map<String, dynamic> map,
+    int page,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(map);

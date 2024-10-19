@@ -19,6 +19,7 @@ class ApplyPatientFiltersModelResponse with _$ApplyPatientFiltersModelResponse {
 class PaginationFiltersModelResponse with _$PaginationFiltersModelResponse {
   const factory PaginationFiltersModelResponse({
     int? total,
+    @JsonKey(name: 'last_page') int? lastPage,
   }) = _PaginationFiltersModelResponse;
   factory PaginationFiltersModelResponse.fromJson(Map<String, dynamic> json) =>
       _$PaginationFiltersModelResponseFromJson(json);

@@ -241,6 +241,8 @@ PaginationFiltersModelResponse _$PaginationFiltersModelResponseFromJson(
 /// @nodoc
 mixin _$PaginationFiltersModelResponse {
   int? get total => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_page')
+  int? get lastPage => throw _privateConstructorUsedError;
 
   /// Serializes this PaginationFiltersModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -260,7 +262,7 @@ abstract class $PaginationFiltersModelResponseCopyWith<$Res> {
       _$PaginationFiltersModelResponseCopyWithImpl<$Res,
           PaginationFiltersModelResponse>;
   @useResult
-  $Res call({int? total});
+  $Res call({int? total, @JsonKey(name: 'last_page') int? lastPage});
 }
 
 /// @nodoc
@@ -280,11 +282,16 @@ class _$PaginationFiltersModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? total = freezed,
+    Object? lastPage = freezed,
   }) {
     return _then(_value.copyWith(
       total: freezed == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPage: freezed == lastPage
+          ? _value.lastPage
+          : lastPage // ignore: cast_nullable_to_non_nullable
               as int?,
     ) as $Val);
   }
@@ -299,7 +306,7 @@ abstract class _$$PaginationFiltersModelResponseImplCopyWith<$Res>
       __$$PaginationFiltersModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? total});
+  $Res call({int? total, @JsonKey(name: 'last_page') int? lastPage});
 }
 
 /// @nodoc
@@ -318,11 +325,16 @@ class __$$PaginationFiltersModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? total = freezed,
+    Object? lastPage = freezed,
   }) {
     return _then(_$PaginationFiltersModelResponseImpl(
       total: freezed == total
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastPage: freezed == lastPage
+          ? _value.lastPage
+          : lastPage // ignore: cast_nullable_to_non_nullable
               as int?,
     ));
   }
@@ -332,7 +344,8 @@ class __$$PaginationFiltersModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PaginationFiltersModelResponseImpl
     implements _PaginationFiltersModelResponse {
-  const _$PaginationFiltersModelResponseImpl({this.total});
+  const _$PaginationFiltersModelResponseImpl(
+      {this.total, @JsonKey(name: 'last_page') this.lastPage});
 
   factory _$PaginationFiltersModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -340,10 +353,13 @@ class _$PaginationFiltersModelResponseImpl
 
   @override
   final int? total;
+  @override
+  @JsonKey(name: 'last_page')
+  final int? lastPage;
 
   @override
   String toString() {
-    return 'PaginationFiltersModelResponse(total: $total)';
+    return 'PaginationFiltersModelResponse(total: $total, lastPage: $lastPage)';
   }
 
   @override
@@ -351,12 +367,14 @@ class _$PaginationFiltersModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PaginationFiltersModelResponseImpl &&
-            (identical(other.total, total) || other.total == total));
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.lastPage, lastPage) ||
+                other.lastPage == lastPage));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, total);
+  int get hashCode => Object.hash(runtimeType, total, lastPage);
 
   /// Create a copy of PaginationFiltersModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -378,7 +396,8 @@ class _$PaginationFiltersModelResponseImpl
 
 abstract class _PaginationFiltersModelResponse
     implements PaginationFiltersModelResponse {
-  const factory _PaginationFiltersModelResponse({final int? total}) =
+  const factory _PaginationFiltersModelResponse(
+          {final int? total, @JsonKey(name: 'last_page') final int? lastPage}) =
       _$PaginationFiltersModelResponseImpl;
 
   factory _PaginationFiltersModelResponse.fromJson(Map<String, dynamic> json) =
@@ -386,6 +405,9 @@ abstract class _PaginationFiltersModelResponse
 
   @override
   int? get total;
+  @override
+  @JsonKey(name: 'last_page')
+  int? get lastPage;
 
   /// Create a copy of PaginationFiltersModelResponse
   /// with the given fields replaced by the non-null parameter values.

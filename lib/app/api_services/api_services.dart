@@ -285,6 +285,7 @@ abstract class ApiServices {
   @POST(ApiEndPoint.applyPatientsFilter)
   Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
     @Body() Map<String, dynamic> map,
+    @Query("page") int page,
   );
 
   @GET(ApiEndPoint.getAllFeeds)

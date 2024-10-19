@@ -2,6 +2,8 @@ import 'package:egy_akin/features/community/presentation/cubit/community_cubit.d
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -37,6 +39,7 @@ class AppRoutes {
   static const String consultation = '/consultation';
   static const String consultationDetails = '/consultationDetails';
   static const String community = '/community';
+  static const String showSingleFeed = '/showSingleFeed';
 }
 
 class RouteGenerator {
@@ -671,6 +674,28 @@ class RouteGenerator {
               builder: (_) => BlocProvider<CommunityCubit>(
                 create: (context) => di.sl<CommunityCubit>(),
                 child: CommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.showSingleFeed:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<ShowSingleFeedCubit>(
+                create: (context) => di.sl<ShowSingleFeedCubit>(),
+                child: ShowSingleFeedScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                 ),

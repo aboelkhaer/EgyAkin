@@ -8,5 +8,8 @@ abstract class AllDoctorsPatientsRepository {
   Future<Either<Failure, GetAllDoctorsPatientsModelResponse>>
       getAllDoctorsPatients(int page);
   Future<Either<Failure, ApplyPatientFiltersModelResponse>>
-      applyPatientsFilters(Map<String, dynamic> map);
+      applyPatientsFilters(
+    Map<String, dynamic> map,
+    int page,
+  );
 }

@@ -4,14 +4,22 @@ import '../../../../exports.dart';
 
 class ApplyPatientsFiltersUsecase
     implements
-        BaseUseCase<Map<String, dynamic>, ApplyPatientFiltersModelResponse> {
+        BaseUseCase<ApplyPatientsFiltersUsecaseInput,
+            ApplyPatientFiltersModelResponse> {
   final AllDoctorsPatientsRepository repository;
 
   ApplyPatientsFiltersUsecase(this.repository);
 
   @override
   Future<Either<Failure, ApplyPatientFiltersModelResponse>> execute(
-      Map<String, dynamic> map) async {
-    return await repository.applyPatientsFilters(map);
+      ApplyPatientsFiltersUsecaseInput input) async {
+    return await repository.applyPatientsFilters(input.map, input.page);
   }
+}
+
+class ApplyPatientsFiltersUsecaseInput {
+  final Map<String, dynamic> map;
+  final int page;
+
+  ApplyPatientsFiltersUsecaseInput({required this.map, required this.page});
 }

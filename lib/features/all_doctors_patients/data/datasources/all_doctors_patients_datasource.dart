@@ -7,7 +7,9 @@ abstract class AllDoctorsPatientsDataSource {
   Future<GetAllDoctorsPatientsModelResponse> getAllDoctorPatients(int page);
 
   Future<ApplyPatientFiltersModelResponse> applyPatientsFilters(
-      Map<String, dynamic> map);
+    Map<String, dynamic> map,
+    int page,
+  );
 }
 
 class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
@@ -23,7 +25,7 @@ class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
 
   @override
   Future<ApplyPatientFiltersModelResponse> applyPatientsFilters(
-      Map<String, dynamic> map) async {
-    return await _apiServices.applyPatientFilters(map);
+      Map<String, dynamic> map, int page) async {
+    return await _apiServices.applyPatientFilters(map, page);
   }
 }

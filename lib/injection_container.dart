@@ -10,6 +10,7 @@ import 'package:egy_akin/features/community/presentation/cubit/community_cubit.d
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -64,6 +65,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
   sl.registerFactory(() => CommunityCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => ShowSingleFeedCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(

@@ -31,10 +31,12 @@ _$PaginationFiltersModelResponseImpl
     _$$PaginationFiltersModelResponseImplFromJson(Map<String, dynamic> json) =>
         _$PaginationFiltersModelResponseImpl(
           total: (json['total'] as num?)?.toInt(),
+          lastPage: (json['last_page'] as num?)?.toInt(),
         );
 
 Map<String, dynamic> _$$PaginationFiltersModelResponseImplToJson(
         _$PaginationFiltersModelResponseImpl instance) =>
     <String, dynamic>{
       'total': instance.total,
+      'last_page': instance.lastPage,
     };

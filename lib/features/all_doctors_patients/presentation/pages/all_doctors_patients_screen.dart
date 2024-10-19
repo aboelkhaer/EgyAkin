@@ -49,7 +49,8 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
   }
 
   void _onScroll() {
-    if (context.read<AllDoctorsPatientsCubit>().isLastPage) {
+    if (context.read<AllDoctorsPatientsCubit>().isLastPage ||
+        context.read<AllDoctorsPatientsCubit>().isLastPageFilter) {
       return;
     } else {
       final maxScroll = context
@@ -63,12 +64,26 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
           .position
           .pixels;
       const threshold = 200.0;
-      if (context.read<AllDoctorsPatientsCubit>().isLoadingMoreForScroll ==
-              false &&
-          maxScroll - currentScroll <= threshold) {
-        context.read<AllDoctorsPatientsCubit>().isLoadingMoreForScroll = true;
+      if (context.read<AllDoctorsPatientsCubit>().isApplyFilterDone) {
+        if ((context
+                    .read<AllDoctorsPatientsCubit>()
+                    .isLoadingMoreForScrollForFilter ==
+                false) &&
+            maxScroll - currentScroll <= threshold) {
+          context
+              .read<AllDoctorsPatientsCubit>()
+              .isLoadingMoreForScrollForFilter = true;
 
-        context.read<AllDoctorsPatientsCubit>().loadMorePatients();
+          context.read<AllDoctorsPatientsCubit>().applyPatientFiltersLoadMore();
+        }
+      } else {
+        if ((context.read<AllDoctorsPatientsCubit>().isLoadingMoreForScroll ==
+                false) &&
+            maxScroll - currentScroll <= threshold) {
+          context.read<AllDoctorsPatientsCubit>().isLoadingMoreForScroll = true;
+
+          context.read<AllDoctorsPatientsCubit>().loadMorePatients();
+        }
       }
     }
   }
@@ -317,7 +332,11 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                             )
                           : GestureDetector(
                               onTap: () {
-                                cubit.loadMorePatients();
+                                if (cubit.isApplyFilterDone) {
+                                  cubit.applyPatientFiltersLoadMore();
+                                } else {
+                                  cubit.loadMorePatients();
+                                }
                               },
                               child: const Text(
                                 '',
