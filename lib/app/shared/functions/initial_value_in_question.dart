@@ -41,6 +41,9 @@ String initialValueInQuestions({
       return hideEmail(answer);
     }
   }
+  if (answer is List) {
+    return answer.join(", ");
+  }
 
   if (questionAnswerInForm != null) {
     return questionAnswerInForm;

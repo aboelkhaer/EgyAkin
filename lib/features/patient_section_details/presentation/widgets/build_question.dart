@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
+import 'package:egy_akin/app/shared/functions/is_date.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -38,6 +39,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
 
     switch (cubit.questionModelList[widget.index].type) {
+      //! String
       case AppStrings.questionTypeString:
         var questionAnswer = cubit.questionModelList[widget.index].answer;
         return BuildStringValueQuestions(
@@ -90,6 +92,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
             return null;
           },
         );
+
+      //! Select
       case AppStrings.questionTypeSelect:
         var questionAnswer = cubit.questionModelList[widget.index].answer;
         dynamic selectedValue;
@@ -97,7 +101,9 @@ class _BuildQuestionState extends State<BuildQuestion> {
           questionList: cubit.questionModelList,
           index: widget.index,
           selected: initialValueInSelectQuestion(
-              questionAnswer: questionAnswer, selectedValue: selectedValue),
+              questionAnswer: questionAnswer,
+              selectedValue: selectedValue,
+              values: cubit.questionModelList[widget.index].values!),
           validator: (val) {
             if (cubit.questionModelList[widget.index].mandatory == true &&
                 (cubit.questionModelList[widget.index].answer == null ||
@@ -128,125 +134,270 @@ class _BuildQuestionState extends State<BuildQuestion> {
             setState(() {});
           },
         );
+
+      //! Multiple
       case AppStrings.questionTypeMultiple:
         var questionAnswer = cubit.questionModelList[widget.index].answer;
         Map<String, dynamic> answerMap = questionAnswer ??= {
           AppStrings.answers: [],
           AppStrings.otherField: AppStrings.empty
         };
-        List<dynamic> answers = cubit
-            .questionModelList[widget.index].answer[AppStrings.answers] ??= [];
+        if (cubit.questionModelList[widget.index].answer[AppStrings.answers]
+            is String) {
+          String answers = cubit.questionModelList[widget.index]
+              .answer[AppStrings.answers] ??= '';
+          return BuildMultipleValueQuestion(
+            index: widget.index,
+            questionList: cubit.questionModelList,
+            initialValue: answerMap[AppStrings.otherField] ?? '',
+            listContainOther: const [],
+            oldAnswer: cubit
+                .questionModelList[widget.index].answer[AppStrings.answers],
+            isOldAnswer: true,
+            onChanged: (val) {
+              setState(() {
+                answerMap[AppStrings.otherField] = val;
+                cubit.formData[
+                    cubit.questionModelList[widget.index].id.toString()] = {
+                  AppStrings.answers: answers,
+                  AppStrings.otherField: answers.contains(AppStrings.others)
+                      ? val
+                      : AppStrings.empty,
+                };
+              });
 
-        return BuildMultipleValueQuestion(
-          index: widget.index,
-          questionList: cubit.questionModelList,
-          initialValue: answerMap[AppStrings.otherField] ?? '',
-          listContainOther: answers,
-          onChanged: (val) {
-            setState(() {
-              answerMap[AppStrings.otherField] = val;
-              cubit.formData[
-                  cubit.questionModelList[widget.index].id.toString()] = {
-                AppStrings.answers: answers,
-                AppStrings.otherField: answers.contains(AppStrings.others)
-                    ? val
-                    : AppStrings.empty,
-              };
-            });
-
-            log('map ${cubit.formData}');
-          },
-          validator: (val) {
-            if (cubit.questionModelList[widget.index].mandatory == true) {
-              if (val == null || val.isEmpty) {
-                return AppStrings.chooseAtLeastOnOption;
+              log('map ${cubit.formData}');
+            },
+            validator: (val) {
+              if (cubit.questionModelList[widget.index].mandatory == true) {
+                if (val == null || val.isEmpty) {
+                  return AppStrings.chooseAtLeastOnOption;
+                }
               }
-            }
-            return null;
-          },
-          children: cubit.questionModelList[widget.index].values!.map((value) {
-            return Tooltip(
-              message: value.toString(),
-              child: Theme(
-                data: ThemeData(
-                  chipTheme: ChipThemeData(
-                    selectedColor: AppColors.primary.withOpacity(0.7),
-                    checkmarkColor: Colors.white, // Change the checkmark color
-                    showCheckmark: true,
+              return null;
+            },
+            children:
+                cubit.questionModelList[widget.index].values!.map((value) {
+              return Tooltip(
+                message: value.toString(),
+                child: Theme(
+                  data: ThemeData(
+                    chipTheme: ChipThemeData(
+                      selectedColor: AppColors.primary.withOpacity(0.7),
+                      checkmarkColor:
+                          Colors.white, // Change the checkmark color
+                      showCheckmark: true,
 
-                    labelStyle: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      labelStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                child: ChoiceChip(
-                  label: Text(
-                    value.toString(),
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                    maxLines: 2,
-                  ),
-                  backgroundColor: Colors.grey.shade400,
-                  selected: answers.contains(value),
-                  selectedColor: AppColors.primary.withOpacity(0.7),
-                  onSelected: (selected) {
-                    setState(() {
-                      if (selected) {
-                        answers.add(value);
-                        // Show other field if "Other" is selected
-                        if (value == AppStrings.others) {
-                          answerMap[AppStrings.otherField] =
-                              ''; // Reset other field if selected
+                  child: ChoiceChip(
+                    label: Text(
+                      value.toString(),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                      maxLines: 2,
+                    ),
+                    backgroundColor: Colors.grey.shade400,
+                    selected: answers.contains(value),
+                    selectedColor: AppColors.primary.withOpacity(0.7),
+                    onSelected: (selected) {
+                      setState(() {
+                        // Check if `answers` is a String, and if so, replace it with an empty List<dynamic>
+                        if (answerMap[AppStrings.answers] is String) {
+                          answerMap[AppStrings.answers] = <dynamic>[];
                         }
-                      } else {
-                        answers.remove(value);
-                        // Clear other field if "Other" is deselected
-                        if (value == AppStrings.others) {
-                          answerMap[AppStrings.otherField] = AppStrings.empty;
-                        }
-                      }
 
-                      cubit.formData[cubit.questionModelList[widget.index].id
-                          .toString()] = {
-                        AppStrings.answers: answers,
-                        AppStrings.otherField:
-                            answers.contains(AppStrings.others)
-                                ? answerMap[AppStrings.otherField]
-                                : AppStrings.empty,
-                      };
-                      log('map ${cubit.formData}');
-                    });
-                  },
+                        // Now safely retrieve `answers` as a List<dynamic>
+                        List<dynamic> answers =
+                            answerMap[AppStrings.answers] as List<dynamic>;
+
+                        if (selected) {
+                          answers.add(value);
+                          // Show other field if "Other" is selected
+                          if (value == AppStrings.others) {
+                            answerMap[AppStrings.otherField] =
+                                ''; // Reset other field if selected
+                          }
+                        } else {
+                          answers.remove(value);
+                          // Clear other field if "Other" is deselected
+                          if (value == AppStrings.others) {
+                            answerMap[AppStrings.otherField] = AppStrings.empty;
+                          }
+                        }
+
+                        // Update the answerMap with the modified `answers` list
+                        answerMap[AppStrings.answers] = answers;
+
+                        // Update cubit.formData with the answers list and other field
+                        cubit.formData[cubit.questionModelList[widget.index].id
+                            .toString()] = {
+                          AppStrings.answers: answers,
+                          AppStrings.otherField:
+                              answers.contains(AppStrings.others)
+                                  ? answerMap[AppStrings.otherField]
+                                  : AppStrings.empty,
+                        };
+                        log('map ${cubit.formData}');
+                      });
+                    },
+                  ),
                 ),
-              ),
-            );
-          }).toList(),
-        );
+              );
+            }).toList(),
+          );
+        } else if (cubit.questionModelList[widget.index].answer is Map) {
+          List<dynamic> answers = cubit.questionModelList[widget.index]
+              .answer[AppStrings.answers] ??= [];
+          return BuildMultipleValueQuestion(
+            index: widget.index,
+            questionList: cubit.questionModelList,
+            initialValue: answerMap[AppStrings.otherField] ?? '',
+            listContainOther: answers,
+            onChanged: (val) {
+              setState(() {
+                answerMap[AppStrings.otherField] = val;
+                cubit.formData[
+                    cubit.questionModelList[widget.index].id.toString()] = {
+                  AppStrings.answers: answers,
+                  AppStrings.otherField: answers.contains(AppStrings.others)
+                      ? val
+                      : AppStrings.empty,
+                };
+              });
+
+              log('map ${cubit.formData}');
+            },
+            validator: (val) {
+              if (cubit.questionModelList[widget.index].mandatory == true) {
+                if (val == null || val.isEmpty) {
+                  return AppStrings.chooseAtLeastOnOption;
+                }
+              }
+              return null;
+            },
+            children:
+                cubit.questionModelList[widget.index].values!.map((value) {
+              return Tooltip(
+                message: value.toString(),
+                child: Theme(
+                  data: ThemeData(
+                    chipTheme: ChipThemeData(
+                      selectedColor: AppColors.primary.withOpacity(0.7),
+                      checkmarkColor:
+                          Colors.white, // Change the checkmark color
+                      showCheckmark: true,
+
+                      labelStyle: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  child: ChoiceChip(
+                    label: Text(
+                      value.toString(),
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.bold),
+                      maxLines: 2,
+                    ),
+                    backgroundColor: Colors.grey.shade400,
+                    selected: answers.contains(value),
+                    selectedColor: AppColors.primary.withOpacity(0.7),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          answers.add(value);
+                          // Show other field if "Other" is selected
+                          if (value == AppStrings.others) {
+                            answerMap[AppStrings.otherField] =
+                                ''; // Reset other field if selected
+                          }
+                        } else {
+                          answers.remove(value);
+                          // Clear other field if "Other" is deselected
+                          if (value == AppStrings.others) {
+                            answerMap[AppStrings.otherField] = AppStrings.empty;
+                          }
+                        }
+
+                        cubit.formData[cubit.questionModelList[widget.index].id
+                            .toString()] = {
+                          AppStrings.answers: answers,
+                          AppStrings.otherField:
+                              answers.contains(AppStrings.others)
+                                  ? answerMap[AppStrings.otherField]
+                                  : AppStrings.empty,
+                        };
+                        log('map ${cubit.formData}');
+                      });
+                    },
+                  ),
+                ),
+              );
+            }).toList(),
+          );
+        }
+        return const SizedBox.shrink();
+
+      //! Date
+
       case AppStrings.questionTypeDate:
         var questionAnswer = cubit.questionModelList[widget.index].answer;
         questionAnswer ??= DateTime.now().toString();
         // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
 
-        return SizedBox(
-          height: MediaQuery.of(context).copyWith().size.height / 4,
-          child: CalendarDatePicker(
-            initialDate: questionAnswer == null || questionAnswer == ""
-                ? DateTime.now()
-                : DateTime.parse(questionAnswer),
-            firstDate: DateTime(1900),
-            lastDate: DateTime(2100),
-            onDateChanged: (val) {
-              questionAnswer = val.toString();
-              cubit.formData[cubit.questionModelList[widget.index].id
-                  .toString()] = questionAnswer;
-              log(cubit.formData[
-                  cubit.questionModelList[widget.index].id.toString()]);
-              setState(() {});
-            },
-          ),
+        return Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).copyWith().size.height / 4,
+              child: CalendarDatePicker(
+                initialDate: () {
+                  if (questionAnswer == null || questionAnswer == "") {
+                    return DateTime.now();
+                  }
+                  try {
+                    return DateTime.parse(questionAnswer);
+                  } catch (e) {
+                    // Log the error or handle it as needed
+                    return DateTime
+                        .now(); // Default to the current date if parsing fails
+                  }
+                }(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime(2100),
+                onDateChanged: (val) {
+                  questionAnswer = val.toString();
+                  cubit.formData[cubit.questionModelList[widget.index].id
+                      .toString()] = questionAnswer;
+                  log(cubit.formData[
+                      cubit.questionModelList[widget.index].id.toString()]);
+                  setState(() {});
+                },
+              ),
+            ),
+            isValidDate(cubit.questionModelList[widget.index].answer.toString())
+                ? const SizedBox.shrink()
+                : Row(
+                    children: [
+                      const Text('Old Answer:'),
+                      const SizedBox(width: 5),
+                      Text(
+                        cubit.questionModelList[widget.index].answer.toString(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+          ],
         );
 
+      //! File
       case AppStrings.questionTypeFiles:
         // List<String> filesList =
         //     List.from(cubit.questionModelList[widget.index].answer);

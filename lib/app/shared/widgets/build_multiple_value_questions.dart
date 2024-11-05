@@ -8,6 +8,8 @@ class BuildMultipleValueQuestion extends StatelessWidget {
   final String initialValue;
   final Function(String)? onChanged;
   final List<dynamic> listContainOther;
+  final bool isOldAnswer;
+  final String? oldAnswer;
 
   const BuildMultipleValueQuestion({
     super.key,
@@ -18,6 +20,8 @@ class BuildMultipleValueQuestion extends StatelessWidget {
     required this.validator,
     required this.children,
     required this.listContainOther,
+    this.isOldAnswer = false,
+    this.oldAnswer,
   });
 
   @override
@@ -30,14 +34,30 @@ class BuildMultipleValueQuestion extends StatelessWidget {
           children: children,
         ),
         const SizedBox(height: 16),
-        listContainOther.contains('Others')
-            ? CustomTextFormField(
-                title: 'Answer here',
-                initialValue: initialValue,
-                textInputType: TextInputType.text,
-                textInputAction: TextInputAction.next,
-                validator: validator,
-                onChanged: onChanged,
+        isOldAnswer == false
+            ? listContainOther.contains('Others')
+                ? CustomTextFormField(
+                    title: 'Answer here',
+                    initialValue: initialValue,
+                    textInputType: TextInputType.text,
+                    textInputAction: TextInputAction.next,
+                    validator: validator,
+                    onChanged: onChanged,
+                  )
+                : const SizedBox.shrink()
+            : const SizedBox.shrink(),
+        isOldAnswer
+            ? Row(
+                children: [
+                  const Text('Old Answer:'),
+                  const SizedBox(width: 5),
+                  Text(
+                    oldAnswer.toString(),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               )
             : const SizedBox.shrink(),
       ],

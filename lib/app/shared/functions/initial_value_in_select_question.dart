@@ -1,13 +1,16 @@
-dynamic initialValueInSelectQuestion(
-    {required dynamic questionAnswer, required dynamic selectedValue}) {
-  if ((questionAnswer == null || questionAnswer == '') &&
-      (selectedValue == null || selectedValue == '')) {
-    return null;
-  }
-  if (selectedValue != null && selectedValue != '') {
+dynamic initialValueInSelectQuestion({
+  required dynamic questionAnswer,
+  required dynamic selectedValue,
+  required List<dynamic> values,
+}) {
+  if (selectedValue != null &&
+      selectedValue != '' &&
+      values.contains(selectedValue)) {
     return selectedValue;
   }
-  if (questionAnswer != null && questionAnswer != '') {
+  if (questionAnswer != null &&
+      questionAnswer != '' &&
+      values.contains(questionAnswer)) {
     return questionAnswer;
   }
   return null;

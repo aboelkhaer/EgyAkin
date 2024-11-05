@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
 
@@ -45,8 +43,6 @@ class _PatientSectionDetailsScreenState
   @override
   Widget build(BuildContext context) {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
-    Size size = MediaQuery.of(context).size;
-    log(widget.isAllDataOpen.toString());
 
     return Scaffold(
       appBar: AppBar(

@@ -25,7 +25,9 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void dispose() {
     if (context.read<HomeCubit>().isClosed) {
-      context.read<HomeCubit>().homeTabScrollController.dispose();
+      if (context.read<HomeCubit>().homeTabScrollController.hasClients) {
+        context.read<HomeCubit>().homeTabScrollController.dispose();
+      }
     }
     super.dispose();
   }
