@@ -1,4 +1,6 @@
 import 'dart:ui' as ui;
+import 'package:egy_akin/features/patient_sections/presentation/widgets/consultation_button.dart';
+
 import '../../../../exports.dart';
 
 class PatientSectionsScreen extends StatefulWidget {
@@ -117,67 +119,67 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
           },
         ),
         centerTitle: true,
-        actions: [
-          BlocBuilder<PatientSectionsCubit, PatientSectionsState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
-                },
-                loaded: (response,
-                    isDelete,
-                    isFinalSubmit,
-                    message,
-                    isLoading,
-                    reportProgress,
-                    filePath,
-                    isDownloadingReport,
-                    isDownloadedReport) {
-                  if ((response.doctorId.toString() ==
-                          widget.currentDoctorModel.id.toString()) ||
-                      widget.currentDoctorRole == AppStrings.roleAdmin) {
-                    return Tooltip(
-                      message: 'Send consultation',
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 5.w),
-                        child: InkWell(
-                          onTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.sendConsultation,
-                              arguments:
-                                  AppRoutesArgs.sendConsultationRouteArgs(
-                                homeDataModel: widget.homeDataModel,
-                                currentDoctorModel: widget.currentDoctorModel,
-                                patientId: widget.patientId,
-                              ),
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(20.r),
-                          child: Container(
-                            height: 40.r,
-                            width: 40.r,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.transparent,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                AppImages.consultation,
-                                height: 20.r,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              );
-            },
-          )
-        ],
+        // actions: [
+        //   BlocBuilder<PatientSectionsCubit, PatientSectionsState>(
+        //     builder: (context, state) {
+        //       return state.maybeWhen(
+        //         orElse: () {
+        //           return const SizedBox.shrink();
+        //         },
+        //         loaded: (response,
+        //             isDelete,
+        //             isFinalSubmit,
+        //             message,
+        //             isLoading,
+        //             reportProgress,
+        //             filePath,
+        //             isDownloadingReport,
+        //             isDownloadedReport) {
+        //           if ((response.doctorId.toString() ==
+        //                   widget.currentDoctorModel.id.toString()) ||
+        //               widget.currentDoctorRole == AppStrings.roleAdmin) {
+        //             return Tooltip(
+        //               message: 'Send consultation',
+        //               child: Padding(
+        //                 padding: EdgeInsets.only(right: 5.w),
+        //                 child: InkWell(
+        //                   onTap: () {
+        //                     navigatorKey.currentState?.pushNamed(
+        //                       AppRoutes.sendConsultation,
+        //                       arguments:
+        //                           AppRoutesArgs.sendConsultationRouteArgs(
+        //                         homeDataModel: widget.homeDataModel,
+        //                         currentDoctorModel: widget.currentDoctorModel,
+        //                         patientId: widget.patientId,
+        //                       ),
+        //                     );
+        //                   },
+        //                   borderRadius: BorderRadius.circular(20.r),
+        //                   child: Container(
+        //                     height: 40.r,
+        //                     width: 40.r,
+        //                     decoration: const BoxDecoration(
+        //                       shape: BoxShape.circle,
+        //                       color: Colors.transparent,
+        //                     ),
+        //                     child: Center(
+        //                       child: Image.asset(
+        //                         AppImages.consultation,
+        //                         height: 20.r,
+        //                         color: Colors.white,
+        //                       ),
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             );
+        //           }
+        //           return const SizedBox.shrink();
+        //         },
+        //       );
+        //     },
+        //   )
+        // ],
       ),
       body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
         listener: (context, state) {
@@ -271,6 +273,39 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                     ],
                                   ),
                                 ),
+                          SizedBox(height: 25.h),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Request Consultation:',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.sp,
+                                      color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ConsultationButtonsRow(
+                            onDoctorConsultationTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.sendConsultation,
+                                arguments:
+                                    AppRoutesArgs.sendConsultationRouteArgs(
+                                  homeDataModel: widget.homeDataModel,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                  patientId: widget.patientId,
+                                ),
+                              );
+                            },
+                            onAiConsultationTap: () {
+                              navigatorKey.currentState
+                                  ?.pushNamed(AppRoutes.consultationFromAi);
+                            },
+                          ),
                           SizedBox(height: 25.h),
                           Padding(
                             padding: const EdgeInsets.only(left: 20, right: 20),

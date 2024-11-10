@@ -7,6 +7,7 @@ import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_use
 import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
@@ -66,6 +67,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
   sl.registerFactory(() => CommunityCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ShowSingleFeedCubit());
+  sl.registerFactory(() => ConsultationFromAICubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(

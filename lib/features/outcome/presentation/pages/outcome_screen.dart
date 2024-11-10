@@ -93,6 +93,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
               patientId: widget.patientId,
               isSyndicateCardRequired: widget.isSyndicateCardRequired,
               currentDoctorModel: widget.currentDoctorModel,
+              doctorId: widget.doctorId,
+              homeDataModel: widget.homeDataModel,
             ),
     );
   }

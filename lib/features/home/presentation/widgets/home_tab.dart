@@ -16,18 +16,19 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  late final HomeCubit homeCubit; // Store a reference to the cubit
+
   @override
   void initState() {
-    context.read<HomeCubit>().homeTabScrollController = ScrollController();
     super.initState();
+    homeCubit = context.read<HomeCubit>(); // Initialize cubit reference
+    homeCubit.homeTabScrollController = ScrollController();
   }
 
   @override
   void dispose() {
-    if (context.read<HomeCubit>().isClosed) {
-      if (context.read<HomeCubit>().homeTabScrollController.hasClients) {
-        context.read<HomeCubit>().homeTabScrollController.dispose();
-      }
+    if (!homeCubit.isClosed && homeCubit.homeTabScrollController.hasClients) {
+      homeCubit.homeTabScrollController.dispose();
     }
     super.dispose();
   }

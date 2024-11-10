@@ -1,7 +1,8 @@
-import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
@@ -40,6 +41,7 @@ class AppRoutes {
   static const String consultationDetails = '/consultationDetails';
   static const String community = '/community';
   static const String showSingleFeed = '/showSingleFeed';
+  static const String consultationFromAi = '/consultationFromAi';
 }
 
 class RouteGenerator {
@@ -523,13 +525,7 @@ class RouteGenerator {
         } else {
           return unDefinedRoute();
         }
-      // case AppRoutes.gfrCalculator:
-      //   return MaterialPageRoute(
-      //     builder: (_) => BlocProvider<GfrCalculatorCubit>(
-      //       create: (context) => di.sl<GfrCalculatorCubit>(),
-      //       child:  GfrCalculatorScreen(),
-      //     ),
-      //   );
+
       case AppRoutes.changePassword:
         return MaterialPageRoute(
           builder: (_) => BlocProvider<ChangePasswordCubit>(
@@ -707,6 +703,13 @@ class RouteGenerator {
         } else {
           return unDefinedRoute();
         }
+      case AppRoutes.consultationFromAi:
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<ConsultationFromAICubit>(
+            create: (context) => di.sl<ConsultationFromAICubit>(),
+            child: const ConsultationFromAiScreen(),
+          ),
+        );
 
       default:
         return unDefinedRoute();
