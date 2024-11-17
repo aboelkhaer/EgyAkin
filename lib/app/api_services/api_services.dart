@@ -6,6 +6,8 @@ import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_o
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
+import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
+import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -303,5 +305,16 @@ abstract class ApiServices {
   Future<SaveOrUnsavePostModelResponse> saveOrUnsavePost(
     @Path("postId") String postId,
     @Field("status") String saveOrUnsave,
+  );
+
+  @GET('${ApiEndPoint.getAIConsultationHistory}/{patientId}')
+  Future<GetAiConsultationHistoryModelResponse> getAIConsultationHistory(
+    @Path("patientId") String patientId,
+    @Query("page") int page,
+  );
+
+  @POST('${ApiEndPoint.sendAIConsultationRequest}/{patientId}')
+  Future<SendAIConsultationRequestModelResponse> sendAIConsultationRequest(
+    @Path("patientId") String patientId,
   );
 }

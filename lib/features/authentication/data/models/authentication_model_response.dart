@@ -34,7 +34,6 @@ class DoctorModel with _$DoctorModel {
     String? job,
     String? gender,
     String? image,
-    // String? score,
     @JsonKey(name: 'password_confirmation') String? passwordConfirmation,
     @JsonKey(name: 'syndicate_card') String? syndicateCard,
     @JsonKey(name: 'patients_count') String? patientsCount,

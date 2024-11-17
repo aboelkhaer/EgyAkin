@@ -704,12 +704,25 @@ class RouteGenerator {
           return unDefinedRoute();
         }
       case AppRoutes.consultationFromAi:
-        return MaterialPageRoute(
-          builder: (_) => BlocProvider<ConsultationFromAICubit>(
-            create: (context) => di.sl<ConsultationFromAICubit>(),
-            child: const ConsultationFromAiScreen(),
-          ),
-        );
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('patientId')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<ConsultationFromAICubit>(
+                create: (context) => di.sl<ConsultationFromAICubit>(),
+                child: ConsultationFromAiScreen(
+                  patientId: args['patientId'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
 
       default:
         return unDefinedRoute();

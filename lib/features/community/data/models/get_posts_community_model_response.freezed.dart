@@ -651,9 +651,9 @@ mixin _$PostCommunityModel {
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'likes_count')
-  String? get likesCount => throw _privateConstructorUsedError;
+  int? get likesCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'comments_count')
-  String? get commentsCount => throw _privateConstructorUsedError;
+  int? get commentsCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'isSaved')
   bool? get isSaved => throw _privateConstructorUsedError;
   @JsonKey(name: 'isLiked')
@@ -684,8 +684,8 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'likes_count') String? likesCount,
-      @JsonKey(name: 'comments_count') String? commentsCount,
+      @JsonKey(name: 'likes_count') int? likesCount,
+      @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       DoctorModel? doctor});
@@ -753,11 +753,11 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
       likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       isSaved: freezed == isSaved
           ? _value.isSaved
           : isSaved // ignore: cast_nullable_to_non_nullable
@@ -804,8 +804,8 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'likes_count') String? likesCount,
-      @JsonKey(name: 'comments_count') String? commentsCount,
+      @JsonKey(name: 'likes_count') int? likesCount,
+      @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       DoctorModel? doctor});
@@ -872,11 +872,11 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
       likesCount: freezed == likesCount
           ? _value.likesCount
           : likesCount // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       commentsCount: freezed == commentsCount
           ? _value.commentsCount
           : commentsCount // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       isSaved: freezed == isSaved
           ? _value.isSaved
           : isSaved // ignore: cast_nullable_to_non_nullable
@@ -933,10 +933,10 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   final String? updatedAt;
   @override
   @JsonKey(name: 'likes_count')
-  final String? likesCount;
+  final int? likesCount;
   @override
   @JsonKey(name: 'comments_count')
-  final String? commentsCount;
+  final int? commentsCount;
   @override
   @JsonKey(name: 'isSaved')
   final bool? isSaved;
@@ -1020,8 +1020,8 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       final String? visibility,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      @JsonKey(name: 'likes_count') final String? likesCount,
-      @JsonKey(name: 'comments_count') final String? commentsCount,
+      @JsonKey(name: 'likes_count') final int? likesCount,
+      @JsonKey(name: 'comments_count') final int? commentsCount,
       @JsonKey(name: 'isSaved') final bool? isSaved,
       @JsonKey(name: 'isLiked') final bool? isLiked,
       final DoctorModel? doctor}) = _$PostCommunityModelImpl;
@@ -1049,10 +1049,10 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   String? get updatedAt;
   @override
   @JsonKey(name: 'likes_count')
-  String? get likesCount;
+  int? get likesCount;
   @override
   @JsonKey(name: 'comments_count')
-  String? get commentsCount;
+  int? get commentsCount;
   @override
   @JsonKey(name: 'isSaved')
   bool? get isSaved;

@@ -69,8 +69,8 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       visibility: json['visibility'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-      likesCount: json['likes_count'] as String?,
-      commentsCount: json['comments_count'] as String?,
+      likesCount: (json['likes_count'] as num?)?.toInt(),
+      commentsCount: (json['comments_count'] as num?)?.toInt(),
       isSaved: json['isSaved'] as bool?,
       isLiked: json['isLiked'] as bool?,
       doctor: json['doctor'] == null

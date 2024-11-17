@@ -7,6 +7,12 @@ import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_use
 import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
+import 'package:egy_akin/features/consultation_from_ai/data/datasources/consultation_from_ai_datasource.dart';
+import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
+import 'package:egy_akin/features/consultation_from_ai/data/repositories/consultation_from_ai_repo_impl.dart';
+import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consultation_from_ai_repo.dart';
+import 'package:egy_akin/features/consultation_from_ai/domain/usecases/get_ai_consultation_history_usecase.dart';
+import 'package:egy_akin/features/consultation_from_ai/domain/usecases/send_ai_consultation_request_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
@@ -67,7 +73,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
   sl.registerFactory(() => CommunityCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ShowSingleFeedCubit());
-  sl.registerFactory(() => ConsultationFromAICubit());
+  sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -118,6 +124,8 @@ Future<void> diInit() async {
       () => ConsultationDetailsDataSourceImpl(sl()));
   sl.registerLazySingleton<CommunityDatasource>(
       () => CommunityDatasourceImpl(sl()));
+  sl.registerLazySingleton<ConsultationFromAIDatasource>(
+      () => ConsultationFromAIDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -170,6 +178,8 @@ Future<void> diInit() async {
       () => ConsultationDetailsRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<CommunityRepository>(
       () => CommunityRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ConsultationFromAIRepository>(
+      () => ConsultationFromAIRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -376,5 +386,13 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<SaveOrUnsavePostUsecase>()) {
     sl.registerFactory<SaveOrUnsavePostUsecase>(
         () => SaveOrUnsavePostUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAiConsultationHistoryUsecase>()) {
+    sl.registerFactory<GetAiConsultationHistoryUsecase>(
+        () => GetAiConsultationHistoryUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SendAiConsultationRequestUsecase>()) {
+    sl.registerFactory<SendAiConsultationRequestUsecase>(
+        () => SendAiConsultationRequestUsecase(sl()));
   }
 }

@@ -80,7 +80,7 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
       read: json['read'] as bool?,
       type: json['type'] as String?,
       content: json['content'] as String?,
-      typeId: json['type_id'] as String?,
+      typeId: (json['type_id'] as num?)?.toInt(),
       createdAt: json['created_at'] as String?,
       patient: json['patient'] == null
           ? null

@@ -69,4 +69,6 @@ class ApiEndPoint {
   static const getAllFeeds = '$baseUrl/api/feed/posts';
   static const addLikeOnPost = '$baseUrl/api/feed/posts';
   static const saveOrUnsavePost = '$baseUrl/api/feed/posts';
+  static const getAIConsultationHistory = '$baseUrl/api/AIconsultation-history';
+  static const sendAIConsultationRequest = '$baseUrl/api/AIconsultation';
 }

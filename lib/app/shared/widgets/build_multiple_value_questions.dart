@@ -51,10 +51,12 @@ class BuildMultipleValueQuestion extends StatelessWidget {
                 children: [
                   const Text('Old Answer:'),
                   const SizedBox(width: 5),
-                  Text(
-                    oldAnswer.toString(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
+                  Flexible(
+                    child: Text(
+                      oldAnswer ?? '',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

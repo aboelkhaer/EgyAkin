@@ -68,23 +68,31 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      child: Text(
-                                        '${index + 1} - ${questionModel.question!}',
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                      child: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text:
+                                                  '${index + 1} - ${questionModel.question!} ',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            if (questionModel.mandatory! ||
+                                                questionModel.question ==
+                                                    AppStrings.nationalID)
+                                              const TextSpan(
+                                                text: ' *',
+                                                style: TextStyle(
+                                                  color: Colors.red,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    questionModel.mandatory! ||
-                                            questionModel.question ==
-                                                AppStrings.nationalID
-                                        ? const Text(
-                                            '*',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                        : const SizedBox.shrink(),
                                   ],
                                 ),
                               ),

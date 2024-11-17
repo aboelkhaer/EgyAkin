@@ -20,7 +20,13 @@ mixin _$ConsultationFromAIState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +34,13 @@ mixin _$ConsultationFromAIState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +48,13 @@ mixin _$ConsultationFromAIState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -133,7 +151,13 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -144,7 +168,13 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -155,7 +185,13 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -250,7 +286,13 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -261,7 +303,13 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -272,7 +320,13 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -329,6 +383,15 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   factory _$$LoadedImplCopyWith(
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {GetAiConsultationHistoryModelResponse aiHistoryResponse,
+      bool isRequestAIOpinionLoading,
+      bool isRequestAIOpinionLoaded,
+      String message,
+      bool isSeeMore});
+
+  $GetAiConsultationHistoryModelResponseCopyWith<$Res> get aiHistoryResponse;
 }
 
 /// @nodoc
@@ -341,36 +404,119 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
   /// Create a copy of ConsultationFromAIState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? aiHistoryResponse = null,
+    Object? isRequestAIOpinionLoading = null,
+    Object? isRequestAIOpinionLoaded = null,
+    Object? message = null,
+    Object? isSeeMore = null,
+  }) {
+    return _then(_$LoadedImpl(
+      null == aiHistoryResponse
+          ? _value.aiHistoryResponse
+          : aiHistoryResponse // ignore: cast_nullable_to_non_nullable
+              as GetAiConsultationHistoryModelResponse,
+      null == isRequestAIOpinionLoading
+          ? _value.isRequestAIOpinionLoading
+          : isRequestAIOpinionLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isRequestAIOpinionLoaded
+          ? _value.isRequestAIOpinionLoaded
+          : isRequestAIOpinionLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+
+  /// Create a copy of ConsultationFromAIState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetAiConsultationHistoryModelResponseCopyWith<$Res> get aiHistoryResponse {
+    return $GetAiConsultationHistoryModelResponseCopyWith<$Res>(
+        _value.aiHistoryResponse, (value) {
+      return _then(_value.copyWith(aiHistoryResponse: value));
+    });
+  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl();
+  const _$LoadedImpl(this.aiHistoryResponse, this.isRequestAIOpinionLoading,
+      this.isRequestAIOpinionLoaded, this.message, this.isSeeMore);
+
+  @override
+  final GetAiConsultationHistoryModelResponse aiHistoryResponse;
+  @override
+  final bool isRequestAIOpinionLoading;
+  @override
+  final bool isRequestAIOpinionLoaded;
+  @override
+  final String message;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'ConsultationFromAIState.loaded()';
+    return 'ConsultationFromAIState.loaded(aiHistoryResponse: $aiHistoryResponse, isRequestAIOpinionLoading: $isRequestAIOpinionLoading, isRequestAIOpinionLoaded: $isRequestAIOpinionLoaded, message: $message, isSeeMore: $isSeeMore)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadedImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$LoadedImpl &&
+            (identical(other.aiHistoryResponse, aiHistoryResponse) ||
+                other.aiHistoryResponse == aiHistoryResponse) &&
+            (identical(other.isRequestAIOpinionLoading,
+                    isRequestAIOpinionLoading) ||
+                other.isRequestAIOpinionLoading == isRequestAIOpinionLoading) &&
+            (identical(
+                    other.isRequestAIOpinionLoaded, isRequestAIOpinionLoaded) ||
+                other.isRequestAIOpinionLoaded == isRequestAIOpinionLoaded) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, aiHistoryResponse,
+      isRequestAIOpinionLoading, isRequestAIOpinionLoaded, message, isSeeMore);
+
+  /// Create a copy of ConsultationFromAIState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded();
+    return loaded(aiHistoryResponse, isRequestAIOpinionLoading,
+        isRequestAIOpinionLoaded, message, isSeeMore);
   }
 
   @override
@@ -378,10 +524,17 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call();
+    return loaded?.call(aiHistoryResponse, isRequestAIOpinionLoading,
+        isRequestAIOpinionLoaded, message, isSeeMore);
   }
 
   @override
@@ -389,12 +542,19 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded();
+      return loaded(aiHistoryResponse, isRequestAIOpinionLoading,
+          isRequestAIOpinionLoaded, message, isSeeMore);
     }
     return orElse();
   }
@@ -438,7 +598,24 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements ConsultationFromAIState {
-  const factory _Loaded() = _$LoadedImpl;
+  const factory _Loaded(
+      final GetAiConsultationHistoryModelResponse aiHistoryResponse,
+      final bool isRequestAIOpinionLoading,
+      final bool isRequestAIOpinionLoaded,
+      final String message,
+      final bool isSeeMore) = _$LoadedImpl;
+
+  GetAiConsultationHistoryModelResponse get aiHistoryResponse;
+  bool get isRequestAIOpinionLoading;
+  bool get isRequestAIOpinionLoaded;
+  String get message;
+  bool get isSeeMore;
+
+  /// Create a copy of ConsultationFromAIState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -511,7 +688,13 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -522,7 +705,13 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -533,7 +722,13 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetAiConsultationHistoryModelResponse aiHistoryResponse,
+            bool isRequestAIOpinionLoading,
+            bool isRequestAIOpinionLoaded,
+            String message,
+            bool isSeeMore)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

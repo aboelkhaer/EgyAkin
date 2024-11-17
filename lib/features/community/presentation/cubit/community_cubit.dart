@@ -55,14 +55,12 @@ class CommunityCubit extends Cubit<CommunityState> {
                   isCurrentlyLiked =
                       post.isLiked ?? false; // Default to false if null
                   final updatedLikesCount = isCurrentlyLiked
-                      ? int.parse(post.likesCount!) - 1 // Decrement if liked
-                      : int.parse(post.likesCount!) +
-                          1; // Increment if not liked
+                      ? post.likesCount! - 1 // Decrement if liked
+                      : post.likesCount! + 1; // Increment if not liked
 
                   return post.copyWith(
                     isLiked: !isCurrentlyLiked, // Toggle isLiked
-                    likesCount:
-                        updatedLikesCount.toString(), // Update likesCount
+                    likesCount: updatedLikesCount, // Update likesCount
                   );
                 }
                 return post; // Return unchanged post if ID doesn't match

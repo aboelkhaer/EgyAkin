@@ -297,4 +297,12 @@ class AppRoutesArgs {
       'currentDoctorModel': currentDoctorModel,
     };
   }
+
+  static Map<String, dynamic> consultationFromAiRouteArgs({
+    required String patientId,
+  }) {
+    return {
+      'patientId': patientId,
+    };
+  }
 }

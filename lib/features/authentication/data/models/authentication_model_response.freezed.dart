@@ -262,7 +262,7 @@ mixin _$DoctorModel {
   String? get phone => throw _privateConstructorUsedError;
   String? get job => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
-  String? get image => throw _privateConstructorUsedError; // String? score,
+  String? get image => throw _privateConstructorUsedError;
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation => throw _privateConstructorUsedError;
   @JsonKey(name: 'syndicate_card')
@@ -747,7 +747,6 @@ class _$DoctorModelImpl implements _DoctorModel {
   final String? gender;
   @override
   final String? image;
-// String? score,
   @override
   @JsonKey(name: 'password_confirmation')
   final String? passwordConfirmation;
@@ -960,7 +959,7 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   String? get gender;
   @override
-  String? get image; // String? score,
+  String? get image;
   @override
   @JsonKey(name: 'password_confirmation')
   String? get passwordConfirmation;

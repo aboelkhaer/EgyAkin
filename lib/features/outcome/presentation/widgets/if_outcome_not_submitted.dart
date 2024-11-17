@@ -128,23 +128,33 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                                     Row(
                                       children: [
                                         Flexible(
-                                          child: Text(
-                                            '${index + 1} - ${question.question!}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      '${index + 1} - ${question.question!} ',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors
+                                                        .black, // Make sure this color matches your theme
+                                                  ),
+                                                ),
+                                                if (question.mandatory!)
+                                                  const TextSpan(
+                                                    text:
+                                                        AppStrings.asteriskMark,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                        question.mandatory!
-                                            ? const Text(
-                                                AppStrings.asteriskMark,
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
                                       ],
                                     ),
+
                                     const SizedBox(height: 16),
                                     buildQuestionWidget(
                                       cubit.questionModelList,
@@ -327,21 +337,18 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
         );
 
       //! Select
-      case AppStrings.questionTypeSelect:
-        var questionAnswer = cubit.questionModelList[index].answer;
+      case AppStrings.selectType:
+        var questionAnswer = questionList[index].answer['answers'];
         dynamic selectedValue;
         return BuildSelectValueQuestion(
-          questionList: cubit.questionModelList,
+          questionList: questionList,
           index: index,
-          selected: initialValueInSelectQuestion(
-              questionAnswer: questionAnswer,
-              selectedValue: selectedValue,
-              values: cubit.questionModelList[index].values!),
+          selected: cubit.formData[questionList[index].id.toString()]
+                  ['answers'] ??
+              selectedValue,
           validator: (val) {
-            if (cubit.questionModelList[index].mandatory == true &&
-                (cubit.questionModelList[index].answer == null ||
-                    cubit.questionModelList[index].answer ==
-                        AppStrings.empty)) {
+            if (questionList[index].mandatory == true &&
+                (val == null || val == AppStrings.empty)) {
               return AppStrings.thisFieldIsRequired;
             }
 
@@ -350,22 +357,24 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
           onChanged: (val) {
             selectedValue = val;
             if (questionAnswer != val) {
-              // questionAnswer = val;
-              cubit.updateQuestionAnswer(
-                  cubit.questionModelList[index].id.toString(), val);
+              questionAnswer = val;
 
-              cubit.formData[cubit.questionModelList[index].id.toString()] =
+              cubit.formData[questionList[index].id.toString()]['answers'] =
                   val;
             } else {
-              // questionAnswer = null;
-              cubit.updateQuestionAnswer(
-                  cubit.questionModelList[index].id.toString(), null);
-              cubit.formData
-                  .remove(cubit.questionModelList[index].id.toString());
+              questionAnswer = null;
+              cubit.formData.remove(questionList[index].id.toString());
             }
+
+            log(cubit.formData.toString());
 
             setState(() {});
           },
+          // onChangedForOtherField: (value) {
+          //   cubit.formData[questionList[index].id.toString()]['other_field'] =
+          //       value;
+          //   log(cubit.formData.toString());
+          // },
         );
 
       //! Multiple

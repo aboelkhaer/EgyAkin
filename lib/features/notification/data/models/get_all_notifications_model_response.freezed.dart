@@ -752,7 +752,7 @@ mixin _$NotificationsModel {
   String? get type => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
   @JsonKey(name: 'type_id')
-  String? get typeId => throw _privateConstructorUsedError;
+  int? get typeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   PatientNotificationModel? get patient => throw _privateConstructorUsedError;
@@ -781,7 +781,7 @@ abstract class $NotificationsModelCopyWith<$Res> {
       bool? read,
       String? type,
       String? content,
-      @JsonKey(name: 'type_id') String? typeId,
+      @JsonKey(name: 'type_id') int? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
       PatientNotificationModel? patient,
       @JsonKey(name: 'type_doctor')
@@ -835,7 +835,7 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
       typeId: freezed == typeId
           ? _value.typeId
           : typeId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -894,7 +894,7 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       bool? read,
       String? type,
       String? content,
-      @JsonKey(name: 'type_id') String? typeId,
+      @JsonKey(name: 'type_id') int? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
       PatientNotificationModel? patient,
       @JsonKey(name: 'type_doctor')
@@ -948,7 +948,7 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
       typeId: freezed == typeId
           ? _value.typeId
           : typeId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -991,7 +991,7 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   final String? content;
   @override
   @JsonKey(name: 'type_id')
-  final String? typeId;
+  final int? typeId;
   @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
@@ -1051,7 +1051,7 @@ abstract class _NotificationsModel implements NotificationsModel {
           final bool? read,
           final String? type,
           final String? content,
-          @JsonKey(name: 'type_id') final String? typeId,
+          @JsonKey(name: 'type_id') final int? typeId,
           @JsonKey(name: 'created_at') final String? createdAt,
           final PatientNotificationModel? patient,
           @JsonKey(name: 'type_doctor')
@@ -1071,7 +1071,7 @@ abstract class _NotificationsModel implements NotificationsModel {
   String? get content;
   @override
   @JsonKey(name: 'type_id')
-  String? get typeId;
+  int? get typeId;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;

@@ -99,23 +99,32 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                                     Row(
                                       children: [
                                         Flexible(
-                                          child: Text(
-                                            '${index + 1} - ${question.question!}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                          child: RichText(
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      '${index + 1} - ${question.question!} ',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors
+                                                        .black, // Set color to match your theme
+                                                  ),
+                                                ),
+                                                if (question.mandatory! ||
+                                                    question.question ==
+                                                        AppStrings.nationalID)
+                                                  const TextSpan(
+                                                    text:
+                                                        AppStrings.asteriskMark,
+                                                    style: TextStyle(
+                                                      color: Colors.red,
+                                                    ),
+                                                  ),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                        question.mandatory! ||
-                                                question.question ==
-                                                    AppStrings.nationalID
-                                            ? const Text(
-                                                AppStrings.asteriskMark,
-                                                style: TextStyle(
-                                                  color: Colors.red,
-                                                ),
-                                              )
-                                            : const SizedBox.shrink(),
                                       ],
                                     ),
                                     const SizedBox(height: 16),
@@ -283,12 +292,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
         );
       case AppStrings.selectType:
-        var questionAnswer = questionList[index].answer;
+        var questionAnswer = questionList[index].answer['answers'];
         dynamic selectedValue;
         return BuildSelectValueQuestion(
           questionList: questionList,
           index: index,
-          selected: cubit.formData[questionList[index].id.toString()] ??
+          selected: cubit.formData[questionList[index].id.toString()]
+                  ['answers'] ??
               selectedValue,
           validator: (val) {
             if (questionList[index].mandatory == true &&
@@ -303,7 +313,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             if (questionAnswer != val) {
               questionAnswer = val;
 
-              cubit.formData[questionList[index].id.toString()] = val;
+              cubit.formData[questionList[index].id.toString()]['answers'] =
+                  val;
             } else {
               questionAnswer = null;
               cubit.formData.remove(questionList[index].id.toString());
@@ -313,6 +324,11 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
             setState(() {});
           },
+          // onChangedForOtherField: (value) {
+          //   cubit.formData[questionList[index].id.toString()]['other_field'] =
+          //       value;
+          //   log(cubit.formData.toString());
+          // },
         );
 
       case AppStrings.multipleType:

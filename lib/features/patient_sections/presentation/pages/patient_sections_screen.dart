@@ -302,8 +302,12 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                               );
                             },
                             onAiConsultationTap: () {
-                              navigatorKey.currentState
-                                  ?.pushNamed(AppRoutes.consultationFromAi);
+                              navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.consultationFromAi,
+                                  arguments:
+                                      AppRoutesArgs.consultationFromAiRouteArgs(
+                                    patientId: widget.patientId,
+                                  ));
                             },
                           ),
                           SizedBox(height: 25.h),
