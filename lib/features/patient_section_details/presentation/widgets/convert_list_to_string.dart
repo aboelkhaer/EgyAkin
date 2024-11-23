@@ -1,18 +1,26 @@
 import '../../../../exports.dart';
 
 String convertDynamicToString(QuestionModel question) {
-  List<dynamic>? dynamicList = question.answer[AppStrings.answers];
+  if (question.answer[AppStrings.answers] is String) {
+    return question.answer[AppStrings.answers];
+  } else {
+    List<dynamic>? dynamicList = question.answer[AppStrings.answers];
 
-  if (dynamicList == null) return '...';
+    if (dynamicList == null) return '...';
 
-  if (dynamicList.contains('Others') &&
-      !dynamicList.contains('Other answer:')) {
-    dynamicList.remove('Others');
-    dynamicList
-        .add('\nOther answer: ${question.answer[AppStrings.otherField]}');
+    // Create a new list to avoid modifying the original one
+    List<dynamic> resultList = List.from(dynamicList);
+
+    // Add "Other answer:" only once
+    if (resultList.contains('Others') &&
+        !resultList.any((item) => item.toString().contains('Other answer:'))) {
+      resultList.add(
+          '\nOther answer: ${question.answer[AppStrings.otherField] ?? '...'}');
+    }
+
+    return resultList
+        .map((item) =>
+            item.toString().contains('Other answer:') ? item : '$item')
+        .join(',\n');
   }
-
-  return dynamicList
-      .map((item) => item.toString().contains('Other answer:') ? item : '$item')
-      .join(',\n');
 }

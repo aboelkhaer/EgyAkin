@@ -1,5 +1,6 @@
 import 'package:egy_akin/app/shared/functions/convert_dynamic_list_to_string_list.dart';
 import 'package:egy_akin/app/shared/functions/hide_email.dart';
+import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import '../../../../exports.dart';
@@ -63,36 +64,41 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                     : Text(
                         question.type == AppStrings.questionTypeMultiple
                             ? convertDynamicToString(question)
-                            : question.type == AppStrings.questionTypeDate
-                                ? formatDateTime(question.answer)
-                                : question.question == AppStrings.nationalID
-                                    ? currentDoctorId == doctorId
-                                        ? question.answer ?? '...'
-                                        : hideNationalId(
-                                            question.answer ?? '...')
-                                    : question.question == 'Name'
+                            : question.type == AppStrings.questionTypeSelect
+                                ? showAnswerWithSelectType(question.answer)
+                                : question.type == AppStrings.questionTypeDate
+                                    ? formatDateTime(question.answer)
+                                    : question.question == AppStrings.nationalID
                                         ? currentDoctorId == doctorId
                                             ? question.answer ?? '...'
-                                            : isAllDataOpen
-                                                ? question.answer ?? '...'
-                                                : convertTextToSymbols(
-                                                    question.answer)
-                                        : question.question == 'Phone'
+                                            : hideNationalId(
+                                                question.answer ?? '...')
+                                        : question.question == 'Name'
                                             ? currentDoctorId == doctorId
                                                 ? question.answer ?? '...'
                                                 : isAllDataOpen
                                                     ? question.answer ?? '...'
-                                                    : hideNationalId(
+                                                    : convertTextToSymbols(
                                                         question.answer)
-                                            : question.question == 'Email'
+                                            : question.question == 'Phone'
                                                 ? currentDoctorId == doctorId
                                                     ? question.answer ?? '...'
                                                     : isAllDataOpen
                                                         ? question.answer ??
                                                             '...'
-                                                        : hideEmail(
+                                                        : hideNationalId(
                                                             question.answer)
-                                                : question.answer ?? '...',
+                                                : question.question == 'Email'
+                                                    ? currentDoctorId ==
+                                                            doctorId
+                                                        ? question.answer ??
+                                                            '...'
+                                                        : isAllDataOpen
+                                                            ? question.answer ??
+                                                                '...'
+                                                            : hideEmail(
+                                                                question.answer)
+                                                    : question.answer ?? '...',
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.grey.shade900,

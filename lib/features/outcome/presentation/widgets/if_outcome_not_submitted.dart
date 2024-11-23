@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
@@ -72,7 +73,15 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                             arguments: 0);
                       }
                       if (message.isNotEmpty) {
-                        customSnackBar(context: context, message: message);
+                        if (isSubmitedOutcome) {
+                          customSnackBar(context: context, message: message);
+                        } else {
+                          showHintDialog(
+                            context: context,
+                            message: message,
+                            dialogType: DialogType.error,
+                          );
+                        }
                       }
                     },
                   );
@@ -337,18 +346,80 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
         );
 
       //! Select
-      case AppStrings.selectType:
-        var questionAnswer = questionList[index].answer['answers'];
+      // case AppStrings.questionTypeSelect:
+      //   var questionAnswer = cubit.questionModelList[index].answer;
+      //   Map<String, dynamic> answerMap = questionAnswer ??= {
+      //     AppStrings.answers: '',
+      //     AppStrings.otherField: AppStrings.empty
+      //   };
+      //   dynamic selectedValue;
+      //   return BuildSelectValueQuestion(
+      //     questionList: cubit.questionModelList,
+      //     index: index,
+      //     selected: initialValueInSelectQuestion(
+      //         questionAnswer: questionAnswer,
+      //         selectedValue: selectedValue,
+      //         values: cubit.questionModelList[index].values!),
+      //     validator: (val) {
+      //       if (cubit.questionModelList[index].mandatory == true &&
+      //           (cubit.questionModelList[index].answer == null ||
+      //               cubit.questionModelList[index].answer ==
+      //                   AppStrings.empty)) {
+      //         return AppStrings.thisFieldIsRequired;
+      //       }
+
+      //       return null;
+      //     },
+      //     onChanged: (val) {
+      //       selectedValue = val;
+      //       if (questionAnswer != val) {
+      //         // questionAnswer = val;
+      //         cubit.updateQuestionAnswer(
+      //             cubit.questionModelList[index].id.toString(), val);
+
+      //         cubit.formData[cubit.questionModelList[index].id.toString()] =
+      //             val;
+      //       } else {
+      //         // questionAnswer = null;
+      //         cubit.updateQuestionAnswer(
+      //             cubit.questionModelList[index].id.toString(), null);
+      //         cubit.formData
+      //             .remove(cubit.questionModelList[index].id.toString());
+      //       }
+
+      //       setState(() {});
+      //     },
+      //     onChangedForOtherField: (value) {
+      //       setState(() {
+      //         answerMap[AppStrings.otherField] = value;
+      //         cubit.formData[cubit.questionModelList[index].id.toString()] = {
+      //           AppStrings.answers: selectedValue,
+      //           AppStrings.otherField: value,
+      //         };
+      //       });
+      //     },
+      //   );
+      case AppStrings.questionTypeSelect:
+        var questionAnswer = cubit.questionModelList[index].answer;
+        Map<String, dynamic> answerMap = questionAnswer ??= {
+          AppStrings.answers: '',
+          AppStrings.otherField: AppStrings.empty
+        };
         dynamic selectedValue;
         return BuildSelectValueQuestion(
-          questionList: questionList,
+          questionList: cubit.questionModelList,
           index: index,
-          selected: cubit.formData[questionList[index].id.toString()]
-                  ['answers'] ??
-              selectedValue,
+          selected: initialValueInSelectQuestion(
+              questionAnswer: questionAnswer is Map
+                  ? questionAnswer[AppStrings.answers]
+                  : questionAnswer,
+              selectedValue: selectedValue,
+              values: cubit.questionModelList[index].values!),
           validator: (val) {
-            if (questionList[index].mandatory == true &&
-                (val == null || val == AppStrings.empty)) {
+            if (cubit.questionModelList[index].mandatory == true &&
+                (cubit.questionModelList[index].answer['answers'] == null ||
+                    cubit.questionModelList[index].answer['answers'] ==
+                        AppStrings.empty)) {
               return AppStrings.thisFieldIsRequired;
             }
 
@@ -357,24 +428,38 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
           onChanged: (val) {
             selectedValue = val;
             if (questionAnswer != val) {
-              questionAnswer = val;
+              // questionAnswer['answers'] = val;
+              answerMap[AppStrings.answers] = val;
+              if (answerMap[AppStrings.otherField] != 'Others') {
+                answerMap[AppStrings.otherField] = null;
+              }
+              cubit.updateQuestionAnswer(
+                  cubit.questionModelList[index].id.toString(), answerMap);
 
-              cubit.formData[questionList[index].id.toString()]['answers'] =
-                  val;
+              cubit.formData[cubit.questionModelList[index].id.toString()] =
+                  answerMap;
             } else {
-              questionAnswer = null;
-              cubit.formData.remove(questionList[index].id.toString());
-            }
+              // questionAnswer['answers'] = '';
 
+              cubit.updateQuestionAnswer(
+                  cubit.questionModelList[index].id.toString(),
+                  {'answers': null, 'otherField': null});
+              cubit.formData
+                  .remove(cubit.questionModelList[index].id.toString());
+            }
+            // make log for the map
             log(cubit.formData.toString());
 
             setState(() {});
           },
-          // onChangedForOtherField: (value) {
-          //   cubit.formData[questionList[index].id.toString()]['other_field'] =
-          //       value;
-          //   log(cubit.formData.toString());
-          // },
+          onChangedForOtherField: (value) {
+            setState(() {
+              answerMap[AppStrings.otherField] = value;
+              cubit.formData[cubit.questionModelList[index].id.toString()] =
+                  answerMap;
+            });
+            log(cubit.formData.toString());
+          },
         );
 
       //! Multiple

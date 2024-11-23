@@ -9,11 +9,9 @@ import 'package:egy_akin/features/patient_section_details/domain/usecases/get_pa
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image/image.dart' as img;
-import 'dart:typed_data'; // Import Uint8List
 
 class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   PatientSectionDetailsCubit(this._getPatientSectionDetailsUsecase,
@@ -108,15 +106,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         if (question.mandatory == true) {
           if (question.type == 'multiple') {
             Map myMap = question.answer;
-            // ??
-            //     {
-            //       "answers": [],
-            //       "other_field": '',
-            //     };
-            // Map myMap = formData[question.id.toString()] ??= {
-            //   "answers": [],
-            //   "other_field": ''
-            // };
 
             // Check if "answers" key is either null or an empty list
             if (myMap.containsKey('answers')) {

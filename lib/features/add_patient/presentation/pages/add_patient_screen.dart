@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
+import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
@@ -21,13 +23,18 @@ class AddPatientScreen extends StatefulWidget {
 }
 
 class _AddPatientScreenState extends State<AddPatientScreen> {
-  Map<String, dynamic> answerMap = {};
+  // Map<String, dynamic> answerMap = {};
+  // Map<String, dynamic> answerMapForSelect = {};
   @override
   void initState() {
-    answerMap = {
-      AppStrings.answers: [],
-      AppStrings.otherField: AppStrings.empty,
-    };
+    // answerMap = {
+    //   AppStrings.answers: [],
+    //   AppStrings.otherField: AppStrings.empty,
+    // };
+    // answerMapForSelect = {
+    //   AppStrings.answers: '',
+    //   AppStrings.otherField: AppStrings.empty
+    // };
 
     super.initState();
   }
@@ -188,7 +195,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                         );
                       }
                       if (message.isNotEmpty) {
-                        customSnackBar(context: context, message: message);
+                        // customSnackBar(context: context, message: message);
+                        showHintDialog(
+                          context: context,
+                          message: message,
+                          dialogType: DialogType.error,
+                        );
                       }
                     },
                     error: (message) {
@@ -291,51 +303,123 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             return null;
           },
         );
-      case AppStrings.selectType:
-        var questionAnswer = questionList[index].answer['answers'];
+      // case AppStrings.selectType:
+      //   var questionAnswer = questionList[index].answer['answers'];
+      //   dynamic selectedValue;
+      //   return BuildSelectValueQuestion(
+      //     questionList: questionList,
+      //     index: index,
+      //     selected: cubit.formData[questionList[index].id.toString()]
+      //             ['answers'] ??
+      //         selectedValue,
+      //     validator: (val) {
+      //       if (questionList[index].mandatory == true &&
+      //           (val == null || val == AppStrings.empty)) {
+      //         return AppStrings.thisFieldIsRequired;
+      //       }
+
+      //       return null;
+      //     },
+      //     onChanged: (val) {
+      //       selectedValue = val;
+      //       if (questionAnswer != val) {
+      //         questionAnswer = val;
+
+      //         cubit.formData[questionList[index].id.toString()]['answers'] =
+      //             val;
+      //       } else {
+      //         questionAnswer = null;
+      //         cubit.formData.remove(questionList[index].id.toString());
+      //       }
+
+      //       log(cubit.formData.toString());
+
+      //       setState(() {});
+      //     },
+      //     onChangedForOtherField: (value) {
+      //       setState(() {
+      //         answerMap[AppStrings.otherField] = value;
+      //         cubit.formData[cubit.questionModelList![index].id.toString()] = {
+      //           AppStrings.answers: selectedValue,
+      //           AppStrings.otherField: value,
+      //         };
+      //       });
+      //     },
+      //   );
+      //! Select
+      case AppStrings.questionTypeSelect:
+        var questionAnswer = questionList[index].answer;
+
+        // Initialize answerMapForSelect from the existing value or default structure
+        Map<dynamic, dynamic> answerMapForSelect =
+            cubit.formData[questionList[index].id.toString()] ??
+                {
+                  AppStrings.answers: '',
+                  AppStrings.otherField: AppStrings.empty,
+                };
+
         dynamic selectedValue;
+
         return BuildSelectValueQuestion(
           questionList: questionList,
           index: index,
-          selected: cubit.formData[questionList[index].id.toString()]
-                  ['answers'] ??
-              selectedValue,
+          formData: cubit.formData,
+          isAddPatient: true,
+          selected: initialValueInSelectQuestion(
+              questionAnswer: questionAnswer is Map
+                  ? questionAnswer[AppStrings.answers]
+                  : questionAnswer,
+              selectedValue: selectedValue,
+              values: questionList[index].values!),
           validator: (val) {
             if (questionList[index].mandatory == true &&
-                (val == null || val == AppStrings.empty)) {
+                (answerMapForSelect[AppStrings.answers] == null ||
+                    answerMapForSelect[AppStrings.answers] ==
+                        AppStrings.empty)) {
               return AppStrings.thisFieldIsRequired;
             }
-
             return null;
           },
           onChanged: (val) {
-            selectedValue = val;
-            if (questionAnswer != val) {
-              questionAnswer = val;
+            setState(() {
+              // Update the "answers" field
+              answerMapForSelect[AppStrings.answers] = val;
 
-              cubit.formData[questionList[index].id.toString()]['answers'] =
-                  val;
-            } else {
-              questionAnswer = null;
-              cubit.formData.remove(questionList[index].id.toString());
-            }
+              // If the answer is not "Others", reset the "other_field" to null
+              if (val != AppStrings.others) {
+                answerMapForSelect[AppStrings.otherField] = null;
+              }
 
-            log(cubit.formData.toString());
+              // Update the cubit with the modified map
+              cubit.formData[questionList[index].id.toString()] =
+                  Map.from(answerMapForSelect);
+            });
 
-            setState(() {});
+            log('onChanged: ${cubit.formData}');
           },
-          // onChangedForOtherField: (value) {
-          //   cubit.formData[questionList[index].id.toString()]['other_field'] =
-          //       value;
-          //   log(cubit.formData.toString());
-          // },
+          onChangedForOtherField: (value) {
+            setState(() {
+              // Copy the existing map and update only the "other_field"
+              answerMapForSelect[AppStrings.otherField] = value;
+
+              // Update the cubit with the modified map
+              cubit.formData[questionList[index].id.toString()] =
+                  Map.from(answerMapForSelect);
+            });
+
+            log('onChangedForOtherField: ${cubit.formData}');
+          },
         );
 
       case AppStrings.multipleType:
-        // Map<String, dynamic> answerMap = {
-        //   AppStrings.answers: [],
-        //   AppStrings.otherField: AppStrings.empty
-        // };
+        // Retrieve or initialize the answer map from cubit.formData
+        Map<String, dynamic> answerMap =
+            cubit.formData[questionList[index].id.toString()] ??
+                {
+                  AppStrings.answers: [],
+                  AppStrings.otherField: AppStrings.empty,
+                };
+
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
@@ -345,32 +429,29 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               answerMap[AppStrings.otherField] = val;
             });
             cubit.formData[questionList[index].id.toString()] = {
-              AppStrings.answers: answerMap[AppStrings.answers],
+              AppStrings.answers: List.from(answerMap[AppStrings.answers]),
               AppStrings.otherField: answerMap[AppStrings.otherField],
             };
             log('map ${cubit.formData}');
           },
           validator: (val) {
             if (questionList[index].mandatory == true &&
-                ((answerMap[AppStrings.answers] as List<dynamic>)
-                        .contains(AppStrings.others) ||
-                    (answerMap[AppStrings.answers] as List<dynamic>)
-                        .contains(AppStrings.others))) {
+                (answerMap[AppStrings.answers] as List<dynamic>)
+                    .contains(AppStrings.others)) {
               if (val == null || val.isEmpty) {
                 return AppStrings.thisFieldIsRequired;
               }
             }
             return null;
           },
-          listContainOther: (answerMap[AppStrings.answers] as List<dynamic>),
+          listContainOther: List.from(answerMap[AppStrings.answers]),
           children: questionList[index].values!.map((value) {
             return Theme(
               data: ThemeData(
                 chipTheme: ChipThemeData(
                   selectedColor: AppColors.primary.withOpacity(0.7),
-                  checkmarkColor: Colors.white, // Change the checkmark color
+                  checkmarkColor: Colors.white,
                   showCheckmark: true,
-
                   labelStyle: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -396,7 +477,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     }
                   });
                   cubit.formData[questionList[index].id.toString()] = {
-                    AppStrings.answers: (answerMap[AppStrings.answers] as List),
+                    AppStrings.answers:
+                        List.from(answerMap[AppStrings.answers]),
                     AppStrings.otherField: answerMap[AppStrings.otherField],
                   };
                   log('map ${cubit.formData}');
@@ -405,6 +487,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             );
           }).toList(),
         );
+
       case AppStrings.date:
         String? questionAnswer = questionList[index].answer;
 

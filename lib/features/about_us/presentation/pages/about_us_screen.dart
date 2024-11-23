@@ -89,7 +89,7 @@ class AboutUsScreen extends StatelessWidget {
             
         </ul>
           <ul>
-            <li><strong>Aboelkhaer Fadel:</strong> Software Engineer with expertise in mobile application development. Aboelkhaer focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaerfadel@gmail.com">aboelkhaerfadel@gmail.com</a></li>
+            <li><strong>Aboelkhaer AboElyazed:</strong> Software Engineer with expertise in mobile application development. Aboelkhaer focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaerfadel@gmail.com">aboelkhaerfadel@gmail.com</a></li>
          </ul>
         <p>Thank you for choosing EgyAkin.</p>
           </div>

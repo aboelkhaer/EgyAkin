@@ -7,6 +7,7 @@ class CustomElevatedButton extends StatelessWidget {
   final IconData? icon;
   final bool hasIcon;
   final String title;
+  final Color? color;
   const CustomElevatedButton({
     super.key,
     required this.onPressed,
@@ -15,6 +16,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.isDelete = false,
     required this.title,
     this.isDisable = false,
+    this.color,
   });
 
   @override
@@ -24,9 +26,10 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: isDisable ? null : onPressed,
         style: ElevatedButton.styleFrom(
-            backgroundColor: isDelete
-                ? Colors.red.shade800
-                : AppColors.primary.withOpacity(0.7),
+            backgroundColor: color ??
+                (isDelete
+                    ? Colors.red.shade800
+                    : AppColors.primary.withOpacity(0.7)),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10))),
         child: Row(

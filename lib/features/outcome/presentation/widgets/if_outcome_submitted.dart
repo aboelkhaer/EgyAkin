@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 
 import '../../../../exports.dart';
@@ -160,7 +161,13 @@ class IfOutcomeSubmitted extends StatelessWidget {
                                                 AppStrings.questionTypeMultiple
                                             ? convertDynamicToString(
                                                 response[index])
-                                            : response[index].answer ?? '...',
+                                            : response[index].type ==
+                                                    AppStrings
+                                                        .questionTypeSelect
+                                                ? showAnswerWithSelectType(
+                                                    response[index].answer)
+                                                : response[index].answer ??
+                                                    '...',
                                       ),
                                     ),
                                   ],

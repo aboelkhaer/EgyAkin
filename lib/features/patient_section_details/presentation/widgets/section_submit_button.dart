@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
+
 import '../../../../exports.dart';
 
 class SectionSubmitButton extends StatelessWidget {
@@ -67,7 +69,12 @@ class SectionSubmitButton extends StatelessWidget {
                       uploadFilesProgress,
                     ) {
                       if (message.isNotEmpty) {
-                        customSnackBar(context: context, message: message);
+                        // customSnackBar(context: context, message: message);
+                        showHintDialog(
+                          context: context,
+                          message: message,
+                          dialogType: DialogType.error,
+                        );
                       }
                       if (isSubmitted) {
                         // context
