@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/send_consultation/data/models/send_consultation_model_response.dart';
 import '../../../../exports.dart';
 
 class SendConsultationUsecase

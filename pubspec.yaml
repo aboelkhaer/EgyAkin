@@ -11,6 +11,7 @@ dependencies:
   animate_do: ^3.3.4
   cached_network_image: ^3.3.0
   carousel_slider: ^5.0.0
+  change_app_package_name: ^1.4.0
   chips_choice: ^3.0.1
   cupertino_icons: ^1.0.2
   dartz: ^0.10.1

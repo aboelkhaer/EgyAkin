@@ -9,11 +9,11 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.incode.egyAkin</string>
+	<string>com.incodeco.EgyAkin</string>
 	<key>PROJECT_ID</key>
 	<string>egyakin-e28b5</string>
 	<key>STORAGE_BUCKET</key>
-	<string>egyakin-e28b5.appspot.com</string>
+	<string>egyakin-e28b5.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:520481338319:ios:389966c7cd24fd9aeb18ba</string>
+	<string>1:520481338319:ios:17dd64dec91b6199eb18ba</string>
 </dict>
 </plist>

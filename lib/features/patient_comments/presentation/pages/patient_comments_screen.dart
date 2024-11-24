@@ -1,5 +1,4 @@
 import '../../../../exports.dart';
-import 'dart:ui' as ui;
 
 class PatientCommentsScreen extends StatefulWidget {
   final String patientId;

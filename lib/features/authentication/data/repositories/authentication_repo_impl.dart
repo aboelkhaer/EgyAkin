@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/authentication/data/models/send_fcm_token_model_response.dart';
 import '../../../../exports.dart';
 
 class AuthenticationRepositoryImpl extends AuthenticationRepository {

@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:egy_akin/features/home/data/models/upload_syndicate_card_model_response.dart';
-
 import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
 

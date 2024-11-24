@@ -6,9 +6,7 @@ import 'package:egy_akin/features/community/domain/repositories/community_repo.d
 import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
-import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/datasources/consultation_from_ai_datasource.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/repositories/consultation_from_ai_repo_impl.dart';
 import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consultation_from_ai_repo.dart';
 import 'package:egy_akin/features/consultation_from_ai/domain/usecases/get_ai_consultation_history_usecase.dart';

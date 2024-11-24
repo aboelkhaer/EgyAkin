@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/profile_tab_icon.dart';
@@ -74,14 +72,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   checkUpdateMessageCounter,
                   isUserBlocked,
                 ) {
-                  // if (cubit!.isUpdateMessageHidden == false) {
-                  //   showUpdateDialog(
-                  //     context: context,
-                  //     onDismissed: () {
-                  //       cubit!.setUpdateMessageStatusToLocal();
-                  //     },
-                  //   );
-                  // }
+                  if (cubit!.isUpdateMessageHidden2 == false) {
+                    showUpdateDialog(
+                      context: context,
+                      onDismissed: () {
+                        cubit!.setUpdateMessageStatusToLocal();
+                      },
+                    );
+                  }
 
                   if (homeData.isUserBlocked == true) {
                     showBlockedDialog(

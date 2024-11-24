@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import '../../../../exports.dart';
 
 class ProfileTabIcon extends StatelessWidget {

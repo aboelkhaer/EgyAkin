@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/change_password/data/models/change_password_model_response.dart';
 import '../../../../exports.dart';
 
 class ChangePasswordRepositoryImpl extends ChangePasswordRepository {

@@ -1,10 +1,6 @@
-import 'package:egy_akin/app/shared/functions/convert_timestamp_in_community.dart';
-import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_card.dart';
-import 'package:timeago/timeago.dart' as timeago;
-import 'dart:ui' as ui;
 
 class PostsTab extends StatelessWidget {
   final DoctorModel currentDoctorModel;

@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_annotation_target
-import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'change_password_model_response.freezed.dart';
 part 'change_password_model_response.g.dart';

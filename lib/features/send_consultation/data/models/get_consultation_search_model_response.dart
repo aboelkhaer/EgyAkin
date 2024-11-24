@@ -2,7 +2,6 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../../../exports.dart';
 part 'get_consultation_search_model_response.freezed.dart';
 part 'get_consultation_search_model_response.g.dart';
 

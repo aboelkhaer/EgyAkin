@@ -1,6 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/patient_comments/data/models/add_patient_comment_model_response.dart';
-import 'package:egy_akin/features/patient_comments/data/models/delete_patient_comment_model_response.dart';
 import '../../../../exports.dart';
 
 class PatientCommentsRepositoryImpl extends PatientCommentsRepository {

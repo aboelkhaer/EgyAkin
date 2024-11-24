@@ -1,7 +1,3 @@
-import 'package:egy_akin/features/patient_sections/data/models/delete_patient_model_response.dart';
-import 'package:egy_akin/features/patient_sections/data/models/download_patient_report_model_response.dart';
-import 'package:egy_akin/features/patient_sections/data/models/final_submit_model_response.dart';
-
 import '../../../../exports.dart';
 
 abstract class PatientSectionsDataSource {

@@ -35,17 +35,23 @@ void showUpdateDialog({
                       TextStyle(fontWeight: FontWeight.bold, fontSize: 12.sp)),
               SizedBox(height: 5.h),
               HtmlWidget(
-                '''<ul><li><strong>Doctor Consultations</strong>: Doctors can now consult one or more colleagues for advice on their patients.</li><li><strong>User Achievements</strong>: Earn achievements by adding a set number of patients or completing specific outcomes.</li></ul>''',
+                '''<ul>
+      <li><strong>AI Consultations</strong>: Use advanced AI to analyze patient data and provide intelligent recommendations for care.</li>
+      <li><strong>Fix Bugs and Improve Performance</strong>: Enjoy a smoother and more reliable app experience with various fixes and optimizations.</li>
+  </ul>''',
                 onTapUrl: (url) {
                   launchURL(
-                      url: url,
-                      onError: (error) {
-                        showErrorDialog(context, error);
-                      });
+                    url: url,
+                    onError: (error) {
+                      showErrorDialog(context, error);
+                    },
+                  );
                   return true;
                 },
-                textStyle:
-                    TextStyle(fontSize: 11.sp, color: Colors.grey.shade600),
+                textStyle: TextStyle(
+                  fontSize: 11.sp,
+                  color: Colors.grey.shade600,
+                ),
               ),
             ],
           ),

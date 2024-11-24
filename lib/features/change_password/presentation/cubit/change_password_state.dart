@@ -1,4 +1,3 @@
-import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'change_password_state.freezed.dart';
 

@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'all_doctors_patients_state.freezed.dart';
 

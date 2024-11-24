@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
 import '../../../../exports.dart';
 
 class OutcomeRepositoryImpl extends OutcomeRepository {

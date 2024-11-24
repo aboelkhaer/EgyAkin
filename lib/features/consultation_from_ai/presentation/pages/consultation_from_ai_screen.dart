@@ -1,7 +1,5 @@
-import 'package:egy_akin/app/shared/functions/format_text_from_chatgpt.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_state.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';

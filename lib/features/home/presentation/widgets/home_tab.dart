@@ -149,18 +149,18 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       PostsSliderAndDots(cubit: widget.cubit),
                       SizedBox(height: 10.h),
-                      TextButton(
-                          onPressed: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.community,
-                              arguments: AppRoutesArgs.communityRouteArgs(
-                                homeDataModel: widget.cubit.homeDataModel,
-                                currentDoctorModel:
-                                    widget.cubit.currentDoctorModel,
-                              ),
-                            );
-                          },
-                          child: const Text('hello')),
+                      // TextButton(
+                      //     onPressed: () {
+                      //       navigatorKey.currentState?.pushNamed(
+                      //         AppRoutes.community,
+                      //         arguments: AppRoutesArgs.communityRouteArgs(
+                      //           homeDataModel: widget.cubit.homeDataModel,
+                      //           currentDoctorModel:
+                      //               widget.cubit.currentDoctorModel,
+                      //         ),
+                      //       );
+                      //     },
+                      //     child: const Text('hello')),
                       const DoctorsActivation(),
                       SizedBox(height: 10.h),
                       const TopDoctors(),

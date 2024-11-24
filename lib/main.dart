@@ -8,7 +8,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform, name: 'EgyAkin');
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
   await di.diInit();

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/contact_us/data/models/contact_us_model_response.dart';
 import '../../../../exports.dart';
 
 class AddContactUsUsecase

@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/outcome/data/models/sumbit_outcome_model_response.dart';
-
 import '../../../../exports.dart';
 
 abstract class OutcomeDataSource {

@@ -1,5 +1,3 @@
-import 'package:egy_akin/features/doctor_profile_view/data/models/update_doctor_profile_model_response.dart';
-
 import '../../../../exports.dart';
 
 abstract class DoctorProfileViewDataSource {

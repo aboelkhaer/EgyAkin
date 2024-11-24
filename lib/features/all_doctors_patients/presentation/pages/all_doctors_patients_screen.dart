@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/hospital_text.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
 
@@ -215,8 +216,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                                         patient.updatedAt ?? AppStrings.empty,
                                     drLastName: patient.doctor!.lastName ??
                                         AppStrings.empty,
-                                    hospital:
-                                        patient.hospital ?? AppStrings.empty,
+                                    hospital: hospitalText(patient.hospital),
                                     currentDoctorModel:
                                         widget.currentDoctorModel,
                                     currentDoctorPoints:

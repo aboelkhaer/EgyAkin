@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_annotation_target
-import 'package:egy_akin/exports.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_current_doctor_consultation_model_response.freezed.dart';
 part 'get_current_doctor_consultation_model_response.g.dart';

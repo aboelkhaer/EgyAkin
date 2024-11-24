@@ -19,5 +19,6 @@ class AppLocalStrings {
   static const String currentDoctorRegistrationNumber =
       'currentDoctorRegistrationNumber';
   static const String isUpdateMessageHidden = 'isUpdateMessageHidden';
+  static const String isUpdateMessageHidden2 = 'isUpdateMessageHidden2';
   static const String userAppVersion = 'userAppVersion';
 }

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
-import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 class BuildFilterWidget extends StatefulWidget {
   final List<GetFiltersOptionsDataModelResponse>? filters;
