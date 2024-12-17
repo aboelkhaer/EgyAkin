@@ -21,7 +21,9 @@ class CustomTextFormField extends StatelessWidget {
   final bool enabled;
   final TextAlign textAlign;
   final bool obscureText;
+  final bool isCreatePostInCommunity;
   final bool isOTP;
+  final TextDirection? textDirectionForCreatePostInCommunity;
   final bool readOnly;
   final Function(String?)? onSave;
   final int? maxLength;
@@ -34,6 +36,8 @@ class CustomTextFormField extends StatelessWidget {
       this.unVisiblePasswordIconFunction,
       this.visiblePasswordIcon,
       this.readOnly = false,
+      this.textDirectionForCreatePostInCommunity,
+      this.isCreatePostInCommunity = false,
       this.obscureText = false,
       this.enabled = true,
       this.isOTP = false,
@@ -62,14 +66,16 @@ class CustomTextFormField extends StatelessWidget {
         controller: textFormFieldController,
         initialValue: initialValue,
         keyboardType: textInputType,
-        textDirection: initialValue == null
-            ? ui.TextDirection.ltr
-            : RegExp(r'[\u0600-\u06FF]').hasMatch(initialValue!)
-                ? ui.TextDirection.rtl
-                : ui.TextDirection.ltr,
+        textDirection: isCreatePostInCommunity
+            ? textDirectionForCreatePostInCommunity
+            : initialValue == null
+                ? ui.TextDirection.ltr
+                : RegExp(r'[\u0600-\u06FF]').hasMatch(initialValue!)
+                    ? ui.TextDirection.rtl
+                    : ui.TextDirection.ltr,
         inputFormatters: inputFormatters ??
             [
-              LengthLimitingTextInputFormatter(500),
+              LengthLimitingTextInputFormatter(maxLength ?? 500),
             ],
         enableSuggestions: enableSuggestions,
         onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -95,28 +101,39 @@ class CustomTextFormField extends StatelessWidget {
               ? const TextStyle(height: 0, fontSize: 0)
               : const TextStyle(fontSize: 9, height: 0.3),
           filled: true,
-          fillColor: AppColors.subBG,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppColors.primary),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide:
-                BorderSide(color: isOTP ? Colors.red : Colors.grey.shade300),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: const BorderSide(color: AppColors.primary),
-          ),
+          fillColor:
+              isCreatePostInCommunity ? Colors.transparent : AppColors.subBG,
+          enabledBorder: isCreatePostInCommunity
+              ? InputBorder.none
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+          focusedBorder: isCreatePostInCommunity
+              ? InputBorder.none
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.primary),
+                ),
+          disabledBorder: isCreatePostInCommunity
+              ? InputBorder.none
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+          errorBorder: isCreatePostInCommunity
+              ? InputBorder.none
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(
+                      color: isOTP ? Colors.red : Colors.grey.shade300),
+                ),
+          focusedErrorBorder: isCreatePostInCommunity
+              ? InputBorder.none
+              : OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: AppColors.primary),
+                ),
           suffixIcon: visiblePasswordIcon == true
               ? GestureDetector(
                   onTap: visiblePasswordIconFunction,

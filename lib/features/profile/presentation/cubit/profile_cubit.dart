@@ -66,7 +66,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       if (e.code == 'photo_access_denied') {
         emit(const ProfileState.error(
             'Photo access denied. Please allow photo access from settings.'));
-        openAppSettings();
+        // openAppSettings();
       } else {
         emit(ProfileState.error('An unexpected error occurred: ${e.message}'));
       }

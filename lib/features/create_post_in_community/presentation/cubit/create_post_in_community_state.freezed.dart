@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'community_state.dart';
+part of 'create_post_in_community_state.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,34 +15,28 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$CommunityState {
+mixin _$CreatePostInCommunityState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
-        loaded,
+    required TResult Function(int tabIndex) loading,
+    required TResult Function(int postLength) loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult? Function(int tabIndex)? loading,
+    TResult? Function(int postLength)? loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult Function(int tabIndex)? loading,
+    TResult Function(int postLength)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -75,23 +69,25 @@ mixin _$CommunityState {
 }
 
 /// @nodoc
-abstract class $CommunityStateCopyWith<$Res> {
-  factory $CommunityStateCopyWith(
-          CommunityState value, $Res Function(CommunityState) then) =
-      _$CommunityStateCopyWithImpl<$Res, CommunityState>;
+abstract class $CreatePostInCommunityStateCopyWith<$Res> {
+  factory $CreatePostInCommunityStateCopyWith(CreatePostInCommunityState value,
+          $Res Function(CreatePostInCommunityState) then) =
+      _$CreatePostInCommunityStateCopyWithImpl<$Res,
+          CreatePostInCommunityState>;
 }
 
 /// @nodoc
-class _$CommunityStateCopyWithImpl<$Res, $Val extends CommunityState>
-    implements $CommunityStateCopyWith<$Res> {
-  _$CommunityStateCopyWithImpl(this._value, this._then);
+class _$CreatePostInCommunityStateCopyWithImpl<$Res,
+        $Val extends CreatePostInCommunityState>
+    implements $CreatePostInCommunityStateCopyWith<$Res> {
+  _$CreatePostInCommunityStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -104,13 +100,13 @@ abstract class _$$InitialImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$InitialImplCopyWithImpl<$Res>
-    extends _$CommunityStateCopyWithImpl<$Res, _$InitialImpl>
+    extends _$CreatePostInCommunityStateCopyWithImpl<$Res, _$InitialImpl>
     implements _$$InitialImplCopyWith<$Res> {
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
 }
 
@@ -121,7 +117,7 @@ class _$InitialImpl implements _Initial {
 
   @override
   String toString() {
-    return 'CommunityState.initial()';
+    return 'CreatePostInCommunityState.initial()';
   }
 
   @override
@@ -137,10 +133,8 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
-        loaded,
+    required TResult Function(int tabIndex) loading,
+    required TResult Function(int postLength) loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -150,10 +144,8 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult? Function(int tabIndex)? loading,
+    TResult? Function(int postLength)? loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -163,10 +155,8 @@ class _$InitialImpl implements _Initial {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult Function(int tabIndex)? loading,
+    TResult Function(int postLength)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -214,7 +204,7 @@ class _$InitialImpl implements _Initial {
   }
 }
 
-abstract class _Initial implements CommunityState {
+abstract class _Initial implements CreatePostInCommunityState {
   const factory _Initial() = _$InitialImpl;
 }
 
@@ -223,78 +213,100 @@ abstract class _$$LoadingImplCopyWith<$Res> {
   factory _$$LoadingImplCopyWith(
           _$LoadingImpl value, $Res Function(_$LoadingImpl) then) =
       __$$LoadingImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int tabIndex});
 }
 
 /// @nodoc
 class __$$LoadingImplCopyWithImpl<$Res>
-    extends _$CommunityStateCopyWithImpl<$Res, _$LoadingImpl>
+    extends _$CreatePostInCommunityStateCopyWithImpl<$Res, _$LoadingImpl>
     implements _$$LoadingImplCopyWith<$Res> {
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tabIndex = null,
+  }) {
+    return _then(_$LoadingImpl(
+      null == tabIndex
+          ? _value.tabIndex
+          : tabIndex // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$LoadingImpl implements _Loading {
-  const _$LoadingImpl();
+  const _$LoadingImpl(this.tabIndex);
+
+  @override
+  final int tabIndex;
 
   @override
   String toString() {
-    return 'CommunityState.loading()';
+    return 'CreatePostInCommunityState.loading(tabIndex: $tabIndex)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$LoadingImpl &&
+            (identical(other.tabIndex, tabIndex) ||
+                other.tabIndex == tabIndex));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, tabIndex);
+
+  /// Create a copy of CreatePostInCommunityState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadingImplCopyWith<_$LoadingImpl> get copyWith =>
+      __$$LoadingImplCopyWithImpl<_$LoadingImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
-        loaded,
+    required TResult Function(int tabIndex) loading,
+    required TResult Function(int postLength) loaded,
     required TResult Function(String message) error,
   }) {
-    return loading();
+    return loading(tabIndex);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult? Function(int tabIndex)? loading,
+    TResult? Function(int postLength)? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loading?.call();
+    return loading?.call(tabIndex);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult Function(int tabIndex)? loading,
+    TResult Function(int postLength)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loading != null) {
-      return loading();
+      return loading(tabIndex);
     }
     return orElse();
   }
@@ -337,8 +349,16 @@ class _$LoadingImpl implements _Loading {
   }
 }
 
-abstract class _Loading implements CommunityState {
-  const factory _Loading() = _$LoadingImpl;
+abstract class _Loading implements CreatePostInCommunityState {
+  const factory _Loading(final int tabIndex) = _$LoadingImpl;
+
+  int get tabIndex;
+
+  /// Create a copy of CreatePostInCommunityState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadingImplCopyWith<_$LoadingImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -347,83 +367,44 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call(
-      {GetPostsCommunityModelResponse feedsResponse,
-      bool isDeletePostLoading,
-      bool isDeletePostLoaded,
-      String message});
-
-  $GetPostsCommunityModelResponseCopyWith<$Res> get feedsResponse;
+  $Res call({int postLength});
 }
 
 /// @nodoc
 class __$$LoadedImplCopyWithImpl<$Res>
-    extends _$CommunityStateCopyWithImpl<$Res, _$LoadedImpl>
+    extends _$CreatePostInCommunityStateCopyWithImpl<$Res, _$LoadedImpl>
     implements _$$LoadedImplCopyWith<$Res> {
   __$$LoadedImplCopyWithImpl(
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? feedsResponse = null,
-    Object? isDeletePostLoading = null,
-    Object? isDeletePostLoaded = null,
-    Object? message = null,
+    Object? postLength = null,
   }) {
     return _then(_$LoadedImpl(
-      null == feedsResponse
-          ? _value.feedsResponse
-          : feedsResponse // ignore: cast_nullable_to_non_nullable
-              as GetPostsCommunityModelResponse,
-      null == isDeletePostLoading
-          ? _value.isDeletePostLoading
-          : isDeletePostLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == isDeletePostLoaded
-          ? _value.isDeletePostLoaded
-          : isDeletePostLoaded // ignore: cast_nullable_to_non_nullable
-              as bool,
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
+      null == postLength
+          ? _value.postLength
+          : postLength // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
-  }
-
-  /// Create a copy of CommunityState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $GetPostsCommunityModelResponseCopyWith<$Res> get feedsResponse {
-    return $GetPostsCommunityModelResponseCopyWith<$Res>(_value.feedsResponse,
-        (value) {
-      return _then(_value.copyWith(feedsResponse: value));
-    });
   }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.feedsResponse, this.isDeletePostLoading,
-      this.isDeletePostLoaded, this.message);
+  const _$LoadedImpl(this.postLength);
 
   @override
-  final GetPostsCommunityModelResponse feedsResponse;
-  @override
-  final bool isDeletePostLoading;
-  @override
-  final bool isDeletePostLoaded;
-  @override
-  final String message;
+  final int postLength;
 
   @override
   String toString() {
-    return 'CommunityState.loaded(feedsResponse: $feedsResponse, isDeletePostLoading: $isDeletePostLoading, isDeletePostLoaded: $isDeletePostLoaded, message: $message)';
+    return 'CreatePostInCommunityState.loaded(postLength: $postLength)';
   }
 
   @override
@@ -431,20 +412,14 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            (identical(other.feedsResponse, feedsResponse) ||
-                other.feedsResponse == feedsResponse) &&
-            (identical(other.isDeletePostLoading, isDeletePostLoading) ||
-                other.isDeletePostLoading == isDeletePostLoading) &&
-            (identical(other.isDeletePostLoaded, isDeletePostLoaded) ||
-                other.isDeletePostLoaded == isDeletePostLoaded) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.postLength, postLength) ||
+                other.postLength == postLength));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, feedsResponse,
-      isDeletePostLoading, isDeletePostLoaded, message);
+  int get hashCode => Object.hash(runtimeType, postLength);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -456,44 +431,35 @@ class _$LoadedImpl implements _Loaded {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
-        loaded,
+    required TResult Function(int tabIndex) loading,
+    required TResult Function(int postLength) loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(
-        feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+    return loaded(postLength);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult? Function(int tabIndex)? loading,
+    TResult? Function(int postLength)? loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(
-        feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+    return loaded?.call(postLength);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult Function(int tabIndex)? loading,
+    TResult Function(int postLength)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(
-          feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+      return loaded(postLength);
     }
     return orElse();
   }
@@ -536,19 +502,12 @@ class _$LoadedImpl implements _Loaded {
   }
 }
 
-abstract class _Loaded implements CommunityState {
-  const factory _Loaded(
-      final GetPostsCommunityModelResponse feedsResponse,
-      final bool isDeletePostLoading,
-      final bool isDeletePostLoaded,
-      final String message) = _$LoadedImpl;
+abstract class _Loaded implements CreatePostInCommunityState {
+  const factory _Loaded(final int postLength) = _$LoadedImpl;
 
-  GetPostsCommunityModelResponse get feedsResponse;
-  bool get isDeletePostLoading;
-  bool get isDeletePostLoaded;
-  String get message;
+  int get postLength;
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -566,13 +525,13 @@ abstract class _$$ErrorImplCopyWith<$Res> {
 
 /// @nodoc
 class __$$ErrorImplCopyWithImpl<$Res>
-    extends _$CommunityStateCopyWithImpl<$Res, _$ErrorImpl>
+    extends _$CreatePostInCommunityStateCopyWithImpl<$Res, _$ErrorImpl>
     implements _$$ErrorImplCopyWith<$Res> {
   __$$ErrorImplCopyWithImpl(
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -598,7 +557,7 @@ class _$ErrorImpl implements _Error {
 
   @override
   String toString() {
-    return 'CommunityState.error(message: $message)';
+    return 'CreatePostInCommunityState.error(message: $message)';
   }
 
   @override
@@ -612,7 +571,7 @@ class _$ErrorImpl implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
@@ -624,10 +583,8 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
-        loaded,
+    required TResult Function(int tabIndex) loading,
+    required TResult Function(int postLength) loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -637,10 +594,8 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult? Function(int tabIndex)? loading,
+    TResult? Function(int postLength)? loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -650,10 +605,8 @@ class _$ErrorImpl implements _Error {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
-        loaded,
+    TResult Function(int tabIndex)? loading,
+    TResult Function(int postLength)? loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -701,12 +654,12 @@ class _$ErrorImpl implements _Error {
   }
 }
 
-abstract class _Error implements CommunityState {
+abstract class _Error implements CreatePostInCommunityState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
 
-  /// Create a copy of CommunityState
+  /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>

@@ -406,18 +406,21 @@ class _BuildQuestionState extends State<BuildQuestion> {
             ),
             isValidDate(cubit.questionModelList[widget.index].answer.toString())
                 ? const SizedBox.shrink()
-                : Row(
-                    children: [
-                      const Text('Old Answer:'),
-                      const SizedBox(width: 5),
-                      Text(
-                        cubit.questionModelList[widget.index].answer.toString(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                : cubit.questionModelList[widget.index].answer == null
+                    ? const SizedBox.shrink()
+                    : Row(
+                        children: [
+                          const Text('Old Answer:'),
+                          const SizedBox(width: 5),
+                          Text(
+                            cubit.questionModelList[widget.index].answer
+                                .toString(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
           ],
         );
 

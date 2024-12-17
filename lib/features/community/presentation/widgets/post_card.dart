@@ -1,12 +1,21 @@
 import 'package:egy_akin/app/shared/functions/convert_timestamp_in_community.dart';
+import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
+import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 
 import '../../../../exports.dart';
 
 class PostCard extends StatelessWidget {
   final PostCommunityModel feed;
-  const PostCard({super.key, required this.feed});
+  final HomeModelResponse homeDataModel;
+  final DoctorModel currentDoctorModel;
+  const PostCard({
+    super.key,
+    required this.feed,
+    required this.homeDataModel,
+    required this.currentDoctorModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +69,7 @@ class PostCard extends StatelessWidget {
                     Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           SizedBox(width: 12.w),
                           Expanded(
@@ -105,7 +114,108 @@ class PostCard extends StatelessWidget {
                               ],
                             ),
                           ),
-                          const Icon(Icons.more_vert),
+                          BlocConsumer<CommunityCubit, CommunityState>(
+                            listener: (context, state) {
+                              state.maybeWhen(
+                                orElse: () {},
+                                error: (message) {
+                                  showHintDialog(
+                                      context: context,
+                                      dialogType: DialogType.error,
+                                      message: message);
+                                },
+                                loaded: (feedsResponse, isDeletePostLoading,
+                                    isDeletePostLoaded, message) {
+                                  if (message != '') {
+                                    showHintDialog(
+                                        context: context,
+                                        dialogType: DialogType.information,
+                                        message: message);
+                                  }
+                                },
+                              );
+                            },
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox.shrink();
+                                },
+                                loaded: (feedsResponse, isDeletePostLoading,
+                                    isDeletePostLoaded, message) {
+                                  if (isDeletePostLoading &&
+                                      (feed.id.toString() ==
+                                          cubit.postIdDeleted)) {
+                                    return const Row(
+                                      children: [
+                                        SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                          ),
+                                        ),
+                                        SizedBox(width: 10),
+                                      ],
+                                    );
+                                  }
+
+                                  return PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    onSelected: (String value) {
+                                      switch (value) {
+                                        case 'Report':
+                                          // Handle report action
+                                          print('Report clicked');
+                                          break;
+                                        case 'Delete':
+                                          // Handle delete action
+                                          cubit.deletePost(feed.id.toString());
+                                          break;
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      final items = <PopupMenuEntry<String>>[
+                                        PopupMenuItem(
+                                          value: 'Report',
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.report,
+                                                  color: AppColors.description),
+                                              SizedBox(width: 8.w),
+                                              const Text('Report'),
+                                            ],
+                                          ),
+                                        ),
+                                      ];
+
+                                      if (feed.doctor!.id.toString() ==
+                                              currentDoctorModel.id
+                                                  .toString() ||
+                                          homeDataModel.role ==
+                                              AppStrings.roleAdmin) {
+                                        items.add(
+                                          PopupMenuItem(
+                                            value: 'Delete',
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.delete,
+                                                    color:
+                                                        AppColors.description),
+                                                SizedBox(width: 8.w),
+                                                const Text('Delete'),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      return items;
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         ],
                       ),
                     ),

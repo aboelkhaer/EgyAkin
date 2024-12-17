@@ -41,8 +41,7 @@
 		<true/>
 	</dict>
 	
-	<key>NSUserTrackingUsageDescription</key>
-<string>This identifier will be used to deliver personalized ads to you.</string>
+
 	<key>NSCameraUsageDescription</key>
     <string>EgyAkin would like to use your camera.</string>
 	<key>NSPhotoLibraryUsageDescription</key>

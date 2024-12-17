@@ -383,7 +383,7 @@ class HomeCubit extends Cubit<HomeState> {
           ),
         );
 
-        openAppSettings();
+        // openAppSettings();
       } else {
         emit(
           state.maybeMap(

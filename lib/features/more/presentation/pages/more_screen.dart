@@ -33,33 +33,40 @@ class _MoreScreenState extends State<MoreScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'General',
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey.shade500,
-                    fontSize: 13.sp),
-              ),
-              ListTile(
-                title: Text(
-                  'GFR Calculator',
-                  style: TextStyle(fontSize: 13.5.sp),
-                ),
-                leading: Icon(
-                  Icons.calculate,
-                  color: Colors.grey.shade600,
-                ),
-                trailing: Icon(
-                  Icons.arrow_forward_ios,
-                  size: 15.r,
-                ),
-                onTap: () {
-                  navigatorKey.currentState?.pushNamed(AppRoutes.gfrCalculator,
-                      arguments: AppRoutesArgs.gfrCalculatorRouteArgs(
-                          homeDataModel: widget.homeDataModel));
-                },
-              ),
-              SizedBox(height: 15.h),
+              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
+                  ? const SizedBox.shrink()
+                  : Text(
+                      'General',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey.shade500,
+                          fontSize: 13.sp),
+                    ),
+              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
+                  ? const SizedBox.shrink()
+                  : ListTile(
+                      title: Text(
+                        'GFR Calculator',
+                        style: TextStyle(fontSize: 13.5.sp),
+                      ),
+                      leading: Icon(
+                        Icons.calculate,
+                        color: Colors.grey.shade600,
+                      ),
+                      trailing: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 15.r,
+                      ),
+                      onTap: () {
+                        navigatorKey.currentState?.pushNamed(
+                            AppRoutes.gfrCalculator,
+                            arguments: AppRoutesArgs.gfrCalculatorRouteArgs(
+                                homeDataModel: widget.homeDataModel));
+                      },
+                    ),
+              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
+                  ? const SizedBox.shrink()
+                  : SizedBox(height: 15.h),
               Text(
                 'Privacy & Security',
                 style: TextStyle(
@@ -198,7 +205,12 @@ class _MoreScreenState extends State<MoreScreen> {
                     },
                     loaded: () {
                       return widget.homeDataModel.role == 'Admin'
-                          ? SelectableText(cubit.fcmToken)
+                          ? SelectableText(
+                              cubit.fcmToken,
+                              style: const TextStyle(
+                                color: Colors.transparent,
+                              ),
+                            )
                           : const SizedBox.shrink();
                     },
                   );

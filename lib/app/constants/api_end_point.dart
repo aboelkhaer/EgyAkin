@@ -71,4 +71,6 @@ class ApiEndPoint {
   static const saveOrUnsavePost = '$baseUrl/api/feed/posts';
   static const getAIConsultationHistory = '$baseUrl/api/AIconsultation-history';
   static const sendAIConsultationRequest = '$baseUrl/api/AIconsultation';
+  static const deletePostInFeeds = '$baseUrl/api/feed/posts';
+  static const createPostInCommunity = '$baseUrl/api/feed/posts';
 }

@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/delete_post_in_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
@@ -10,11 +11,13 @@ class CommunityCubit extends Cubit<CommunityState> {
     this._getAllFeedsUsecase,
     this._addLikeOnPostUsecase,
     this._saveOrUnsavePostUsecase,
+    this._deletePostInFeedsUsecase,
   ) : super(const CommunityState.initial());
   static CommunityCubit get(context) => BlocProvider.of(context);
   final GetAllFeedsUsecase _getAllFeedsUsecase;
   final AddLikeOnPostUsecase _addLikeOnPostUsecase;
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
+  final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
@@ -28,9 +31,71 @@ class CommunityCubit extends Cubit<CommunityState> {
         emit(CommunityState.error(l.message));
       },
       (postResponse) async {
-        emit(CommunityState.loaded(postResponse));
+        emit(CommunityState.loaded(
+          postResponse,
+          false,
+          false,
+          '',
+        ));
       },
     );
+  }
+
+  String postIdDeleted = '';
+  // make delete post function
+  deletePost(String postId) async {
+    postIdDeleted = postId;
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => CommunityState.loaded(
+          value.feedsResponse,
+          true,
+          false,
+          '',
+        ),
+      ),
+    );
+
+    final deleteResult = await _deletePostInFeedsUsecase.execute(
+      postId,
+    );
+    deleteResult.fold(
+      (failure) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunityState.loaded(
+              value.feedsResponse,
+              false,
+              false,
+              failure.message,
+            ),
+          ),
+        );
+      },
+      (success) {
+        // delete post from the list
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunityState.loaded(
+              value.feedsResponse.copyWith(
+                data: value.feedsResponse.data!.copyWith(
+                  data: value.feedsResponse.data!.data!
+                      .where((element) => element.id.toString() != postId)
+                      .toList(),
+                ),
+              ),
+              false,
+              true,
+              success.message.toString(),
+            ),
+          ),
+        );
+      },
+    );
+    postIdDeleted = '';
   }
 
   addLikeOrUnlikeOnPost(String postId) async {

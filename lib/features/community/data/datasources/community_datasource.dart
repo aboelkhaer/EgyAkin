@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
+import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
 
@@ -11,6 +12,9 @@ abstract class CommunityDatasource {
   Future<SaveOrUnsavePostModelResponse> saveOrUnsavePost({
     required String postId,
     required String saveOrUnsave,
+  });
+  Future<DeletePostModelResponse> deletePostInFeeds({
+    required String postId,
   });
 }
 
@@ -34,5 +38,11 @@ class CommunityDatasourceImpl implements CommunityDatasource {
   Future<SaveOrUnsavePostModelResponse> saveOrUnsavePost(
       {required String postId, required String saveOrUnsave}) async {
     return await _apiServices.saveOrUnsavePost(postId, saveOrUnsave);
+  }
+
+  @override
+  Future<DeletePostModelResponse> deletePostInFeeds(
+      {required String postId}) async {
+    return await _apiServices.deletePostInFeeds(postId);
   }
 }

@@ -8,6 +8,10 @@ abstract class CommunityState with _$CommunityState {
   const factory CommunityState.loading() = _Loading;
 
   const factory CommunityState.loaded(
-      GetPostsCommunityModelResponse feedsResponse) = _Loaded;
+    GetPostsCommunityModelResponse feedsResponse,
+    bool isDeletePostLoading,
+    bool isDeletePostLoaded,
+    String message,
+  ) = _Loaded;
   const factory CommunityState.error(String message) = _Error;
 }

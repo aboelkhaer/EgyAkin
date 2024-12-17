@@ -160,6 +160,27 @@ class OutcomeCubit extends Cubit<OutcomeState> {
             break;
           }
         }
+
+        if (question.type == AppStrings.selectType) {
+          if (question.answer['answers'] == null ||
+              question.answer['answers'] == '') {
+            emit(state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => OutcomeState.loaded(
+                value.questionList,
+                false,
+                'This question is required \n{${question.question}}',
+                snackbarErrorCounter += 1,
+                false,
+                submitterModel,
+              ),
+            ));
+
+            isValid = false;
+            break;
+          }
+        }
+
         if (question.type == AppStrings.questionTypeString) {
           if (question.question == 'National ID') {
             String nationalID = question.answer;

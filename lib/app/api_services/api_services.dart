@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
+import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
+import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -315,5 +317,18 @@ abstract class ApiServices {
   @POST('${ApiEndPoint.sendAIConsultationRequest}/{patientId}')
   Future<SendAIConsultationRequestModelResponse> sendAIConsultationRequest(
     @Path("patientId") String patientId,
+  );
+
+  @DELETE('${ApiEndPoint.deletePostInFeeds}/{postId}')
+  Future<DeletePostModelResponse> deletePostInFeeds(
+    @Path("postId") String postId,
+  );
+
+  @POST(ApiEndPoint.createPostInCommunity)
+  Future<CreatePostInCommunityModelResponse> createPostInCommunity(
+    @Part(name: 'content') String content,
+    @Part(name: "media_type") String mediaType,
+    @Part(name: "media_path") File mediaFilePath,
+    @Part(name: "visibility") String visibility,
   );
 }

@@ -55,57 +55,61 @@ class _HomeTabState extends State<HomeTab> {
         color: Colors.grey.shade100,
         child: Column(
           children: [
-            BlocConsumer<HomeCubit, HomeState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                  orElse: () {},
-                  loaded: (
-                    homeData,
-                    currentDoctorModel,
-                    dotsPosition,
-                    homeIndex,
-                    isUploadingSyndicateCard,
-                    isUploadedSyndicateCard,
-                    message,
-                    checkUpdateMessageCounter,
-                    isUserBlocked,
-                  ) {},
-                  error: (message) {
-                    customSnackBar(message: message, context: context);
-                    // todo fix crash here
-                    if (message == 'Unauthenticated.') {
-                      SchedulerBinding.instance.addPostFrameCallback((_) {
-                        context.read<HomeCubit>().signOutForUnUnauthenticated();
-                        navigatorKey.currentState
-                            ?.pushReplacementNamed(AppRoutes.signIn);
-                      });
-                    }
-                  },
-                );
-              },
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loaded: (
-                    homeData,
-                    currentDoctorModel,
-                    dotsPosition,
-                    homeIndex,
-                    isUploadingSyndicateCard,
-                    isUploadedSyndicateCard,
-                    message,
-                    checkUpdateMessageCounter,
-                    isUserBlocked,
-                  ) {
-                    return CheckIfVerified(
-                      verified: homeData.verified!,
-                      isSyndicateCardRequired:
-                          homeData.isSyndicateCardRequired!,
-                    );
-                  },
-                  orElse: () => const SizedBox.shrink(),
-                );
-              },
-            ),
+            widget.cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com'
+                ? const SizedBox.shrink()
+                : BlocConsumer<HomeCubit, HomeState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        orElse: () {},
+                        loaded: (
+                          homeData,
+                          currentDoctorModel,
+                          dotsPosition,
+                          homeIndex,
+                          isUploadingSyndicateCard,
+                          isUploadedSyndicateCard,
+                          message,
+                          checkUpdateMessageCounter,
+                          isUserBlocked,
+                        ) {},
+                        error: (message) {
+                          customSnackBar(message: message, context: context);
+                          // todo fix crash here
+                          if (message == 'Unauthenticated.') {
+                            SchedulerBinding.instance.addPostFrameCallback((_) {
+                              context
+                                  .read<HomeCubit>()
+                                  .signOutForUnUnauthenticated();
+                              navigatorKey.currentState
+                                  ?.pushReplacementNamed(AppRoutes.signIn);
+                            });
+                          }
+                        },
+                      );
+                    },
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        loaded: (
+                          homeData,
+                          currentDoctorModel,
+                          dotsPosition,
+                          homeIndex,
+                          isUploadingSyndicateCard,
+                          isUploadedSyndicateCard,
+                          message,
+                          checkUpdateMessageCounter,
+                          isUserBlocked,
+                        ) {
+                          return CheckIfVerified(
+                            verified: homeData.verified!,
+                            isSyndicateCardRequired:
+                                homeData.isSyndicateCardRequired!,
+                          );
+                        },
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                    },
+                  ),
             Expanded(
               child: SingleChildScrollView(
                 controller: widget.cubit.homeTabScrollController,
@@ -147,8 +151,14 @@ class _HomeTabState extends State<HomeTab> {
                           );
                         },
                       ),
-                      PostsSliderAndDots(cubit: widget.cubit),
-                      SizedBox(height: 10.h),
+                      widget.cubit.currentDoctorModel.email ==
+                              'aboelkhaer@yandex.com'
+                          ? const SizedBox.shrink()
+                          : PostsSliderAndDots(cubit: widget.cubit),
+                      widget.cubit.currentDoctorModel.email ==
+                              'aboelkhaer@yandex.com'
+                          ? const SizedBox.shrink()
+                          : SizedBox(height: 10.h),
                       // TextButton(
                       //     onPressed: () {
                       //       navigatorKey.currentState?.pushNamed(
@@ -163,7 +173,7 @@ class _HomeTabState extends State<HomeTab> {
                       //     child: const Text('hello')),
                       const DoctorsActivation(),
                       SizedBox(height: 10.h),
-                      const TopDoctors(),
+                      TopDoctors(cubit: widget.cubit),
                       const YourPatientSection(),
                       const AllPatientSection(),
                     ],

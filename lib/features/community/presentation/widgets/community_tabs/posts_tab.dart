@@ -22,7 +22,12 @@ class PostsTab extends StatelessWidget {
             orElse: () {
               return const SizedBox.shrink();
             },
-            loaded: (feedsResponse) {
+            loaded: (
+              feedsResponse,
+              isDeletePostLoading,
+              isDeletePostLoaded,
+              message,
+            ) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -38,7 +43,11 @@ class PostsTab extends StatelessWidget {
                             EdgeInsets.only(bottom: 60.h),
                         itemBuilder: (context, index) {
                           var feed = feedsResponse.data!.data![index];
-                          return PostCard(feed: feed);
+                          return PostCard(
+                            feed: feed,
+                            homeDataModel: homeDataModel,
+                            currentDoctorModel: currentDoctorModel,
+                          );
                         },
                       ),
                     ),

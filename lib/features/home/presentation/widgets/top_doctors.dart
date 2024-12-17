@@ -1,19 +1,22 @@
 import '../../../../exports.dart';
 
 class TopDoctors extends StatelessWidget {
-  const TopDoctors({super.key});
+  final HomeCubit cubit;
+  const TopDoctors({super.key, required this.cubit});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        HomePatientTitleHeader(
-            title: 'Top Doctors',
-            patientCount: '',
-            leftArrow: '',
-            isWithIcon: false,
-            rightArrow: '',
-            onTap: () {}),
+        cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com'
+            ? const SizedBox.shrink()
+            : HomePatientTitleHeader(
+                title: 'Top Doctors',
+                patientCount: '',
+                leftArrow: '',
+                isWithIcon: false,
+                rightArrow: '',
+                onTap: () {}),
         Container(
           // color: Colors.red,
           margin: EdgeInsets.only(bottom: 10.h),
@@ -38,6 +41,9 @@ class TopDoctors extends StatelessWidget {
                   checkUpdateMessageCounter,
                   isUserBlocked,
                 ) {
+                  if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                    return const SizedBox.shrink();
+                  }
                   return FadeIn(
                     duration: const Duration(seconds: 2),
                     child: ListView.builder(

@@ -33,6 +33,9 @@ class PostsSliderAndDots extends StatelessWidget {
                 checkUpdateMessageCounter,
                 isUserBlocked,
               ) {
+                if (cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                  return const SizedBox.shrink();
+                }
                 return FadeIn(
                   duration: const Duration(seconds: 2),
                   child: CarouselSlider.builder(
@@ -90,6 +93,9 @@ class PostsSliderAndDots extends StatelessWidget {
                 checkUpdateMessageCounter,
                 isUserBlocked,
               ) {
+                if (cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                  return const SizedBox.shrink();
+                }
                 return homeData.data!.posts!.isEmpty
                     ? const SizedBox.shrink()
                     : DotsIndicator(

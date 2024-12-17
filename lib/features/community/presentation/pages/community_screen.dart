@@ -109,7 +109,15 @@ class _CommunityScreenState extends State<CommunityScreen>
                           ),
                           const SizedBox(width: 10),
                           InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.createPostInCommunity,
+                                arguments: AppRoutesArgs
+                                    .createPostInCommunityRouteArgs(
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                ),
+                              );
+                            },
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                             child: Column(
@@ -135,7 +143,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                     ],
                   ),
                 ),
-                pinned: false, // This allows it to scroll
+                pinned: true, // This allows it to scroll
               ),
 
               // TabBar with margin
@@ -236,7 +244,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
+    return Container(
+      color: Colors.white, // Set the background color here
+      child: child,
+    );
   }
 
   @override

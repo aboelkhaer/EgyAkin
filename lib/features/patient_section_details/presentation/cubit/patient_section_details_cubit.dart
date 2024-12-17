@@ -176,6 +176,28 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               break;
             }
           }
+
+          if (question.type == AppStrings.selectType) {
+            if (question.answer['answers'] == null ||
+                question.answer['answers'] == '') {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                  value.questions,
+                  false,
+                  false,
+                  'This question is required \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                  0.0,
+                ),
+              ));
+
+              isValid = false;
+              break;
+            }
+          }
           if (question.question == 'Name') {
             if (formData.containsKey(question.id.toString())) {
               String name = formData[question.id.toString()];

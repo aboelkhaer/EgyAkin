@@ -3,6 +3,8 @@ import 'package:egy_akin/features/consultation/presentation/pages/consultation_s
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
+import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
+import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_post_in_community_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
@@ -42,6 +44,7 @@ class AppRoutes {
   static const String community = '/community';
   static const String showSingleFeed = '/showSingleFeed';
   static const String consultationFromAi = '/consultationFromAi';
+  static const String createPostInCommunity = '/createPostInCommunity';
 }
 
 class RouteGenerator {
@@ -714,6 +717,26 @@ class RouteGenerator {
                 create: (context) => di.sl<ConsultationFromAICubit>(),
                 child: ConsultationFromAiScreen(
                   patientId: args['patientId'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.createPostInCommunity:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel')) {
+            return MaterialPageRoute(
+              builder: (_) => BlocProvider<CreatePostInCommunityCubit>(
+                create: (context) => di.sl<CreatePostInCommunityCubit>(),
+                child: CreatePostInCommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                 ),
               ),
             );

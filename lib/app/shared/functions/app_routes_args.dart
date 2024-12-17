@@ -305,4 +305,12 @@ class AppRoutesArgs {
       'patientId': patientId,
     };
   }
+
+  static Map<String, dynamic> createPostInCommunityRouteArgs({
+    required DoctorModel currentDoctorModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+    };
+  }
 }

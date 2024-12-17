@@ -2,31 +2,17 @@ import '../../../exports.dart';
 
 enum DialogType { error, information, success }
 
+bool _isDialogVisible = false;
+
 Future<void> showHintDialog({
   required BuildContext context,
   required DialogType dialogType,
   required String message,
-}) {
-  // Map dialog type to corresponding icon and color
-  IconData icon;
-  Color iconColor;
+}) async {
+  if (_isDialogVisible) return;
 
-  switch (dialogType) {
-    case DialogType.error:
-      icon = Icons.error;
-      iconColor = Colors.red.shade700;
-      break;
-    case DialogType.information:
-      icon = Icons.info;
-      iconColor = Colors.blue;
-      break;
-    case DialogType.success:
-      icon = Icons.check_circle;
-      iconColor = Colors.green;
-      break;
-  }
-
-  return showDialog(
+  _isDialogVisible = true; // Mark as visible
+  await showDialog(
     context: context,
     barrierDismissible: true,
     builder: (context) {
@@ -38,9 +24,9 @@ Future<void> showHintDialog({
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                icon,
+                _getIcon(dialogType),
                 size: 48,
-                color: iconColor,
+                color: _getIconColor(dialogType),
               ),
               const SizedBox(height: 16),
               Text(
@@ -54,7 +40,7 @@ Future<void> showHintDialog({
               ),
               const SizedBox(height: 24),
               SizedBox(
-                width: double.infinity, // Takes all available width
+                width: 100.w, // Takes all available width
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
@@ -80,4 +66,27 @@ Future<void> showHintDialog({
       );
     },
   );
+  _isDialogVisible = false; // Reset visibility
+}
+
+IconData _getIcon(DialogType dialogType) {
+  switch (dialogType) {
+    case DialogType.error:
+      return Icons.error;
+    case DialogType.information:
+      return Icons.info;
+    case DialogType.success:
+      return Icons.check_circle;
+  }
+}
+
+Color _getIconColor(DialogType dialogType) {
+  switch (dialogType) {
+    case DialogType.error:
+      return Colors.red.shade700;
+    case DialogType.information:
+      return AppColors.primary;
+    case DialogType.success:
+      return Colors.green;
+  }
 }

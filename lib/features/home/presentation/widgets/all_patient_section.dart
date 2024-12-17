@@ -30,6 +30,9 @@ class AllPatientSection extends StatelessWidget {
                 checkUpdateMessageCounter,
                 isUserBlocked,
               ) {
+                if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                  return const SizedBox.shrink();
+                }
                 return HomePatientTitleHeader(
                   title: AppStrings.allPatients,
                   patientCount: homeData.allPatientCount.toString(),
@@ -69,6 +72,9 @@ class AllPatientSection extends StatelessWidget {
               checkUpdateMessageCounter,
               isUserBlocked,
             ) {
+              if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                return const SizedBox.shrink();
+              }
               return FadeIn(
                 child: SizedBox(
                   height: homeData.data!.allPatients!.isEmpty ? 100.h : 160.h,

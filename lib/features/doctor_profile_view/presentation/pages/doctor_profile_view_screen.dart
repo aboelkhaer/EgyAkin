@@ -267,20 +267,17 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: DropdownButtonFormField<dynamic>(
-                                      // hint: Text(
-                                      //     currentDoctorModel.highestdegree ??
-                                      //         'Choose'),
                                       value: currentDoctorModel.highestdegree ??
                                           'Choose',
-
-                                      items: highestDegreeList.map((value) {
+                                      items: ['Choose', ...highestDegreeList]
+                                          .map((value) {
                                         return DropdownMenuItem<String>(
                                           value: value,
                                           child: Text(value.toString()),
                                         );
                                       }).toList(),
                                       onChanged: (val) =>
-                                          cubit.highestDegree = val ?? '',
+                                          cubit.highestDegree = val ?? 'Choose',
                                       validator: (value) =>
                                           AppValidators.fieldsIsEmptyValidation(
                                               value ?? ''),

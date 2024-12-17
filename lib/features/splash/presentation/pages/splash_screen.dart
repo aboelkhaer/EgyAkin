@@ -28,6 +28,7 @@ class _SplashScreenState extends State<SplashScreen>
       begin: 0.0,
       end: 1.0,
     ).animate(animationController);
+    _checkConnection();
 
     // Perform check for updates
     checkForUpdates();
@@ -120,31 +121,36 @@ class _SplashScreenState extends State<SplashScreen>
     if (!mounted) return;
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: false, // Prevent dismissing the dialog
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Mandatory Update'),
-          content: const Text(
-              'A new version of the app is available. You must update to continue using it.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                if (Theme.of(context).platform == TargetPlatform.android) {
-                  await InAppUpdate.completeFlexibleUpdate();
-                } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-                  const url =
-                      'https://apps.apple.com/app/id1234567890'; // Replace with your App Store URL
-                  if (await canLaunch(url)) {
-                    await launch(url);
-                  } else {
-                    _showErrorDialog(
-                        'Could not launch the App Store. Please try again later.');
+        return PopScope(
+          onPopInvokedWithResult: (bool success, dynamic result) {
+            // Prevent the dialog from being dismissed
+          },
+          child: AlertDialog(
+            title: const Text('Mandatory Update'),
+            content: const Text(
+                'A new version of the app is available. You must update to continue using it.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  if (Theme.of(context).platform == TargetPlatform.android) {
+                    await InAppUpdate.completeFlexibleUpdate();
+                  } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+                    const url =
+                        'https://apps.apple.com/eg/app/egyakin/id6738606085'; // Replace with your App Store URL
+                    if (await canLaunch(url)) {
+                      await launch(url);
+                    } else {
+                      _showErrorDialog(
+                          'Could not launch the App Store. Please try again later.');
+                    }
                   }
-                }
-              },
-              child: const Text('Update Now'),
-            ),
-          ],
+                },
+                child: const Text('Update Now'),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -202,6 +208,12 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  bool _isConnected = true;
+  Future<void> _checkConnection() async {
+    _isConnected = await InternetConnectionChecker().hasConnection;
+    setState(() {}); // Update the UI based on connection status
+  }
+
   @override
   Widget build(BuildContext context) {
     animationController.forward();
@@ -224,6 +236,19 @@ class _SplashScreenState extends State<SplashScreen>
                   height: 150.h,
                   fit: BoxFit.contain,
                 ),
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (!_isConnected)
+                    const Text(
+                      'Check your connection and try again later.',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                      textAlign: TextAlign.center,
+                    )
+                  else
+                    const SizedBox.shrink(),
+                ],
               ),
               SizedBox(height: 60.h),
             ],

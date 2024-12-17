@@ -4,6 +4,7 @@ import 'package:egy_akin/features/community/data/datasources/community_datasourc
 import 'package:egy_akin/features/community/data/repositories/community_repo_impl.dart';
 import 'package:egy_akin/features/community/domain/repositories/community_repo.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/delete_post_in_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/datasources/consultation_from_ai_datasource.dart';
@@ -12,6 +13,7 @@ import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consu
 import 'package:egy_akin/features/consultation_from_ai/domain/usecases/get_ai_consultation_history_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/domain/usecases/send_ai_consultation_request_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
+import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
@@ -69,9 +71,10 @@ Future<void> diInit() async {
   sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
-  sl.registerFactory(() => CommunityCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => CommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ShowSingleFeedCubit());
   sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
+  sl.registerFactory(() => CreatePostInCommunityCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -392,5 +395,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<SendAiConsultationRequestUsecase>()) {
     sl.registerFactory<SendAiConsultationRequestUsecase>(
         () => SendAiConsultationRequestUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeletePostInFeedsUsecase>()) {
+    sl.registerFactory<DeletePostInFeedsUsecase>(
+        () => DeletePostInFeedsUsecase(sl()));
   }
 }
