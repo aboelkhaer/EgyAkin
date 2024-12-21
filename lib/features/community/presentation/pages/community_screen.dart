@@ -115,6 +115,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                 arguments: AppRoutesArgs
                                     .createPostInCommunityRouteArgs(
                                   currentDoctorModel: widget.currentDoctorModel,
+                                  homeDataModel: widget.homeDataModel,
                                 ),
                               );
                             },
@@ -215,11 +216,11 @@ class _CommunityScreenState extends State<CommunityScreen>
         floatingActionButton: _isFabVisible
             ? FloatingActionButton(
                 onPressed: () {
-                  // Action for creating a post
+                  animateToTopOfScreen(_scrollController);
                 },
-                backgroundColor: AppColors.primary,
+                backgroundColor: AppColors.primary.withOpacity(0.2),
                 child: const Icon(
-                  Icons.add,
+                  Icons.arrow_upward,
                   color: Colors.white,
                   size: 30,
                 ),

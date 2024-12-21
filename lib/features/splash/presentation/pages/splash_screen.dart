@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import '../../../../exports.dart';
 
@@ -71,50 +72,83 @@ class _SplashScreenState extends State<SplashScreen>
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
         _isUpToDate = false; // Update available
         if (updateInfo.immediateUpdateAllowed) {
+          // Force an immediate update
           await InAppUpdate.performImmediateUpdate();
-        } else if (updateInfo.flexibleUpdateAllowed) {
-          await InAppUpdate.startFlexibleUpdate();
-          _showForceUpdateDialog(); // Show the forced update dialog
+        } else {
+          // Immediate update not allowed, show custom force update dialog
+          _showForceUpdateDialog();
         }
       }
     } catch (e) {
       if (mounted) {
         debugPrint('Failed to check for updates on Android: $e');
-        // _showErrorDialog(
-        //     'Failed to check for updates on Android. Please try again later.');
       }
     }
   }
 
   Future<void> _checkForiOSUpdate() async {
+    debugPrint('Starting iOS update check...');
+
     final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = packageInfo.version;
+    final currentVersion = Version.parse(packageInfo.version);
     final bundleId = packageInfo.packageName;
 
+    debugPrint('Current version: $currentVersion');
+    debugPrint('Bundle ID: $bundleId');
+
     if (!mounted) return;
+
     setState(() {
-      currentUserVersion = currentVersion;
+      currentUserVersion = packageInfo.version;
     });
 
     try {
-      final response = await http
-          .get(Uri.parse('https://itunes.apple.com/lookup?bundleId=$bundleId'));
+      final response = await http.get(
+        Uri.parse(ApiEndPoint.baseUrl == 'https://api.egyakin.com'
+            ? 'https://itunes.apple.com/lookup?bundleId=$bundleId'
+            : ''),
+      );
+
+      debugPrint('Response status: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
+
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        if (jsonData['resultCount'] > 0 && jsonData['results'].isNotEmpty) {
-          final appStoreVersion = jsonData['results'][0]['version'];
+        debugPrint('Decoded JSON: $jsonData');
 
-          if (appStoreVersion != currentVersion) {
-            _isUpToDate = false;
+        if (jsonData['resultCount'] > 0 && jsonData['results'].isNotEmpty) {
+          final appStoreVersion =
+              Version.parse(jsonData['results'][0]['version']);
+          debugPrint('App Store version: $appStoreVersion');
+
+          if (appStoreVersion > currentVersion) {
+            debugPrint('App is outdated. Showing update dialog...');
+            if (mounted) {
+              setState(() {
+                _isUpToDate = false;
+              });
+            }
             _showForceUpdateDialog();
+          } else {
+            debugPrint('App is up-to-date.');
+            if (mounted) {
+              setState(() {
+                _isUpToDate = true;
+              });
+            }
           }
+        } else {
+          debugPrint('No results found in the App Store.');
         }
+      } else {
+        debugPrint(
+            'Failed to fetch App Store data. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      if (mounted) {
-        debugPrint('Error occurred while checking for iOS update: $e');
-      }
+      debugPrint('Error occurred while checking for iOS update: $e');
     }
+
+    debugPrint('Finished iOS update check.');
   }
 
   void _showForceUpdateDialog() {

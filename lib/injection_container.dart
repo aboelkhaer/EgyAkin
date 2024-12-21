@@ -13,6 +13,11 @@ import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consu
 import 'package:egy_akin/features/consultation_from_ai/domain/usecases/get_ai_consultation_history_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/domain/usecases/send_ai_consultation_request_usecase.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
+import 'package:egy_akin/features/create_post_in_community/data/datasources/create_post_in_community_datasource.dart';
+import 'package:egy_akin/features/create_post_in_community/data/repositories/create_post_in_community_repo_impl.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/repositories/create_post_in_community_repo.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/creat_post_with_text_in_community_usecase.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/create_post_with_image_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
 import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
@@ -74,7 +79,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => CommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ShowSingleFeedCubit());
   sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
-  sl.registerFactory(() => CreatePostInCommunityCubit());
+  sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -127,6 +132,8 @@ Future<void> diInit() async {
       () => CommunityDatasourceImpl(sl()));
   sl.registerLazySingleton<ConsultationFromAIDatasource>(
       () => ConsultationFromAIDatasourceImpl(sl()));
+  sl.registerLazySingleton<CreatePostInCommunityDatasource>(
+      () => CreatePostInCommunityDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -181,6 +188,8 @@ Future<void> diInit() async {
       () => CommunityRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ConsultationFromAIRepository>(
       () => ConsultationFromAIRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<CreatePostInCommunityRepository>(
+      () => CreatePostInCommunityRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -399,5 +408,13 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<DeletePostInFeedsUsecase>()) {
     sl.registerFactory<DeletePostInFeedsUsecase>(
         () => DeletePostInFeedsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreatePostWithImageInCommunityUsecase>()) {
+    sl.registerFactory<CreatePostWithImageInCommunityUsecase>(
+        () => CreatePostWithImageInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreatePostWithTextInCommunityUsecase>()) {
+    sl.registerFactory<CreatePostWithTextInCommunityUsecase>(
+        () => CreatePostWithTextInCommunityUsecase(sl()));
   }
 }

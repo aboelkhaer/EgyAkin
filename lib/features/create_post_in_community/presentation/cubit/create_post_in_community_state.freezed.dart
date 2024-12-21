@@ -20,7 +20,14 @@ mixin _$CreatePostInCommunityState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(int tabIndex) loading,
-    required TResult Function(int postLength) loaded,
+    required TResult Function(
+            int postLength,
+            int changeCounter,
+            bool isImagePick,
+            bool isUploadPostLoading,
+            bool isUploadPostLoaded,
+            String message)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +35,9 @@ mixin _$CreatePostInCommunityState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(int tabIndex)? loading,
-    TResult? Function(int postLength)? loaded,
+    TResult? Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +45,9 @@ mixin _$CreatePostInCommunityState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(int tabIndex)? loading,
-    TResult Function(int postLength)? loaded,
+    TResult Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -134,7 +145,14 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(int tabIndex) loading,
-    required TResult Function(int postLength) loaded,
+    required TResult Function(
+            int postLength,
+            int changeCounter,
+            bool isImagePick,
+            bool isUploadPostLoading,
+            bool isUploadPostLoaded,
+            String message)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -145,7 +163,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(int tabIndex)? loading,
-    TResult? Function(int postLength)? loaded,
+    TResult? Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -156,7 +176,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(int tabIndex)? loading,
-    TResult Function(int postLength)? loaded,
+    TResult Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -279,7 +301,14 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(int tabIndex) loading,
-    required TResult Function(int postLength) loaded,
+    required TResult Function(
+            int postLength,
+            int changeCounter,
+            bool isImagePick,
+            bool isUploadPostLoading,
+            bool isUploadPostLoaded,
+            String message)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading(tabIndex);
@@ -290,7 +319,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(int tabIndex)? loading,
-    TResult? Function(int postLength)? loaded,
+    TResult? Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call(tabIndex);
@@ -301,7 +332,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(int tabIndex)? loading,
-    TResult Function(int postLength)? loaded,
+    TResult Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -367,7 +400,13 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int postLength});
+  $Res call(
+      {int postLength,
+      int changeCounter,
+      bool isImagePick,
+      bool isUploadPostLoading,
+      bool isUploadPostLoaded,
+      String message});
 }
 
 /// @nodoc
@@ -384,12 +423,37 @@ class __$$LoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? postLength = null,
+    Object? changeCounter = null,
+    Object? isImagePick = null,
+    Object? isUploadPostLoading = null,
+    Object? isUploadPostLoaded = null,
+    Object? message = null,
   }) {
     return _then(_$LoadedImpl(
       null == postLength
           ? _value.postLength
           : postLength // ignore: cast_nullable_to_non_nullable
               as int,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == isImagePick
+          ? _value.isImagePick
+          : isImagePick // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isUploadPostLoading
+          ? _value.isUploadPostLoading
+          : isUploadPostLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isUploadPostLoaded
+          ? _value.isUploadPostLoaded
+          : isUploadPostLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -397,14 +461,25 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.postLength);
+  const _$LoadedImpl(this.postLength, this.changeCounter, this.isImagePick,
+      this.isUploadPostLoading, this.isUploadPostLoaded, this.message);
 
   @override
   final int postLength;
+  @override
+  final int changeCounter;
+  @override
+  final bool isImagePick;
+  @override
+  final bool isUploadPostLoading;
+  @override
+  final bool isUploadPostLoaded;
+  @override
+  final String message;
 
   @override
   String toString() {
-    return 'CreatePostInCommunityState.loaded(postLength: $postLength)';
+    return 'CreatePostInCommunityState.loaded(postLength: $postLength, changeCounter: $changeCounter, isImagePick: $isImagePick, isUploadPostLoading: $isUploadPostLoading, isUploadPostLoaded: $isUploadPostLoaded, message: $message)';
   }
 
   @override
@@ -413,11 +488,21 @@ class _$LoadedImpl implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             (identical(other.postLength, postLength) ||
-                other.postLength == postLength));
+                other.postLength == postLength) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter) &&
+            (identical(other.isImagePick, isImagePick) ||
+                other.isImagePick == isImagePick) &&
+            (identical(other.isUploadPostLoading, isUploadPostLoading) ||
+                other.isUploadPostLoading == isUploadPostLoading) &&
+            (identical(other.isUploadPostLoaded, isUploadPostLoaded) ||
+                other.isUploadPostLoaded == isUploadPostLoaded) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, postLength);
+  int get hashCode => Object.hash(runtimeType, postLength, changeCounter,
+      isImagePick, isUploadPostLoading, isUploadPostLoaded, message);
 
   /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -432,10 +517,18 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(int tabIndex) loading,
-    required TResult Function(int postLength) loaded,
+    required TResult Function(
+            int postLength,
+            int changeCounter,
+            bool isImagePick,
+            bool isUploadPostLoading,
+            bool isUploadPostLoaded,
+            String message)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(postLength);
+    return loaded(postLength, changeCounter, isImagePick, isUploadPostLoading,
+        isUploadPostLoaded, message);
   }
 
   @override
@@ -443,10 +536,13 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(int tabIndex)? loading,
-    TResult? Function(int postLength)? loaded,
+    TResult? Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(postLength);
+    return loaded?.call(postLength, changeCounter, isImagePick,
+        isUploadPostLoading, isUploadPostLoaded, message);
   }
 
   @override
@@ -454,12 +550,15 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(int tabIndex)? loading,
-    TResult Function(int postLength)? loaded,
+    TResult Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(postLength);
+      return loaded(postLength, changeCounter, isImagePick, isUploadPostLoading,
+          isUploadPostLoaded, message);
     }
     return orElse();
   }
@@ -503,9 +602,20 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements CreatePostInCommunityState {
-  const factory _Loaded(final int postLength) = _$LoadedImpl;
+  const factory _Loaded(
+      final int postLength,
+      final int changeCounter,
+      final bool isImagePick,
+      final bool isUploadPostLoading,
+      final bool isUploadPostLoaded,
+      final String message) = _$LoadedImpl;
 
   int get postLength;
+  int get changeCounter;
+  bool get isImagePick;
+  bool get isUploadPostLoading;
+  bool get isUploadPostLoaded;
+  String get message;
 
   /// Create a copy of CreatePostInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -584,7 +694,14 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function(int tabIndex) loading,
-    required TResult Function(int postLength) loaded,
+    required TResult Function(
+            int postLength,
+            int changeCounter,
+            bool isImagePick,
+            bool isUploadPostLoading,
+            bool isUploadPostLoaded,
+            String message)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -595,7 +712,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function(int tabIndex)? loading,
-    TResult? Function(int postLength)? loaded,
+    TResult? Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -606,7 +725,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function(int tabIndex)? loading,
-    TResult Function(int postLength)? loaded,
+    TResult Function(int postLength, int changeCounter, bool isImagePick,
+            bool isUploadPostLoading, bool isUploadPostLoaded, String message)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

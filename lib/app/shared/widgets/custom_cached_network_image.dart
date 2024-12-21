@@ -3,13 +3,13 @@ import '../../../exports.dart';
 class CustomCachedNetworkImage extends StatelessWidget {
   final String imageUrl;
   final double width;
-  final double height;
+  final double? height;
   final BoxFit fit;
   const CustomCachedNetworkImage({
     super.key,
     required this.imageUrl,
     required this.width,
-    required this.height,
+    this.height,
     this.fit = BoxFit.cover,
   });
 

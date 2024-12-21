@@ -21,7 +21,7 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  int currentPage = 1;
+  int currentPage = 3;
 
   getAllFeeds() async {
     emit(const CommunityState.loading());

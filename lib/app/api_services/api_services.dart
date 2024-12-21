@@ -325,10 +325,19 @@ abstract class ApiServices {
   );
 
   @POST(ApiEndPoint.createPostInCommunity)
-  Future<CreatePostInCommunityModelResponse> createPostInCommunity(
-    @Part(name: 'content') String content,
+  @MultiPart()
+  Future<CreatePostInCommunityModelResponse> createPostWithImageInCommunity(
+    @Part(name: 'content') String? postContent,
     @Part(name: "media_type") String mediaType,
-    @Part(name: "media_path") File mediaFilePath,
     @Part(name: "visibility") String visibility,
+    @Part(name: "group_id") String? groupId,
+    @Part(name: "media_path") File image,
+  );
+  @POST(ApiEndPoint.createPostInCommunity)
+  Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
+    @Field('content') String postContent,
+    @Field("media_type") String mediaType,
+    @Field("visibility") String visibility,
+    @Field("group_id") String? groupId,
   );
 }

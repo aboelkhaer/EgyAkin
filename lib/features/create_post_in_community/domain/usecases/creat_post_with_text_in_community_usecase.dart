@@ -1,0 +1,41 @@
+import 'dart:io';
+
+import 'package:dartz/dartz.dart';
+
+import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/repositories/create_post_in_community_repo.dart';
+import '../../../../exports.dart';
+
+class CreatePostWithTextInCommunityUsecase
+    implements
+        BaseUseCase<CreatePostWithTextInCommunityUsecaseInput,
+            CreatePostInCommunityModelResponse> {
+  final CreatePostInCommunityRepository repository;
+
+  CreatePostWithTextInCommunityUsecase(this.repository);
+
+  @override
+  Future<Either<Failure, CreatePostInCommunityModelResponse>> execute(
+    CreatePostWithTextInCommunityUsecaseInput input,
+  ) async {
+    return await repository.createPostWithTextInCommunity(
+      postContent: input.postContent,
+      mediaType: input.mediaType,
+      visibility: input.visibility,
+      groupId: input.groupId,
+    );
+  }
+}
+
+class CreatePostWithTextInCommunityUsecaseInput {
+  final String postContent;
+  final String mediaType;
+  final String visibility;
+  final String? groupId;
+
+  CreatePostWithTextInCommunityUsecaseInput(
+      {required this.postContent,
+      required this.mediaType,
+      required this.visibility,
+      required this.groupId});
+}

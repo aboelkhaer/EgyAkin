@@ -12,7 +12,8 @@ class HashtagText extends StatefulWidget {
     required this.content,
     this.trimLines = 2, // The number of lines before collapsing
     this.trimCollapsedText = '... See more',
-    this.trimExpandedText = ' Show less',
+    this.trimExpandedText = '',
+    // this.trimExpandedText = ' Show less',
   });
 
   @override
@@ -43,57 +44,36 @@ class _HashtagTextState extends State<HashtagText> {
         );
         tp.layout(maxWidth: constraints.maxWidth);
 
-        // If text overflows, show expandable text
-        if (tp.didExceedMaxLines && !isExpanded) {
-          return Column(
+        // The entire text is wrapped in GestureDetector
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              isExpanded = !isExpanded;
+            });
+          },
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
-                maxLines: widget.trimLines,
-                overflow: TextOverflow.ellipsis,
+                maxLines: isExpanded ? null : widget.trimLines,
+                overflow:
+                    isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
                 text: buildHashtagText(widget.content),
                 textDirection: _isArabic(widget.content)
                     ? TextDirection.rtl
                     : TextDirection.ltr, // Text direction based on content
               ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isExpanded = true;
-                  });
-                },
-                child: Text(
-                  widget.trimCollapsedText,
+              if (tp.didExceedMaxLines ||
+                  isExpanded) // Show toggle text only if necessary
+                Text(
+                  isExpanded
+                      ? widget.trimExpandedText
+                      : widget.trimCollapsedText,
                   style: const TextStyle(color: Colors.blue),
                 ),
-              ),
             ],
-          );
-        } else {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                text: buildHashtagText(widget.content),
-                textDirection: _isArabic(widget.content)
-                    ? TextDirection.rtl
-                    : TextDirection.ltr, // Text direction based on content
-              ),
-              // Optional: Uncomment if you want a "Show less" option
-              // GestureDetector(
-              //   onTap: () {
-              //     setState(() {
-              //       isExpanded = false;
-              //     });
-              //   },
-              //   child: Text(
-              //     widget.trimExpandedText,
-              //     style: const TextStyle(color: Colors.blue),
-              //   ),
-              // ),
-            ],
-          );
-        }
+          ),
+        );
       },
     );
   }

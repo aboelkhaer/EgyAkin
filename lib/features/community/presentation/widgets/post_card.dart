@@ -34,192 +34,210 @@ class PostCard extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            spreadRadius: 2,
-                            blurRadius: 9,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
+                InkWell(
+                  onTap: () {
+                    navigatorKey.currentState?.pushNamed(
+                      AppRoutes.showSingleFeed,
+                      arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                        homeDataModel: homeDataModel,
+                        currentDoctorModel: currentDoctorModel,
+                        feed: feed,
                       ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(80.r),
-                        child: GestureDetector(
-                          onTap: () {
-                            // Handle user profile navigation here
-                          },
-                          child: CircleAvatar(
-                            radius: 20.r,
-                            backgroundColor: AppColors.primary.withOpacity(0.8),
-                            child: CustomCachedNetworkImage(
-                              imageUrl: feed.doctor!.image.toString(),
-                              height: 100.h,
-                              width: 100.w,
+                    );
+                  },
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  child: Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              // Handle user profile navigation here
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: CustomCachedNetworkImage(
+                                imageUrl: feed.doctor!.image.toString(),
+                                height: 100.h,
+                                width: 100.w,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Flexible(
-                                      child: Text(
-                                        doctorName(
-                                          firstName: feed.doctor!.firstName,
-                                          lastName: feed.doctor!.lastName,
-                                          role: '',
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          doctorName(
+                                            firstName: feed.doctor!.firstName,
+                                            lastName: feed.doctor!.lastName,
+                                            role: '',
+                                          ),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.title,
+                                            fontSize: 12.sp,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.title,
-                                          fontSize: 12.sp,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                    ),
-                                    'Verified' == 'Verified'
-                                        ? const VerificationIcon(
-                                            isPatientCard: false,
-                                          )
-                                        : const SizedBox.shrink(),
-                                  ],
-                                ),
-                                Text(
-                                  formatDateTimeForCommunity(
-                                      feed.createdAt.toString()),
-                                  style: TextStyle(
-                                    color: AppColors.description,
-                                    fontSize: 11.sp,
+                                      'Verified' == 'Verified'
+                                          ? const VerificationIcon(
+                                              isPatientCard: false,
+                                            )
+                                          : const SizedBox.shrink(),
+                                    ],
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
+                                  Text(
+                                    formatDateTimeForCommunity(
+                                        feed.createdAt.toString()),
+                                    style: TextStyle(
+                                      color: AppColors.description,
+                                      fontSize: 11.sp,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          BlocConsumer<CommunityCubit, CommunityState>(
-                            listener: (context, state) {
-                              state.maybeWhen(
-                                orElse: () {},
-                                error: (message) {
-                                  showHintDialog(
-                                      context: context,
-                                      dialogType: DialogType.error,
-                                      message: message);
-                                },
-                                loaded: (feedsResponse, isDeletePostLoading,
-                                    isDeletePostLoaded, message) {
-                                  if (message != '') {
+                            BlocConsumer<CommunityCubit, CommunityState>(
+                              listener: (context, state) {
+                                state.maybeWhen(
+                                  orElse: () {},
+                                  error: (message) {
                                     showHintDialog(
                                         context: context,
-                                        dialogType: DialogType.information,
+                                        dialogType: DialogType.error,
                                         message: message);
-                                  }
-                                },
-                              );
-                            },
-                            builder: (context, state) {
-                              return state.maybeWhen(
-                                orElse: () {
-                                  return const SizedBox.shrink();
-                                },
-                                loaded: (feedsResponse, isDeletePostLoading,
-                                    isDeletePostLoaded, message) {
-                                  if (isDeletePostLoading &&
-                                      (feed.id.toString() ==
-                                          cubit.postIdDeleted)) {
-                                    return const Row(
-                                      children: [
-                                        SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 3,
+                                  },
+                                  loaded: (feedsResponse, isDeletePostLoading,
+                                      isDeletePostLoaded, message) {
+                                    if (message != '') {
+                                      showHintDialog(
+                                          context: context,
+                                          dialogType: DialogType.information,
+                                          message: message);
+                                    }
+                                  },
+                                );
+                              },
+                              builder: (context, state) {
+                                return state.maybeWhen(
+                                  orElse: () {
+                                    return const SizedBox.shrink();
+                                  },
+                                  loaded: (feedsResponse, isDeletePostLoading,
+                                      isDeletePostLoaded, message) {
+                                    if (isDeletePostLoading &&
+                                        (feed.id.toString() ==
+                                            cubit.postIdDeleted)) {
+                                      return const Row(
+                                        children: [
+                                          SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 10),
-                                      ],
-                                    );
-                                  }
+                                          SizedBox(width: 10),
+                                        ],
+                                      );
+                                    }
 
-                                  return PopupMenuButton<String>(
-                                    icon: const Icon(Icons.more_vert),
-                                    onSelected: (String value) {
-                                      switch (value) {
-                                        case 'Report':
-                                          // Handle report action
-                                          print('Report clicked');
-                                          break;
-                                        case 'Delete':
-                                          // Handle delete action
-                                          cubit.deletePost(feed.id.toString());
-                                          break;
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) {
-                                      final items = <PopupMenuEntry<String>>[
-                                        PopupMenuItem(
-                                          value: 'Report',
-                                          child: Row(
-                                            children: [
-                                              const Icon(Icons.report,
-                                                  color: AppColors.description),
-                                              SizedBox(width: 8.w),
-                                              const Text('Report'),
-                                            ],
-                                          ),
-                                        ),
-                                      ];
-
-                                      if (feed.doctor!.id.toString() ==
-                                              currentDoctorModel.id
-                                                  .toString() ||
-                                          homeDataModel.role ==
-                                              AppStrings.roleAdmin) {
-                                        items.add(
+                                    return PopupMenuButton<String>(
+                                      icon: const Icon(Icons.more_vert),
+                                      onSelected: (String value) {
+                                        switch (value) {
+                                          case 'Report':
+                                            // Handle report action
+                                            print('Report clicked');
+                                            break;
+                                          case 'Delete':
+                                            // Handle delete action
+                                            cubit
+                                                .deletePost(feed.id.toString());
+                                            break;
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        final items = <PopupMenuEntry<String>>[
                                           PopupMenuItem(
-                                            value: 'Delete',
+                                            value: 'Report',
                                             child: Row(
                                               children: [
-                                                const Icon(Icons.delete,
+                                                const Icon(Icons.report,
                                                     color:
                                                         AppColors.description),
                                                 SizedBox(width: 8.w),
-                                                const Text('Delete'),
+                                                const Text('Report'),
                                               ],
                                             ),
                                           ),
-                                        );
-                                      }
+                                        ];
 
-                                      return items;
-                                    },
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                                        if (feed.doctor!.id.toString() ==
+                                                currentDoctorModel.id
+                                                    .toString() ||
+                                            homeDataModel.role ==
+                                                AppStrings.roleAdmin) {
+                                          items.add(
+                                            PopupMenuItem(
+                                              value: 'Delete',
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.delete,
+                                                      color: AppColors
+                                                          .description),
+                                                  SizedBox(width: 8.w),
+                                                  const Text('Delete'),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
+
+                                        return items;
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -288,21 +306,33 @@ class PostCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 20),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.comment,
-                          color: Colors.grey.shade400,
-                          size: 23,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          feed.commentsCount.toString(),
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
+                    GestureDetector(
+                      onTap: () {
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.showSingleFeed,
+                          arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                            homeDataModel: homeDataModel,
+                            currentDoctorModel: currentDoctorModel,
+                            feed: feed,
                           ),
-                        ),
-                      ],
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.comment,
+                            color: Colors.grey.shade400,
+                            size: 23,
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            feed.commentsCount.toString(),
+                            style: TextStyle(
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

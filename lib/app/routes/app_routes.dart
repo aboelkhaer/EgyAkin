@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
@@ -692,11 +693,21 @@ class RouteGenerator {
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<ShowSingleFeedCubit>(
-                create: (context) => di.sl<ShowSingleFeedCubit>(),
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<ShowSingleFeedCubit>(
+                    create: (context) => di.sl<ShowSingleFeedCubit>(),
+                  ),
+                  // Add other BlocProvider instances here
+                  BlocProvider<CommunityCubit>(
+                    create: (context) => di.sl<CommunityCubit>(),
+                  ),
+                  // Add more BlocProviders as needed
+                ],
                 child: ShowSingleFeedScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  feed: args['feed'] as PostCommunityModel,
                 ),
               ),
             );
@@ -731,12 +742,22 @@ class RouteGenerator {
             settings.arguments is Map<String, dynamic>) {
           final Map<String, dynamic> args =
               settings.arguments as Map<String, dynamic>;
-          if (args.containsKey('currentDoctorModel')) {
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<CreatePostInCommunityCubit>(
-                create: (context) => di.sl<CreatePostInCommunityCubit>(),
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<CreatePostInCommunityCubit>(
+                    create: (context) => di.sl<CreatePostInCommunityCubit>(),
+                  ),
+                  // Add more providers here if needed, e.g., another Cubit
+                  BlocProvider<CommunityCubit>(
+                    create: (context) => di.sl<CommunityCubit>(),
+                  ),
+                ],
                 child: CreatePostInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
                 ),
               ),
             );

@@ -2087,35 +2087,91 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<CreatePostInCommunityModelResponse> createPostInCommunity(
-    String content,
+  Future<CreatePostInCommunityModelResponse> createPostWithImageInCommunity(
+    String? postContent,
     String mediaType,
-    File mediaFilePath,
     String visibility,
+    String? groupId,
+    File image,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
     final _data = FormData();
-    _data.fields.add(MapEntry(
-      'content',
-      content,
-    ));
+    if (postContent != null) {
+      _data.fields.add(MapEntry(
+        'content',
+        postContent,
+      ));
+    }
     _data.fields.add(MapEntry(
       'media_type',
       mediaType,
-    ));
-    _data.files.add(MapEntry(
-      'media_path',
-      MultipartFile.fromFileSync(
-        mediaFilePath.path,
-        filename: mediaFilePath.path.split(Platform.pathSeparator).last,
-      ),
     ));
     _data.fields.add(MapEntry(
       'visibility',
       visibility,
     ));
+    if (groupId != null) {
+      _data.fields.add(MapEntry(
+        'group_id',
+        groupId,
+      ));
+    }
+    _data.files.add(MapEntry(
+      'media_path',
+      MultipartFile.fromFileSync(
+        image.path,
+        filename: image.path.split(Platform.pathSeparator).last,
+      ),
+    ));
+    final _options = _setStreamType<CreatePostInCommunityModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'multipart/form-data',
+    )
+        .compose(
+          _dio.options,
+          'https://api.egyakin.com/api/feed/posts',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late CreatePostInCommunityModelResponse _value;
+    try {
+      _value = CreatePostInCommunityModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
+    String postContent,
+    String mediaType,
+    String visibility,
+    String? groupId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'content': postContent,
+      'media_type': mediaType,
+      'visibility': visibility,
+      'group_id': groupId,
+    };
+    _data.removeWhere((k, v) => v == null);
     final _options = _setStreamType<CreatePostInCommunityModelResponse>(Options(
       method: 'POST',
       headers: _headers,
