@@ -20,7 +20,19 @@ mixin _$ShowSingleFeedState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +40,19 @@ mixin _$ShowSingleFeedState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +60,19 @@ mixin _$ShowSingleFeedState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -132,7 +168,19 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -143,7 +191,19 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -154,7 +214,19 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -249,7 +321,19 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -260,7 +344,19 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -271,7 +367,19 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -328,6 +436,22 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   factory _$$LoadedImplCopyWith(
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {GetCommentsInCommunityModelResponse commentsResponse,
+      int changeCounter,
+      PostCommunityModel feed,
+      bool isSendCommentLoading,
+      bool isSendCommentLoaded,
+      String message,
+      String? highlightedCommentId,
+      bool isDeleteCommentLoading,
+      bool isDeleteCommentLoaded,
+      bool isSendReplyLoading,
+      bool isSendReplyLoaded});
+
+  $GetCommentsInCommunityModelResponseCopyWith<$Res> get commentsResponse;
+  $PostCommunityModelCopyWith<$Res> get feed;
 }
 
 /// @nodoc
@@ -340,36 +464,217 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
   /// Create a copy of ShowSingleFeedState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? commentsResponse = null,
+    Object? changeCounter = null,
+    Object? feed = null,
+    Object? isSendCommentLoading = null,
+    Object? isSendCommentLoaded = null,
+    Object? message = null,
+    Object? highlightedCommentId = freezed,
+    Object? isDeleteCommentLoading = null,
+    Object? isDeleteCommentLoaded = null,
+    Object? isSendReplyLoading = null,
+    Object? isSendReplyLoaded = null,
+  }) {
+    return _then(_$LoadedImpl(
+      null == commentsResponse
+          ? _value.commentsResponse
+          : commentsResponse // ignore: cast_nullable_to_non_nullable
+              as GetCommentsInCommunityModelResponse,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == feed
+          ? _value.feed
+          : feed // ignore: cast_nullable_to_non_nullable
+              as PostCommunityModel,
+      null == isSendCommentLoading
+          ? _value.isSendCommentLoading
+          : isSendCommentLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSendCommentLoaded
+          ? _value.isSendCommentLoaded
+          : isSendCommentLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      freezed == highlightedCommentId
+          ? _value.highlightedCommentId
+          : highlightedCommentId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      null == isDeleteCommentLoading
+          ? _value.isDeleteCommentLoading
+          : isDeleteCommentLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isDeleteCommentLoaded
+          ? _value.isDeleteCommentLoaded
+          : isDeleteCommentLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSendReplyLoading
+          ? _value.isSendReplyLoading
+          : isSendReplyLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSendReplyLoaded
+          ? _value.isSendReplyLoaded
+          : isSendReplyLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+
+  /// Create a copy of ShowSingleFeedState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetCommentsInCommunityModelResponseCopyWith<$Res> get commentsResponse {
+    return $GetCommentsInCommunityModelResponseCopyWith<$Res>(
+        _value.commentsResponse, (value) {
+      return _then(_value.copyWith(commentsResponse: value));
+    });
+  }
+
+  /// Create a copy of ShowSingleFeedState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PostCommunityModelCopyWith<$Res> get feed {
+    return $PostCommunityModelCopyWith<$Res>(_value.feed, (value) {
+      return _then(_value.copyWith(feed: value));
+    });
+  }
 }
 
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl();
+  const _$LoadedImpl(
+      this.commentsResponse,
+      this.changeCounter,
+      this.feed,
+      this.isSendCommentLoading,
+      this.isSendCommentLoaded,
+      this.message,
+      this.highlightedCommentId,
+      this.isDeleteCommentLoading,
+      this.isDeleteCommentLoaded,
+      this.isSendReplyLoading,
+      this.isSendReplyLoaded);
+
+  @override
+  final GetCommentsInCommunityModelResponse commentsResponse;
+  @override
+  final int changeCounter;
+  @override
+  final PostCommunityModel feed;
+  @override
+  final bool isSendCommentLoading;
+  @override
+  final bool isSendCommentLoaded;
+  @override
+  final String message;
+  @override
+  final String? highlightedCommentId;
+  @override
+  final bool isDeleteCommentLoading;
+  @override
+  final bool isDeleteCommentLoaded;
+  @override
+  final bool isSendReplyLoading;
+  @override
+  final bool isSendReplyLoaded;
 
   @override
   String toString() {
-    return 'ShowSingleFeedState.loaded()';
+    return 'ShowSingleFeedState.loaded(commentsResponse: $commentsResponse, changeCounter: $changeCounter, feed: $feed, isSendCommentLoading: $isSendCommentLoading, isSendCommentLoaded: $isSendCommentLoaded, message: $message, highlightedCommentId: $highlightedCommentId, isDeleteCommentLoading: $isDeleteCommentLoading, isDeleteCommentLoaded: $isDeleteCommentLoaded, isSendReplyLoading: $isSendReplyLoading, isSendReplyLoaded: $isSendReplyLoaded)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadedImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$LoadedImpl &&
+            (identical(other.commentsResponse, commentsResponse) ||
+                other.commentsResponse == commentsResponse) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter) &&
+            (identical(other.feed, feed) || other.feed == feed) &&
+            (identical(other.isSendCommentLoading, isSendCommentLoading) ||
+                other.isSendCommentLoading == isSendCommentLoading) &&
+            (identical(other.isSendCommentLoaded, isSendCommentLoaded) ||
+                other.isSendCommentLoaded == isSendCommentLoaded) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.highlightedCommentId, highlightedCommentId) ||
+                other.highlightedCommentId == highlightedCommentId) &&
+            (identical(other.isDeleteCommentLoading, isDeleteCommentLoading) ||
+                other.isDeleteCommentLoading == isDeleteCommentLoading) &&
+            (identical(other.isDeleteCommentLoaded, isDeleteCommentLoaded) ||
+                other.isDeleteCommentLoaded == isDeleteCommentLoaded) &&
+            (identical(other.isSendReplyLoading, isSendReplyLoading) ||
+                other.isSendReplyLoading == isSendReplyLoading) &&
+            (identical(other.isSendReplyLoaded, isSendReplyLoaded) ||
+                other.isSendReplyLoaded == isSendReplyLoaded));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(
+      runtimeType,
+      commentsResponse,
+      changeCounter,
+      feed,
+      isSendCommentLoading,
+      isSendCommentLoaded,
+      message,
+      highlightedCommentId,
+      isDeleteCommentLoading,
+      isDeleteCommentLoaded,
+      isSendReplyLoading,
+      isSendReplyLoaded);
+
+  /// Create a copy of ShowSingleFeedState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      __$$LoadedImplCopyWithImpl<_$LoadedImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded();
+    return loaded(
+        commentsResponse,
+        changeCounter,
+        feed,
+        isSendCommentLoading,
+        isSendCommentLoaded,
+        message,
+        highlightedCommentId,
+        isDeleteCommentLoading,
+        isDeleteCommentLoaded,
+        isSendReplyLoading,
+        isSendReplyLoaded);
   }
 
   @override
@@ -377,10 +682,33 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call();
+    return loaded?.call(
+        commentsResponse,
+        changeCounter,
+        feed,
+        isSendCommentLoading,
+        isSendCommentLoaded,
+        message,
+        highlightedCommentId,
+        isDeleteCommentLoading,
+        isDeleteCommentLoaded,
+        isSendReplyLoading,
+        isSendReplyLoaded);
   }
 
   @override
@@ -388,12 +716,35 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded();
+      return loaded(
+          commentsResponse,
+          changeCounter,
+          feed,
+          isSendCommentLoading,
+          isSendCommentLoaded,
+          message,
+          highlightedCommentId,
+          isDeleteCommentLoading,
+          isDeleteCommentLoaded,
+          isSendReplyLoading,
+          isSendReplyLoaded);
     }
     return orElse();
   }
@@ -437,7 +788,36 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements ShowSingleFeedState {
-  const factory _Loaded() = _$LoadedImpl;
+  const factory _Loaded(
+      final GetCommentsInCommunityModelResponse commentsResponse,
+      final int changeCounter,
+      final PostCommunityModel feed,
+      final bool isSendCommentLoading,
+      final bool isSendCommentLoaded,
+      final String message,
+      final String? highlightedCommentId,
+      final bool isDeleteCommentLoading,
+      final bool isDeleteCommentLoaded,
+      final bool isSendReplyLoading,
+      final bool isSendReplyLoaded) = _$LoadedImpl;
+
+  GetCommentsInCommunityModelResponse get commentsResponse;
+  int get changeCounter;
+  PostCommunityModel get feed;
+  bool get isSendCommentLoading;
+  bool get isSendCommentLoaded;
+  String get message;
+  String? get highlightedCommentId;
+  bool get isDeleteCommentLoading;
+  bool get isDeleteCommentLoaded;
+  bool get isSendReplyLoading;
+  bool get isSendReplyLoaded;
+
+  /// Create a copy of ShowSingleFeedState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -510,7 +890,19 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function() loaded,
+    required TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -521,7 +913,19 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function()? loaded,
+    TResult? Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -532,7 +936,19 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function()? loaded,
+    TResult Function(
+            GetCommentsInCommunityModelResponse commentsResponse,
+            int changeCounter,
+            PostCommunityModel feed,
+            bool isSendCommentLoading,
+            bool isSendCommentLoaded,
+            String message,
+            String? highlightedCommentId,
+            bool isDeleteCommentLoading,
+            bool isDeleteCommentLoaded,
+            bool isSendReplyLoading,
+            bool isSendReplyLoaded)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

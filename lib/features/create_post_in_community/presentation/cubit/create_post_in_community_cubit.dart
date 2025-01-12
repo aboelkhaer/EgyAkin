@@ -1,8 +1,12 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
+import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/creat_post_with_text_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/create_post_with_image_in_community_usecase.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_image_in_community_usecase.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_text_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
 import 'package:flutter/foundation.dart';
 
@@ -13,14 +17,22 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
 
 class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
-  CreatePostInCommunityCubit(this._createPostInCommunityUsecase,
-      this._createPostWithTextInCommunityUsecase)
+  CreatePostInCommunityCubit(
+      this._createPostInCommunityUsecase,
+      this._createPostWithTextInCommunityUsecase,
+      this._editPostWithImageInCommunityUsecase,
+      this._editPostWithTextInCommunityUsecase)
       : super(const CreatePostInCommunityState.loaded(
             0, 0, false, false, false, ''));
   static CreatePostInCommunityCubit get(context) => BlocProvider.of(context);
   final CreatePostWithImageInCommunityUsecase _createPostInCommunityUsecase;
   final CreatePostWithTextInCommunityUsecase
       _createPostWithTextInCommunityUsecase;
+  final EditPostWithImageInCommunityUsecase
+      _editPostWithImageInCommunityUsecase;
+  final EditPostWithTextInCommunityUsecase _editPostWithTextInCommunityUsecase;
+
+  PostCommunityModel? editableFeed;
 
   String postContent = '';
   File? imagePicked;
@@ -41,9 +53,26 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
+  emitLoadedStateForEditPost(PostCommunityModel feed) {
+    editableFeed = feed;
+    emit(
+      CreatePostInCommunityState.loaded(editableFeed!.content!.length,
+          changeCounter, false, false, false, ''),
+    );
+  }
+
+  editFeedContentForEditableFeed(String? editableFeedContent) {
+    editableFeed = editableFeed!.copyWith(content: editableFeedContent);
+    log(editableFeedContent.toString());
+  }
+
   int changeCounter = 0;
   removePickedImage() {
+    if (editableFeed != null) {
+      editableFeed = editableFeed!.copyWith(mediaPath: null);
+    }
     imagePicked = null;
+
     changeCounter++;
     emit(
       state.maybeMap(
@@ -195,17 +224,35 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   }
 
   submitPost(context) async {
-    if (imagePicked == null && postContent.trim() == '') {
-      customSnackBar(context: context, message: 'Write something to publish.');
-      return;
-    }
-    if (imagePicked != null) {
-      createPostWithImageInCommunity();
-      return;
-    }
-    if (imagePicked == null && postContent != '') {
-      createPostWithTextInCommunity();
-      return;
+    if (editableFeed == null) {
+      if (imagePicked == null && postContent.trim() == '') {
+        customSnackBar(
+            context: context, message: 'Write something to publish.');
+        return;
+      }
+      if (imagePicked != null) {
+        createPostWithImageInCommunity();
+        return;
+      }
+      if (imagePicked == null && postContent != '') {
+        createPostWithTextInCommunity();
+        return;
+      }
+    } else {
+      if (imagePicked == null && editableFeed!.content!.trim() == '') {
+        customSnackBar(
+            context: context, message: 'Write something to publish.');
+        return;
+      }
+      if (imagePicked != null) {
+        editPostWithImageInCommunity();
+        return;
+      }
+      if (imagePicked == null &&
+          (editableFeed!.content != null && editableFeed!.content != '')) {
+        editPostWithTextInCommunity();
+        return;
+      }
     }
   }
 
@@ -229,6 +276,137 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       CreatePostWithImageInCommunityUsecaseInput(
         postContent: postContent.trim(),
         image: optimizedFile,
+        mediaType: 'image',
+        visibility: 'Public',
+        groupId: null,
+      ),
+    );
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreatePostInCommunityState.loaded(
+              value.postLength,
+              value.changeCounter,
+              false,
+              false,
+              false,
+              l.message,
+            ),
+          ),
+        );
+      },
+      (response) async {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreatePostInCommunityState.loaded(
+              value.postLength,
+              value.changeCounter,
+              false,
+              false,
+              true,
+              '',
+            ),
+          ),
+        );
+        debugPrint(response.message);
+      },
+    );
+  }
+
+  editPostWithImageInCommunity() async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => CreatePostInCommunityState.loaded(
+          value.postLength,
+          value.changeCounter,
+          false,
+          true,
+          false,
+          '',
+        ),
+      ),
+    );
+    // emit(
+    //   CreatePostInCommunityState.loaded(
+    //     editableFeed!.content!.length,
+    //     changeCounter,
+    //     false,
+    //     true,
+    //     false,
+    //     '',
+    //   ),
+    // );
+
+    final optimizedFile = await _optimizeImage(imagePicked!, 80);
+
+    final result = await _editPostWithImageInCommunityUsecase.execute(
+      EditPostWithImageInCommunityUsecaseInput(
+        postId: editableFeed!.id.toString(),
+        postContent: editableFeed!.content,
+        image: optimizedFile,
+        mediaType: 'image',
+        visibility: 'Public',
+        groupId: null,
+      ),
+    );
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreatePostInCommunityState.loaded(
+              value.postLength,
+              value.changeCounter,
+              false,
+              false,
+              false,
+              l.message,
+            ),
+          ),
+        );
+      },
+      (response) async {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreatePostInCommunityState.loaded(
+              value.postLength,
+              value.changeCounter,
+              false,
+              false,
+              true,
+              '',
+            ),
+          ),
+        );
+        debugPrint(response.message);
+      },
+    );
+  }
+
+  editPostWithTextInCommunity() async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => CreatePostInCommunityState.loaded(
+          value.postLength,
+          value.changeCounter,
+          false,
+          true,
+          false,
+          '',
+        ),
+      ),
+    );
+
+    final result = await _editPostWithTextInCommunityUsecase.execute(
+      EditPostWithTextInCommunityUsecaseInput(
+        postId: editableFeed!.id.toString(),
+        postContent: editableFeed!.content!.trim(),
         mediaType: 'image',
         visibility: 'Public',
         groupId: null,

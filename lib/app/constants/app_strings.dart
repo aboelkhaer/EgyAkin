@@ -21,7 +21,7 @@ class AppStrings {
   // static const String initialPassword = '';
 
   static const int splashDelay = 1;
-  static const int snackBarDelay = 5;
+  static const int snackBarDelay = 2;
   static const int delayForAPIRequestInMilliseconds = 300;
 
   static const int apiTimeOut = 300;

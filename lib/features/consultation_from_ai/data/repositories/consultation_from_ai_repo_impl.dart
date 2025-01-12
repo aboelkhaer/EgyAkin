@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/datasources/consultation_from_ai_datasource.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
-import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consultation_from_ai_repo.dart';
 import '../../../../exports.dart';
 
 class ConsultationFromAIRepositoryImpl extends ConsultationFromAIRepository {

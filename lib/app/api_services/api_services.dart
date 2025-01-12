@@ -4,11 +4,15 @@ import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
+import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/add_like_or_unlike_on_comment_in_community_model_response.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/create_comment_on_post_in_community_model_response.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/create_reply_on_comment_in_community_model_response.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/delete_comment_on_post_in_community_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
 import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -339,5 +343,59 @@ abstract class ApiServices {
     @Field("media_type") String mediaType,
     @Field("visibility") String visibility,
     @Field("group_id") String? groupId,
+  );
+  @GET('${ApiEndPoint.getCommentsInCommunity}/{postId}/comments')
+  Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
+    @Path('postId') String postId,
+  );
+
+  @POST(
+      '${ApiEndPoint.addLikeAndUnlikeOnCommentInCommunity}/{commentId}/likeOrUnlikeComment')
+  Future<AddLikeOrUnlikeOnCommentInCommunityModelResponse>
+      addLikeAndUnlikeOnCommentInCommunity(
+    @Path('commentId') String commentId,
+    @Field('status') String status,
+  );
+
+  @POST('${ApiEndPoint.createCommentOnPostInCommunity}/{postId}/comment')
+  Future<CreateCommentOnPostInCommunityModelResponse>
+      createCommentOnPostInCommunity(
+    @Path('postId') String postId,
+    @Field('comment') String comment,
+    @Field('parent_id') int? parentId,
+  );
+
+  @DELETE('${ApiEndPoint.deleteCommentOnPostInCommunity}/{commentId}')
+  Future<DeleteCommentOnPostInCommunityModelResponse>
+      deleteCommentOnPostInCommunity(
+    @Path('commentId') String commentId,
+  );
+
+  @PUT('${ApiEndPoint.editPostInCommunity}/{postId}')
+  Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
+    @Path('postId') String postId,
+    @Field('content') String postContent,
+    @Field("media_type") String mediaType,
+    @Field("visibility") String visibility,
+    @Field("group_id") String? groupId,
+  );
+
+  @PUT('${ApiEndPoint.editPostInCommunity}/{postId}')
+  @MultiPart()
+  Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity(
+    @Path('postId') String postId,
+    @Part(name: 'content') String? postContent,
+    @Part(name: "media_type") String mediaType,
+    @Part(name: "visibility") String visibility,
+    @Part(name: "group_id") String? groupId,
+    @Part(name: "media_path") File image,
+  );
+
+  @POST('${ApiEndPoint.createReplyOnCommentInCommunity}/{postId}/comments')
+  Future<CreateReplyOnCommentInCommunityModelResponse>
+      createReplyOnCommentInCommunity(
+    @Path('postId') String postId,
+    @Field('comment') String comment,
+    @Field('parent_id') int? parentId,
   );
 }

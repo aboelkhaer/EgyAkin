@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 
 class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments({
@@ -312,10 +311,12 @@ class AppRoutesArgs {
   static Map<String, dynamic> createPostInCommunityRouteArgs({
     required DoctorModel currentDoctorModel,
     required HomeModelResponse homeDataModel,
+    PostCommunityModel? feed,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'homeDataModel': homeDataModel,
+      'feed': feed,
     };
   }
 }

@@ -1,9 +1,9 @@
 class ApiEndPoint {
   //! test url
-  // static const baseUrl = 'https://test.egyakin.com';
+  static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  static const baseUrl = 'https://api.egyakin.com';
+  // static const baseUrl = 'https://api.egyakin.com';
 
   static const home = '$baseUrl/api/homeNew';
   static const signIn = '$baseUrl/api/login';
@@ -73,4 +73,10 @@ class ApiEndPoint {
   static const sendAIConsultationRequest = '$baseUrl/api/AIconsultation';
   static const deletePostInFeeds = '$baseUrl/api/feed/posts';
   static const createPostInCommunity = '$baseUrl/api/feed/posts';
+  static const getCommentsInCommunity = '$baseUrl/api/posts';
+  static const addLikeAndUnlikeOnCommentInCommunity = '$baseUrl/api/comments';
+  static const createCommentOnPostInCommunity = '$baseUrl/api/feed/posts';
+  static const deleteCommentOnPostInCommunity = '$baseUrl/api/feed/comments';
+  static const editPostInCommunity = '$baseUrl/api/feed/posts';
+  static const createReplyOnCommentInCommunity = '$baseUrl/api/posts';
 }

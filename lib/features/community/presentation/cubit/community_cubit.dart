@@ -1,7 +1,5 @@
-import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/delete_post_in_feeds_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
+import 'dart:developer';
+
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 
 import '../../../../exports.dart';
@@ -21,9 +19,10 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  int currentPage = 3;
+  int currentPage = 0;
 
   getAllFeeds() async {
+    currentPage = 0;
     emit(const CommunityState.loading());
     final result = await _getAllFeedsUsecase.execute(currentPage);
     result.fold(
@@ -98,15 +97,19 @@ class CommunityCubit extends Cubit<CommunityState> {
     postIdDeleted = '';
   }
 
+  bool _isUpdatingPostLikeStatus = false; // Add this as a private flag
+
   addLikeOrUnlikeOnPost(String postId) async {
-    // Update the UI state locally
+    // Prevent multiple simultaneous actions
+    if (_isUpdatingPostLikeStatus) return;
+
+    _isUpdatingPostLikeStatus = true; // Set the flag to true
     bool isCurrentlyLiked = false;
 
     emit(
       state.maybeMap(
         orElse: () => state,
         loaded: (value) {
-          // Ensure feedsResponse is accessible
           final feedsResponse = value.feedsResponse;
           if (feedsResponse.data == null) {
             return value; // Return unchanged state if feedsResponse is null
@@ -132,52 +135,105 @@ class CommunityCubit extends Cubit<CommunityState> {
               }).toList(),
             ),
           );
+
           return value.copyWith(feedsResponse: updatedData);
         },
       ),
     );
 
-    // Call the appropriate API based on whether the post is liked or unliked
-    if (isCurrentlyLiked) {
-      // Post is currently liked, so we need to call the "unlike" API
-      final unLikeResult = await _addLikeOnPostUsecase.execute(
-        AddLikeOnPostUsecaseInput(
-          postId: postId,
-          likeOrUnlike: 'unlike',
-        ),
-      );
+    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
 
-      // Handle the result of the unlike API call
-      unLikeResult.fold(
-        (failure) {
-          // Handle failure (e.g., rollback UI changes)
-        },
-        (success) {
-          // Optionally handle success
-        },
-      );
-    } else {
-      // Post is currently unliked, so we need to call the "like" API
-      final likeResult = await _addLikeOnPostUsecase.execute(
-        AddLikeOnPostUsecaseInput(
-          postId: postId,
-          likeOrUnlike: 'like',
-        ),
-      );
+    final result = await _addLikeOnPostUsecase.execute(
+      AddLikeOnPostUsecaseInput(
+        postId: postId,
+        likeOrUnlike: likeOrUnlike,
+      ),
+    );
 
-      // Handle the result of the like API call
-      likeResult.fold(
-        (failure) {
-          // Handle failure (e.g., rollback UI changes)
-        },
-        (success) {
-          // Optionally handle success
-        },
-      );
-    }
+    result.fold(
+      (failure) {
+        // Rollback UI changes on failure
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              final feedsResponse = value.feedsResponse;
+              if (feedsResponse.data == null) {
+                return value;
+              }
+
+              final revertedData = feedsResponse.copyWith(
+                data: feedsResponse.data!.copyWith(
+                  data: feedsResponse.data!.data!.map((post) {
+                    if (post.id.toString() == postId) {
+                      final revertedLikesCount = !isCurrentlyLiked
+                          ? post.likesCount! - 1
+                          : post.likesCount! + 1;
+
+                      return post.copyWith(
+                        isLiked: isCurrentlyLiked,
+                        likesCount: revertedLikesCount,
+                      );
+                    }
+                    return post;
+                  }).toList(),
+                ),
+              );
+
+              return value.copyWith(feedsResponse: revertedData);
+            },
+          ),
+        );
+      },
+      (success) {
+        // Optionally handle success
+      },
+    );
+
+    _isUpdatingPostLikeStatus = false; // Reset the flag
   }
 
+  void updatePost(PostCommunityModel updatedPost) {
+    log('Updating post: ${updatedPost.id}'); // Debug log
+
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          // Map through the existing posts to update the one that matches the updatedPost's ID
+          final updatedData = value.feedsResponse.data?.data?.map((post) {
+            if (post.id == updatedPost.id) {
+              return updatedPost; // Replace the old post with the updated one
+            }
+            return post;
+          }).toList();
+
+          // Create a new copy of feedsResponse with the updated data
+          final updatedFeedsResponse = value.feedsResponse.copyWith(
+            data: value.feedsResponse.data?.copyWith(
+              data: updatedData,
+            ),
+          );
+
+          // Emit the new state with the updated feedsResponse
+          return CommunityState.loaded(
+            updatedFeedsResponse,
+            value.isDeletePostLoading,
+            value.isDeletePostLoaded,
+            value.message,
+          );
+        },
+      ),
+    );
+  }
+
+  bool _isUpdatingPostSaveStatus = false; // Add this as a private flag
+
   addSaveOrUnsaveOnPost(String postId) async {
+    // Prevent multiple simultaneous actions
+    if (_isUpdatingPostSaveStatus) return;
+
+    _isUpdatingPostSaveStatus = true; // Set the flag to true
     bool isCurrentlySaved = false;
 
     emit(
@@ -207,36 +263,49 @@ class CommunityCubit extends Cubit<CommunityState> {
       ),
     );
 
-    if (isCurrentlySaved) {
-      final unSaveResult = await _saveOrUnsavePostUsecase.execute(
-        SaveOrUnsavePostUsecaseInput(
-          postId: postId,
-          saveOrUnsave: 'unsave',
-        ),
-      );
-      unSaveResult.fold(
-        (failure) {
-          // Handle failure (e.g., rollback UI changes)
-        },
-        (success) {
-          // Optionally handle success
-        },
-      );
-    } else {
-      final saveResult = await _saveOrUnsavePostUsecase.execute(
-        SaveOrUnsavePostUsecaseInput(
-          postId: postId,
-          saveOrUnsave: 'save',
-        ),
-      );
-      saveResult.fold(
-        (failure) {
-          // Handle failure (e.g., rollback UI changes)
-        },
-        (success) {
-          // Optionally handle success
-        },
-      );
-    }
+    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+
+    final result = await _saveOrUnsavePostUsecase.execute(
+      SaveOrUnsavePostUsecaseInput(
+        postId: postId,
+        saveOrUnsave: saveOrUnsave,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Rollback UI changes on failure
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              final feedsResponse = value.feedsResponse;
+              if (feedsResponse.data == null) {
+                return value;
+              }
+
+              final revertedData = feedsResponse.copyWith(
+                data: feedsResponse.data!.copyWith(
+                  data: feedsResponse.data!.data!.map((post) {
+                    if (post.id.toString() == postId) {
+                      return post.copyWith(
+                        isSaved: isCurrentlySaved, // Revert to original state
+                      );
+                    }
+                    return post;
+                  }).toList(),
+                ),
+              );
+              return value.copyWith(feedsResponse: revertedData);
+            },
+          ),
+        );
+      },
+      (success) {
+        // Optionally handle success
+      },
+    );
+
+    _isUpdatingPostSaveStatus = false; // Reset the flag
   }
 }

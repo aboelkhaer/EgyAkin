@@ -1,12 +1,8 @@
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
-import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
-import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_post_in_community_screen.dart';
-import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
 import '../../exports.dart';
@@ -671,8 +667,9 @@ class RouteGenerator {
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<CommunityCubit>(
-                create: (context) => di.sl<CommunityCubit>(),
+              builder: (_) => BlocProvider.value(
+                value:
+                    di.sl<CommunityCubit>(), // Pass the already created Cubit
                 child: CommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
@@ -695,14 +692,16 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider<ShowSingleFeedCubit>(
-                    create: (context) => di.sl<ShowSingleFeedCubit>(),
+                  BlocProvider.value(
+                    value: di
+                        .sl<ShowSingleFeedCubit>(), // Reuse the existing Cubit
                   ),
-                  // Add other BlocProvider instances here
+                  // BlocProvider.value(
+                  //   value: di.sl<CommunityCubit>(), // Reuse the existing Cubit
+                  // ),
                   BlocProvider<CommunityCubit>(
                     create: (context) => di.sl<CommunityCubit>(),
                   ),
-                  // Add more BlocProviders as needed
                 ],
                 child: ShowSingleFeedScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -758,6 +757,7 @@ class RouteGenerator {
                 child: CreatePostInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  feed: args['feed'] as PostCommunityModel?,
                 ),
               ),
             );

@@ -1,7 +1,3 @@
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
-
 import '../../../../exports.dart';
 
 class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {

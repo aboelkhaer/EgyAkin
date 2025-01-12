@@ -1,6 +1,5 @@
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
 
 import '../../../../exports.dart';

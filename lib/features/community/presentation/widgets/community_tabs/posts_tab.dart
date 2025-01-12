@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/widgets/loading_for_feeds.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 import 'package:egy_akin/features/community/presentation/widgets/post_card.dart';
@@ -20,7 +21,9 @@ class PostsTab extends StatelessWidget {
         builder: (context, state) {
           return state.maybeWhen(
             orElse: () {
-              return const SizedBox.shrink();
+              return const ShimmerLoadingFeeds(
+                numberOfShimmer: 5,
+              );
             },
             loaded: (
               feedsResponse,

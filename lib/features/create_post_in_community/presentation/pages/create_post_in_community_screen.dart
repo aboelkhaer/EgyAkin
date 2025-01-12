@@ -1,18 +1,36 @@
-import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../../../../exports.dart';
 
-class CreatePostInCommunityScreen extends StatelessWidget {
+class CreatePostInCommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final PostCommunityModel? feed;
 
   const CreatePostInCommunityScreen({
     super.key,
     required this.currentDoctorModel,
     required this.homeDataModel,
+    this.feed,
   });
+
+  @override
+  State<CreatePostInCommunityScreen> createState() =>
+      _CreatePostInCommunityScreenState();
+}
+
+class _CreatePostInCommunityScreenState
+    extends State<CreatePostInCommunityScreen> {
+  @override
+  void initState() {
+    if (widget.feed != null) {
+      context
+          .read<CreatePostInCommunityCubit>()
+          .emitLoadedStateForEditPost(widget.feed!);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +42,9 @@ class CreatePostInCommunityScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Post'),
+        title: Text(
+          widget.feed == null ? 'Create Post' : 'Edit Post',
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -36,14 +56,12 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                   loaded: (postLength, changeCounter, isImagePick,
                       isUploadPostLoading, isUploadPostLoaded, message) {
                     if (isUploadPostLoaded) {
-                      if (context.read<CommunityCubit>().isClosed == false) {
-                        navigatorKey.currentState?.pop();
-                        navigatorKey.currentState?.popAndPushNamed(
-                            AppRoutes.community,
-                            arguments: AppRoutesArgs.communityRouteArgs(
-                                homeDataModel: homeDataModel,
-                                currentDoctorModel: currentDoctorModel));
-                      }
+                      navigatorKey.currentState?.pop();
+                      navigatorKey.currentState?.popAndPushNamed(
+                          AppRoutes.community,
+                          arguments: AppRoutesArgs.communityRouteArgs(
+                              homeDataModel: widget.homeDataModel,
+                              currentDoctorModel: widget.currentDoctorModel));
                     }
                   },
                 );
@@ -136,8 +154,11 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                                       backgroundColor:
                                           AppColors.primary.withOpacity(0.8),
                                       child: CustomCachedNetworkImage(
-                                        imageUrl:
-                                            currentDoctorModel.image.toString(),
+                                        imageUrl: cubit.editableFeed != null
+                                            ? cubit.editableFeed!.doctor!.image
+                                                .toString()
+                                            : widget.currentDoctorModel.image
+                                                .toString(),
                                         height: 100.h,
                                         width: 100.w,
                                       ),
@@ -150,22 +171,38 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                                 child: Row(
                                   children: [
                                     Text(
-                                      doctorName(
-                                        firstName: currentDoctorModel.firstName,
-                                        lastName: currentDoctorModel.lastName,
-                                        role: '',
-                                      ),
+                                      cubit.editableFeed != null
+                                          ? doctorName(
+                                              firstName: cubit.editableFeed!
+                                                  .doctor!.firstName,
+                                              lastName: cubit.editableFeed!
+                                                  .doctor!.lastName,
+                                              role: '',
+                                            )
+                                          : doctorName(
+                                              firstName: widget
+                                                  .currentDoctorModel.firstName,
+                                              lastName: widget
+                                                  .currentDoctorModel.lastName,
+                                              role: '',
+                                            ),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                    'Verified' == 'Verified'
+                                    cubit.editableFeed != null
                                         ? const VerificationIcon(
                                             isPatientCard: false,
                                           )
-                                        : const SizedBox.shrink(),
+                                        : widget.currentDoctorModel
+                                                    .isSyndicateCardRequired ==
+                                                'Verified'
+                                            ? const VerificationIcon(
+                                                isPatientCard: false,
+                                              )
+                                            : const SizedBox.shrink(),
                                   ],
                                 ),
                               ),
@@ -182,19 +219,19 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                               ValueListenableBuilder<TextDirection>(
                                 valueListenable: textDirectionNotifier,
                                 builder: (context, textDirection, child) {
-                                  return TextField(
-                                    // controller: _textController,
+                                  return TextFormField(
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 16,
                                     ),
+                                    initialValue: cubit.editableFeed
+                                        ?.content, // Set your initial value here
                                     onTapOutside: (event) =>
                                         FocusScope.of(context).unfocus(),
                                     decoration: const InputDecoration(
-                                      hintText: "What's on your mind?",
+                                      hintText: 'What\'s on your mind?',
                                       hintStyle: TextStyle(
                                         color: Colors.grey,
-                                        //  color: Colors.transparent,
                                       ),
                                       border: InputBorder.none,
                                     ),
@@ -202,7 +239,12 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                                     maxLines: null,
                                     textDirection: textDirection,
                                     onChanged: (value) {
-                                      cubit.postContent = value;
+                                      if (cubit.editableFeed == null) {
+                                        cubit.postContent = value;
+                                      } else {
+                                        cubit.editFeedContentForEditableFeed(
+                                            value);
+                                      }
                                       if (value.isNotEmpty &&
                                           RegExp(r'^[\u0600-\u06FF]')
                                               .hasMatch(value[0])) {
@@ -224,7 +266,12 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                        cubit.postContent.length.toString(),
+                                        cubit.editableFeed == null
+                                            ? cubit.postContent.length
+                                                .toString()
+                                            : cubit
+                                                .editableFeed!.content!.length
+                                                .toString(),
                                         style: TextStyle(
                                           fontSize: 12,
                                           color:
@@ -251,80 +298,163 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                         const SizedBox(height: 20),
 
                         // Picked Image
+
                         BlocBuilder<CreatePostInCommunityCubit,
                             CreatePostInCommunityState>(
                           builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return const SizedBox.shrink();
-                              },
-                              loaded: (
-                                postLength,
-                                changeCounter,
-                                isImagePick,
-                                isUploadPostLoading,
-                                isUploadPostLoaded,
-                                message,
-                              ) {
-                                if (cubit.imagePicked != null) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    child: Stack(
-                                      alignment: Alignment
-                                          .topRight, // Align the icon in the top-right corner
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Image.file(
-                                            cubit.imagePicked!,
-                                            width: double.infinity,
-                                            fit: BoxFit.contain,
-                                          ),
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            cubit.removePickedImage();
-                                          },
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          child: Container(
-                                            margin: const EdgeInsets.all(8),
-                                            padding: const EdgeInsets.all(8),
-                                            decoration: BoxDecoration(
-                                              color: Colors.white.withOpacity(
-                                                  0.5), // White background for the icon button
-                                              shape: BoxShape
-                                                  .circle, // Make the background circular
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black.withOpacity(
-                                                      0.2), // Optional shadow for better visibility
-                                                  spreadRadius: 1,
-                                                  blurRadius: 3,
-                                                  offset: const Offset(0, 2),
+                            return Column(
+                              children: [
+                                cubit.editableFeed != null &&
+                                        cubit.editableFeed!.mediaPath != null
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16),
+                                        child: Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: CachedNetworkImage(
+                                                imageUrl: cubit
+                                                    .editableFeed!.mediaPath!,
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                cubit.removePickedImage();
+                                              },
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              child: Container(
+                                                margin: const EdgeInsets.all(8),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white.withOpacity(
+                                                      0.5), // White background for the icon button
+                                                  shape: BoxShape
+                                                      .circle, // Make the background circular
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(
+                                                              0.2), // Optional shadow for better visibility
+                                                      spreadRadius: 1,
+                                                      blurRadius: 3,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.grey
+                                                      .shade600, // Adjust color as needed
+                                                  size:
+                                                      25, // Adjust size as needed
+                                                ),
+                                              ),
                                             ),
-                                            child: Icon(
-                                              Icons.delete,
-                                              color: Colors.grey
-                                                  .shade600, // Adjust color as needed
-                                              size: 25, // Adjust size as needed
-                                            ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                                return const SizedBox.shrink();
-                              },
+                                      )
+                                    : BlocBuilder<CreatePostInCommunityCubit,
+                                        CreatePostInCommunityState>(
+                                        builder: (context, state) {
+                                          return state.maybeWhen(
+                                            orElse: () {
+                                              return const SizedBox.shrink();
+                                            },
+                                            loaded: (
+                                              postLength,
+                                              changeCounter,
+                                              isImagePick,
+                                              isUploadPostLoading,
+                                              isUploadPostLoaded,
+                                              message,
+                                            ) {
+                                              if (cubit.imagePicked != null) {
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16),
+                                                  child: Stack(
+                                                    alignment: Alignment
+                                                        .topRight, // Align the icon in the top-right corner
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        child: Image.file(
+                                                          cubit.imagePicked!,
+                                                          width:
+                                                              double.infinity,
+                                                          fit: BoxFit.contain,
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          cubit
+                                                              .removePickedImage();
+                                                        },
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white
+                                                                .withOpacity(
+                                                                    0.5), // White background for the icon button
+                                                            shape: BoxShape
+                                                                .circle, // Make the background circular
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                        0.2), // Optional shadow for better visibility
+                                                                spreadRadius: 1,
+                                                                blurRadius: 3,
+                                                                offset:
+                                                                    const Offset(
+                                                                        0, 2),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          child: Icon(
+                                                            Icons.delete,
+                                                            color: Colors.grey
+                                                                .shade600, // Adjust color as needed
+                                                            size:
+                                                                25, // Adjust size as needed
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+                                              return const SizedBox.shrink();
+                                            },
+                                          );
+                                        },
+                                      ),
+                                SizedBox(height: 100.h),
+                              ],
                             );
                           },
                         ),
-                        SizedBox(height: 100.h),
                       ],
                     ),
                   ),
@@ -394,7 +524,7 @@ class CreatePostInCommunityScreen extends StatelessWidget {
                               );
                             }
                             return Container(
-                              color: Colors.grey.shade300,
+                              color: Colors.grey.shade200,
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(

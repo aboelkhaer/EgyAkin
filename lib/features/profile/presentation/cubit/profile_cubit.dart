@@ -12,7 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 
-import 'package:permission_handler/permission_handler.dart';
 //! don't remove imports
 
 class ProfileCubit extends Cubit<ProfileState> {

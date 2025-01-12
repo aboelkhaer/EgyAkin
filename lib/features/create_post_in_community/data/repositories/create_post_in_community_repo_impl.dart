@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/create_post_in_community/data/datasources/create_post_in_community_datasource.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/repositories/create_post_in_community_repo.dart';
+import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
 import '../../../../exports.dart';
 
 class CreatePostInCommunityRepositoryImpl
@@ -61,6 +60,64 @@ class CreatePostInCommunityRepositoryImpl
           visibility: visibility,
           groupId: groupId,
         );
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, EditPostInCommunityModelResponse>>
+      editPostWithImageInCommunity(
+          {required File image,
+          required String? postContent,
+          required String mediaType,
+          required String visibility,
+          required String? groupId,
+          required String postId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await createPostInCommunityDatasource.editPostWithImageInCommunity(
+                image: image,
+                postContent: postContent,
+                mediaType: mediaType,
+                visibility: visibility,
+                groupId: groupId,
+                postId: postId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, EditPostInCommunityModelResponse>>
+      editPostWithTextInCommunity(
+          {required String postContent,
+          required String mediaType,
+          required String visibility,
+          required String? groupId,
+          required String postId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await createPostInCommunityDatasource.editPostWithTextInCommunity(
+                postContent: postContent,
+                mediaType: mediaType,
+                visibility: visibility,
+                groupId: groupId,
+                postId: postId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

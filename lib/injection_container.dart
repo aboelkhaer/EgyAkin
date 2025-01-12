@@ -1,28 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/all_doctors_patients/domain/usecases/apply_patients_filters_usecase.dart';
-import 'package:egy_akin/features/community/data/datasources/community_datasource.dart';
-import 'package:egy_akin/features/community/data/repositories/community_repo_impl.dart';
-import 'package:egy_akin/features/community/domain/repositories/community_repo.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_like_on_post_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/delete_post_in_feeds_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_all_feeds_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/save_or_unsave_post_usecase.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/datasources/consultation_from_ai_datasource.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/repositories/consultation_from_ai_repo_impl.dart';
-import 'package:egy_akin/features/consultation_from_ai/domain/repositories/consultation_from_ai_repo.dart';
-import 'package:egy_akin/features/consultation_from_ai/domain/usecases/get_ai_consultation_history_usecase.dart';
-import 'package:egy_akin/features/consultation_from_ai/domain/usecases/send_ai_consultation_request_usecase.dart';
-import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_cubit.dart';
-import 'package:egy_akin/features/create_post_in_community/data/datasources/create_post_in_community_datasource.dart';
-import 'package:egy_akin/features/create_post_in_community/data/repositories/create_post_in_community_repo_impl.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/repositories/create_post_in_community_repo.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/usecases/creat_post_with_text_in_community_usecase.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/usecases/create_post_with_image_in_community_usecase.dart';
-import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_cubit.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/block_user_usecase.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/change_syndicate_card_status_usecase.dart';
-import 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_email_usecase.dart';
-import 'package:egy_akin/features/show_single_feed/presentation/cubit/show_single_feed_cubit.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_image_in_community_usecase.dart';
+import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_text_in_community_usecase.dart';
+import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -76,10 +55,11 @@ Future<void> diInit() async {
   sl.registerFactory(() => SendConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
-  sl.registerFactory(() => CommunityCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => ShowSingleFeedCubit());
+  sl.registerLazySingleton(() => CommunityCubit(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(
+      () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
-  sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl()));
+  sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -134,6 +114,8 @@ Future<void> diInit() async {
       () => ConsultationFromAIDatasourceImpl(sl()));
   sl.registerLazySingleton<CreatePostInCommunityDatasource>(
       () => CreatePostInCommunityDatasourceImpl(sl()));
+  sl.registerLazySingleton<ShowSingleFeedDatasource>(
+      () => ShowSingleFeedDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -190,6 +172,8 @@ Future<void> diInit() async {
       () => ConsultationFromAIRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<CreatePostInCommunityRepository>(
       () => CreatePostInCommunityRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ShowSingleFeedRepository>(
+      () => ShowSingleFeedRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -416,5 +400,33 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<CreatePostWithTextInCommunityUsecase>()) {
     sl.registerFactory<CreatePostWithTextInCommunityUsecase>(
         () => CreatePostWithTextInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetCommentsInCommunityUsecase>()) {
+    sl.registerFactory<GetCommentsInCommunityUsecase>(
+        () => GetCommentsInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddLikeOrUnlikeOnCommentInCommunityUsecase>()) {
+    sl.registerFactory<AddLikeOrUnlikeOnCommentInCommunityUsecase>(
+        () => AddLikeOrUnlikeOnCommentInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreateCommentOnPostInCommunityUsecase>()) {
+    sl.registerFactory<CreateCommentOnPostInCommunityUsecase>(
+        () => CreateCommentOnPostInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<DeleteCommentOnPostInCommunityUsecase>()) {
+    sl.registerFactory<DeleteCommentOnPostInCommunityUsecase>(
+        () => DeleteCommentOnPostInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<EditPostWithImageInCommunityUsecase>()) {
+    sl.registerFactory<EditPostWithImageInCommunityUsecase>(
+        () => EditPostWithImageInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<EditPostWithTextInCommunityUsecase>()) {
+    sl.registerFactory<EditPostWithTextInCommunityUsecase>(
+        () => EditPostWithTextInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreateReplyOnCommentInCommunityUsecase>()) {
+    sl.registerFactory<CreateReplyOnCommentInCommunityUsecase>(
+        () => CreateReplyOnCommentInCommunityUsecase(sl()));
   }
 }

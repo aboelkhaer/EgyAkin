@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
-import 'package:egy_akin/features/community/domain/repositories/community_repo.dart';
 import '../../../../exports.dart';
 
 class SaveOrUnsavePostUsecase

@@ -4,11 +4,13 @@ class ShimmerLoadingPatientsCards extends StatelessWidget {
   final bool ishorizontal;
   final int? numberOfShimmer;
   final bool isTopDoctor;
+  final bool isFeedsComments;
   const ShimmerLoadingPatientsCards({
     super.key,
     required this.ishorizontal,
     this.numberOfShimmer,
     this.isTopDoctor = false,
+    this.isFeedsComments = false,
   });
 
   @override
@@ -84,30 +86,42 @@ class ShimmerLoadingPatientsCards extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Container(
-                                          color: const Color.fromRGBO(
-                                              255, 255, 255, 1),
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromRGBO(
+                                                255, 255, 255, 1),
+                                            borderRadius: isFeedsComments
+                                                ? BorderRadius.circular(40)
+                                                : null,
+                                          ),
                                           width: 200,
                                           height: 20,
                                         ),
                                         const SizedBox(height: 4),
                                         Container(
-                                          color: Colors.white,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromRGBO(
+                                                255, 255, 255, 1),
+                                            borderRadius: isFeedsComments
+                                                ? BorderRadius.circular(40)
+                                                : null,
+                                          ),
                                           width: 180,
                                           height: 20,
                                         ),
                                         const SizedBox(height: 4),
                                         Container(
-                                          color: Colors.white,
+                                          decoration: BoxDecoration(
+                                            color: const Color.fromRGBO(
+                                                255, 255, 255, 1),
+                                            borderRadius: isFeedsComments
+                                                ? BorderRadius.circular(40)
+                                                : null,
+                                          ),
                                           width: 120,
                                           height: 20,
                                         ),
                                       ],
                                     ),
-                                    // Container(
-                                    //   color: const Color.fromRGBO(255, 255, 255, 1),
-                                    //   width: 100,
-                                    //   height: 20,
-                                    // ),
                                   ],
                                 ),
                               ],

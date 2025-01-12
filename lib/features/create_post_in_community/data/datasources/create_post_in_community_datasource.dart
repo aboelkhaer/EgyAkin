@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
+import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -16,6 +17,21 @@ abstract class CreatePostInCommunityDatasource {
     required String mediaType,
     required String visibility,
     required String? groupId,
+  });
+  Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity({
+    required File image,
+    required String? postContent,
+    required String mediaType,
+    required String visibility,
+    required String? groupId,
+    required String postId,
+  });
+  Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity({
+    required String postContent,
+    required String mediaType,
+    required String visibility,
+    required String? groupId,
+    required String postId,
   });
 }
 
@@ -49,5 +65,33 @@ class CreatePostInCommunityDatasourceImpl
       required String? groupId}) async {
     return await _apiServices.createPostWithTextInCommunity(
         postContent, mediaType, visibility, groupId);
+  }
+
+  @override
+  Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
+      {required String postContent,
+      required String mediaType,
+      required String visibility,
+      required String? groupId,
+      required String postId}) async {
+    return await _apiServices.editPostWithTextInCommunity(
+      postId,
+      postContent,
+      mediaType,
+      visibility,
+      groupId,
+    );
+  }
+
+  @override
+  Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity(
+      {required File image,
+      required String? postContent,
+      required String mediaType,
+      required String visibility,
+      required String? groupId,
+      required String postId}) async {
+    return await _apiServices.editPostWithImageInCommunity(
+        postId, postContent, mediaType, visibility, groupId, image);
   }
 }

@@ -1,7 +1,5 @@
-import 'package:egy_akin/app/shared/functions/convert_timestamp_in_community.dart';
 import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
-import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 
 import '../../../../exports.dart';
@@ -49,8 +47,10 @@ class PostCard extends StatelessWidget {
                   highlightColor: Colors.transparent,
                   hoverColor: Colors.transparent,
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
+                        margin: const EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           boxShadow: [
@@ -68,14 +68,39 @@ class PostCard extends StatelessWidget {
                             onTap: () {
                               // Handle user profile navigation here
                             },
-                            child: CircleAvatar(
-                              radius: 20.r,
-                              backgroundColor:
-                                  AppColors.primary.withOpacity(0.8),
-                              child: CustomCachedNetworkImage(
-                                imageUrl: feed.doctor!.image.toString(),
-                                height: 100.h,
-                                width: 100.w,
+                            child: GestureDetector(
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.doctorInfoView,
+                                  arguments:
+                                      AppRoutesArgs.doctorInfoViewRouteArgs(
+                                    doctorId: feed.doctor!.id.toString(),
+                                    currentDoctorModel: currentDoctorModel,
+                                    currentDoctorPoints:
+                                        int.parse(homeDataModel.scoreValue!),
+                                    accountVerification:
+                                        homeDataModel.verified!,
+                                    initialIndex: 0,
+                                    isSyndicateCardRequired: homeDataModel
+                                        .isSyndicateCardRequired
+                                        .toString(),
+                                    currentDoctorRole:
+                                        homeDataModel.role.toString(),
+                                    homeDataModel: homeDataModel,
+                                    isNavigateToTheButtonOfInformationTab:
+                                        false,
+                                  ),
+                                );
+                              },
+                              child: CircleAvatar(
+                                radius: 20.r,
+                                backgroundColor:
+                                    AppColors.primary.withOpacity(0.8),
+                                child: CustomCachedNetworkImage(
+                                  imageUrl: feed.doctor!.image.toString(),
+                                  height: 100.h,
+                                  width: 100.w,
+                                ),
                               ),
                             ),
                           ),
@@ -92,21 +117,53 @@ class PostCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
                                       Flexible(
-                                        child: Text(
-                                          doctorName(
-                                            firstName: feed.doctor!.firstName,
-                                            lastName: feed.doctor!.lastName,
-                                            role: '',
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            navigatorKey.currentState
+                                                ?.pushNamed(
+                                              AppRoutes.doctorInfoView,
+                                              arguments: AppRoutesArgs
+                                                  .doctorInfoViewRouteArgs(
+                                                doctorId:
+                                                    feed.doctor!.id.toString(),
+                                                currentDoctorModel:
+                                                    currentDoctorModel,
+                                                currentDoctorPoints: int.parse(
+                                                    homeDataModel.scoreValue!),
+                                                accountVerification:
+                                                    homeDataModel.verified!,
+                                                initialIndex: 0,
+                                                isSyndicateCardRequired:
+                                                    homeDataModel
+                                                        .isSyndicateCardRequired
+                                                        .toString(),
+                                                currentDoctorRole: homeDataModel
+                                                    .role
+                                                    .toString(),
+                                                homeDataModel: homeDataModel,
+                                                isNavigateToTheButtonOfInformationTab:
+                                                    false,
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            doctorName(
+                                              firstName: feed.doctor!.firstName,
+                                              lastName: feed.doctor!.lastName,
+                                              role: '',
+                                            ),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.title,
+                                              fontSize: 12.sp,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.title,
-                                            fontSize: 12.sp,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                       'Verified' == 'Verified'
@@ -142,10 +199,8 @@ class PostCard extends StatelessWidget {
                                   loaded: (feedsResponse, isDeletePostLoading,
                                       isDeletePostLoaded, message) {
                                     if (message != '') {
-                                      showHintDialog(
-                                          context: context,
-                                          dialogType: DialogType.information,
-                                          message: message);
+                                      customSnackBar(
+                                          context: context, message: message);
                                     }
                                   },
                                 );
@@ -160,16 +215,26 @@ class PostCard extends StatelessWidget {
                                     if (isDeletePostLoading &&
                                         (feed.id.toString() ==
                                             cubit.postIdDeleted)) {
-                                      return const Row(
+                                      return Row(
                                         children: [
-                                          SizedBox(
-                                            height: 20,
-                                            width: 20,
+                                          IconButton(
+                                              onPressed: () {},
+                                              hoverColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              splashColor: Colors.transparent,
+                                              icon: const Icon(
+                                                Icons.more_vert,
+                                                color: Colors.transparent,
+                                              )),
+                                          const SizedBox(
+                                            height: 15,
+                                            width: 15,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 3,
                                             ),
                                           ),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                         ],
                                       );
                                     }
@@ -180,7 +245,21 @@ class PostCard extends StatelessWidget {
                                         switch (value) {
                                           case 'Report':
                                             // Handle report action
-                                            print('Report clicked');
+                                            debugPrint('Report clicked');
+                                            break;
+                                          case 'Edit':
+                                            // Handle edit action
+                                            navigatorKey.currentState
+                                                ?.pushNamed(
+                                              AppRoutes.createPostInCommunity,
+                                              arguments: AppRoutesArgs
+                                                  .createPostInCommunityRouteArgs(
+                                                currentDoctorModel:
+                                                    currentDoctorModel,
+                                                homeDataModel: homeDataModel,
+                                                feed: feed,
+                                              ),
+                                            );
                                             break;
                                           case 'Delete':
                                             // Handle delete action
@@ -191,20 +270,40 @@ class PostCard extends StatelessWidget {
                                       },
                                       itemBuilder: (BuildContext context) {
                                         final items = <PopupMenuEntry<String>>[
-                                          PopupMenuItem(
-                                            value: 'Report',
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.report,
-                                                    color:
-                                                        AppColors.description),
-                                                SizedBox(width: 8.w),
-                                                const Text('Report'),
-                                              ],
-                                            ),
-                                          ),
+                                          // PopupMenuItem(
+                                          //   value: 'Report',
+                                          //   child: Row(
+                                          //     children: [
+                                          //       const Icon(Icons.report,
+                                          //           color:
+                                          //               AppColors.description),
+                                          //       SizedBox(width: 8.w),
+                                          //       const Text('Report'),
+                                          //     ],
+                                          //   ),
+                                          // ),
                                         ];
 
+                                        if (feed.doctor!.id.toString() ==
+                                                currentDoctorModel.id
+                                                    .toString() ||
+                                            homeDataModel.role ==
+                                                AppStrings.roleAdmin) {
+                                          items.add(
+                                            PopupMenuItem(
+                                              value: 'Edit',
+                                              child: Row(
+                                                children: [
+                                                  const Icon(Icons.edit,
+                                                      color: AppColors
+                                                          .description),
+                                                  SizedBox(width: 8.w),
+                                                  const Text('Edit'),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }
                                         if (feed.doctor!.id.toString() ==
                                                 currentDoctorModel.id
                                                     .toString() ||
@@ -226,6 +325,21 @@ class PostCard extends StatelessWidget {
                                           );
                                         }
 
+                                        items.add(
+                                          PopupMenuItem(
+                                            value: 'Report',
+                                            child: Row(
+                                              children: [
+                                                const Icon(Icons.report,
+                                                    color:
+                                                        AppColors.description),
+                                                SizedBox(width: 8.w),
+                                                const Text('Report'),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+
                                         return items;
                                       },
                                     );
@@ -239,13 +353,13 @@ class PostCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
                 Row(
                   children: [
                     Flexible(
                       child: HashtagText(
                         content: feed.content.toString(),
-                        trimLines: 6,
+                        trimLines: 4,
                       ),
                     ),
                   ],
@@ -257,105 +371,132 @@ class PostCard extends StatelessWidget {
               ? const SizedBox.shrink()
               : GestureDetector(
                   onTap: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => FullScreenImage(
-                          imageUrl: feed.mediaPath.toString(),
-                        ),
+                    // navigatorKey.currentState?.push(
+                    //   MaterialPageRoute(
+                    //     builder: (context) => FullScreenImage(
+                    //       imageUrl: feed.mediaPath.toString(),
+                    //     ),
+                    //   ),
+                    // );
+                    navigatorKey.currentState?.pushNamed(
+                      AppRoutes.showSingleFeed,
+                      arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                        homeDataModel: homeDataModel,
+                        currentDoctorModel: currentDoctorModel,
+                        feed: feed,
                       ),
                     );
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(5),
-                    child: CustomCachedNetworkImage(
-                      imageUrl: feed.mediaPath.toString(),
-                      width: double.infinity,
-                      height: 150.h,
+                    child: Hero(
+                      tag: feed.id.toString(),
+                      child: CustomCachedNetworkImage(
+                        imageUrl: feed.mediaPath.toString(),
+                        width: double.infinity,
+                        height: 150.h,
+                      ),
                     ),
                   ),
                 ),
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        cubit.addLikeOrUnlikeOnPost(feed.id.toString());
-                      },
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.favorite,
-                            color: feed.isLiked == true
-                                ? Colors.red.shade600
-                                : Colors.grey.shade400,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            feed.likesCount.toString(),
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
-                        navigatorKey.currentState?.pushNamed(
-                          AppRoutes.showSingleFeed,
-                          arguments: AppRoutesArgs.showSingleFeedRouteArgs(
-                            homeDataModel: homeDataModel,
-                            currentDoctorModel: currentDoctorModel,
-                            feed: feed,
-                          ),
-                        );
-                      },
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.comment,
-                            color: Colors.grey.shade400,
-                            size: 23,
-                          ),
-                          const SizedBox(width: 5),
-                          Text(
-                            feed.commentsCount.toString(),
-                            style: TextStyle(
-                              color: Colors.grey.shade400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+          InkWell(
+            onTap: () {
+              navigatorKey.currentState?.pushNamed(
+                AppRoutes.showSingleFeed,
+                arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                  homeDataModel: homeDataModel,
+                  currentDoctorModel: currentDoctorModel,
+                  feed: feed,
                 ),
-                InkWell(
-                  onTap: () {
-                    cubit.addSaveOrUnsaveOnPost(feed.id.toString());
-                  },
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  child: Row(
+              );
+            },
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     children: [
-                      Icon(
-                        feed.isSaved == true
-                            ? Icons.bookmark
-                            : Icons.bookmark_outline,
-                        color: feed.isSaved == true
-                            ? Colors.amber
-                            : Colors.grey.shade400,
+                      InkWell(
+                        onTap: () {
+                          cubit.addLikeOrUnlikeOnPost(feed.id.toString());
+                        },
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.favorite,
+                              color: feed.isLiked == true
+                                  ? Colors.red.shade600
+                                  : Colors.grey.shade400,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              feed.likesCount.toString(),
+                              style: TextStyle(
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      GestureDetector(
+                        onTap: () {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.showSingleFeed,
+                            arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                              homeDataModel: homeDataModel,
+                              currentDoctorModel: currentDoctorModel,
+                              feed: feed,
+                            ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.comment,
+                              color: Colors.grey.shade400,
+                              size: 23,
+                            ),
+                            const SizedBox(width: 5),
+                            Text(
+                              feed.commentsCount.toString(),
+                              style: TextStyle(
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  InkWell(
+                    onTap: () {
+                      cubit.addSaveOrUnsaveOnPost(feed.id.toString());
+                    },
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    child: Row(
+                      children: [
+                        Icon(
+                          feed.isSaved == true
+                              ? Icons.bookmark
+                              : Icons.bookmark_outline,
+                          color: feed.isSaved == true
+                              ? Colors.amber
+                              : Colors.grey.shade400,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
