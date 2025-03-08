@@ -17,14 +17,16 @@ class CommunityCubit extends Cubit<CommunityState> {
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
 
+  ScrollController feedsScrollController = ScrollController();
+
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  int currentPage = 0;
+  int _currentPage = 0;
 
   getAllFeeds() async {
-    currentPage = 0;
+    _currentPage = 0;
     emit(const CommunityState.loading());
-    final result = await _getAllFeedsUsecase.execute(currentPage);
+    final result = await _getAllFeedsUsecase.execute(_currentPage);
     result.fold(
       (l) {
         emit(CommunityState.error(l.message));
@@ -35,14 +37,75 @@ class CommunityCubit extends Cubit<CommunityState> {
           false,
           false,
           '',
+          false,
         ));
+      },
+    );
+  }
+
+  void loadMoreFeeds() async {
+    _currentPage++;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => CommunityState.loaded(
+        value.feedsResponse,
+        false,
+        false,
+        '',
+        true,
+      ),
+    ));
+    final result = await _getAllFeedsUsecase.execute(_currentPage);
+    result.fold(
+      (l) {
+        _currentPage--;
+        emit(CommunityState.error(l.message));
+      },
+      (loadMoreFeeds) async {
+        final currentState = state;
+        currentState.when(
+          initial: () {},
+          loading: () {},
+          loaded: (
+            feedsResponse,
+            isDeletePostLoading,
+            isDeletePostLoaded,
+            message,
+            isSeeMore,
+          ) {
+            final updatedData = feedsResponse.copyWith(
+              data: feedsResponse.data!.copyWith(
+                data: [
+                  ...feedsResponse.data!.data!,
+                  ...loadMoreFeeds.data!.data!
+                ],
+              ),
+            );
+            if (_currentPage >= feedsResponse.data!.lastPage!) {
+              isLastPage = true;
+            } else {
+              isLastPage = false;
+            }
+            isLoadingMoreForScroll = false;
+            emit(CommunityState.loaded(
+              updatedData,
+              false,
+              false,
+              '',
+              false,
+            ));
+          },
+          error: (error) {},
+        );
       },
     );
   }
 
   String postIdDeleted = '';
   // make delete post function
-  deletePost(String postId) async {
+  deletePost(
+    String postId,
+  ) async {
     postIdDeleted = postId;
     emit(
       state.maybeMap(
@@ -52,6 +115,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           true,
           false,
           '',
+          false,
         ),
       ),
     );
@@ -69,12 +133,14 @@ class CommunityCubit extends Cubit<CommunityState> {
               false,
               false,
               failure.message,
+              false,
             ),
           ),
         );
       },
       (success) {
         // delete post from the list
+
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -89,6 +155,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               false,
               true,
               success.message.toString(),
+              false,
             ),
           ),
         );
@@ -221,6 +288,7 @@ class CommunityCubit extends Cubit<CommunityState> {
             value.isDeletePostLoading,
             value.isDeletePostLoaded,
             value.message,
+            false,
           );
         },
       ),

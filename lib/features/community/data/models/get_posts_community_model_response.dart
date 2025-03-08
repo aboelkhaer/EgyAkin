@@ -50,8 +50,19 @@ class PostCommunityModel with _$PostCommunityModel {
     @JsonKey(name: 'comments_count') int? commentsCount,
     @JsonKey(name: 'isSaved') bool? isSaved,
     @JsonKey(name: 'isLiked') bool? isLiked,
+    GroupDetails? group,
     DoctorModel? doctor,
   }) = _PostCommunityModel;
   factory PostCommunityModel.fromJson(Map<String, dynamic> json) =>
       _$PostCommunityModelFromJson(json);
+}
+
+@freezed
+class GroupDetails with _$GroupDetails {
+  const factory GroupDetails({
+    int? id,
+    String? name,
+  }) = _GroupDetails;
+  factory GroupDetails.fromJson(Map<String, dynamic> json) =>
+      _$GroupDetailsFromJson(json);
 }

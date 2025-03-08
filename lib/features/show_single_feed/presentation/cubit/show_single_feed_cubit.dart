@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
 
 import '../../../../exports.dart';
 
@@ -24,7 +25,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   ScrollController scrollController = ScrollController();
 
   CommentModelInCommunity? commentToReply;
-  String commentContent = '';
+  // String commentContent = '';
+
+  TextEditingController commentContent = TextEditingController();
   int changeCounter = 0;
   final GlobalKey<AnimatedListState> listKeyForComments =
       GlobalKey<AnimatedListState>();
@@ -168,7 +171,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
     // Reset the flag after the operation is complete (assuming the API call is async)
     Future.delayed(
-      const Duration(seconds: 5),
+      const Duration(milliseconds: 500),
       () {
         _isLikingOrUnlikingPost = false;
       },
@@ -225,7 +228,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
     // Reset the flag after the operation is complete (assuming the API call is async)
     Future.delayed(
-      const Duration(seconds: 5),
+      const Duration(milliseconds: 500),
       () {
         _isSavingOrUnsavingPost = false;
       },
@@ -499,7 +502,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       },
       // Handle success case
       (r) async {
-        commentContent = '';
+        commentContent.clear();
 
         final updatedFeed = feed.copyWith(
           commentsCount:
@@ -588,6 +591,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   //   emit(state)
   // }
 
+//! Delete comment
   String deleteCommentId = '';
   deleteCommentOnPostInCommunity(
     String commentId,
@@ -706,10 +710,137 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     deleteCommentId = '';
   }
 
+  final Map<int, GlobalKey<AnimatedListState>> listKeyForReplies = {};
+
+//! delete reply
+  Future<void> deleteReplyOnComment(
+    String replyId,
+    CommentModelInCommunity commentModel,
+    int replyIndex,
+    PostCommunityModel feed,
+    GetCommentsInCommunityModelResponse commentsResponse,
+    HomeModelResponse homeDataModel,
+    DoctorModel currentDoctorModel,
+  ) async {
+    deleteCommentId = replyId;
+
+    final currentState = state.maybeMap(
+      orElse: () => null,
+      loaded: (value) => value,
+    );
+
+    if (currentState == null) return;
+
+    emit(
+      ShowSingleFeedState.loaded(
+        currentState.commentsResponse,
+        changeCounter,
+        currentState.feed,
+        false,
+        false,
+        '',
+        null,
+        true,
+        false,
+        false,
+        false,
+      ),
+    );
+
+    final result =
+        await _deleteCommentOnPostInCommunityUsecase.execute(replyId);
+
+    result.fold(
+      (failure) {
+        emit(
+          ShowSingleFeedState.loaded(
+            currentState.commentsResponse,
+            changeCounter,
+            currentState.feed,
+            false,
+            false,
+            failure.message,
+            null,
+            false,
+            false,
+            false,
+            false,
+          ),
+        );
+      },
+      (success) async {
+        final updatedFeed = feed.copyWith(
+          commentsCount: (feed.commentsCount ?? 0) - 1,
+        );
+
+        final updatedReplies = commentModel.replies
+            ?.where((reply) => reply.id.toString() != replyId)
+            .toList();
+        final updatedComment = commentModel.copyWith(
+          replies: updatedReplies,
+          repliesCount: (commentModel.repliesCount ?? 0) - 1,
+        );
+
+        final updatedCommentsData = currentState.commentsResponse.data?.data
+            ?.map((comment) =>
+                comment.id == commentModel.id ? updatedComment : comment)
+            .toList();
+        final updatedCommentsResponse = currentState.commentsResponse.copyWith(
+          data: currentState.commentsResponse.data?.copyWith(
+            data: updatedCommentsData,
+          ),
+        );
+
+        if (listKeyForReplies[commentModel.id]?.currentState != null) {
+          listKeyForReplies[commentModel.id]?.currentState?.removeItem(
+            replyIndex,
+            (context, animation) {
+              final replyToRemove = commentModel.replies![replyIndex];
+              return SizeTransition(
+                sizeFactor: animation,
+                axisAlignment: 0.0,
+                child: CommentWidgetInCommunity(
+                    commentModel: replyToRemove,
+                    homeDataModel: homeDataModel,
+                    currentDoctorModel: currentDoctorModel,
+                    commentsResponse: currentState.commentsResponse,
+                    index: replyIndex,
+                    updatedFeed: updatedFeed),
+              );
+            },
+            duration: const Duration(milliseconds: 300),
+          );
+
+          await Future.delayed(const Duration(milliseconds: 300));
+        }
+
+        emit(
+          ShowSingleFeedState.loaded(
+            updatedCommentsResponse,
+            changeCounter + 1,
+            updatedFeed,
+            false,
+            false,
+            '',
+            null,
+            false,
+            true,
+            false,
+            false,
+          ),
+        );
+      },
+    );
+
+    deleteCommentId = '';
+    commentContent.clear();
+  }
+
+  //! create reply
+
   createReplyOnComment(
     String postId,
     String commentId,
-    String replyContent,
     CommentModelInCommunity parentComment,
     DoctorModel currentDoctorModel,
   ) async {
@@ -737,7 +868,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     final result = await _createReplyOnCommentInCommunityUsecase.execute(
       CreateReplyOnCommentInCommunityUsecaseInput(
         postId: postId,
-        comment: replyContent,
+        comment: commentContent.text,
         parentId: int.parse(commentId),
       ),
     );
@@ -773,7 +904,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           feedPostId: parentComment.feedPostId,
           parentId: parentComment.id,
           doctor: currentDoctorModel,
-          comment: replyContent,
+          comment: commentContent.text,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
           likesCount: 0,
@@ -801,7 +932,6 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           return comment;
         }).toList();
 
-        // Emit the updated state with the new reply
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -824,6 +954,34 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             ),
           ),
         );
+
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        // Emit the updated state with the new reply
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => ShowSingleFeedState.loaded(
+              value.commentsResponse.copyWith(
+                data: value.commentsResponse.data?.copyWith(
+                  data: updatedComments,
+                ),
+              ),
+              changeCounter,
+              value.feed,
+              false, // Not sending a comment
+              false, // Not sending a comment
+              '',
+              null,
+              value.isDeleteCommentLoading,
+              value.isDeleteCommentLoaded,
+              false, // Not sending a reply
+              true, // Reply sent successfully
+            ),
+          ),
+        );
+        commentToReply = null;
+        commentContent.clear();
       },
     );
   }

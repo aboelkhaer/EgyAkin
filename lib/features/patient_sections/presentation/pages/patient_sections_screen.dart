@@ -306,6 +306,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                         currentDoctorModel:
                                             widget.currentDoctorModel,
                                         patientId: widget.patientId,
+                                        isSendConsultation: true,
+                                        groupId: '',
                                       ),
                                     );
                                   },

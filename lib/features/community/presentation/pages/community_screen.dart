@@ -3,11 +3,14 @@ import 'package:egy_akin/exports.dart';
 class CommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final int initialTab;
 
-  const CommunityScreen(
-      {super.key,
-      required this.currentDoctorModel,
-      required this.homeDataModel});
+  const CommunityScreen({
+    super.key,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
+    required this.initialTab,
+  });
 
   @override
   _CommunityScreenState createState() => _CommunityScreenState();
@@ -16,20 +19,25 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
   late ScrollController _scrollController;
-  bool _isFabVisible = false;
   late TabController _tabController;
+  bool _isFabVisible = false;
+
+  late CommunityCubit _communityCubit; // Store a reference to the cubit
 
   @override
   void initState() {
     super.initState();
-    context.read<CommunityCubit>().getAllFeeds();
+    _communityCubit = context.read<CommunityCubit>(); // Initialize the cubit
+    _communityCubit.getAllFeeds(); // Use the stored cubit
     _scrollController = ScrollController();
-    _tabController =
-        TabController(length: 3, vsync: this); // Initialize the TabController
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTab,
+    );
 
     _scrollController.addListener(() {
       if (_scrollController.offset > 100 && _tabController.index == 0) {
-        // Check if in Posts tab (index 0)
         setState(() {
           _isFabVisible = true;
         });
@@ -39,19 +47,45 @@ class _CommunityScreenState extends State<CommunityScreen>
         });
       }
     });
+
+    _communityCubit.feedsScrollController =
+        ScrollController(); // Use the stored cubit
+    _communityCubit.feedsScrollController
+        .addListener(_onScroll); // Use the stored cubit
+  }
+
+  void _onScroll() {
+    final scrollController =
+        _communityCubit.feedsScrollController; // Use the stored cubit
+    if (scrollController.hasClients) {
+      if (_communityCubit.isLastPage) {
+        return;
+      } else {
+        final maxScroll = scrollController.position.maxScrollExtent;
+        final currentScroll = scrollController.position.pixels;
+        const threshold = 200.0;
+
+        if ((_communityCubit.isLoadingMoreForScroll == false) &&
+            maxScroll - currentScroll <= threshold) {
+          _communityCubit.isLoadingMoreForScroll = true;
+          _communityCubit.loadMoreFeeds();
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _tabController.dispose();
+    _communityCubit.feedsScrollController
+        .removeListener(_onScroll); // Use the stored cubit
+    _communityCubit.feedsScrollController.dispose(); // Use the stored cubit
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    CommunityCubit cubit = CommunityCubit.get(context);
-
     return DefaultTabController(
       length: 3, // Number of tabs
       child: Scaffold(
@@ -107,38 +141,34 @@ class _CommunityScreenState extends State<CommunityScreen>
                               ],
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          InkWell(
-                            onTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                AppRoutes.createPostInCommunity,
-                                arguments: AppRoutesArgs
-                                    .createPostInCommunityRouteArgs(
-                                  currentDoctorModel: widget.currentDoctorModel,
-                                  homeDataModel: widget.homeDataModel,
-                                ),
-                              );
-                            },
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  child: const Text(
-                                    'Create\nPost',
-                                    style: TextStyle(
-                                      color: AppColors.primary,
-                                    ),
-                                    textAlign: TextAlign.center,
+                          const SizedBox(width: 3),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  onPressed: () {
+                                    navigatorKey.currentState?.pushNamed(
+                                      AppRoutes.createPostInCommunity,
+                                      arguments: AppRoutesArgs
+                                          .createPostInCommunityRouteArgs(
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        homeDataModel: widget.homeDataModel,
+                                      ),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.add,
+                                    size: 30,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(height: 10),
+                            ],
                           ),
-                          SizedBox(width: 15.w),
+                          const SizedBox(width: 10),
                         ],
                       ),
                     ],
@@ -169,9 +199,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.article_outlined, size: 18),
+                            Icon(Icons.article_outlined, size: 16),
                             SizedBox(width: 5),
-                            Text('Feeds'),
+                            Text(
+                              'Feeds',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -179,9 +214,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.newspaper_outlined, size: 18),
+                            Icon(Icons.trending_up, size: 16),
                             SizedBox(width: 5),
-                            Text('News'),
+                            Text(
+                              'Trending',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -189,9 +229,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.trending_up, size: 18),
+                            Icon(Icons.group, size: 16),
                             SizedBox(width: 5),
-                            Text('Trending'),
+                            Text(
+                              'Groups',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -208,8 +253,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                 homeDataModel: widget.homeDataModel,
                 currentDoctorModel: widget.currentDoctorModel,
               ),
-              const NewsTab(),
-              const TrendingTab(),
+              TrendingTab(
+                homeDataModel: widget.homeDataModel,
+                currentDoctorModel: widget.currentDoctorModel,
+              ),
+              GroupsTab(
+                homeDataModel: widget.homeDataModel,
+                currentDoctorModel: widget.currentDoctorModel,
+              ),
             ],
           ),
         ),

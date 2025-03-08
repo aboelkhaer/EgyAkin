@@ -1,4 +1,6 @@
 import 'package:egy_akin/app/shared/functions/hash_tags.dart';
+import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
+import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'dart:ui' as ui;
 import '../../../../exports.dart';
@@ -129,29 +131,62 @@ class FeedContentInCommunity extends StatelessWidget {
                           isSendReplyLoading,
                           isSendReplyLoaded,
                         ) {
-                          return InkWell(
-                            onTap: () async {
-                              cubit.addOrRemoveLike();
-                            },
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
+                          return Row(
+                            children: [
+                              InkWell(
+                                onTap: () async {
+                                  cubit.addOrRemoveLike();
+                                },
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
+                                child: Icon(
                                   Icons.favorite,
                                   color: feedResponse.isLiked == true
                                       ? Colors.red.shade600
                                       : Colors.grey.shade400,
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  feedResponse.likesCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(width: 5),
+                              feedResponse.likesCount! > 0
+                                  ? InkWell(
+                                      onTap: () async {
+                                        showCustomBottomSheet(
+                                          context: context,
+                                          builder: (context) {
+                                            return BlocProvider(
+                                              create: (context) =>
+                                                  GroupMembersCubit(
+                                                      sl(), sl(), sl()),
+                                              child: GroupMembersScreen(
+                                                groupId: '',
+                                                currentDoctorModel:
+                                                    currentDoctorModel,
+                                                homeDataModel: homeDataModel,
+                                                postId:
+                                                    feedResponse.id.toString(),
+                                                isPostLikes: true,
+                                                ownerId: '',
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      highlightColor: Colors.transparent,
+                                      splashColor: Colors.transparent,
+                                      child: Text(
+                                        feedResponse.likesCount.toString(),
+                                        style: const TextStyle(
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    )
+                                  : Text(
+                                      feedResponse.likesCount.toString(),
+                                      style: TextStyle(
+                                        color: Colors.grey.shade400,
+                                      ),
+                                    ),
+                            ],
                           );
                         },
                       );

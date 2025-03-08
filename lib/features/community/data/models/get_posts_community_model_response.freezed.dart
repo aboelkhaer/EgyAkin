@@ -658,6 +658,7 @@ mixin _$PostCommunityModel {
   bool? get isSaved => throw _privateConstructorUsedError;
   @JsonKey(name: 'isLiked')
   bool? get isLiked => throw _privateConstructorUsedError;
+  GroupDetails? get group => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
 
   /// Serializes this PostCommunityModel to a JSON map.
@@ -688,8 +689,10 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
+      GroupDetails? group,
       DoctorModel? doctor});
 
+  $GroupDetailsCopyWith<$Res>? get group;
   $DoctorModelCopyWith<$Res>? get doctor;
 }
 
@@ -719,6 +722,7 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
     Object? commentsCount = freezed,
     Object? isSaved = freezed,
     Object? isLiked = freezed,
+    Object? group = freezed,
     Object? doctor = freezed,
   }) {
     return _then(_value.copyWith(
@@ -766,11 +770,29 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
           ? _value.isLiked
           : isLiked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      group: freezed == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as GroupDetails?,
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
               as DoctorModel?,
     ) as $Val);
+  }
+
+  /// Create a copy of PostCommunityModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GroupDetailsCopyWith<$Res>? get group {
+    if (_value.group == null) {
+      return null;
+    }
+
+    return $GroupDetailsCopyWith<$Res>(_value.group!, (value) {
+      return _then(_value.copyWith(group: value) as $Val);
+    });
   }
 
   /// Create a copy of PostCommunityModel
@@ -808,8 +830,11 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
       @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
+      GroupDetails? group,
       DoctorModel? doctor});
 
+  @override
+  $GroupDetailsCopyWith<$Res>? get group;
   @override
   $DoctorModelCopyWith<$Res>? get doctor;
 }
@@ -838,6 +863,7 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
     Object? commentsCount = freezed,
     Object? isSaved = freezed,
     Object? isLiked = freezed,
+    Object? group = freezed,
     Object? doctor = freezed,
   }) {
     return _then(_$PostCommunityModelImpl(
@@ -885,6 +911,10 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
           ? _value.isLiked
           : isLiked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      group: freezed == group
+          ? _value.group
+          : group // ignore: cast_nullable_to_non_nullable
+              as GroupDetails?,
       doctor: freezed == doctor
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
@@ -908,6 +938,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       @JsonKey(name: 'comments_count') this.commentsCount,
       @JsonKey(name: 'isSaved') this.isSaved,
       @JsonKey(name: 'isLiked') this.isLiked,
+      this.group,
       this.doctor});
 
   factory _$PostCommunityModelImpl.fromJson(Map<String, dynamic> json) =>
@@ -944,11 +975,13 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   @JsonKey(name: 'isLiked')
   final bool? isLiked;
   @override
+  final GroupDetails? group;
+  @override
   final DoctorModel? doctor;
 
   @override
   String toString() {
-    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, doctor: $doctor)';
+    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, group: $group, doctor: $doctor)';
   }
 
   @override
@@ -974,6 +1007,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
                 other.commentsCount == commentsCount) &&
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
+            (identical(other.group, group) || other.group == group) &&
             (identical(other.doctor, doctor) || other.doctor == doctor));
   }
 
@@ -992,6 +1026,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       commentsCount,
       isSaved,
       isLiked,
+      group,
       doctor);
 
   /// Create a copy of PostCommunityModel
@@ -1024,6 +1059,7 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       @JsonKey(name: 'comments_count') final int? commentsCount,
       @JsonKey(name: 'isSaved') final bool? isSaved,
       @JsonKey(name: 'isLiked') final bool? isLiked,
+      final GroupDetails? group,
       final DoctorModel? doctor}) = _$PostCommunityModelImpl;
 
   factory _PostCommunityModel.fromJson(Map<String, dynamic> json) =
@@ -1060,6 +1096,8 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   @JsonKey(name: 'isLiked')
   bool? get isLiked;
   @override
+  GroupDetails? get group;
+  @override
   DoctorModel? get doctor;
 
   /// Create a copy of PostCommunityModel
@@ -1067,5 +1105,171 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PostCommunityModelImplCopyWith<_$PostCommunityModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+GroupDetails _$GroupDetailsFromJson(Map<String, dynamic> json) {
+  return _GroupDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$GroupDetails {
+  int? get id => throw _privateConstructorUsedError;
+  String? get name => throw _privateConstructorUsedError;
+
+  /// Serializes this GroupDetails to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of GroupDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $GroupDetailsCopyWith<GroupDetails> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $GroupDetailsCopyWith<$Res> {
+  factory $GroupDetailsCopyWith(
+          GroupDetails value, $Res Function(GroupDetails) then) =
+      _$GroupDetailsCopyWithImpl<$Res, GroupDetails>;
+  @useResult
+  $Res call({int? id, String? name});
+}
+
+/// @nodoc
+class _$GroupDetailsCopyWithImpl<$Res, $Val extends GroupDetails>
+    implements $GroupDetailsCopyWith<$Res> {
+  _$GroupDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of GroupDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$GroupDetailsImplCopyWith<$Res>
+    implements $GroupDetailsCopyWith<$Res> {
+  factory _$$GroupDetailsImplCopyWith(
+          _$GroupDetailsImpl value, $Res Function(_$GroupDetailsImpl) then) =
+      __$$GroupDetailsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int? id, String? name});
+}
+
+/// @nodoc
+class __$$GroupDetailsImplCopyWithImpl<$Res>
+    extends _$GroupDetailsCopyWithImpl<$Res, _$GroupDetailsImpl>
+    implements _$$GroupDetailsImplCopyWith<$Res> {
+  __$$GroupDetailsImplCopyWithImpl(
+      _$GroupDetailsImpl _value, $Res Function(_$GroupDetailsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GroupDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? name = freezed,
+  }) {
+    return _then(_$GroupDetailsImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GroupDetailsImpl implements _GroupDetails {
+  const _$GroupDetailsImpl({this.id, this.name});
+
+  factory _$GroupDetailsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$GroupDetailsImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  final String? name;
+
+  @override
+  String toString() {
+    return 'GroupDetails(id: $id, name: $name)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GroupDetailsImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.name, name) || other.name == name));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name);
+
+  /// Create a copy of GroupDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GroupDetailsImplCopyWith<_$GroupDetailsImpl> get copyWith =>
+      __$$GroupDetailsImplCopyWithImpl<_$GroupDetailsImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GroupDetailsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GroupDetails implements GroupDetails {
+  const factory _GroupDetails({final int? id, final String? name}) =
+      _$GroupDetailsImpl;
+
+  factory _GroupDetails.fromJson(Map<String, dynamic> json) =
+      _$GroupDetailsImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  String? get name;
+
+  /// Create a copy of GroupDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GroupDetailsImplCopyWith<_$GroupDetailsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
+
 import '../../../../exports.dart';
 
 abstract class SendConsultationDataSource {
@@ -6,6 +8,11 @@ abstract class SendConsultationDataSource {
   });
   Future<SendConsultationModelResponse> sendConsultation({
     required String patientId,
+    required String message,
+    required List<String> doctorsIDS,
+  });
+  Future<SendInvitationModelResponse> sendGroupInvitation({
+    required String groupId,
     required String message,
     required List<String> doctorsIDS,
   });
@@ -28,5 +35,13 @@ class SendConsultationDataSourceImpl implements SendConsultationDataSource {
       required String message,
       required List<String> doctorsIDS}) async {
     return await _apiServices.sendConsultation(patientId, message, doctorsIDS);
+  }
+
+  @override
+  Future<SendInvitationModelResponse> sendGroupInvitation(
+      {required String groupId,
+      required String message,
+      required List<String> doctorsIDS}) async {
+    return await _apiServices.sendGroupInvitation(groupId, message, doctorsIDS);
   }
 }

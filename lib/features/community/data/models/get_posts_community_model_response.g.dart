@@ -73,6 +73,9 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       commentsCount: (json['comments_count'] as num?)?.toInt(),
       isSaved: json['isSaved'] as bool?,
       isLiked: json['isLiked'] as bool?,
+      group: json['group'] == null
+          ? null
+          : GroupDetails.fromJson(json['group'] as Map<String, dynamic>),
       doctor: json['doctor'] == null
           ? null
           : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
@@ -92,5 +95,18 @@ Map<String, dynamic> _$$PostCommunityModelImplToJson(
       'comments_count': instance.commentsCount,
       'isSaved': instance.isSaved,
       'isLiked': instance.isLiked,
+      'group': instance.group,
       'doctor': instance.doctor,
+    };
+
+_$GroupDetailsImpl _$$GroupDetailsImplFromJson(Map<String, dynamic> json) =>
+    _$GroupDetailsImpl(
+      id: (json['id'] as num?)?.toInt(),
+      name: json['name'] as String?,
+    );
+
+Map<String, dynamic> _$$GroupDetailsImplToJson(_$GroupDetailsImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
     };

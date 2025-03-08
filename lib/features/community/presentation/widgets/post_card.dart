@@ -8,11 +8,20 @@ class PostCard extends StatelessWidget {
   final PostCommunityModel feed;
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
+  final bool isGroupPosts;
+  final void Function()? onLikeAndUnlikeAdditional;
+  final void Function()? onSaveAndUnSaveAdditional;
+  final void Function()? onDeleteAdditional;
+
   const PostCard({
     super.key,
     required this.feed,
     required this.homeDataModel,
     required this.currentDoctorModel,
+    this.isGroupPosts = false,
+    this.onLikeAndUnlikeAdditional,
+    this.onSaveAndUnSaveAdditional,
+    this.onDeleteAdditional,
   });
 
   @override
@@ -20,18 +29,76 @@ class PostCard extends StatelessWidget {
     CommunityCubit cubit = CommunityCubit.get(context);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: isGroupPosts ? 0 : 16),
       // padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 7,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: isGroupPosts
+                ? const EdgeInsets.only(
+                    top: 20, left: 20, right: 20, bottom: 20)
+                : const EdgeInsets.all(20),
             child: Column(
               children: [
+                isGroupPosts && feed.group != null
+                    ? Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.groupDetailsInCommunity,
+                                arguments: AppRoutesArgs
+                                    .groupDetailsInCommunityRouteArgs(
+                                  currentDoctorModel: currentDoctorModel,
+                                  homeDataModel: homeDataModel,
+                                  groupId: feed.group!.id.toString(),
+                                ),
+                              );
+                            },
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            hoverColor: Colors.transparent,
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Posted at',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  feed.group!.name.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.grey.shade300,
+                            thickness: 0.5,
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+
                 InkWell(
                   onTap: () {
                     navigatorKey.currentState?.pushNamed(
@@ -196,8 +263,13 @@ class PostCard extends StatelessWidget {
                                         dialogType: DialogType.error,
                                         message: message);
                                   },
-                                  loaded: (feedsResponse, isDeletePostLoading,
-                                      isDeletePostLoaded, message) {
+                                  loaded: (
+                                    feedsResponse,
+                                    isDeletePostLoading,
+                                    isDeletePostLoaded,
+                                    message,
+                                    isSeeMore,
+                                  ) {
                                     if (message != '') {
                                       customSnackBar(
                                           context: context, message: message);
@@ -210,8 +282,13 @@ class PostCard extends StatelessWidget {
                                   orElse: () {
                                     return const SizedBox.shrink();
                                   },
-                                  loaded: (feedsResponse, isDeletePostLoading,
-                                      isDeletePostLoaded, message) {
+                                  loaded: (
+                                    feedsResponse,
+                                    isDeletePostLoading,
+                                    isDeletePostLoaded,
+                                    message,
+                                    isSeeMore,
+                                  ) {
                                     if (isDeletePostLoading &&
                                         (feed.id.toString() ==
                                             cubit.postIdDeleted)) {
@@ -262,9 +339,14 @@ class PostCard extends StatelessWidget {
                                             );
                                             break;
                                           case 'Delete':
-                                            // Handle delete action
-                                            cubit
-                                                .deletePost(feed.id.toString());
+                                            if (isGroupPosts) {
+                                              onDeleteAdditional!();
+                                            } else {
+                                              cubit.deletePost(
+                                                feed.id.toString(),
+                                              );
+                                            }
+
                                             break;
                                         }
                                       },
@@ -304,11 +386,11 @@ class PostCard extends StatelessWidget {
                                             ),
                                           );
                                         }
-                                        if (feed.doctor!.id.toString() ==
+                                        if ((feed.doctor!.id.toString() ==
                                                 currentDoctorModel.id
                                                     .toString() ||
                                             homeDataModel.role ==
-                                                AppStrings.roleAdmin) {
+                                                AppStrings.roleAdmin)) {
                                           items.add(
                                             PopupMenuItem(
                                               value: 'Delete',
@@ -371,13 +453,6 @@ class PostCard extends StatelessWidget {
               ? const SizedBox.shrink()
               : GestureDetector(
                   onTap: () {
-                    // navigatorKey.currentState?.push(
-                    //   MaterialPageRoute(
-                    //     builder: (context) => FullScreenImage(
-                    //       imageUrl: feed.mediaPath.toString(),
-                    //     ),
-                    //   ),
-                    // );
                     navigatorKey.currentState?.pushNamed(
                       AppRoutes.showSingleFeed,
                       arguments: AppRoutesArgs.showSingleFeedRouteArgs(
@@ -423,7 +498,11 @@ class PostCard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          cubit.addLikeOrUnlikeOnPost(feed.id.toString());
+                          if (isGroupPosts) {
+                            onLikeAndUnlikeAdditional!();
+                          } else {
+                            cubit.addLikeOrUnlikeOnPost(feed.id.toString());
+                          }
                         },
                         highlightColor: Colors.transparent,
                         splashColor: Colors.transparent,
@@ -478,7 +557,11 @@ class PostCard extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      cubit.addSaveOrUnsaveOnPost(feed.id.toString());
+                      if (isGroupPosts) {
+                        onSaveAndUnSaveAdditional!();
+                      } else {
+                        cubit.addSaveOrUnsaveOnPost(feed.id.toString());
+                      }
                     },
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,

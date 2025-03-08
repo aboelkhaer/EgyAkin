@@ -1,14 +1,16 @@
+import 'package:egy_akin/features/send_consultation/domain/usecases/send_group_invitation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 
 import '../../../../exports.dart';
 
 class SendConsultationCubit extends Cubit<SendConsultationState> {
-  SendConsultationCubit(
-      this._getConsultationSearchUsecase, this._sendConsultationUsecase)
+  SendConsultationCubit(this._getConsultationSearchUsecase,
+      this._sendConsultationUsecase, this._sendGroupInvitationUsecase)
       : super(const SendConsultationState.loaded(
             false, false, '', null, 0, false, false));
   final GetConsultationSearchUsecase _getConsultationSearchUsecase;
   final SendConsultationUsecase _sendConsultationUsecase;
+  final SendGroupInvitationUsecase _sendGroupInvitationUsecase;
   static SendConsultationCubit get(context) => BlocProvider.of(context);
   TextEditingController searchController = TextEditingController();
   final List<DoctorModelInConsultationModelResponse> doctorsChecked = [];
@@ -77,6 +79,66 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
     final result = await _sendConsultationUsecase.execute(
       SendConsultationUsecaseInput(
         patientId: patientId,
+        message: consultMessage,
+        doctorsIDS: doctorsIDS,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => SendConsultationState.loaded(
+            value.isSearching,
+            value.isSearched,
+            l.message,
+            value.response,
+            value.counterChanges,
+            false,
+            false,
+          ),
+        ));
+      },
+      (r) {
+        doctorsChecked.clear();
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => SendConsultationState.loaded(
+              value.isSearching,
+              value.isSearched,
+              r.message.toString(),
+              value.response?.copyWith(data: []),
+              value.counterChanges,
+              false,
+              true,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  sendGroupInvitation(String groupId) async {
+    List<String> doctorsIDS =
+        doctorsChecked.map((doctor) => doctor.id.toString()).toList();
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => SendConsultationState.loaded(
+        value.isSearching,
+        value.isSearched,
+        '',
+        value.response,
+        value.counterChanges,
+        true,
+        false,
+      ),
+    ));
+    final result = await _sendGroupInvitationUsecase.execute(
+      SendGroupInvitationUsecaseInput(
+        groupId: groupId,
         message: consultMessage,
         doctorsIDS: doctorsIDS,
       ),

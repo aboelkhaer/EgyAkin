@@ -5,7 +5,34 @@ enum QuestionType {
   date,
 }
 
+enum GroupInviteStatus {
+  invited,
+  accepted,
+  declined,
+  joined,
+}
 
+enum GroupStatus {
+  private,
+  public,
+}
+
+enum PostPosition {
+  community,
+  groupTab,
+  groupDetails,
+}
+
+enum GroupPosition {
+  groupTab,
+  myGroups,
+  allGroups,
+}
+
+enum GroupPrivacy {
+  public,
+  private,
+}
 // // Assuming `questionJson` is the JSON object representing a question from the API
 // String typeString = questionJson['type']; // Assuming 'type' is a string field in the JSON
 

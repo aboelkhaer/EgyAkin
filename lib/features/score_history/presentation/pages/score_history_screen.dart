@@ -34,15 +34,6 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
     super.dispose();
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   context
-  //       .read<AllDoctorsPatientsCubit>()
-  //       .scrollController
-  //       .addListener(_onScroll);
-  // }
-
   void _onScroll() {
     if (context.read<ScoreHistoryCubit>().isLastPage) {
       return;

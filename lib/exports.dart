@@ -363,7 +363,7 @@ export 'package:egy_akin/features/send_consultation/data/models/send_consultatio
 export 'package:egy_akin/features/splash/data/models/get_app_settings_model_response.dart';
 export 'package:egy_akin/features/doctor_info_view/data/models/syndicate_card_verify_model_response.dart';
 export 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
-export 'package:egy_akin/features/community/presentation/widgets/community_tabs/news_tab.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/groups_tab.dart';
 export 'package:egy_akin/features/community/presentation/widgets/community_tabs/posts_tab.dart';
 export 'package:egy_akin/features/community/presentation/widgets/community_tabs/trending_tab.dart';
 export 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
@@ -405,3 +405,9 @@ export 'package:egy_akin/features/doctor_info_view/domain/usecases/verify_user_e
 export 'package:egy_akin/features/show_single_feed/data/datasources/show_single_feed_datasource.dart';
 export 'package:egy_akin/features/show_single_feed/data/repositories/show_single_feed_repo_impl.dart';
 export 'package:egy_akin/features/show_single_feed/domain/repositories/show_single_feed_repo.dart';
+export 'package:egy_akin/app/shared/widgets/loading_for_feeds.dart';
+export 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
+export 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_state.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/group_row.dart';
+export 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/loading_for_group_row.dart';
+export 'package:egy_akin/features/community/presentation/widgets/post_card.dart';

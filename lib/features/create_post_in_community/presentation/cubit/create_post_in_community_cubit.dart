@@ -223,7 +223,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     return optimizedImageFile;
   }
 
-  submitPost(context) async {
+  submitPost(context, String? groupId) async {
     if (editableFeed == null) {
       if (imagePicked == null && postContent.trim() == '') {
         customSnackBar(
@@ -231,11 +231,11 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         return;
       }
       if (imagePicked != null) {
-        createPostWithImageInCommunity();
+        createPostWithImageInCommunity(groupId);
         return;
       }
       if (imagePicked == null && postContent != '') {
-        createPostWithTextInCommunity();
+        createPostWithTextInCommunity(groupId);
         return;
       }
     } else {
@@ -245,18 +245,18 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         return;
       }
       if (imagePicked != null) {
-        editPostWithImageInCommunity();
+        editPostWithImageInCommunity(groupId);
         return;
       }
       if (imagePicked == null &&
           (editableFeed!.content != null && editableFeed!.content != '')) {
-        editPostWithTextInCommunity();
+        editPostWithTextInCommunity(groupId);
         return;
       }
     }
   }
 
-  createPostWithImageInCommunity() async {
+  createPostWithImageInCommunity(String? groupId) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -278,7 +278,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         image: optimizedFile,
         mediaType: 'image',
         visibility: 'Public',
-        groupId: null,
+        groupId: groupId,
       ),
     );
     result.fold(
@@ -316,7 +316,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  editPostWithImageInCommunity() async {
+  editPostWithImageInCommunity(String? groupId) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -350,7 +350,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         image: optimizedFile,
         mediaType: 'image',
         visibility: 'Public',
-        groupId: null,
+        groupId: groupId,
       ),
     );
     result.fold(
@@ -388,7 +388,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  editPostWithTextInCommunity() async {
+  editPostWithTextInCommunity(String? groupId) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -407,9 +407,9 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       EditPostWithTextInCommunityUsecaseInput(
         postId: editableFeed!.id.toString(),
         postContent: editableFeed!.content!.trim(),
-        mediaType: 'image',
+        mediaType: 'text',
         visibility: 'Public',
-        groupId: null,
+        groupId: groupId,
       ),
     );
     result.fold(
@@ -447,7 +447,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  createPostWithTextInCommunity() async {
+  createPostWithTextInCommunity(String? groupId) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -466,7 +466,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         postContent: postContent,
         mediaType: '',
         visibility: 'Public',
-        groupId: null,
+        groupId: groupId,
       ),
     );
     result.fold(

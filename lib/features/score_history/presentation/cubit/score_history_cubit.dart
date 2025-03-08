@@ -46,14 +46,6 @@ class ScoreHistoryCubit extends Cubit<ScoreHistoryState> {
           initial: () {},
           loading: () {},
           loaded: (scoreHistory, isSeeMore) {
-            // final updatedData = scoreHistory!.data!.copyWith(
-            //   data: scoreHistory.data!.data!.copyWith(
-            //     data: [
-            //       ...scoreHistory.data!.data!,
-            //       ...loadMoreActions.data!.data!
-            //     ],
-            //   ),
-            // );
             final updatedData = scoreHistory.copyWith(
               data: [
                 ...scoreHistory.data!,

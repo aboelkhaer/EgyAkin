@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
+import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../../../../exports.dart';
@@ -7,12 +8,16 @@ class CreatePostInCommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   final PostCommunityModel? feed;
+  final String? groupId;
+  final VoidCallback? onPostUploaded;
 
   const CreatePostInCommunityScreen({
     super.key,
     required this.currentDoctorModel,
     required this.homeDataModel,
     this.feed,
+    this.groupId,
+    this.onPostUploaded,
   });
 
   @override
@@ -57,11 +62,18 @@ class _CreatePostInCommunityScreenState
                       isUploadPostLoading, isUploadPostLoaded, message) {
                     if (isUploadPostLoaded) {
                       navigatorKey.currentState?.pop();
-                      navigatorKey.currentState?.popAndPushNamed(
+                      if (widget.groupId != null) {
+                        widget.onPostUploaded?.call();
+                      } else {
+                        navigatorKey.currentState?.popAndPushNamed(
                           AppRoutes.community,
                           arguments: AppRoutesArgs.communityRouteArgs(
-                              homeDataModel: widget.homeDataModel,
-                              currentDoctorModel: widget.currentDoctorModel));
+                            homeDataModel: widget.homeDataModel,
+                            currentDoctorModel: widget.currentDoctorModel,
+                            initialTab: 0,
+                          ),
+                        );
+                      }
                     }
                   },
                 );
@@ -104,7 +116,7 @@ class _CreatePostInCommunityScreenState
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onPressed: () {
-                        cubit.submitPost(context);
+                        cubit.submitPost(context, widget.groupId);
                       },
                       icon: const Icon(Icons.send),
                     );
@@ -315,10 +327,21 @@ class _CreatePostInCommunityScreenState
                                             ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              child: CachedNetworkImage(
-                                                imageUrl: cubit
-                                                    .editableFeed!.mediaPath!,
-                                              ),
+                                              child: cubit.imagePicked == null
+                                                  ? FadeIn(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: cubit
+                                                            .editableFeed!
+                                                            .mediaPath!,
+                                                      ),
+                                                    )
+                                                  : FadeIn(
+                                                      child: Image.file(
+                                                        cubit.imagePicked!,
+                                                        width: double.infinity,
+                                                        fit: BoxFit.contain,
+                                                      ),
+                                                    ),
                                             ),
                                             InkWell(
                                               onTap: () {

@@ -78,5 +78,18 @@ class ApiEndPoint {
   static const createCommentOnPostInCommunity = '$baseUrl/api/feed/posts';
   static const deleteCommentOnPostInCommunity = '$baseUrl/api/feed/comments';
   static const editPostInCommunity = '$baseUrl/api/feed/posts';
-  static const createReplyOnCommentInCommunity = '$baseUrl/api/posts';
+  static const createReplyOnCommentInCommunity = '$baseUrl/api/feed/posts';
+  static const getGroupDetailsInCommunity = '$baseUrl/api/groups';
+  static const getGroupsTab = '$baseUrl/api/latest-groups-with-random-posts';
+  static const joinGroupInCommunity = '$baseUrl/api/groups';
+  static const leaveGroupInCommunity = '$baseUrl/api/groups';
+  static const getGroupMembers = '$baseUrl/api/groups';
+  static const getPostLikes = '$baseUrl/api/posts';
+  static const getMyGroups = '$baseUrl/api/mygroups';
+  static const sendGroupInvitation = '$baseUrl/api/groups';
+  static const removeMemberFromGroup = '$baseUrl/api/groups';
+  static const getAllGroups = '$baseUrl/api/groups';
+  static const createGroupInCommunity = '$baseUrl/api/groups';
+  static const deleteGroupInCommunity = '$baseUrl/api/groups';
+  static const getTrendingPostsInCommunity = '$baseUrl/api/feed/trendingPosts';
 }

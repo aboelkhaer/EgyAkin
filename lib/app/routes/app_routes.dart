@@ -1,8 +1,20 @@
+import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/pages/all_groups_in_community_screen.dart';
+import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
+import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
+import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
+import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_cubit.dart';
+import 'package:egy_akin/features/create_group_in_community/presentation/pages/create_group_in_community_screen.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_post_in_community_screen.dart';
+import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
+import 'package:egy_akin/features/group_details_in_community/presentation/pages/group_details_in_community_screen.dart';
+import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/cubit/invite_member_to_group_in_community_cubit.dart';
+import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/pages/invite_member_to_group_in_community_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
 import '../../exports.dart';
@@ -42,6 +54,11 @@ class AppRoutes {
   static const String showSingleFeed = '/showSingleFeed';
   static const String consultationFromAi = '/consultationFromAi';
   static const String createPostInCommunity = '/createPostInCommunity';
+  static const String groupDetailsInCommunity = '/groupDetailsInCommunity';
+  static const String allGroupsInCommunity = '/allGroupsInCommunity';
+  static const String inviteMemberToGroupInCommunity =
+      '/inviteMemberToGroupInCommunity';
+  static const String createGroupInCommunity = '/createGroupInCommunity';
 }
 
 class RouteGenerator {
@@ -594,6 +611,8 @@ class RouteGenerator {
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   patientId: args['patientId'] as String,
+                  isSendConsultation: args['isSendConsultation'] as bool,
+                  groupId: args['groupId'] as String,
                 ),
               ),
             );
@@ -665,14 +684,21 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
 
           if (args.containsKey('currentDoctorModel') &&
-              args.containsKey('homeDataModel')) {
+              args.containsKey('homeDataModel') &&
+              args.containsKey('initialTab')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider.value(
-                value:
-                    di.sl<CommunityCubit>(), // Pass the already created Cubit
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(
+                      value:
+                          di.sl<GroupsCubit>()), // Add other cubits if needed
+                ],
                 child: CommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialTab: args['initialTab'] as int,
                 ),
               ),
             );
@@ -758,6 +784,127 @@ class RouteGenerator {
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                   feed: args['feed'] as PostCommunityModel?,
+                  groupId: args['groupId'] as String?,
+                  onPostUploaded: args['onPostUploaded'] as VoidCallback?,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.groupDetailsInCommunity:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel') &&
+              args.containsKey('groupId')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => di.sl<GroupDetailsInCommunityCubit>(),
+                  ),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                ],
+                child: GroupDetailsInCommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  groupId: args['groupId'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.allGroupsInCommunity:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => di.sl<AllGroupsInCommunityCubit>(),
+                  ),
+                  BlocProvider(
+                    create: (context) => di.sl<MyGroupsInCommunityCubit>(),
+                  ),
+                  // BlocProvider.value(value: di.sl<MyGroupsInCommunityCubit>()),
+                  BlocProvider(
+                    create: (context) => di.sl<GroupsCubit>(),
+                  ),
+                ],
+                child: AllGroupsInCommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.inviteMemberToGroupInCommunity:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) =>
+                        di.sl<InviteMemberToGroupInCommunityCubit>(),
+                  ),
+                ],
+                child: InviteMemberToGroupInCommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.createGroupInCommunity:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                      create: (context) =>
+                          di.sl<CreateGroupInCommunityCubit>()),
+                  BlocProvider.value(value: di.sl<MyGroupsInCommunityCubit>()),
+                ],
+                child: CreateGroupInCommunityScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  isCreateNewGroup: args['isCreateNewGroup'] as bool,
+                  groupModel: args['groupModel'] as GroupModel?,
                 ),
               ),
             );

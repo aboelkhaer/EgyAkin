@@ -5,6 +5,7 @@ class WriteCommentInCommunity extends StatelessWidget {
   final String isSyndicateCardRequired;
   final PostCommunityModel feed;
   final DoctorModel currentDoctorModel;
+
   const WriteCommentInCommunity({
     super.key,
     required this.accountVerification,
@@ -94,7 +95,7 @@ class WriteCommentInCommunity extends StatelessWidget {
                           textInputType: TextInputType.text,
                           enableSuggestions: true,
                           onChanged: (val) {
-                            cubit.commentContent = val;
+                            cubit.commentContent.text = val;
                           },
                           onFieldSubmitted: (val) {},
                           textInputAction: TextInputAction.done,
@@ -139,6 +140,9 @@ class WriteCommentInCommunity extends StatelessWidget {
             isSendReplyLoaded,
           ) {
             if (isSendCommentLoading) {
+              return const SizedBox.shrink();
+            }
+            if (isSendReplyLoading) {
               return const SizedBox.shrink();
             }
 
@@ -211,7 +215,7 @@ class WriteCommentInCommunity extends StatelessWidget {
                           textInputType: TextInputType.text,
                           enableSuggestions: true,
                           onChanged: (val) {
-                            cubit.commentContent = val;
+                            cubit.commentContent.text = val;
                           },
                           onFieldSubmitted: (val) {},
                           textInputAction: TextInputAction.done,
@@ -229,14 +233,13 @@ class WriteCommentInCommunity extends StatelessWidget {
                                 cubit.createReplyOnComment(
                                   feed.id.toString(),
                                   cubit.commentToReply!.id.toString(),
-                                  cubit.commentContent,
                                   cubit.commentToReply!,
                                   currentDoctorModel,
                                 );
                               } else {
                                 cubit.createCommentOnPostInCommunity(
                                   feed.id.toString(),
-                                  cubit.commentContent,
+                                  cubit.commentContent.text,
                                   feed,
                                   commentsResponse.data!.data ?? [],
                                   currentDoctorModel,

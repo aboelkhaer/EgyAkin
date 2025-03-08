@@ -5,11 +5,11 @@ import '../../../../exports.dart';
 class DoctorInfoViewScreen extends StatefulWidget {
   final String doctorId;
   final DoctorModel currentDoctorModel;
+  final HomeModelResponse homeDataModel;
   final String isSyndicateCardRequired;
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
-  final HomeModelResponse homeDataModel;
   final int initialIndex;
   final bool isNavigateToTheButtonOfInformationTab;
 

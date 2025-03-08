@@ -7,11 +7,16 @@ class SendConsultationScreen extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final String patientId;
-  const SendConsultationScreen(
-      {super.key,
-      required this.homeDataModel,
-      required this.currentDoctorModel,
-      required this.patientId});
+  final bool isSendConsultation;
+  final String groupId;
+  const SendConsultationScreen({
+    super.key,
+    required this.homeDataModel,
+    required this.currentDoctorModel,
+    required this.patientId,
+    required this.isSendConsultation,
+    required this.groupId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +24,8 @@ class SendConsultationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Send Consultation',
+        title: Text(
+          isSendConsultation ? 'Send Consultation' : 'Invite Members',
         ),
         actions: [
           IconButton(
@@ -32,7 +37,7 @@ class SendConsultationScreen extends StatelessWidget {
                 } else {
                   showCustomDialog(
                     context: context,
-                    title: 'Consultation',
+                    title: isSendConsultation ? 'Consultation' : 'Invitation',
                     noColoredButtonText: 'Cancel',
                     isWithTextField: true,
                     textFormFieldMaxLines: 3,
@@ -47,7 +52,11 @@ class SendConsultationScreen extends StatelessWidget {
                     coloredButtonText: 'Send',
                     coloredButtonOnTap: () {
                       Navigator.pop(context);
-                      cubit.sendConsultation(patientId);
+                      if (isSendConsultation) {
+                        cubit.sendConsultation(patientId);
+                      } else {
+                        cubit.sendGroupInvitation(groupId);
+                      }
                     },
                   );
                 }
@@ -60,45 +69,6 @@ class SendConsultationScreen extends StatelessWidget {
       floatingActionButton: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // BlocBuilder<SendConsultationCubit, SendConsultationState>(
-          //   builder: (context, state) {
-          //     return state.maybeWhen(
-          //       orElse: () {
-          //         return const SizedBox.shrink();
-          //       },
-          //       loaded: (isSearching, isSearched, message, response,
-          //           counterChanges) {
-          //         if (cubit.doctorsChecked.isNotEmpty) {
-          //           return Column(
-          //             children: [
-          //               FadeIn(
-          //                 child: SizedBox(
-          //                   height: 50.w,
-          //                   width: 50.w,
-          //                   child: FloatingActionButton(
-          //                     shape: RoundedRectangleBorder(
-          //                       borderRadius: BorderRadius.circular(50.0),
-          //                     ),
-          //                     onPressed: () {
-          //                       // Action for second FAB
-          //                     },
-          //                     child: Icon(
-          //                       Icons.send,
-          //                       color: Colors.white,
-          //                       size: 20.r,
-          //                     ),
-          //                   ),
-          //                 ),
-          //               ),
-          //               SizedBox(height: 10.h),
-          //             ],
-          //           );
-          //         }
-          //         return const SizedBox.shrink();
-          //       },
-          //     );
-          //   },
-          // ),
           SizedBox(
             height: 50.w,
             width: 50.w,

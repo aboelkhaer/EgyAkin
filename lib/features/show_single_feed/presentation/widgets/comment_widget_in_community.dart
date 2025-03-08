@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
@@ -433,16 +434,19 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                   () {
                                                                 Navigator.pop(
                                                                     context);
-                                                                cubit
-                                                                    .deleteCommentOnPostInCommunity(
-                                                                  commentModel
-                                                                      .id
-                                                                      .toString(),
-                                                                  updatedFeed,
-                                                                  index,
-                                                                  homeDataModel,
-                                                                  currentDoctorModel,
-                                                                );
+
+                                                                if (isMainComment) {
+                                                                  cubit
+                                                                      .deleteCommentOnPostInCommunity(
+                                                                    commentModel
+                                                                        .id
+                                                                        .toString(),
+                                                                    updatedFeed,
+                                                                    index,
+                                                                    homeDataModel,
+                                                                    currentDoctorModel,
+                                                                  );
+                                                                }
                                                               },
                                                               noColoredButtonText:
                                                                   'Delete',
@@ -514,7 +518,6 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              // this is replies
                               commentModel.parentId != null
                                   ? const SizedBox.shrink()
                                   : commentModel.replies!.isEmpty
@@ -526,16 +529,13 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                               (replyIndex) {
                                                 var replyModel = commentModel
                                                     .replies![replyIndex];
-                                                return CommentWidgetInCommunity(
-                                                  commentModel: replyModel,
+                                                return ReplyWidgetInCommunity(
+                                                  replyModel: replyModel,
                                                   homeDataModel: homeDataModel,
                                                   currentDoctorModel:
                                                       currentDoctorModel,
-                                                  commentsResponse:
-                                                      commentsResponse,
-                                                  index: replyIndex,
-                                                  updatedFeed: updatedFeed,
-                                                  isMainComment: false,
+                                                  commentModel: commentModel,
+                                                  replyIndex: replyIndex,
                                                 );
                                               },
                                             ),

@@ -20,8 +20,12 @@ mixin _$CommunityState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
+    required TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,8 +34,12 @@ mixin _$CommunityState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult? Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -40,8 +48,12 @@ mixin _$CommunityState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -138,8 +150,12 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
+    required TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -151,8 +167,12 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult? Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -164,8 +184,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -261,8 +285,12 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
+    required TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -274,8 +302,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult? Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -287,8 +319,12 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -351,7 +387,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       {GetPostsCommunityModelResponse feedsResponse,
       bool isDeletePostLoading,
       bool isDeletePostLoaded,
-      String message});
+      String message,
+      bool isSeeMore});
 
   $GetPostsCommunityModelResponseCopyWith<$Res> get feedsResponse;
 }
@@ -373,6 +410,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isDeletePostLoading = null,
     Object? isDeletePostLoaded = null,
     Object? message = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$LoadedImpl(
       null == feedsResponse
@@ -391,6 +429,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -410,7 +452,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(this.feedsResponse, this.isDeletePostLoading,
-      this.isDeletePostLoaded, this.message);
+      this.isDeletePostLoaded, this.message, this.isSeeMore);
 
   @override
   final GetPostsCommunityModelResponse feedsResponse;
@@ -420,10 +462,12 @@ class _$LoadedImpl implements _Loaded {
   final bool isDeletePostLoaded;
   @override
   final String message;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'CommunityState.loaded(feedsResponse: $feedsResponse, isDeletePostLoading: $isDeletePostLoading, isDeletePostLoaded: $isDeletePostLoaded, message: $message)';
+    return 'CommunityState.loaded(feedsResponse: $feedsResponse, isDeletePostLoading: $isDeletePostLoading, isDeletePostLoaded: $isDeletePostLoaded, message: $message, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -437,12 +481,14 @@ class _$LoadedImpl implements _Loaded {
                 other.isDeletePostLoading == isDeletePostLoading) &&
             (identical(other.isDeletePostLoaded, isDeletePostLoaded) ||
                 other.isDeletePostLoaded == isDeletePostLoaded) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, feedsResponse,
-      isDeletePostLoading, isDeletePostLoaded, message);
+      isDeletePostLoading, isDeletePostLoaded, message, isSeeMore);
 
   /// Create a copy of CommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -457,13 +503,17 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
+    required TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(
-        feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+    return loaded(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
+        message, isSeeMore);
   }
 
   @override
@@ -471,13 +521,17 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult? Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(
-        feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+    return loaded?.call(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
+        message, isSeeMore);
   }
 
   @override
@@ -485,15 +539,19 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(
-          feedsResponse, isDeletePostLoading, isDeletePostLoaded, message);
+      return loaded(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
+          message, isSeeMore);
     }
     return orElse();
   }
@@ -541,12 +599,14 @@ abstract class _Loaded implements CommunityState {
       final GetPostsCommunityModelResponse feedsResponse,
       final bool isDeletePostLoading,
       final bool isDeletePostLoaded,
-      final String message) = _$LoadedImpl;
+      final String message,
+      final bool isSeeMore) = _$LoadedImpl;
 
   GetPostsCommunityModelResponse get feedsResponse;
   bool get isDeletePostLoading;
   bool get isDeletePostLoaded;
   String get message;
+  bool get isSeeMore;
 
   /// Create a copy of CommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -625,8 +685,12 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)
+    required TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -638,8 +702,12 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult? Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -651,8 +719,12 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetPostsCommunityModelResponse feedsResponse,
-            bool isDeletePostLoading, bool isDeletePostLoaded, String message)?
+    TResult Function(
+            GetPostsCommunityModelResponse feedsResponse,
+            bool isDeletePostLoading,
+            bool isDeletePostLoaded,
+            String message,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

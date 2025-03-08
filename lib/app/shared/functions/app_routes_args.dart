@@ -1,4 +1,5 @@
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 
 class AppRoutesArgs {
   static Map<String, dynamic> patientSectionsRouteArguments({
@@ -242,11 +243,15 @@ class AppRoutesArgs {
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
     required String patientId,
+    required bool isSendConsultation,
+    required String groupId,
   }) {
     return {
       'homeDataModel': homeDataModel,
       'currentDoctorModel': currentDoctorModel,
       'patientId': patientId,
+      'isSendConsultation': isSendConsultation,
+      'groupId': groupId,
     };
   }
 
@@ -281,10 +286,12 @@ class AppRoutesArgs {
   static Map<String, dynamic> communityRouteArgs({
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
+    required int initialTab,
   }) {
     return {
       'homeDataModel': homeDataModel,
       'currentDoctorModel': currentDoctorModel,
+      'initialTab': initialTab,
     };
   }
 
@@ -312,11 +319,61 @@ class AppRoutesArgs {
     required DoctorModel currentDoctorModel,
     required HomeModelResponse homeDataModel,
     PostCommunityModel? feed,
+    String? groupId,
+    VoidCallback? onPostUploaded,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'homeDataModel': homeDataModel,
       'feed': feed,
+      'groupId': groupId,
+      'onPostUploaded': onPostUploaded,
+    };
+  }
+
+  static Map<String, dynamic> groupDetailsInCommunityRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+    required String groupId,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+      'groupId': groupId,
+    };
+  }
+
+  static Map<String, dynamic> allGroupsInCommunityRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+    };
+  }
+
+  static Map<String, dynamic> inviteMemberToGroupInCommunityRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+    };
+  }
+
+  static Map<String, dynamic> createGroupInCommunityRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+    required bool isCreateNewGroup,
+    GroupModel? groupModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+      'isCreateNewGroup': isCreateNewGroup,
+      'groupModel': groupModel,
     };
   }
 }

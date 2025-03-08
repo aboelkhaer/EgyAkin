@@ -167,6 +167,7 @@ class _HomeTabState extends State<HomeTab> {
                                 homeDataModel: widget.cubit.homeDataModel,
                                 currentDoctorModel:
                                     widget.cubit.currentDoctorModel,
+                                initialTab: 0,
                               ),
                             );
                           },
