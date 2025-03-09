@@ -17,11 +17,15 @@ class CommunityCubit extends Cubit<CommunityState> {
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
 
-  ScrollController feedsScrollController = ScrollController();
+  ScrollController? feedsScrollController;
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
   int _currentPage = 0;
+  void disposeScrollController() {
+    feedsScrollController?.dispose();
+    feedsScrollController = null;
+  }
 
   getAllFeeds() async {
     _currentPage = 0;

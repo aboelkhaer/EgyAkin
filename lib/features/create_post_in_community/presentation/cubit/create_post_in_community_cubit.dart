@@ -63,7 +63,6 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
   editFeedContentForEditableFeed(String? editableFeedContent) {
     editableFeed = editableFeed!.copyWith(content: editableFeedContent);
-    log(editableFeedContent.toString());
   }
 
   int changeCounter = 0;
@@ -225,6 +224,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
   submitPost(context, String? groupId) async {
     if (editableFeed == null) {
+      log('moatz1');
       if (imagePicked == null && postContent.trim() == '') {
         customSnackBar(
             context: context, message: 'Write something to publish.');
@@ -235,11 +235,15 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         return;
       }
       if (imagePicked == null && postContent != '') {
+        log('kkkk');
         createPostWithTextInCommunity(groupId);
         return;
       }
     } else {
-      if (imagePicked == null && editableFeed!.content!.trim() == '') {
+      log('moatz2');
+      if (imagePicked == null &&
+          editableFeed!.content!.trim() == '' &&
+          editableFeed!.mediaPath == null) {
         customSnackBar(
             context: context, message: 'Write something to publish.');
         return;
@@ -249,10 +253,39 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         return;
       }
       if (imagePicked == null &&
-          (editableFeed!.content != null && editableFeed!.content != '')) {
-        editPostWithTextInCommunity(groupId);
+          (editableFeed!.content != null &&
+              editableFeed!.content != '' &&
+              editableFeed!.mediaPath != null)) {
+        editPostWithTextInCommunity(groupId, null);
         return;
       }
+      if (imagePicked == null &&
+          (editableFeed!.content != null &&
+              editableFeed!.content != '' &&
+              editableFeed!.mediaPath == null)) {
+        log('text type');
+        editPostWithTextInCommunity(groupId, 'text');
+        return;
+      }
+    }
+  }
+
+  removeMediaPathInEditableFeed() {
+    if (editableFeed != null) {
+      editableFeed = editableFeed!.copyWith(mediaPath: null);
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => CreatePostInCommunityState.loaded(
+            value.postLength,
+            value.changeCounter,
+            value.isImagePick,
+            false,
+            false,
+            '',
+          ),
+        ),
+      );
     }
   }
 
@@ -388,7 +421,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  editPostWithTextInCommunity(String? groupId) async {
+  editPostWithTextInCommunity(String? groupId, String? mediaType) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -407,7 +440,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       EditPostWithTextInCommunityUsecaseInput(
         postId: editableFeed!.id.toString(),
         postContent: editableFeed!.content!.trim(),
-        mediaType: 'text',
+        mediaType: mediaType,
         visibility: 'Public',
         groupId: groupId,
       ),
@@ -464,7 +497,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     final result = await _createPostWithTextInCommunityUsecase.execute(
       CreatePostWithTextInCommunityUsecaseInput(
         postContent: postContent,
-        mediaType: '',
+        mediaType: null,
         visibility: 'Public',
         groupId: groupId,
       ),

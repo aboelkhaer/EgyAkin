@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:egy_akin/app/utilities/enums.dart';
+import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/create_group_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,6 +27,7 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
   String groupDescriptionText = '';
   GroupPrivacy _privacy = GroupPrivacy.public;
   GroupPrivacy get privacy => _privacy;
+  GroupModel? editableGroupModel;
 
   set privacySetValue(GroupPrivacy value) {
     _privacy = value;
@@ -35,6 +37,21 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
   int imageQuality = 10;
 
   final ImagePicker _picker = ImagePicker();
+
+  addEditableGroupModel(GroupModel groupModel) {
+    editableGroupModel = groupModel;
+    emit(
+      CreateGroupInCommunityState.loaded(
+        '',
+        '',
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+      ),
+    );
+  }
 
   Future<void> pickGroupHeaderImage() async {
     emit(

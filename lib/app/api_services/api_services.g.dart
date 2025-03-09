@@ -2157,7 +2157,7 @@ class _ApiServices implements ApiServices {
   @override
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
     String postContent,
-    String mediaType,
+    String? mediaType,
     String visibility,
     String? groupId,
   ) async {
@@ -2359,7 +2359,7 @@ class _ApiServices implements ApiServices {
   Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
     String postId,
     String postContent,
-    String mediaType,
+    String? mediaType,
     String visibility,
     String? groupId,
   ) async {
@@ -2375,7 +2375,7 @@ class _ApiServices implements ApiServices {
     };
     _data.removeWhere((k, v) => v == null);
     final _options = _setStreamType<EditPostInCommunityModelResponse>(Options(
-      method: 'PUT',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
     )
@@ -2443,7 +2443,7 @@ class _ApiServices implements ApiServices {
       ),
     ));
     final _options = _setStreamType<EditPostInCommunityModelResponse>(Options(
-      method: 'PUT',
+      method: 'POST',
       headers: _headers,
       extra: _extra,
       contentType: 'multipart/form-data',

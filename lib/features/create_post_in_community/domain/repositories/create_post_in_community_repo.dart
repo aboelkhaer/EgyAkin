@@ -19,7 +19,7 @@ abstract class CreatePostInCommunityRepository {
   Future<Either<Failure, CreatePostInCommunityModelResponse>>
       createPostWithTextInCommunity({
     required String postContent,
-    required String mediaType,
+    required String? mediaType,
     required String visibility,
     required String? groupId,
   });
@@ -35,7 +35,7 @@ abstract class CreatePostInCommunityRepository {
   Future<Either<Failure, EditPostInCommunityModelResponse>>
       editPostWithTextInCommunity({
     required String postContent,
-    required String mediaType,
+    required String? mediaType,
     required String visibility,
     required String? groupId,
     required String postId,

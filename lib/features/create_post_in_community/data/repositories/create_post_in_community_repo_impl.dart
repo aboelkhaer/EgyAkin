@@ -46,7 +46,7 @@ class CreatePostInCommunityRepositoryImpl
   Future<Either<Failure, CreatePostInCommunityModelResponse>>
       createPostWithTextInCommunity(
           {required String postContent,
-          required String mediaType,
+          required String? mediaType,
           required String visibility,
           required String? groupId}) async {
     if (await networkInfo.isConnected) {
@@ -103,7 +103,7 @@ class CreatePostInCommunityRepositoryImpl
   Future<Either<Failure, EditPostInCommunityModelResponse>>
       editPostWithTextInCommunity(
           {required String postContent,
-          required String mediaType,
+          required String? mediaType,
           required String visibility,
           required String? groupId,
           required String postId}) async {

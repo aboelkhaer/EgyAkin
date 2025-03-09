@@ -23,12 +23,12 @@ class _CommunityScreenState extends State<CommunityScreen>
   bool _isFabVisible = false;
 
   late CommunityCubit _communityCubit; // Store a reference to the cubit
-
   @override
   void initState() {
     super.initState();
     _communityCubit = context.read<CommunityCubit>(); // Initialize the cubit
     _communityCubit.getAllFeeds(); // Use the stored cubit
+
     _scrollController = ScrollController();
     _tabController = TabController(
       length: 3,
@@ -48,40 +48,46 @@ class _CommunityScreenState extends State<CommunityScreen>
       }
     });
 
-    _communityCubit.feedsScrollController =
-        ScrollController(); // Use the stored cubit
-    _communityCubit.feedsScrollController
-        .addListener(_onScroll); // Use the stored cubit
-  }
-
-  void _onScroll() {
-    final scrollController =
-        _communityCubit.feedsScrollController; // Use the stored cubit
-    if (scrollController.hasClients) {
-      if (_communityCubit.isLastPage) {
-        return;
-      } else {
-        final maxScroll = scrollController.position.maxScrollExtent;
-        final currentScroll = scrollController.position.pixels;
-        const threshold = 200.0;
-
-        if ((_communityCubit.isLoadingMoreForScroll == false) &&
-            maxScroll - currentScroll <= threshold) {
-          _communityCubit.isLoadingMoreForScroll = true;
-          _communityCubit.loadMoreFeeds();
-        }
-      }
+    // Reinitialize the feedsScrollController if it was disposed
+    if (_communityCubit.feedsScrollController == null ||
+        !_communityCubit.feedsScrollController!.hasClients) {
+      _communityCubit.feedsScrollController = ScrollController();
     }
+
+    _communityCubit.feedsScrollController!.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     _tabController.dispose();
-    _communityCubit.feedsScrollController
-        .removeListener(_onScroll); // Use the stored cubit
-    _communityCubit.feedsScrollController.dispose(); // Use the stored cubit
+
+    // Dispose of the feedsScrollController in the cubit
+    _communityCubit.disposeScrollController();
+
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_communityCubit.feedsScrollController == null ||
+        !_communityCubit.feedsScrollController!.hasClients) {
+      return;
+    }
+
+    final scrollController = _communityCubit.feedsScrollController!;
+    if (_communityCubit.isLastPage) {
+      return;
+    } else {
+      final maxScroll = scrollController.position.maxScrollExtent;
+      final currentScroll = scrollController.position.pixels;
+      const threshold = 200.0;
+
+      if ((_communityCubit.isLoadingMoreForScroll == false) &&
+          maxScroll - currentScroll <= threshold) {
+        _communityCubit.isLoadingMoreForScroll = true;
+        _communityCubit.loadMoreFeeds();
+      }
+    }
   }
 
   @override
@@ -131,7 +137,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Search in feeds...',
+                                    title: 'Search',
                                     textInputType: TextInputType.text,
                                     validator: (value) {
                                       return null;

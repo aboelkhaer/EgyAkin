@@ -317,6 +317,30 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                                                                   .shrink()
                                                         ],
                                                       ),
+                                                      widget.isPostLikes
+                                                          ? const SizedBox
+                                                              .shrink()
+                                                          : Row(
+                                                              children: [
+                                                                Text(
+                                                                  doctorModel.id
+                                                                              .toString() ==
+                                                                          widget
+                                                                              .ownerId
+                                                                      ? 'Admin'
+                                                                      : 'Member',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .grey
+                                                                        .shade500,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
                                                       // Row(
                                                       //   children: [
                                                       //     Text(
@@ -388,12 +412,16 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                                                                           2,
                                                                     ),
                                                                   ))
-                                                              : widget.currentDoctorModel
-                                                                          .id
-                                                                          .toString() ==
-                                                                      doctorModel
-                                                                          .id
-                                                                          .toString()
+                                                              : (widget.currentDoctorModel
+                                                                              .id
+                                                                              .toString() ==
+                                                                          doctorModel
+                                                                              .id
+                                                                              .toString()) ||
+                                                                      (widget.ownerId ==
+                                                                          doctorModel
+                                                                              .id
+                                                                              .toString())
                                                                   ? const SizedBox
                                                                       .shrink()
                                                                   : IconButton(

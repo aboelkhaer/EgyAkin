@@ -4,7 +4,7 @@ import 'package:egy_akin/features/create_group_in_community/presentation/cubit/c
 
 import '../../../../exports.dart';
 
-class CreateGroupInCommunityScreen extends StatelessWidget {
+class CreateGroupInCommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   final bool isCreateNewGroup;
@@ -18,20 +18,37 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
   });
 
   @override
+  State<CreateGroupInCommunityScreen> createState() =>
+      _CreateGroupInCommunityScreenState();
+}
+
+class _CreateGroupInCommunityScreenState
+    extends State<CreateGroupInCommunityScreen> {
+  @override
+  void initState() {
+    if (widget.isCreateNewGroup == false) {
+      context
+          .read<CreateGroupInCommunityCubit>()
+          .addEditableGroupModel(widget.groupModel!);
+    }
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final CreateGroupInCommunityCubit cubit =
         CreateGroupInCommunityCubit.get(context);
 
-    if (isCreateNewGroup == false) {
-      _parseGroupPrivacy(groupModel!.privacy, context);
-      cubit.groupHeaderText = groupModel!.name.toString();
-      cubit.groupDescriptionText = groupModel!.description.toString();
+    if (widget.isCreateNewGroup == false) {
+      _parseGroupPrivacy(widget.groupModel!.privacy, context);
+      cubit.groupHeaderText = widget.groupModel!.name.toString();
+      cubit.groupDescriptionText = widget.groupModel!.description.toString();
     }
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isCreateNewGroup ? 'Create Group' : 'Update Group',
+          widget.isCreateNewGroup ? 'Create Group' : 'Update Group',
         ),
       ),
       body: SingleChildScrollView(
@@ -82,8 +99,9 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                                   navigatorKey.currentState?.pushNamed(
                                     AppRoutes.community,
                                     arguments: AppRoutesArgs.communityRouteArgs(
-                                      homeDataModel: homeDataModel,
-                                      currentDoctorModel: currentDoctorModel,
+                                      homeDataModel: widget.homeDataModel,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
                                       initialTab: 2,
                                     ),
                                   );
@@ -93,8 +111,9 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                                     AppRoutes.allGroupsInCommunity,
                                     arguments: AppRoutesArgs
                                         .allGroupsInCommunityRouteArgs(
-                                      currentDoctorModel: currentDoctorModel,
-                                      homeDataModel: homeDataModel,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      homeDataModel: widget.homeDataModel,
                                     ),
                                   );
                                 });
@@ -116,11 +135,11 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                               isCreateGroupLoading,
                               isCreateGroupLoaded,
                             ) {
-                              if (isCreateNewGroup == false &&
+                              if (widget.isCreateNewGroup == false &&
                                   cubit.imagePickedForGroupHeader == null) {
                                 return CustomCachedNetworkImage(
-                                  imageUrl:
-                                      groupModel!.headerPicture.toString(),
+                                  imageUrl: widget.groupModel!.headerPicture
+                                      .toString(),
                                   width: double.infinity,
                                 );
                               }
@@ -224,14 +243,15 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                                       isCreateGroupLoading,
                                       isCreateGroupLoaded,
                                     ) {
-                                      if (isCreateNewGroup == false &&
+                                      if (widget.isCreateNewGroup == false &&
                                           cubit.imagePickedForGroupImage ==
                                               null) {
                                         return ClipRRect(
                                           borderRadius:
                                               BorderRadius.circular(80.r),
                                           child: CustomCachedNetworkImage(
-                                            imageUrl: groupModel!.groupImage
+                                            imageUrl: widget
+                                                .groupModel!.groupImage
                                                 .toString(),
                                             fit: BoxFit.cover,
                                             width: 100.w,
@@ -344,7 +364,9 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                     child: CustomTextFormField(
                       title: 'Title',
                       textInputType: TextInputType.text,
-                      initialValue: isCreateNewGroup ? null : groupModel!.name,
+                      initialValue: widget.isCreateNewGroup
+                          ? null
+                          : widget.groupModel!.name,
                       validator: (value) {
                         return null;
                       },
@@ -362,8 +384,9 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                 child: CustomTextFormField(
                   title: 'Description',
                   textInputType: TextInputType.text,
-                  initialValue:
-                      isCreateNewGroup ? null : groupModel!.description,
+                  initialValue: widget.isCreateNewGroup
+                      ? null
+                      : widget.groupModel!.description,
                   validator: (value) {
                     return null;
                   },
@@ -482,7 +505,9 @@ class CreateGroupInCommunityScreen extends StatelessWidget {
                                 onPressed: () {
                                   cubit.createGroup();
                                 },
-                                title: isCreateNewGroup ? 'Create' : 'Update',
+                                title: widget.isCreateNewGroup
+                                    ? 'Create'
+                                    : 'Update',
                               );
                       },
                     );

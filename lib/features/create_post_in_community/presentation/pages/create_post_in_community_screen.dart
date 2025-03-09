@@ -58,21 +58,39 @@ class _CreatePostInCommunityScreenState
               listener: (context, state) {
                 state.maybeWhen(
                   orElse: () {},
+                  error: (message) {
+                    customSnackBar(
+                      context: context,
+                      message: message,
+                    );
+                  },
                   loaded: (postLength, changeCounter, isImagePick,
                       isUploadPostLoading, isUploadPostLoaded, message) {
+                    if (message != '') {
+                      customSnackBar(context: context, message: message);
+                    }
                     if (isUploadPostLoaded) {
                       navigatorKey.currentState?.pop();
                       if (widget.groupId != null) {
                         widget.onPostUploaded?.call();
                       } else {
-                        navigatorKey.currentState?.popAndPushNamed(
-                          AppRoutes.community,
-                          arguments: AppRoutesArgs.communityRouteArgs(
-                            homeDataModel: widget.homeDataModel,
-                            currentDoctorModel: widget.currentDoctorModel,
-                            initialTab: 0,
-                          ),
-                        );
+                        Future.delayed(Duration.zero, () {
+                          navigatorKey.currentState?.pushReplacementNamed(
+                            AppRoutes.home,
+                            arguments: 0,
+                          );
+                        });
+
+                        Future.delayed(Duration.zero, () {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.community,
+                            arguments: AppRoutesArgs.communityRouteArgs(
+                              homeDataModel: widget.homeDataModel,
+                              currentDoctorModel: widget.currentDoctorModel,
+                              initialTab: 0,
+                            ),
+                          );
+                        });
                       }
                     }
                   },
@@ -346,6 +364,8 @@ class _CreatePostInCommunityScreenState
                                             InkWell(
                                               onTap: () {
                                                 cubit.removePickedImage();
+                                                cubit
+                                                    .removeMediaPathInEditableFeed();
                                               },
                                               splashColor: Colors.transparent,
                                               highlightColor:
@@ -422,6 +442,8 @@ class _CreatePostInCommunityScreenState
                                                         onTap: () {
                                                           cubit
                                                               .removePickedImage();
+                                                          cubit
+                                                              .removeMediaPathInEditableFeed();
                                                         },
                                                         splashColor:
                                                             Colors.transparent,
@@ -561,6 +583,7 @@ class _CreatePostInCommunityScreenState
                                     ElevatedButton.icon(
                                       onPressed: () {
                                         cubit.pickImageAndShowIt(false);
+                                        cubit.removeMediaPathInEditableFeed();
                                       },
                                       icon: const Icon(Icons.photo_library),
                                       label: const Text("Gallery"),
@@ -569,6 +592,7 @@ class _CreatePostInCommunityScreenState
                                     ElevatedButton.icon(
                                       onPressed: () {
                                         cubit.pickImageAndShowIt(true);
+                                        cubit.removeMediaPathInEditableFeed();
                                       },
                                       icon: const Icon(Icons.camera_alt),
                                       label: const Text("Camera"),

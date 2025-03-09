@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'trending_state.freezed.dart';
 
 @freezed
-abstract class TrendingState with _$TrendingCubitState {
+abstract class TrendingState with _$TrendingState {
   const factory TrendingState.initial() = _Initial;
   const factory TrendingState.loading() = _Loading;
 

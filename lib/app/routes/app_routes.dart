@@ -690,6 +690,7 @@ class RouteGenerator {
               builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
+
                   BlocProvider.value(value: di.sl<TrendingCubit>()),
                   BlocProvider.value(
                       value:

@@ -351,7 +351,7 @@ abstract class ApiServices {
   @POST(ApiEndPoint.createPostInCommunity)
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
     @Field('content') String postContent,
-    @Field("media_type") String mediaType,
+    @Field("media_type") String? mediaType,
     @Field("visibility") String visibility,
     @Field("group_id") String? groupId,
   );
@@ -382,16 +382,16 @@ abstract class ApiServices {
     @Path('commentId') String commentId,
   );
 
-  @PUT('${ApiEndPoint.editPostInCommunity}/{postId}')
+  @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
   Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
     @Path('postId') String postId,
     @Field('content') String postContent,
-    @Field("media_type") String mediaType,
+    @Field("media_type") String? mediaType,
     @Field("visibility") String visibility,
     @Field("group_id") String? groupId,
   );
 
-  @PUT('${ApiEndPoint.editPostInCommunity}/{postId}')
+  @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
   @MultiPart()
   Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity(
     @Path('postId') String postId,

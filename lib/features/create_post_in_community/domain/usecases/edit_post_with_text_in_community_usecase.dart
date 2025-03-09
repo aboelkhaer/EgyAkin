@@ -27,7 +27,7 @@ class EditPostWithTextInCommunityUsecase
 class EditPostWithTextInCommunityUsecaseInput {
   final String postId;
   final String postContent;
-  final String mediaType;
+  final String? mediaType;
   final String visibility;
   final String? groupId;
 

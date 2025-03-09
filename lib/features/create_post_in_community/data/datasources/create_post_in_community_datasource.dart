@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
@@ -14,7 +15,7 @@ abstract class CreatePostInCommunityDatasource {
   });
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity({
     required String postContent,
-    required String mediaType,
+    required String? mediaType,
     required String visibility,
     required String? groupId,
   });
@@ -28,7 +29,7 @@ abstract class CreatePostInCommunityDatasource {
   });
   Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity({
     required String postContent,
-    required String mediaType,
+    required String? mediaType,
     required String visibility,
     required String? groupId,
     required String postId,
@@ -60,20 +61,22 @@ class CreatePostInCommunityDatasourceImpl
   @override
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
       {required String postContent,
-      required String mediaType,
+      required String? mediaType,
       required String visibility,
       required String? groupId}) async {
     return await _apiServices.createPostWithTextInCommunity(
-        postContent, mediaType, visibility, groupId);
+        postContent, null, visibility, groupId);
   }
 
   @override
-  Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
-      {required String postContent,
-      required String mediaType,
-      required String visibility,
-      required String? groupId,
-      required String postId}) async {
+  Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity({
+    required String postContent,
+    required String? mediaType,
+    required String visibility,
+    required String? groupId,
+    required String postId,
+  }) async {
+    log(mediaType.toString());
     return await _apiServices.editPostWithTextInCommunity(
       postId,
       postContent,
