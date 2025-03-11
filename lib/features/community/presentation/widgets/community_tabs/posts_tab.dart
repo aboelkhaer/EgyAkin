@@ -4,11 +4,13 @@ import 'package:egy_akin/features/community/presentation/cubit/community_state.d
 class PostsTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final ScrollController feedsScrollController;
 
   const PostsTab({
     super.key,
     required this.currentDoctorModel,
     required this.homeDataModel,
+    required this.feedsScrollController,
   });
 
   @override
@@ -47,7 +49,7 @@ class _PostsTabState extends State<PostsTab> {
                       },
                       child: ListView.builder(
                         itemCount: feedsResponse.data!.data!.length,
-                        controller: cubit.feedsScrollController,
+                        controller: widget.feedsScrollController,
                         padding: const EdgeInsets.all(20) +
                             EdgeInsets.only(bottom: 60.h),
                         itemBuilder: (context, index) {

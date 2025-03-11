@@ -1,5 +1,4 @@
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 
 import '../../../../exports.dart';
@@ -74,23 +73,31 @@ class _CreatePostInCommunityScreenState
                       if (widget.groupId != null) {
                         widget.onPostUploaded?.call();
                       } else {
-                        Future.delayed(Duration.zero, () {
-                          navigatorKey.currentState?.pushReplacementNamed(
-                            AppRoutes.home,
-                            arguments: 0,
-                          );
-                        });
+                        navigatorKey.currentState?.popAndPushNamed(
+                          AppRoutes.community,
+                          arguments: AppRoutesArgs.communityRouteArgs(
+                            homeDataModel: widget.homeDataModel,
+                            currentDoctorModel: widget.currentDoctorModel,
+                            initialTab: 0,
+                          ),
+                        );
+                        // Future.delayed(Duration.zero, () {
+                        //   navigatorKey.currentState?.pushReplacementNamed(
+                        //     AppRoutes.home,
+                        //     arguments: 0,
+                        //   );
+                        // });
 
-                        Future.delayed(Duration.zero, () {
-                          navigatorKey.currentState?.pushNamed(
-                            AppRoutes.community,
-                            arguments: AppRoutesArgs.communityRouteArgs(
-                              homeDataModel: widget.homeDataModel,
-                              currentDoctorModel: widget.currentDoctorModel,
-                              initialTab: 0,
-                            ),
-                          );
-                        });
+                        // Future.delayed(Duration.zero, () {
+                        //   navigatorKey.currentState?.pushNamed(
+                        //     AppRoutes.community,
+                        //     arguments: AppRoutesArgs.communityRouteArgs(
+                        //       homeDataModel: widget.homeDataModel,
+                        //       currentDoctorModel: widget.currentDoctorModel,
+                        //       initialTab: 0,
+                        //     ),
+                        //   );
+                        // });
                       }
                     }
                   },
