@@ -67,24 +67,44 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
       child: Column(
         children: [
           // Top Section: Trending Hashtags
-          BlocBuilder<TrendingCubit, TrendingState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
-                },
-                loaded: (snackBarMessage, dialogMessage, response) {
-                  return Expanded(
-                    child: ListView.builder(
+          Expanded(
+            child: BlocBuilder<TrendingCubit, TrendingState>(
+              builder: (context, state) {
+                return state.maybeWhen(
+                  orElse: () {
+                    return const SingleChildScrollView(
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        child: LoadingForGroupRow(
+                          count: 20,
+                          isTrends: true,
+                        ),
+                      ),
+                    );
+                  },
+                  loaded: (snackBarMessage, dialogMessage, response) {
+                    return ListView.builder(
                       itemCount: response.data!.length,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.zero,
                       itemBuilder: (context, index) {
                         TrendModel trendModel = response.data![index];
                         return Column(
                           children: [
                             InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.communitySearch,
+                                  arguments:
+                                      AppRoutesArgs.communitySearchRouteArgs(
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    homeDataModel: widget.homeDataModel,
+                                    initialValueInSearch: '#${trendModel.tag}',
+                                  ),
+                                );
+                              },
                               child: Container(
                                 alignment: Alignment.topLeft,
                                 margin: const EdgeInsets.symmetric(
@@ -122,11 +142,11 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
                           ],
                         );
                       },
-                    ),
-                  );
-                },
-              );
-            },
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),

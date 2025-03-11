@@ -9,6 +9,7 @@ import 'package:egy_akin/features/community/data/models/get_groups_tab_model_res
 import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/join_group_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
+import 'package:egy_akin/features/community_search/data/models/get_response_of_search_model.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/data/models/create_group_in_community_model_response.dart';
@@ -479,4 +480,9 @@ abstract class ApiServices {
 
   @GET(ApiEndPoint.getTrendingPostsInCommunity)
   Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity();
+
+  @POST(ApiEndPoint.getCommunitySearchResponse)
+  Future<GetResponseOfSearchModel> getCommunitySearchResponse(
+    @Field("query") String searchContent,
+  );
 }

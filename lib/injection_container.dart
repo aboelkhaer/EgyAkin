@@ -11,6 +11,11 @@ import 'package:egy_akin/features/community/domain/usecases/get_trending_posts_i
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
+import 'package:egy_akin/features/community_search/data/datasources/community_search_datasource.dart';
+import 'package:egy_akin/features/community_search/data/repositories/community_search_repo_impl.dart';
+import 'package:egy_akin/features/community_search/domain/repositories/community_search_repo.dart';
+import 'package:egy_akin/features/community_search/domain/usecases/get_response_of_search_in_community_usecase.dart';
+import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/create_group_in_community/data/datasources/create_group_in_community_datasource.dart';
 import 'package:egy_akin/features/create_group_in_community/data/repositories/create_group_in_community_repo_impl.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/repositories/create_group_in_community_repo.dart';
@@ -102,6 +107,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
   sl.registerFactory(() => CreateGroupInCommunityCubit(sl()));
   sl.registerFactory(() => TrendingCubit(sl()));
+  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -166,6 +172,8 @@ Future<void> diInit() async {
       () => AllGroupsInCommunityDatasourceImpl(sl()));
   sl.registerLazySingleton<CreateGroupInCommunityDatasource>(
       () => CreateGroupInCommunityDatasourceImpl(sl()));
+  sl.registerLazySingleton<CommunitySearchDatasource>(
+      () => CommunitySearchDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -232,6 +240,8 @@ Future<void> diInit() async {
       () => AllGroupsInCommunityRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<CreateGroupInCommunityRepository>(
       () => CreateGroupInCommunityRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<CommunitySearchRepository>(
+      () => CommunitySearchRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -534,5 +544,9 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetTrendingPostsInCommunityUsecase>()) {
     sl.registerFactory<GetTrendingPostsInCommunityUsecase>(
         () => GetTrendingPostsInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetResponseOfSearchInCommunityUsecase>()) {
+    sl.registerFactory<GetResponseOfSearchInCommunityUsecase>(
+        () => GetResponseOfSearchInCommunityUsecase(sl()));
   }
 }

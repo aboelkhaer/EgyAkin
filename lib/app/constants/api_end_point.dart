@@ -92,4 +92,5 @@ class ApiEndPoint {
   static const createGroupInCommunity = '$baseUrl/api/groups';
   static const deleteGroupInCommunity = '$baseUrl/api/groups';
   static const getTrendingPostsInCommunity = '$baseUrl/api/feed/trendingPosts';
+  static const getCommunitySearchResponse = '$baseUrl/api/feed/searchPosts';
 }

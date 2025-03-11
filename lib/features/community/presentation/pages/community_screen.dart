@@ -119,200 +119,179 @@ class _CommunityScreenState extends State<CommunityScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification scrollNotification) {
-          // Handle scroll notifications here
-          if (scrollNotification is ScrollUpdateNotification) {
-            if (scrollNotification.metrics.pixels > 100 &&
-                _tabController.index == 0) {
-              setState(() {
-                _isFabVisible = true;
-              });
-            } else {
-              setState(() {
-                _isFabVisible = false;
-              });
-            }
-          }
-          return false; // Return false to allow the notification to continue propagating
-        },
-        child: NestedScrollView(
-          controller: _scrollController, // Pass the ScrollController here
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              // SliverAppBar for the status bar (fixed at the top)
-              const SliverAppBar(
-                toolbarHeight: 0, // Remove toolbar to keep only the status bar
-                backgroundColor: Colors.white,
-                elevation: 0,
-                pinned: true, // This keeps the status bar fixed
-                automaticallyImplyLeading: false,
-              ),
+      body: Column(
+        children: [
+          // Header with Search and Add Button
+          SizedBox(height: 40.h),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    navigatorKey.currentState?.pop();
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back_ios,
+                  ),
+                ),
+                Expanded(
+                  child: CustomTextFormField(
+                    title: 'Search',
+                    textAlign: TextAlign.center,
+                    onTextClick: () {
+                      navigatorKey.currentState?.pushNamed(
+                        AppRoutes.communitySearch,
+                        arguments: AppRoutesArgs.communitySearchRouteArgs(
+                          currentDoctorModel: widget.currentDoctorModel,
+                          homeDataModel: widget.homeDataModel,
+                          initialValueInSearch: null,
+                        ),
+                      );
+                    },
+                    readOnly: true,
+                    isCommunitySearch: true,
+                    isSearchIconInCenter: true,
+                    textInputType: TextInputType.text,
+                    validator: (value) {
+                      return null;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  onPressed: () {
+                    navigatorKey.currentState?.pushNamed(
+                      AppRoutes.createPostInCommunity,
+                      arguments: AppRoutesArgs.createPostInCommunityRouteArgs(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.add,
+                    size: 30,
+                  ),
+                ),
+              ],
+            ),
+          ),
 
-              // SliverPersistentHeader for the Search and Row (this will scroll)
-              SliverPersistentHeader(
-                delegate: _SliverAppBarDelegate(
-                  child: Column(
+          // TabBar
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
+            child: TabBar(
+              controller: _tabController, // Link the TabController
+              padding: const EdgeInsets.only(bottom: 10),
+              labelColor: AppColors.primary,
+              isScrollable: false,
+              labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+              unselectedLabelColor: Colors.grey.shade500,
+              dividerColor: Colors.transparent,
+              overlayColor: WidgetStateProperty.all(Colors.transparent),
+              indicator: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              tabs: const [
+                Tab(
+                  child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
-                        children: [
-                          SizedBox(width: 10.w),
-                          Column(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  navigatorKey.currentState?.pop();
-                                },
-                                icon: const Icon(
-                                  Icons.arrow_back_ios,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                          Expanded(
-                            flex: 3,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextFormField(
-                                    title: 'Search',
-                                    textInputType: TextInputType.text,
-                                    validator: (value) {
-                                      return null;
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                alignment: Alignment.center,
-                                child: IconButton(
-                                  onPressed: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.createPostInCommunity,
-                                      arguments: AppRoutesArgs
-                                          .createPostInCommunityRouteArgs(
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                        homeDataModel: widget.homeDataModel,
-                                      ),
-                                    );
-                                  },
-                                  icon: const Icon(
-                                    Icons.add,
-                                    size: 30,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                            ],
-                          ),
-                          const SizedBox(width: 10),
-                        ],
+                      Icon(Icons.article_outlined, size: 16),
+                      SizedBox(width: 5),
+                      Text(
+                        'Feeds',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                pinned: true, // This allows it to scroll
-              ),
-
-              // Conditionally show or hide the TabBar based on scroll position
-              if (_showTabs)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: 10.h),
-                    child: TabBar(
-                      controller: _tabController, // Link the TabController
-                      labelColor: AppColors.primary,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      isScrollable: false,
-                      labelStyle: const TextStyle(fontWeight: FontWeight.w500),
-                      unselectedLabelColor: Colors.grey.shade500,
-                      dividerColor: Colors.transparent,
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                      indicator: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.trending_up, size: 16),
+                      SizedBox(width: 5),
+                      Text(
+                        'Trending',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
                       ),
-                      tabs: const [
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.article_outlined, size: 16),
-                              SizedBox(width: 5),
-                              Text(
-                                'Feeds',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.trending_up, size: 16),
-                              SizedBox(width: 5),
-                              Text(
-                                'Trending',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Tab(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.group, size: 16),
-                              SizedBox(width: 5),
-                              Text(
-                                'Groups',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-            ];
-          },
-          body: TabBarView(
-            controller: _tabController, // Link the TabController
-            children: [
-              PostsTab(
-                homeDataModel: widget.homeDataModel,
-                currentDoctorModel: widget.currentDoctorModel,
-                feedsScrollController:
-                    feedsScrollController, // Pass the controller
-              ),
-              TrendingTab(
-                homeDataModel: widget.homeDataModel,
-                currentDoctorModel: widget.currentDoctorModel,
-              ),
-              GroupsTab(
-                homeDataModel: widget.homeDataModel,
-                currentDoctorModel: widget.currentDoctorModel,
-              ),
-            ],
+                Tab(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.group, size: 16),
+                      SizedBox(width: 5),
+                      Text(
+                        'Groups',
+                        style: TextStyle(
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+
+          // TabBarView with Scrollable Content
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (ScrollNotification scrollNotification) {
+                // Handle scroll notifications here
+                if (scrollNotification is ScrollUpdateNotification) {
+                  // Show FAB only in the Feeds tab (index 0) when scrolled down
+                  if (_tabController.index == 0) {
+                    if (scrollNotification.metrics.pixels > 100) {
+                      setState(() {
+                        _isFabVisible = true; // Show FAB when scrolled down
+                      });
+                    } else {
+                      setState(() {
+                        _isFabVisible = false; // Hide FAB when at the top
+                      });
+                    }
+                  } else {
+                    // Hide FAB in other tabs
+                    setState(() {
+                      _isFabVisible = false;
+                    });
+                  }
+                }
+                return false; // Return false to allow the notification to continue propagating
+              },
+              child: TabBarView(
+                controller: _tabController, // Link the TabController
+                children: [
+                  PostsTab(
+                    homeDataModel: widget.homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                    feedsScrollController:
+                        feedsScrollController, // Pass the controller
+                  ),
+                  TrendingTab(
+                    homeDataModel: widget.homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                  ),
+                  GroupsTab(
+                    homeDataModel: widget.homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
       floatingActionButton: _isFabVisible
           ? FloatingActionButton(
@@ -328,31 +307,5 @@ class _CommunityScreenState extends State<CommunityScreen>
             )
           : null,
     );
-  }
-}
-
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final Widget child;
-
-  _SliverAppBarDelegate({required this.child});
-
-  @override
-  double get minExtent => 80.0;
-
-  @override
-  double get maxExtent => 100.0;
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Colors.white, // Set the background color here
-      child: child,
-    );
-  }
-
-  @override
-  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
-    return oldDelegate.child != child;
   }
 }

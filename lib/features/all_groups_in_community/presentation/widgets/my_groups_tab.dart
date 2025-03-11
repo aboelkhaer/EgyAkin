@@ -56,6 +56,15 @@ class _MyGroupsTabState extends State<MyGroupsTab> {
               dialogMessage,
               isSeeMore,
             ) {
+              if (response.data!.data!.isEmpty) {
+                return Center(
+                  child: Image.asset(
+                    AppImages.notFound,
+                    width: 200,
+                    height: 200,
+                  ),
+                );
+              }
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(

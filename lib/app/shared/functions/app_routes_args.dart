@@ -376,4 +376,16 @@ class AppRoutesArgs {
       'groupModel': groupModel,
     };
   }
+
+  static Map<String, dynamic> communitySearchRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+    required String? initialValueInSearch,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+      'initialValueInSearch': initialValueInSearch,
+    };
+  }
 }

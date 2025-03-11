@@ -5,6 +5,8 @@ import 'package:egy_akin/features/community/data/models/get_groups_tab_model_res
 import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
 import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
+import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
+import 'package:egy_akin/features/community_search/presentation/pages/community_search_screen.dart';
 import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
 import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
 import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
@@ -59,6 +61,7 @@ class AppRoutes {
   static const String inviteMemberToGroupInCommunity =
       '/inviteMemberToGroupInCommunity';
   static const String createGroupInCommunity = '/createGroupInCommunity';
+  static const String communitySearch = '/communitySearch';
 }
 
 class RouteGenerator {
@@ -908,6 +911,43 @@ class RouteGenerator {
                   groupModel: args['groupModel'] as GroupModel?,
                 ),
               ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.communitySearch:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) =>
+                  MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                      create: (context) => di.sl<CommunitySearchCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                ],
+                child: CommunitySearchScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialValueInSearch: args['initialValueInSearch'] as String?,
+                ),
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              transitionDuration: const Duration(
+                  milliseconds: 300), // Adjust duration as needed
             );
           } else {
             return unDefinedRoute();

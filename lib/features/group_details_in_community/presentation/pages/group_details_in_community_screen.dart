@@ -117,20 +117,55 @@ class _GroupDetailsInCommunityScreenState
         headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
           return [
             SliverAppBar(
-              expandedHeight: 250.0,
+              expandedHeight: 200.0,
               pinned: true,
               floating: false,
               flexibleSpace: LayoutBuilder(
                 builder: (context, constraints) {
+                  double opacity = constraints.biggest.height < 200 ? 1.0 : 0.0;
                   return Stack(
+                    fit: StackFit.expand,
                     children: [
+                      BlocBuilder<GroupDetailsInCommunityCubit,
+                          GroupDetailsInCommunityState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () {
+                              return const SizedBox.shrink();
+                            },
+                            loaded: (groupDetails,
+                                snackBarMessage,
+                                dialogMessage,
+                                isDeleteGroupLoading,
+                                isDeleteGroupLoaded) {
+                              return Positioned(
+                                left: 0,
+                                bottom: 16,
+                                right: 0,
+                                child: AnimatedOpacity(
+                                  duration: const Duration(milliseconds: 300),
+                                  opacity: opacity,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        groupDetails.data!.group!.name
+                                            .toString(),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                       FlexibleSpaceBar(
-                        titlePadding:
-                            const EdgeInsets.only(left: 16, bottom: 16),
-                        title: const Text(
-                          'Community',
-                          style: TextStyle(color: Colors.white, fontSize: 18),
-                        ),
                         background: BlocConsumer<GroupDetailsInCommunityCubit,
                             GroupDetailsInCommunityState>(
                           listener: (context, state) {
@@ -242,7 +277,7 @@ class _GroupDetailsInCommunityScreenState
                       ),
                       // Add a shadow at the bottom of the SliverAppBar
                       if (constraints.maxHeight ==
-                          250.0) // Only show shadow when expanded
+                          200.0) // Only show shadow when expanded
                         Positioned(
                           bottom: 0,
                           left: 0,
@@ -882,12 +917,10 @@ class _GroupDetailsInCommunityScreenState
                             ? Column(
                                 children: [
                                   SizedBox(height: 50.h),
-                                  Text(
-                                    'No posts yet',
-                                    style: TextStyle(
-                                      color: Colors.grey.shade500,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                  Image.asset(
+                                    AppImages.notFound,
+                                    width: 150,
+                                    height: 150,
                                   ),
                                 ],
                               )

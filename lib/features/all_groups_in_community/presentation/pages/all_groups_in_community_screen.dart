@@ -118,7 +118,7 @@ class _AllGroupsInCommunityScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('All Groups'),
+        title: const Text('Groups'),
         actions: [
           IconButton(
             onPressed: () {

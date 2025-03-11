@@ -9,6 +9,9 @@ class PostCard extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final bool isGroupPosts;
+  final bool isCommunitySearch;
+  final String? highlightWord;
+
   final void Function()? onLikeAndUnlikeAdditional;
   final void Function()? onSaveAndUnSaveAdditional;
   final void Function()? onDeleteAdditional;
@@ -22,6 +25,8 @@ class PostCard extends StatelessWidget {
     this.onLikeAndUnlikeAdditional,
     this.onSaveAndUnSaveAdditional,
     this.onDeleteAdditional,
+    this.isCommunitySearch = false,
+    this.highlightWord,
   });
 
   @override
@@ -339,7 +344,8 @@ class PostCard extends StatelessWidget {
                                             );
                                             break;
                                           case 'Delete':
-                                            if (isGroupPosts) {
+                                            if (isGroupPosts ||
+                                                isCommunitySearch) {
                                               onDeleteAdditional!();
                                             } else {
                                               cubit.deletePost(
@@ -442,6 +448,9 @@ class PostCard extends StatelessWidget {
                       child: HashtagText(
                         content: feed.content.toString(),
                         trimLines: 4,
+                        currentDoctorModel: currentDoctorModel,
+                        homeDataModel: homeDataModel,
+                        highlightWord: highlightWord,
                       ),
                     ),
                   ],
@@ -498,7 +507,7 @@ class PostCard extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          if (isGroupPosts) {
+                          if (isGroupPosts || isCommunitySearch) {
                             onLikeAndUnlikeAdditional!();
                           } else {
                             cubit.addLikeOrUnlikeOnPost(feed.id.toString());
@@ -557,7 +566,7 @@ class PostCard extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      if (isGroupPosts) {
+                      if (isGroupPosts || isCommunitySearch) {
                         onSaveAndUnSaveAdditional!();
                       } else {
                         cubit.addSaveOrUnsaveOnPost(feed.id.toString());

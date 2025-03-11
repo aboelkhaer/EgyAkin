@@ -1,4 +1,4 @@
-import 'package:egy_akin/app/shared/functions/hash_tags.dart';
+import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -9,11 +9,14 @@ class FeedContentInCommunity extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final PostCommunityModel feed;
-  const FeedContentInCommunity(
-      {super.key,
-      required this.homeDataModel,
-      required this.currentDoctorModel,
-      required this.feed});
+  final String? highlightWord;
+  const FeedContentInCommunity({
+    super.key,
+    required this.homeDataModel,
+    required this.currentDoctorModel,
+    required this.feed,
+    this.highlightWord,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +41,12 @@ class FeedContentInCommunity extends StatelessWidget {
                           : isArabic // Check for RTL characters
                               ? TextAlign.right // Align right for RTL languages
                               : TextAlign.left, // Align left for LTR languages
-                      text: buildHashtagText('${feed.content}'),
+                      text: buildHashtagText(
+                        '${feed.content}',
+                        currentDoctorModel,
+                        homeDataModel,
+                        highlightWord,
+                      ),
                       textDirection: feed.content == null
                           ? null
                           : isArabic
