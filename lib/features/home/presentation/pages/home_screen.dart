@@ -239,6 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                 accountVerification: false,
                 currentDoctorRole: cubit.currentDoctorRole,
+                currentDoctorModel: cubit.currentDoctorModel,
                 homeDataModel: cubit.homeDataModel,
                 currentDoctorPoints: cubit.doctorScore == null
                     ? 0
@@ -275,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     isSyndicateCardRequired: cubit.isSyndicateCardRequired,
                     accountVerification: cubit.accountVerification!,
                     homeDataModel: homeData,
+                    currentDoctorModel: cubit.currentDoctorModel,
                     currentDoctorPoints: cubit.doctorScore == null
                         ? 0
                         : int.parse(cubit.doctorScore!),

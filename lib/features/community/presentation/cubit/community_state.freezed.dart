@@ -25,7 +25,8 @@ mixin _$CommunityState {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -39,7 +40,8 @@ mixin _$CommunityState {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -53,7 +55,8 @@ mixin _$CommunityState {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -155,7 +158,8 @@ class _$InitialImpl implements _Initial {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -172,7 +176,8 @@ class _$InitialImpl implements _Initial {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -189,7 +194,8 @@ class _$InitialImpl implements _Initial {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -290,7 +296,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -307,7 +314,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -324,7 +332,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -388,7 +397,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isDeletePostLoading,
       bool isDeletePostLoaded,
       String message,
-      bool isSeeMore});
+      bool isSeeMore,
+      int changeCounter});
 
   $GetPostsCommunityModelResponseCopyWith<$Res> get feedsResponse;
 }
@@ -411,6 +421,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isDeletePostLoaded = null,
     Object? message = null,
     Object? isSeeMore = null,
+    Object? changeCounter = null,
   }) {
     return _then(_$LoadedImpl(
       null == feedsResponse
@@ -433,6 +444,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSeeMore
           : isSeeMore // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -451,8 +466,13 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.feedsResponse, this.isDeletePostLoading,
-      this.isDeletePostLoaded, this.message, this.isSeeMore);
+  const _$LoadedImpl(
+      this.feedsResponse,
+      this.isDeletePostLoading,
+      this.isDeletePostLoaded,
+      this.message,
+      this.isSeeMore,
+      this.changeCounter);
 
   @override
   final GetPostsCommunityModelResponse feedsResponse;
@@ -464,10 +484,12 @@ class _$LoadedImpl implements _Loaded {
   final String message;
   @override
   final bool isSeeMore;
+  @override
+  final int changeCounter;
 
   @override
   String toString() {
-    return 'CommunityState.loaded(feedsResponse: $feedsResponse, isDeletePostLoading: $isDeletePostLoading, isDeletePostLoaded: $isDeletePostLoaded, message: $message, isSeeMore: $isSeeMore)';
+    return 'CommunityState.loaded(feedsResponse: $feedsResponse, isDeletePostLoading: $isDeletePostLoading, isDeletePostLoaded: $isDeletePostLoaded, message: $message, isSeeMore: $isSeeMore, changeCounter: $changeCounter)';
   }
 
   @override
@@ -483,12 +505,20 @@ class _$LoadedImpl implements _Loaded {
                 other.isDeletePostLoaded == isDeletePostLoaded) &&
             (identical(other.message, message) || other.message == message) &&
             (identical(other.isSeeMore, isSeeMore) ||
-                other.isSeeMore == isSeeMore));
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, feedsResponse,
-      isDeletePostLoading, isDeletePostLoaded, message, isSeeMore);
+  int get hashCode => Object.hash(
+      runtimeType,
+      feedsResponse,
+      isDeletePostLoading,
+      isDeletePostLoaded,
+      message,
+      isSeeMore,
+      changeCounter);
 
   /// Create a copy of CommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -508,12 +538,13 @@ class _$LoadedImpl implements _Loaded {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
-        message, isSeeMore);
+        message, isSeeMore, changeCounter);
   }
 
   @override
@@ -526,12 +557,13 @@ class _$LoadedImpl implements _Loaded {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
-        message, isSeeMore);
+        message, isSeeMore, changeCounter);
   }
 
   @override
@@ -544,14 +576,15 @@ class _$LoadedImpl implements _Loaded {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(feedsResponse, isDeletePostLoading, isDeletePostLoaded,
-          message, isSeeMore);
+          message, isSeeMore, changeCounter);
     }
     return orElse();
   }
@@ -600,13 +633,15 @@ abstract class _Loaded implements CommunityState {
       final bool isDeletePostLoading,
       final bool isDeletePostLoaded,
       final String message,
-      final bool isSeeMore) = _$LoadedImpl;
+      final bool isSeeMore,
+      final int changeCounter) = _$LoadedImpl;
 
   GetPostsCommunityModelResponse get feedsResponse;
   bool get isDeletePostLoading;
   bool get isDeletePostLoaded;
   String get message;
   bool get isSeeMore;
+  int get changeCounter;
 
   /// Create a copy of CommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -690,7 +725,8 @@ class _$ErrorImpl implements _Error {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -707,7 +743,8 @@ class _$ErrorImpl implements _Error {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -724,7 +761,8 @@ class _$ErrorImpl implements _Error {
             bool isDeletePostLoading,
             bool isDeletePostLoaded,
             String message,
-            bool isSeeMore)?
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

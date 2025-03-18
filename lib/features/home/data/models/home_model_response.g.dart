@@ -19,6 +19,8 @@ _$HomeModelResponseImpl _$$HomeModelResponseImplFromJson(
       scoreValue: json['score_value'] as String?,
       role: json['role'] as String?,
       isUserBlocked: json['isUserBlocked'] as bool?,
+      postsCount: json['posts_count'] as String?,
+      savedPosts: json['saved_posts_count'] as String?,
       data: json['data'] == null
           ? null
           : HomeDataModelResponse.fromJson(
@@ -38,6 +40,8 @@ Map<String, dynamic> _$$HomeModelResponseImplToJson(
       'score_value': instance.scoreValue,
       'role': instance.role,
       'isUserBlocked': instance.isUserBlocked,
+      'posts_count': instance.postsCount,
+      'saved_posts_count': instance.savedPosts,
       'data': instance.data,
     };
 

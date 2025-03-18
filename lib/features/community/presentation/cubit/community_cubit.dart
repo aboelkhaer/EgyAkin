@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 
 import '../../../../exports.dart';
@@ -10,21 +12,31 @@ class CommunityCubit extends Cubit<CommunityState> {
     this._addLikeOnPostUsecase,
     this._saveOrUnsavePostUsecase,
     this._deletePostInFeedsUsecase,
+    this._addVoteAndUnvoteUsecase,
+    this._addOptionOnPollUsecase,
   ) : super(const CommunityState.initial());
   static CommunityCubit get(context) => BlocProvider.of(context);
   final GetAllFeedsUsecase _getAllFeedsUsecase;
   final AddLikeOnPostUsecase _addLikeOnPostUsecase;
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
+  final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  final AddOptionOnPollUsecase _addOptionOnPollUsecase;
+  final Map<int, Set<int>> postSelectedOptions = {};
+  final Map<int, int?> postSelectedOption = {};
+
+  int changeCounter = 0;
 
   // ScrollController? feedsScrollController;
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  int _currentPage = 0;
+  int _currentPage = 1;
 
   getAllFeeds() async {
-    _currentPage = 0;
+    _currentPage = 1;
+    postSelectedOptions.clear();
+    postSelectedOption.clear();
     emit(const CommunityState.loading());
     final result = await _getAllFeedsUsecase.execute(_currentPage);
     result.fold(
@@ -38,9 +50,104 @@ class CommunityCubit extends Cubit<CommunityState> {
           false,
           '',
           false,
+          changeCounter,
         ));
       },
     );
+  }
+
+  addVoteAndUnVote(
+    String pollId,
+    int optionId,
+  ) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          final updatedFeeds = value.feedsResponse.data?.data?.map((post) {
+            if (post.poll?.id.toString() == pollId) {
+              final poll = post.poll!;
+              final isMultipleChoice = poll.allowMultipleChoice ?? false;
+
+              int? previouslyVotedOptionId;
+              if (!isMultipleChoice) {
+                // Find the previously voted option (for single-choice polls)
+                previouslyVotedOptionId = poll.options!
+                    .firstWhere((opt) => opt.isVoted ?? false,
+                        orElse: () => const PollOptionsModelResponse(id: -1))
+                    .id;
+              }
+
+              final updatedOptions = poll.options!.map((option) {
+                if (option.id == optionId) {
+                  // Toggle new vote
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) +
+                        (option.isVoted == true ? -1 : 1),
+                    isVoted: !(option.isVoted ?? false),
+                  );
+                } else if (!isMultipleChoice &&
+                    option.id == previouslyVotedOptionId) {
+                  // Reduce previous vote count for single-choice polls
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) - 1,
+                    isVoted: false,
+                  );
+                }
+                return option;
+              }).toList();
+
+              final updatedPoll = poll.copyWith(options: updatedOptions);
+              return post.copyWith(poll: updatedPoll);
+            }
+            return post;
+          }).toList();
+
+          final updatedResponse = value.feedsResponse.copyWith(
+            data: value.feedsResponse.data!.copyWith(data: updatedFeeds),
+          );
+
+          return CommunityState.loaded(
+            updatedResponse,
+            false,
+            false,
+            '',
+            value.isSeeMore,
+            changeCounter,
+          );
+        },
+      ),
+    );
+
+    // API call
+    final result = await _addVoteAndUnvoteUsecase.execute(
+      AddVoteAndUnvoteUsecaseInput(
+        pollId: pollId,
+        optionId: optionId,
+      ),
+    );
+
+    result.fold(
+      (l) {}, // Handle failure
+      (r) async {
+        // Optionally re-fetch data from server if needed
+      },
+    );
+  }
+
+  refreshScreen() {
+    changeCounter = changeCounter + 1;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => CommunityState.loaded(
+        value.feedsResponse,
+        value.isDeletePostLoading,
+        value.isDeletePostLoaded,
+        '',
+        value.isSeeMore,
+        changeCounter,
+      ),
+    ));
   }
 
   void loadMoreFeeds() async {
@@ -53,6 +160,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         false,
         '',
         true,
+        changeCounter,
       ),
     ));
     final result = await _getAllFeedsUsecase.execute(_currentPage);
@@ -72,6 +180,7 @@ class CommunityCubit extends Cubit<CommunityState> {
             isDeletePostLoaded,
             message,
             isSeeMore,
+            changeCounter,
           ) {
             final updatedData = feedsResponse.copyWith(
               data: feedsResponse.data!.copyWith(
@@ -93,6 +202,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               false,
               '',
               false,
+              changeCounter,
             ));
           },
           error: (error) {},
@@ -116,6 +226,7 @@ class CommunityCubit extends Cubit<CommunityState> {
           false,
           '',
           false,
+          changeCounter,
         ),
       ),
     );
@@ -134,6 +245,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               false,
               failure.message,
               false,
+              changeCounter,
             ),
           ),
         );
@@ -156,6 +268,7 @@ class CommunityCubit extends Cubit<CommunityState> {
               true,
               success.message.toString(),
               false,
+              changeCounter,
             ),
           ),
         );
@@ -289,6 +402,7 @@ class CommunityCubit extends Cubit<CommunityState> {
             value.isDeletePostLoaded,
             value.message,
             false,
+            changeCounter,
           );
         },
       ),
@@ -375,5 +489,83 @@ class CommunityCubit extends Cubit<CommunityState> {
     );
 
     _isUpdatingPostSaveStatus = false; // Reset the flag
+  }
+
+  addOptionOnPoll(
+    String pollId,
+    String option,
+  ) async {
+    final result = await _addOptionOnPollUsecase.execute(
+      AddOptionOnPollUsecaseInput(
+        pollId: pollId,
+        option: option,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunityState.loaded(
+              value.feedsResponse,
+              value.isDeletePostLoading,
+              value.isDeletePostLoaded,
+              'Failed to add option',
+              value.isSeeMore,
+              value.changeCounter, // Keep change counter the same
+            ),
+          ),
+        );
+      },
+      (newOptionResponse) async {
+        // Extract the option from AddOptionInPollModelResponse
+        PollOptionsModelResponse newOption = PollOptionsModelResponse(
+          id: newOptionResponse.data!.id,
+          pollId: int.parse(newOptionResponse.data!.pollId!),
+          optionText: newOptionResponse.data!.option.toString(),
+          createdAt: newOptionResponse.data!.createdAt,
+          updatedAt: newOptionResponse.data!.updatedAt,
+          votesCount: 0, // Default votes count for new option
+          isVoted: false,
+        );
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              // Ensure data exists
+              final updatedPosts = value.feedsResponse.data?.copyWith(
+                data: value.feedsResponse.data?.data?.map((post) {
+                  if (post.poll?.id.toString() == pollId) {
+                    return post.copyWith(
+                      poll: post.poll?.copyWith(
+                        options: [
+                          ...(post.poll?.options ?? []), // Keep old options
+                          newOption, // Append new option
+                        ],
+                      ),
+                    );
+                  }
+                  return post;
+                }).toList(),
+              );
+
+              return CommunityState.loaded(
+                value.feedsResponse.copyWith(
+                  data: updatedPosts,
+                ),
+                value.isDeletePostLoading,
+                value.isDeletePostLoaded,
+                'Option added successfully',
+                value.isSeeMore,
+                value.changeCounter +
+                    1, // Increment change counter to trigger UI refresh
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }

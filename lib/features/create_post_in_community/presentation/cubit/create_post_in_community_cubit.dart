@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
+import 'package:egy_akin/features/create_post_in_community/data/models/poll_model.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/creat_post_with_text_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/create_post_with_image_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_image_in_community_usecase.dart';
@@ -33,7 +34,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   final EditPostWithTextInCommunityUsecase _editPostWithTextInCommunityUsecase;
 
   PostCommunityModel? editableFeed;
-
+  // PollModel? poll;
   String postContent = '';
   File? imagePicked;
 
@@ -222,9 +223,12 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     return optimizedImageFile;
   }
 
-  submitPost(context, String? groupId) async {
+  submitPost(
+    context,
+    String? groupId,
+    PollModel? pollModel,
+  ) async {
     if (editableFeed == null) {
-      log('moatz1');
       if (imagePicked == null && postContent.trim() == '') {
         customSnackBar(
             context: context, message: 'Write something to publish.');
@@ -235,12 +239,10 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         return;
       }
       if (imagePicked == null && postContent != '') {
-        log('kkkk');
-        createPostWithTextInCommunity(groupId);
+        createPostWithTextInCommunity(groupId, pollModel ?? const PollModel());
         return;
       }
     } else {
-      log('moatz2');
       if (imagePicked == null &&
           editableFeed!.content!.trim() == '' &&
           editableFeed!.mediaPath == null) {
@@ -480,7 +482,10 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  createPostWithTextInCommunity(String? groupId) async {
+  createPostWithTextInCommunity(
+    String? groupId,
+    PollModel? pollModel,
+  ) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -500,6 +505,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         mediaType: null,
         visibility: 'Public',
         groupId: groupId,
+        pollModel: pollModel,
       ),
     );
     result.fold(

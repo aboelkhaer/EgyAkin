@@ -9,10 +9,16 @@ class TrendingCubit extends Cubit<TrendingState> {
   static TrendingCubit get(context) => BlocProvider.of(context);
   final GetTrendingPostsInCommunityUsecase _getTrendingPostsInCommunityUsecase;
   int callTrendsTabTimes = 0;
+  bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
+  ScrollController? scrollController;
+  int _currentPage = 1;
+
   getTrendingPostsInCommunity() async {
     emit(const TrendingState.loading());
+    _currentPage = 1;
     final result =
-        await _getTrendingPostsInCommunityUsecase.execute(NoParams());
+        await _getTrendingPostsInCommunityUsecase.execute(_currentPage);
     result.fold(
       (l) {
         emit(TrendingState.error(l.message));
@@ -22,7 +28,64 @@ class TrendingCubit extends Cubit<TrendingState> {
           '',
           '',
           response,
+          false,
         ));
+      },
+    );
+  }
+
+  void loadMoreTrends() async {
+    _currentPage++;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => TrendingState.loaded(
+        '',
+        '',
+        value.response,
+        true,
+      ),
+    ));
+
+    final result =
+        await _getTrendingPostsInCommunityUsecase.execute(_currentPage);
+
+    result.fold(
+      (l) {
+        _currentPage--;
+        emit(TrendingState.error(l.message));
+      },
+      (loadMoreTrends) async {
+        final currentState = state;
+        currentState.when(
+          initial: () {},
+          loading: () {},
+          loaded: (
+            snackBarMessage,
+            dialogMessage,
+            response,
+            isSeeMore,
+          ) {
+            final updatedData = response.copyWith(
+              data: [
+                ...(response.data ??
+                    []), // ✅ Now correctly handling list merging
+                ...(loadMoreTrends.data ?? []),
+              ],
+            );
+
+            isLastPage = (response.lastPage != null &&
+                _currentPage >= response.lastPage!);
+            isLoadingMoreForScroll = false;
+
+            emit(TrendingState.loaded(
+              '',
+              '',
+              updatedData,
+              false,
+            ));
+          },
+          error: (error) {},
+        );
       },
     );
   }

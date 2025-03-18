@@ -15,6 +15,7 @@ class ProfilePatientsCubit extends Cubit<ProfilePatientsState> {
 
   getProfilePatients(String doctorId) async {
     emit(const ProfilePatientsState.loading());
+    _currentPage = 1;
 
     final result = await _getProfilePatientsUsecase.execute(
       GetProfilePatientsUsecaseInput(

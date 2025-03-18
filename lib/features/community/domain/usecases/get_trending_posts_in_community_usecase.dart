@@ -3,14 +3,14 @@ import 'package:egy_akin/features/community/data/models/get_trending_tab_in_comm
 import '../../../../exports.dart';
 
 class GetTrendingPostsInCommunityUsecase
-    implements BaseUseCase<NoParams, GetTrendingTabInCommunityModelResponse> {
+    implements BaseUseCase<int, GetTrendingTabInCommunityModelResponse> {
   final CommunityRepository repository;
 
   GetTrendingPostsInCommunityUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetTrendingTabInCommunityModelResponse>> execute(
-      NoParams input) async {
-    return await repository.getTrendingPostsInCommunity();
+      int page) async {
+    return await repository.getTrendingPostsInCommunity(page);
   }
 }

@@ -4,15 +4,26 @@ import 'package:egy_akin/features/community_search/domain/repositories/community
 import '../../../../exports.dart';
 
 class GetResponseOfSearchInCommunityUsecase
-    implements BaseUseCase<String, GetResponseOfSearchModel> {
+    implements
+        BaseUseCase<GetResponseOfSearchInCommunityUsecaseInput,
+            GetResponseOfSearchModel> {
   final CommunitySearchRepository repository;
 
   GetResponseOfSearchInCommunityUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetResponseOfSearchModel>> execute(
-    String searchContent,
+    GetResponseOfSearchInCommunityUsecaseInput input,
   ) async {
-    return await repository.getCommunitySearchResponse(searchContent);
+    return await repository.getCommunitySearchResponse(
+        input.page, input.searchContent);
   }
+}
+
+class GetResponseOfSearchInCommunityUsecaseInput {
+  final int page;
+  final String searchContent;
+
+  GetResponseOfSearchInCommunityUsecaseInput(
+      {required this.page, required this.searchContent});
 }

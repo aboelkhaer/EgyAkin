@@ -18,6 +18,7 @@ class ConsultationFromAICubit extends Cubit<ConsultationFromAIState> {
 
   getAIConsultationHistory(String patientId) async {
     emit(const ConsultationFromAIState.loading());
+    _currentPage = 1;
 
     final result = await _getAiConsultationHistoryUsecase
         .execute(GetAiConsultationHistoryUsecaseInput(

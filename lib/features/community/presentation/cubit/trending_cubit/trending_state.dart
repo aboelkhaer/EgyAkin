@@ -11,6 +11,7 @@ abstract class TrendingState with _$TrendingState {
     String snackBarMessage,
     String dialogMessage,
     GetTrendingTabInCommunityModelResponse response,
+    bool isSeeMore,
   ) = _Loaded;
   const factory TrendingState.error(String message) = _Error;
 }

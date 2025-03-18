@@ -25,7 +25,9 @@ mixin _$GroupDetailsInCommunityState {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -39,7 +41,9 @@ mixin _$GroupDetailsInCommunityState {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -53,7 +57,9 @@ mixin _$GroupDetailsInCommunityState {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -158,7 +164,9 @@ class _$InitialImpl implements _Initial {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -175,7 +183,9 @@ class _$InitialImpl implements _Initial {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -192,7 +202,9 @@ class _$InitialImpl implements _Initial {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -293,7 +305,9 @@ class _$LoadingImpl implements _Loading {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -310,7 +324,9 @@ class _$LoadingImpl implements _Loading {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -327,7 +343,9 @@ class _$LoadingImpl implements _Loading {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -391,7 +409,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       String snackBarMessage,
       String dialogMessage,
       bool isDeleteGroupLoading,
-      bool isDeleteGroupLoaded});
+      bool isDeleteGroupLoaded,
+      int changeCounter,
+      bool isSeeMore});
 
   $GetGroupDetailsInCommunityModelResponseCopyWith<$Res> get groupDetails;
 }
@@ -414,6 +434,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? dialogMessage = null,
     Object? isDeleteGroupLoading = null,
     Object? isDeleteGroupLoaded = null,
+    Object? changeCounter = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$LoadedImpl(
       null == groupDetails
@@ -436,6 +458,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isDeleteGroupLoaded
           : isDeleteGroupLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -454,8 +484,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.groupDetails, this.snackBarMessage,
-      this.dialogMessage, this.isDeleteGroupLoading, this.isDeleteGroupLoaded);
+  const _$LoadedImpl(
+      this.groupDetails,
+      this.snackBarMessage,
+      this.dialogMessage,
+      this.isDeleteGroupLoading,
+      this.isDeleteGroupLoaded,
+      this.changeCounter,
+      this.isSeeMore);
 
   @override
   final GetGroupDetailsInCommunityModelResponse groupDetails;
@@ -467,10 +503,14 @@ class _$LoadedImpl implements _Loaded {
   final bool isDeleteGroupLoading;
   @override
   final bool isDeleteGroupLoaded;
+  @override
+  final int changeCounter;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'GroupDetailsInCommunityState.loaded(groupDetails: $groupDetails, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isDeleteGroupLoading: $isDeleteGroupLoading, isDeleteGroupLoaded: $isDeleteGroupLoaded)';
+    return 'GroupDetailsInCommunityState.loaded(groupDetails: $groupDetails, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isDeleteGroupLoading: $isDeleteGroupLoading, isDeleteGroupLoaded: $isDeleteGroupLoaded, changeCounter: $changeCounter, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -487,12 +527,23 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isDeleteGroupLoading, isDeleteGroupLoading) ||
                 other.isDeleteGroupLoading == isDeleteGroupLoading) &&
             (identical(other.isDeleteGroupLoaded, isDeleteGroupLoaded) ||
-                other.isDeleteGroupLoaded == isDeleteGroupLoaded));
+                other.isDeleteGroupLoaded == isDeleteGroupLoaded) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, groupDetails, snackBarMessage,
-      dialogMessage, isDeleteGroupLoading, isDeleteGroupLoaded);
+  int get hashCode => Object.hash(
+      runtimeType,
+      groupDetails,
+      snackBarMessage,
+      dialogMessage,
+      isDeleteGroupLoading,
+      isDeleteGroupLoaded,
+      changeCounter,
+      isSeeMore);
 
   /// Create a copy of GroupDetailsInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -512,12 +563,14 @@ class _$LoadedImpl implements _Loaded {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(groupDetails, snackBarMessage, dialogMessage,
-        isDeleteGroupLoading, isDeleteGroupLoaded);
+        isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
   }
 
   @override
@@ -530,12 +583,14 @@ class _$LoadedImpl implements _Loaded {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(groupDetails, snackBarMessage, dialogMessage,
-        isDeleteGroupLoading, isDeleteGroupLoaded);
+        isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
   }
 
   @override
@@ -548,14 +603,16 @@ class _$LoadedImpl implements _Loaded {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(groupDetails, snackBarMessage, dialogMessage,
-          isDeleteGroupLoading, isDeleteGroupLoaded);
+          isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
     }
     return orElse();
   }
@@ -604,13 +661,17 @@ abstract class _Loaded implements GroupDetailsInCommunityState {
       final String snackBarMessage,
       final String dialogMessage,
       final bool isDeleteGroupLoading,
-      final bool isDeleteGroupLoaded) = _$LoadedImpl;
+      final bool isDeleteGroupLoaded,
+      final int changeCounter,
+      final bool isSeeMore) = _$LoadedImpl;
 
   GetGroupDetailsInCommunityModelResponse get groupDetails;
   String get snackBarMessage;
   String get dialogMessage;
   bool get isDeleteGroupLoading;
   bool get isDeleteGroupLoaded;
+  int get changeCounter;
+  bool get isSeeMore;
 
   /// Create a copy of GroupDetailsInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -694,7 +755,9 @@ class _$ErrorImpl implements _Error {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -711,7 +774,9 @@ class _$ErrorImpl implements _Error {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -728,7 +793,9 @@ class _$ErrorImpl implements _Error {
             String snackBarMessage,
             String dialogMessage,
             bool isDeleteGroupLoading,
-            bool isDeleteGroupLoaded)?
+            bool isDeleteGroupLoaded,
+            int changeCounter,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

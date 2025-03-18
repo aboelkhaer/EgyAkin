@@ -14,6 +14,7 @@ class CommunitySearchRepositoryImpl extends CommunitySearchRepository {
 
   @override
   Future<Either<Failure, GetResponseOfSearchModel>> getCommunitySearchResponse(
+    int page,
     String searchContent,
   ) async {
     if (await networkInfo.isConnected) {
@@ -22,6 +23,7 @@ class CommunitySearchRepositoryImpl extends CommunitySearchRepository {
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response =
             await communitySearchDatasource.getCommunitySearchResponse(
+          page,
           searchContent,
         );
         return Right(response);

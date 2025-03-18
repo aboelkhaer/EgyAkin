@@ -38,6 +38,7 @@ class _PostsTabState extends State<PostsTab> {
               isDeletePostLoaded,
               message,
               isSeeMore,
+              changeCounter,
             ) {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -47,20 +48,29 @@ class _PostsTabState extends State<PostsTab> {
                       onRefresh: () async {
                         await cubit.getAllFeeds();
                       },
-                      child: ListView.builder(
-                        itemCount: feedsResponse.data!.data!.length,
-                        controller: widget.feedsScrollController,
-                        padding: const EdgeInsets.all(20) +
-                            EdgeInsets.only(bottom: 60.h),
-                        itemBuilder: (context, index) {
-                          var feed = feedsResponse.data!.data![index];
-                          return PostCard(
-                            feed: feed,
-                            homeDataModel: widget.homeDataModel,
-                            currentDoctorModel: widget.currentDoctorModel,
-                          );
-                        },
-                      ),
+                      child: feedsResponse.data!.data!.isEmpty
+                          ? Center(
+                              child: Image.asset(
+                                AppImages.notFound,
+                                width: 150.w,
+                                height: 150.h,
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: feedsResponse.data!.data!.length,
+                              controller: widget.feedsScrollController,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(20) +
+                                  EdgeInsets.only(bottom: 60.h),
+                              itemBuilder: (context, index) {
+                                var feed = feedsResponse.data!.data![index];
+                                return PostCard(
+                                  feed: feed,
+                                  homeDataModel: widget.homeDataModel,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                );
+                              },
+                            ),
                     ),
                   ),
                   Row(

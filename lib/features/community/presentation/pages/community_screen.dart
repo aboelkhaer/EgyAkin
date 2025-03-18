@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
 
 class CommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -23,6 +24,7 @@ class _CommunityScreenState extends State<CommunityScreen>
   late ScrollController _scrollController;
   late TabController _tabController;
   late ScrollController feedsScrollController;
+
   bool _isFabVisible = false;
   bool _showTabs = true; // Track visibility of the TabBar
 

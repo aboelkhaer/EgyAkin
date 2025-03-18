@@ -660,6 +660,7 @@ mixin _$PostCommunityModel {
   bool? get isLiked => throw _privateConstructorUsedError;
   GroupDetails? get group => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
+  PollModelResponse? get poll => throw _privateConstructorUsedError;
 
   /// Serializes this PostCommunityModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -690,10 +691,12 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       GroupDetails? group,
-      DoctorModel? doctor});
+      DoctorModel? doctor,
+      PollModelResponse? poll});
 
   $GroupDetailsCopyWith<$Res>? get group;
   $DoctorModelCopyWith<$Res>? get doctor;
+  $PollModelResponseCopyWith<$Res>? get poll;
 }
 
 /// @nodoc
@@ -724,6 +727,7 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
     Object? isLiked = freezed,
     Object? group = freezed,
     Object? doctor = freezed,
+    Object? poll = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -778,6 +782,10 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
               as DoctorModel?,
+      poll: freezed == poll
+          ? _value.poll
+          : poll // ignore: cast_nullable_to_non_nullable
+              as PollModelResponse?,
     ) as $Val);
   }
 
@@ -808,6 +816,20 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
       return _then(_value.copyWith(doctor: value) as $Val);
     });
   }
+
+  /// Create a copy of PostCommunityModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $PollModelResponseCopyWith<$Res>? get poll {
+    if (_value.poll == null) {
+      return null;
+    }
+
+    return $PollModelResponseCopyWith<$Res>(_value.poll!, (value) {
+      return _then(_value.copyWith(poll: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -831,12 +853,15 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       GroupDetails? group,
-      DoctorModel? doctor});
+      DoctorModel? doctor,
+      PollModelResponse? poll});
 
   @override
   $GroupDetailsCopyWith<$Res>? get group;
   @override
   $DoctorModelCopyWith<$Res>? get doctor;
+  @override
+  $PollModelResponseCopyWith<$Res>? get poll;
 }
 
 /// @nodoc
@@ -865,6 +890,7 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
     Object? isLiked = freezed,
     Object? group = freezed,
     Object? doctor = freezed,
+    Object? poll = freezed,
   }) {
     return _then(_$PostCommunityModelImpl(
       id: freezed == id
@@ -919,6 +945,10 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
           ? _value.doctor
           : doctor // ignore: cast_nullable_to_non_nullable
               as DoctorModel?,
+      poll: freezed == poll
+          ? _value.poll
+          : poll // ignore: cast_nullable_to_non_nullable
+              as PollModelResponse?,
     ));
   }
 }
@@ -939,7 +969,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       @JsonKey(name: 'isSaved') this.isSaved,
       @JsonKey(name: 'isLiked') this.isLiked,
       this.group,
-      this.doctor});
+      this.doctor,
+      this.poll});
 
   factory _$PostCommunityModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PostCommunityModelImplFromJson(json);
@@ -978,10 +1009,12 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   final GroupDetails? group;
   @override
   final DoctorModel? doctor;
+  @override
+  final PollModelResponse? poll;
 
   @override
   String toString() {
-    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, group: $group, doctor: $doctor)';
+    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, group: $group, doctor: $doctor, poll: $poll)';
   }
 
   @override
@@ -1008,7 +1041,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
             (identical(other.group, group) || other.group == group) &&
-            (identical(other.doctor, doctor) || other.doctor == doctor));
+            (identical(other.doctor, doctor) || other.doctor == doctor) &&
+            (identical(other.poll, poll) || other.poll == poll));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1027,7 +1061,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       isSaved,
       isLiked,
       group,
-      doctor);
+      doctor,
+      poll);
 
   /// Create a copy of PostCommunityModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1060,7 +1095,8 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       @JsonKey(name: 'isSaved') final bool? isSaved,
       @JsonKey(name: 'isLiked') final bool? isLiked,
       final GroupDetails? group,
-      final DoctorModel? doctor}) = _$PostCommunityModelImpl;
+      final DoctorModel? doctor,
+      final PollModelResponse? poll}) = _$PostCommunityModelImpl;
 
   factory _PostCommunityModel.fromJson(Map<String, dynamic> json) =
       _$PostCommunityModelImpl.fromJson;
@@ -1099,6 +1135,8 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   GroupDetails? get group;
   @override
   DoctorModel? get doctor;
+  @override
+  PollModelResponse? get poll;
 
   /// Create a copy of PostCommunityModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1106,6 +1144,663 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PostCommunityModelImplCopyWith<_$PostCommunityModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+PollModelResponse _$PollModelResponseFromJson(Map<String, dynamic> json) {
+  return _PollModelResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PollModelResponse {
+  int? get id => throw _privateConstructorUsedError;
+  String? get content => throw _privateConstructorUsedError;
+  @JsonKey(name: 'feed_post_id')
+  int? get feedPostId => throw _privateConstructorUsedError;
+  String? get question => throw _privateConstructorUsedError;
+  @JsonKey(name: 'allow_add_options')
+  bool? get allowAddOptions => throw _privateConstructorUsedError;
+  @JsonKey(name: 'allow_multiple_choice')
+  bool? get allowMultipleChoice => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt => throw _privateConstructorUsedError;
+  List<PollOptionsModelResponse>? get options =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this PollModelResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PollModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PollModelResponseCopyWith<PollModelResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PollModelResponseCopyWith<$Res> {
+  factory $PollModelResponseCopyWith(
+          PollModelResponse value, $Res Function(PollModelResponse) then) =
+      _$PollModelResponseCopyWithImpl<$Res, PollModelResponse>;
+  @useResult
+  $Res call(
+      {int? id,
+      String? content,
+      @JsonKey(name: 'feed_post_id') int? feedPostId,
+      String? question,
+      @JsonKey(name: 'allow_add_options') bool? allowAddOptions,
+      @JsonKey(name: 'allow_multiple_choice') bool? allowMultipleChoice,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      List<PollOptionsModelResponse>? options});
+}
+
+/// @nodoc
+class _$PollModelResponseCopyWithImpl<$Res, $Val extends PollModelResponse>
+    implements $PollModelResponseCopyWith<$Res> {
+  _$PollModelResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PollModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? content = freezed,
+    Object? feedPostId = freezed,
+    Object? question = freezed,
+    Object? allowAddOptions = freezed,
+    Object? allowMultipleChoice = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? options = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
+      feedPostId: freezed == feedPostId
+          ? _value.feedPostId
+          : feedPostId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      question: freezed == question
+          ? _value.question
+          : question // ignore: cast_nullable_to_non_nullable
+              as String?,
+      allowAddOptions: freezed == allowAddOptions
+          ? _value.allowAddOptions
+          : allowAddOptions // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      allowMultipleChoice: freezed == allowMultipleChoice
+          ? _value.allowMultipleChoice
+          : allowMultipleChoice // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      options: freezed == options
+          ? _value.options
+          : options // ignore: cast_nullable_to_non_nullable
+              as List<PollOptionsModelResponse>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PollModelResponseImplCopyWith<$Res>
+    implements $PollModelResponseCopyWith<$Res> {
+  factory _$$PollModelResponseImplCopyWith(_$PollModelResponseImpl value,
+          $Res Function(_$PollModelResponseImpl) then) =
+      __$$PollModelResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      String? content,
+      @JsonKey(name: 'feed_post_id') int? feedPostId,
+      String? question,
+      @JsonKey(name: 'allow_add_options') bool? allowAddOptions,
+      @JsonKey(name: 'allow_multiple_choice') bool? allowMultipleChoice,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      List<PollOptionsModelResponse>? options});
+}
+
+/// @nodoc
+class __$$PollModelResponseImplCopyWithImpl<$Res>
+    extends _$PollModelResponseCopyWithImpl<$Res, _$PollModelResponseImpl>
+    implements _$$PollModelResponseImplCopyWith<$Res> {
+  __$$PollModelResponseImplCopyWithImpl(_$PollModelResponseImpl _value,
+      $Res Function(_$PollModelResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PollModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? content = freezed,
+    Object? feedPostId = freezed,
+    Object? question = freezed,
+    Object? allowAddOptions = freezed,
+    Object? allowMultipleChoice = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? options = freezed,
+  }) {
+    return _then(_$PollModelResponseImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
+      feedPostId: freezed == feedPostId
+          ? _value.feedPostId
+          : feedPostId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      question: freezed == question
+          ? _value.question
+          : question // ignore: cast_nullable_to_non_nullable
+              as String?,
+      allowAddOptions: freezed == allowAddOptions
+          ? _value.allowAddOptions
+          : allowAddOptions // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      allowMultipleChoice: freezed == allowMultipleChoice
+          ? _value.allowMultipleChoice
+          : allowMultipleChoice // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      options: freezed == options
+          ? _value._options
+          : options // ignore: cast_nullable_to_non_nullable
+              as List<PollOptionsModelResponse>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PollModelResponseImpl implements _PollModelResponse {
+  const _$PollModelResponseImpl(
+      {this.id,
+      this.content,
+      @JsonKey(name: 'feed_post_id') this.feedPostId,
+      this.question,
+      @JsonKey(name: 'allow_add_options') this.allowAddOptions,
+      @JsonKey(name: 'allow_multiple_choice') this.allowMultipleChoice,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt,
+      final List<PollOptionsModelResponse>? options})
+      : _options = options;
+
+  factory _$PollModelResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PollModelResponseImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  final String? content;
+  @override
+  @JsonKey(name: 'feed_post_id')
+  final int? feedPostId;
+  @override
+  final String? question;
+  @override
+  @JsonKey(name: 'allow_add_options')
+  final bool? allowAddOptions;
+  @override
+  @JsonKey(name: 'allow_multiple_choice')
+  final bool? allowMultipleChoice;
+  @override
+  @JsonKey(name: 'created_at')
+  final String? createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  final String? updatedAt;
+  final List<PollOptionsModelResponse>? _options;
+  @override
+  List<PollOptionsModelResponse>? get options {
+    final value = _options;
+    if (value == null) return null;
+    if (_options is EqualUnmodifiableListView) return _options;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'PollModelResponse(id: $id, content: $content, feedPostId: $feedPostId, question: $question, allowAddOptions: $allowAddOptions, allowMultipleChoice: $allowMultipleChoice, createdAt: $createdAt, updatedAt: $updatedAt, options: $options)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PollModelResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.content, content) || other.content == content) &&
+            (identical(other.feedPostId, feedPostId) ||
+                other.feedPostId == feedPostId) &&
+            (identical(other.question, question) ||
+                other.question == question) &&
+            (identical(other.allowAddOptions, allowAddOptions) ||
+                other.allowAddOptions == allowAddOptions) &&
+            (identical(other.allowMultipleChoice, allowMultipleChoice) ||
+                other.allowMultipleChoice == allowMultipleChoice) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            const DeepCollectionEquality().equals(other._options, _options));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      content,
+      feedPostId,
+      question,
+      allowAddOptions,
+      allowMultipleChoice,
+      createdAt,
+      updatedAt,
+      const DeepCollectionEquality().hash(_options));
+
+  /// Create a copy of PollModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PollModelResponseImplCopyWith<_$PollModelResponseImpl> get copyWith =>
+      __$$PollModelResponseImplCopyWithImpl<_$PollModelResponseImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PollModelResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PollModelResponse implements PollModelResponse {
+  const factory _PollModelResponse(
+      {final int? id,
+      final String? content,
+      @JsonKey(name: 'feed_post_id') final int? feedPostId,
+      final String? question,
+      @JsonKey(name: 'allow_add_options') final bool? allowAddOptions,
+      @JsonKey(name: 'allow_multiple_choice') final bool? allowMultipleChoice,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at') final String? updatedAt,
+      final List<PollOptionsModelResponse>? options}) = _$PollModelResponseImpl;
+
+  factory _PollModelResponse.fromJson(Map<String, dynamic> json) =
+      _$PollModelResponseImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  String? get content;
+  @override
+  @JsonKey(name: 'feed_post_id')
+  int? get feedPostId;
+  @override
+  String? get question;
+  @override
+  @JsonKey(name: 'allow_add_options')
+  bool? get allowAddOptions;
+  @override
+  @JsonKey(name: 'allow_multiple_choice')
+  bool? get allowMultipleChoice;
+  @override
+  @JsonKey(name: 'created_at')
+  String? get createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt;
+  @override
+  List<PollOptionsModelResponse>? get options;
+
+  /// Create a copy of PollModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PollModelResponseImplCopyWith<_$PollModelResponseImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+PollOptionsModelResponse _$PollOptionsModelResponseFromJson(
+    Map<String, dynamic> json) {
+  return _PollOptionsModelResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$PollOptionsModelResponse {
+  int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'poll_id')
+  int? get pollId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'option_text')
+  String? get optionText => throw _privateConstructorUsedError;
+  @JsonKey(name: 'created_at')
+  String? get createdAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'votes_count')
+  int? get votesCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_voted')
+  bool? get isVoted => throw _privateConstructorUsedError;
+
+  /// Serializes this PollOptionsModelResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of PollOptionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $PollOptionsModelResponseCopyWith<PollOptionsModelResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $PollOptionsModelResponseCopyWith<$Res> {
+  factory $PollOptionsModelResponseCopyWith(PollOptionsModelResponse value,
+          $Res Function(PollOptionsModelResponse) then) =
+      _$PollOptionsModelResponseCopyWithImpl<$Res, PollOptionsModelResponse>;
+  @useResult
+  $Res call(
+      {int? id,
+      @JsonKey(name: 'poll_id') int? pollId,
+      @JsonKey(name: 'option_text') String? optionText,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'votes_count') int? votesCount,
+      @JsonKey(name: 'is_voted') bool? isVoted});
+}
+
+/// @nodoc
+class _$PollOptionsModelResponseCopyWithImpl<$Res,
+        $Val extends PollOptionsModelResponse>
+    implements $PollOptionsModelResponseCopyWith<$Res> {
+  _$PollOptionsModelResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of PollOptionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? pollId = freezed,
+    Object? optionText = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? votesCount = freezed,
+    Object? isVoted = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      pollId: freezed == pollId
+          ? _value.pollId
+          : pollId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      optionText: freezed == optionText
+          ? _value.optionText
+          : optionText // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      votesCount: freezed == votesCount
+          ? _value.votesCount
+          : votesCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isVoted: freezed == isVoted
+          ? _value.isVoted
+          : isVoted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$PollOptionsModelResponseImplCopyWith<$Res>
+    implements $PollOptionsModelResponseCopyWith<$Res> {
+  factory _$$PollOptionsModelResponseImplCopyWith(
+          _$PollOptionsModelResponseImpl value,
+          $Res Function(_$PollOptionsModelResponseImpl) then) =
+      __$$PollOptionsModelResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {int? id,
+      @JsonKey(name: 'poll_id') int? pollId,
+      @JsonKey(name: 'option_text') String? optionText,
+      @JsonKey(name: 'created_at') String? createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(name: 'votes_count') int? votesCount,
+      @JsonKey(name: 'is_voted') bool? isVoted});
+}
+
+/// @nodoc
+class __$$PollOptionsModelResponseImplCopyWithImpl<$Res>
+    extends _$PollOptionsModelResponseCopyWithImpl<$Res,
+        _$PollOptionsModelResponseImpl>
+    implements _$$PollOptionsModelResponseImplCopyWith<$Res> {
+  __$$PollOptionsModelResponseImplCopyWithImpl(
+      _$PollOptionsModelResponseImpl _value,
+      $Res Function(_$PollOptionsModelResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PollOptionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = freezed,
+    Object? pollId = freezed,
+    Object? optionText = freezed,
+    Object? createdAt = freezed,
+    Object? updatedAt = freezed,
+    Object? votesCount = freezed,
+    Object? isVoted = freezed,
+  }) {
+    return _then(_$PollOptionsModelResponseImpl(
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      pollId: freezed == pollId
+          ? _value.pollId
+          : pollId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      optionText: freezed == optionText
+          ? _value.optionText
+          : optionText // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: freezed == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      votesCount: freezed == votesCount
+          ? _value.votesCount
+          : votesCount // ignore: cast_nullable_to_non_nullable
+              as int?,
+      isVoted: freezed == isVoted
+          ? _value.isVoted
+          : isVoted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$PollOptionsModelResponseImpl implements _PollOptionsModelResponse {
+  const _$PollOptionsModelResponseImpl(
+      {this.id,
+      @JsonKey(name: 'poll_id') this.pollId,
+      @JsonKey(name: 'option_text') this.optionText,
+      @JsonKey(name: 'created_at') this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt,
+      @JsonKey(name: 'votes_count') this.votesCount,
+      @JsonKey(name: 'is_voted') this.isVoted});
+
+  factory _$PollOptionsModelResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$PollOptionsModelResponseImplFromJson(json);
+
+  @override
+  final int? id;
+  @override
+  @JsonKey(name: 'poll_id')
+  final int? pollId;
+  @override
+  @JsonKey(name: 'option_text')
+  final String? optionText;
+  @override
+  @JsonKey(name: 'created_at')
+  final String? createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  final String? updatedAt;
+  @override
+  @JsonKey(name: 'votes_count')
+  final int? votesCount;
+  @override
+  @JsonKey(name: 'is_voted')
+  final bool? isVoted;
+
+  @override
+  String toString() {
+    return 'PollOptionsModelResponse(id: $id, pollId: $pollId, optionText: $optionText, createdAt: $createdAt, updatedAt: $updatedAt, votesCount: $votesCount, isVoted: $isVoted)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PollOptionsModelResponseImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.pollId, pollId) || other.pollId == pollId) &&
+            (identical(other.optionText, optionText) ||
+                other.optionText == optionText) &&
+            (identical(other.createdAt, createdAt) ||
+                other.createdAt == createdAt) &&
+            (identical(other.updatedAt, updatedAt) ||
+                other.updatedAt == updatedAt) &&
+            (identical(other.votesCount, votesCount) ||
+                other.votesCount == votesCount) &&
+            (identical(other.isVoted, isVoted) || other.isVoted == isVoted));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, id, pollId, optionText,
+      createdAt, updatedAt, votesCount, isVoted);
+
+  /// Create a copy of PollOptionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PollOptionsModelResponseImplCopyWith<_$PollOptionsModelResponseImpl>
+      get copyWith => __$$PollOptionsModelResponseImplCopyWithImpl<
+          _$PollOptionsModelResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$PollOptionsModelResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _PollOptionsModelResponse implements PollOptionsModelResponse {
+  const factory _PollOptionsModelResponse(
+          {final int? id,
+          @JsonKey(name: 'poll_id') final int? pollId,
+          @JsonKey(name: 'option_text') final String? optionText,
+          @JsonKey(name: 'created_at') final String? createdAt,
+          @JsonKey(name: 'updated_at') final String? updatedAt,
+          @JsonKey(name: 'votes_count') final int? votesCount,
+          @JsonKey(name: 'is_voted') final bool? isVoted}) =
+      _$PollOptionsModelResponseImpl;
+
+  factory _PollOptionsModelResponse.fromJson(Map<String, dynamic> json) =
+      _$PollOptionsModelResponseImpl.fromJson;
+
+  @override
+  int? get id;
+  @override
+  @JsonKey(name: 'poll_id')
+  int? get pollId;
+  @override
+  @JsonKey(name: 'option_text')
+  String? get optionText;
+  @override
+  @JsonKey(name: 'created_at')
+  String? get createdAt;
+  @override
+  @JsonKey(name: 'updated_at')
+  String? get updatedAt;
+  @override
+  @JsonKey(name: 'votes_count')
+  int? get votesCount;
+  @override
+  @JsonKey(name: 'is_voted')
+  bool? get isVoted;
+
+  /// Create a copy of PollOptionsModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PollOptionsModelResponseImplCopyWith<_$PollOptionsModelResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 GroupDetails _$GroupDetailsFromJson(Map<String, dynamic> json) {

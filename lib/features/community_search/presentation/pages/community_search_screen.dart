@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 
@@ -19,6 +20,7 @@ class CommunitySearchScreen extends StatefulWidget {
 }
 
 class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
+  CommunitySearchCubit? _cubit;
   @override
   void initState() {
     if (widget.initialValueInSearch != null) {
@@ -27,7 +29,38 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           .read<CommunitySearchCubit>()
           .getResponseOfSearchInCommunity(widget.initialValueInSearch!, 100);
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _cubit = context.read<CommunitySearchCubit>();
+
+      if (!_cubit!.isClosed) {
+        _cubit!.scrollController = ScrollController();
+        _cubit!.scrollController!.addListener(_onScroll);
+      }
+    });
     super.initState();
+  }
+
+  void _onScroll() {
+    final cubit = context.read<CommunitySearchCubit>();
+
+    if (cubit.isLastPage || cubit.isLoadingMoreForScroll) {
+      return;
+    }
+
+    final maxScroll = cubit.scrollController!.position.maxScrollExtent;
+    final currentScroll = cubit.scrollController!.position.pixels;
+    const threshold = 200.0;
+
+    if (maxScroll - currentScroll <= threshold) {
+      cubit.isLoadingMoreForScroll = true;
+
+      // Use correct search value
+      final searchValue = widget.initialValueInSearch ?? cubit.searchValue;
+
+      if (searchValue!.isNotEmpty) {
+        cubit.loadMorePosts(searchValue);
+      }
+    }
   }
 
   @override
@@ -55,14 +88,16 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                   child: CustomTextFormField(
                     title: 'Search',
                     textAlign: TextAlign.center,
-                    isSearchIconInCenter: true,
+                    isSearchIconInCenter:
+                        cubit.isSearchContentEmpty ? true : false,
                     initialValue: widget.initialValueInSearch,
                     autoFocus:
-                        widget.initialValueInSearch == null ? false : true,
+                        widget.initialValueInSearch == null ? true : false,
                     textInputType: TextInputType.text,
                     onChanged: (value) {
                       if (value.isNotEmpty) {
                         cubit.isSearchContentEmpty = false;
+                        cubit.searchValue = value;
                         cubit.getResponseOfSearchInCommunity(value);
                       } else {
                         cubit.isSearchContentEmpty = true;
@@ -107,8 +142,15 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                       numberOfShimmer: 5,
                     );
                   },
-                  loaded: (snackBarMessage, dialogMessage, response) {
-                    return response.data!.data!.isEmpty
+                  loaded: (
+                    snackBarMessage,
+                    dialogMessage,
+                    response,
+                    isSeeMore,
+                    changeCounter,
+                  ) {
+                    return response.data!.data!.isEmpty ||
+                            response.data!.data == null
                         ? Center(
                             child: Image.asset(
                               AppImages.notFound,
@@ -118,6 +160,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           )
                         : ListView.builder(
                             itemCount: response.data!.data!.length,
+                            controller: cubit.scrollController,
+                            physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(20) +
                                 EdgeInsets.only(bottom: 60.h),
                             itemBuilder: (context, index) {
@@ -128,6 +172,40 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                 isCommunitySearch: true,
                                 currentDoctorModel: widget.currentDoctorModel,
                                 highlightWord: widget.initialValueInSearch,
+                                viewPollWidget: ViewPollWidget(
+                                  poll: feed.poll,
+                                  selectedOptions:
+                                      _cubit!.postSelectedOptions[feed.id] ??
+                                          {},
+                                  initiallyExpanded: false,
+                                  selectedOption:
+                                      _cubit!.postSelectedOption[feed.id],
+                                  onOptionSelected: (optionId) {
+                                    _cubit!.postSelectedOption[feed.id!] =
+                                        optionId;
+                                    _cubit!.addVoteAndUnVote(
+                                      feed.poll!.id.toString(),
+                                      optionId!,
+                                    );
+                                    _cubit!.refreshScreen();
+                                  },
+                                  onOptionToggled: (optionId, isSelected) {
+                                    _cubit!.postSelectedOptions[feed.id!] ??=
+                                        {};
+                                    _cubit!.addVoteAndUnVote(
+                                      feed.poll!.id.toString(),
+                                      optionId,
+                                    );
+                                    if (isSelected) {
+                                      _cubit!.postSelectedOptions[feed.id!]!
+                                          .add(optionId);
+                                    } else {
+                                      _cubit!.postSelectedOptions[feed.id!]!
+                                          .remove(optionId);
+                                    }
+                                    _cubit!.refreshScreen();
+                                  },
+                                ),
                                 onLikeAndUnlikeAdditional: () {
                                   cubit.addLikeOrUnlikeOnPost(
                                       feed.id.toString());
@@ -146,6 +224,35 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                 );
               },
             ),
+          ),
+          BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loaded: (
+                  snackBarMessage,
+                  dialogMessage,
+                  response,
+                  isSeeMore,
+                  changeCounter,
+                ) {
+                  return isSeeMore
+                      ? Column(
+                          children: [
+                            const SizedBox(
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(strokeWidth: 3),
+                            ),
+                            SizedBox(height: 20.h),
+                          ],
+                        )
+                      : const SizedBox.shrink();
+                },
+              );
+            },
           ),
         ],
       ),

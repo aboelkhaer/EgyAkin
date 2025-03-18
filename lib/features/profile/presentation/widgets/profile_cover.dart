@@ -6,6 +6,7 @@ class ProfileCover extends StatelessWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
+  final DoctorModel currentDoctorModel;
   const ProfileCover({
     super.key,
     required this.cubit,
@@ -14,6 +15,7 @@ class ProfileCover extends StatelessWidget {
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
     required this.homeDataModel,
+    required this.currentDoctorModel,
   });
 
   final ProfileCubit cubit;
@@ -31,7 +33,7 @@ class ProfileCover extends StatelessWidget {
           Stack(
             children: [
               Positioned(
-                top: 25.h,
+                top: 10.h,
                 left: 0,
                 right: 0,
                 bottom: 0,
@@ -65,6 +67,7 @@ class ProfileCover extends StatelessWidget {
                       currentDoctorRole: currentDoctorRole,
                       currentDoctorPoints: currentDoctorPoints,
                       homeDataModel: homeDataModel,
+                      currentDoctorModel: currentDoctorModel,
                     ),
                     SizedBox(height: 5.h),
                     SizedBox(height: 10.h),

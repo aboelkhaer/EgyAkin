@@ -6,6 +6,7 @@ class ProfileNameAndJob extends StatelessWidget {
   final bool accountVerification;
   final String currentDoctorRole;
   final int currentDoctorPoints;
+  final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
 
   const ProfileNameAndJob({
@@ -16,6 +17,7 @@ class ProfileNameAndJob extends StatelessWidget {
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
     required this.homeDataModel,
+    required this.currentDoctorModel,
   });
 
   @override
@@ -202,119 +204,119 @@ class ProfileNameAndJob extends StatelessWidget {
                 SizedBox(height: 3.h),
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, state) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    return Column(
                       children: [
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.profilePatients,
-                              arguments: AppRoutesArgs.profilePatientsRouteArgs(
-                                doctorId: cubit.currentDoctor.id.toString(),
-                                currentDoctorModel: cubit.currentDoctor,
-                                accountVerification: accountVerification,
-                                currentDoctorPoints: currentDoctorPoints,
-                                isSyndicateCardRequired:
-                                    isSyndicateCardRequired,
-                                doctorFirstName:
-                                    cubit.currentDoctor.firstName.toString(),
-                                currentDoctorRole: currentDoctorRole,
-                                homeDataModel: homeDataModel,
-                              ),
-                            );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                context
-                                    .read<HomeCubit>()
-                                    .doctorPatientCount
-                                    .toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                              SizedBox(width: 3.w),
-                              Text(
-                                'Patient',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                            ],
-                          ),
-                        ),
-                        const Text('|'),
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            showCustomBottomSheet(
+                        // First Row with three items
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildStatItem(
                               context: context,
-                              builder: (context) {
-                                return BlocProvider(
-                                  create: (context) => ScoreHistoryCubit(sl()),
-                                  child: ScoreHistoryScreen(
+                              icon: Icons.people,
+                              value: context
+                                  .read<HomeCubit>()
+                                  .doctorPatientCount
+                                  .toString(),
+                              label: 'Patient',
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.profilePatients,
+                                  arguments:
+                                      AppRoutesArgs.profilePatientsRouteArgs(
                                     doctorId: cubit.currentDoctor.id.toString(),
+                                    currentDoctorModel: cubit.currentDoctor,
+                                    accountVerification: accountVerification,
+                                    currentDoctorPoints: currentDoctorPoints,
+                                    isSyndicateCardRequired:
+                                        isSyndicateCardRequired,
+                                    doctorFirstName: cubit
+                                        .currentDoctor.firstName
+                                        .toString(),
+                                    currentDoctorRole: currentDoctorRole,
+                                    homeDataModel: homeDataModel,
                                   ),
                                 );
                               },
-                            );
-                          },
-                          child: GestureDetector(
-                            onTap: () {
-                              showCustomBottomSheet(
-                                context: context,
-                                builder: (context) {
-                                  return BlocProvider(
-                                    create: (context) =>
-                                        ScoreHistoryCubit(sl()),
-                                    child: ScoreHistoryScreen(
-                                      doctorId:
-                                          cubit.currentDoctor.id.toString(),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            child: Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    context
-                                        .read<HomeCubit>()
-                                        .doctorScore
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  SizedBox(width: 3.w),
-                                  Text(
-                                    'Score',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                                  // SizedBox(width: 5.w),
-                                ],
-                              ),
                             ),
-                          ),
+                            _buildDivider(),
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.star,
+                              value: context
+                                  .read<HomeCubit>()
+                                  .doctorScore
+                                  .toString(),
+                              label: 'Score',
+                              onTap: () {
+                                showCustomBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return BlocProvider(
+                                      create: (context) =>
+                                          ScoreHistoryCubit(sl()),
+                                      child: ScoreHistoryScreen(
+                                        doctorId:
+                                            cubit.currentDoctor.id.toString(),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            _buildDivider(),
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.bookmark,
+                              value: homeDataModel.savedPosts.toString(),
+                              label: 'Saved Posts',
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.savedPosts,
+                                  arguments: AppRoutesArgs.savedPostsRouteArgs(
+                                    currentDoctorModel: currentDoctorModel,
+                                    homeDataModel: homeDataModel,
+                                    doctorId: currentDoctorModel.id.toString(),
+                                    doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName
+                                            .toString(),
+                                        lastName: currentDoctorModel.lastName
+                                            .toString(),
+                                        role: ''),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 5.h), // Space between rows
+
+                        // Second Row with "All Posts"
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.post_add,
+                              value: homeDataModel.postsCount.toString(),
+                              label: 'All Posts',
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.allDoctorPosts,
+                                  arguments:
+                                      AppRoutesArgs.allDoctorPostsRouteArgs(
+                                    currentDoctorModel: currentDoctorModel,
+                                    homeDataModel: homeDataModel,
+                                    doctorId: currentDoctorModel.id.toString(),
+                                    doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName,
+                                        lastName: currentDoctorModel.lastName,
+                                        role: ''),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ],
                     );
@@ -325,6 +327,58 @@ class ProfileNameAndJob extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  Widget _buildStatItem({
+    required BuildContext context,
+    required IconData icon,
+    required String value,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      onTap: onTap,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            size: 16.sp,
+            color: Colors.grey.shade600,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+              fontSize: 12.sp,
+            ),
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade600,
+              fontSize: 12.sp,
+            ),
+          ),
+          SizedBox(width: 10.w),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      height: 20.h,
+      width: 1.w,
+      color: Colors.grey.shade400,
+      margin: EdgeInsets.only(right: 5.w),
     );
   }
 }

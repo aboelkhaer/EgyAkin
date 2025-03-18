@@ -411,3 +411,7 @@ export 'package:egy_akin/features/community/presentation/cubit/groups_cubit/grou
 export 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/group_row.dart';
 export 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/loading_for_group_row.dart';
 export 'package:egy_akin/features/community/presentation/widgets/post_card.dart';
+export 'package:egy_akin/features/create_post_in_community/data/models/poll_model.dart';
+export 'package:egy_akin/app/shared/functions/hint_dialog.dart';
+export 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_cubit.dart';
+export 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_state.dart';

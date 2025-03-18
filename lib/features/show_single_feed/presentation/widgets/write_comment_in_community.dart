@@ -1,6 +1,6 @@
 import '../../../../exports.dart';
 
-class WriteCommentInCommunity extends StatelessWidget {
+class WriteCommentInCommunity extends StatefulWidget {
   final bool accountVerification;
   final String isSyndicateCardRequired;
   final PostCommunityModel feed;
@@ -14,6 +14,12 @@ class WriteCommentInCommunity extends StatelessWidget {
     required this.currentDoctorModel,
   });
 
+  @override
+  State<WriteCommentInCommunity> createState() =>
+      _WriteCommentInCommunityState();
+}
+
+class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
   @override
   Widget build(BuildContext context) {
     ShowSingleFeedCubit cubit = ShowSingleFeedCubit.get(context);
@@ -234,7 +240,7 @@ class WriteCommentInCommunity extends StatelessWidget {
                                   feed.id.toString(),
                                   cubit.commentToReply!.id.toString(),
                                   cubit.commentToReply!,
-                                  currentDoctorModel,
+                                  widget.currentDoctorModel,
                                 );
                               } else {
                                 cubit.createCommentOnPostInCommunity(
@@ -242,7 +248,7 @@ class WriteCommentInCommunity extends StatelessWidget {
                                   cubit.commentContent.text,
                                   feed,
                                   commentsResponse.data!.data ?? [],
-                                  currentDoctorModel,
+                                  widget.currentDoctorModel,
                                 );
                               }
                             },

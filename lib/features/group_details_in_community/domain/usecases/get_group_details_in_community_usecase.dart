@@ -4,14 +4,25 @@ import 'package:egy_akin/features/group_details_in_community/domain/repositories
 import '../../../../exports.dart';
 
 class GetGroupDetailsInCommunityUsecase
-    implements BaseUseCase<String, GetGroupDetailsInCommunityModelResponse> {
+    implements
+        BaseUseCase<GetGroupDetailsInCommunityUsecaseInput,
+            GetGroupDetailsInCommunityModelResponse> {
   final GroupDetailsInCommunityRepository repository;
 
   GetGroupDetailsInCommunityUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetGroupDetailsInCommunityModelResponse>> execute(
-      String groupId) async {
-    return await repository.getGroupDetailsInCommunity(groupId);
+      GetGroupDetailsInCommunityUsecaseInput input) async {
+    return await repository.getGroupDetailsInCommunity(
+        input.groupId, input.page);
   }
+}
+
+class GetGroupDetailsInCommunityUsecaseInput {
+  final String groupId;
+  final int page;
+
+  GetGroupDetailsInCommunityUsecaseInput(
+      {required this.groupId, required this.page});
 }

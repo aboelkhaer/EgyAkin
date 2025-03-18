@@ -7,6 +7,7 @@ class ProfileScreen extends StatelessWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
+  final DoctorModel currentDoctorModel;
 
   const ProfileScreen(
       {super.key,
@@ -14,6 +15,7 @@ class ProfileScreen extends StatelessWidget {
       required this.accountVerification,
       required this.currentDoctorRole,
       required this.currentDoctorPoints,
+      required this.currentDoctorModel,
       required this.homeDataModel});
 
   @override
@@ -31,6 +33,7 @@ class ProfileScreen extends StatelessWidget {
             currentDoctorRole: currentDoctorRole,
             currentDoctorPoints: currentDoctorPoints,
             homeDataModel: homeDataModel,
+            currentDoctorModel: currentDoctorModel,
           ),
           SizedBox(height: 20.h),
           ProfileFeatures(

@@ -69,6 +69,7 @@ class _AllGroupsTabState extends State<AllGroupsTab> {
               }
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
+                controller: cubit.scrollControllerForAllGroups,
                 padding: const EdgeInsets.only(
                   top: 20,
                   left: 20,

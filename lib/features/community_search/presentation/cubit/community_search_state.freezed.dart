@@ -20,8 +20,12 @@ mixin _$CommunitySearchState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)
+    required TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,8 +34,12 @@ mixin _$CommunitySearchState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult? Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -40,8 +48,12 @@ mixin _$CommunitySearchState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -139,8 +151,12 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)
+    required TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -152,8 +168,12 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult? Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -165,8 +185,12 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -262,8 +286,12 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)
+    required TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -275,8 +303,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult? Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -288,8 +320,12 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -351,7 +387,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   $Res call(
       {String snackBarMessage,
       String dialogMessage,
-      GetResponseOfSearchModel response});
+      GetResponseOfSearchModel response,
+      bool isSeeMore,
+      int changeCounter});
 
   $GetResponseOfSearchModelCopyWith<$Res> get response;
 }
@@ -372,6 +410,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? snackBarMessage = null,
     Object? dialogMessage = null,
     Object? response = null,
+    Object? isSeeMore = null,
+    Object? changeCounter = null,
   }) {
     return _then(_$LoadedImpl(
       null == snackBarMessage
@@ -386,6 +426,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.response
           : response // ignore: cast_nullable_to_non_nullable
               as GetResponseOfSearchModel,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -403,7 +451,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.snackBarMessage, this.dialogMessage, this.response);
+  const _$LoadedImpl(this.snackBarMessage, this.dialogMessage, this.response,
+      this.isSeeMore, this.changeCounter);
 
   @override
   final String snackBarMessage;
@@ -411,10 +460,14 @@ class _$LoadedImpl implements _Loaded {
   final String dialogMessage;
   @override
   final GetResponseOfSearchModel response;
+  @override
+  final bool isSeeMore;
+  @override
+  final int changeCounter;
 
   @override
   String toString() {
-    return 'CommunitySearchState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response)';
+    return 'CommunitySearchState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response, isSeeMore: $isSeeMore, changeCounter: $changeCounter)';
   }
 
   @override
@@ -427,12 +480,16 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.dialogMessage, dialogMessage) ||
                 other.dialogMessage == dialogMessage) &&
             (identical(other.response, response) ||
-                other.response == response));
+                other.response == response) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, snackBarMessage, dialogMessage, response);
+  int get hashCode => Object.hash(runtimeType, snackBarMessage, dialogMessage,
+      response, isSeeMore, changeCounter);
 
   /// Create a copy of CommunitySearchState
   /// with the given fields replaced by the non-null parameter values.
@@ -447,12 +504,17 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)
+    required TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(snackBarMessage, dialogMessage, response);
+    return loaded(
+        snackBarMessage, dialogMessage, response, isSeeMore, changeCounter);
   }
 
   @override
@@ -460,12 +522,17 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult? Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(snackBarMessage, dialogMessage, response);
+    return loaded?.call(
+        snackBarMessage, dialogMessage, response, isSeeMore, changeCounter);
   }
 
   @override
@@ -473,14 +540,19 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(snackBarMessage, dialogMessage, response);
+      return loaded(
+          snackBarMessage, dialogMessage, response, isSeeMore, changeCounter);
     }
     return orElse();
   }
@@ -527,11 +599,15 @@ abstract class _Loaded implements CommunitySearchState {
   const factory _Loaded(
       final String snackBarMessage,
       final String dialogMessage,
-      final GetResponseOfSearchModel response) = _$LoadedImpl;
+      final GetResponseOfSearchModel response,
+      final bool isSeeMore,
+      final int changeCounter) = _$LoadedImpl;
 
   String get snackBarMessage;
   String get dialogMessage;
   GetResponseOfSearchModel get response;
+  bool get isSeeMore;
+  int get changeCounter;
 
   /// Create a copy of CommunitySearchState
   /// with the given fields replaced by the non-null parameter values.
@@ -610,8 +686,12 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)
+    required TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -623,8 +703,12 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult? Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -636,8 +720,12 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(String snackBarMessage, String dialogMessage,
-            GetResponseOfSearchModel response)?
+    TResult Function(
+            String snackBarMessage,
+            String dialogMessage,
+            GetResponseOfSearchModel response,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

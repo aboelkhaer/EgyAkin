@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:egy_akin/app/shared/functions/date_formate_for_group.dart';
 import 'package:egy_akin/app/shared/widgets/custom_network_image.dart';
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
@@ -38,12 +39,20 @@ class _GroupDetailsInCommunityScreenState
     super.dispose();
   }
 
+  late final GroupDetailsInCommunityCubit _cubit;
+
   @override
   void initState() {
     super.initState();
+
     context
         .read<GroupDetailsInCommunityCubit>()
         .getGroupDetails(widget.groupId);
+    _cubit = context.read<GroupDetailsInCommunityCubit>();
+
+    // Initialize ScrollController
+
+    _scrollController.addListener(_onScroll);
   }
 
   Future<void> _onRefresh() async {
@@ -54,6 +63,19 @@ class _GroupDetailsInCommunityScreenState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(scrollPosition);
     });
+  }
+
+  void _onScroll() {
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
+
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
+    const threshold = 200.0;
+
+    if (maxScroll - currentScroll <= threshold) {
+      _cubit.isLoadingMoreForScroll = true;
+      _cubit.loadMoreFeeds(widget.groupId);
+    }
   }
 
   @override
@@ -74,6 +96,8 @@ class _GroupDetailsInCommunityScreenState
               dialogMessage,
               isDeleteGroupLoading,
               isDeleteGroupLoaded,
+              changeCounter,
+              isSeeMore,
             ) {
               return (groupDetails.data!.group!.userStatus ==
                           GroupInviteStatus.accepted.name ||
@@ -133,11 +157,15 @@ class _GroupDetailsInCommunityScreenState
                             orElse: () {
                               return const SizedBox.shrink();
                             },
-                            loaded: (groupDetails,
-                                snackBarMessage,
-                                dialogMessage,
-                                isDeleteGroupLoading,
-                                isDeleteGroupLoaded) {
+                            loaded: (
+                              groupDetails,
+                              snackBarMessage,
+                              dialogMessage,
+                              isDeleteGroupLoading,
+                              isDeleteGroupLoaded,
+                              changeCounter,
+                              isSeeMore,
+                            ) {
                               return Positioned(
                                 left: 0,
                                 bottom: 16,
@@ -181,6 +209,8 @@ class _GroupDetailsInCommunityScreenState
                                 dialogMessage,
                                 isDeleteGroupLoading,
                                 isDeleteGroupLoaded,
+                                changeCounter,
+                                isSeeMore,
                               ) {
                                 if (snackBarMessage != '') {
                                   customSnackBar(
@@ -229,6 +259,8 @@ class _GroupDetailsInCommunityScreenState
                                 dialogMessage,
                                 isDeleteGroupLoading,
                                 isDeleteGroupLoaded,
+                                changeCounter,
+                                isSeeMore,
                               ) {
                                 return GestureDetector(
                                   onTap: groupDetails.data!.group!.userStatus ==
@@ -338,6 +370,8 @@ class _GroupDetailsInCommunityScreenState
                         dialogMessage,
                         isDeleteGroupLoading,
                         isDeleteGroupLoaded,
+                        changeCounter,
+                        isSeeMore,
                       ) {
                         return isDeleteGroupLoading
                             ? const IconButton(
@@ -359,9 +393,19 @@ class _GroupDetailsInCommunityScreenState
                                     debugPrint('Report clicked');
                                   }
                                   if (value == 'leave_group') {
-                                    cubit.leaveGroup(groupDetails
-                                        .data!.group!.id
-                                        .toString());
+                                    if ((widget.currentDoctorModel.id
+                                            .toString() !=
+                                        groupDetails.data!.group!.owner!.id
+                                            .toString())) {
+                                      cubit.leaveGroup(groupDetails
+                                          .data!.group!.id
+                                          .toString());
+                                    } else {
+                                      customSnackBar(
+                                          context: context,
+                                          message:
+                                              'Sorry can\'t do that! You are admin.');
+                                    }
                                   }
                                   if (value == 'delete_group') {
                                     log('hello');
@@ -491,6 +535,8 @@ class _GroupDetailsInCommunityScreenState
                                           dialogMessage,
                                           isDeleteGroupLoading,
                                           isDeleteGroupLoaded,
+                                          changeCounter,
+                                          isSeeMore,
                                         ) {
                                           return FadeIn(
                                             duration: const Duration(
@@ -561,6 +607,8 @@ class _GroupDetailsInCommunityScreenState
                                   dialogMessage,
                                   isDeleteGroupLoading,
                                   isDeleteGroupLoaded,
+                                  changeCounter,
+                                  isSeeMore,
                                 ) {
                                   return Column(
                                     crossAxisAlignment:
@@ -712,6 +760,8 @@ class _GroupDetailsInCommunityScreenState
                               dialogMessage,
                               isDeleteGroupLoading,
                               isDeleteGroupLoaded,
+                              changeCounter,
+                              isSeeMore,
                             ) {
                               return ReadMoreText(
                                 groupDetails.data!.group!.description
@@ -781,6 +831,8 @@ class _GroupDetailsInCommunityScreenState
                               dialogMessage,
                               isDeleteGroupLoading,
                               isDeleteGroupLoaded,
+                              changeCounter,
+                              isSeeMore,
                             ) {
                               if (groupDetails.data!.group!.userStatus ==
                                           GroupInviteStatus.invited.name &&
@@ -912,6 +964,8 @@ class _GroupDetailsInCommunityScreenState
                         dialogMessage,
                         isDeleteGroupLoading,
                         isDeleteGroupLoaded,
+                        changeCounter,
+                        isSeeMore,
                       ) {
                         return groupDetails.data!.posts!.data!.isEmpty
                             ? Column(
@@ -929,11 +983,46 @@ class _GroupDetailsInCommunityScreenState
                                 shrinkWrap: true,
                                 itemCount:
                                     groupDetails.data!.posts!.data!.length,
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
+                                padding: EdgeInsets.only(
+                                    left: 20, right: 20, bottom: 50.h),
                                 itemBuilder: (context, index) {
                                   PostCommunityModel postModel =
                                       groupDetails.data!.posts!.data![index];
+                                  final poll = postModel
+                                      .poll; // Store poll in a variable to avoid multiple null checks
+
+                                  if (poll != null) {
+                                    // Ensure initial values are set in postSelectedOptions
+                                    if (poll.allowMultipleChoice == true &&
+                                        !cubit.postSelectedOptions
+                                            .containsKey(postModel.id)) {
+                                      cubit.postSelectedOptions[postModel.id!] =
+                                          {
+                                        ...poll.options
+                                                ?.where((option) =>
+                                                    option.isVoted ?? false)
+                                                .map((option) => option.id!)
+                                                .toSet() ??
+                                            {}
+                                      };
+                                    }
+
+                                    // Ensure initial value for single-choice poll
+                                    if (poll.allowMultipleChoice == false &&
+                                        !cubit.postSelectedOption
+                                            .containsKey(postModel.id)) {
+                                      cubit.postSelectedOption[
+                                          postModel
+                                              .id!] = poll.options
+                                          ?.firstWhere(
+                                              (option) =>
+                                                  option.isVoted ?? false,
+                                              orElse: () =>
+                                                  const PollOptionsModelResponse(
+                                                      id: -1))
+                                          .id;
+                                    }
+                                  }
                                   return Container(
                                     margin: const EdgeInsets.only(bottom: 20),
                                     child: PostCard(
@@ -942,6 +1031,43 @@ class _GroupDetailsInCommunityScreenState
                                       currentDoctorModel:
                                           widget.currentDoctorModel,
                                       isGroupPosts: true,
+                                      viewPollWidget: ViewPollWidget(
+                                        poll: poll,
+                                        selectedOptions:
+                                            cubit.postSelectedOptions[
+                                                    postModel.id] ??
+                                                {},
+                                        selectedOption: cubit
+                                            .postSelectedOption[postModel.id],
+                                        onOptionSelected: (optionId) {
+                                          cubit.postSelectedOption[
+                                              postModel.id!] = optionId;
+                                          cubit.addVoteAndUnVote(
+                                            poll!.id.toString(),
+                                            optionId!,
+                                          );
+                                          cubit.refreshScreen();
+                                        },
+                                        onOptionToggled:
+                                            (optionId, isSelected) {
+                                          cubit.postSelectedOptions[
+                                              postModel.id!] ??= {};
+                                          cubit.addVoteAndUnVote(
+                                            poll!.id.toString(),
+                                            optionId,
+                                          );
+                                          if (isSelected) {
+                                            cubit.postSelectedOptions[
+                                                    postModel.id!]!
+                                                .add(optionId);
+                                          } else {
+                                            cubit.postSelectedOptions[
+                                                    postModel.id!]!
+                                                .remove(optionId);
+                                          }
+                                          cubit.refreshScreen();
+                                        },
+                                      ),
                                       onLikeAndUnlikeAdditional: () {
                                         cubit.addLikeOrUnlikeOnPost(
                                             postModel.id.toString());
@@ -958,6 +1084,39 @@ class _GroupDetailsInCommunityScreenState
                                   );
                                 },
                               );
+                      },
+                    );
+                  },
+                ),
+                BlocBuilder<GroupDetailsInCommunityCubit,
+                    GroupDetailsInCommunityState>(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      orElse: () {
+                        return const SizedBox.shrink();
+                      },
+                      loaded: (groupDetails,
+                          snackBarMessage,
+                          dialogMessage,
+                          isDeleteGroupLoading,
+                          isDeleteGroupLoaded,
+                          changeCounter,
+                          isSeeMore) {
+                        if (isSeeMore) {
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 20.h),
+                            child: const Center(
+                              child: SizedBox(
+                                height: 15,
+                                width: 15,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 3,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return const SizedBox.shrink();
                       },
                     );
                   },

@@ -1,9 +1,11 @@
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
+import 'package:egy_akin/features/community/data/models/add_option_in_poll_model_response.dart';
 import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/join_group_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
+import 'package:egy_akin/features/group_details_in_community/data/models/add_vote_and_unvote_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -22,7 +24,17 @@ abstract class CommunityDatasource {
   Future<JoinGroupModelResponse> joinGroupInCommunity(
     String groupId,
   );
-  Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity();
+  Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity(
+      int page);
+
+  Future<AddVoteAndUnvoteModelResponse> addVoteForPollInPosts(
+    String pollId,
+    int optionId,
+  );
+  Future<AddOptionInPollModelResponse> addOptionOnPoll(
+    String pollId,
+    String option,
+  );
 }
 
 class CommunityDatasourceImpl implements CommunityDatasource {
@@ -64,8 +76,20 @@ class CommunityDatasourceImpl implements CommunityDatasource {
   }
 
   @override
-  Future<GetTrendingTabInCommunityModelResponse>
-      getTrendingPostsInCommunity() async {
-    return await _apiServices.getTrendingPostsInCommunity();
+  Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity(
+      int page) async {
+    return await _apiServices.getTrendingPostsInCommunity(page);
+  }
+
+  @override
+  Future<AddVoteAndUnvoteModelResponse> addVoteForPollInPosts(
+      String pollId, int optionId) async {
+    return await _apiServices.addVoteForPollInPosts(pollId, optionId);
+  }
+
+  @override
+  Future<AddOptionInPollModelResponse> addOptionOnPoll(
+      String pollId, String option) async {
+    return await _apiServices.addOptionOnPoll(pollId, option);
   }
 }

@@ -503,7 +503,40 @@ class _CreateGroupInCommunityScreenState
                               )
                             : CustomElevatedButton(
                                 onPressed: () {
-                                  cubit.createGroup();
+                                  if (cubit.editableGroupModel == null) {
+                                    cubit.createGroup();
+                                  } else {
+                                    // cubit.updateGroup(cubit
+                                    //     .editableGroupModel!.id
+                                    //     .toString());
+                                    if (cubit.imagePickedForGroupHeader ==
+                                            null &&
+                                        cubit.imagePickedForGroupImage ==
+                                            null) {
+                                      cubit.updateGroupTexts(cubit
+                                          .editableGroupModel!.id
+                                          .toString());
+                                      return;
+                                    }
+                                    if (cubit.imagePickedForGroupHeader !=
+                                            null &&
+                                        cubit.imagePickedForGroupImage ==
+                                            null) {
+                                      cubit.updateGroupHeaderImage(cubit
+                                          .editableGroupModel!.id
+                                          .toString());
+                                      return;
+                                    }
+                                    if (cubit.imagePickedForGroupHeader ==
+                                            null &&
+                                        cubit.imagePickedForGroupImage !=
+                                            null) {
+                                      cubit.updateGroupImage(cubit
+                                          .editableGroupModel!.id
+                                          .toString());
+                                      return;
+                                    }
+                                  }
                                 },
                                 title: widget.isCreateNewGroup
                                     ? 'Create'

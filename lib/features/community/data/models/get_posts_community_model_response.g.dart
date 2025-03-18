@@ -79,6 +79,9 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       doctor: json['doctor'] == null
           ? null
           : DoctorModel.fromJson(json['doctor'] as Map<String, dynamic>),
+      poll: json['poll'] == null
+          ? null
+          : PollModelResponse.fromJson(json['poll'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$PostCommunityModelImplToJson(
@@ -97,6 +100,62 @@ Map<String, dynamic> _$$PostCommunityModelImplToJson(
       'isLiked': instance.isLiked,
       'group': instance.group,
       'doctor': instance.doctor,
+      'poll': instance.poll,
+    };
+
+_$PollModelResponseImpl _$$PollModelResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PollModelResponseImpl(
+      id: (json['id'] as num?)?.toInt(),
+      content: json['content'] as String?,
+      feedPostId: (json['feed_post_id'] as num?)?.toInt(),
+      question: json['question'] as String?,
+      allowAddOptions: json['allow_add_options'] as bool?,
+      allowMultipleChoice: json['allow_multiple_choice'] as bool?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+      options: (json['options'] as List<dynamic>?)
+          ?.map((e) =>
+              PollOptionsModelResponse.fromJson(e as Map<String, dynamic>))
+          .toList(),
+    );
+
+Map<String, dynamic> _$$PollModelResponseImplToJson(
+        _$PollModelResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'content': instance.content,
+      'feed_post_id': instance.feedPostId,
+      'question': instance.question,
+      'allow_add_options': instance.allowAddOptions,
+      'allow_multiple_choice': instance.allowMultipleChoice,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'options': instance.options,
+    };
+
+_$PollOptionsModelResponseImpl _$$PollOptionsModelResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$PollOptionsModelResponseImpl(
+      id: (json['id'] as num?)?.toInt(),
+      pollId: (json['poll_id'] as num?)?.toInt(),
+      optionText: json['option_text'] as String?,
+      createdAt: json['created_at'] as String?,
+      updatedAt: json['updated_at'] as String?,
+      votesCount: (json['votes_count'] as num?)?.toInt(),
+      isVoted: json['is_voted'] as bool?,
+    );
+
+Map<String, dynamic> _$$PollOptionsModelResponseImplToJson(
+        _$PollOptionsModelResponseImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'poll_id': instance.pollId,
+      'option_text': instance.optionText,
+      'created_at': instance.createdAt,
+      'updated_at': instance.updatedAt,
+      'votes_count': instance.votesCount,
+      'is_voted': instance.isVoted,
     };
 
 _$GroupDetailsImpl _$$GroupDetailsImplFromJson(Map<String, dynamic> json) =>

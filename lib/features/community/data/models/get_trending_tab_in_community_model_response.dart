@@ -10,6 +10,17 @@ class GetTrendingTabInCommunityModelResponse
     with _$GetTrendingTabInCommunityModelResponse {
   const factory GetTrendingTabInCommunityModelResponse({
     List<TrendModel>? data,
+    @JsonKey(name: 'current_page') int? currentPage,
+    @JsonKey(name: 'first_page_url') String? firstPageUrl,
+    int? from,
+    @JsonKey(name: 'last_page') int? lastPage,
+    @JsonKey(name: 'last_page_url') String? lastPageUrl,
+    @JsonKey(name: 'next_page_url') String? nextPageUrl,
+    String? path,
+    int? perPage,
+    @JsonKey(name: 'prev_page_url') String? prevPageUrl,
+    int? to,
+    int? total,
   }) = _GetTrendingTabInCommunityModelResponse;
   factory GetTrendingTabInCommunityModelResponse.fromJson(
           Map<String, dynamic> json) =>

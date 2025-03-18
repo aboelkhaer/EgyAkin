@@ -1,0 +1,523 @@
+import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
+import 'package:egy_akin/features/saved_posts/domain/usecases/get_saved_posts_usecase.dart';
+import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_state.dart';
+
+import '../../../../exports.dart';
+
+class SavedPostsCubit extends Cubit<SavedPostsState> {
+  SavedPostsCubit(
+      this._getSavedPostsUsecase,
+      this._addLikeOnPostUsecase,
+      this._saveOrUnsavePostUsecase,
+      this._deletePostInFeedsUsecase,
+      this._addVoteAndUnvoteUsecase)
+      : super(const SavedPostsState.initial());
+  static SavedPostsCubit get(context) => BlocProvider.of(context);
+
+  final GetSavedPostsUsecase _getSavedPostsUsecase;
+  final AddLikeOnPostUsecase _addLikeOnPostUsecase;
+  final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
+  final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
+  final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  ScrollController? scrollController;
+
+  int currentPage = 1;
+  bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
+  final Map<int, Set<int>> postSelectedOptions = {};
+  final Map<int, int?> postSelectedOption = {};
+
+  int changeCounter = 0;
+
+  getSavedPosts(String doctorId) async {
+    emit(const SavedPostsState.loading());
+    currentPage = 1;
+    final result = await _getSavedPostsUsecase.execute(
+        GetSavedPostsUsecaseInput(doctorId: doctorId, page: currentPage));
+    result.fold(
+      (l) {
+        emit(SavedPostsState.error(l.message));
+      },
+      (response) async {
+        emit(SavedPostsState.loaded(
+          response,
+          '',
+          '',
+          false,
+          false,
+          false,
+          changeCounter,
+        ));
+      },
+    );
+  }
+
+  void loadMoreFeeds(String doctorId) async {
+    currentPage++;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => SavedPostsState.loaded(
+        value.response,
+        '',
+        '',
+        false,
+        false,
+        true,
+        changeCounter,
+      ),
+    ));
+    final result = await _getSavedPostsUsecase.execute(
+        GetSavedPostsUsecaseInput(doctorId: doctorId, page: currentPage));
+    result.fold(
+      (l) {
+        currentPage--;
+        emit(SavedPostsState.error(l.message));
+      },
+      (loadMoreFeeds) async {
+        final currentState = state;
+        currentState.when(
+          initial: () {},
+          loading: () {},
+          loaded: (
+            response,
+            snackBarMessage,
+            dialogMessage,
+            isDeletePostLoading,
+            isDeletePostLoaded,
+            isSeeMore,
+            changeCounter,
+          ) {
+            final updatedData = response.copyWith(
+              data: response.data!.copyWith(
+                data: [...response.data!.data!, ...loadMoreFeeds.data!.data!],
+              ),
+            );
+            if (currentPage >= response.data!.lastPage!) {
+              isLastPage = true;
+            } else {
+              isLastPage = false;
+            }
+            isLoadingMoreForScroll = false;
+            emit(SavedPostsState.loaded(
+              updatedData,
+              '',
+              '',
+              false,
+              false,
+              false,
+              changeCounter,
+            ));
+          },
+          error: (error) {},
+        );
+      },
+    );
+  }
+
+  bool _isUpdatingPostLikeStatus = false;
+
+  Future<void> addLikeOrUnlikeOnPost(String postId) async {
+    if (_isUpdatingPostLikeStatus) return;
+    _isUpdatingPostLikeStatus = true;
+
+    bool isCurrentlyLiked = false;
+
+    /// **1️⃣ Optimistically Update UI**
+    emit(
+      state.maybeMap(
+        loaded: (value) {
+          final response = value.response;
+          if (response.data == null || response.data!.data == null) {
+            return value;
+          }
+
+          final postList = response.data!.data!;
+
+          /// **Find Post & Toggle Like Status**
+          final updatedPosts = postList.map((post) {
+            if (post.id == int.tryParse(postId)) {
+              isCurrentlyLiked = post.isLiked ?? false;
+              final updatedLikesCount =
+                  (post.likesCount ?? 0) + (isCurrentlyLiked ? -1 : 1);
+
+              return post.copyWith(
+                isLiked: !isCurrentlyLiked,
+                likesCount: updatedLikesCount,
+              );
+            }
+            return post;
+          }).toList();
+
+          /// **Update State with a New Instance**
+          final updatedResponse = response.copyWith(
+            data: response.data!.copyWith(data: [...updatedPosts]),
+          );
+
+          return SavedPostsState.loaded(
+            updatedResponse,
+            '',
+            '',
+            false,
+            false,
+            false,
+            changeCounter,
+          );
+        },
+        orElse: () => state,
+      ),
+    );
+
+    /// **2️⃣ Send API Request**
+    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
+    final result = await _addLikeOnPostUsecase.execute(
+      AddLikeOnPostUsecaseInput(
+        postId: postId,
+        likeOrUnlike: likeOrUnlike,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        /// **3️⃣ Rollback UI on Failure**
+        emit(
+          state.maybeMap(
+            loaded: (value) {
+              final response = value.response;
+              if (response.data == null || response.data!.data == null) {
+                return value;
+              }
+
+              final revertedPosts = response.data!.data!.map((post) {
+                if (post.id == int.tryParse(postId)) {
+                  final revertedLikesCount = !isCurrentlyLiked
+                      ? (post.likesCount ?? 1) - 1
+                      : (post.likesCount ?? 0) + 1;
+
+                  return post.copyWith(
+                    isLiked: isCurrentlyLiked,
+                    likesCount: revertedLikesCount,
+                  );
+                }
+                return post;
+              }).toList();
+
+              final revertedResponse = response.copyWith(
+                data: response.data!.copyWith(data: [...revertedPosts]),
+              );
+
+              return SavedPostsState.loaded(
+                revertedResponse,
+                '',
+                '',
+                false,
+                false,
+                false,
+                changeCounter,
+              );
+            },
+            orElse: () => state,
+          ),
+        );
+      },
+      (success) {},
+    );
+
+    _isUpdatingPostLikeStatus = false;
+  }
+
+  bool _isUpdatingPostSaveStatus =
+      false; // Private flag to prevent multiple simultaneous actions
+
+  Future<void> addSaveOrUnsaveOnPost(String postId) async {
+    // Prevent multiple simultaneous actions
+    if (_isUpdatingPostSaveStatus) return;
+    _isUpdatingPostSaveStatus = true;
+
+    bool isCurrentlySaved =
+        false; // Store the current save status for rollback in case of failure
+
+    /// **1️⃣ Optimistically Update UI**
+    emit(
+      state.maybeMap(
+        loaded: (value) {
+          final response = value.response;
+          if (response.data == null || response.data!.data == null) {
+            debugPrint("[Save] ❌ No data found in response");
+            return value; // Return unchanged state if data is null
+          }
+
+          final postList = response.data!.data!;
+
+          /// **Find Post & Toggle Save Status**
+          final updatedPosts = postList.map((post) {
+            if (post.id == int.tryParse(postId)) {
+              isCurrentlySaved =
+                  post.isSaved ?? false; // Default to false if null
+              return post.copyWith(
+                isSaved: !isCurrentlySaved, // Toggle isSaved
+              );
+            }
+            return post; // Return unchanged post if ID doesn't match
+          }).toList();
+
+          /// **Update State with a New Instance**
+          final updatedResponse = response.copyWith(
+            data: response.data!.copyWith(data: [...updatedPosts]),
+          );
+
+          debugPrint("[Save] ✅ UI Updated Optimistically");
+          return SavedPostsState.loaded(
+            updatedResponse,
+            '',
+            '',
+            false,
+            false,
+            false,
+            changeCounter,
+          );
+        },
+        orElse: () =>
+            state, // Return unchanged state if not in the loaded state
+      ),
+    );
+
+    /// **2️⃣ Send API Request**
+    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+    final result = await _saveOrUnsavePostUsecase.execute(
+      SaveOrUnsavePostUsecaseInput(
+        postId: postId,
+        saveOrUnsave: saveOrUnsave,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        debugPrint("[Save] ❌ API Failed: ${failure.message}");
+
+        /// **3️⃣ Rollback UI on Failure**
+        emit(
+          state.maybeMap(
+            loaded: (value) {
+              final response = value.response;
+              if (response.data == null || response.data!.data == null) {
+                return value;
+              }
+
+              final postList = response.data!.data!;
+
+              /// **Revert Save Status**
+              final revertedPosts = postList.map((post) {
+                if (post.id == int.tryParse(postId)) {
+                  return post.copyWith(
+                    isSaved: isCurrentlySaved, // Revert to original state
+                  );
+                }
+                return post;
+              }).toList();
+
+              /// **Update State with Reverted Data**
+              final revertedResponse = response.copyWith(
+                data: response.data!.copyWith(data: [...revertedPosts]),
+              );
+
+              debugPrint("[Save] 🔄 Rollback UI Due to API Failure");
+              return SavedPostsState.loaded(
+                revertedResponse,
+                '',
+                '',
+                false,
+                false,
+                false,
+                changeCounter,
+              );
+            },
+            orElse: () => state,
+          ),
+        );
+      },
+      (success) {
+        debugPrint("[Save] ✅ API Success: Save/Unsave applied");
+      },
+    );
+
+    _isUpdatingPostSaveStatus = false; // Reset the flag
+  }
+
+  String postIdDeleted = '';
+  Future<void> deletePost(String postId) async {
+    // Step 1: Delete the post using your Cubit or repository
+
+    postIdDeleted = postId;
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => SavedPostsState.loaded(
+          value.response,
+          '',
+          '',
+          true,
+          false,
+          false,
+          changeCounter,
+        ),
+      ),
+    );
+
+    final deleteResult = await _deletePostInFeedsUsecase.execute(
+      postId,
+    );
+    deleteResult.fold(
+      (failure) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => SavedPostsState.loaded(
+              value.response,
+              failure.message,
+              '',
+              false,
+              false,
+              false,
+              changeCounter,
+            ),
+          ),
+        );
+      },
+      (success) {
+        // delete post from the list
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => SavedPostsState.loaded(
+              value.response.copyWith(
+                data: value.response.data!.copyWith(
+                  data: value.response.data!.data!
+                      .where((element) => element.id.toString() != postId)
+                      .toList(),
+                ),
+              ),
+              success.message.toString(),
+              '',
+              false,
+              true,
+              false,
+              changeCounter,
+            ),
+          ),
+        );
+      },
+    );
+    postIdDeleted = '';
+  }
+
+  void addVoteAndUnVote(
+    String pollId,
+    int optionId,
+  ) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          // Update the posts with the new poll data
+          final updatedPosts = value.response.data!.data!.map((post) {
+            if (post.poll?.id.toString() == pollId) {
+              final poll = post.poll!;
+              final isMultipleChoice = poll.allowMultipleChoice ?? false;
+
+              int? previouslyVotedOptionId;
+              if (!isMultipleChoice) {
+                // Find the previously voted option (for single-choice polls)
+                previouslyVotedOptionId = poll.options!
+                    .firstWhere(
+                      (opt) => opt.isVoted ?? false,
+                      orElse: () => const PollOptionsModelResponse(id: -1),
+                    )
+                    .id;
+              }
+
+              // Update the poll options
+              final updatedOptions = poll.options!.map((option) {
+                if (option.id == optionId) {
+                  // Toggle new vote
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) +
+                        (option.isVoted == true ? -1 : 1),
+                    isVoted: !(option.isVoted ?? false),
+                  );
+                } else if (!isMultipleChoice &&
+                    option.id == previouslyVotedOptionId) {
+                  // Reduce previous vote count for single-choice polls
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) - 1,
+                    isVoted: false,
+                  );
+                }
+                return option;
+              }).toList();
+
+              // Update the poll with the new options
+              final updatedPoll = poll.copyWith(options: updatedOptions);
+              return post.copyWith(poll: updatedPoll);
+            }
+            return post;
+          }).toList();
+
+          // Create a new `randomPosts` object with the updated posts
+          final updatedRandomPosts = value.response.data!.copyWith(
+            data: updatedPosts,
+          );
+
+          // Create a new `GetGroupsTabModelResponse` with the updated data
+          final updatedResponse = value.response.copyWith(
+            data: updatedRandomPosts,
+          );
+
+          // Emit the new state with the updated response
+          return SavedPostsState.loaded(
+            updatedResponse,
+            '',
+            '',
+            value.isDeletePostLoading,
+            value.isDeletePostLoaded,
+            value.isSeeMore,
+            changeCounter,
+          );
+        },
+      ),
+    );
+
+    // Make the API call to update the vote
+    final result = await _addVoteAndUnvoteUsecase.execute(
+      AddVoteAndUnvoteUsecaseInput(
+        pollId: pollId,
+        optionId: optionId,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        // Handle failure (e.g., show an error message)
+      },
+      (r) async {
+        // Optionally re-fetch data from the server if needed
+      },
+    );
+  }
+
+  refreshScreen() {
+    changeCounter = changeCounter + 1;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => SavedPostsState.loaded(
+        value.response,
+        '',
+        '',
+        value.isDeletePostLoading,
+        value.isDeletePostLoaded,
+        value.isSeeMore,
+        changeCounter,
+      ),
+    ));
+  }
+}

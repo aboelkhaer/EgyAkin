@@ -34,6 +34,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
 
   getCurrentDoctorPatients() async {
     emit(const AllDoctorsPatientsState.loading());
+    _currentPage = 1;
 
     final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
     result.fold(

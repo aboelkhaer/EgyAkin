@@ -18,6 +18,7 @@ abstract class CreatePostInCommunityDatasource {
     required String? mediaType,
     required String visibility,
     required String? groupId,
+    required PollModel? pollModel,
   });
   Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity({
     required File image,
@@ -59,13 +60,20 @@ class CreatePostInCommunityDatasourceImpl
   }
 
   @override
-  Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
-      {required String postContent,
-      required String? mediaType,
-      required String visibility,
-      required String? groupId}) async {
+  Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity({
+    required String postContent,
+    required String? mediaType,
+    required String visibility,
+    required String? groupId,
+    required PollModel? pollModel,
+  }) async {
     return await _apiServices.createPostWithTextInCommunity(
-        postContent, null, visibility, groupId);
+      postContent,
+      null,
+      visibility,
+      groupId,
+      pollModel?.toJson(),
+    );
   }
 
   @override

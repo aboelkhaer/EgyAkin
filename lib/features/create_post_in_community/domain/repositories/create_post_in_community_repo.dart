@@ -22,6 +22,7 @@ abstract class CreatePostInCommunityRepository {
     required String? mediaType,
     required String visibility,
     required String? groupId,
+    required PollModel? pollModel,
   });
   Future<Either<Failure, EditPostInCommunityModelResponse>>
       editPostWithImageInCommunity({

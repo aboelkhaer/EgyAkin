@@ -14,6 +14,8 @@ abstract class GroupDetailsInCommunityState
     String dialogMessage,
     bool isDeleteGroupLoading,
     bool isDeleteGroupLoaded,
+    int changeCounter,
+    bool isSeeMore,
   ) = _Loaded;
   const factory GroupDetailsInCommunityState.error(String message) = _Error;
 }

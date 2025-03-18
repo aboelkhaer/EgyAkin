@@ -25,6 +25,10 @@ mixin _$DoctorInfoViewModelResponse {
   String? get patientCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'score_value')
   String? get scoreValue => throw _privateConstructorUsedError;
+  @JsonKey(name: 'posts_count')
+  String? get postsCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'saved_posts_count')
+  String? get savedPostsCount => throw _privateConstructorUsedError;
   DoctorModel? get data => throw _privateConstructorUsedError;
 
   /// Serializes this DoctorInfoViewModelResponse to a JSON map.
@@ -48,6 +52,8 @@ abstract class $DoctorInfoViewModelResponseCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: 'patient_count') String? patientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
+      @JsonKey(name: 'posts_count') String? postsCount,
+      @JsonKey(name: 'saved_posts_count') String? savedPostsCount,
       DoctorModel? data});
 
   $DoctorModelCopyWith<$Res>? get data;
@@ -71,6 +77,8 @@ class _$DoctorInfoViewModelResponseCopyWithImpl<$Res,
   $Res call({
     Object? patientCount = freezed,
     Object? scoreValue = freezed,
+    Object? postsCount = freezed,
+    Object? savedPostsCount = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -81,6 +89,14 @@ class _$DoctorInfoViewModelResponseCopyWithImpl<$Res,
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postsCount: freezed == postsCount
+          ? _value.postsCount
+          : postsCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      savedPostsCount: freezed == savedPostsCount
+          ? _value.savedPostsCount
+          : savedPostsCount // ignore: cast_nullable_to_non_nullable
               as String?,
       data: freezed == data
           ? _value.data
@@ -116,6 +132,8 @@ abstract class _$$DoctorInfoViewModelResponseImplCopyWith<$Res>
   $Res call(
       {@JsonKey(name: 'patient_count') String? patientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
+      @JsonKey(name: 'posts_count') String? postsCount,
+      @JsonKey(name: 'saved_posts_count') String? savedPostsCount,
       DoctorModel? data});
 
   @override
@@ -139,6 +157,8 @@ class __$$DoctorInfoViewModelResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? patientCount = freezed,
     Object? scoreValue = freezed,
+    Object? postsCount = freezed,
+    Object? savedPostsCount = freezed,
     Object? data = freezed,
   }) {
     return _then(_$DoctorInfoViewModelResponseImpl(
@@ -149,6 +169,14 @@ class __$$DoctorInfoViewModelResponseImplCopyWithImpl<$Res>
       scoreValue: freezed == scoreValue
           ? _value.scoreValue
           : scoreValue // ignore: cast_nullable_to_non_nullable
+              as String?,
+      postsCount: freezed == postsCount
+          ? _value.postsCount
+          : postsCount // ignore: cast_nullable_to_non_nullable
+              as String?,
+      savedPostsCount: freezed == savedPostsCount
+          ? _value.savedPostsCount
+          : savedPostsCount // ignore: cast_nullable_to_non_nullable
               as String?,
       data: freezed == data
           ? _value.data
@@ -165,6 +193,8 @@ class _$DoctorInfoViewModelResponseImpl
   const _$DoctorInfoViewModelResponseImpl(
       {@JsonKey(name: 'patient_count') this.patientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
+      @JsonKey(name: 'posts_count') this.postsCount,
+      @JsonKey(name: 'saved_posts_count') this.savedPostsCount,
       this.data});
 
   factory _$DoctorInfoViewModelResponseImpl.fromJson(
@@ -178,11 +208,17 @@ class _$DoctorInfoViewModelResponseImpl
   @JsonKey(name: 'score_value')
   final String? scoreValue;
   @override
+  @JsonKey(name: 'posts_count')
+  final String? postsCount;
+  @override
+  @JsonKey(name: 'saved_posts_count')
+  final String? savedPostsCount;
+  @override
   final DoctorModel? data;
 
   @override
   String toString() {
-    return 'DoctorInfoViewModelResponse(patientCount: $patientCount, scoreValue: $scoreValue, data: $data)';
+    return 'DoctorInfoViewModelResponse(patientCount: $patientCount, scoreValue: $scoreValue, postsCount: $postsCount, savedPostsCount: $savedPostsCount, data: $data)';
   }
 
   @override
@@ -194,12 +230,17 @@ class _$DoctorInfoViewModelResponseImpl
                 other.patientCount == patientCount) &&
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
+            (identical(other.postsCount, postsCount) ||
+                other.postsCount == postsCount) &&
+            (identical(other.savedPostsCount, savedPostsCount) ||
+                other.savedPostsCount == savedPostsCount) &&
             (identical(other.data, data) || other.data == data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, patientCount, scoreValue, data);
+  int get hashCode => Object.hash(
+      runtimeType, patientCount, scoreValue, postsCount, savedPostsCount, data);
 
   /// Create a copy of DoctorInfoViewModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -223,6 +264,8 @@ abstract class _DoctorInfoViewModelResponse
   const factory _DoctorInfoViewModelResponse(
       {@JsonKey(name: 'patient_count') final String? patientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
+      @JsonKey(name: 'posts_count') final String? postsCount,
+      @JsonKey(name: 'saved_posts_count') final String? savedPostsCount,
       final DoctorModel? data}) = _$DoctorInfoViewModelResponseImpl;
 
   factory _DoctorInfoViewModelResponse.fromJson(Map<String, dynamic> json) =
@@ -234,6 +277,12 @@ abstract class _DoctorInfoViewModelResponse
   @override
   @JsonKey(name: 'score_value')
   String? get scoreValue;
+  @override
+  @JsonKey(name: 'posts_count')
+  String? get postsCount;
+  @override
+  @JsonKey(name: 'saved_posts_count')
+  String? get savedPostsCount;
   @override
   DoctorModel? get data;
 

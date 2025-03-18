@@ -13,6 +13,7 @@ abstract class CommunityState with _$CommunityState {
     bool isDeletePostLoaded,
     String message,
     bool isSeeMore,
+    int changeCounter,
   ) = _Loaded;
   const factory CommunityState.error(String message) = _Error;
 }

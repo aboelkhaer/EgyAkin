@@ -11,6 +11,8 @@ abstract class CommunitySearchState with _$CommunitySearchState {
     String snackBarMessage,
     String dialogMessage,
     GetResponseOfSearchModel response,
+    bool isSeeMore,
+    int changeCounter,
   ) = _Loaded;
   const factory CommunitySearchState.error(String message) = _Error;
 }

@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
 
@@ -9,7 +11,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       this._addLikeOrUnlikeOnCommentInCommunityUsecase,
       this._createCommentOnPostInCommunityUsecase,
       this._deleteCommentOnPostInCommunityUsecase,
-      this._createReplyOnCommentInCommunityUsecase)
+      this._createReplyOnCommentInCommunityUsecase,
+      this._addVoteAndUnvoteUsecase,
+      this._addOptionOnPollUsecase)
       : super(const ShowSingleFeedState.initial());
   static ShowSingleFeedCubit get(context) => BlocProvider.of(context);
 
@@ -23,6 +27,11 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   final CreateReplyOnCommentInCommunityUsecase
       _createReplyOnCommentInCommunityUsecase;
   ScrollController scrollController = ScrollController();
+  final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  final AddOptionOnPollUsecase _addOptionOnPollUsecase;
+
+  final Map<int, Set<int>> postSelectedOptions = {};
+  final Map<int, int?> postSelectedOption = {};
 
   CommentModelInCommunity? commentToReply;
   // String commentContent = '';
@@ -679,13 +688,14 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
                 sizeFactor: animation,
                 axisAlignment: 0.0,
                 child: CommentWidgetInCommunity(
-                    commentModel:
-                        currentState.commentsResponse.data!.data![index],
-                    homeDataModel: homeDataModel,
-                    currentDoctorModel: currentDoctorModel,
-                    commentsResponse: currentState.commentsResponse,
-                    index: index,
-                    updatedFeed: updatedFeed),
+                  commentModel:
+                      currentState.commentsResponse.data!.data![index],
+                  homeDataModel: homeDataModel,
+                  currentDoctorModel: currentDoctorModel,
+                  commentsResponse: currentState.commentsResponse,
+                  index: index,
+                  updatedFeed: updatedFeed,
+                ),
               );
             },
             duration: const Duration(milliseconds: 300),
@@ -800,12 +810,13 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
                 sizeFactor: animation,
                 axisAlignment: 0.0,
                 child: CommentWidgetInCommunity(
-                    commentModel: replyToRemove,
-                    homeDataModel: homeDataModel,
-                    currentDoctorModel: currentDoctorModel,
-                    commentsResponse: currentState.commentsResponse,
-                    index: replyIndex,
-                    updatedFeed: updatedFeed),
+                  commentModel: replyToRemove,
+                  homeDataModel: homeDataModel,
+                  currentDoctorModel: currentDoctorModel,
+                  commentsResponse: currentState.commentsResponse,
+                  index: replyIndex,
+                  updatedFeed: updatedFeed,
+                ),
               );
             },
             duration: const Duration(milliseconds: 300),
@@ -982,6 +993,221 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         );
         commentToReply = null;
         commentContent.clear();
+      },
+    );
+  }
+
+  void addVoteAndUnVote(
+    String pollId,
+    int optionId,
+  ) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          // Debug: Print current poll state
+          print("Current Poll: ${value.feed.poll}");
+
+          // Update the poll in the feed
+          final updatedPoll = value.feed.poll != null &&
+                  value.feed.poll!.id.toString() == pollId
+              ? _updatePoll(value.feed.poll!, optionId)
+              : value.feed.poll; // No change for other polls
+
+          // Debug: Print updated poll state
+          print("Updated Poll: $updatedPoll");
+
+          final updatedFeed = value.feed.copyWith(poll: updatedPoll);
+
+          // Debug: Print updated feed state
+          print("Updated Feed: $updatedFeed");
+
+          // Update the post state with the new poll
+          // sl<CommunityCubit>().updatePost(updatedFeed);
+
+          // Update the state with the new feed
+          return ShowSingleFeedState.loaded(
+            value.commentsResponse,
+            value.changeCounter,
+            updatedFeed,
+            value.isSendCommentLoading,
+            value.isSendCommentLoaded,
+            '',
+            null,
+            value.isDeleteCommentLoading,
+            value.isDeleteCommentLoaded,
+            value.isSendReplyLoading,
+            value.isSendReplyLoaded,
+          );
+        },
+      ),
+    );
+
+    // Make the API call to update the vote
+    final result = await _addVoteAndUnvoteUsecase.execute(
+      AddVoteAndUnvoteUsecaseInput(
+        pollId: pollId,
+        optionId: optionId,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        // Handle failure (e.g., show an error message)
+        print("Vote update failed: $l");
+      },
+      (r) async {
+        // Call the like/unlike API
+        // sl<CommunityCubit>().addVoteAndUnVote(pollId, optionId);
+
+        // Optionally re-fetch data from the server if needed
+        print("Vote update succeeded");
+      },
+    );
+  }
+
+  /// Helper function to update the poll options
+  PollModelResponse _updatePoll(PollModelResponse poll, int optionId) {
+    final isMultipleChoice = poll.allowMultipleChoice ?? false;
+
+    int? previouslyVotedOptionId;
+    if (!isMultipleChoice) {
+      // Find the previously voted option (for single-choice polls)
+      previouslyVotedOptionId = poll.options!
+          .firstWhere(
+            (opt) => opt.isVoted ?? false,
+            orElse: () => const PollOptionsModelResponse(id: -1),
+          )
+          .id;
+    }
+
+    // Debug: Print previously voted option ID
+    print("Previously Voted Option ID: $previouslyVotedOptionId");
+
+    // Update the poll options
+    final updatedOptions = poll.options!.map((option) {
+      if (option.id == optionId) {
+        // Toggle the vote for the selected option
+        return option.copyWith(
+          votesCount:
+              (option.votesCount ?? 0) + (option.isVoted == true ? -1 : 1),
+          isVoted: !(option.isVoted ?? false),
+        );
+      } else if (!isMultipleChoice && option.id == previouslyVotedOptionId) {
+        // Reduce the vote count for the previously voted option (single-choice polls)
+        return option.copyWith(
+          votesCount: (option.votesCount ?? 0) - 1,
+          isVoted: false,
+        );
+      }
+      return option; // No change for other options
+    }).toList();
+
+    // Debug: Print updated options
+    print("Updated Options: $updatedOptions");
+
+    // Update the poll with the new options
+    return poll.copyWith(options: updatedOptions);
+  }
+
+  addOptionOnPoll(
+    String pollId,
+    String option,
+  ) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => ShowSingleFeedState.loaded(
+          value.commentsResponse,
+          value.changeCounter,
+          value.feed,
+          value.isSendCommentLoading,
+          value.isSendCommentLoaded,
+          '', // Show error message
+          value.highlightedCommentId,
+          value.isDeleteCommentLoading,
+          value.isDeleteCommentLoaded,
+          value.isSendReplyLoading,
+          value.isSendReplyLoaded,
+        ),
+      ),
+    );
+    final result = await _addOptionOnPollUsecase.execute(
+      AddOptionOnPollUsecaseInput(
+        pollId: pollId,
+        option: option,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => ShowSingleFeedState.loaded(
+              value.commentsResponse,
+              value.changeCounter,
+              value.feed,
+              value.isSendCommentLoading,
+              value.isSendCommentLoaded,
+              l.message, // Show error message
+              value.highlightedCommentId,
+              value.isDeleteCommentLoading,
+              value.isDeleteCommentLoaded,
+              value.isSendReplyLoading,
+              value.isSendReplyLoaded,
+            ),
+          ),
+        );
+      },
+      (newOptionResponse) async {
+        // Ensure response data is not null
+        if (newOptionResponse.data == null) return;
+
+        PollOptionsModelResponse newOption = PollOptionsModelResponse(
+          id: newOptionResponse.data!.id,
+          pollId: int.parse(newOptionResponse.data!.pollId!),
+          optionText: newOptionResponse.data!.option.toString(),
+          createdAt: newOptionResponse.data!.createdAt,
+          updatedAt: newOptionResponse.data!.updatedAt,
+          votesCount: 0, // Default votes count
+          isVoted: false,
+        );
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              // Ensure feed.poll is not null before modifying
+              if (value.feed.poll == null) return value;
+
+              // Update the poll options
+              final updatedFeed = value.feed.copyWith(
+                poll: value.feed.poll!.copyWith(
+                  options: [
+                    ...(value.feed.poll!.options ??
+                        []), // Keep existing options
+                    newOption, // Add new option
+                  ],
+                ),
+              );
+
+              return ShowSingleFeedState.loaded(
+                value.commentsResponse,
+                value.changeCounter + 1, // Increment to reflect UI changes
+                updatedFeed, // Updated feed with new poll option
+                value.isSendCommentLoading,
+                value.isSendCommentLoaded,
+                newOptionResponse.message.toString(), // Clear message
+                value.highlightedCommentId,
+                value.isDeleteCommentLoading,
+                value.isDeleteCommentLoaded,
+                value.isSendReplyLoading,
+                value.isSendReplyLoaded,
+              );
+            },
+          ),
+        );
       },
     );
   }

@@ -1,4 +1,9 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctor_posts/data/datasources/all_doctor_posts_datasource.dart';
+import 'package:egy_akin/features/all_doctor_posts/data/repositories/all_doctor_posts_repo_impl.dart';
+import 'package:egy_akin/features/all_doctor_posts/domain/repositories/all_doctor_posts_repo.dart';
+import 'package:egy_akin/features/all_doctor_posts/domain/usecases/get_all_doctor_posts_usecase.dart';
+import 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/data/datasources/all_groups_in_community_datasource.dart';
 import 'package:egy_akin/features/all_groups_in_community/data/repositories/all_groups_in_community_repo_impl.dart';
 import 'package:egy_akin/features/all_groups_in_community/domain/repositories/all_groups_in_community_repo.dart';
@@ -6,6 +11,8 @@ import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_al
 import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_my_groups_usecase.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_groups_tab_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_trending_posts_in_community_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
@@ -20,6 +27,9 @@ import 'package:egy_akin/features/create_group_in_community/data/datasources/cre
 import 'package:egy_akin/features/create_group_in_community/data/repositories/create_group_in_community_repo_impl.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/repositories/create_group_in_community_repo.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/create_group_in_community_usecase.dart';
+import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_header_image_in_community_usecase.dart';
+import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_image_in_community_usecase.dart';
+import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_texts_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_cubit.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_image_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_text_in_community_usecase.dart';
@@ -38,6 +48,11 @@ import 'package:egy_akin/features/group_members/domain/usecases/get_post_likes_u
 import 'package:egy_akin/features/group_members/domain/usecases/remove_member_from_group_usecase.dart';
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/cubit/invite_member_to_group_in_community_cubit.dart';
+import 'package:egy_akin/features/saved_posts/data/datasources/saved_posts_datasource.dart';
+import 'package:egy_akin/features/saved_posts/data/repositories/saved_posts_repo_impl.dart';
+import 'package:egy_akin/features/saved_posts/domain/repositories/saved_posts_repo.dart';
+import 'package:egy_akin/features/saved_posts/domain/usecases/get_saved_posts_usecase.dart';
+import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/send_group_invitation_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -93,21 +108,25 @@ Future<void> diInit() async {
   sl.registerFactory(() => SendConsultationCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
-  sl.registerLazySingleton(() => CommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(
-      () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl()));
+      () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(
+      () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
   sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => GroupsCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(
-      () => GroupDetailsInCommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(
+      () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() =>
+      GroupDetailsInCommunityCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
   sl.registerFactory(() => AllGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => MyGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
-  sl.registerFactory(() => CreateGroupInCommunityCubit(sl()));
-  sl.registerFactory(() => TrendingCubit(sl()));
-  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => CreateGroupInCommunityCubit(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(() => TrendingCubit(sl()));
+  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => SavedPostsCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -174,6 +193,10 @@ Future<void> diInit() async {
       () => CreateGroupInCommunityDatasourceImpl(sl()));
   sl.registerLazySingleton<CommunitySearchDatasource>(
       () => CommunitySearchDatasourceImpl(sl()));
+  sl.registerLazySingleton<SavedPostsDataSource>(
+      () => SavedPostsDataSourceImpl(sl()));
+  sl.registerLazySingleton<AllDoctorPostsDatasource>(
+      () => AllDoctorPostsDatasourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -242,6 +265,10 @@ Future<void> diInit() async {
       () => CreateGroupInCommunityRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<CommunitySearchRepository>(
       () => CommunitySearchRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<SavedPostsRepository>(
+      () => SavedPostsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<AllDoctorPostsRepository>(
+      () => AllDoctorPostsRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -548,5 +575,32 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<GetResponseOfSearchInCommunityUsecase>()) {
     sl.registerFactory<GetResponseOfSearchInCommunityUsecase>(
         () => GetResponseOfSearchInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetAllDoctorPostsUsecase>()) {
+    sl.registerFactory<GetAllDoctorPostsUsecase>(
+        () => GetAllDoctorPostsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetSavedPostsUsecase>()) {
+    sl.registerFactory<GetSavedPostsUsecase>(() => GetSavedPostsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddVoteAndUnvoteUsecase>()) {
+    sl.registerFactory<AddVoteAndUnvoteUsecase>(
+        () => AddVoteAndUnvoteUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddOptionOnPollUsecase>()) {
+    sl.registerFactory<AddOptionOnPollUsecase>(
+        () => AddOptionOnPollUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdateGroupTextsInCommunityUsecase>()) {
+    sl.registerFactory<UpdateGroupTextsInCommunityUsecase>(
+        () => UpdateGroupTextsInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdateGroupHeaderImageInCommunityUsecase>()) {
+    sl.registerFactory<UpdateGroupHeaderImageInCommunityUsecase>(
+        () => UpdateGroupHeaderImageInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdateGroupImageInCommunityUsecase>()) {
+    sl.registerFactory<UpdateGroupImageInCommunityUsecase>(
+        () => UpdateGroupImageInCommunityUsecase(sl()));
   }
 }

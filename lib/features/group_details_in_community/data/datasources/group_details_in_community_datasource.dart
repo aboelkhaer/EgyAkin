@@ -6,7 +6,9 @@ import '../../../../exports.dart';
 
 abstract class GroupDetailsInCommunityDatasource {
   Future<GetGroupDetailsInCommunityModelResponse> getGroupDetailsInCommunity(
-      String groupId);
+    String groupId,
+    int page,
+  );
   Future<LeaveGroupModelResponse> leaveGroupInCommunity(
     String groupId,
   );
@@ -23,8 +25,13 @@ class GroupDetailsInCommunityDatasourceImpl
 
   @override
   Future<GetGroupDetailsInCommunityModelResponse> getGroupDetailsInCommunity(
-      String groupId) async {
-    return await _apiServices.getGroupDetailsInCommunity(groupId);
+    String groupId,
+    int page,
+  ) async {
+    return await _apiServices.getGroupDetailsInCommunity(
+      groupId,
+      page,
+    );
   }
 
   @override

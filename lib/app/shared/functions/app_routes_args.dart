@@ -388,4 +388,32 @@ class AppRoutesArgs {
       'initialValueInSearch': initialValueInSearch,
     };
   }
+
+  static Map<String, dynamic> savedPostsRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+    required String doctorId,
+    required String doctorName,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+      'doctorId': doctorId,
+      'doctorName': doctorName,
+    };
+  }
+
+  static Map<String, dynamic> allDoctorPostsRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+    required String doctorId,
+    required String doctorName,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+      'doctorId': doctorId,
+      'doctorName': doctorName,
+    };
+  }
 }

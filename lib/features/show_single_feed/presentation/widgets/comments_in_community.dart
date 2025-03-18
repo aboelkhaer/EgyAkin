@@ -4,11 +4,13 @@ class CommentsInCommunity extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final PostCommunityModel feed;
-  const CommentsInCommunity(
-      {super.key,
-      required this.homeDataModel,
-      required this.currentDoctorModel,
-      required this.feed});
+
+  const CommentsInCommunity({
+    super.key,
+    required this.homeDataModel,
+    required this.currentDoctorModel,
+    required this.feed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +19,9 @@ class CommentsInCommunity extends StatelessWidget {
       listener: (context, state) {
         state.maybeWhen(
           orElse: () {},
+          error: (message) {
+            customSnackBar(context: context, message: message);
+          },
           loaded: (
             commentsResponse,
             changeCounter,
@@ -30,9 +35,11 @@ class CommentsInCommunity extends StatelessWidget {
             isSendReplyLoading,
             isSendReplyLoaded,
           ) {
-            // if (isSendCommentLoaded) {
-            //   animateToBottomOfScreen(cubit.scrollController);
-            // }
+            if (message == 'This option already exists for the poll') {
+              customSnackBar(
+                  context: context,
+                  message: 'This option already exists for the poll');
+            }
           },
         );
       },

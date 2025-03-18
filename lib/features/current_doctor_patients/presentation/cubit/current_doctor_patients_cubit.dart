@@ -9,6 +9,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
 
   getCurrentDoctorPatients() async {
     emit(const CurrentDoctorPatientsState.loading());
+    _currentPage = 1;
 
     final result = await _getCurrentDoctorPatientsUsecase.execute(_currentPage);
     result.fold(

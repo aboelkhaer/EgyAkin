@@ -52,9 +52,42 @@ class PostCommunityModel with _$PostCommunityModel {
     @JsonKey(name: 'isLiked') bool? isLiked,
     GroupDetails? group,
     DoctorModel? doctor,
+    PollModelResponse? poll,
   }) = _PostCommunityModel;
   factory PostCommunityModel.fromJson(Map<String, dynamic> json) =>
       _$PostCommunityModelFromJson(json);
+}
+
+@freezed
+class PollModelResponse with _$PollModelResponse {
+  const factory PollModelResponse({
+    int? id,
+    String? content,
+    @JsonKey(name: 'feed_post_id') int? feedPostId,
+    String? question,
+    @JsonKey(name: 'allow_add_options') bool? allowAddOptions,
+    @JsonKey(name: 'allow_multiple_choice') bool? allowMultipleChoice,
+    @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
+    List<PollOptionsModelResponse>? options,
+  }) = _PollModelResponse;
+  factory PollModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$PollModelResponseFromJson(json);
+}
+
+@freezed
+class PollOptionsModelResponse with _$PollOptionsModelResponse {
+  const factory PollOptionsModelResponse({
+    int? id,
+    @JsonKey(name: 'poll_id') int? pollId,
+    @JsonKey(name: 'option_text') String? optionText,
+    @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'updated_at') String? updatedAt,
+    @JsonKey(name: 'votes_count') int? votesCount,
+    @JsonKey(name: 'is_voted') bool? isVoted,
+  }) = _PollOptionsModelResponse;
+  factory PollOptionsModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$PollOptionsModelResponseFromJson(json);
 }
 
 @freezed

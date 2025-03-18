@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_cubit.dart';
+import 'package:egy_akin/features/all_doctor_posts/presentation/pages/all_doctor_posts_screen.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/pages/all_groups_in_community_screen.dart';
@@ -17,6 +19,8 @@ import 'package:egy_akin/features/group_details_in_community/presentation/cubit/
 import 'package:egy_akin/features/group_details_in_community/presentation/pages/group_details_in_community_screen.dart';
 import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/cubit/invite_member_to_group_in_community_cubit.dart';
 import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/pages/invite_member_to_group_in_community_screen.dart';
+import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
+import 'package:egy_akin/features/saved_posts/presentation/pages/saved_posts_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 
 import '../../exports.dart';
@@ -62,6 +66,8 @@ class AppRoutes {
       '/inviteMemberToGroupInCommunity';
   static const String createGroupInCommunity = '/createGroupInCommunity';
   static const String communitySearch = '/communitySearch';
+  static const String savedPosts = '/savedPosts';
+  static const String allDoctorPosts = '/allDoctorPosts';
 }
 
 class RouteGenerator {
@@ -845,7 +851,6 @@ class RouteGenerator {
                   BlocProvider(
                     create: (context) => di.sl<MyGroupsInCommunityCubit>(),
                   ),
-                  // BlocProvider.value(value: di.sl<MyGroupsInCommunityCubit>()),
                   BlocProvider(
                     create: (context) => di.sl<GroupsCubit>(),
                   ),
@@ -948,6 +953,67 @@ class RouteGenerator {
               },
               transitionDuration: const Duration(
                   milliseconds: 300), // Adjust duration as needed
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
+      case AppRoutes.savedPosts:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel') &&
+              args.containsKey('doctorId') &&
+              args.containsKey('doctorName')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(create: (context) => di.sl<SavedPostsCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                ],
+                child: SavedPostsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  doctorId: args['doctorId'] as String,
+                  doctorName: args['doctorName'] as String,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.allDoctorPosts:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel') &&
+              args.containsKey('doctorId') &&
+              args.containsKey('doctorName')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                      create: (context) => di.sl<AllDoctorPostsCubit>()),
+                  // BlocProvider(create: (context) => di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                ],
+                child: AllDoctorPostsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  doctorId: args['doctorId'] as String,
+                  doctorName: args['doctorName'] as String,
+                ),
+              ),
             );
           } else {
             return unDefinedRoute();

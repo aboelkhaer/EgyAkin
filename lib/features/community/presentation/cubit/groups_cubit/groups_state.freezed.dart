@@ -20,8 +20,12 @@ mixin _$GroupsState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)
+    required TResult Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,8 +34,12 @@ mixin _$GroupsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)?
+    TResult? Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -41,7 +49,7 @@ mixin _$GroupsState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetGroupsTabModelResponse response, String snackBarMessage,
-            String dialogMessage)?
+            String dialogMessage, bool isSeeMore, int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -138,8 +146,12 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)
+    required TResult Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -151,8 +163,12 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)?
+    TResult? Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -165,7 +181,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetGroupsTabModelResponse response, String snackBarMessage,
-            String dialogMessage)?
+            String dialogMessage, bool isSeeMore, int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -261,8 +277,12 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)
+    required TResult Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -274,8 +294,12 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)?
+    TResult? Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -288,7 +312,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetGroupsTabModelResponse response, String snackBarMessage,
-            String dialogMessage)?
+            String dialogMessage, bool isSeeMore, int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -350,7 +374,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   $Res call(
       {GetGroupsTabModelResponse response,
       String snackBarMessage,
-      String dialogMessage});
+      String dialogMessage,
+      bool isSeeMore,
+      int changeCounter});
 
   $GetGroupsTabModelResponseCopyWith<$Res> get response;
 }
@@ -371,6 +397,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? response = null,
     Object? snackBarMessage = null,
     Object? dialogMessage = null,
+    Object? isSeeMore = null,
+    Object? changeCounter = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -385,6 +413,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.dialogMessage
           : dialogMessage // ignore: cast_nullable_to_non_nullable
               as String,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == changeCounter
+          ? _value.changeCounter
+          : changeCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -402,7 +438,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.response, this.snackBarMessage, this.dialogMessage);
+  const _$LoadedImpl(this.response, this.snackBarMessage, this.dialogMessage,
+      this.isSeeMore, this.changeCounter);
 
   @override
   final GetGroupsTabModelResponse response;
@@ -410,10 +447,14 @@ class _$LoadedImpl implements _Loaded {
   final String snackBarMessage;
   @override
   final String dialogMessage;
+  @override
+  final bool isSeeMore;
+  @override
+  final int changeCounter;
 
   @override
   String toString() {
-    return 'GroupsState.loaded(response: $response, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage)';
+    return 'GroupsState.loaded(response: $response, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isSeeMore: $isSeeMore, changeCounter: $changeCounter)';
   }
 
   @override
@@ -426,12 +467,16 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.snackBarMessage, snackBarMessage) ||
                 other.snackBarMessage == snackBarMessage) &&
             (identical(other.dialogMessage, dialogMessage) ||
-                other.dialogMessage == dialogMessage));
+                other.dialogMessage == dialogMessage) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.changeCounter, changeCounter) ||
+                other.changeCounter == changeCounter));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, response, snackBarMessage, dialogMessage);
+  int get hashCode => Object.hash(runtimeType, response, snackBarMessage,
+      dialogMessage, isSeeMore, changeCounter);
 
   /// Create a copy of GroupsState
   /// with the given fields replaced by the non-null parameter values.
@@ -446,12 +491,17 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)
+    required TResult Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, snackBarMessage, dialogMessage);
+    return loaded(
+        response, snackBarMessage, dialogMessage, isSeeMore, changeCounter);
   }
 
   @override
@@ -459,12 +509,17 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)?
+    TResult? Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, snackBarMessage, dialogMessage);
+    return loaded?.call(
+        response, snackBarMessage, dialogMessage, isSeeMore, changeCounter);
   }
 
   @override
@@ -473,13 +528,14 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetGroupsTabModelResponse response, String snackBarMessage,
-            String dialogMessage)?
+            String dialogMessage, bool isSeeMore, int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, snackBarMessage, dialogMessage);
+      return loaded(
+          response, snackBarMessage, dialogMessage, isSeeMore, changeCounter);
     }
     return orElse();
   }
@@ -523,12 +579,18 @@ class _$LoadedImpl implements _Loaded {
 }
 
 abstract class _Loaded implements GroupsState {
-  const factory _Loaded(final GetGroupsTabModelResponse response,
-      final String snackBarMessage, final String dialogMessage) = _$LoadedImpl;
+  const factory _Loaded(
+      final GetGroupsTabModelResponse response,
+      final String snackBarMessage,
+      final String dialogMessage,
+      final bool isSeeMore,
+      final int changeCounter) = _$LoadedImpl;
 
   GetGroupsTabModelResponse get response;
   String get snackBarMessage;
   String get dialogMessage;
+  bool get isSeeMore;
+  int get changeCounter;
 
   /// Create a copy of GroupsState
   /// with the given fields replaced by the non-null parameter values.
@@ -607,8 +669,12 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)
+    required TResult Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -620,8 +686,12 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetGroupsTabModelResponse response,
-            String snackBarMessage, String dialogMessage)?
+    TResult? Function(
+            GetGroupsTabModelResponse response,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSeeMore,
+            int changeCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -634,7 +704,7 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(GetGroupsTabModelResponse response, String snackBarMessage,
-            String dialogMessage)?
+            String dialogMessage, bool isSeeMore, int changeCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

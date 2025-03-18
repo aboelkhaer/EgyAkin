@@ -69,9 +69,11 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
               widget.doctorId == widget.currentDoctorModel.id.toString()
                   ? IconButton(
                       onPressed: () {
-                        navigatorKey.currentState?.pushReplacementNamed(
-                            AppRoutes.home,
-                            arguments: 2);
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          navigatorKey.currentState?.pushReplacementNamed(
+                              AppRoutes.home,
+                              arguments: 2);
+                        });
                       },
                       icon: const Icon(Icons.edit),
                     )
@@ -273,30 +275,57 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                   },
                 ),
                 SizedBox(height: 10.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
-                      builder: (context, state) {
-                        return state.maybeWhen(
-                          orElse: () {
-                            return Text(
-                              'Patient',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade600,
-                              ),
-                            );
-                          },
-                          loaded: (
-                            doctorInfo,
-                            isLoadingScoreHistory,
-                            isLoadedScoreHistory,
-                            message,
-                            scoreHistory,
-                            changesCounter,
-                          ) {
-                            return InkWell(
+                BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      orElse: () {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildStatCard(
+                              icon: Icons.group,
+                              title: 'Patients',
+                              value: '',
+                              onTap: () {},
+                            ),
+                            _buildStatCard(
+                              icon: Icons.star,
+                              title: 'Score',
+                              value: '',
+                              onTap: () {},
+                            ),
+                            _buildStatCard(
+                              icon: Icons.bookmark,
+                              title: 'Saved Posts',
+                              value: '',
+                              onTap: () {
+                                // Add action for Saved Posts
+                              },
+                            ),
+                            _buildStatCard(
+                              icon: Icons.post_add,
+                              title: 'All Posts',
+                              value: '',
+                              onTap: () {
+                                // Add action for All Posts
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                      loaded: (doctorInfo,
+                          isLoadingAchievements,
+                          isLoadedAchievements,
+                          message,
+                          achievements,
+                          changesCounter) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildStatCard(
+                              icon: Icons.group,
+                              title: 'Patients',
+                              value: doctorInfo?.patientCount.toString() ?? '0',
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.profilePatients,
@@ -318,98 +347,75 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                   ),
                                 );
                               },
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              child: Column(
-                                children: [
-                                  BlocBuilder<DoctorInfoViewCubit,
-                                      DoctorInfoViewState>(
-                                    builder: (context, state) {
-                                      return state.maybeWhen(
-                                        orElse: () {
-                                          return const SizedBox.shrink();
-                                        },
-                                        loaded: (doctorInfo,
-                                            isLoadingScoreHistory,
-                                            isLoadedScoreHistory,
-                                            message,
-                                            scoreHistory,
-                                            changesCounter) {
-                                          return Text(
-                                              doctorInfo!.patientCount
-                                                  .toString(),
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14.sp));
-                                        },
-                                      );
-                                    },
-                                  ),
-                                  Text(
-                                    'Patient',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    InkWell(
-                      onTap: () {
-                        showCustomBottomSheet(
-                          context: context,
-                          builder: (context) {
-                            return BlocProvider(
-                              create: (context) => ScoreHistoryCubit(sl()),
-                              child: ScoreHistoryScreen(
-                                doctorId: widget.doctorId,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
-                      child: Column(
-                        children: [
-                          BlocBuilder<DoctorInfoViewCubit, DoctorInfoViewState>(
-                            builder: (context, state) {
-                              return state.maybeWhen(
-                                orElse: () {
-                                  return const SizedBox.shrink();
-                                },
-                                loaded: (
-                                  doctorInfo,
-                                  isLoadingScoreHistory,
-                                  isLoadedScoreHistory,
-                                  message,
-                                  scoreHistory,
-                                  changesCounter,
-                                ) {
-                                  return Text(doctorInfo!.scoreValue.toString(),
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.sp));
-                                },
-                              );
-                            },
-                          ),
-                          Text(
-                            'Score',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade600,
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                            _buildStatCard(
+                              icon: Icons.star,
+                              title: 'Score',
+                              value: doctorInfo?.scoreValue.toString() ?? '0',
+                              onTap: () {
+                                showCustomBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return BlocProvider(
+                                      create: (context) =>
+                                          ScoreHistoryCubit(sl()),
+                                      child: ScoreHistoryScreen(
+                                        doctorId: widget.doctorId,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            _buildStatCard(
+                              icon: Icons.bookmark,
+                              title: 'Saved Posts',
+                              value:
+                                  doctorInfo?.savedPostsCount.toString() ?? '0',
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.savedPosts,
+                                  arguments: AppRoutesArgs.savedPostsRouteArgs(
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    homeDataModel: widget.homeDataModel,
+                                    doctorId: widget.doctorId,
+                                    doctorName: doctorName(
+                                        firstName: doctorInfo!.data!.firstName
+                                            .toString(),
+                                        lastName: doctorInfo.data!.lastName
+                                            .toString(),
+                                        role: ''),
+                                  ),
+                                );
+                              },
+                            ),
+                            _buildStatCard(
+                              icon: Icons.post_add,
+                              title: 'All Posts',
+                              value: doctorInfo?.postsCount.toString() ?? '0',
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.allDoctorPosts,
+                                  arguments:
+                                      AppRoutesArgs.allDoctorPostsRouteArgs(
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    homeDataModel: widget.homeDataModel,
+                                    doctorId: widget.doctorId,
+                                    doctorName: doctorName(
+                                        firstName: doctorInfo!.data!.firstName,
+                                        lastName: doctorInfo.data!.lastName,
+                                        role: ''),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
@@ -465,6 +471,58 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildStatCard({
+    required IconData icon,
+    required String title,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.white, // Ensure proper ripple effect
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius:
+            BorderRadius.circular(12), // Ensures ripple effect follows shape
+        splashColor:
+            Colors.blue.withOpacity(0.2), // Customize ripple effect color
+        child: Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 28, color: AppColors.primary.withOpacity(0.5)),
+                const SizedBox(height: 5),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

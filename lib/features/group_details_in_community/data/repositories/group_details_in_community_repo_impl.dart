@@ -18,13 +18,16 @@ class GroupDetailsInCommunityRepositoryImpl
 
   @override
   Future<Either<Failure, GetGroupDetailsInCommunityModelResponse>>
-      getGroupDetailsInCommunity(String groupId) async {
+      getGroupDetailsInCommunity(String groupId, int page) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final response = await groupDetailsInCommunityDatasource
-            .getGroupDetailsInCommunity(groupId);
+        final response =
+            await groupDetailsInCommunityDatasource.getGroupDetailsInCommunity(
+          groupId,
+          page,
+        );
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

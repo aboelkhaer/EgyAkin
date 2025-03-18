@@ -9,6 +9,8 @@ class DoctorInfoViewModelResponse with _$DoctorInfoViewModelResponse {
   const factory DoctorInfoViewModelResponse({
     @JsonKey(name: 'patient_count') String? patientCount,
     @JsonKey(name: 'score_value') String? scoreValue,
+    @JsonKey(name: 'posts_count') String? postsCount,
+    @JsonKey(name: 'saved_posts_count') String? savedPostsCount,
     DoctorModel? data,
   }) = _DoctorInfoViewModelResponse;
   factory DoctorInfoViewModelResponse.fromJson(Map<String, dynamic> json) =>

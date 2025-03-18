@@ -1,6 +1,7 @@
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
+import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_poll_screen.dart';
+import 'package:egy_akin/features/create_post_in_community/presentation/widgets/build_setting_item.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-
 import '../../../../exports.dart';
 
 class CreatePostInCommunityScreen extends StatefulWidget {
@@ -26,6 +27,7 @@ class CreatePostInCommunityScreen extends StatefulWidget {
 
 class _CreatePostInCommunityScreenState
     extends State<CreatePostInCommunityScreen> {
+  PollModel? _poll;
   @override
   void initState() {
     if (widget.feed != null) {
@@ -34,6 +36,63 @@ class _CreatePostInCommunityScreenState
           .emitLoadedStateForEditPost(widget.feed!);
     }
     super.initState();
+  }
+
+  void _createPoll() async {
+    final poll = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CreatePollScreen(
+          onPollCreated: (poll) {
+            setState(() {
+              _poll = poll;
+            });
+          },
+          initialOptionCount: 2,
+          existingPoll: _poll, // Pass the existing poll data
+        ),
+      ),
+    );
+  }
+
+  void _deletePoll() {
+    // Show a confirmation dialog before deleting
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Poll'),
+          content: const Text('Are you sure you want to delete this poll?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                // Perform the deletion logic here
+                // For example, update the state or call a callback
+                setState(() {
+                  _poll = null; // Remove the poll
+                });
+                Navigator.pop(context); // Close the dialog
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -81,23 +140,6 @@ class _CreatePostInCommunityScreenState
                             initialTab: 0,
                           ),
                         );
-                        // Future.delayed(Duration.zero, () {
-                        //   navigatorKey.currentState?.pushReplacementNamed(
-                        //     AppRoutes.home,
-                        //     arguments: 0,
-                        //   );
-                        // });
-
-                        // Future.delayed(Duration.zero, () {
-                        //   navigatorKey.currentState?.pushNamed(
-                        //     AppRoutes.community,
-                        //     arguments: AppRoutesArgs.communityRouteArgs(
-                        //       homeDataModel: widget.homeDataModel,
-                        //       currentDoctorModel: widget.currentDoctorModel,
-                        //       initialTab: 0,
-                        //     ),
-                        //   );
-                        // });
                       }
                     }
                   },
@@ -141,7 +183,7 @@ class _CreatePostInCommunityScreenState
                       splashColor: Colors.transparent,
                       highlightColor: Colors.transparent,
                       onPressed: () {
-                        cubit.submitPost(context, widget.groupId);
+                        cubit.submitPost(context, widget.groupId, _poll);
                       },
                       icon: const Icon(Icons.send),
                     );
@@ -333,9 +375,148 @@ class _CreatePostInCommunityScreenState
                           ),
                         ),
                         const SizedBox(height: 20),
+                        //! Poll
+                        if (_poll != null)
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Card(
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                side: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                              child: Stack(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // Poll Header
+                                        const Text(
+                                          'Poll',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16),
+
+                                        // Poll Question
+                                        if (_poll?.question?.isNotEmpty ??
+                                            false)
+                                          Text(
+                                            _poll!.question!,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 18,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                        if (_poll?.question?.isNotEmpty ??
+                                            false)
+                                          const SizedBox(height: 16),
+
+                                        // Poll Options
+                                        ...?(_poll?.options?.map((option) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 8.0),
+                                            child: Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                const Icon(
+                                                  Icons.circle,
+                                                  size: 12,
+                                                  color: AppColors.primary,
+                                                ),
+                                                const SizedBox(width: 12),
+                                                Expanded(
+                                                  child: Text(
+                                                    option,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.black87,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        })),
+
+                                        // Poll Settings
+                                        if ((_poll?.allowMultipleChoices ??
+                                                false) ||
+                                            (_poll?.allowAddOptions ?? false))
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const SizedBox(height: 16),
+                                              if (_poll?.allowMultipleChoices ??
+                                                  false)
+                                                buildSettingItem(
+                                                  icon:
+                                                      Icons.check_box_outlined,
+                                                  label:
+                                                      'Allow multiple choices',
+                                                ),
+                                              if (_poll?.allowAddOptions ??
+                                                  false)
+                                                buildSettingItem(
+                                                  icon:
+                                                      Icons.add_circle_outline,
+                                                  label:
+                                                      'Allow members to add options',
+                                                ),
+                                            ],
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Edit Icon
+                                  Positioned(
+                                    top: 8,
+                                    right: 8,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.edit,
+                                        color: Colors.blue,
+                                        size: 20,
+                                      ),
+                                      onPressed:
+                                          _createPoll, // Call _createPoll to edit the poll
+                                    ),
+                                  ),
+
+                                  // Delete Icon
+                                  Positioned(
+                                    top: 8,
+                                    right: 40,
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
+                                        size: 20,
+                                      ),
+                                      onPressed: _deletePoll,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 20),
 
                         // Picked Image
-
                         BlocBuilder<CreatePostInCommunityCubit,
                             CreatePostInCommunityState>(
                           builder: (context, state) {
@@ -532,6 +713,17 @@ class _CreatePostInCommunityScreenState
                             isUploadPostLoaded,
                             message,
                           ) {
+                            if (widget.feed == null ||
+                                widget.feed!.poll != null) {
+                              return Center(
+                                child: Text(
+                                  'Your poll has already been published.',
+                                  style: TextStyle(
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                              );
+                            }
                             if (isImagePick) {
                               return Container(
                                 color: Colors.grey.shade300,
@@ -575,6 +767,7 @@ class _CreatePostInCommunityScreenState
                                 ),
                               );
                             }
+
                             return Container(
                               color: Colors.grey.shade200,
                               padding: const EdgeInsets.symmetric(vertical: 5),
@@ -585,25 +778,59 @@ class _CreatePostInCommunityScreenState
                                     EdgeInsets.only(
                                         bottom: isKeyboardVisible ? 0 : 20),
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        cubit.pickImageAndShowIt(false);
-                                        cubit.removeMediaPathInEditableFeed();
-                                      },
-                                      icon: const Icon(Icons.photo_library),
-                                      label: const Text("Gallery"),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton.icon(
-                                      onPressed: () {
-                                        cubit.pickImageAndShowIt(true);
-                                        cubit.removeMediaPathInEditableFeed();
-                                      },
-                                      icon: const Icon(Icons.camera_alt),
-                                      label: const Text("Camera"),
-                                    ),
+                                    _poll != null ||
+                                            (cubit.editableFeed != null &&
+                                                cubit.editableFeed!.poll !=
+                                                    null)
+                                        ? const SizedBox.shrink()
+                                        : ElevatedButton.icon(
+                                            onPressed: () {
+                                              cubit.pickImageAndShowIt(false);
+                                              cubit
+                                                  .removeMediaPathInEditableFeed();
+                                            },
+                                            icon:
+                                                const Icon(Icons.photo_library),
+                                            label: const Text("Gallery"),
+                                          ),
+                                    _poll != null ||
+                                            (cubit.editableFeed != null &&
+                                                cubit.editableFeed!.poll !=
+                                                    null)
+                                        ? const SizedBox.shrink()
+                                        : const SizedBox(width: 10),
+                                    _poll != null ||
+                                            (cubit.editableFeed != null &&
+                                                cubit.editableFeed!.poll !=
+                                                    null)
+                                        ? const SizedBox.shrink()
+                                        : ElevatedButton.icon(
+                                            onPressed: () {
+                                              cubit.pickImageAndShowIt(true);
+                                              cubit
+                                                  .removeMediaPathInEditableFeed();
+                                            },
+                                            icon: const Icon(Icons.camera_alt),
+                                            label: const Text("Camera"),
+                                          ),
+                                    _poll != null ||
+                                            (cubit.editableFeed != null &&
+                                                cubit.editableFeed!.poll !=
+                                                    null)
+                                        ? const SizedBox.shrink()
+                                        : const SizedBox(width: 10),
+                                    cubit.imagePicked != null ||
+                                            (cubit.editableFeed != null &&
+                                                cubit.editableFeed!.mediaPath !=
+                                                    null)
+                                        ? const SizedBox.shrink()
+                                        : ElevatedButton.icon(
+                                            onPressed: _createPoll,
+                                            icon: const Icon(Icons.poll),
+                                            label: const Text("Poll"),
+                                          ),
                                   ],
                                 ),
                               ),

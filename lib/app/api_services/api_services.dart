@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctor_posts/data/models/get_all_doctor_posts_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
 import 'package:egy_akin/features/all_groups_in_community/data/models/get_all_groups_in_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
+import 'package:egy_akin/features/community/data/models/add_option_in_poll_model_response.dart';
 import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
@@ -13,13 +15,16 @@ import 'package:egy_akin/features/community_search/data/models/get_response_of_s
 import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
 import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/data/models/create_group_in_community_model_response.dart';
+import 'package:egy_akin/features/create_group_in_community/data/models/update_group_in_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
+import 'package:egy_akin/features/group_details_in_community/data/models/add_vote_and_unvote_model_response.dart';
 import 'package:egy_akin/features/group_details_in_community/data/models/delete_group_in_community_model_response.dart';
 import 'package:egy_akin/features/group_details_in_community/data/models/get_group_details_in_community_model_response.dart';
 import 'package:egy_akin/features/group_details_in_community/data/models/leave_group_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_group_members_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/remove_member_from_group_model_response.dart';
+import 'package:egy_akin/features/saved_posts/data/models/get_saved_posts_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/add_like_or_unlike_on_comment_in_community_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/create_comment_on_post_in_community_model_response.dart';
@@ -355,6 +360,7 @@ abstract class ApiServices {
     @Field("media_type") String? mediaType,
     @Field("visibility") String visibility,
     @Field("group_id") String? groupId,
+    @Field("poll") Map<String, dynamic>? pollModel,
   );
   @GET('${ApiEndPoint.getCommentsInCommunity}/{postId}/comments')
   Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
@@ -414,6 +420,7 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.getGroupDetailsInCommunity}/{groupId}/detailsWithPosts')
   Future<GetGroupDetailsInCommunityModelResponse> getGroupDetailsInCommunity(
     @Path('groupId') String groupId,
+    @Query('page') int pageNumber,
   );
 
   @GET(ApiEndPoint.getGroupsTab)
@@ -479,10 +486,62 @@ abstract class ApiServices {
   );
 
   @GET(ApiEndPoint.getTrendingPostsInCommunity)
-  Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity();
+  Future<GetTrendingTabInCommunityModelResponse> getTrendingPostsInCommunity(
+    @Query('page') int page,
+  );
 
   @POST(ApiEndPoint.getCommunitySearchResponse)
   Future<GetResponseOfSearchModel> getCommunitySearchResponse(
+    @Query('page') int page,
     @Field("query") String searchContent,
+  );
+
+  @GET('${ApiEndPoint.getAllDoctorPosts}/{doctorId}')
+  Future<GetAllDoctorPostsModelResponse> getAllDoctorPosts(
+    @Path('doctorId') String doctorId,
+    @Query('page') int pageNumber,
+  );
+
+  @GET('${ApiEndPoint.getSavedPosts}/{doctorId}')
+  Future<GetSavedPostsModelResponse> getSavedPosts(
+    @Path('doctorId') String doctorId,
+    @Query('page') int pageNumber,
+  );
+  @POST('${ApiEndPoint.addVoteForPollInPosts}/{pollId}/vote')
+  Future<AddVoteAndUnvoteModelResponse> addVoteForPollInPosts(
+    @Path('pollId') String pollId,
+    @Field("option_id") int optionId,
+  );
+
+  @POST('${ApiEndPoint.addOptionOnPoll}/{pollId}/options')
+  Future<AddOptionInPollModelResponse> addOptionOnPoll(
+    @Path('pollId') String pollId,
+    @Field("option_text") String option,
+  );
+
+  @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
+  Future<UpdateGroupInCommunityModelResponse> updateGroupTextsInCommunity(
+    @Path('groupId') String groupId,
+    @Field("name") String name,
+    @Field("description") String description,
+    @Field("privacy") String privacy,
+  );
+  @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
+  @MultiPart()
+  Future<UpdateGroupInCommunityModelResponse> updateGroupHeaderImageInCommunity(
+    @Path('groupId') String groupId,
+    @Part(name: "name") String name,
+    @Part(name: "header_picture") File headerImage,
+    @Part(name: "description") String description,
+    @Part(name: "privacy") String privacy,
+  );
+  @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
+  @MultiPart()
+  Future<UpdateGroupInCommunityModelResponse> updateGroupImageInCommunity(
+    @Path('groupId') String groupId,
+    @Part(name: "name") String name,
+    @Part(name: "group_image") File groupImage,
+    @Part(name: "description") String description,
+    @Part(name: "privacy") String privacy,
   );
 }

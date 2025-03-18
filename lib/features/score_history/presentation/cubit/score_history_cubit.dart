@@ -14,6 +14,7 @@ class ScoreHistoryCubit extends Cubit<ScoreHistoryState> {
   int _currentPage = 1;
   getScoreHistory(String doctorId) async {
     emit(const ScoreHistoryState.loading());
+    _currentPage = 1;
 
     final result = await _getScoreHistoryUsecase.execute(
         GetScoreHistoryUsecaseInput(doctorId: doctorId, page: _currentPage));

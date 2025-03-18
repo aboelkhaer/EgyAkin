@@ -44,11 +44,13 @@ class CreatePostInCommunityRepositoryImpl
 
   @override
   Future<Either<Failure, CreatePostInCommunityModelResponse>>
-      createPostWithTextInCommunity(
-          {required String postContent,
-          required String? mediaType,
-          required String visibility,
-          required String? groupId}) async {
+      createPostWithTextInCommunity({
+    required String postContent,
+    required String? mediaType,
+    required String visibility,
+    required String? groupId,
+    required PollModel? pollModel,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
@@ -59,6 +61,7 @@ class CreatePostInCommunityRepositoryImpl
           mediaType: mediaType,
           visibility: visibility,
           groupId: groupId,
+          pollModel: pollModel,
         );
         return Right(response);
       } catch (error) {

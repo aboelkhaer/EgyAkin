@@ -21,7 +21,7 @@ mixin _$TrendingState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -31,7 +31,7 @@ mixin _$TrendingState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -41,7 +41,7 @@ mixin _$TrendingState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -139,7 +139,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -152,7 +152,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -165,7 +165,7 @@ class _$InitialImpl implements _Initial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -262,7 +262,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -275,7 +275,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -288,7 +288,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -350,7 +350,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
   $Res call(
       {String snackBarMessage,
       String dialogMessage,
-      GetTrendingTabInCommunityModelResponse response});
+      GetTrendingTabInCommunityModelResponse response,
+      bool isSeeMore});
 
   $GetTrendingTabInCommunityModelResponseCopyWith<$Res> get response;
 }
@@ -371,6 +372,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? snackBarMessage = null,
     Object? dialogMessage = null,
     Object? response = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$LoadedImpl(
       null == snackBarMessage
@@ -385,6 +387,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.response
           : response // ignore: cast_nullable_to_non_nullable
               as GetTrendingTabInCommunityModelResponse,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -403,7 +409,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.snackBarMessage, this.dialogMessage, this.response);
+  const _$LoadedImpl(
+      this.snackBarMessage, this.dialogMessage, this.response, this.isSeeMore);
 
   @override
   final String snackBarMessage;
@@ -411,10 +418,12 @@ class _$LoadedImpl implements _Loaded {
   final String dialogMessage;
   @override
   final GetTrendingTabInCommunityModelResponse response;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'TrendingState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response)';
+    return 'TrendingState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -427,12 +436,14 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.dialogMessage, dialogMessage) ||
                 other.dialogMessage == dialogMessage) &&
             (identical(other.response, response) ||
-                other.response == response));
+                other.response == response) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, snackBarMessage, dialogMessage, response);
+  int get hashCode => Object.hash(
+      runtimeType, snackBarMessage, dialogMessage, response, isSeeMore);
 
   /// Create a copy of TrendingState
   /// with the given fields replaced by the non-null parameter values.
@@ -448,11 +459,11 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(snackBarMessage, dialogMessage, response);
+    return loaded(snackBarMessage, dialogMessage, response, isSeeMore);
   }
 
   @override
@@ -461,11 +472,11 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(snackBarMessage, dialogMessage, response);
+    return loaded?.call(snackBarMessage, dialogMessage, response, isSeeMore);
   }
 
   @override
@@ -474,13 +485,13 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(snackBarMessage, dialogMessage, response);
+      return loaded(snackBarMessage, dialogMessage, response, isSeeMore);
     }
     return orElse();
   }
@@ -527,11 +538,13 @@ abstract class _Loaded implements TrendingState {
   const factory _Loaded(
       final String snackBarMessage,
       final String dialogMessage,
-      final GetTrendingTabInCommunityModelResponse response) = _$LoadedImpl;
+      final GetTrendingTabInCommunityModelResponse response,
+      final bool isSeeMore) = _$LoadedImpl;
 
   String get snackBarMessage;
   String get dialogMessage;
   GetTrendingTabInCommunityModelResponse get response;
+  bool get isSeeMore;
 
   /// Create a copy of TrendingState
   /// with the given fields replaced by the non-null parameter values.
@@ -611,7 +624,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -624,7 +637,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -637,7 +650,7 @@ class _$ErrorImpl implements _Error {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(String snackBarMessage, String dialogMessage,
-            GetTrendingTabInCommunityModelResponse response)?
+            GetTrendingTabInCommunityModelResponse response, bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

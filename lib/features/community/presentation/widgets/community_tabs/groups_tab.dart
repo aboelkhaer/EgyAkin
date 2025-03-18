@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
+
 import '../../../../../exports.dart';
 
 class GroupsTab extends StatefulWidget {
@@ -14,33 +16,50 @@ class GroupsTab extends StatefulWidget {
 }
 
 class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
+  late final GroupsCubit _cubit;
+
   @override
   void initState() {
     super.initState();
 
-    // Add the observer to listen for lifecycle events
     WidgetsBinding.instance.addObserver(this);
 
-    // Fetch groups data on initial load
-    if (context.read<GroupsCubit>().callGroupsTabTimes == 0) {
-      context.read<GroupsCubit>().getGroupsTab();
-      context.read<GroupsCubit>().callGroupsTabTimes++;
+    _cubit = context.read<GroupsCubit>();
+
+    // Initialize ScrollController
+    _cubit.scrollController = ScrollController();
+    _cubit.scrollController!.addListener(_onScroll);
+
+    if (_cubit.callGroupsTabTimes == 0) {
+      _cubit.getGroupsTab();
+      _cubit.callGroupsTabTimes++;
     }
   }
 
   @override
   void dispose() {
-    // Remove the observer when the widget is disposed
     WidgetsBinding.instance.removeObserver(this);
+    _cubit.scrollController!.dispose();
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Check if the app has resumed
     if (state == AppLifecycleState.resumed) {
-      // Fetch groups data when the app resumes
-      context.read<GroupsCubit>().getGroupsTab();
+      _cubit.getGroupsTab();
+    }
+  }
+
+  void _onScroll() {
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
+
+    final maxScroll = _cubit.scrollController!.position.maxScrollExtent;
+    final currentScroll = _cubit.scrollController!.position.pixels;
+    const threshold = 200.0;
+
+    if (maxScroll - currentScroll <= threshold) {
+      _cubit.isLoadingMoreForScroll = true;
+      _cubit.loadMorePosts();
     }
   }
 
@@ -57,17 +76,17 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
         ),
       ),
       child: RefreshIndicator(
-        onRefresh: () {
-          return context.read<GroupsCubit>().getGroupsTab();
+        onRefresh: () async {
+          await _cubit.getGroupsTab();
         },
         child: CustomScrollView(
+          controller:
+              _cubit.scrollController, // ✅ Directly using the controller
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20) +
-                    const EdgeInsets.only(
-                      bottom: 20,
-                    ),
+                    const EdgeInsets.only(bottom: 20),
                 child: Column(
                   children: [
                     Row(
@@ -75,9 +94,7 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                       children: [
                         const Text(
                           'Join Group',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextButton(
                           onPressed: () {
@@ -97,29 +114,22 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                           ),
                           child: const Text(
                             'See All',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                            ),
+                            style: TextStyle(color: AppColors.primary),
                           ),
                         ),
                       ],
                     ),
                     BlocConsumer<GroupsCubit, GroupsState>(
-                      listener: (context, state) {
-                        state.maybeWhen(
-                          orElse: () {},
-                          initial: () {},
-                        );
-                      },
+                      listener: (context, state) {},
                       builder: (context, state) {
                         return state.maybeWhen(
-                          orElse: () {
-                            return const LoadingForGroupRow();
-                          },
+                          orElse: () => const LoadingForGroupRow(),
                           loaded: (
                             response,
                             snackBarMessage,
                             dialogMessage,
+                            isSeeMore,
+                            changeCounter,
                           ) {
                             return Column(
                               children: List.generate(
@@ -142,32 +152,59 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
               ),
             ),
             SliverToBoxAdapter(
-              child: Container(
-                height: 10,
-                color: Colors.grey.shade100,
-              ),
-            ),
+                child: Container(height: 10, color: Colors.grey.shade100)),
             BlocBuilder<GroupsCubit, GroupsState>(
               builder: (context, state) {
                 return state.maybeWhen(
-                  orElse: () {
-                    return SliverToBoxAdapter(
-                      child: SizedBox(
-                        height: 500.h, // Provide a fixed height
-                        child: const ShimmerLoadingFeeds(
-                          numberOfShimmer: 3,
-                        ),
-                      ),
-                    );
-                  },
+                  orElse: () => SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: 500.h,
+                      child: const ShimmerLoadingFeeds(numberOfShimmer: 3),
+                    ),
+                  ),
                   loaded: (
                     response,
                     snackBarMessage,
                     dialogMessage,
+                    isSeeMore,
+                    changeCounter,
                   ) {
                     return SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
+                          PostCommunityModel feed =
+                              response.data!.randomPosts!.data![index];
+                          final poll = feed
+                              .poll; // Store poll in a variable to avoid multiple null checks
+
+                          if (poll != null) {
+                            // Ensure initial values are set in postSelectedOptions
+                            if (poll.allowMultipleChoice == true &&
+                                !_cubit.postSelectedOptions
+                                    .containsKey(feed.id)) {
+                              _cubit.postSelectedOptions[feed.id!] = {
+                                ...poll.options
+                                        ?.where(
+                                            (option) => option.isVoted ?? false)
+                                        .map((option) => option.id!)
+                                        .toSet() ??
+                                    {}
+                              };
+                            }
+
+                            // Ensure initial value for single-choice poll
+                            if (poll.allowMultipleChoice == false &&
+                                !_cubit.postSelectedOption
+                                    .containsKey(feed.id)) {
+                              _cubit.postSelectedOption[feed.id!] = poll.options
+                                  ?.firstWhere(
+                                      (option) => option.isVoted ?? false,
+                                      orElse: () =>
+                                          const PollOptionsModelResponse(
+                                              id: -1))
+                                  .id;
+                            }
+                          }
                           return Padding(
                             padding: const EdgeInsets.only(
                                 top: 20, left: 20, right: 20, bottom: 0),
@@ -176,22 +213,54 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                               homeDataModel: widget.homeDataModel,
                               currentDoctorModel: widget.currentDoctorModel,
                               isGroupPosts: true,
+                              viewPollWidget: ViewPollWidget(
+                                poll: feed.poll,
+                                selectedOptions:
+                                    _cubit.postSelectedOptions[feed.id] ?? {},
+                                onAddOption: (pollId, option) async {
+                                  await _cubit.addOptionOnPoll(pollId,
+                                      option); // Call your function here
+                                },
+                                initiallyExpanded: false,
+                                selectedOption:
+                                    _cubit.postSelectedOption[feed.id],
+                                onOptionSelected: (optionId) {
+                                  _cubit.postSelectedOption[feed.id!] =
+                                      optionId;
+                                  _cubit.addVoteAndUnVote(
+                                    feed.poll!.id.toString(),
+                                    optionId!,
+                                  );
+                                  _cubit.refreshScreen();
+                                },
+                                onOptionToggled: (optionId, isSelected) {
+                                  _cubit.postSelectedOptions[feed.id!] ??= {};
+                                  _cubit.addVoteAndUnVote(
+                                    feed.poll!.id.toString(),
+                                    optionId,
+                                  );
+                                  if (isSelected) {
+                                    _cubit.postSelectedOptions[feed.id!]!
+                                        .add(optionId);
+                                  } else {
+                                    _cubit.postSelectedOptions[feed.id!]!
+                                        .remove(optionId);
+                                  }
+                                  _cubit.refreshScreen();
+                                },
+                              ),
                               onLikeAndUnlikeAdditional: () {
-                                context
-                                    .read<GroupsCubit>()
-                                    .addLikeOrUnlikeOnPost(response
-                                        .data!.randomPosts!.data![index].id
-                                        .toString());
+                                _cubit.addLikeOrUnlikeOnPost(response
+                                    .data!.randomPosts!.data![index].id
+                                    .toString());
                               },
                               onSaveAndUnSaveAdditional: () {
-                                context
-                                    .read<GroupsCubit>()
-                                    .addSaveOrUnsaveOnPost(response
-                                        .data!.randomPosts!.data![index].id
-                                        .toString());
+                                _cubit.addSaveOrUnsaveOnPost(response
+                                    .data!.randomPosts!.data![index].id
+                                    .toString());
                               },
                               onDeleteAdditional: () {
-                                context.read<GroupsCubit>().deletePost(response
+                                _cubit.deletePost(response
                                     .data!.randomPosts!.data![index].id
                                     .toString());
                               },
@@ -206,9 +275,38 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
               },
             ),
             SliverToBoxAdapter(
-              child: Container(
-                height: 50.h,
-                color: Colors.transparent,
+              child: Column(
+                children: [
+                  Container(height: 30.h, color: Colors.transparent),
+                  BlocBuilder<GroupsCubit, GroupsState>(
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () => const SizedBox.shrink(),
+                        loaded: (
+                          response,
+                          snackBarMessage,
+                          dialogMessage,
+                          isSeeMore,
+                          changeCounter,
+                        ) {
+                          return isSeeMore
+                              ? Column(
+                                  children: [
+                                    const SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 3),
+                                    ),
+                                    SizedBox(height: 20.h),
+                                  ],
+                                )
+                              : const SizedBox.shrink();
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],

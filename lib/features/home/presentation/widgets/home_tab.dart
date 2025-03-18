@@ -171,7 +171,10 @@ class _HomeTabState extends State<HomeTab> {
                               ),
                             );
                           },
-                          child: const Text('hello')),
+                          child: const Text(
+                            'Community',
+                            style: TextStyle(color: AppColors.primary),
+                          )),
                       const DoctorsActivation(),
                       SizedBox(height: 10.h),
                       TopDoctors(cubit: widget.cubit),

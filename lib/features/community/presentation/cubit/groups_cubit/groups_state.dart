@@ -11,6 +11,8 @@ abstract class GroupsState with _$GroupsState {
     GetGroupsTabModelResponse response,
     String snackBarMessage,
     String dialogMessage,
+    bool isSeeMore,
+    int changeCounter,
   ) = _Loaded;
   const factory GroupsState.error(String message) = _Error;
 }

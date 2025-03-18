@@ -20,6 +20,7 @@ class CreatePostWithTextInCommunityUsecase
       mediaType: input.mediaType,
       visibility: input.visibility,
       groupId: input.groupId,
+      pollModel: input.pollModel,
     );
   }
 }
@@ -29,10 +30,13 @@ class CreatePostWithTextInCommunityUsecaseInput {
   final String? mediaType;
   final String visibility;
   final String? groupId;
+  final PollModel? pollModel;
 
-  CreatePostWithTextInCommunityUsecaseInput(
-      {required this.postContent,
-      required this.mediaType,
-      required this.visibility,
-      required this.groupId});
+  CreatePostWithTextInCommunityUsecaseInput({
+    required this.postContent,
+    required this.mediaType,
+    required this.visibility,
+    required this.groupId,
+    required this.pollModel,
+  });
 }

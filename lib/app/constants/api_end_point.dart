@@ -90,7 +90,12 @@ class ApiEndPoint {
   static const removeMemberFromGroup = '$baseUrl/api/groups';
   static const getAllGroups = '$baseUrl/api/groups';
   static const createGroupInCommunity = '$baseUrl/api/groups';
+  static const updateGroupInCommunity = '$baseUrl/api/groups';
   static const deleteGroupInCommunity = '$baseUrl/api/groups';
   static const getTrendingPostsInCommunity = '$baseUrl/api/feed/trendingPosts';
   static const getCommunitySearchResponse = '$baseUrl/api/feed/searchPosts';
+  static const getAllDoctorPosts = '$baseUrl/api/doctorposts';
+  static const getSavedPosts = '$baseUrl/api/doctorsavedposts';
+  static const addVoteForPollInPosts = '$baseUrl/api/polls';
+  static const addOptionOnPoll = '$baseUrl/api/polls';
 }

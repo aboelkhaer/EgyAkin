@@ -21,7 +21,13 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
     context
         .read<ShowSingleFeedCubit>()
         .getCommentsInCommunity(widget.feed.id.toString(), widget.feed);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

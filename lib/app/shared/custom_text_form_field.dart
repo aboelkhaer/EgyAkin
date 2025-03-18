@@ -1,7 +1,7 @@
+import 'dart:developer';
+
 import '../../exports.dart';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class CustomTextFormField extends StatefulWidget {
   final String title;
@@ -79,23 +79,31 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   late TextEditingController _controller;
   bool _isTextEmpty = true;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _controller = widget.textFormFieldController ??
+  //       TextEditingController(text: widget.initialValue);
+
+  //   // Listen for text changes to update _isTextEmpty state
+  //   _controller.addListener(() {
+  //     setState(() {
+  //       _isTextEmpty = _controller.text.isEmpty;
+  //     });
+  //   });
+  // }
   @override
   void initState() {
     super.initState();
     _controller = widget.textFormFieldController ??
         TextEditingController(text: widget.initialValue);
-
-    // Listen for text changes to update _isTextEmpty state
-    _controller.addListener(() {
-      setState(() {
-        _isTextEmpty = _controller.text.isEmpty;
-      });
-    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.textFormFieldController == null) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 

@@ -22,6 +22,7 @@ class _MyGroupsTabState extends State<MyGroupsTab> {
       context.read<MyGroupsInCommunityCubit>().getMyGroups();
       context.read<MyGroupsInCommunityCubit>().callMyGroups++;
     }
+
     super.initState();
   }
 
@@ -67,6 +68,7 @@ class _MyGroupsTabState extends State<MyGroupsTab> {
               }
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
+                controller: cubit.scrollControllerForMyGroups,
                 padding: const EdgeInsets.only(
                   top: 20,
                   left: 20,

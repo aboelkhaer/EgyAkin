@@ -1,14 +1,17 @@
 import 'package:flutter/gestures.dart';
+import 'package:any_link_preview/any_link_preview.dart'; // Add this import
 import '../../../exports.dart'; // Assuming this handles building the hashtag text
 
 class HashtagText extends StatefulWidget {
   final String content;
-  final int trimLines;
+  final int? trimLines;
   final String trimCollapsedText;
   final String trimExpandedText;
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   final String? highlightWord; // Words to highlight
+  final bool disableTrimLines; // New parameter to disable trim lines
+
   const HashtagText({
     super.key,
     required this.content,
@@ -18,6 +21,7 @@ class HashtagText extends StatefulWidget {
     this.trimCollapsedText = '... See more',
     this.trimExpandedText = '',
     this.highlightWord, // Default empty list
+    this.disableTrimLines = false, // Default to false (trim lines enabled)
   });
 
   @override
@@ -37,24 +41,18 @@ class _HashtagTextState extends State<HashtagText> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate if text overflows
+        // Calculate if text overflows (only if trim lines are enabled)
         final span = buildHashtagText(
           widget.content,
           widget.currentDoctorModel,
           widget.homeDataModel,
           widget.highlightWord, // Pass the highlight words
         );
-        final tp = TextPainter(
-          text: span,
-          maxLines: widget.trimLines,
-          textDirection: _isArabic(widget.content)
-              ? TextDirection.rtl
-              : TextDirection.ltr, // Dynamically set the text direction
-        );
-        tp.layout(maxWidth: constraints.maxWidth);
 
-        // Check if the text exceeds the trimLines limit
-        final shouldShowToggle = tp.didExceedMaxLines;
+        // Check if trim lines are disabled
+        final shouldShowToggle = widget.disableTrimLines
+            ? false // Disable toggle if trim lines are disabled
+            : _checkTextOverflow(span, constraints.maxWidth);
 
         // The entire text is wrapped in GestureDetector
         return GestureDetector(
@@ -69,9 +67,15 @@ class _HashtagTextState extends State<HashtagText> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RichText(
-                maxLines: isExpanded ? null : widget.trimLines,
-                overflow:
-                    isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                maxLines: widget.disableTrimLines
+                    ? null // No max lines if trim lines are disabled
+                    : (isExpanded ? null : widget.trimLines),
+                overflow: widget.disableTrimLines
+                    ? TextOverflow
+                        .visible // No overflow if trim lines are disabled
+                    : (isExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis),
                 text: buildHashtagText(
                   widget.content,
                   widget.currentDoctorModel,
@@ -90,11 +94,55 @@ class _HashtagTextState extends State<HashtagText> {
                       : widget.trimCollapsedText,
                   style: const TextStyle(color: Colors.blue),
                 ),
+              // Add link previews here
+              ..._buildLinkPreviews(widget.content),
             ],
           ),
         );
       },
     );
+  }
+
+  // Helper function to check if text overflows
+  bool _checkTextOverflow(TextSpan span, double maxWidth) {
+    final tp = TextPainter(
+      text: span,
+      maxLines: widget.trimLines,
+      textDirection:
+          _isArabic(widget.content) ? TextDirection.rtl : TextDirection.ltr,
+    );
+    tp.layout(maxWidth: maxWidth);
+    return tp.didExceedMaxLines;
+  }
+
+  // Helper function to detect URLs and build link previews
+  List<Widget> _buildLinkPreviews(String content) {
+    final urlRegExp = RegExp(
+      r'https?://[^\s]+',
+      caseSensitive: false,
+    );
+    final matches = urlRegExp.allMatches(content);
+    List<Widget> previews = [];
+
+    for (final match in matches) {
+      final url = match.group(0)!;
+      previews.add(
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: AnyLinkPreview(
+            link: url,
+            displayDirection: UIDirection.uiDirectionVertical,
+            cache: const Duration(days: 7), // Cache the preview for 7 days
+            placeholderWidget:
+                const CircularProgressIndicator(), // Show a loader while loading
+            errorWidget: const Text(
+                'Unable to load preview'), // Show this if the preview fails
+          ),
+        ),
+      );
+    }
+
+    return previews;
   }
 }
 
@@ -106,15 +154,16 @@ TextSpan buildHashtagText(
   String? highlightWord, // Word to highlight
 ) {
   final RegExp hashtagRegExp = RegExp(r'#[a-zA-Z0-9_]+'); // Detect hashtags
+  final RegExp urlRegExp = RegExp(r'https?://[^\s]+'); // Detect URLs
   final String? highlightLower =
       highlightWord?.toLowerCase().trim(); // Normalize highlight word
 
   List<TextSpan> spans = [];
   int currentIndex = 0;
 
-  // Match hashtags and words separately (handles punctuation correctly)
-  final RegExp regex =
-      RegExp(r'#[a-zA-Z0-9_]+|\b\w+\b'); // Detect hashtags & words
+  // Match hashtags, URLs, and words separately
+  final RegExp regex = RegExp(
+      r'#[a-zA-Z0-9_]+|https?://[^\s]+|\b\w+\b'); // Detect hashtags, URLs, & words
 
   for (final match in regex.allMatches(content)) {
     String matchText = match.group(0)!; // Extract the matched text
@@ -132,7 +181,6 @@ TextSpan buildHashtagText(
           style: TextStyle(
             backgroundColor: Colors.yellow.shade200,
             color: Colors.blue,
-            // fontWeight: FontWeight.bold,
           ),
         ),
       );
@@ -157,6 +205,9 @@ TextSpan buildHashtagText(
             },
         ),
       );
+    } else if (urlRegExp.hasMatch(matchText)) {
+      // If it's a URL, skip it here (handled in _buildLinkPreviews)
+      spans.add(const TextSpan(text: ' ')); // Replace URL with space
     } else {
       // Normal text
       spans.add(TextSpan(

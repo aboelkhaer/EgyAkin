@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
 import 'package:egy_akin/features/group_details_in_community/domain/usecases/delete_group_in_community_usecase.dart';
 import 'package:egy_akin/features/group_details_in_community/domain/usecases/get_group_details_in_community_usecase.dart';
@@ -13,7 +14,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
       this._joinGroupInCommunityUsecase,
       this._addLikeOnPostUsecase,
       this._saveOrUnsavePostUsecase,
-      this._deleteGroupInCommunityUsecase)
+      this._deleteGroupInCommunityUsecase,
+      this._addVoteAndUnvoteUsecase)
       : super(const GroupDetailsInCommunityState.initial());
   static GroupDetailsInCommunityCubit get(context) => BlocProvider.of(context);
 
@@ -23,10 +25,23 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   final AddLikeOnPostUsecase _addLikeOnPostUsecase;
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeleteGroupInCommunityUsecase _deleteGroupInCommunityUsecase;
+  final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
 
+  final Map<int, Set<int>> postSelectedOptions = {};
+  final Map<int, int?> postSelectedOption = {};
+
+  int changeCounter = 1;
+  bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
+  int _currentPage = 1;
   getGroupDetails(String groupId) async {
     emit(const GroupDetailsInCommunityState.loading());
-    final result = await _getGroupDetailsInCommunityUsecase.execute(groupId);
+    final result = await _getGroupDetailsInCommunityUsecase.execute(
+      GetGroupDetailsInCommunityUsecaseInput(
+        groupId: groupId,
+        page: _currentPage,
+      ),
+    );
 
     result.fold((l) {
       emit(GroupDetailsInCommunityState.error(l.message));
@@ -37,8 +52,97 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         '',
         false,
         false,
+        changeCounter,
+        false,
       ));
     });
+  }
+
+  void loadMoreFeeds(String groupId) async {
+    _currentPage++;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => GroupDetailsInCommunityState.loaded(
+        value.groupDetails,
+        '',
+        '',
+        false,
+        false,
+        changeCounter,
+        true,
+      ),
+    ));
+    final result = await _getGroupDetailsInCommunityUsecase.execute(
+      GetGroupDetailsInCommunityUsecaseInput(
+        groupId: groupId,
+        page: _currentPage,
+      ),
+    );
+    result.fold(
+      (l) {
+        _currentPage--;
+        emit(GroupDetailsInCommunityState.error(l.message));
+      },
+      (loadMoreFeeds) async {
+        final currentState = state;
+        currentState.when(
+          initial: () {},
+          loading: () {},
+          loaded: (
+            groupDetails,
+            snackBarMessage,
+            dialogMessage,
+            isDeleteGroupLoading,
+            isDeleteGroupLoaded,
+            changeCounter,
+            isSeeMore,
+          ) {
+            final updatedData = groupDetails.copyWith(
+              data: groupDetails.data!.copyWith(
+                posts: groupDetails.data!.posts!.copyWith(
+                  data: [
+                    ...groupDetails.data!.posts!.data!,
+                    ...loadMoreFeeds.data!.posts!.data!
+                  ],
+                ),
+              ),
+            );
+            if (_currentPage >= groupDetails.data!.posts!.lastPage!) {
+              isLastPage = true;
+            } else {
+              isLastPage = false;
+            }
+            isLoadingMoreForScroll = false;
+            emit(GroupDetailsInCommunityState.loaded(
+              updatedData,
+              '',
+              '',
+              false,
+              false,
+              changeCounter,
+              false,
+            ));
+          },
+          error: (error) {},
+        );
+      },
+    );
+  }
+
+  refreshScreen() {
+    changeCounter = changeCounter + 1;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => GroupDetailsInCommunityState.loaded(
+        value.groupDetails,
+        '',
+        '',
+        value.isDeleteGroupLoading,
+        value.isDeleteGroupLoaded,
+        changeCounter,
+        value.isSeeMore,
+      ),
+    ));
   }
 
   void leaveGroup(String groupId) async {
@@ -72,6 +176,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             '',
             false,
             false,
+            changeCounter,
+            false,
           );
         }
 
@@ -90,6 +196,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
               l.message.toString(),
               '',
               false,
+              false,
+              changeCounter,
               false,
             ),
           ),
@@ -131,6 +239,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             '',
             false,
             false,
+            changeCounter,
+            false,
           );
         }
 
@@ -147,6 +257,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             '',
             failure.message,
             false,
+            false,
+            changeCounter,
             false,
           ),
         ));
@@ -424,6 +536,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           '',
           false,
           false,
+          changeCounter,
+          value.isSeeMore,
         ),
       ),
     );
@@ -439,6 +553,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           '',
           true,
           false,
+          changeCounter,
+          false,
         ),
       ),
     );
@@ -453,6 +569,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             '',
             false,
             false,
+            changeCounter,
+            false,
           ),
         ),
       );
@@ -466,9 +584,108 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             '',
             false,
             true,
+            changeCounter,
+            false,
           ),
         ),
       );
     });
+  }
+
+  void addVoteAndUnVote(
+    String pollId,
+    int optionId,
+  ) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          // Update the posts in the group details
+          final updatedPosts =
+              value.groupDetails.data?.posts?.data?.map((post) {
+            if (post.poll?.id.toString() == pollId) {
+              final poll = post.poll!;
+              final isMultipleChoice = poll.allowMultipleChoice ?? false;
+
+              int? previouslyVotedOptionId;
+              if (!isMultipleChoice) {
+                // Find the previously voted option (for single-choice polls)
+                previouslyVotedOptionId = poll.options!
+                    .firstWhere(
+                      (opt) => opt.isVoted ?? false,
+                      orElse: () => const PollOptionsModelResponse(id: -1),
+                    )
+                    .id;
+              }
+
+              // Update the poll options
+              final updatedOptions = poll.options!.map((option) {
+                if (option.id == optionId) {
+                  // Toggle the vote for the selected option
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) +
+                        (option.isVoted == true ? -1 : 1),
+                    isVoted: !(option.isVoted ?? false),
+                  );
+                } else if (!isMultipleChoice &&
+                    option.id == previouslyVotedOptionId) {
+                  // Reduce the vote count for the previously voted option (single-choice polls)
+                  return option.copyWith(
+                    votesCount: (option.votesCount ?? 0) - 1,
+                    isVoted: false,
+                  );
+                }
+                return option; // No change for other options
+              }).toList();
+
+              // Update the poll with the new options
+              final updatedPoll = poll.copyWith(options: updatedOptions);
+
+              // Return the updated post
+              return post.copyWith(poll: updatedPoll);
+            }
+            return post; // No change for other posts
+          }).toList();
+
+          // Update the posts in the group details response
+          final updatedPostsResponse = value.groupDetails.data?.posts?.copyWith(
+            data: updatedPosts,
+          );
+
+          // Update the group details with the new posts
+          final updatedGroupDetails = value.groupDetails.data?.copyWith(
+            posts: updatedPostsResponse,
+          );
+
+          // Update the state with the new group details
+          return GroupDetailsInCommunityState.loaded(
+            value.groupDetails.copyWith(data: updatedGroupDetails),
+            '',
+            '',
+            false,
+            false,
+            value.changeCounter,
+            value.isSeeMore,
+          );
+        },
+      ),
+    );
+
+    // Make the API call to update the vote
+    final result = await _addVoteAndUnvoteUsecase.execute(
+      AddVoteAndUnvoteUsecaseInput(
+        pollId: pollId,
+        optionId: optionId,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        // Handle failure (e.g., show an error message)
+      },
+      (r) async {
+        // Optionally re-fetch data from the server if needed
+      },
+    );
   }
 }
