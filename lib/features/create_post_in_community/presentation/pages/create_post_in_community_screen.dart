@@ -516,62 +516,63 @@ class _CreatePostInCommunityScreenState
                           ),
                         const SizedBox(height: 20),
 
-                        // Picked Image
+                        // Picked Images
                         BlocBuilder<CreatePostInCommunityCubit,
                             CreatePostInCommunityState>(
                           builder: (context, state) {
+                            final cubit =
+                                CreatePostInCommunityCubit.get(context);
                             return Column(
                               children: [
-                                cubit.editableFeed != null &&
-                                        cubit.editableFeed!.mediaPath != null
-                                    ? Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16),
-                                        child: Stack(
+                                if (cubit.imagesPicked.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3, // 3 images per row
+                                        crossAxisSpacing: 8,
+                                        mainAxisSpacing: 8,
+                                      ),
+                                      itemCount: cubit.imagesPicked.length,
+                                      itemBuilder: (context, index) {
+                                        return Stack(
                                           alignment: Alignment.topRight,
                                           children: [
                                             ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(8),
-                                              child: cubit.imagePicked == null
-                                                  ? FadeIn(
-                                                      child: CachedNetworkImage(
-                                                        imageUrl: cubit
-                                                            .editableFeed!
-                                                            .mediaPath!,
-                                                      ),
-                                                    )
-                                                  : FadeIn(
-                                                      child: Image.file(
-                                                        cubit.imagePicked!,
-                                                        width: double.infinity,
-                                                        fit: BoxFit.contain,
-                                                      ),
-                                                    ),
+                                              child: Image.file(
+                                                cubit.imagesPicked[index],
+                                                width: double.infinity,
+                                                height: double.infinity,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                             InkWell(
                                               onTap: () {
-                                                cubit.removePickedImage();
-                                                cubit
-                                                    .removeMediaPathInEditableFeed();
+                                                cubit.removeImage(
+                                                    index); // Remove the image
                                               },
                                               splashColor: Colors.transparent,
                                               highlightColor:
                                                   Colors.transparent,
                                               child: Container(
-                                                margin: const EdgeInsets.all(8),
+                                                margin: const EdgeInsets.all(4),
                                                 padding:
-                                                    const EdgeInsets.all(8),
+                                                    const EdgeInsets.all(4),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.white.withOpacity(
-                                                      0.5), // White background for the icon button
-                                                  shape: BoxShape
-                                                      .circle, // Make the background circular
+                                                  color: Colors.white
+                                                      .withOpacity(0.5),
+                                                  shape: BoxShape.circle,
                                                   boxShadow: [
                                                     BoxShadow(
                                                       color: Colors.black
-                                                          .withOpacity(
-                                                              0.2), // Optional shadow for better visibility
+                                                          .withOpacity(0.2),
                                                       spreadRadius: 1,
                                                       blurRadius: 3,
                                                       offset:
@@ -581,108 +582,90 @@ class _CreatePostInCommunityScreenState
                                                 ),
                                                 child: Icon(
                                                   Icons.delete,
-                                                  color: Colors.grey
-                                                      .shade600, // Adjust color as needed
-                                                  size:
-                                                      25, // Adjust size as needed
+                                                  color: Colors.grey.shade600,
+                                                  size: 20,
                                                 ),
                                               ),
                                             ),
                                           ],
-                                        ),
-                                      )
-                                    : BlocBuilder<CreatePostInCommunityCubit,
-                                        CreatePostInCommunityState>(
-                                        builder: (context, state) {
-                                          return state.maybeWhen(
-                                            orElse: () {
-                                              return const SizedBox.shrink();
-                                            },
-                                            loaded: (
-                                              postLength,
-                                              changeCounter,
-                                              isImagePick,
-                                              isUploadPostLoading,
-                                              isUploadPostLoaded,
-                                              message,
-                                            ) {
-                                              if (cubit.imagePicked != null) {
-                                                return Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 16),
-                                                  child: Stack(
-                                                    alignment: Alignment
-                                                        .topRight, // Align the icon in the top-right corner
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                        child: Image.file(
-                                                          cubit.imagePicked!,
-                                                          width:
-                                                              double.infinity,
-                                                          fit: BoxFit.contain,
-                                                        ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          cubit
-                                                              .removePickedImage();
-                                                          cubit
-                                                              .removeMediaPathInEditableFeed();
-                                                        },
-                                                        splashColor:
-                                                            Colors.transparent,
-                                                        highlightColor:
-                                                            Colors.transparent,
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(8),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors.white
-                                                                .withOpacity(
-                                                                    0.5), // White background for the icon button
-                                                            shape: BoxShape
-                                                                .circle, // Make the background circular
-                                                            boxShadow: [
-                                                              BoxShadow(
-                                                                color: Colors
-                                                                    .black
-                                                                    .withOpacity(
-                                                                        0.2), // Optional shadow for better visibility
-                                                                spreadRadius: 1,
-                                                                blurRadius: 3,
-                                                                offset:
-                                                                    const Offset(
-                                                                        0, 2),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          child: Icon(
-                                                            Icons.delete,
-                                                            color: Colors.grey
-                                                                .shade600, // Adjust color as needed
-                                                            size:
-                                                                25, // Adjust size as needed
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }
-                                              return const SizedBox.shrink();
-                                            },
-                                          );
-                                        },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                if (cubit.editableFeed != null &&
+                                    cubit.editableFeed!.mediaPath != null)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: GridView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3, // 3 images per row
+                                        crossAxisSpacing: 8,
+                                        mainAxisSpacing: 8,
                                       ),
+                                      itemCount:
+                                          cubit.editableFeed!.mediaPath!.length,
+                                      itemBuilder: (context, index) {
+                                        final imageUrl = cubit
+                                            .editableFeed!.mediaPath![index];
+                                        return Stack(
+                                          alignment: Alignment.topRight,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              child: FadeIn(
+                                                child: CachedNetworkImage(
+                                                  imageUrl: imageUrl,
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            InkWell(
+                                              onTap: () {
+                                                cubit.removeMediaPathInEditableFeed(
+                                                    index); // Remove the image at the specified index
+                                              },
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              child: Container(
+                                                margin: const EdgeInsets.all(8),
+                                                padding:
+                                                    const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.5),
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.2),
+                                                      spreadRadius: 1,
+                                                      blurRadius: 3,
+                                                      offset:
+                                                          const Offset(0, 2),
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.grey.shade600,
+                                                  size: 25,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                  ),
                                 SizedBox(height: 100.h),
                               ],
                             );
@@ -695,16 +678,12 @@ class _CreatePostInCommunityScreenState
                   // Footer Buttons
                   Container(
                     alignment: Alignment.bottomCenter,
-                    margin: EdgeInsets.only(
-                      bottom: isKeyboardVisible ? 0 : 0,
-                    ),
+                    margin: EdgeInsets.only(bottom: isKeyboardVisible ? 0 : 0),
                     child: BlocBuilder<CreatePostInCommunityCubit,
                         CreatePostInCommunityState>(
                       builder: (context, state) {
                         return state.maybeWhen(
-                          orElse: () {
-                            return const SizedBox.shrink();
-                          },
+                          orElse: () => const SizedBox.shrink(),
                           loaded: (
                             postLength,
                             changeCounter,
@@ -713,17 +692,22 @@ class _CreatePostInCommunityScreenState
                             isUploadPostLoaded,
                             message,
                           ) {
-                            if (widget.feed == null ||
+                            final hasPoll = _poll != null ||
+                                (cubit.editableFeed?.poll != null);
+                            final hasImages = cubit.imagesPicked.isNotEmpty ||
+                                (cubit.editableFeed?.mediaPath?.isNotEmpty ??
+                                    false);
+
+                            if (widget.feed != null &&
                                 widget.feed!.poll != null) {
                               return Center(
                                 child: Text(
                                   'Your poll has already been published.',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                  ),
+                                  style: TextStyle(color: Colors.grey.shade600),
                                 ),
                               );
                             }
+
                             if (isImagePick) {
                               return Container(
                                 color: Colors.grey.shade300,
@@ -732,35 +716,40 @@ class _CreatePostInCommunityScreenState
                                 child: Padding(
                                   padding: EdgeInsets.only(
                                       bottom: isKeyboardVisible ? 0 : 20),
-                                  child: Row(
+                                  child: const Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          overlayColor: Colors.transparent,
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
-                                          shadowColor: Colors
-                                              .transparent, // Optional: Makes the shadow transparent
+                                        onPressed: null,
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent),
+                                          shadowColor: MaterialStatePropertyAll(
+                                              Colors.transparent),
+                                          overlayColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent),
                                         ),
-                                        child: const Text(''),
+                                        child: Text(''),
                                       ),
-                                      const SizedBox(
-                                        height: 25,
-                                        width: 25,
-                                        child: CircularProgressIndicator(),
-                                      ),
+                                      SizedBox(
+                                          height: 25,
+                                          width: 25,
+                                          child: CircularProgressIndicator()),
                                       ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          overlayColor: Colors.transparent,
-                                          backgroundColor: Colors.transparent,
-                                          foregroundColor: Colors.transparent,
-                                          shadowColor: Colors
-                                              .transparent, // Optional: Makes the shadow transparent
+                                        onPressed: null,
+                                        style: ButtonStyle(
+                                          backgroundColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent),
+                                          shadowColor: MaterialStatePropertyAll(
+                                              Colors.transparent),
+                                          overlayColor:
+                                              MaterialStatePropertyAll(
+                                                  Colors.transparent),
                                         ),
-                                        child: const Text(''),
+                                        child: Text(''),
                                       ),
                                     ],
                                   ),
@@ -773,64 +762,34 @@ class _CreatePostInCommunityScreenState
                               padding: const EdgeInsets.symmetric(vertical: 5),
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                    ) +
-                                    EdgeInsets.only(
-                                        bottom: isKeyboardVisible ? 0 : 20),
+                                        horizontal: 20)
+                                    .add(EdgeInsets.only(
+                                        bottom: isKeyboardVisible ? 0 : 20)),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    _poll != null ||
-                                            (cubit.editableFeed != null &&
-                                                cubit.editableFeed!.poll !=
-                                                    null)
-                                        ? const SizedBox.shrink()
-                                        : ElevatedButton.icon(
-                                            onPressed: () {
-                                              cubit.pickImageAndShowIt(false);
-                                              cubit
-                                                  .removeMediaPathInEditableFeed();
-                                            },
-                                            icon:
-                                                const Icon(Icons.photo_library),
-                                            label: const Text("Gallery"),
-                                          ),
-                                    _poll != null ||
-                                            (cubit.editableFeed != null &&
-                                                cubit.editableFeed!.poll !=
-                                                    null)
-                                        ? const SizedBox.shrink()
-                                        : const SizedBox(width: 10),
-                                    _poll != null ||
-                                            (cubit.editableFeed != null &&
-                                                cubit.editableFeed!.poll !=
-                                                    null)
-                                        ? const SizedBox.shrink()
-                                        : ElevatedButton.icon(
-                                            onPressed: () {
-                                              cubit.pickImageAndShowIt(true);
-                                              cubit
-                                                  .removeMediaPathInEditableFeed();
-                                            },
-                                            icon: const Icon(Icons.camera_alt),
-                                            label: const Text("Camera"),
-                                          ),
-                                    _poll != null ||
-                                            (cubit.editableFeed != null &&
-                                                cubit.editableFeed!.poll !=
-                                                    null)
-                                        ? const SizedBox.shrink()
-                                        : const SizedBox(width: 10),
-                                    cubit.imagePicked != null ||
-                                            (cubit.editableFeed != null &&
-                                                cubit.editableFeed!.mediaPath !=
-                                                    null)
-                                        ? const SizedBox.shrink()
-                                        : ElevatedButton.icon(
-                                            onPressed: _createPoll,
-                                            icon: const Icon(Icons.poll),
-                                            label: const Text("Poll"),
-                                          ),
+                                    if (!hasPoll) ...[
+                                      ElevatedButton.icon(
+                                        onPressed: () =>
+                                            cubit.pickImageAndShowIt(false),
+                                        icon: const Icon(Icons.photo_library),
+                                        label: const Text("Gallery"),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      ElevatedButton.icon(
+                                        onPressed: () =>
+                                            cubit.pickImageAndShowIt(true),
+                                        icon: const Icon(Icons.camera_alt),
+                                        label: const Text("Camera"),
+                                      ),
+                                      const SizedBox(width: 10),
+                                    ],
+                                    if (!hasImages)
+                                      ElevatedButton.icon(
+                                        onPressed: _createPoll,
+                                        icon: const Icon(Icons.poll),
+                                        label: const Text("Poll"),
+                                      ),
                                   ],
                                 ),
                               ),

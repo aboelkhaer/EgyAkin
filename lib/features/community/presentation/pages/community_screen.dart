@@ -274,6 +274,7 @@ class _CommunityScreenState extends State<CommunityScreen>
               },
               child: TabBarView(
                 controller: _tabController, // Link the TabController
+
                 children: [
                   PostsTab(
                     homeDataModel: widget.homeDataModel,

@@ -557,7 +557,7 @@ class CommunityCubit extends Cubit<CommunityState> {
                 ),
                 value.isDeletePostLoading,
                 value.isDeletePostLoaded,
-                'Option added successfully',
+                '',
                 value.isSeeMore,
                 value.changeCounter +
                     1, // Increment change counter to trigger UI refresh

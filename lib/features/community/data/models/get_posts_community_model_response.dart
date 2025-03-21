@@ -42,7 +42,7 @@ class PostCommunityModel with _$PostCommunityModel {
     int? id,
     String? content,
     @JsonKey(name: 'media_type') String? mediaType,
-    @JsonKey(name: 'media_path') String? mediaPath,
+    @JsonKey(name: 'media_path') List<String>? mediaPath,
     String? visibility,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,

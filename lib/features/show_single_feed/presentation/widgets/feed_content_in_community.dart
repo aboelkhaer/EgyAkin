@@ -2,7 +2,9 @@ import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/images_in_single_post.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:ui' as ui;
 import '../../../../exports.dart';
 
@@ -96,6 +98,8 @@ class FeedContentInCommunity extends StatelessWidget {
               orElse: () {
                 return ViewPollWidget(
                   poll: feed.poll,
+                  currentDoctorModel: currentDoctorModel,
+                  homeDataModel: homeDataModel,
                   selectedOptions: cubit.postSelectedOptions[feed.id] ?? {},
                   initiallyExpanded: true,
                   selectedOption: cubit.postSelectedOption[feed.id],
@@ -119,6 +123,8 @@ class FeedContentInCommunity extends StatelessWidget {
                 }
                 return ViewPollWidget(
                   poll: updatedFeed.poll,
+                  currentDoctorModel: currentDoctorModel,
+                  homeDataModel: homeDataModel,
                   selectedOptions:
                       cubit.postSelectedOptions[updatedFeed.id] ?? {},
                   initiallyExpanded: true,
@@ -154,32 +160,13 @@ class FeedContentInCommunity extends StatelessWidget {
             );
           },
         ),
-        feed.mediaPath == null
+        feed.mediaPath == null || feed.mediaPath!.isEmpty
             ? const SizedBox.shrink()
             : KeyboardVisibilityBuilder(
                 builder: (context, isKeyboardVisible) {
-                  return GestureDetector(
-                    onTap: isKeyboardVisible
-                        ? null // Disable tap when the keyboard is visible
-                        : () {
-                            navigatorKey.currentState?.push(
-                              MaterialPageRoute(
-                                builder: (context) => FullScreenImage(
-                                  imageUrl: feed.mediaPath.toString(),
-                                ),
-                              ),
-                            );
-                          },
-                    child: Opacity(
-                      opacity: 1.0,
-                      child: Hero(
-                        tag: feed.id.toString(),
-                        child: CustomCachedNetworkImage(
-                          imageUrl: feed.mediaPath.toString(),
-                          width: double.infinity,
-                        ),
-                      ),
-                    ),
+                  return ImagesInSinglePost(
+                    mediaPaths: feed.mediaPath!, // Pass the list of image URLs
+                    heroTag: feed.id.toString(), // Pass the Hero tag
                   );
                 },
               ),

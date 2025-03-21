@@ -65,7 +65,9 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       id: (json['id'] as num?)?.toInt(),
       content: json['content'] as String?,
       mediaType: json['media_type'] as String?,
-      mediaPath: json['media_path'] as String?,
+      mediaPath: (json['media_path'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       visibility: json['visibility'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,

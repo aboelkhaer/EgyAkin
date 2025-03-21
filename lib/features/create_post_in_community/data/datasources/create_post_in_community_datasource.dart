@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
 
@@ -7,7 +8,7 @@ import '../../../../exports.dart';
 
 abstract class CreatePostInCommunityDatasource {
   Future<CreatePostInCommunityModelResponse> createPostWithImageInCommunity({
-    required File image,
+    required List<MultipartFile> images,
     required String? postContent,
     required String mediaType,
     required String visibility,
@@ -21,7 +22,7 @@ abstract class CreatePostInCommunityDatasource {
     required PollModel? pollModel,
   });
   Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity({
-    required File image,
+    required List<MultipartFile> images,
     required String? postContent,
     required String mediaType,
     required String visibility,
@@ -45,7 +46,7 @@ class CreatePostInCommunityDatasourceImpl
 
   @override
   Future<CreatePostInCommunityModelResponse> createPostWithImageInCommunity(
-      {required File image,
+      {required List<MultipartFile> images,
       required String? postContent,
       required String mediaType,
       required String visibility,
@@ -55,7 +56,7 @@ class CreatePostInCommunityDatasourceImpl
       mediaType,
       visibility,
       groupId,
-      image,
+      images,
     );
   }
 
@@ -96,13 +97,13 @@ class CreatePostInCommunityDatasourceImpl
 
   @override
   Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity(
-      {required File image,
+      {required List<MultipartFile> images,
       required String? postContent,
       required String mediaType,
       required String visibility,
       required String? groupId,
       required String postId}) async {
     return await _apiServices.editPostWithImageInCommunity(
-        postId, postContent, mediaType, visibility, groupId, image);
+        postId, postContent, mediaType, visibility, groupId, images);
   }
 }

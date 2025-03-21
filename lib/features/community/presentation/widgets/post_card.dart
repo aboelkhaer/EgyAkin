@@ -1,8 +1,9 @@
-import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+import 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
-
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class PostCard extends StatelessWidget {
@@ -39,6 +40,7 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     CommunityCubit cubit = CommunityCubit.get(context);
+    final PageController pageController = PageController();
 
     return Container(
       margin: EdgeInsets.only(bottom: isGroupPosts ? 0 : 16),
@@ -253,8 +255,10 @@ class PostCard extends StatelessWidget {
                                     ],
                                   ),
                                   Text(
-                                    formatDateTimeForCommunity(
-                                        feed.createdAt.toString()),
+                                    // formatDateTimeForCommunity(
+                                    //     feed.createdAt.toString()),
+                                    timeago.format(DateTime.parse(
+                                        feed.createdAt.toString())),
                                     style: TextStyle(
                                       color: AppColors.description,
                                       fontSize: 11.sp,
@@ -462,19 +466,21 @@ class PostCard extends StatelessWidget {
                 ),
 
                 // const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Flexible(
-                      child: HashtagText(
-                        content: feed.content.toString(),
-                        trimLines: 4,
-                        currentDoctorModel: currentDoctorModel,
-                        homeDataModel: homeDataModel,
-                        highlightWord: highlightWord,
+                feed.content == null
+                    ? const SizedBox.shrink()
+                    : Row(
+                        children: [
+                          Flexible(
+                            child: HashtagText(
+                              content: feed.content.toString(),
+                              trimLines: 4,
+                              currentDoctorModel: currentDoctorModel,
+                              homeDataModel: homeDataModel,
+                              highlightWord: highlightWord,
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
               ],
             ),
           ),
@@ -524,6 +530,8 @@ class PostCard extends StatelessWidget {
 
                       return ViewPollWidget(
                         poll: poll,
+                        currentDoctorModel: currentDoctorModel,
+                        homeDataModel: homeDataModel,
                         selectedOptions:
                             cubit.postSelectedOptions[feed.id] ?? {},
                         initiallyExpanded: false,
@@ -560,31 +568,11 @@ class PostCard extends StatelessWidget {
                 },
               ),
 
-          feed.mediaPath == null
-              ? const SizedBox.shrink()
-              : GestureDetector(
-                  onTap: () {
-                    navigatorKey.currentState?.pushNamed(
-                      AppRoutes.showSingleFeed,
-                      arguments: AppRoutesArgs.showSingleFeedRouteArgs(
-                        homeDataModel: homeDataModel,
-                        currentDoctorModel: currentDoctorModel,
-                        feed: feed,
-                      ),
-                    );
-                  },
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(5),
-                    child: Hero(
-                      tag: feed.id.toString(),
-                      child: CustomCachedNetworkImage(
-                        imageUrl: feed.mediaPath.toString(),
-                        width: double.infinity,
-                        height: 150.h,
-                      ),
-                    ),
-                  ),
-                ),
+          ImagesInPostCard(
+              feed: feed,
+              homeDataModel: homeDataModel,
+              currentDoctorModel: currentDoctorModel),
+
           InkWell(
             onTap: () {
               navigatorKey.currentState?.pushNamed(

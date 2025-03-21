@@ -8,6 +8,7 @@ import 'package:egy_akin/features/community/data/models/add_like_on_post_model_r
 import 'package:egy_akin/features/community/data/models/add_option_in_poll_model_response.dart';
 import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
+import 'package:egy_akin/features/community/data/models/get_poll_voters_model_response.dart';
 import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
 import 'package:egy_akin/features/community/data/models/join_group_model_response.dart';
 import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
@@ -352,8 +353,9 @@ abstract class ApiServices {
     @Part(name: "media_type") String mediaType,
     @Part(name: "visibility") String visibility,
     @Part(name: "group_id") String? groupId,
-    @Part(name: "media_path") File image,
+    @Part(name: "media_path[]") List<MultipartFile> images,
   );
+
   @POST(ApiEndPoint.createPostInCommunity)
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
     @Field('content') String postContent,
@@ -406,7 +408,7 @@ abstract class ApiServices {
     @Part(name: "media_type") String mediaType,
     @Part(name: "visibility") String visibility,
     @Part(name: "group_id") String? groupId,
-    @Part(name: "media_path") File image,
+    @Part(name: "media_path[]") List<MultipartFile> images,
   );
 
   @POST('${ApiEndPoint.createReplyOnCommentInCommunity}/{postId}/comment')
@@ -543,5 +545,12 @@ abstract class ApiServices {
     @Part(name: "group_image") File groupImage,
     @Part(name: "description") String description,
     @Part(name: "privacy") String privacy,
+  );
+
+  @GET('${ApiEndPoint.getPollVoters}/{pollId}/options/{optionId}/voters')
+  Future<GetPollVotersModelResponse> getPollVoters(
+    @Path('pollId') String pollId,
+    @Path('optionId') String optionId,
+    @Query('page') int page,
   );
 }

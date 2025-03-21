@@ -125,9 +125,16 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                   currentDoctorModel: widget.currentDoctorModel,
                                   viewPollWidget: ViewPollWidget(
                                     poll: feed.poll,
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    homeDataModel: widget.homeDataModel,
                                     selectedOptions:
                                         _cubit!.postSelectedOptions[feed.id] ??
                                             {},
+                                    onAddOption: (pollId, option) async {
+                                      await _cubit!.addOptionOnPoll(pollId,
+                                          option); // Call your function here
+                                    },
                                     initiallyExpanded: false,
                                     selectedOption:
                                         _cubit!.postSelectedOption[feed.id],

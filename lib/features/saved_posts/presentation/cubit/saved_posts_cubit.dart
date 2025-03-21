@@ -1,4 +1,6 @@
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
+import 'package:egy_akin/features/saved_posts/data/models/get_saved_posts_model_response.dart';
 import 'package:egy_akin/features/saved_posts/domain/usecases/get_saved_posts_usecase.dart';
 import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_state.dart';
 
@@ -10,7 +12,8 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
       this._addLikeOnPostUsecase,
       this._saveOrUnsavePostUsecase,
       this._deletePostInFeedsUsecase,
-      this._addVoteAndUnvoteUsecase)
+      this._addVoteAndUnvoteUsecase,
+      this._addOptionOnPollUsecase)
       : super(const SavedPostsState.initial());
   static SavedPostsCubit get(context) => BlocProvider.of(context);
 
@@ -19,6 +22,7 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeletePostInFeedsUsecase _deletePostInFeedsUsecase;
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  final AddOptionOnPollUsecase _addOptionOnPollUsecase;
   ScrollController? scrollController;
 
   int currentPage = 1;
@@ -519,5 +523,90 @@ class SavedPostsCubit extends Cubit<SavedPostsState> {
         changeCounter,
       ),
     ));
+  }
+
+  addOptionOnPoll(
+    String pollId,
+    String option,
+  ) async {
+    final result = await _addOptionOnPollUsecase.execute(
+      AddOptionOnPollUsecaseInput(
+        pollId: pollId,
+        option: option,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => SavedPostsState.loaded(
+              value.response,
+              l.message, // Snackbar message for failure
+              '', // No dialog message
+              value.isDeletePostLoading,
+              value.isDeletePostLoaded,
+              value.isSeeMore,
+              value.changeCounter +
+                  1, // Increment changeCounter to trigger UI update
+            ),
+          ),
+        );
+      },
+      (newOptionResponse) async {
+        if (newOptionResponse.data == null) return;
+
+        PollOptionsModelResponse newOption = PollOptionsModelResponse(
+          id: newOptionResponse.data!.id,
+          pollId: int.parse(newOptionResponse.data!.pollId!),
+          optionText: newOptionResponse.data!.option.toString(),
+          createdAt: newOptionResponse.data!.createdAt,
+          updatedAt: newOptionResponse.data!.updatedAt,
+          votesCount: 0, // Default votes count for new option
+          isVoted: false,
+        );
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              // Ensure response and data exist
+              final updatedPosts = value.response.data?.data?.map((post) {
+                if (post.poll?.id.toString() == pollId) {
+                  return post.copyWith(
+                    poll: post.poll?.copyWith(
+                      options: [
+                        ...(post.poll?.options ?? []), // Keep old options
+                        newOption, // Append new option
+                      ],
+                    ),
+                  );
+                }
+                return post;
+              }).toList();
+
+              // Create a new instance of GetAllDoctorPostsModelResponse with updated posts
+              final updatedResponse = GetSavedPostsModelResponse(
+                data: value.response.data?.copyWith(
+                  data: updatedPosts,
+                ),
+              );
+
+              return SavedPostsState.loaded(
+                updatedResponse,
+                '', // Snackbar message for success
+                '', // No dialog message
+                value.isDeletePostLoading,
+                value.isDeletePostLoaded,
+                value.isSeeMore,
+                value.changeCounter +
+                    1, // Increment changeCounter to trigger UI update
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }

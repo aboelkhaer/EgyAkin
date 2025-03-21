@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
 import '../../../../exports.dart';
 
@@ -22,7 +23,7 @@ class EditPostWithImageInCommunityUsecase
       visibility: input.visibility,
       groupId: input.groupId,
       postId: input.postId,
-      image: input.image,
+      images: input.images,
     );
   }
 }
@@ -30,7 +31,7 @@ class EditPostWithImageInCommunityUsecase
 class EditPostWithImageInCommunityUsecaseInput {
   final String postId;
   final String? postContent;
-  final File image;
+  final List<MultipartFile> images;
   final String mediaType;
   final String visibility;
   final String? groupId;
@@ -41,6 +42,6 @@ class EditPostWithImageInCommunityUsecaseInput {
     required this.visibility,
     required this.groupId,
     required this.postId,
-    required this.image,
+    required this.images,
   });
 }

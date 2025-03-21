@@ -14,6 +14,7 @@ import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cub
 import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_groups_tab_usecase.dart';
+import 'package:egy_akin/features/community/domain/usecases/get_poll_voters_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/get_trending_posts_in_community_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
 import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
@@ -116,17 +117,18 @@ Future<void> diInit() async {
   sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(
       () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() =>
-      GroupDetailsInCommunityCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => GroupDetailsInCommunityCubit(
+      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
   sl.registerFactory(() => AllGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => MyGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
   sl.registerFactory(() => CreateGroupInCommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(() => TrendingCubit(sl()));
-  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => SavedPostsCubit(sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(
+      () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -602,5 +604,8 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<UpdateGroupImageInCommunityUsecase>()) {
     sl.registerFactory<UpdateGroupImageInCommunityUsecase>(
         () => UpdateGroupImageInCommunityUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPollVotersUsecase>()) {
+    sl.registerFactory<GetPollVotersUsecase>(() => GetPollVotersUsecase(sl()));
   }
 }

@@ -1033,10 +1033,17 @@ class _GroupDetailsInCommunityScreenState
                                       isGroupPosts: true,
                                       viewPollWidget: ViewPollWidget(
                                         poll: poll,
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        homeDataModel: widget.homeDataModel,
                                         selectedOptions:
                                             cubit.postSelectedOptions[
                                                     postModel.id] ??
                                                 {},
+                                        onAddOption: (pollId, option) async {
+                                          await _cubit.addOptionOnPoll(pollId,
+                                              option); // Call your function here
+                                        },
                                         selectedOption: cubit
                                             .postSelectedOption[postModel.id],
                                         onOptionSelected: (optionId) {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import '../../../../exports.dart';
@@ -18,7 +19,7 @@ class CreatePostWithImageInCommunityUsecase
     CreatePostWithImageInCommunityUsecaseInput input,
   ) async {
     return await repository.createPostWithImageInCommunity(
-      image: input.image,
+      images: input.images,
       postContent: input.postContent,
       mediaType: input.mediaType,
       visibility: input.visibility,
@@ -29,14 +30,14 @@ class CreatePostWithImageInCommunityUsecase
 
 class CreatePostWithImageInCommunityUsecaseInput {
   final String? postContent;
-  final File image;
+  final List<MultipartFile> images;
   final String mediaType;
   final String visibility;
   final String? groupId;
 
   CreatePostWithImageInCommunityUsecaseInput(
       {required this.postContent,
-      required this.image,
+      required this.images,
       required this.mediaType,
       required this.visibility,
       required this.groupId});

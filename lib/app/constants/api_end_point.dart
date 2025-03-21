@@ -98,4 +98,5 @@ class ApiEndPoint {
   static const getSavedPosts = '$baseUrl/api/doctorsavedposts';
   static const addVoteForPollInPosts = '$baseUrl/api/polls';
   static const addOptionOnPoll = '$baseUrl/api/polls';
+  static const getPollVoters = '$baseUrl/api/polls';
 }

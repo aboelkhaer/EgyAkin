@@ -1,3 +1,6 @@
+import 'package:egy_akin/features/poll_voters/presentation/cubit/poll_voters_cubit.dart';
+import 'package:egy_akin/features/poll_voters/presentation/pages/poll_voters_screen.dart';
+
 import '../../../../exports.dart';
 
 class ViewPollWidget extends StatefulWidget {
@@ -8,6 +11,8 @@ class ViewPollWidget extends StatefulWidget {
   final Function(int optionId, bool isSelected) onOptionToggled;
   final bool initiallyExpanded;
   final Function(String pollId, String option)? onAddOption;
+  final DoctorModel currentDoctorModel;
+  final HomeModelResponse homeDataModel;
 
   const ViewPollWidget({
     super.key,
@@ -18,6 +23,8 @@ class ViewPollWidget extends StatefulWidget {
     required this.onOptionToggled,
     this.initiallyExpanded = false,
     this.onAddOption,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
   });
 
   @override
@@ -85,11 +92,11 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                   'Poll',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontSize: 14,
                     color: AppColors.primary,
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Poll Question
                 if (widget.poll?.question?.isNotEmpty ?? false)
@@ -97,7 +104,7 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                     widget.poll!.question!,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 16,
+                      fontSize: 14,
                       color: Colors.black87,
                     ),
                   ),
@@ -151,17 +158,44 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                               ),
                             ),
 
-                            // Vote Count
-                            Text(
-                              '${option.votesCount ?? 0}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
+                            // Clickable Vote Count
+                            GestureDetector(
+                              onTap: option.votesCount! > 0
+                                  ? () {
+                                      showCustomBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return BlocProvider(
+                                            create: (context) =>
+                                                PollVotersCubit(sl()),
+                                            child: PollVotersScreen(
+                                              pollId:
+                                                  widget.poll!.id.toString(),
+                                              optionId: option.id.toString(),
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
+                                  : () {},
+                              child: Text(
+                                '${option.votesCount ?? 0}',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: option.votesCount! > 0
+                                      ? AppColors.primary
+                                      : Colors
+                                          .grey.shade500, // Make it stand out
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
 
                         // Progress Bar for votes
                         LinearProgressIndicator(
@@ -174,8 +208,9 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                   );
                 }),
 
-                // Add New Option Input (only shown when "See More" is clicked)
-                if ((widget.poll?.allowAddOptions ?? false) && showAllOptions)
+                // Add New Option Input
+                if ((widget.poll?.allowAddOptions ?? false) &&
+                    (optionsList.length == 2 || showAllOptions))
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Row(
@@ -219,6 +254,7 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                     ),
                   ),
                 const SizedBox(height: 10),
+
                 // Show "See More" if more than 2 options
                 if (optionsList.length > 2)
                   Align(

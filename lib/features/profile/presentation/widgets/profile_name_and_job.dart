@@ -347,7 +347,7 @@ class ProfileNameAndJob extends StatelessWidget {
           Icon(
             icon,
             size: 16.sp,
-            color: Colors.grey.shade600,
+            color: AppColors.primary.withOpacity(0.5),
           ),
           SizedBox(width: 4.w),
           Text(

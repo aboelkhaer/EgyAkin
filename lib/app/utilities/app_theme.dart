@@ -14,6 +14,7 @@ class Themes {
         color: Colors.white,
         fontWeight: FontWeight.bold,
         fontSize: 20,
+        // fontFamily: 'Amiri',
       ),
     ),
     progressIndicatorTheme: const ProgressIndicatorThemeData(

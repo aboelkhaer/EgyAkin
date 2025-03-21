@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
+import 'package:egy_akin/features/community_search/data/models/get_response_of_search_model.dart';
 import 'package:egy_akin/features/community_search/domain/usecases/get_response_of_search_in_community_usecase.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 
@@ -11,7 +13,8 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
       this._getResponseOfSearchInCommunityUsecase,
       this._addLikeOnPostUsecase,
       this._saveOrUnsavePostUsecase,
-      this._addVoteAndUnvoteUsecase)
+      this._addVoteAndUnvoteUsecase,
+      this._addOptionOnPollUsecase)
       : super(const CommunitySearchState.initial());
   static CommunitySearchCubit get(context) => BlocProvider.of(context);
   final GetResponseOfSearchInCommunityUsecase
@@ -19,6 +22,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   final AddLikeOnPostUsecase _addLikeOnPostUsecase;
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  final AddOptionOnPollUsecase _addOptionOnPollUsecase;
   bool isSearchContentEmpty = true;
   Timer? _debounce;
   String? initialValue;
@@ -524,9 +528,90 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         '',
         '',
         value.response,
-        false,
+        value.isSeeMore,
         changeCounter,
       ),
     ));
+  }
+
+  addOptionOnPoll(
+    String pollId,
+    String option,
+  ) async {
+    final result = await _addOptionOnPollUsecase.execute(
+      AddOptionOnPollUsecaseInput(
+        pollId: pollId,
+        option: option,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CommunitySearchState.loaded(
+              'Failed to add option', // Snackbar message for failure
+              '', // No dialog message
+              value.response,
+              value.isSeeMore,
+              value.changeCounter +
+                  1, // Increment changeCounter to trigger UI update
+            ),
+          ),
+        );
+      },
+      (newOptionResponse) async {
+        if (newOptionResponse.data == null) return;
+
+        PollOptionsModelResponse newOption = PollOptionsModelResponse(
+          id: newOptionResponse.data!.id,
+          pollId: int.parse(newOptionResponse.data!.pollId!),
+          optionText: newOptionResponse.data!.option.toString(),
+          createdAt: newOptionResponse.data!.createdAt,
+          updatedAt: newOptionResponse.data!.updatedAt,
+          votesCount: 0, // Default votes count for new option
+          isVoted: false,
+        );
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              // Ensure response and data exist
+              final updatedPosts = value.response.data?.data?.map((post) {
+                if (post.poll?.id.toString() == pollId) {
+                  return post.copyWith(
+                    poll: post.poll?.copyWith(
+                      options: [
+                        ...(post.poll?.options ?? []), // Keep old options
+                        newOption, // Append new option
+                      ],
+                    ),
+                  );
+                }
+                return post;
+              }).toList();
+
+              // Create a new instance of GetResponseOfSearchModel with updated posts
+              final updatedResponse = GetResponseOfSearchModel(
+                data: value.response.data?.copyWith(
+                  data: updatedPosts,
+                ),
+              );
+
+              return CommunitySearchState.loaded(
+                '', // Snackbar message for success
+                '', // No dialog message
+                updatedResponse,
+                value.isSeeMore,
+                value.changeCounter +
+                    1, // Increment changeCounter to trigger UI update
+              );
+            },
+          ),
+        );
+      },
+    );
   }
 }

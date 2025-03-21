@@ -644,7 +644,7 @@ mixin _$PostCommunityModel {
   @JsonKey(name: 'media_type')
   String? get mediaType => throw _privateConstructorUsedError;
   @JsonKey(name: 'media_path')
-  String? get mediaPath => throw _privateConstructorUsedError;
+  List<String>? get mediaPath => throw _privateConstructorUsedError;
   String? get visibility => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
@@ -682,7 +682,7 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       {int? id,
       String? content,
       @JsonKey(name: 'media_type') String? mediaType,
-      @JsonKey(name: 'media_path') String? mediaPath,
+      @JsonKey(name: 'media_path') List<String>? mediaPath,
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
@@ -745,7 +745,7 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
       mediaPath: freezed == mediaPath
           ? _value.mediaPath
           : mediaPath // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<String>?,
       visibility: freezed == visibility
           ? _value.visibility
           : visibility // ignore: cast_nullable_to_non_nullable
@@ -844,7 +844,7 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
       {int? id,
       String? content,
       @JsonKey(name: 'media_type') String? mediaType,
-      @JsonKey(name: 'media_path') String? mediaPath,
+      @JsonKey(name: 'media_path') List<String>? mediaPath,
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
@@ -906,9 +906,9 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
           : mediaType // ignore: cast_nullable_to_non_nullable
               as String?,
       mediaPath: freezed == mediaPath
-          ? _value.mediaPath
+          ? _value._mediaPath
           : mediaPath // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as List<String>?,
       visibility: freezed == visibility
           ? _value.visibility
           : visibility // ignore: cast_nullable_to_non_nullable
@@ -960,7 +960,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       {this.id,
       this.content,
       @JsonKey(name: 'media_type') this.mediaType,
-      @JsonKey(name: 'media_path') this.mediaPath,
+      @JsonKey(name: 'media_path') final List<String>? mediaPath,
       this.visibility,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
@@ -970,7 +970,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       @JsonKey(name: 'isLiked') this.isLiked,
       this.group,
       this.doctor,
-      this.poll});
+      this.poll})
+      : _mediaPath = mediaPath;
 
   factory _$PostCommunityModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PostCommunityModelImplFromJson(json);
@@ -982,9 +983,17 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   @override
   @JsonKey(name: 'media_type')
   final String? mediaType;
+  final List<String>? _mediaPath;
   @override
   @JsonKey(name: 'media_path')
-  final String? mediaPath;
+  List<String>? get mediaPath {
+    final value = _mediaPath;
+    if (value == null) return null;
+    if (_mediaPath is EqualUnmodifiableListView) return _mediaPath;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final String? visibility;
   @override
@@ -1026,8 +1035,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
             (identical(other.content, content) || other.content == content) &&
             (identical(other.mediaType, mediaType) ||
                 other.mediaType == mediaType) &&
-            (identical(other.mediaPath, mediaPath) ||
-                other.mediaPath == mediaPath) &&
+            const DeepCollectionEquality()
+                .equals(other._mediaPath, _mediaPath) &&
             (identical(other.visibility, visibility) ||
                 other.visibility == visibility) &&
             (identical(other.createdAt, createdAt) ||
@@ -1052,7 +1061,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       id,
       content,
       mediaType,
-      mediaPath,
+      const DeepCollectionEquality().hash(_mediaPath),
       visibility,
       createdAt,
       updatedAt,
@@ -1086,7 +1095,7 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       {final int? id,
       final String? content,
       @JsonKey(name: 'media_type') final String? mediaType,
-      @JsonKey(name: 'media_path') final String? mediaPath,
+      @JsonKey(name: 'media_path') final List<String>? mediaPath,
       final String? visibility,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
@@ -1110,7 +1119,7 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   String? get mediaType;
   @override
   @JsonKey(name: 'media_path')
-  String? get mediaPath;
+  List<String>? get mediaPath;
   @override
   String? get visibility;
   @override

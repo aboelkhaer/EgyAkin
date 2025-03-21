@@ -25,6 +25,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   void initState() {
     if (widget.initialValueInSearch != null) {
       context.read<CommunitySearchCubit>().isSearchContentEmpty = false;
+      context.read<CommunitySearchCubit>().initialValue =
+          widget.initialValueInSearch;
       context
           .read<CommunitySearchCubit>()
           .getResponseOfSearchInCommunity(widget.initialValueInSearch!, 100);
@@ -98,6 +100,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                       if (value.isNotEmpty) {
                         cubit.isSearchContentEmpty = false;
                         cubit.searchValue = value;
+                        cubit.initialValue = value;
                         cubit.getResponseOfSearchInCommunity(value);
                       } else {
                         cubit.isSearchContentEmpty = true;
@@ -171,12 +174,18 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                 homeDataModel: widget.homeDataModel,
                                 isCommunitySearch: true,
                                 currentDoctorModel: widget.currentDoctorModel,
-                                highlightWord: widget.initialValueInSearch,
+                                highlightWord: _cubit!.initialValue,
                                 viewPollWidget: ViewPollWidget(
                                   poll: feed.poll,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                  homeDataModel: widget.homeDataModel,
                                   selectedOptions:
                                       _cubit!.postSelectedOptions[feed.id] ??
                                           {},
+                                  onAddOption: (pollId, option) async {
+                                    await _cubit!.addOptionOnPoll(pollId,
+                                        option); // Call your function here
+                                  },
                                   initiallyExpanded: false,
                                   selectedOption:
                                       _cubit!.postSelectedOption[feed.id],

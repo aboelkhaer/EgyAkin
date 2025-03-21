@@ -2,5 +2,9 @@
     "cmake.sourceDirectory": "/Users/moatz/Flutter Projects/egy_akin/linux/flutter",
     "cSpell.words": [
         "vsync"
-    ]
+    ],
+    "flutterTools.displayGetxContextMenu": false,
+    "flutterTools.displayMobxContextMenu": false,
+    "flutterTools.displayRiverpodContextMenu": false,
+    "flutterTools.displayModularContextMenu": false
 }

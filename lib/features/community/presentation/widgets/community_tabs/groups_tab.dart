@@ -82,6 +82,7 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
         child: CustomScrollView(
           controller:
               _cubit.scrollController, // ✅ Directly using the controller
+          physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
@@ -215,6 +216,8 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                               isGroupPosts: true,
                               viewPollWidget: ViewPollWidget(
                                 poll: feed.poll,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                homeDataModel: widget.homeDataModel,
                                 selectedOptions:
                                     _cubit.postSelectedOptions[feed.id] ?? {},
                                 onAddOption: (pollId, option) async {

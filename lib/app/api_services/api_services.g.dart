@@ -2092,7 +2092,7 @@ class _ApiServices implements ApiServices {
     String mediaType,
     String visibility,
     String? groupId,
-    File image,
+    List<MultipartFile> images,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2119,13 +2119,7 @@ class _ApiServices implements ApiServices {
         groupId,
       ));
     }
-    _data.files.add(MapEntry(
-      'media_path',
-      MultipartFile.fromFileSync(
-        image.path,
-        filename: image.path.split(Platform.pathSeparator).last,
-      ),
-    ));
+    _data.files.addAll(images.map((i) => MapEntry('media_path[]', i)));
     final _options = _setStreamType<CreatePostInCommunityModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -2410,7 +2404,7 @@ class _ApiServices implements ApiServices {
     String mediaType,
     String visibility,
     String? groupId,
-    File image,
+    List<MultipartFile> images,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2437,13 +2431,7 @@ class _ApiServices implements ApiServices {
         groupId,
       ));
     }
-    _data.files.add(MapEntry(
-      'media_path',
-      MultipartFile.fromFileSync(
-        image.path,
-        filename: image.path.split(Platform.pathSeparator).last,
-      ),
-    ));
+    _data.files.addAll(images.map((i) => MapEntry('media_path[]', i)));
     final _options = _setStreamType<EditPostInCommunityModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -3344,6 +3332,43 @@ class _ApiServices implements ApiServices {
     late UpdateGroupInCommunityModelResponse _value;
     try {
       _value = UpdateGroupInCommunityModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetPollVotersModelResponse> getPollVoters(
+    String pollId,
+    String optionId,
+    int page,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetPollVotersModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://test.egyakin.com/api/polls/${pollId}/options/${optionId}/voters',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPollVotersModelResponse _value;
+    try {
+      _value = GetPollVotersModelResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

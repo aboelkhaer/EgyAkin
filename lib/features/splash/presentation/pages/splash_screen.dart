@@ -266,11 +266,14 @@ class _SplashScreenState extends State<SplashScreen>
                 opacity: animation,
                 child: Image.asset(
                   // AppImages.logoForSplash,
-                  'assets/images/app_icon.png',
+                  'assets/images/splash.png',
                   width: double.infinity,
-                  height: 130.h,
+                  height: 80.h,
                   fit: BoxFit.contain,
                 ),
+              ),
+              const SizedBox(
+                height: 50,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

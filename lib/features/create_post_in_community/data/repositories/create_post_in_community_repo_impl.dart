@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
 import '../../../../exports.dart';
@@ -16,7 +17,7 @@ class CreatePostInCommunityRepositoryImpl
   @override
   Future<Either<Failure, CreatePostInCommunityModelResponse>>
       createPostWithImageInCommunity(
-          {required File image,
+          {required List<MultipartFile> images,
           required String? postContent,
           required String mediaType,
           required String visibility,
@@ -27,7 +28,7 @@ class CreatePostInCommunityRepositoryImpl
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await createPostInCommunityDatasource
             .createPostWithImageInCommunity(
-          image: image,
+          images: images,
           postContent: postContent,
           mediaType: mediaType,
           visibility: visibility,
@@ -75,7 +76,7 @@ class CreatePostInCommunityRepositoryImpl
   @override
   Future<Either<Failure, EditPostInCommunityModelResponse>>
       editPostWithImageInCommunity(
-          {required File image,
+          {required List<MultipartFile> images,
           required String? postContent,
           required String mediaType,
           required String visibility,
@@ -87,7 +88,7 @@ class CreatePostInCommunityRepositoryImpl
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response =
             await createPostInCommunityDatasource.editPostWithImageInCommunity(
-                image: image,
+                images: images,
                 postContent: postContent,
                 mediaType: mediaType,
                 visibility: visibility,

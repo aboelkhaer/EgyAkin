@@ -220,7 +220,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                 commentModel.comment ?? '',
                                 style: const TextStyle(
                                   color: ui.Color.fromRGBO(117, 117, 117, 1),
-                                  fontWeight: FontWeight.w400,
+                                  // fontWeight: FontWeight.w400,
+                                  fontFamily: 'Tajawal',
+                                  fontWeight: FontWeight.w500,
+                                  height: 1.6,
                                 ),
                                 textDirection: RegExp(r'[\u0600-\u06FF]')
                                         .hasMatch(

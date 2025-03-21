@@ -1,5 +1,7 @@
+import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
+import 'package:egy_akin/features/group_details_in_community/data/models/get_group_details_in_community_model_response.dart';
 import 'package:egy_akin/features/group_details_in_community/domain/usecases/delete_group_in_community_usecase.dart';
 import 'package:egy_akin/features/group_details_in_community/domain/usecases/get_group_details_in_community_usecase.dart';
 import 'package:egy_akin/features/group_details_in_community/domain/usecases/leave_group_in_community_usecase.dart';
@@ -15,7 +17,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
       this._addLikeOnPostUsecase,
       this._saveOrUnsavePostUsecase,
       this._deleteGroupInCommunityUsecase,
-      this._addVoteAndUnvoteUsecase)
+      this._addVoteAndUnvoteUsecase,
+      this._addOptionOnPollUsecase)
       : super(const GroupDetailsInCommunityState.initial());
   static GroupDetailsInCommunityCubit get(context) => BlocProvider.of(context);
 
@@ -26,6 +29,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   final SaveOrUnsavePostUsecase _saveOrUnsavePostUsecase;
   final DeleteGroupInCommunityUsecase _deleteGroupInCommunityUsecase;
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
+  final AddOptionOnPollUsecase _addOptionOnPollUsecase;
 
   final Map<int, Set<int>> postSelectedOptions = {};
   final Map<int, int?> postSelectedOption = {};
@@ -685,6 +689,94 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
       },
       (r) async {
         // Optionally re-fetch data from the server if needed
+      },
+    );
+  }
+
+  addOptionOnPoll(
+    String pollId,
+    String option,
+  ) async {
+    final result = await _addOptionOnPollUsecase.execute(
+      AddOptionOnPollUsecaseInput(
+        pollId: pollId,
+        option: option,
+      ),
+    );
+
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => GroupDetailsInCommunityState.loaded(
+              value.groupDetails,
+              'Failed to add option', // Snackbar message for failure
+              '', // No dialog message
+              value.isDeleteGroupLoading,
+              value.isDeleteGroupLoaded,
+              value.changeCounter,
+              value.isSeeMore,
+            ),
+          ),
+        );
+      },
+      (newOptionResponse) async {
+        if (newOptionResponse.data == null) return;
+
+        PollOptionsModelResponse newOption = PollOptionsModelResponse(
+          id: newOptionResponse.data!.id,
+          pollId: int.parse(newOptionResponse.data!.pollId!),
+          optionText: newOptionResponse.data!.option.toString(),
+          createdAt: newOptionResponse.data!.createdAt,
+          updatedAt: newOptionResponse.data!.updatedAt,
+          votesCount: 0, // Default votes count for new option
+          isVoted: false,
+        );
+
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              // Ensure groupDetails and posts exist
+              final updatedPosts =
+                  value.groupDetails.data?.posts?.data?.map((post) {
+                if (post.poll?.id.toString() == pollId) {
+                  return post.copyWith(
+                    poll: post.poll?.copyWith(
+                      options: [
+                        ...(post.poll?.options ?? []), // Keep old options
+                        newOption, // Append new option
+                      ],
+                    ),
+                  );
+                }
+                return post;
+              }).toList();
+
+              // Create a new instance of GetGroupDetailsInCommunityModelResponse with updated posts
+              final updatedGroupDetails =
+                  GetGroupDetailsInCommunityModelResponse(
+                data: value.groupDetails.data?.copyWith(
+                  posts: value.groupDetails.data?.posts?.copyWith(
+                    data: updatedPosts,
+                  ),
+                ),
+              );
+
+              return GroupDetailsInCommunityState.loaded(
+                updatedGroupDetails,
+                '',
+                '', // No dialog message
+                value.isDeleteGroupLoading,
+                value.isDeleteGroupLoaded,
+                value.changeCounter +
+                    1, // Increment changeCounter to trigger UI update
+                value.isSeeMore,
+              );
+            },
+          ),
+        );
       },
     );
   }

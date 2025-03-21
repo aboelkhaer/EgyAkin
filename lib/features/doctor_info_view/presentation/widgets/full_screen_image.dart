@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../exports.dart';
 
 class FullScreenImage extends StatelessWidget {
-  final String imageUrl;
+  final String imageUrl; // Single image URL
   final bool isLocal;
 
   const FullScreenImage({
@@ -20,11 +21,9 @@ class FullScreenImage extends StatelessWidget {
         onTap: () {
           Navigator.of(context).pop();
         },
-        // onHorizontalDragStart: (details) {
-        //   Navigator.of(context).pop();
-        // },
         child: Stack(
           children: [
+            // Display the single image
             Center(
               child: PhotoView(
                 imageProvider: isLocal
@@ -35,6 +34,7 @@ class FullScreenImage extends StatelessWidget {
                 ),
               ),
             ),
+            // Close button
             Positioned(
               top: 40,
               right: 20,

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_cubit.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_state.dart';
@@ -63,6 +65,7 @@ class _CreateGroupInCommunityScreenState
                 highlightColor: Colors.transparent,
                 hoverColor: Colors.transparent,
                 child: Stack(
+                  alignment: Alignment.center,
                   children: [
                     Container(
                       height: 200,
@@ -86,15 +89,14 @@ class _CreateGroupInCommunityScreenState
                                 counterChanges,
                                 isCreateGroupLoading,
                                 isCreateGroupLoaded) {
-                              if (snackBarMessage != '') {
+                              if (snackBarMessage.isNotEmpty) {
                                 customSnackBar(
                                     context: context, message: snackBarMessage);
                               }
                               if (isCreateGroupLoaded) {
                                 navigatorKey.currentState?.pushReplacementNamed(
-                                  AppRoutes.home,
-                                  arguments: 0,
-                                );
+                                    AppRoutes.home,
+                                    arguments: 0);
                                 Future.delayed(Duration.zero, () {
                                   navigatorKey.currentState?.pushNamed(
                                     AppRoutes.community,
@@ -123,19 +125,15 @@ class _CreateGroupInCommunityScreenState
                         },
                         builder: (context, state) {
                           return state.maybeWhen(
-                            orElse: () {
-                              return const SizedBox.shrink();
-                            },
-                            loaded: (
-                              snackBarMessage,
-                              dialogMessage,
-                              isPickGroupHeaderLoading,
-                              isPickGroupImageLoading,
-                              counterChanges,
-                              isCreateGroupLoading,
-                              isCreateGroupLoaded,
-                            ) {
-                              if (widget.isCreateNewGroup == false &&
+                            orElse: () => const SizedBox.shrink(),
+                            loaded: (snackBarMessage,
+                                dialogMessage,
+                                isPickGroupHeaderLoading,
+                                isPickGroupImageLoading,
+                                counterChanges,
+                                isCreateGroupLoading,
+                                isCreateGroupLoaded) {
+                              if (!widget.isCreateNewGroup &&
                                   cubit.imagePickedForGroupHeader == null) {
                                 return CustomCachedNetworkImage(
                                   imageUrl: widget.groupModel!.headerPicture
@@ -154,48 +152,66 @@ class _CreateGroupInCommunityScreenState
                         },
                       ),
                     ),
+
+                    // Glass-like Circular Background with Icon
                     Positioned(
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 0,
-                        child: BlocBuilder<CreateGroupInCommunityCubit,
-                            CreateGroupInCommunityState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return const SizedBox.shrink();
-                              },
-                              loaded: (
-                                snackBarMessage,
+                      child: BlocBuilder<CreateGroupInCommunityCubit,
+                          CreateGroupInCommunityState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () => const SizedBox.shrink(),
+                            loaded: (snackBarMessage,
                                 dialogMessage,
                                 isPickGroupHeaderLoading,
                                 isPickGroupImageLoading,
                                 counterChanges,
                                 isCreateGroupLoading,
-                                isCreateGroupLoaded,
-                              ) {
-                                return isPickGroupHeaderLoading
-                                    ? const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            height: 20,
-                                            width: 20,
-                                            child: CircularProgressIndicator(),
+                                isCreateGroupLoaded) {
+                              return Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        40), // Circular shape
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 10, sigmaY: 10),
+                                      child: Container(
+                                        height: 50,
+                                        width: 50,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary
+                                              .withOpacity(0.2), // Glass effect
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                              color:
+                                                  Colors.white.withOpacity(0.3),
+                                              width: 1),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  isPickGroupHeaderLoading
+                                      ? const SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 3,
+                                            color: Colors.white,
                                           ),
-                                        ],
-                                      )
-                                    : Icon(
-                                        Icons.camera_alt_outlined,
-                                        size: 25.r,
-                                        color: AppColors.primary,
-                                      );
-                              },
-                            );
-                          },
-                        )),
+                                        )
+                                      : const Icon(
+                                          Icons.camera_alt_outlined,
+                                          size: 28,
+                                          color: Colors.white,
+                                        ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -303,7 +319,7 @@ class _CreateGroupInCommunityScreenState
                             child: CircleAvatar(
                               radius: 13.r, // camera background
                               backgroundColor:
-                                  AppColors.primary.withOpacity(0.8),
+                                  AppColors.primary.withOpacity(0.6),
                               child: BlocBuilder<CreateGroupInCommunityCubit,
                                   CreateGroupInCommunityState>(
                                 builder: (context, state) {

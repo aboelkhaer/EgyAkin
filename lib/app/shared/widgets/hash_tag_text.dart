@@ -1,5 +1,5 @@
+import 'package:egy_akin/app/shared/widgets/link_preview_widget.dart';
 import 'package:flutter/gestures.dart';
-import 'package:any_link_preview/any_link_preview.dart'; // Add this import
 import '../../../exports.dart'; // Assuming this handles building the hashtag text
 
 class HashtagText extends StatefulWidget {
@@ -21,7 +21,7 @@ class HashtagText extends StatefulWidget {
     this.trimCollapsedText = '... See more',
     this.trimExpandedText = '',
     this.highlightWord, // Default empty list
-    this.disableTrimLines = false, // Default to false (trim lines enabled)
+    this.disableTrimLines = false,
   });
 
   @override
@@ -70,6 +70,7 @@ class _HashtagTextState extends State<HashtagText> {
                 maxLines: widget.disableTrimLines
                     ? null // No max lines if trim lines are disabled
                     : (isExpanded ? null : widget.trimLines),
+
                 overflow: widget.disableTrimLines
                     ? TextOverflow
                         .visible // No overflow if trim lines are disabled
@@ -92,7 +93,9 @@ class _HashtagTextState extends State<HashtagText> {
                   isExpanded
                       ? widget.trimExpandedText
                       : widget.trimCollapsedText,
-                  style: const TextStyle(color: Colors.blue),
+                  style: const TextStyle(
+                    color: Colors.blue,
+                  ),
                 ),
               // Add link previews here
               ..._buildLinkPreviews(widget.content),
@@ -117,10 +120,7 @@ class _HashtagTextState extends State<HashtagText> {
 
   // Helper function to detect URLs and build link previews
   List<Widget> _buildLinkPreviews(String content) {
-    final urlRegExp = RegExp(
-      r'https?://[^\s]+',
-      caseSensitive: false,
-    );
+    final urlRegExp = RegExp(r'https?://[^\s]+', caseSensitive: false);
     final matches = urlRegExp.allMatches(content);
     List<Widget> previews = [];
 
@@ -129,15 +129,7 @@ class _HashtagTextState extends State<HashtagText> {
       previews.add(
         Padding(
           padding: const EdgeInsets.only(top: 8.0),
-          child: AnyLinkPreview(
-            link: url,
-            displayDirection: UIDirection.uiDirectionVertical,
-            cache: const Duration(days: 7), // Cache the preview for 7 days
-            placeholderWidget:
-                const CircularProgressIndicator(), // Show a loader while loading
-            errorWidget: const Text(
-                'Unable to load preview'), // Show this if the preview fails
-          ),
+          child: LinkPreviewWidget(url: url), // Use custom widget
         ),
       );
     }
@@ -171,7 +163,14 @@ TextSpan buildHashtagText(
 
     // Add any text before the matched word
     if (match.start > currentIndex) {
-      spans.add(TextSpan(text: content.substring(currentIndex, match.start)));
+      spans.add(TextSpan(
+          text: content.substring(currentIndex, match.start),
+          style: TextStyle(
+            fontSize: postTextSize,
+            fontFamily: 'Tajawal',
+            fontWeight: FontWeight.w500,
+            height: 1.6,
+          )));
     }
     if (highlightLower != null && lowerMatchText == highlightLower) {
       // If it's the highlight word, add yellow background
@@ -211,7 +210,14 @@ TextSpan buildHashtagText(
     } else {
       // Normal text
       spans.add(TextSpan(
-          text: matchText, style: const TextStyle(color: Colors.black)));
+          text: matchText,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: postTextSize,
+            fontFamily: 'Tajawal',
+            fontWeight: FontWeight.w500,
+            height: 1.6,
+          )));
     }
 
     currentIndex = match.end;
@@ -219,8 +225,25 @@ TextSpan buildHashtagText(
 
   // Add remaining text after last match
   if (currentIndex < content.length) {
-    spans.add(TextSpan(text: content.substring(currentIndex)));
+    spans.add(TextSpan(
+        text: content.substring(currentIndex),
+        style: TextStyle(
+          fontSize: postTextSize,
+          fontFamily: 'Tajawal',
+          fontWeight: FontWeight.w500,
+          height: 1.6,
+        )));
   }
 
-  return TextSpan(style: const TextStyle(color: Colors.black), children: spans);
+  return TextSpan(
+      style: TextStyle(
+        color: Colors.black,
+        fontSize: postTextSize,
+        fontFamily: 'Tajawal',
+        fontWeight: FontWeight.w500,
+        height: 1.6,
+      ),
+      children: spans);
 }
+
+double postTextSize = 16;
