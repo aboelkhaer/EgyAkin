@@ -1073,6 +1073,1007 @@ class CheckNotificationType extends StatelessWidget {
             ],
           ),
         );
+      case 'Post':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.showSingleFeed,
+              arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                feed: notificationModel.feed ?? const PostCommunityModel(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'PostLike':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.showSingleFeed,
+              arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                feed: notificationModel.feed ?? const PostCommunityModel(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'PostComment':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.showSingleFeed,
+              arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                feed: notificationModel.feed ?? const PostCommunityModel(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'CommentLike':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.showSingleFeed,
+              arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                feed: notificationModel.feed ?? const PostCommunityModel(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'group_invitation':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.groupDetailsInCommunity,
+              arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
+                currentDoctorModel: currentDoctorModel,
+                homeDataModel: homeDataModel,
+                groupId: notificationModel.groupId.toString(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'group_invitation_accepted':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.groupDetailsInCommunity,
+              arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
+                currentDoctorModel: currentDoctorModel,
+                homeDataModel: homeDataModel,
+                groupId: notificationModel.groupId.toString(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
+      case 'group_join_request':
+        return GestureDetector(
+          onTap: () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.groupDetailsInCommunity,
+              arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
+                currentDoctorModel: currentDoctorModel,
+                homeDataModel: homeDataModel,
+                groupId: notificationModel.groupId.toString(),
+              ),
+            );
+          },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.4),
+                              spreadRadius: 2,
+                              blurRadius: 9,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(80.r),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: notificationModel.typeDoctor!.id
+                                      .toString(),
+                                  initialIndex: 0,
+                                  currentDoctorModel: currentDoctorModel,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  accountVerification: accountVerification,
+                                  currentDoctorRole: currentDoctorRole,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  homeDataModel: homeDataModel,
+                                  isNavigateToTheButtonOfInformationTab: true,
+                                ),
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: notificationModel.typeDoctor!.image == null
+                                  ? Text(
+                                      notificationModel
+                                          .typeDoctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl: notificationModel
+                                          .typeDoctor!.image
+                                          .toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 15.w),
+                      Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                      children: const <TextSpan>[],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5.h),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  timeago
+                                      .format(DateTime.parse(notificationModel
+                                          .createdAt
+                                          .toString()))
+                                      .toString(),
+                                  style: TextStyle(
+                                    color: Colors.grey.shade500,
+                                    fontSize: 8.sp,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  notificationModel.read!
+                      ? const SizedBox.shrink()
+                      : Positioned(
+                          left: 0,
+                          // right: 0.w,
+                          // top: 2.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            radius: 5.r,
+                          ),
+                        ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+                thickness: 0.2,
+              ),
+              SizedBox(height: 10.h),
+            ],
+          ),
+        );
 
       default:
         return Container();

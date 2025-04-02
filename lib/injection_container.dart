@@ -1,61 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/all_doctor_posts/data/datasources/all_doctor_posts_datasource.dart';
-import 'package:egy_akin/features/all_doctor_posts/data/repositories/all_doctor_posts_repo_impl.dart';
-import 'package:egy_akin/features/all_doctor_posts/domain/repositories/all_doctor_posts_repo.dart';
-import 'package:egy_akin/features/all_doctor_posts/domain/usecases/get_all_doctor_posts_usecase.dart';
-import 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_cubit.dart';
-import 'package:egy_akin/features/all_groups_in_community/data/datasources/all_groups_in_community_datasource.dart';
-import 'package:egy_akin/features/all_groups_in_community/data/repositories/all_groups_in_community_repo_impl.dart';
-import 'package:egy_akin/features/all_groups_in_community/domain/repositories/all_groups_in_community_repo.dart';
-import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_all_groups_usecase.dart';
-import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_my_groups_usecase.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_groups_tab_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_poll_voters_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_trending_posts_in_community_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
-import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
-import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
-import 'package:egy_akin/features/community_search/data/datasources/community_search_datasource.dart';
-import 'package:egy_akin/features/community_search/data/repositories/community_search_repo_impl.dart';
-import 'package:egy_akin/features/community_search/domain/repositories/community_search_repo.dart';
-import 'package:egy_akin/features/community_search/domain/usecases/get_response_of_search_in_community_usecase.dart';
-import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
-import 'package:egy_akin/features/create_group_in_community/data/datasources/create_group_in_community_datasource.dart';
-import 'package:egy_akin/features/create_group_in_community/data/repositories/create_group_in_community_repo_impl.dart';
-import 'package:egy_akin/features/create_group_in_community/domain/repositories/create_group_in_community_repo.dart';
-import 'package:egy_akin/features/create_group_in_community/domain/usecases/create_group_in_community_usecase.dart';
-import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_header_image_in_community_usecase.dart';
-import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_image_in_community_usecase.dart';
-import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_texts_in_community_usecase.dart';
-import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_cubit.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_image_in_community_usecase.dart';
-import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_text_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/data/datasources/group_details_in_community_datasource.dart';
-import 'package:egy_akin/features/group_details_in_community/data/repositories/group_details_in_community_repo_impl.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/repositories/group_details_in_community_repo.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/delete_group_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/get_group_details_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/leave_group_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
-import 'package:egy_akin/features/group_members/data/datasources/group_members_datasource.dart';
-import 'package:egy_akin/features/group_members/data/repositories/group_members_repo_impl.dart';
-import 'package:egy_akin/features/group_members/domain/repositories/group_members_repo.dart';
-import 'package:egy_akin/features/group_members/domain/usecases/get_group_members_usecase.dart';
-import 'package:egy_akin/features/group_members/domain/usecases/get_post_likes_usecase.dart';
-import 'package:egy_akin/features/group_members/domain/usecases/remove_member_from_group_usecase.dart';
-import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
-import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/cubit/invite_member_to_group_in_community_cubit.dart';
-import 'package:egy_akin/features/saved_posts/data/datasources/saved_posts_datasource.dart';
-import 'package:egy_akin/features/saved_posts/data/repositories/saved_posts_repo_impl.dart';
-import 'package:egy_akin/features/saved_posts/domain/repositories/saved_posts_repo.dart';
-import 'package:egy_akin/features/saved_posts/domain/usecases/get_saved_posts_usecase.dart';
-import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
-import 'package:egy_akin/features/send_consultation/domain/usecases/send_group_invitation_usecase.dart';
-import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -117,9 +60,18 @@ Future<void> diInit() async {
   sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(
       () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => GroupDetailsInCommunityCubit(
-      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => GroupDetailsInCommunityCubit(
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+        sl(),
+      ));
+  sl.registerFactory(() => GroupMembersCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => AllGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => MyGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
@@ -129,6 +81,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(
       () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => GroupsInvitationsCubit(sl(), sl(), sl()));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -607,5 +560,13 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<GetPollVotersUsecase>()) {
     sl.registerFactory<GetPollVotersUsecase>(() => GetPollVotersUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetDoctorInvitationsForGroupsUsecase>()) {
+    sl.registerFactory<GetDoctorInvitationsForGroupsUsecase>(
+        () => GetDoctorInvitationsForGroupsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AcceptOrDeclineMemberInGroupUsecase>()) {
+    sl.registerFactory<AcceptOrDeclineMemberInGroupUsecase>(
+        () => AcceptOrDeclineMemberInGroupUsecase(sl()));
   }
 }

@@ -28,6 +28,7 @@ abstract class CreatePostInCommunityDatasource {
     required String visibility,
     required String? groupId,
     required String postId,
+    required List<String> existingMediaPath,
   });
   Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity({
     required String postContent,
@@ -35,6 +36,7 @@ abstract class CreatePostInCommunityDatasource {
     required String visibility,
     required String? groupId,
     required String postId,
+    required PollModel? pollModel,
   });
 }
 
@@ -84,6 +86,7 @@ class CreatePostInCommunityDatasourceImpl
     required String visibility,
     required String? groupId,
     required String postId,
+    required PollModel? pollModel,
   }) async {
     log(mediaType.toString());
     return await _apiServices.editPostWithTextInCommunity(
@@ -92,6 +95,7 @@ class CreatePostInCommunityDatasourceImpl
       mediaType,
       visibility,
       groupId,
+      pollModel?.toJson(),
     );
   }
 
@@ -102,8 +106,16 @@ class CreatePostInCommunityDatasourceImpl
       required String mediaType,
       required String visibility,
       required String? groupId,
-      required String postId}) async {
+      required String postId,
+      required List<String> existingMediaPath}) async {
     return await _apiServices.editPostWithImageInCommunity(
-        postId, postContent, mediaType, visibility, groupId, images);
+      postId,
+      postContent,
+      mediaType,
+      visibility,
+      groupId,
+      images,
+      existingMediaPath,
+    );
   }
 }

@@ -138,59 +138,94 @@ class _HashtagTextState extends State<HashtagText> {
   }
 }
 
-// Build the RichText with clickable hashtags and highlighted words
 TextSpan buildHashtagText(
   String content,
   DoctorModel currentDoctorModel,
   HomeModelResponse homeDataModel,
-  String? highlightWord, // Word to highlight
+  String? highlightWord,
 ) {
-  final RegExp hashtagRegExp = RegExp(r'#[a-zA-Z0-9_]+'); // Detect hashtags
-  final RegExp urlRegExp = RegExp(r'https?://[^\s]+'); // Detect URLs
-  final String? highlightLower =
-      highlightWord?.toLowerCase().trim(); // Normalize highlight word
+  // Constants for styling
+  const TextStyle defaultTextStyle = TextStyle(
+    fontSize: 16,
+    fontFamily: 'Tajawal',
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+    color: Colors.black,
+  );
+
+  final TextStyle highlightStyle = defaultTextStyle.copyWith(
+    backgroundColor: Colors.yellow.shade200,
+    color: Colors.blue,
+  );
+
+  final TextStyle hashtagStyle = defaultTextStyle.copyWith(
+    color: Colors.blue,
+  );
+
+  // Regex patterns
+  final RegExp hashtagRegExp = RegExp(r'#[a-zA-Z0-9_]+');
+  final RegExp urlRegExp = RegExp(r'https?://[^\s]+');
+  final RegExp wordRegExp = RegExp(r'(#[a-zA-Z0-9_]+|\b\w+\b)');
+
+  // Safe handling of highlight word
+  final String? normalizedHighlight = highlightWord?.trim().toLowerCase();
+  final bool isHighlightHashtag = normalizedHighlight?.startsWith('#') ?? false;
+  final String? highlightWithoutHash = isHighlightHashtag
+      ? normalizedHighlight?.substring(1)
+      : normalizedHighlight;
 
   List<TextSpan> spans = [];
   int currentIndex = 0;
 
-  // Match hashtags, URLs, and words separately
-  final RegExp regex = RegExp(
-      r'#[a-zA-Z0-9_]+|https?://[^\s]+|\b\w+\b'); // Detect hashtags, URLs, & words
-
-  for (final match in regex.allMatches(content)) {
-    String matchText = match.group(0)!; // Extract the matched text
-    String lowerMatchText = matchText.toLowerCase();
-
-    // Add any text before the matched word
-    if (match.start > currentIndex) {
+  // Helper function to add non-matched text
+  void addPlainText(int start, int end) {
+    if (start < end && end <= content.length) {
       spans.add(TextSpan(
-          text: content.substring(currentIndex, match.start),
-          style: TextStyle(
-            fontSize: postTextSize,
-            fontFamily: 'Tajawal',
-            fontWeight: FontWeight.w500,
-            height: 1.6,
-          )));
+        text: content.substring(start, end),
+        style: defaultTextStyle,
+      ));
     }
-    if (highlightLower != null && lowerMatchText == highlightLower) {
-      // If it's the highlight word, add yellow background
-      spans.add(
-        TextSpan(
-          text: matchText,
-          style: TextStyle(
-            backgroundColor: Colors.yellow.shade200,
-            color: Colors.blue,
-          ),
-        ),
-      );
-    } else if (hashtagRegExp.hasMatch(matchText)) {
-      // If it's a hashtag, make it clickable
-      spans.add(
-        TextSpan(
-          text: matchText,
-          style: const TextStyle(
-            color: Colors.blue,
-          ),
+  }
+
+  // First pass: Handle URLs
+  for (final urlMatch in urlRegExp.allMatches(content)) {
+    addPlainText(currentIndex, urlMatch.start);
+    spans.add(const TextSpan(text: ' '));
+    currentIndex = urlMatch.end;
+  }
+
+  // Process remaining text after URLs
+  if (currentIndex < content.length) {
+    final remainingAfterUrls = content.substring(currentIndex);
+    currentIndex = 0;
+
+    for (final wordMatch in wordRegExp.allMatches(remainingAfterUrls)) {
+      final String? wordText = wordMatch.group(0);
+      if (wordText == null) continue;
+
+      final String lowerWordText = wordText.toLowerCase();
+      final bool isWordHashtag = wordText.startsWith('#');
+      final String wordWithoutHash =
+          isWordHashtag ? lowerWordText.substring(1) : lowerWordText;
+
+      // Add text before the word
+      addPlainText(currentIndex, wordMatch.start);
+
+      // Check for highlight match
+      if (normalizedHighlight != null &&
+          (lowerWordText == normalizedHighlight ||
+              (isHighlightHashtag && lowerWordText == normalizedHighlight) ||
+              (!isWordHashtag && wordWithoutHash == highlightWithoutHash) ||
+              (isWordHashtag && wordWithoutHash == highlightWithoutHash))) {
+        spans.add(TextSpan(
+          text: wordText,
+          style: highlightStyle,
+        ));
+      } else if (hashtagRegExp.hasMatch(wordText)) {
+        // Clickable hashtag
+        spans.add(TextSpan(
+          text: wordText,
+          style: hashtagStyle,
           recognizer: TapGestureRecognizer()
             ..onTap = () {
               navigatorKey.currentState?.pushNamed(
@@ -198,52 +233,25 @@ TextSpan buildHashtagText(
                 arguments: AppRoutesArgs.communitySearchRouteArgs(
                   currentDoctorModel: currentDoctorModel,
                   homeDataModel: homeDataModel,
-                  initialValueInSearch: matchText,
+                  initialValueInSearch: wordText,
                 ),
               );
             },
-        ),
-      );
-    } else if (urlRegExp.hasMatch(matchText)) {
-      // If it's a URL, skip it here (handled in _buildLinkPreviews)
-      spans.add(const TextSpan(text: ' ')); // Replace URL with space
-    } else {
-      // Normal text
-      spans.add(TextSpan(
-          text: matchText,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: postTextSize,
-            fontFamily: 'Tajawal',
-            fontWeight: FontWeight.w500,
-            height: 1.6,
-          )));
+        ));
+      } else {
+        // Normal text
+        spans.add(TextSpan(
+          text: wordText,
+          style: defaultTextStyle,
+        ));
+      }
+
+      currentIndex = wordMatch.end;
     }
 
-    currentIndex = match.end;
+    // Add remaining text after last word
+    addPlainText(currentIndex, remainingAfterUrls.length);
   }
 
-  // Add remaining text after last match
-  if (currentIndex < content.length) {
-    spans.add(TextSpan(
-        text: content.substring(currentIndex),
-        style: TextStyle(
-          fontSize: postTextSize,
-          fontFamily: 'Tajawal',
-          fontWeight: FontWeight.w500,
-          height: 1.6,
-        )));
-  }
-
-  return TextSpan(
-      style: TextStyle(
-        color: Colors.black,
-        fontSize: postTextSize,
-        fontFamily: 'Tajawal',
-        fontWeight: FontWeight.w500,
-        height: 1.6,
-      ),
-      children: spans);
+  return TextSpan(children: spans);
 }
-
-double postTextSize = 16;

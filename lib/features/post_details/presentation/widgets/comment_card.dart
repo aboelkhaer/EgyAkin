@@ -130,7 +130,9 @@ class CommentCard extends StatelessWidget {
                                           commentModel.doctor!.firstName ?? '',
                                       lastName:
                                           commentModel.doctor!.lastName ?? '',
-                                      role: currentDoctorRole,
+                                      role: commentModel
+                                          .doctor!.isSyndicateCardRequired
+                                          .toString(),
                                     ),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,

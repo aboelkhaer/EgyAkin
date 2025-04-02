@@ -74,6 +74,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
         allowMultipleChoices: _allowMultipleChoices,
         allowAddOptions: _allowAddOptions,
       );
+
       widget.onPollCreated(poll);
       Navigator.pop(context);
     }

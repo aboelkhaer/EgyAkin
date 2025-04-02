@@ -1,10 +1,3 @@
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/data/models/get_group_details_in_community_model_response.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/delete_group_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/get_group_details_in_community_usecase.dart';
-import 'package:egy_akin/features/group_details_in_community/domain/usecases/leave_group_in_community_usecase.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
 
 import '../../../../exports.dart';
@@ -18,7 +11,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
       this._saveOrUnsavePostUsecase,
       this._deleteGroupInCommunityUsecase,
       this._addVoteAndUnvoteUsecase,
-      this._addOptionOnPollUsecase)
+      this._addOptionOnPollUsecase,
+      this._acceptOrDeclineMemberInGroupUsecase)
       : super(const GroupDetailsInCommunityState.initial());
   static GroupDetailsInCommunityCubit get(context) => BlocProvider.of(context);
 
@@ -30,6 +24,8 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   final DeleteGroupInCommunityUsecase _deleteGroupInCommunityUsecase;
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
   final AddOptionOnPollUsecase _addOptionOnPollUsecase;
+  final AcceptOrDeclineMemberInGroupUsecase
+      _acceptOrDeclineMemberInGroupUsecase;
 
   final Map<int, Set<int>> postSelectedOptions = {};
   final Map<int, int?> postSelectedOption = {};
@@ -58,6 +54,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         false,
         changeCounter,
         false,
+        false,
       ));
     });
   }
@@ -74,6 +71,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         false,
         changeCounter,
         true,
+        false,
       ),
     ));
     final result = await _getGroupDetailsInCommunityUsecase.execute(
@@ -100,6 +98,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             isDeleteGroupLoaded,
             changeCounter,
             isSeeMore,
+            isAcceptOrDeclineGroupInvitation,
           ) {
             final updatedData = groupDetails.copyWith(
               data: groupDetails.data!.copyWith(
@@ -125,6 +124,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
               false,
               changeCounter,
               false,
+              false,
             ));
           },
           error: (error) {},
@@ -145,6 +145,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         value.isDeleteGroupLoaded,
         changeCounter,
         value.isSeeMore,
+        value.isAcceptOrDeclineGroupInvitation,
       ),
     ));
   }
@@ -182,6 +183,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             changeCounter,
             false,
+            false,
           );
         }
 
@@ -202,6 +204,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
               false,
               false,
               changeCounter,
+              false,
               false,
             ),
           ),
@@ -224,10 +227,14 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         if (response.data!.group!.id.toString() == groupId) {
           // Update the group's userStatus and memberCount
           final updatedGroup = response.data!.group!.copyWith(
-            userStatus: GroupInviteStatus
-                .invited.name, // Set userStatus to null when leaving the group
-            memberCount: (response.data!.group!.memberCount ?? 0) +
-                1, // Decrement memberCount
+            userStatus:
+                response.data!.group!.privacy == GroupPrivacy.private.name
+                    ? GroupInviteStatus.pending.name
+                    : GroupInviteStatus.joined.name,
+            memberCount: response.data!.group!.privacy ==
+                    GroupPrivacy.public.name
+                ? (response.data!.group!.memberCount ?? 0) + 1
+                : response.data!.group!.memberCount, // Decrement memberCount
           );
 
           // Create a new data object with the updated group
@@ -244,6 +251,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             false,
             changeCounter,
+            false,
             false,
           );
         }
@@ -263,6 +271,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             false,
             changeCounter,
+            false,
             false,
           ),
         ));
@@ -542,6 +551,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           false,
           changeCounter,
           value.isSeeMore,
+          false,
         ),
       ),
     );
@@ -559,6 +569,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
           false,
           changeCounter,
           false,
+          false,
         ),
       ),
     );
@@ -575,6 +586,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             changeCounter,
             false,
+            false,
           ),
         ),
       );
@@ -589,6 +601,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             true,
             changeCounter,
+            false,
             false,
           ),
         ),
@@ -670,6 +683,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             false,
             value.changeCounter,
             value.isSeeMore,
+            false,
           );
         },
       ),
@@ -716,7 +730,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
               value.isDeleteGroupLoading,
               value.isDeleteGroupLoaded,
               value.changeCounter,
-              value.isSeeMore,
+              value.isSeeMore, false,
             ),
           ),
         );
@@ -772,12 +786,96 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
                 value.isDeleteGroupLoaded,
                 value.changeCounter +
                     1, // Increment changeCounter to trigger UI update
-                value.isSeeMore,
+                value.isSeeMore, false,
               );
             },
           ),
         );
       },
     );
+  }
+
+  changeIsHasInvitationsValue() {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => GroupDetailsInCommunityState.loaded(
+          value.groupDetails.copyWith(
+            data: value.groupDetails.data?.copyWith(
+              group: value.groupDetails.data?.group?.copyWith(
+                isHasPendingInvitations: false,
+              ),
+            ),
+          ),
+          '',
+          '',
+          value.isDeleteGroupLoading,
+          value.isDeleteGroupLoaded,
+          value.changeCounter + 1, // Increment to force state change
+          value.isSeeMore, false,
+        ),
+      ),
+    );
+  }
+
+  acceptOrDeclineGroupInvitation({
+    required String groupId,
+    required int invitationId,
+    required String status,
+    required String doctorId,
+  }) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => GroupDetailsInCommunityState.loaded(
+          value.groupDetails,
+          '',
+          '',
+          value.isDeleteGroupLoading,
+          value.isDeleteGroupLoaded,
+          value.changeCounter + 1,
+          value.isSeeMore,
+          true,
+        ),
+      ),
+    );
+    final result = await _acceptOrDeclineMemberInGroupUsecase.execute(
+      AcceptOrDeclineMemberInGroupUsecaseInput(
+          groupId: groupId, status: status, invitationId: invitationId),
+    );
+    result.fold((l) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => GroupDetailsInCommunityState.loaded(
+            value.groupDetails,
+            l.message,
+            '',
+            value.isDeleteGroupLoading,
+            value.isDeleteGroupLoaded,
+            value.changeCounter + 1,
+            value.isSeeMore,
+            false,
+          ),
+        ),
+      );
+    }, (r) async {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => GroupDetailsInCommunityState.loaded(
+            value.groupDetails,
+            '',
+            '',
+            value.isDeleteGroupLoading,
+            value.isDeleteGroupLoaded,
+            value.changeCounter + 1,
+            value.isSeeMore,
+            false,
+          ),
+        ),
+      );
+      getGroupDetails(groupId);
+    });
   }
 }

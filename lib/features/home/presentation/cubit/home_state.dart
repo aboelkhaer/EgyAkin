@@ -8,14 +8,16 @@ abstract class HomeState with _$HomeState {
   const factory HomeState.loading(int tabIndex) = _Loading;
 
   const factory HomeState.loaded(
-      HomeModelResponse homeData,
-      DoctorModel currentDoctorModel,
-      int dotsPosition,
-      int homeIndex,
-      bool isUploadingSyndicateCard,
-      bool isUploadedSyndicateCard,
-      String message,
-      int checkUpdateMessageCounter,
-      bool isUserBlocked) = _Loaded;
+    HomeModelResponse homeData,
+    DoctorModel currentDoctorModel,
+    int dotsPosition,
+    int homeIndex,
+    bool isUploadingSyndicateCard,
+    bool isUploadedSyndicateCard,
+    String message,
+    int checkUpdateMessageCounter,
+    bool isUserBlocked,
+    int changesCounter,
+  ) = _Loaded;
   const factory HomeState.error(String message) = _Error;
 }

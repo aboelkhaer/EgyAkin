@@ -287,7 +287,9 @@ class _PollVotersScreenState extends State<PollVotersScreen> {
                                                               lastName:
                                                                   doctorModel
                                                                       .lastName,
-                                                              role: '',
+                                                              role: doctorModel
+                                                                  .isSyndicateCardRequired
+                                                                  .toString(),
                                                             ),
                                                             style: TextStyle(
                                                               fontSize: 12.sp,

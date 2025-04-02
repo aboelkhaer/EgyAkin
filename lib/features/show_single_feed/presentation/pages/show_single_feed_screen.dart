@@ -1,4 +1,5 @@
 import '../../../../exports.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ShowSingleFeedScreen extends StatefulWidget {
   final HomeModelResponse homeDataModel;
@@ -16,18 +17,41 @@ class ShowSingleFeedScreen extends StatefulWidget {
 }
 
 class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
+  late final ShowSingleFeedCubit _cubit;
+  late ScrollController scrollController;
+
   @override
   void initState() {
-    context
-        .read<ShowSingleFeedCubit>()
-        .getCommentsInCommunity(widget.feed.id.toString(), widget.feed);
-
     super.initState();
+
+    _cubit = context.read<ShowSingleFeedCubit>();
+
+    // Initialize ScrollController
+    scrollController = ScrollController();
+    scrollController.addListener(_onScroll);
+
+    _cubit.getCommentsInCommunity(widget.feed.id.toString(), widget.feed);
   }
 
   @override
   void dispose() {
+    scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
+
+    final maxScroll = scrollController.position.maxScrollExtent;
+    final currentScroll = scrollController.position.pixels;
+    const threshold = 200.0;
+
+    if (maxScroll - currentScroll <= threshold) {
+      _cubit.isLoadingMoreForScroll = true;
+      _cubit.loadMoreComments(
+        widget.feed.id.toString(),
+      );
+    }
   }
 
   @override
@@ -146,7 +170,9 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                               widget.feed.doctor!.firstName,
                                           lastName:
                                               widget.feed.doctor!.lastName,
-                                          role: '',
+                                          role: widget.feed.doctor!
+                                              .isSyndicateCardRequired
+                                              .toString(),
                                         ),
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -165,8 +191,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                   ],
                                 ),
                                 Text(
-                                  formatDateTimeForCommunity(
-                                      widget.feed.createdAt.toString()),
+                                  // formatDateTimeForCommunity(
+                                  //     widget.feed.createdAt.toString()),
+                                  timeago.format(DateTime.parse(
+                                      widget.feed.createdAt.toString())),
                                   style: TextStyle(
                                     color: AppColors.description,
                                     fontSize: 11.sp,
@@ -275,7 +303,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
-                  controller: cubit.scrollController,
+                  controller: scrollController,
                   child: Column(
                     children: [
                       FeedContentInCommunity(

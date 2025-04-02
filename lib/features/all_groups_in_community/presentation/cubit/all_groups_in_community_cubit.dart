@@ -108,9 +108,12 @@ class AllGroupsInCommunityCubit extends Cubit<AllGroupsInCommunityState> {
         final updatedGroups = response.data!.data!.map((group) {
           if (group.id.toString() == groupId) {
             return group.copyWith(
-              userStatus: GroupInviteStatus.invited.name,
-              memberCount:
-                  (group.memberCount ?? 0) + 1, // Increment memberCount
+              userStatus: group.privacy == GroupPrivacy.private.name
+                  ? GroupInviteStatus.pending.name
+                  : GroupInviteStatus.joined.name,
+              memberCount: group.privacy == GroupPrivacy.public.name
+                  ? (group.memberCount ?? 0) + 1
+                  : group.memberCount, // Increment memberCount
             ); // Update userStatus and memberCount
           }
           return group; // Return unchanged group if ID doesn't match

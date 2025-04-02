@@ -1,17 +1,16 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/group_members/data/models/get_group_members_model_response.dart';
-import 'package:egy_akin/features/group_members/domain/repositories/group_members_repo.dart';
+import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import '../../../../exports.dart';
 
 class GetPostLikesUsecase
     implements
-        BaseUseCase<GetPostLikesUsecaseInput, GetGroupMembersModelResponse> {
+        BaseUseCase<GetPostLikesUsecaseInput, GetPostLikesModelResponse> {
   final GroupMembersRepository repository;
 
   GetPostLikesUsecase(this.repository);
 
   @override
-  Future<Either<Failure, GetGroupMembersModelResponse>> execute(
+  Future<Either<Failure, GetPostLikesModelResponse>> execute(
       GetPostLikesUsecaseInput input) async {
     return await repository.getPostLikes(input.postId, input.pageNumber);
   }

@@ -31,17 +31,20 @@ class ReplyWidgetInCommunity extends StatelessWidget {
           orElse: () {
             return const SizedBox.shrink();
           },
-          loaded: (commentsResponse,
-              changeCounter,
-              feed,
-              isSendCommentLoading,
-              isSendCommentLoaded,
-              message,
-              highlightedCommentId,
-              isDeleteCommentLoading,
-              isDeleteCommentLoaded,
-              isSendReplyLoading,
-              isSendReplyLoaded) {
+          loaded: (
+            commentsResponse,
+            changeCounter,
+            feed,
+            isSendCommentLoading,
+            isSendCommentLoaded,
+            message,
+            highlightedCommentId,
+            isDeleteCommentLoading,
+            isDeleteCommentLoaded,
+            isSendReplyLoading,
+            isSendReplyLoaded,
+            isSeeMore,
+          ) {
             return AnimatedContainer(
               key: cubit.listKeyForReplies[replyModel.id],
 
@@ -149,7 +152,9 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                                     .doctor!.firstName,
                                                 lastName:
                                                     replyModel.doctor!.lastName,
-                                                role: '',
+                                                role: replyModel.doctor!
+                                                    .isSyndicateCardRequired
+                                                    .toString(),
                                               ),
                                         style: TextStyle(
                                           color: replyModel.doctor == null
@@ -225,6 +230,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                       isDeleteCommentLoaded,
                                       isSendReplyLoading,
                                       isSendReplyLoaded,
+                                      isSeeMore,
                                     ) {
                                       return GestureDetector(
                                         onTap: () {
@@ -283,6 +289,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                       isDeleteCommentLoaded,
                                       isSendReplyLoading,
                                       isSendReplyLoaded,
+                                      isSeeMore,
                                     ) {
                                       return homeDataModel.role ==
                                                   AppStrings.roleAdmin ||

@@ -11,13 +11,7 @@ class AllPatientSection extends StatelessWidget {
           builder: (context, state) {
             return state.maybeWhen(
               orElse: () {
-                return HomePatientTitleHeader(
-                  title: AppStrings.allPatients,
-                  patientCount: '',
-                  leftArrow: '',
-                  rightArrow: '',
-                  onTap: () {},
-                );
+                return const SizedBox.shrink();
               },
               loaded: (
                 homeData,
@@ -29,8 +23,9 @@ class AllPatientSection extends StatelessWidget {
                 message,
                 checkUpdateMessageCounter,
                 isUserBlocked,
+                changesCounter,
               ) {
-                if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
                   return const SizedBox.shrink();
                 }
                 return HomePatientTitleHeader(
@@ -71,8 +66,9 @@ class AllPatientSection extends StatelessWidget {
               message,
               checkUpdateMessageCounter,
               isUserBlocked,
+              changesCounter,
             ) {
-              if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+              if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
                 return const SizedBox.shrink();
               }
               return FadeIn(

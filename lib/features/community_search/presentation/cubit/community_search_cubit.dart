@@ -1,9 +1,4 @@
 import 'dart:developer';
-
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/community_search/data/models/get_response_of_search_model.dart';
-import 'package:egy_akin/features/community_search/domain/usecases/get_response_of_search_in_community_usecase.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 
 import '../../../../exports.dart';
@@ -25,19 +20,18 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   final AddOptionOnPollUsecase _addOptionOnPollUsecase;
   bool isSearchContentEmpty = true;
   Timer? _debounce;
-  String? initialValue;
+
   String? searchValue;
   final Map<int, Set<int>> postSelectedOptions = {};
   final Map<int, int?> postSelectedOption = {};
 
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  ScrollController? scrollController;
-  int _currentPage = 1;
+  // ScrollController? scrollController;
+  int currentPage = 1;
   int changeCounter = 0;
 
-  void getResponseOfSearchInCommunity(String searchContent,
-      [int? milliseconds]) {
+  void getResponseOfSearchInCommunity([int? milliseconds]) {
     _debounce
         ?.cancel(); // Cancel the previous request if the user is still typing
 
@@ -46,8 +40,8 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
       final result = await _getResponseOfSearchInCommunityUsecase.execute(
         GetResponseOfSearchInCommunityUsecaseInput(
-          page: _currentPage,
-          searchContent: searchContent,
+          page: currentPage,
+          searchContent: searchValue ?? '',
         ),
       );
 
@@ -70,7 +64,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   void loadMorePosts(String searchContent) async {
     if (isLastPage) return;
 
-    _currentPage++;
+    currentPage++;
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => CommunitySearchState.loaded(
@@ -84,14 +78,14 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     final result = await _getResponseOfSearchInCommunityUsecase.execute(
       GetResponseOfSearchInCommunityUsecaseInput(
-        page: _currentPage,
+        page: currentPage,
         searchContent: searchContent,
       ),
     );
 
     result.fold(
       (l) {
-        _currentPage--; // Roll back the page increment if the API call fails
+        currentPage--; // Roll back the page increment if the API call fails
         emit(CommunitySearchState.error(l.message));
       },
       (loadMorePosts) {
@@ -133,7 +127,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
               // Check if this is the last page
               isLastPage = (response.data?.lastPage != null &&
-                  _currentPage >= response.data!.lastPage!);
+                  currentPage >= response.data!.lastPage!);
               isLoadingMoreForScroll = false;
 
               // Emit the updated state

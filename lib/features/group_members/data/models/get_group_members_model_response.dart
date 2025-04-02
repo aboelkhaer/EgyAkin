@@ -16,6 +16,17 @@ class GetGroupMembersModelResponse with _$GetGroupMembersModelResponse {
 @freezed
 class GetGroupMembersDataModelResponse with _$GetGroupMembersDataModelResponse {
   const factory GetGroupMembersDataModelResponse({
+    MembersDataModelResponse? members,
+    @JsonKey(name: 'pending_invitations') List<DoctorModel>? pendingInvitations,
+  }) = _GetGroupMembersDataModelResponse;
+  factory GetGroupMembersDataModelResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$GetGroupMembersDataModelResponseFromJson(json);
+}
+
+@freezed
+class MembersDataModelResponse with _$MembersDataModelResponse {
+  const factory MembersDataModelResponse({
     @JsonKey(name: 'current_page') int? currentPage,
     List<DoctorModel>? data,
     @JsonKey(name: 'first_page_url') String? firstPageUrl,
@@ -29,8 +40,7 @@ class GetGroupMembersDataModelResponse with _$GetGroupMembersDataModelResponse {
     @JsonKey(name: 'prev_page_url') String? prevPageUrl,
     int? to,
     int? total,
-  }) = _GetGroupMembersDataModelResponse;
-  factory GetGroupMembersDataModelResponse.fromJson(
-          Map<String, dynamic> json) =>
-      _$GetGroupMembersDataModelResponseFromJson(json);
+  }) = _MembersDataModelResponse;
+  factory MembersDataModelResponse.fromJson(Map<String, dynamic> json) =>
+      _$MembersDataModelResponseFromJson(json);
 }

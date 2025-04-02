@@ -8,15 +8,39 @@ class TopDoctors extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com'
-            ? const SizedBox.shrink()
-            : HomePatientTitleHeader(
-                title: 'Top Doctors',
-                patientCount: '',
-                leftArrow: '',
-                isWithIcon: false,
-                rightArrow: '',
-                onTap: () {}),
+        BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () {
+                return const SizedBox.shrink();
+              },
+              loaded: (
+                homeData,
+                currentDoctorModel,
+                dotsPosition,
+                homeIndex,
+                isUploadingSyndicateCard,
+                isUploadedSyndicateCard,
+                message,
+                checkUpdateMessageCounter,
+                isUserBlocked,
+                changesCounter,
+              ) {
+                if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                  return const SizedBox.shrink();
+                }
+                return HomePatientTitleHeader(
+                  title: 'Top Doctors',
+                  patientCount: '',
+                  leftArrow: '',
+                  isWithIcon: false,
+                  rightArrow: '',
+                  onTap: () {},
+                );
+              },
+            );
+          },
+        ),
         Container(
           // color: Colors.red,
           margin: EdgeInsets.only(bottom: 10.h),
@@ -40,8 +64,9 @@ class TopDoctors extends StatelessWidget {
                   message,
                   checkUpdateMessageCounter,
                   isUserBlocked,
+                  changesCounter,
                 ) {
-                  if (currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                  if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
                     return const SizedBox.shrink();
                   }
                   return FadeIn(

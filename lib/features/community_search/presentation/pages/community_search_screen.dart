@@ -20,47 +20,45 @@ class CommunitySearchScreen extends StatefulWidget {
 }
 
 class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
-  CommunitySearchCubit? _cubit;
+  late final CommunitySearchCubit _cubit;
+  late final ScrollController _scrollController;
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   void initState() {
-    if (widget.initialValueInSearch != null) {
-      context.read<CommunitySearchCubit>().isSearchContentEmpty = false;
-      context.read<CommunitySearchCubit>().initialValue =
-          widget.initialValueInSearch;
-      context
-          .read<CommunitySearchCubit>()
-          .getResponseOfSearchInCommunity(widget.initialValueInSearch!, 100);
-    }
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _cubit = context.read<CommunitySearchCubit>();
-
-      if (!_cubit!.isClosed) {
-        _cubit!.scrollController = ScrollController();
-        _cubit!.scrollController!.addListener(_onScroll);
-      }
-    });
     super.initState();
+    _cubit = context.read<CommunitySearchCubit>();
+    _scrollController = ScrollController()..addListener(_onScroll);
+
+    // Initialize search if initial value is provided
+    if (widget.initialValueInSearch != null) {
+      // _searchController.text = widget.initialValueInSearch!;
+      _cubit.isSearchContentEmpty = false;
+      _cubit.searchValue = widget.initialValueInSearch;
+      _cubit.getResponseOfSearchInCommunity(100);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
   }
 
   void _onScroll() {
-    final cubit = context.read<CommunitySearchCubit>();
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
 
-    if (cubit.isLastPage || cubit.isLoadingMoreForScroll) {
-      return;
-    }
-
-    final maxScroll = cubit.scrollController!.position.maxScrollExtent;
-    final currentScroll = cubit.scrollController!.position.pixels;
+    final maxScroll = _scrollController.position.maxScrollExtent;
+    final currentScroll = _scrollController.position.pixels;
     const threshold = 200.0;
 
     if (maxScroll - currentScroll <= threshold) {
-      cubit.isLoadingMoreForScroll = true;
+      _cubit.isLoadingMoreForScroll = true;
+      final searchValue = widget.initialValueInSearch ?? _cubit.searchValue;
 
-      // Use correct search value
-      final searchValue = widget.initialValueInSearch ?? cubit.searchValue;
-
-      if (searchValue!.isNotEmpty) {
-        cubit.loadMorePosts(searchValue);
+      if (searchValue?.isNotEmpty ?? false) {
+        _cubit.loadMorePosts(searchValue!);
       }
     }
   }
@@ -98,12 +96,15 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                     textInputType: TextInputType.text,
                     onChanged: (value) {
                       if (value.isNotEmpty) {
+                        cubit.currentPage = 1;
                         cubit.isSearchContentEmpty = false;
+
                         cubit.searchValue = value;
-                        cubit.initialValue = value;
-                        cubit.getResponseOfSearchInCommunity(value);
+
+                        cubit.getResponseOfSearchInCommunity();
                       } else {
                         cubit.isSearchContentEmpty = true;
+                        cubit.searchValue = value;
                       }
                     },
                     validator: (value) {
@@ -163,7 +164,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           )
                         : ListView.builder(
                             itemCount: response.data!.data!.length,
-                            controller: cubit.scrollController,
+                            controller: _scrollController,
                             physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.all(20) +
                                 EdgeInsets.only(bottom: 60.h),
@@ -174,45 +175,43 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                 homeDataModel: widget.homeDataModel,
                                 isCommunitySearch: true,
                                 currentDoctorModel: widget.currentDoctorModel,
-                                highlightWord: _cubit!.initialValue,
+                                highlightWord: _cubit.searchValue,
                                 viewPollWidget: ViewPollWidget(
                                   poll: feed.poll,
                                   currentDoctorModel: widget.currentDoctorModel,
                                   homeDataModel: widget.homeDataModel,
                                   selectedOptions:
-                                      _cubit!.postSelectedOptions[feed.id] ??
-                                          {},
+                                      _cubit.postSelectedOptions[feed.id] ?? {},
                                   onAddOption: (pollId, option) async {
-                                    await _cubit!.addOptionOnPoll(pollId,
+                                    await _cubit.addOptionOnPoll(pollId,
                                         option); // Call your function here
                                   },
                                   initiallyExpanded: false,
                                   selectedOption:
-                                      _cubit!.postSelectedOption[feed.id],
+                                      _cubit.postSelectedOption[feed.id],
                                   onOptionSelected: (optionId) {
-                                    _cubit!.postSelectedOption[feed.id!] =
+                                    _cubit.postSelectedOption[feed.id!] =
                                         optionId;
-                                    _cubit!.addVoteAndUnVote(
+                                    _cubit.addVoteAndUnVote(
                                       feed.poll!.id.toString(),
                                       optionId!,
                                     );
-                                    _cubit!.refreshScreen();
+                                    _cubit.refreshScreen();
                                   },
                                   onOptionToggled: (optionId, isSelected) {
-                                    _cubit!.postSelectedOptions[feed.id!] ??=
-                                        {};
-                                    _cubit!.addVoteAndUnVote(
+                                    _cubit.postSelectedOptions[feed.id!] ??= {};
+                                    _cubit.addVoteAndUnVote(
                                       feed.poll!.id.toString(),
                                       optionId,
                                     );
                                     if (isSelected) {
-                                      _cubit!.postSelectedOptions[feed.id!]!
+                                      _cubit.postSelectedOptions[feed.id!]!
                                           .add(optionId);
                                     } else {
-                                      _cubit!.postSelectedOptions[feed.id!]!
+                                      _cubit.postSelectedOptions[feed.id!]!
                                           .remove(optionId);
                                     }
-                                    _cubit!.refreshScreen();
+                                    _cubit.refreshScreen();
                                   },
                                 ),
                                 onLikeAndUnlikeAdditional: () {

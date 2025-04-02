@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/group_members/data/datasources/group_members_datasource.dart';
+import 'package:egy_akin/features/group_members/data/models/accept_or_decline_member_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_group_members_model_response.dart';
+import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/remove_member_from_group_model_response.dart';
 import 'package:egy_akin/features/group_members/domain/repositories/group_members_repo.dart';
 import '../../../../exports.dart';
@@ -30,7 +32,7 @@ class GroupMembersRepositoryImpl extends GroupMembersRepository {
   }
 
   @override
-  Future<Either<Failure, GetGroupMembersModelResponse>> getPostLikes(
+  Future<Either<Failure, GetPostLikesModelResponse>> getPostLikes(
       String postId, int pageNumber) async {
     if (await networkInfo.isConnected) {
       try {
@@ -56,6 +58,25 @@ class GroupMembersRepositoryImpl extends GroupMembersRepository {
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await groupMembersDatasource.removeMemberFromGroup(
             groupId, doctorId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, AcceptOrDeclineMemberModelResponse>>
+      acceptOrDeclineMemberInGroup(
+          String groupId, String status, int invitationId) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await groupMembersDatasource
+            .acceptOrDeclineMemberInGroup(groupId, status, invitationId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

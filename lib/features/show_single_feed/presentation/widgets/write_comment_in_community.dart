@@ -68,7 +68,9 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                                         cubit.commentToReply!.doctor!.firstName,
                                     lastName:
                                         cubit.commentToReply!.doctor!.lastName,
-                                    role: '',
+                                    role: cubit.commentToReply!.doctor!
+                                        .isSyndicateCardRequired
+                                        .toString(),
                                   )}',
                                   style: const TextStyle(
                                     color: Colors.blue,
@@ -144,6 +146,7 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
             isDeleteCommentLoaded,
             isSendReplyLoading,
             isSendReplyLoaded,
+            isSeeMore,
           ) {
             if (isSendCommentLoading) {
               return const SizedBox.shrink();
@@ -188,7 +191,9 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                                         cubit.commentToReply!.doctor!.firstName,
                                     lastName:
                                         cubit.commentToReply!.doctor!.lastName,
-                                    role: '',
+                                    role: cubit.commentToReply!.doctor!
+                                        .isSyndicateCardRequired
+                                        .toString(),
                                   )}',
                                   style: const TextStyle(
                                     color: Colors.blue,

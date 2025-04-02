@@ -1,8 +1,3 @@
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/get_groups_tab_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
-
 import '../../../../../exports.dart';
 
 class GroupsCubit extends Cubit<GroupsState> {
@@ -23,9 +18,9 @@ class GroupsCubit extends Cubit<GroupsState> {
   final AddOptionOnPollUsecase _addOptionOnPollUsecase;
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  int _currentPage = 0;
+  int _currentPage = 1;
   int callGroupsTabTimes = 0;
-  ScrollController? scrollController;
+
   final Map<int, Set<int>> postSelectedOptions = {};
   final Map<int, int?> postSelectedOption = {};
 
@@ -126,9 +121,12 @@ class GroupsCubit extends Cubit<GroupsState> {
         final updatedGroups = response.data!.latestGroups!.map((group) {
           if (group.id.toString() == groupId) {
             return group.copyWith(
-              userStatus: GroupInviteStatus.invited.name,
-              memberCount:
-                  (group.memberCount ?? 0) + 1, // Increment memberCount
+              userStatus: group.privacy == GroupPrivacy.private.name
+                  ? GroupInviteStatus.pending.name
+                  : GroupInviteStatus.joined.name,
+              memberCount: group.privacy == GroupPrivacy.public.name
+                  ? (group.memberCount ?? 0) + 1
+                  : group.memberCount, // Increment memberCount
             ); // Update userStatus and memberCount
           }
           return group; // Return unchanged group if ID doesn't match

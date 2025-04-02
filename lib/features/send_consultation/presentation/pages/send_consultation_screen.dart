@@ -499,7 +499,9 @@ class SendConsultationScreen extends StatelessWidget {
                                                               .firstName,
                                                           lastName: doctorModel
                                                               .lastName,
-                                                          role: '',
+                                                          role: doctorModel
+                                                              .isSyndicateCardRequired
+                                                              .toString(),
                                                         ),
                                                         style: TextStyle(
                                                           fontSize: 12.sp,

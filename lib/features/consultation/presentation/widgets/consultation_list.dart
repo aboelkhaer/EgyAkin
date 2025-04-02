@@ -147,7 +147,9 @@ class ConsultationList extends StatelessWidget {
                                                             .doctorFirstName,
                                                         lastName: consult
                                                             .doctorLastName,
-                                                        role: '',
+                                                        role: consult
+                                                            .isSyndicateCard
+                                                            .toString(),
                                                       ),
                                                       style: TextStyle(
                                                         color: currentDoctorModel

@@ -63,6 +63,15 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       posts: (json['posts'] as List<dynamic>?)
           ?.map((e) => PostModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      feeds: (json['feed_posts'] as List<dynamic>?)
+          ?.map((e) => PostCommunityModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      trendsHashtags: (json['trending_hashtags'] as List<dynamic>?)
+          ?.map((e) => TrendModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      latestGroups: (json['latest_groups'] as List<dynamic>?)
+          ?.map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
@@ -73,6 +82,9 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'topDoctors': instance.topDoctors,
       'pendingSyndicateCard': instance.pendingSyndicateCard,
       'posts': instance.posts,
+      'feed_posts': instance.feeds,
+      'trending_hashtags': instance.trendsHashtags,
+      'latest_groups': instance.latestGroups,
     };
 
 _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(

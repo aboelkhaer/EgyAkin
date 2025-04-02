@@ -86,9 +86,10 @@ class IfOutcomeSubmitted extends StatelessWidget {
                           },
                           child: Text(
                             doctorName(
-                                firstName: submitterModel.name,
-                                lastName: submitterModel.name,
-                                role: currentDoctorRole),
+                              firstName: submitterModel.name,
+                              lastName: submitterModel.name,
+                              role: 'true',
+                            ),
                             // '',
                             style: TextStyle(
                               color: Colors.green.shade700,

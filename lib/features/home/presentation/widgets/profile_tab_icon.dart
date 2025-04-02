@@ -22,6 +22,7 @@ class ProfileTabIcon extends StatelessWidget {
           message,
           checkUpdateMessageCounter,
           isUserBlocked,
+          changesCounter,
         ) {
           return GestureDetector(
             onTap: () {

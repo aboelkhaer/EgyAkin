@@ -34,6 +34,7 @@ class CommentsInCommunity extends StatelessWidget {
             isDeleteCommentLoaded,
             isSendReplyLoading,
             isSendReplyLoaded,
+            isSeeMore,
           ) {
             if (message == 'This option already exists for the poll') {
               customSnackBar(
@@ -64,30 +65,47 @@ class CommentsInCommunity extends StatelessWidget {
             isDeleteCommentLoaded,
             isSendReplyLoading,
             isSendReplyLoaded,
+            isSeeMore,
           ) {
-            return AnimatedList(
-              key: cubit.listKeyForComments,
-              initialItemCount: commentsResponse.data!.data!.length,
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(
-                top: 10,
-              ),
-              physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index, animation) {
-                if (index >= commentsResponse.data!.data!.length) {
-                  return const SizedBox
-                      .shrink(); // Return an empty widget if out of bounds
-                }
-                var commentModel = commentsResponse.data!.data![index];
-                return CommentWidgetInCommunity(
-                  commentModel: commentModel,
-                  homeDataModel: homeDataModel,
-                  currentDoctorModel: currentDoctorModel,
-                  commentsResponse: commentsResponse,
-                  index: index,
-                  updatedFeed: updatedFeed,
-                );
-              },
+            return Column(
+              children: [
+                AnimatedList(
+                  key: cubit.listKeyForComments,
+                  initialItemCount: commentsResponse.data!.data!.length,
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                  ),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index, animation) {
+                    if (index >= commentsResponse.data!.data!.length) {
+                      return const SizedBox
+                          .shrink(); // Return an empty widget if out of bounds
+                    }
+                    var commentModel = commentsResponse.data!.data![index];
+                    return CommentWidgetInCommunity(
+                      commentModel: commentModel,
+                      homeDataModel: homeDataModel,
+                      currentDoctorModel: currentDoctorModel,
+                      commentsResponse: commentsResponse,
+                      index: index,
+                      updatedFeed: updatedFeed,
+                    );
+                  },
+                ),
+                isSeeMore
+                    ? Column(
+                        children: [
+                          const SizedBox(
+                            height: 15,
+                            width: 15,
+                            child: CircularProgressIndicator(strokeWidth: 3),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ],
             );
           },
         );

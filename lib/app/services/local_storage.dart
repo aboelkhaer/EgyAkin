@@ -101,6 +101,7 @@ class AppPreferences implements LocalStorageProcess {
   Future<void> removeDoctorData() async {
     await _sharedPreferences.remove(AppLocalStrings.keyToken);
     await _sharedPreferences.remove(AppLocalStrings.doctorData);
+    await _sharedPreferences.remove(AppLocalStrings.isExistVerificationBanner);
   }
 
   @override

@@ -75,6 +75,9 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       commentsCount: (json['comments_count'] as num?)?.toInt(),
       isSaved: json['isSaved'] as bool?,
       isLiked: json['isLiked'] as bool?,
+      existingMediaPath: (json['existing_media_path'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       group: json['group'] == null
           ? null
           : GroupDetails.fromJson(json['group'] as Map<String, dynamic>),
@@ -100,6 +103,7 @@ Map<String, dynamic> _$$PostCommunityModelImplToJson(
       'comments_count': instance.commentsCount,
       'isSaved': instance.isSaved,
       'isLiked': instance.isLiked,
+      'existing_media_path': instance.existingMediaPath,
       'group': instance.group,
       'doctor': instance.doctor,
       'poll': instance.poll,

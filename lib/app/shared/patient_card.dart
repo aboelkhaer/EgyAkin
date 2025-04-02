@@ -189,7 +189,7 @@ class PatientCard extends StatelessWidget {
                                                 firstName:
                                                     drFirstName.toString(),
                                                 lastName: drLastName.toString(),
-                                                role: currentDoctorRole,
+                                                role: isSyndicateCardRequired,
                                               ),
                                               style: const TextStyle(
                                                 color: AppColors.description,

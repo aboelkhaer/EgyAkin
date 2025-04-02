@@ -33,40 +33,33 @@ class _MoreScreenState extends State<MoreScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
-                  ? const SizedBox.shrink()
-                  : Text(
-                      'General',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade500,
-                          fontSize: 13.sp),
-                    ),
-              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
-                  ? const SizedBox.shrink()
-                  : ListTile(
-                      title: Text(
-                        'GFR Calculator',
-                        style: TextStyle(fontSize: 13.5.sp),
-                      ),
-                      leading: Icon(
-                        Icons.calculate,
-                        color: Colors.grey.shade600,
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 15.r,
-                      ),
-                      onTap: () {
-                        navigatorKey.currentState?.pushNamed(
-                            AppRoutes.gfrCalculator,
-                            arguments: AppRoutesArgs.gfrCalculatorRouteArgs(
-                                homeDataModel: widget.homeDataModel));
-                      },
-                    ),
-              widget.currentDoctorModel.email == 'aboelkhaer@yandex.com'
-                  ? const SizedBox.shrink()
-                  : SizedBox(height: 15.h),
+              Text(
+                'General',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    fontSize: 13.sp),
+              ),
+              ListTile(
+                title: Text(
+                  'GFR Calculator',
+                  style: TextStyle(fontSize: 13.5.sp),
+                ),
+                leading: Icon(
+                  Icons.calculate,
+                  color: Colors.grey.shade600,
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15.r,
+                ),
+                onTap: () {
+                  navigatorKey.currentState?.pushNamed(AppRoutes.gfrCalculator,
+                      arguments: AppRoutesArgs.gfrCalculatorRouteArgs(
+                          homeDataModel: widget.homeDataModel));
+                },
+              ),
+              SizedBox(height: 15.h),
               Text(
                 'Privacy & Security',
                 style: TextStyle(
@@ -115,6 +108,33 @@ class _MoreScreenState extends State<MoreScreen> {
                           AppRoutes.emailVerification,
                           arguments: AppRoutesArgs.emailVerificationRouteArgs(
                               currentDoctorModel: widget.currentDoctorModel));
+                    },
+                  );
+                },
+              ),
+              BlocBuilder<MoreCubit, MoreState>(
+                builder: (context, state) {
+                  if (isVerifiedUser(
+                      widget.homeDataModel.isSyndicateCardRequired)) {
+                    return const SizedBox.shrink();
+                  }
+                  return ListTile(
+                    title: Text(
+                      'Syndicate card verification',
+                      style: TextStyle(fontSize: 13.5.sp),
+                    ),
+                    leading: Icon(
+                      Icons.verified,
+                      color: Colors.grey.shade600,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 15.r,
+                    ),
+                    onTap: () {
+                      navigatorKey.currentState?.pushNamed(
+                          AppRoutes.emailVerification,
+                          arguments: widget.currentDoctorModel);
                     },
                   );
                 },
@@ -195,6 +215,27 @@ class _MoreScreenState extends State<MoreScreen> {
                 ),
                 onTap: () {
                   navigatorKey.currentState?.pushNamed(AppRoutes.aboutUs);
+                },
+              ),
+              BlocBuilder<MoreCubit, MoreState>(
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return const SizedBox.shrink();
+                    },
+                    loaded: () {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'v${context.read<HomeCubit>().currentUserVersion}',
+                          style: TextStyle(
+                            color: Colors.grey.shade500,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
               BlocBuilder<MoreCubit, MoreState>(

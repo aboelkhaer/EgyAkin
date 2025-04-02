@@ -1,14 +1,9 @@
-import 'package:egy_akin/features/show_single_feed/data/models/add_like_or_unlike_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_comment_on_post_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_reply_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/delete_comment_on_post_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/delete_reply_on_comment_in_community_model_response.dart';
-
 import '../../../../exports.dart';
 
 abstract class ShowSingleFeedDatasource {
   Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity({
     required String postId,
+    required int page,
   });
   Future<AddLikeOrUnlikeOnCommentInCommunityModelResponse>
       addLikeOrUnlikeOnCommentInCommunity({
@@ -39,9 +34,14 @@ class ShowSingleFeedDatasourceImpl implements ShowSingleFeedDatasource {
   ShowSingleFeedDatasourceImpl(this._apiServices);
 
   @override
-  Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
-      {required String postId}) async {
-    return await _apiServices.getCommentsInCommunity(postId);
+  Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity({
+    required String postId,
+    required int page,
+  }) async {
+    return await _apiServices.getCommentsInCommunity(
+      postId,
+      page,
+    );
   }
 
   @override

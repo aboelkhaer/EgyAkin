@@ -161,6 +161,7 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
       },
       (r) {
         doctorsChecked.clear();
+        searchController.clear();
 
         emit(
           state.maybeMap(

@@ -1,38 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:egy_akin/features/all_doctor_posts/data/models/get_all_doctor_posts_model_response.dart';
-import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
-import 'package:egy_akin/features/all_groups_in_community/data/models/get_all_groups_in_community_model_response.dart';
-import 'package:egy_akin/features/community/data/models/add_like_on_post_model_response.dart';
-import 'package:egy_akin/features/community/data/models/add_option_in_poll_model_response.dart';
-import 'package:egy_akin/features/community/data/models/delete_post_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_poll_voters_model_response.dart';
-import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
-import 'package:egy_akin/features/community/data/models/join_group_model_response.dart';
-import 'package:egy_akin/features/community/data/models/save_or_unsave_post_model_response.dart';
-import 'package:egy_akin/features/community_search/data/models/get_response_of_search_model.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/models/get_ai_consultation_history_model_response.dart';
-import 'package:egy_akin/features/consultation_from_ai/data/models/send_ai_consultation_request_model_response.dart';
-import 'package:egy_akin/features/create_group_in_community/data/models/create_group_in_community_model_response.dart';
-import 'package:egy_akin/features/create_group_in_community/data/models/update_group_in_community_model_response.dart';
-import 'package:egy_akin/features/create_post_in_community/data/models/create_post_in_community_model_response.dart';
-import 'package:egy_akin/features/create_post_in_community/data/models/edit_post_in_community_model_response.dart';
-import 'package:egy_akin/features/group_details_in_community/data/models/add_vote_and_unvote_model_response.dart';
-import 'package:egy_akin/features/group_details_in_community/data/models/delete_group_in_community_model_response.dart';
-import 'package:egy_akin/features/group_details_in_community/data/models/get_group_details_in_community_model_response.dart';
-import 'package:egy_akin/features/group_details_in_community/data/models/leave_group_model_response.dart';
-import 'package:egy_akin/features/group_members/data/models/get_group_members_model_response.dart';
-import 'package:egy_akin/features/group_members/data/models/remove_member_from_group_model_response.dart';
-import 'package:egy_akin/features/saved_posts/data/models/get_saved_posts_model_response.dart';
-import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/add_like_or_unlike_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_comment_on_post_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_reply_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/delete_comment_on_post_in_community_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/block_user_model_response.dart';
-import 'package:egy_akin/features/doctor_info_view/data/models/verify_user_email_model_response.dart';
+import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
@@ -367,6 +336,7 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.getCommentsInCommunity}/{postId}/comments')
   Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
     @Path('postId') String postId,
+    @Query('page') int pageNumber,
   );
 
   @POST(
@@ -398,6 +368,7 @@ abstract class ApiServices {
     @Field("media_type") String? mediaType,
     @Field("visibility") String visibility,
     @Field("group_id") String? groupId,
+    @Field("poll") Map<String, dynamic>? pollModel,
   );
 
   @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
@@ -409,7 +380,18 @@ abstract class ApiServices {
     @Part(name: "visibility") String visibility,
     @Part(name: "group_id") String? groupId,
     @Part(name: "media_path[]") List<MultipartFile> images,
+    @Part(name: "existing_media_path[]") List<String> existingMediaPath,
   );
+
+  // @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
+  // Future<EditPostInCommunityModelResponse> editPostWithImageLinksInCommunity(
+  //   @Path('postId') String postId,
+  //   @Field('content') String postContent,
+  //   @Field("media_type") String? mediaType,
+  //   @Field("visibility") String visibility,
+  //   @Field("group_id") String? groupId,
+  //   @Field("existing_media_path") String existingMediaPath,
+  // );
 
   @POST('${ApiEndPoint.createReplyOnCommentInCommunity}/{postId}/comment')
   Future<CreateReplyOnCommentInCommunityModelResponse>
@@ -445,7 +427,7 @@ abstract class ApiServices {
     @Path('groupId') String groupId,
   );
   @GET('${ApiEndPoint.getPostLikes}/{postId}/likes')
-  Future<GetGroupMembersModelResponse> getPostLikes(
+  Future<GetPostLikesModelResponse> getPostLikes(
     @Query('page') int pageNumber,
     @Path('postId') String postId,
   );
@@ -552,5 +534,19 @@ abstract class ApiServices {
     @Path('pollId') String pollId,
     @Path('optionId') String optionId,
     @Query('page') int page,
+  );
+
+  @GET('${ApiEndPoint.getDoctorInvitationsForGroups}/{doctorId}')
+  Future<GetDoctorInvitationForGroupsModelResponse>
+      getDoctorInvitationsForGroups(
+    @Path('doctorId') String doctorId,
+    @Query('page') int page,
+  );
+
+  @POST('${ApiEndPoint.acceptOrDeclineMemberInGroup}/{groupId}/invitation')
+  Future<AcceptOrDeclineMemberModelResponse> acceptOrDeclineMemberInGroup(
+    @Path('groupId') String groupId,
+    @Field('status') String status,
+    @Field('invitation_id') int invitationId,
   );
 }

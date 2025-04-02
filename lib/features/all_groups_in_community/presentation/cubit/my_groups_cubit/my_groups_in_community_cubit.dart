@@ -1,5 +1,5 @@
 import 'package:egy_akin/features/all_groups_in_community/domain/usecases/get_my_groups_usecase.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_state.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/my_groups_cubit/my_groups_in_community_state.dart';
 import 'package:egy_akin/features/community/domain/usecases/join_group_in_community_usecase.dart';
 import '../../../../../exports.dart';
 
@@ -107,9 +107,12 @@ class MyGroupsInCommunityCubit extends Cubit<MyGroupsInCommunityState> {
         final updatedGroups = response.data!.data!.map((group) {
           if (group.id.toString() == groupId) {
             return group.copyWith(
-              userStatus: GroupInviteStatus.invited.name,
-              memberCount:
-                  (group.memberCount ?? 0) + 1, // Increment memberCount
+              userStatus: group.privacy == GroupPrivacy.private.name
+                  ? GroupInviteStatus.pending.name
+                  : GroupInviteStatus.joined.name,
+              memberCount: group.privacy == GroupPrivacy.public.name
+                  ? (group.memberCount ?? 0) + 1
+                  : group.memberCount, // Increment memberCount
             ); // Update userStatus and memberCount
           }
           return group; // Return unchanged group if ID doesn't match

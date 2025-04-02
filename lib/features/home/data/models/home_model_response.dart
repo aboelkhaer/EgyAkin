@@ -34,6 +34,9 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     List<DoctorModel>? topDoctors,
     List<DoctorModel>? pendingSyndicateCard,
     List<PostModel>? posts,
+    @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
+    @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
+    @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
   }) = _HomeDataModelResponse;
   factory HomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$HomeDataModelResponseFromJson(json);

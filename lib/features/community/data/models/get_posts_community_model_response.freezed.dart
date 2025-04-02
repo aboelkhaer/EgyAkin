@@ -658,6 +658,8 @@ mixin _$PostCommunityModel {
   bool? get isSaved => throw _privateConstructorUsedError;
   @JsonKey(name: 'isLiked')
   bool? get isLiked => throw _privateConstructorUsedError;
+  @JsonKey(name: 'existing_media_path')
+  List<String>? get existingMediaPath => throw _privateConstructorUsedError;
   GroupDetails? get group => throw _privateConstructorUsedError;
   DoctorModel? get doctor => throw _privateConstructorUsedError;
   PollModelResponse? get poll => throw _privateConstructorUsedError;
@@ -690,6 +692,7 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
+      @JsonKey(name: 'existing_media_path') List<String>? existingMediaPath,
       GroupDetails? group,
       DoctorModel? doctor,
       PollModelResponse? poll});
@@ -725,6 +728,7 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
     Object? commentsCount = freezed,
     Object? isSaved = freezed,
     Object? isLiked = freezed,
+    Object? existingMediaPath = freezed,
     Object? group = freezed,
     Object? doctor = freezed,
     Object? poll = freezed,
@@ -774,6 +778,10 @@ class _$PostCommunityModelCopyWithImpl<$Res, $Val extends PostCommunityModel>
           ? _value.isLiked
           : isLiked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      existingMediaPath: freezed == existingMediaPath
+          ? _value.existingMediaPath
+          : existingMediaPath // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       group: freezed == group
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
@@ -852,6 +860,7 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
       @JsonKey(name: 'comments_count') int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
+      @JsonKey(name: 'existing_media_path') List<String>? existingMediaPath,
       GroupDetails? group,
       DoctorModel? doctor,
       PollModelResponse? poll});
@@ -888,6 +897,7 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
     Object? commentsCount = freezed,
     Object? isSaved = freezed,
     Object? isLiked = freezed,
+    Object? existingMediaPath = freezed,
     Object? group = freezed,
     Object? doctor = freezed,
     Object? poll = freezed,
@@ -937,6 +947,10 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
           ? _value.isLiked
           : isLiked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      existingMediaPath: freezed == existingMediaPath
+          ? _value._existingMediaPath
+          : existingMediaPath // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
       group: freezed == group
           ? _value.group
           : group // ignore: cast_nullable_to_non_nullable
@@ -968,10 +982,13 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       @JsonKey(name: 'comments_count') this.commentsCount,
       @JsonKey(name: 'isSaved') this.isSaved,
       @JsonKey(name: 'isLiked') this.isLiked,
+      @JsonKey(name: 'existing_media_path')
+      final List<String>? existingMediaPath,
       this.group,
       this.doctor,
       this.poll})
-      : _mediaPath = mediaPath;
+      : _mediaPath = mediaPath,
+        _existingMediaPath = existingMediaPath;
 
   factory _$PostCommunityModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$PostCommunityModelImplFromJson(json);
@@ -1014,6 +1031,18 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   @override
   @JsonKey(name: 'isLiked')
   final bool? isLiked;
+  final List<String>? _existingMediaPath;
+  @override
+  @JsonKey(name: 'existing_media_path')
+  List<String>? get existingMediaPath {
+    final value = _existingMediaPath;
+    if (value == null) return null;
+    if (_existingMediaPath is EqualUnmodifiableListView)
+      return _existingMediaPath;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   final GroupDetails? group;
   @override
@@ -1023,7 +1052,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
 
   @override
   String toString() {
-    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, group: $group, doctor: $doctor, poll: $poll)';
+    return 'PostCommunityModel(id: $id, content: $content, mediaType: $mediaType, mediaPath: $mediaPath, visibility: $visibility, createdAt: $createdAt, updatedAt: $updatedAt, likesCount: $likesCount, commentsCount: $commentsCount, isSaved: $isSaved, isLiked: $isLiked, existingMediaPath: $existingMediaPath, group: $group, doctor: $doctor, poll: $poll)';
   }
 
   @override
@@ -1049,6 +1078,8 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
                 other.commentsCount == commentsCount) &&
             (identical(other.isSaved, isSaved) || other.isSaved == isSaved) &&
             (identical(other.isLiked, isLiked) || other.isLiked == isLiked) &&
+            const DeepCollectionEquality()
+                .equals(other._existingMediaPath, _existingMediaPath) &&
             (identical(other.group, group) || other.group == group) &&
             (identical(other.doctor, doctor) || other.doctor == doctor) &&
             (identical(other.poll, poll) || other.poll == poll));
@@ -1069,6 +1100,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       commentsCount,
       isSaved,
       isLiked,
+      const DeepCollectionEquality().hash(_existingMediaPath),
       group,
       doctor,
       poll);
@@ -1103,6 +1135,8 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       @JsonKey(name: 'comments_count') final int? commentsCount,
       @JsonKey(name: 'isSaved') final bool? isSaved,
       @JsonKey(name: 'isLiked') final bool? isLiked,
+      @JsonKey(name: 'existing_media_path')
+      final List<String>? existingMediaPath,
       final GroupDetails? group,
       final DoctorModel? doctor,
       final PollModelResponse? poll}) = _$PostCommunityModelImpl;
@@ -1140,6 +1174,9 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   @override
   @JsonKey(name: 'isLiked')
   bool? get isLiked;
+  @override
+  @JsonKey(name: 'existing_media_path')
+  List<String>? get existingMediaPath;
   @override
   GroupDetails? get group;
   @override

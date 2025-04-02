@@ -1,8 +1,3 @@
-import 'package:egy_akin/features/all_doctor_posts/data/models/get_all_doctor_posts_model_response.dart';
-import 'package:egy_akin/features/all_doctor_posts/domain/usecases/get_all_doctor_posts_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-
 import '../../../../exports.dart';
 
 class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
@@ -122,6 +117,8 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
     if (_isUpdatingPostLikeStatus) return;
     _isUpdatingPostLikeStatus = true;
 
+    // Store the original state for potential rollback
+    final originalState = state;
     bool isCurrentlyLiked = false;
 
     /// **1️⃣ Optimistically Update UI**
@@ -152,7 +149,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
 
           /// **Update State with a New Instance**
           final updatedResponse = response.copyWith(
-            data: response.data!.copyWith(data: [...updatedPosts]),
+            data: response.data!.copyWith(data: updatedPosts),
           );
 
           return AllDoctorPostsState.loaded(
@@ -162,7 +159,8 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
             false,
             false,
             false,
-            changeCounter,
+            changeCounter +
+                1, // CRITICAL: Increment changeCounter to trigger UI update
           );
         },
         orElse: () => state,
@@ -182,46 +180,23 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
       (failure) {
         /// **3️⃣ Rollback UI on Failure**
         emit(
-          state.maybeMap(
-            loaded: (value) {
-              final response = value.response;
-              if (response.data == null || response.data!.data == null) {
-                return value;
-              }
-
-              final revertedPosts = response.data!.data!.map((post) {
-                if (post.id == int.tryParse(postId)) {
-                  final revertedLikesCount = !isCurrentlyLiked
-                      ? (post.likesCount ?? 1) - 1
-                      : (post.likesCount ?? 0) + 1;
-
-                  return post.copyWith(
-                    isLiked: isCurrentlyLiked,
-                    likesCount: revertedLikesCount,
-                  );
-                }
-                return post;
-              }).toList();
-
-              final revertedResponse = response.copyWith(
-                data: response.data!.copyWith(data: [...revertedPosts]),
-              );
-
-              return AllDoctorPostsState.loaded(
-                revertedResponse,
-                '',
-                '',
-                false,
-                false,
-                false,
-                changeCounter,
-              );
-            },
-            orElse: () => state,
+          originalState.maybeMap(
+            loaded: (value) => AllDoctorPostsState.loaded(
+              value.response,
+              '',
+              '',
+              false,
+              false,
+              false,
+              changeCounter + 1, // Also increment on rollback
+            ),
+            orElse: () => originalState,
           ),
         );
       },
-      (success) {},
+      (success) {
+        // On success, no need to do anything as we already optimistically updated
+      },
     );
 
     _isUpdatingPostLikeStatus = false;

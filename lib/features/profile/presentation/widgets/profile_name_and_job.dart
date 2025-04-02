@@ -44,7 +44,11 @@ class ProfileNameAndJob extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Dr.${capitalizeFirstText(cubit.currentDoctor.firstName!)} ${capitalizeFirstText(cubit.currentDoctor.lastName!)}',
+                      doctorName(
+                        firstName: cubit.currentDoctor.firstName ?? '',
+                        lastName: cubit.currentDoctor.lastName ?? '',
+                        role: homeDataModel.isSyndicateCardRequired.toString(),
+                      ),
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
@@ -70,99 +74,58 @@ class ProfileNameAndJob extends StatelessWidget {
                 SizedBox(height: 3.h),
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, state) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    return Column(
                       children: [
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            // navigatorKey.currentState?.pushNamed(
-                            //   AppRoutes.profilePatients,
-                            //   arguments: AppRoutesArgs.profilePatientsRouteArgs(
-                            //     doctorId: cubit.currentDoctor.id.toString(),
-                            //     currentDoctorModel: cubit.currentDoctor,
-                            //     accountVerification: accountVerification,
-                            //     isSyndicateCardRequired:
-                            //         isSyndicateCardRequired,
-                            //     doctorFirstName:
-                            //         cubit.currentDoctor.firstName.toString(),
-                            //   ),
-                            // );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                context
-                                    .read<HomeCubit>()
-                                    .doctorPatientCount
-                                    .toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                              SizedBox(width: 3.w),
-                              Text(
-                                'Patient',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.grey.shade600,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                            ],
-                          ),
-                        ),
-                        const Text('|'),
-                        InkWell(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () {
-                            showCustomBottomSheet(
+                        // First Row with three items
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildStatItem(
                               context: context,
-                              builder: (context) {
-                                return BlocProvider(
-                                  create: (context) => ScoreHistoryCubit(sl()),
-                                  child: ScoreHistoryScreen(
-                                    doctorId: cubit.currentDoctor.id.toString(),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          child: Container(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SizedBox(width: 10.w),
-                                Text(
-                                  context
-                                      .read<HomeCubit>()
-                                      .doctorScore
-                                      .toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                                SizedBox(width: 3.w),
-                                Text(
-                                  'Score',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12.sp,
-                                  ),
-                                ),
-                                // SizedBox(width: 5.w),
-                              ],
+                              icon: Icons.people,
+                              value: context
+                                  .read<HomeCubit>()
+                                  .doctorPatientCount
+                                  .toString(),
+                              label: 'Patient',
+                              onTap: () {},
                             ),
-                          ),
+                            _buildDivider(),
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.star,
+                              value: context
+                                  .read<HomeCubit>()
+                                  .doctorScore
+                                  .toString(),
+                              label: 'Score',
+                              onTap: () {},
+                            ),
+                            _buildDivider(),
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.bookmark,
+                              value: homeDataModel.savedPosts.toString(),
+                              label: 'Saved Posts',
+                              onTap: () {},
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 5.h), // Space between rows
+
+                        // Second Row with "All Posts"
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildStatItem(
+                              context: context,
+                              icon: Icons.post_add,
+                              value: homeDataModel.postsCount.toString(),
+                              label: 'All Posts',
+                              onTap: () {},
+                            ),
+                          ],
                         ),
                       ],
                     );
@@ -178,7 +141,11 @@ class ProfileNameAndJob extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Dr.${capitalizeFirstText(doctorModel.firstName!)} ${capitalizeFirstText(doctorModel.lastName!)}',
+                      doctorName(
+                        firstName: cubit.currentDoctor.firstName ?? '',
+                        lastName: cubit.currentDoctor.lastName ?? '',
+                        role: homeDataModel.isSyndicateCardRequired.toString(),
+                      ),
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
@@ -277,11 +244,14 @@ class ProfileNameAndJob extends StatelessWidget {
                                     homeDataModel: homeDataModel,
                                     doctorId: currentDoctorModel.id.toString(),
                                     doctorName: doctorName(
-                                        firstName: currentDoctorModel.firstName
-                                            .toString(),
-                                        lastName: currentDoctorModel.lastName
-                                            .toString(),
-                                        role: ''),
+                                      firstName: currentDoctorModel.firstName
+                                          .toString(),
+                                      lastName: currentDoctorModel.lastName
+                                          .toString(),
+                                      role: homeDataModel
+                                          .isSyndicateCardRequired
+                                          .toString(),
+                                    ),
                                   ),
                                 );
                               },
@@ -309,9 +279,12 @@ class ProfileNameAndJob extends StatelessWidget {
                                     homeDataModel: homeDataModel,
                                     doctorId: currentDoctorModel.id.toString(),
                                     doctorName: doctorName(
-                                        firstName: currentDoctorModel.firstName,
-                                        lastName: currentDoctorModel.lastName,
-                                        role: ''),
+                                      firstName: currentDoctorModel.firstName,
+                                      lastName: currentDoctorModel.lastName,
+                                      role: homeDataModel
+                                          .isSyndicateCardRequired
+                                          .toString(),
+                                    ),
                                   ),
                                 );
                               },

@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
 
 class CommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -21,48 +18,62 @@ class CommunityScreen extends StatefulWidget {
 
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
-  late ScrollController _scrollController;
   late TabController _tabController;
   late ScrollController feedsScrollController;
 
   bool _isFabVisible = false;
-  bool _showTabs = true; // Track visibility of the TabBar
 
   late CommunityCubit _communityCubit; // Store a reference to the cubit
-
   @override
   void initState() {
     super.initState();
-    _communityCubit = context.read<CommunityCubit>(); // Initialize the cubit
-    _communityCubit.getAllFeeds(); // Fetch feeds
+    _communityCubit = context.read<CommunityCubit>();
+    _communityCubit.getAllFeeds();
 
-    // Initialize ScrollController
-    _scrollController = ScrollController();
-
-    // Initialize feedsScrollController
     feedsScrollController = ScrollController();
+    feedsScrollController.addListener(_handleFeedsScroll);
 
-    // Initialize TabController
     _tabController = TabController(
       length: 3,
       vsync: this,
       initialIndex: widget.initialTab,
     );
 
-    // Add listener to ScrollController
-    _scrollController.addListener(_scrollListener);
-
-    // Add listener to feedsScrollController
-    feedsScrollController.addListener(_onScroll);
-
-    // Reset FloatingActionButton visibility
     _isFabVisible = false;
+  }
+
+  void _handleFeedsScroll() {
+    if (!feedsScrollController.hasClients || _tabController.index != 0) {
+      if (_isFabVisible) {
+        setState(() {
+          _isFabVisible = false;
+        });
+      }
+      return;
+    }
+
+    final offset = feedsScrollController.offset;
+    final shouldShow = offset > 300;
+
+    if (_isFabVisible != shouldShow) {
+      setState(() {
+        _isFabVisible = shouldShow;
+      });
+    }
+
+    // Handle load more
+    if (!_communityCubit.isLastPage &&
+        !_communityCubit.isLoadingMoreForScroll &&
+        feedsScrollController.position.extentAfter < 200) {
+      _communityCubit.isLoadingMoreForScroll = true;
+      _communityCubit.loadMoreFeeds();
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_scrollListener); // Remove the listener
-    _scrollController.dispose(); // Dispose of the main scroll controller
+    // _scrollController.removeListener(_scrollListener); // Remove the listener
+    // _scrollController.dispose(); // Dispose of the main scroll controller
     _tabController.dispose(); // Dispose of the tab controller
 
     // Dispose of the feedsScrollController
@@ -70,30 +81,6 @@ class _CommunityScreenState extends State<CommunityScreen>
     feedsScrollController.dispose(); // Dispose of the feedsScrollController
 
     super.dispose();
-  }
-
-  void _scrollListener() {
-    // Show or hide the TabBar based on scroll offset
-    if (_scrollController.offset > 100 && _showTabs) {
-      setState(() {
-        _showTabs = false; // Hide the TabBar
-      });
-    } else if (_scrollController.offset <= 100 && !_showTabs) {
-      setState(() {
-        _showTabs = true; // Show the TabBar
-      });
-    }
-
-    // Show or hide the FloatingActionButton
-    if (_scrollController.offset > 100 && _tabController.index == 0) {
-      setState(() {
-        _isFabVisible = true;
-      });
-    } else {
-      setState(() {
-        _isFabVisible = false;
-      });
-    }
   }
 
   void _onScroll() {
@@ -121,10 +108,17 @@ class _CommunityScreenState extends State<CommunityScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(0),
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        ),
+      ),
       body: Column(
         children: [
           // Header with Search and Add Button
-          SizedBox(height: 40.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
             child: Row(
@@ -248,50 +242,25 @@ class _CommunityScreenState extends State<CommunityScreen>
 
           // TabBarView with Scrollable Content
           Expanded(
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification scrollNotification) {
-                // Handle scroll notifications here
-                if (scrollNotification is ScrollUpdateNotification) {
-                  // Show FAB only in the Feeds tab (index 0) when scrolled down
-                  if (_tabController.index == 0) {
-                    if (scrollNotification.metrics.pixels > 100) {
-                      setState(() {
-                        _isFabVisible = true; // Show FAB when scrolled down
-                      });
-                    } else {
-                      setState(() {
-                        _isFabVisible = false; // Hide FAB when at the top
-                      });
-                    }
-                  } else {
-                    // Hide FAB in other tabs
-                    setState(() {
-                      _isFabVisible = false;
-                    });
-                  }
-                }
-                return false; // Return false to allow the notification to continue propagating
-              },
-              child: TabBarView(
-                controller: _tabController, // Link the TabController
+            child: TabBarView(
+              controller: _tabController, // Link the TabController
 
-                children: [
-                  PostsTab(
-                    homeDataModel: widget.homeDataModel,
-                    currentDoctorModel: widget.currentDoctorModel,
-                    feedsScrollController:
-                        feedsScrollController, // Pass the controller
-                  ),
-                  TrendingTab(
-                    homeDataModel: widget.homeDataModel,
-                    currentDoctorModel: widget.currentDoctorModel,
-                  ),
-                  GroupsTab(
-                    homeDataModel: widget.homeDataModel,
-                    currentDoctorModel: widget.currentDoctorModel,
-                  ),
-                ],
-              ),
+              children: [
+                PostsTab(
+                  homeDataModel: widget.homeDataModel,
+                  currentDoctorModel: widget.currentDoctorModel,
+                  feedsScrollController:
+                      feedsScrollController, // Pass the controller
+                ),
+                TrendingTab(
+                  homeDataModel: widget.homeDataModel,
+                  currentDoctorModel: widget.currentDoctorModel,
+                ),
+                GroupsTab(
+                  homeDataModel: widget.homeDataModel,
+                  currentDoctorModel: widget.currentDoctorModel,
+                ),
+              ],
             ),
           ),
         ],

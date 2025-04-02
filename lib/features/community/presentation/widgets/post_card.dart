@@ -2,7 +2,6 @@ import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 import 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
@@ -235,7 +234,9 @@ class PostCard extends StatelessWidget {
                                             doctorName(
                                               firstName: feed.doctor!.firstName,
                                               lastName: feed.doctor!.lastName,
-                                              role: '',
+                                              role: feed.doctor!
+                                                  .isSyndicateCardRequired
+                                                  .toString(),
                                             ),
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,

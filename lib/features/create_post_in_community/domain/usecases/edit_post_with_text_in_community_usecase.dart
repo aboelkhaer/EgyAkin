@@ -20,6 +20,7 @@ class EditPostWithTextInCommunityUsecase
       visibility: input.visibility,
       groupId: input.groupId,
       postId: input.postId,
+      pollModel: input.pollModel,
     );
   }
 }
@@ -30,6 +31,7 @@ class EditPostWithTextInCommunityUsecaseInput {
   final String? mediaType;
   final String visibility;
   final String? groupId;
+  final PollModel? pollModel;
 
   EditPostWithTextInCommunityUsecaseInput({
     required this.postContent,
@@ -37,5 +39,6 @@ class EditPostWithTextInCommunityUsecaseInput {
     required this.visibility,
     required this.groupId,
     required this.postId,
+    required this.pollModel,
   });
 }

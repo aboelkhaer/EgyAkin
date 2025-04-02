@@ -1,6 +1,7 @@
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/my_groups_cubit/my_groups_in_community_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/all_groups_tab.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/groups_invitation_screen.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/my_groups_tab.dart';
 
 import '../../../../exports.dart';
@@ -140,7 +141,7 @@ class _AllGroupsInCommunityScreenState
         ],
       ),
       body: DefaultTabController(
-        length: 2, // Set tab count dynamically
+        length: 3, // Set tab count dynamically
         child: Column(
           children: [
             ColoredBox(
@@ -153,6 +154,12 @@ class _AllGroupsInCommunityScreenState
                 unselectedLabelColor: Colors.white.withOpacity(0.7),
                 tabs: const [
                   Tab(text: 'My Groups'),
+                  Tab(
+                    child: Text(
+                      'Group\nInvitations',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                   Tab(text: 'All Groups'),
                 ],
               ),
@@ -161,6 +168,10 @@ class _AllGroupsInCommunityScreenState
               child: TabBarView(
                 children: [
                   MyGroupsTab(
+                    currentDoctorModel: widget.currentDoctorModel,
+                    homeDataModel: widget.homeDataModel,
+                  ),
+                  GroupsInvitationScreen(
                     currentDoctorModel: widget.currentDoctorModel,
                     homeDataModel: widget.homeDataModel,
                   ),

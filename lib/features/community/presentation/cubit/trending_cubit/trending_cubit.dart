@@ -11,7 +11,7 @@ class TrendingCubit extends Cubit<TrendingState> {
   int callTrendsTabTimes = 0;
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
-  ScrollController? scrollController;
+
   int _currentPage = 1;
 
   getTrendingPostsInCommunity() async {
@@ -67,8 +67,7 @@ class TrendingCubit extends Cubit<TrendingState> {
           ) {
             final updatedData = response.copyWith(
               data: [
-                ...(response.data ??
-                    []), // ✅ Now correctly handling list merging
+                ...(response.data ?? []),
                 ...(loadMoreTrends.data ?? []),
               ],
             );

@@ -1,28 +1,3 @@
-import 'package:egy_akin/features/all_doctor_posts/presentation/cubit/all_doctor_posts_cubit.dart';
-import 'package:egy_akin/features/all_doctor_posts/presentation/pages/all_doctor_posts_screen.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/cubit/my_groups_in_community_cubit.dart';
-import 'package:egy_akin/features/all_groups_in_community/presentation/pages/all_groups_in_community_screen.dart';
-import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
-import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
-import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
-import 'package:egy_akin/features/community/presentation/pages/community_screen.dart';
-import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
-import 'package:egy_akin/features/community_search/presentation/pages/community_search_screen.dart';
-import 'package:egy_akin/features/consultation/presentation/pages/consultation_screen.dart';
-import 'package:egy_akin/features/consultation_details/presentation/pages/consultation_details_screen.dart';
-import 'package:egy_akin/features/consultation_from_ai/presentation/pages/consultation_from_ai_screen.dart';
-import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_cubit.dart';
-import 'package:egy_akin/features/create_group_in_community/presentation/pages/create_group_in_community_screen.dart';
-import 'package:egy_akin/features/create_post_in_community/presentation/pages/create_post_in_community_screen.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/pages/group_details_in_community_screen.dart';
-import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/cubit/invite_member_to_group_in_community_cubit.dart';
-import 'package:egy_akin/features/invite_member_to_group_in_community/presentation/pages/invite_member_to_group_in_community_screen.dart';
-import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
-import 'package:egy_akin/features/saved_posts/presentation/pages/saved_posts_screen.dart';
-import 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
-
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 
@@ -691,7 +666,6 @@ class RouteGenerator {
             settings.arguments is Map<String, dynamic>) {
           final Map<String, dynamic> args =
               settings.arguments as Map<String, dynamic>;
-
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel') &&
               args.containsKey('initialTab')) {
@@ -699,11 +673,10 @@ class RouteGenerator {
               builder: (_) => MultiBlocProvider(
                 providers: [
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
-
                   BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
                   BlocProvider.value(
-                      value:
-                          di.sl<GroupsCubit>()), // Add other cubits if needed
+                      value: di.sl<GroupDetailsInCommunityCubit>()),
                 ],
                 child: CommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -816,9 +789,11 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                    create: (context) => di.sl<GroupDetailsInCommunityCubit>(),
-                  ),
+                  // BlocProvider(
+                  //   create: (context) => di.sl<GroupDetailsInCommunityCubit>(),
+                  // ),
+                  BlocProvider.value(
+                      value: di.sl<GroupDetailsInCommunityCubit>()),
                   BlocProvider.value(value: di.sl<GroupsCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                 ],
@@ -852,8 +827,16 @@ class RouteGenerator {
                     create: (context) => di.sl<MyGroupsInCommunityCubit>(),
                   ),
                   BlocProvider(
-                    create: (context) => di.sl<GroupsCubit>(),
+                    create: (context) => di.sl<GroupMembersCubit>(),
                   ),
+                  BlocProvider(
+                    create: (context) => di.sl<GroupsInvitationsCubit>(),
+                  ),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(
+                      value: di.sl<GroupDetailsInCommunityCubit>()),
                 ],
                 child: AllGroupsInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -881,6 +864,9 @@ class RouteGenerator {
                     create: (context) =>
                         di.sl<InviteMemberToGroupInCommunityCubit>(),
                   ),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
                 ],
                 child: InviteMemberToGroupInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -908,6 +894,9 @@ class RouteGenerator {
                       create: (context) =>
                           di.sl<CreateGroupInCommunityCubit>()),
                   BlocProvider.value(value: di.sl<MyGroupsInCommunityCubit>()),
+                  BlocProvider.value(value: di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
                 ],
                 child: CreateGroupInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -937,6 +926,8 @@ class RouteGenerator {
                   BlocProvider(
                       create: (context) => di.sl<CommunitySearchCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<TrendingCubit>()),
+                  BlocProvider.value(value: di.sl<GroupsCubit>()),
                 ],
                 child: CommunitySearchScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,

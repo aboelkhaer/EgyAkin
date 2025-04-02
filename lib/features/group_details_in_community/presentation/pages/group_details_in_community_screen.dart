@@ -98,6 +98,7 @@ class _GroupDetailsInCommunityScreenState
               isDeleteGroupLoaded,
               changeCounter,
               isSeeMore,
+              isAcceptOrDeclineGroupInvitation,
             ) {
               return (groupDetails.data!.group!.userStatus ==
                           GroupInviteStatus.accepted.name ||
@@ -165,6 +166,7 @@ class _GroupDetailsInCommunityScreenState
                               isDeleteGroupLoaded,
                               changeCounter,
                               isSeeMore,
+                              isAcceptOrDeclineGroupInvitation,
                             ) {
                               return Positioned(
                                 left: 0,
@@ -211,6 +213,7 @@ class _GroupDetailsInCommunityScreenState
                                 isDeleteGroupLoaded,
                                 changeCounter,
                                 isSeeMore,
+                                isAcceptOrDeclineGroupInvitation,
                               ) {
                                 if (snackBarMessage != '') {
                                   customSnackBar(
@@ -261,6 +264,7 @@ class _GroupDetailsInCommunityScreenState
                                 isDeleteGroupLoaded,
                                 changeCounter,
                                 isSeeMore,
+                                isAcceptOrDeclineGroupInvitation,
                               ) {
                                 return GestureDetector(
                                   onTap: groupDetails.data!.group!.userStatus ==
@@ -372,6 +376,7 @@ class _GroupDetailsInCommunityScreenState
                         isDeleteGroupLoaded,
                         changeCounter,
                         isSeeMore,
+                        isAcceptOrDeclineGroupInvitation,
                       ) {
                         return isDeleteGroupLoading
                             ? const IconButton(
@@ -408,7 +413,6 @@ class _GroupDetailsInCommunityScreenState
                                     }
                                   }
                                   if (value == 'delete_group') {
-                                    log('hello');
                                     cubit.deleteGroup(groupDetails
                                         .data!.group!.id
                                         .toString());
@@ -451,9 +455,12 @@ class _GroupDetailsInCommunityScreenState
                                       ),
                                     );
                                   }
-                                  if (widget.currentDoctorModel.id.toString() ==
-                                      groupDetails.data!.group!.owner!.id
-                                          .toString()) {
+                                  if ((widget.currentDoctorModel.id
+                                              .toString() ==
+                                          groupDetails.data!.group!.owner!.id
+                                              .toString()) ||
+                                      widget.homeDataModel.role ==
+                                          AppStrings.roleAdmin) {
                                     items.add(
                                       PopupMenuItem(
                                         value: 'delete_group',
@@ -537,6 +544,7 @@ class _GroupDetailsInCommunityScreenState
                                           isDeleteGroupLoaded,
                                           changeCounter,
                                           isSeeMore,
+                                          isAcceptOrDeclineGroupInvitation,
                                         ) {
                                           return FadeIn(
                                             duration: const Duration(
@@ -609,6 +617,7 @@ class _GroupDetailsInCommunityScreenState
                                   isDeleteGroupLoaded,
                                   changeCounter,
                                   isSeeMore,
+                                  isAcceptOrDeclineGroupInvitation,
                                 ) {
                                   return Column(
                                     crossAxisAlignment:
@@ -624,55 +633,71 @@ class _GroupDetailsInCommunityScreenState
                                                 fontWeight: FontWeight.bold),
                                           ),
                                           const SizedBox(width: 8),
-                                          InkWell(
-                                            onTap: () {
-                                              navigatorKey.currentState
-                                                  ?.pushNamed(
-                                                AppRoutes
-                                                    .createGroupInCommunity,
-                                                arguments: AppRoutesArgs
-                                                    .createGroupInCommunityRouteArgs(
-                                                  currentDoctorModel:
-                                                      widget.currentDoctorModel,
-                                                  homeDataModel:
-                                                      widget.homeDataModel,
-                                                  isCreateNewGroup: false,
-                                                  groupModel:
-                                                      groupDetails.data!.group,
-                                                ),
-                                              );
-                                            },
-                                            splashColor: Colors.transparent,
-                                            highlightColor: Colors.transparent,
-                                            hoverColor: Colors.transparent,
-                                            child: Icon(
-                                              Icons.edit,
-                                              color: AppColors.description,
-                                              size: 18.r,
-                                            ),
-                                          ),
+                                          (widget.currentDoctorModel.id
+                                                          .toString() ==
+                                                      groupDetails.data!.group!
+                                                          .owner!.id
+                                                          .toString()) ||
+                                                  widget.homeDataModel.role ==
+                                                      AppStrings.roleAdmin
+                                              ? InkWell(
+                                                  onTap: () {
+                                                    navigatorKey.currentState
+                                                        ?.pushNamed(
+                                                      AppRoutes
+                                                          .createGroupInCommunity,
+                                                      arguments: AppRoutesArgs
+                                                          .createGroupInCommunityRouteArgs(
+                                                        currentDoctorModel: widget
+                                                            .currentDoctorModel,
+                                                        homeDataModel: widget
+                                                            .homeDataModel,
+                                                        isCreateNewGroup: false,
+                                                        groupModel: groupDetails
+                                                            .data!.group,
+                                                      ),
+                                                    );
+                                                  },
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  child: Icon(
+                                                    Icons.edit,
+                                                    color:
+                                                        AppColors.description,
+                                                    size: 18.r,
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
-                                          groupDetails.data!.group!
-                                                          .userStatus ==
-                                                      GroupInviteStatus
-                                                          .accepted.name ||
-                                                  groupDetails.data!.group!
-                                                          .userStatus ==
-                                                      GroupInviteStatus
-                                                          .joined.name ||
-                                                  (groupDetails.data!.group!
+                                          (groupDetails.data!.group!.userStatus ==
+                                                          GroupInviteStatus
+                                                              .accepted.name ||
+                                                      groupDetails.data!.group!
                                                               .userStatus ==
                                                           GroupInviteStatus
-                                                              .invited.name &&
-                                                      groupDetails.data!.group!
-                                                              .privacy
-                                                              .toString() ==
-                                                          GroupStatus
-                                                              .public.name)
+                                                              .joined.name ||
+                                                      (groupDetails.data!.group!
+                                                                  .userStatus ==
+                                                              GroupInviteStatus
+                                                                  .invited
+                                                                  .name &&
+                                                          groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .privacy
+                                                                  .toString() ==
+                                                              GroupStatus.public
+                                                                  .name)) ||
+                                                  widget.homeDataModel.role ==
+                                                      AppStrings.roleAdmin
                                               ? InkWell(
                                                   onTap: () {
                                                     showCustomBottomSheet(
@@ -681,9 +706,11 @@ class _GroupDetailsInCommunityScreenState
                                                         return BlocProvider(
                                                           create: (context) =>
                                                               GroupMembersCubit(
-                                                                  sl(),
-                                                                  sl(),
-                                                                  sl()),
+                                                            sl(),
+                                                            sl(),
+                                                            sl(),
+                                                            sl(),
+                                                          ),
                                                           child:
                                                               GroupMembersScreen(
                                                             groupId:
@@ -725,11 +752,33 @@ class _GroupDetailsInCommunityScreenState
                                                       color: Colors.grey[600]),
                                                 ),
                                           const SizedBox(width: 5),
-                                          Text(
-                                            '•',
-                                            style: TextStyle(
-                                                color: Colors.grey[600]),
-                                          ),
+                                          (widget.currentDoctorModel.id
+                                                          .toString() ==
+                                                      groupDetails.data!.group!
+                                                          .owner!.id
+                                                          .toString()) &&
+                                                  groupDetails.data!.group!
+                                                      .isHasPendingInvitations!
+                                              ? Column(
+                                                  children: [
+                                                    const SizedBox(height: 3),
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      radius: 2.r,
+                                                    ),
+                                                  ],
+                                                )
+                                              : Column(
+                                                  children: [
+                                                    const SizedBox(height: 3),
+                                                    CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.grey[600],
+                                                      radius: 2.r,
+                                                    ),
+                                                  ],
+                                                ),
                                           const SizedBox(width: 5),
                                           Text(
                                             'Created ${formatDateForGroup(groupDetails.data!.group!.createdAt.toString())}',
@@ -738,6 +787,7 @@ class _GroupDetailsInCommunityScreenState
                                           ),
                                         ],
                                       ),
+                                      SizedBox(height: 10.h),
                                     ],
                                   );
                                 },
@@ -762,15 +812,15 @@ class _GroupDetailsInCommunityScreenState
                               isDeleteGroupLoaded,
                               changeCounter,
                               isSeeMore,
+                              isAcceptOrDeclineGroupInvitation,
                             ) {
                               return ReadMoreText(
-                                groupDetails.data!.group!.description
-                                    .toString(),
+                                groupDetails.data!.group!.description ?? '',
                                 trimMode: TrimMode.Line,
                                 trimLines: 2,
                                 colorClickableText: Colors.blue,
                                 trimCollapsedText: ' See more',
-                                trimExpandedText: '',
+                                trimExpandedText: ' See less ',
                                 moreStyle: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.blue,
@@ -833,6 +883,7 @@ class _GroupDetailsInCommunityScreenState
                               isDeleteGroupLoaded,
                               changeCounter,
                               isSeeMore,
+                              isAcceptOrDeclineGroupInvitation,
                             ) {
                               if (groupDetails.data!.group!.userStatus ==
                                           GroupInviteStatus.invited.name &&
@@ -885,55 +936,173 @@ class _GroupDetailsInCommunityScreenState
                               return FadeIn(
                                 child: Column(
                                   children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.primary,
-                                        foregroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                        ),
-                                        minimumSize:
-                                            const Size(double.infinity, 48),
-                                      ),
-                                      onPressed: groupDetails.data!.group!
-                                                      .userStatus ==
-                                                  GroupInviteStatus
-                                                      .invited.name &&
-                                              groupDetails
-                                                      .data!.group!.privacy ==
-                                                  GroupStatus.private.name
-                                          ? null // Disable the button if the user is already invited or joined
-                                          : () {
-                                              cubit.joinGroup(groupDetails
-                                                  .data!.group!.id
-                                                  .toString());
-                                            },
-                                      child: Text(
-                                        groupDetails.data!.group!
-                                                        .userStatus ==
-                                                    GroupInviteStatus
-                                                        .invited.name &&
+                                    (groupDetails.data!.group!.userStatus ==
+                                                GroupInviteStatus
+                                                    .invited.name &&
+                                            (widget.currentDoctorModel.id
+                                                    .toString() !=
                                                 groupDetails
-                                                        .data!.group!.privacy ==
-                                                    GroupStatus.private.name
-                                            ? 'Pending'
-                                            : groupDetails.data!
-                                                            .group!.userStatus ==
-                                                        GroupInviteStatus
-                                                            .accepted.name ||
-                                                    groupDetails.data!.group!
+                                                    .data!.group!.owner!.id
+                                                    .toString()))
+                                        ? SizedBox(
+                                            height: 45,
+                                            child:
+                                                isAcceptOrDeclineGroupInvitation
+                                                    ? const Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: 20,
+                                                            width: 20,
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    : Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                CustomElevatedButton(
+                                                              onPressed: () {
+                                                                cubit
+                                                                    .acceptOrDeclineGroupInvitation(
+                                                                  groupId: groupDetails
+                                                                      .data!
+                                                                      .group!
+                                                                      .id
+                                                                      .toString(),
+                                                                  invitationId:
+                                                                      groupDetails
+                                                                          .data!
+                                                                          .group!
+                                                                          .invitationId!,
+                                                                  status:
+                                                                      AcceptOrDeclineMemberInGroup
+                                                                          .declined
+                                                                          .name,
+                                                                  doctorId: widget
+                                                                      .currentDoctorModel
+                                                                      .id
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                              title: 'Decline',
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 20),
+                                                          Expanded(
+                                                            child:
+                                                                CustomElevatedButton(
+                                                              onPressed: () {
+                                                                cubit
+                                                                    .acceptOrDeclineGroupInvitation(
+                                                                  groupId: groupDetails
+                                                                      .data!
+                                                                      .group!
+                                                                      .id
+                                                                      .toString(),
+                                                                  invitationId:
+                                                                      groupDetails
+                                                                          .data!
+                                                                          .group!
+                                                                          .invitationId!,
+                                                                  status:
+                                                                      AcceptOrDeclineMemberInGroup
+                                                                          .accepted
+                                                                          .name,
+                                                                  doctorId: widget
+                                                                      .currentDoctorModel
+                                                                      .id
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                              title:
+                                                                  'Accept invitation',
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                          )
+                                        : ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  AppColors.primary,
+                                              foregroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                              minimumSize: const Size(
+                                                  double.infinity, 48),
+                                            ),
+                                            onPressed: (groupDetails
+                                                                .data!
+                                                                .group!
+                                                                .userStatus ==
+                                                            GroupInviteStatus
+                                                                .invited.name &&
+                                                        groupDetails
+                                                                .data!
+                                                                .group!
+                                                                .privacy ==
+                                                            GroupStatus.private
+                                                                .name) ||
+                                                    (groupDetails.data!.group!
                                                             .userStatus ==
                                                         GroupInviteStatus
-                                                            .joined.name ||
-                                                    groupDetails.data!.group!
-                                                            .userStatus ==
-                                                        GroupInviteStatus
-                                                            .invited.name
-                                                ? 'Joined'
-                                                : 'Join',
-                                      ),
-                                    ),
+                                                            .pending.name)
+                                                ? null // Disable the button if the user is already invited or joined
+                                                : () {
+                                                    cubit.joinGroup(groupDetails
+                                                        .data!.group!.id
+                                                        .toString());
+                                                  },
+                                            child: Text(
+                                              (groupDetails.data!.group!
+                                                                  .userStatus ==
+                                                              GroupInviteStatus
+                                                                  .invited
+                                                                  .name &&
+                                                          groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .privacy ==
+                                                              GroupStatus
+                                                                  .private
+                                                                  .name) ||
+                                                      (groupDetails.data!.group!
+                                                              .userStatus ==
+                                                          GroupInviteStatus
+                                                              .pending.name)
+                                                  ? 'Pending'
+                                                  : groupDetails.data!.group!
+                                                                  .userStatus ==
+                                                              GroupInviteStatus
+                                                                  .accepted
+                                                                  .name ||
+                                                          groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .userStatus ==
+                                                              GroupInviteStatus
+                                                                  .joined
+                                                                  .name ||
+                                                          groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .userStatus ==
+                                                              GroupInviteStatus
+                                                                  .invited.name
+                                                      ? 'Joined'
+                                                      : 'Join',
+                                            ),
+                                          ),
                                     const SizedBox(height: 10),
                                   ],
                                 ),
@@ -966,6 +1135,7 @@ class _GroupDetailsInCommunityScreenState
                         isDeleteGroupLoaded,
                         changeCounter,
                         isSeeMore,
+                        isAcceptOrDeclineGroupInvitation,
                       ) {
                         return groupDetails.data!.posts!.data!.isEmpty
                             ? Column(
@@ -976,6 +1146,7 @@ class _GroupDetailsInCommunityScreenState
                                     width: 150,
                                     height: 150,
                                   ),
+                                  SizedBox(height: 150.h),
                                 ],
                               )
                             : ListView.builder(
@@ -1102,13 +1273,16 @@ class _GroupDetailsInCommunityScreenState
                       orElse: () {
                         return const SizedBox.shrink();
                       },
-                      loaded: (groupDetails,
-                          snackBarMessage,
-                          dialogMessage,
-                          isDeleteGroupLoading,
-                          isDeleteGroupLoaded,
-                          changeCounter,
-                          isSeeMore) {
+                      loaded: (
+                        groupDetails,
+                        snackBarMessage,
+                        dialogMessage,
+                        isDeleteGroupLoading,
+                        isDeleteGroupLoaded,
+                        changeCounter,
+                        isSeeMore,
+                        isAcceptOrDeclineGroupInvitation,
+                      ) {
                         if (isSeeMore) {
                           return Padding(
                             padding: EdgeInsets.only(bottom: 20.h),

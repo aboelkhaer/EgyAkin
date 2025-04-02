@@ -24,6 +24,7 @@ class EditPostWithImageInCommunityUsecase
       groupId: input.groupId,
       postId: input.postId,
       images: input.images,
+      existingMediaPath: input.existingMediaPath,
     );
   }
 }
@@ -35,6 +36,7 @@ class EditPostWithImageInCommunityUsecaseInput {
   final String mediaType;
   final String visibility;
   final String? groupId;
+  final List<String> existingMediaPath;
 
   EditPostWithImageInCommunityUsecaseInput({
     required this.postContent,
@@ -43,5 +45,6 @@ class EditPostWithImageInCommunityUsecaseInput {
     required this.groupId,
     required this.postId,
     required this.images,
+    required this.existingMediaPath,
   });
 }

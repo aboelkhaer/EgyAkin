@@ -3,14 +3,27 @@ import 'package:dartz/dartz.dart';
 import '../../../../exports.dart';
 
 class GetCommentsInCommunityUsecase
-    implements BaseUseCase<String, GetCommentsInCommunityModelResponse> {
+    implements
+        BaseUseCase<GetCommentsInCommunityUsecaseInput,
+            GetCommentsInCommunityModelResponse> {
   final ShowSingleFeedRepository repository;
 
   GetCommentsInCommunityUsecase(this.repository);
 
   @override
   Future<Either<Failure, GetCommentsInCommunityModelResponse>> execute(
-      String postId) async {
-    return await repository.getCommentsInCommunity(postId: postId);
+      GetCommentsInCommunityUsecaseInput input) async {
+    return await repository.getCommentsInCommunity(
+      postId: input.postId,
+      page: input.page,
+    );
   }
+}
+
+class GetCommentsInCommunityUsecaseInput {
+  final String postId;
+  final int page;
+
+  GetCommentsInCommunityUsecaseInput(
+      {required this.postId, required this.page});
 }

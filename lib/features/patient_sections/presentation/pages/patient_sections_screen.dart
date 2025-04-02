@@ -274,52 +274,44 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   ),
                                 ),
                           SizedBox(height: 25.h),
-                          widget.currentDoctorModel.email ==
-                                  'aboelkhaer@yandex.com'
-                              ? const SizedBox.shrink()
-                              : Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, right: 20),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        'Request Consultation:',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 13.sp,
-                                            color: Colors.grey.shade600),
-                                      ),
-                                    ],
-                                  ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 20, right: 20),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'Request Consultation:',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13.sp,
+                                      color: Colors.grey.shade600),
                                 ),
+                              ],
+                            ),
+                          ),
                           const SizedBox(height: 20),
-                          widget.currentDoctorModel.email ==
-                                  'aboelkhaer@yandex.com'
-                              ? const SizedBox.shrink()
-                              : ConsultationButtonsRow(
-                                  onDoctorConsultationTap: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.sendConsultation,
-                                      arguments: AppRoutesArgs
-                                          .sendConsultationRouteArgs(
-                                        homeDataModel: widget.homeDataModel,
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                        patientId: widget.patientId,
-                                        isSendConsultation: true,
-                                        groupId: '',
-                                      ),
-                                    );
-                                  },
-                                  onAiConsultationTap: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                        AppRoutes.consultationFromAi,
-                                        arguments: AppRoutesArgs
-                                            .consultationFromAiRouteArgs(
-                                          patientId: widget.patientId,
-                                        ));
-                                  },
+                          ConsultationButtonsRow(
+                            onDoctorConsultationTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.sendConsultation,
+                                arguments:
+                                    AppRoutesArgs.sendConsultationRouteArgs(
+                                  homeDataModel: widget.homeDataModel,
+                                  currentDoctorModel: widget.currentDoctorModel,
+                                  patientId: widget.patientId,
+                                  isSendConsultation: true,
+                                  groupId: '',
                                 ),
+                              );
+                            },
+                            onAiConsultationTap: () {
+                              navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.consultationFromAi,
+                                  arguments:
+                                      AppRoutesArgs.consultationFromAiRouteArgs(
+                                    patientId: widget.patientId,
+                                  ));
+                            },
+                          ),
                           SizedBox(height: 25.h),
                           Padding(
                             padding: const EdgeInsets.only(left: 20, right: 20),

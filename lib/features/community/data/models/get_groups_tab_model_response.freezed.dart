@@ -436,9 +436,13 @@ mixin _$GroupModel {
   String? get headerPicture => throw _privateConstructorUsedError;
   @JsonKey(name: 'group_image')
   String? get groupImage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'has_pending_invitations')
+  bool? get isHasPendingInvitations => throw _privateConstructorUsedError;
   String? get privacy => throw _privateConstructorUsedError;
   @JsonKey(name: 'owner_id')
   int? get ownerId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'invitation_id')
+  int? get invitationId => throw _privateConstructorUsedError;
   @JsonKey(name: 'member_count')
   int? get memberCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -471,8 +475,10 @@ abstract class $GroupModelCopyWith<$Res> {
       String? description,
       @JsonKey(name: 'header_picture') String? headerPicture,
       @JsonKey(name: 'group_image') String? groupImage,
+      @JsonKey(name: 'has_pending_invitations') bool? isHasPendingInvitations,
       String? privacy,
       @JsonKey(name: 'owner_id') int? ownerId,
+      @JsonKey(name: 'invitation_id') int? invitationId,
       @JsonKey(name: 'member_count') int? memberCount,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
@@ -502,8 +508,10 @@ class _$GroupModelCopyWithImpl<$Res, $Val extends GroupModel>
     Object? description = freezed,
     Object? headerPicture = freezed,
     Object? groupImage = freezed,
+    Object? isHasPendingInvitations = freezed,
     Object? privacy = freezed,
     Object? ownerId = freezed,
+    Object? invitationId = freezed,
     Object? memberCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -531,6 +539,10 @@ class _$GroupModelCopyWithImpl<$Res, $Val extends GroupModel>
           ? _value.groupImage
           : groupImage // ignore: cast_nullable_to_non_nullable
               as String?,
+      isHasPendingInvitations: freezed == isHasPendingInvitations
+          ? _value.isHasPendingInvitations
+          : isHasPendingInvitations // ignore: cast_nullable_to_non_nullable
+              as bool?,
       privacy: freezed == privacy
           ? _value.privacy
           : privacy // ignore: cast_nullable_to_non_nullable
@@ -538,6 +550,10 @@ class _$GroupModelCopyWithImpl<$Res, $Val extends GroupModel>
       ownerId: freezed == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      invitationId: freezed == invitationId
+          ? _value.invitationId
+          : invitationId // ignore: cast_nullable_to_non_nullable
               as int?,
       memberCount: freezed == memberCount
           ? _value.memberCount
@@ -591,8 +607,10 @@ abstract class _$$GroupModelImplCopyWith<$Res>
       String? description,
       @JsonKey(name: 'header_picture') String? headerPicture,
       @JsonKey(name: 'group_image') String? groupImage,
+      @JsonKey(name: 'has_pending_invitations') bool? isHasPendingInvitations,
       String? privacy,
       @JsonKey(name: 'owner_id') int? ownerId,
+      @JsonKey(name: 'invitation_id') int? invitationId,
       @JsonKey(name: 'member_count') int? memberCount,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
@@ -621,8 +639,10 @@ class __$$GroupModelImplCopyWithImpl<$Res>
     Object? description = freezed,
     Object? headerPicture = freezed,
     Object? groupImage = freezed,
+    Object? isHasPendingInvitations = freezed,
     Object? privacy = freezed,
     Object? ownerId = freezed,
+    Object? invitationId = freezed,
     Object? memberCount = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -650,6 +670,10 @@ class __$$GroupModelImplCopyWithImpl<$Res>
           ? _value.groupImage
           : groupImage // ignore: cast_nullable_to_non_nullable
               as String?,
+      isHasPendingInvitations: freezed == isHasPendingInvitations
+          ? _value.isHasPendingInvitations
+          : isHasPendingInvitations // ignore: cast_nullable_to_non_nullable
+              as bool?,
       privacy: freezed == privacy
           ? _value.privacy
           : privacy // ignore: cast_nullable_to_non_nullable
@@ -657,6 +681,10 @@ class __$$GroupModelImplCopyWithImpl<$Res>
       ownerId: freezed == ownerId
           ? _value.ownerId
           : ownerId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      invitationId: freezed == invitationId
+          ? _value.invitationId
+          : invitationId // ignore: cast_nullable_to_non_nullable
               as int?,
       memberCount: freezed == memberCount
           ? _value.memberCount
@@ -691,8 +719,10 @@ class _$GroupModelImpl implements _GroupModel {
       this.description,
       @JsonKey(name: 'header_picture') this.headerPicture,
       @JsonKey(name: 'group_image') this.groupImage,
+      @JsonKey(name: 'has_pending_invitations') this.isHasPendingInvitations,
       this.privacy,
       @JsonKey(name: 'owner_id') this.ownerId,
+      @JsonKey(name: 'invitation_id') this.invitationId,
       @JsonKey(name: 'member_count') this.memberCount,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
@@ -715,10 +745,16 @@ class _$GroupModelImpl implements _GroupModel {
   @JsonKey(name: 'group_image')
   final String? groupImage;
   @override
+  @JsonKey(name: 'has_pending_invitations')
+  final bool? isHasPendingInvitations;
+  @override
   final String? privacy;
   @override
   @JsonKey(name: 'owner_id')
   final int? ownerId;
+  @override
+  @JsonKey(name: 'invitation_id')
+  final int? invitationId;
   @override
   @JsonKey(name: 'member_count')
   final int? memberCount;
@@ -736,7 +772,7 @@ class _$GroupModelImpl implements _GroupModel {
 
   @override
   String toString() {
-    return 'GroupModel(id: $id, name: $name, description: $description, headerPicture: $headerPicture, groupImage: $groupImage, privacy: $privacy, ownerId: $ownerId, memberCount: $memberCount, createdAt: $createdAt, updatedAt: $updatedAt, userStatus: $userStatus, owner: $owner)';
+    return 'GroupModel(id: $id, name: $name, description: $description, headerPicture: $headerPicture, groupImage: $groupImage, isHasPendingInvitations: $isHasPendingInvitations, privacy: $privacy, ownerId: $ownerId, invitationId: $invitationId, memberCount: $memberCount, createdAt: $createdAt, updatedAt: $updatedAt, userStatus: $userStatus, owner: $owner)';
   }
 
   @override
@@ -752,8 +788,13 @@ class _$GroupModelImpl implements _GroupModel {
                 other.headerPicture == headerPicture) &&
             (identical(other.groupImage, groupImage) ||
                 other.groupImage == groupImage) &&
+            (identical(
+                    other.isHasPendingInvitations, isHasPendingInvitations) ||
+                other.isHasPendingInvitations == isHasPendingInvitations) &&
             (identical(other.privacy, privacy) || other.privacy == privacy) &&
             (identical(other.ownerId, ownerId) || other.ownerId == ownerId) &&
+            (identical(other.invitationId, invitationId) ||
+                other.invitationId == invitationId) &&
             (identical(other.memberCount, memberCount) ||
                 other.memberCount == memberCount) &&
             (identical(other.createdAt, createdAt) ||
@@ -774,8 +815,10 @@ class _$GroupModelImpl implements _GroupModel {
       description,
       headerPicture,
       groupImage,
+      isHasPendingInvitations,
       privacy,
       ownerId,
+      invitationId,
       memberCount,
       createdAt,
       updatedAt,
@@ -805,8 +848,11 @@ abstract class _GroupModel implements GroupModel {
       final String? description,
       @JsonKey(name: 'header_picture') final String? headerPicture,
       @JsonKey(name: 'group_image') final String? groupImage,
+      @JsonKey(name: 'has_pending_invitations')
+      final bool? isHasPendingInvitations,
       final String? privacy,
       @JsonKey(name: 'owner_id') final int? ownerId,
+      @JsonKey(name: 'invitation_id') final int? invitationId,
       @JsonKey(name: 'member_count') final int? memberCount,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
@@ -829,10 +875,16 @@ abstract class _GroupModel implements GroupModel {
   @JsonKey(name: 'group_image')
   String? get groupImage;
   @override
+  @JsonKey(name: 'has_pending_invitations')
+  bool? get isHasPendingInvitations;
+  @override
   String? get privacy;
   @override
   @JsonKey(name: 'owner_id')
   int? get ownerId;
+  @override
+  @JsonKey(name: 'invitation_id')
+  int? get invitationId;
   @override
   @JsonKey(name: 'member_count')
   int? get memberCount;

@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
+
 import '../../../../exports.dart';
 
 class YourPatientSection extends StatelessWidget {
@@ -11,12 +13,7 @@ class YourPatientSection extends StatelessWidget {
           builder: (context, state) {
             return state.maybeWhen(
               orElse: () {
-                return HomePatientTitleHeader(
-                    title: AppStrings.yourPatients,
-                    patientCount: '',
-                    leftArrow: '',
-                    rightArrow: '',
-                    onTap: () {});
+                return const SizedBox.shrink();
               },
               loaded: (
                 homeData,
@@ -28,7 +25,11 @@ class YourPatientSection extends StatelessWidget {
                 message,
                 checkUpdateMessageCounter,
                 isUserBlocked,
+                changesCounter,
               ) {
+                if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                  return const SizedBox.shrink();
+                }
                 return HomePatientTitleHeader(
                   title: AppStrings.yourPatients,
                   patientCount: homeData.doctorPatientCount.toString(),
@@ -68,7 +69,11 @@ class YourPatientSection extends StatelessWidget {
               message,
               checkUpdateMessageCounter,
               isUserBlocked,
+              changesCounter,
             ) {
+              if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                return const SizedBox.shrink();
+              }
               return FadeIn(
                 duration: const Duration(seconds: 2),
                 child: SizedBox(

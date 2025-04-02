@@ -19,6 +19,7 @@ abstract class ShowSingleFeedState with _$ShowSingleFeedState {
     bool isDeleteCommentLoaded,
     bool isSendReplyLoading,
     bool isSendReplyLoaded,
+    bool isSeeMore,
   ) = _Loaded;
 
   const factory ShowSingleFeedState.error(String message) = _Error;

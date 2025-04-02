@@ -19,6 +19,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   bool _isPdf = false;
   bool _isLoading = true;
   bool _hasError = false;
+  bool _isTikTok = false;
 
   @override
   void initState() {
@@ -40,6 +41,12 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   }
 
   Future<void> _fetchMetadata() async {
+    if (_isTikTokUrl(widget.url)) {
+      _isTikTok = true;
+      await _handleTikTokUrl(widget.url);
+      return;
+    }
+
     if (_isGoogleDriveUrl(widget.url)) {
       _handleGoogleDriveUrl(widget.url);
       return;
@@ -54,6 +61,31 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       } else {
         _setError();
       }
+    } catch (e) {
+      _setError();
+    }
+  }
+
+  Future<void> _handleTikTokUrl(String url) async {
+    try {
+      // Extract TikTok video ID
+      final videoId = _extractTikTokVideoId(url);
+      if (videoId == null) {
+        _setError();
+        return;
+      }
+
+      // Get TikTok metadata
+      final metadata = await MetadataFetch.extract(url);
+
+      // TikTok thumbnail URL pattern
+      _imageUrl = "https://www.tiktok.com/api/img/?itemId=$videoId";
+
+      setState(() {
+        _title = metadata?.title ?? "TikTok Video";
+        _description = metadata?.description ?? "Watch on TikTok";
+        _isLoading = false;
+      });
     } catch (e) {
       _setError();
     }
@@ -110,10 +142,21 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     return url.contains("drive.google.com");
   }
 
+  bool _isTikTokUrl(String url) {
+    return url.contains("tiktok.com") &&
+        (url.contains("/video/") || url.contains("/v/"));
+  }
+
   String? _extractGoogleDriveFileId(String url) {
     RegExp regex = RegExp(r"/d/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)");
     final match = regex.firstMatch(url);
     return match?.group(1) ?? match?.group(2);
+  }
+
+  String? _extractTikTokVideoId(String url) {
+    RegExp regex = RegExp(r"/video/(\d+)");
+    final match = regex.firstMatch(url);
+    return match?.group(1);
   }
 
   @override
@@ -176,13 +219,35 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
               topLeft: Radius.circular(8),
               topRight: Radius.circular(8),
             ),
-            child: Image.network(
-              _imageUrl!,
-              width: double.infinity,
-              height: 150,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.image_not_supported, size: 50),
+            child: Stack(
+              children: [
+                Image.network(
+                  _imageUrl!,
+                  width: double.infinity,
+                  height: _isTikTok ? 300 : 150,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: _isTikTok ? 300 : 150,
+                    color: Colors.grey[200],
+                    child: Icon(
+                        _isTikTok
+                            ? Icons.videocam_off
+                            : Icons.image_not_supported,
+                        size: 50),
+                  ),
+                ),
+                if (_isTikTok)
+                  const Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Icon(
+                        Icons.play_circle_filled,
+                        size: 50,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
         Container(
@@ -210,6 +275,17 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
+                ),
+              if (_isTikTok)
+                const Padding(
+                  padding: EdgeInsets.only(top: 5),
+                  child: Text(
+                    "Tap to watch on TikTok",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
             ],
           ),

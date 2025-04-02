@@ -3,59 +3,85 @@ import '../../../../exports.dart';
 class CheckIfVerified extends StatelessWidget {
   final bool verified;
   final String isSyndicateCardRequired;
-  const CheckIfVerified(
-      {super.key,
-      required this.verified,
-      required this.isSyndicateCardRequired});
+  final bool isExitVerification;
+
+  const CheckIfVerified({
+    super.key,
+    required this.verified,
+    required this.isSyndicateCardRequired,
+    required this.isExitVerification,
+  });
 
   @override
   Widget build(BuildContext context) {
+    if (context.read<HomeCubit>().isExistVerificationBanner != false ||
+        context.read<HomeCubit>().isExistVerificationBanner == true) {
+      return const SizedBox.shrink();
+    }
     if (!verified) {
       return GestureDetector(
         onTap: () {
           navigatorKey.currentState?.pushNamed(AppRoutes.emailVerification,
               arguments: context.read<HomeCubit>().currentDoctorModel);
         },
-        child: Container(
-          width: double.infinity,
-          height: 50,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 7,
-                offset: const Offset(0, 3), // changes position of shadow
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 50,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3), // changes position of shadow
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline,
-                color: Colors.blue.shade600,
-                size: 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    color: Colors.blue.shade600,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 2),
+                  Text(
+                    'To add patients, you must verify your email address',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward,
+                    size: 18,
+                    color: Colors.blue.shade600,
+                  ),
+                ],
               ),
-              const SizedBox(width: 2),
-              Text(
-                'To add patients, you must verify your email address',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.blue.shade600,
+            ),
+            Positioned(
+              right: 0,
+              bottom: 1,
+              child: IconButton(
+                onPressed: () {
+                  context.read<HomeCubit>().setVerifyBanner();
+                },
+                icon: const Icon(
+                  Icons.cancel,
+                  size: 20,
+                  color: AppColors.primary,
                 ),
               ),
-              Icon(
-                Icons.arrow_forward,
-                size: 18,
-                color: Colors.blue.shade600,
-              )
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
@@ -117,6 +143,7 @@ class CheckIfVerified extends StatelessWidget {
                             message,
                             checkUpdateMessageCounter,
                             isUserBlocked,
+                            changesCounter,
                           ) {
                             if (message.isNotEmpty) {
                               customSnackBar(
@@ -140,6 +167,7 @@ class CheckIfVerified extends StatelessWidget {
                             message,
                             checkUpdateMessageCounter,
                             isUserBlocked,
+                            changesCounter,
                           ) {
                             if (isUploadingSyndicateCard) {
                               return Row(

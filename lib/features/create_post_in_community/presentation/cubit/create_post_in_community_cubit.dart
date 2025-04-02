@@ -56,20 +56,30 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  emitLoadedStateForEditPost(PostCommunityModel feed) {
-    editableFeed = feed;
+  void emitLoadedStateForEditPost(PostCommunityModel feed) {
+    editableFeed = feed.copyWith(
+      content: feed.content ?? '', // Ensure content is not null
+      existingMediaPath: feed.mediaPath,
+    );
 
-    if (editableFeed!.content == null) {
-      editableFeed = editableFeed!.copyWith(content: '');
-    }
     emit(
-      CreatePostInCommunityState.loaded(editableFeed!.content!.length,
-          changeCounter, false, false, false, ''),
+      CreatePostInCommunityState.loaded(
+        editableFeed!.content!.length,
+        changeCounter,
+        false,
+        false,
+        false,
+        '',
+      ),
     );
   }
 
   editFeedContentForEditableFeed(String? editableFeedContent) {
     editableFeed = editableFeed!.copyWith(content: editableFeedContent);
+  }
+
+  editFeedPollForEditableFeed(PollModelResponse? editableFeedPoll) {
+    editableFeed = editableFeed!.copyWith(poll: editableFeedPoll);
   }
 
   int changeCounter = 0;
@@ -94,84 +104,79 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   }
 
   Future<void> pickImageAndShowIt(bool isCamera) async {
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => CreatePostInCommunityState.loaded(
-          postContent.length,
-          value.changeCounter,
-          true,
-          false,
-          false,
-          '',
-        ),
-      ),
-    );
+    try {
+      emit(loadingState()); // Show loading state
 
-    final source = await pickImageSource(isCamera);
-    if (source == null) {
-      emit(
-        state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => CreatePostInCommunityState.loaded(
-            postContent.length,
-            value.changeCounter,
-            false,
-            false,
-            false,
-            '',
-          ),
-        ),
-      );
-      return;
+      final source = isCamera ? ImageSource.camera : ImageSource.gallery;
+      final pickedFiles = await _pickImages(source, isCamera);
+
+      if (pickedFiles.isEmpty) {
+        emit(loadedState()); // Return to loaded state if no images selected
+        return;
+      }
+
+      // Process images
+      for (final pickedFile in pickedFiles) {
+        final optimizedFile = await _optimizeImage(File(pickedFile.path), 80);
+        imagesPicked.add(optimizedFile);
+      }
+
+      emit(loadedState()); // Update with new images
+    } catch (e) {
+      debugPrint('Error picking images: $e');
+      emit(loadedState(errorMessage: 'Failed to pick images'));
     }
-
-    final pickedFiles = await _pickImages(source); // Pick multiple images
-    if (pickedFiles.isEmpty) {
-      emit(
-        state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => CreatePostInCommunityState.loaded(
-            postContent.length,
-            value.changeCounter,
-            false,
-            false,
-            false,
-            '',
-          ),
-        ),
-      );
-      return;
-    }
-
-    // Add picked images to the list
-    for (final pickedFile in pickedFiles) {
-      final optimizedFile = await _optimizeImage(File(pickedFile.path), 80);
-      imagesPicked.add(optimizedFile);
-    }
-
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => CreatePostInCommunityState.loaded(
-          postContent.length,
-          value.changeCounter,
-          false,
-          false,
-          false,
-          '',
-        ),
-      ),
-    );
   }
 
-  Future<ImageSource?> pickImageSource(bool isCamera) async {
-    return isCamera ? ImageSource.camera : ImageSource.gallery;
-  }
-
-  Future<List<XFile>> _pickImages(ImageSource source) async {
+  Future<List<XFile>> _pickImages(ImageSource source, bool isCamera) async {
     final picker = ImagePicker();
-    return await picker.pickMultiImage(); // Pick multiple images
+
+    if (isCamera) {
+      // Handle single image from camera
+      final image = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+      return image != null ? [image] : [];
+    } else {
+      // Handle multiple images from gallery
+      return await picker.pickMultiImage(
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 80,
+      );
+    }
+  }
+
+// Helper methods for state management
+  CreatePostInCommunityState loadingState() {
+    return state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => CreatePostInCommunityState.loaded(
+        postContent.length,
+        value.changeCounter + 1,
+        true, // isLoading
+        false,
+        false,
+        '',
+      ),
+    );
+  }
+
+  CreatePostInCommunityState loadedState({String? errorMessage}) {
+    return state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => CreatePostInCommunityState.loaded(
+        postContent.length,
+        value.changeCounter + 1,
+        false, // isLoading
+        false,
+        false,
+        errorMessage ?? '',
+      ),
+    );
   }
 
   Future<File> _optimizeImage(File imageFile, int qualityPercentage) async {
@@ -256,43 +261,53 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       // For editing posts
       if (imagesPicked.isEmpty &&
           editableFeed!.content!.trim() == '' &&
-          editableFeed!.mediaPath == null) {
+          editableFeed!.mediaPath!.isEmpty) {
         customSnackBar(
           context: context,
           message: 'Write something to publish.',
         );
         return;
       }
-      if (imagesPicked.isNotEmpty) {
+      if (imagesPicked.isNotEmpty ||
+          editableFeed!.existingMediaPath!.isNotEmpty) {
         editPostWithImageInCommunity(groupId); // Handle multiple images
         return;
       }
+      // if (pollModel != null) {
+      //   createPostWithTextInCommunity(groupId, pollModel);
+      // }
       if (imagesPicked.isEmpty &&
           editableFeed!.content != null &&
           editableFeed!.content != '' &&
-          editableFeed!.mediaPath != null) {
-        editPostWithTextInCommunity(groupId, null);
+          editableFeed!.mediaPath!.isNotEmpty) {
+        editPostWithTextInCommunity(
+            groupId, null, pollModel ?? const PollModel());
         return;
       }
       if (imagesPicked.isEmpty &&
           editableFeed!.content != null &&
           editableFeed!.content != '' &&
-          editableFeed!.mediaPath == null) {
+          editableFeed!.mediaPath!.isEmpty) {
         log('text type');
-        editPostWithTextInCommunity(groupId, 'text');
+        editPostWithTextInCommunity(groupId, pollModel == null ? 'text' : null,
+            pollModel ?? const PollModel());
         return;
       }
     }
   }
 
   void removeMediaPathInEditableFeed(int index) {
-    if (editableFeed != null && editableFeed!.mediaPath != null) {
+    if (editableFeed != null && editableFeed!.mediaPath!.isNotEmpty) {
       // Create a modifiable copy of the list
       final updatedMediaPaths = List<String>.from(editableFeed!.mediaPath!);
       updatedMediaPaths.removeAt(index);
 
       // Create a new editableFeed with updated mediaPath
-      editableFeed = editableFeed!.copyWith(mediaPath: updatedMediaPaths);
+      editableFeed = editableFeed!.copyWith(
+        mediaPath: updatedMediaPaths,
+        existingMediaPath: updatedMediaPaths,
+      );
+      // existingMediaPaths = updatedMediaPaths;
 
       emit(
         state.maybeMap(
@@ -406,6 +421,23 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   }
 
   Future<void> editPostWithImageInCommunity(String? groupId) async {
+    if (editableFeed == null) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => CreatePostInCommunityState.loaded(
+            value.postLength,
+            value.changeCounter,
+            false,
+            false,
+            false,
+            'No post data available for editing',
+          ),
+        ),
+      );
+      return;
+    }
+
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -413,79 +445,99 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           value.postLength,
           value.changeCounter,
           false,
-          true, // isLoading
+          true,
           false,
           '',
         ),
       ),
     );
 
-    final tempDir = await getTemporaryDirectory();
-    final List<File> uniquelyCopiedImages = [];
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final List<File> uniquelyCopiedImages = [];
 
-    for (final image in imagesPicked) {
-      final uniqueSuffix = DateTime.now().microsecondsSinceEpoch.toString();
-      final newImagePath = '${tempDir.path}/copied_edit_$uniqueSuffix.jpg';
-      final copiedImage = await image.copy(newImagePath);
-      uniquelyCopiedImages.add(copiedImage);
+      for (final image in imagesPicked) {
+        final uniqueSuffix = DateTime.now().microsecondsSinceEpoch.toString();
+        final newImagePath = '${tempDir.path}/copied_edit_$uniqueSuffix.jpg';
+        final copiedImage = await image.copy(newImagePath);
+        uniquelyCopiedImages.add(copiedImage);
+      }
+
+      final optimizedFiles = await Future.wait(
+        uniquelyCopiedImages.map((file) => _optimizeImage(file, 80)),
+      );
+
+      final multipartFiles = await convertFilesToMultipart(optimizedFiles);
+
+      log('Sending existingMediaPaths: ${editableFeed!.existingMediaPath}');
+
+      final result = await _editPostWithImageInCommunityUsecase.execute(
+        EditPostWithImageInCommunityUsecaseInput(
+          postId: editableFeed!.id.toString(),
+          postContent: editableFeed!.content ?? '',
+          images: multipartFiles,
+          mediaType: 'image',
+          visibility: 'Public',
+          groupId: groupId,
+          existingMediaPath: editableFeed!.existingMediaPath!,
+        ),
+      );
+
+      result.fold(
+        (failure) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => CreatePostInCommunityState.loaded(
+                value.postLength,
+                value.changeCounter,
+                false,
+                false,
+                false,
+                failure.message,
+              ),
+            ),
+          );
+        },
+        (success) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => CreatePostInCommunityState.loaded(
+                value.postLength,
+                value.changeCounter,
+                false,
+                false,
+                true,
+                '',
+              ),
+            ),
+          );
+          imagesPicked.clear();
+        },
+      );
+    } catch (e) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => CreatePostInCommunityState.loaded(
+            value.postLength,
+            value.changeCounter,
+            false,
+            false,
+            false,
+            'An error occurred: $e',
+          ),
+        ),
+      );
     }
-
-    final optimizedFiles = await Future.wait(
-      uniquelyCopiedImages.map((file) => _optimizeImage(file, 80)),
-    );
-
-    final multipartFiles = await convertFilesToMultipart(optimizedFiles);
-
-    final result = await _editPostWithImageInCommunityUsecase.execute(
-      EditPostWithImageInCommunityUsecaseInput(
-        postId: editableFeed!.id.toString(),
-        postContent: editableFeed!.content,
-        images: multipartFiles,
-        mediaType: 'image',
-        visibility: 'Public',
-        groupId: groupId,
-      ),
-    );
-
-    result.fold(
-      (l) {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => CreatePostInCommunityState.loaded(
-              value.postLength,
-              value.changeCounter,
-              false,
-              false,
-              false,
-              l.message,
-            ),
-          ),
-        );
-      },
-      (response) async {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => CreatePostInCommunityState.loaded(
-              value.postLength,
-              value.changeCounter,
-              false,
-              false,
-              true,
-              '',
-            ),
-          ),
-        );
-        debugPrint("Edit Success: ${response.message}");
-
-        // Optional: Clear image state
-        imagesPicked.clear();
-      },
-    );
   }
 
-  editPostWithTextInCommunity(String? groupId, String? mediaType) async {
+  editPostWithTextInCommunity(
+    String? groupId,
+    String? mediaType,
+    PollModel? pollModel,
+  ) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -507,6 +559,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         mediaType: mediaType,
         visibility: 'Public',
         groupId: groupId,
+        pollModel: pollModel,
       ),
     );
     result.fold(

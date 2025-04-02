@@ -5,7 +5,7 @@ import '../../../../../exports.dart';
 
 class WebinarType extends StatelessWidget {
   final HomeCubit cubit;
-  final PostModel postModel;
+  final PostCommunityModel postModel;
   const WebinarType({super.key, required this.cubit, required this.postModel});
 
   @override
@@ -21,16 +21,16 @@ class WebinarType extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         splashColor: AppColors.subBG, // Splash color
         onTap: () {
-          navigatorKey.currentState?.pushNamed(
-            AppRoutes.postDetails,
-            arguments: AppRoutesArgs.postDetailsRouteArgs(
-                postModel: postModel,
-                doctorModel: cubit.currentDoctorModel,
-                verified: cubit.accountVerification!,
-                currentDoctorRole: cubit.currentDoctorRole,
-                homeDataModel: cubit.homeDataModel,
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired),
-          );
+          // navigatorKey.currentState?.pushNamed(
+          //   AppRoutes.postDetails,
+          //   arguments: AppRoutesArgs.postDetailsRouteArgs(
+          //       postModel: postModel,
+          //       doctorModel: cubit.currentDoctorModel,
+          //       verified: cubit.accountVerification!,
+          //       currentDoctorRole: cubit.currentDoctorRole,
+          //       homeDataModel: cubit.homeDataModel,
+          //       isSyndicateCardRequired: cubit.isSyndicateCardRequired),
+          // );
         },
 
         child: SizedBox(
@@ -49,7 +49,7 @@ class WebinarType extends StatelessWidget {
                       child: Hero(
                         tag: 'postImage${postModel.id}',
                         child: CachedNetworkImage(
-                          imageUrl: postModel.image.toString(),
+                          imageUrl: postModel.mediaPath![0].toString(),
                           fadeInDuration: const Duration(milliseconds: 300),
                           width: size.width * 0.3,
                           fadeInCurve: Curves.easeIn,
@@ -83,7 +83,7 @@ class WebinarType extends StatelessWidget {
                                 Flexible(
                                   child: Text(
                                     capitalizeFirstText(
-                                        postModel.title.toString()),
+                                        postModel.content.toString()),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.title,

@@ -46,6 +46,7 @@ class _CreatePostInCommunityScreenState
           onPollCreated: (poll) {
             setState(() {
               _poll = poll;
+              // context.read<CreatePostInCommunityCubit>().editFeedPollForEditableFeed(poll);
             });
           },
           initialOptionCount: 2,
@@ -132,14 +133,21 @@ class _CreatePostInCommunityScreenState
                       if (widget.groupId != null) {
                         widget.onPostUploaded?.call();
                       } else {
-                        navigatorKey.currentState?.popAndPushNamed(
-                          AppRoutes.community,
-                          arguments: AppRoutesArgs.communityRouteArgs(
-                            homeDataModel: widget.homeDataModel,
-                            currentDoctorModel: widget.currentDoctorModel,
-                            initialTab: 0,
-                          ),
-                        );
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          navigatorKey.currentState?.pushReplacementNamed(
+                              AppRoutes.home,
+                              arguments: 0);
+                        });
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.community,
+                            arguments: AppRoutesArgs.communityRouteArgs(
+                              homeDataModel: widget.homeDataModel,
+                              currentDoctorModel: widget.currentDoctorModel,
+                              initialTab: 0,
+                            ),
+                          );
+                        });
                       }
                     }
                   },
@@ -256,14 +264,18 @@ class _CreatePostInCommunityScreenState
                                                   .doctor!.firstName,
                                               lastName: cubit.editableFeed!
                                                   .doctor!.lastName,
-                                              role: '',
+                                              role: cubit.editableFeed!.doctor!
+                                                  .isSyndicateCardRequired
+                                                  .toString(),
                                             )
                                           : doctorName(
                                               firstName: widget
                                                   .currentDoctorModel.firstName,
                                               lastName: widget
                                                   .currentDoctorModel.lastName,
-                                              role: '',
+                                              role: widget.homeDataModel
+                                                  .isSyndicateCardRequired
+                                                  .toString(),
                                             ),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,

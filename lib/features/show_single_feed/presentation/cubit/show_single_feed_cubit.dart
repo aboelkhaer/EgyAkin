@@ -1,8 +1,3 @@
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_vote_and_unvote_usecase.dart';
-import 'package:egy_akin/features/show_single_feed/domain/usecases/create_reply_on_comment_in_community_usecase.dart';
-import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
-
 import '../../../../exports.dart';
 
 class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
@@ -26,7 +21,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       _deleteCommentOnPostInCommunityUsecase;
   final CreateReplyOnCommentInCommunityUsecase
       _createReplyOnCommentInCommunityUsecase;
-  ScrollController scrollController = ScrollController();
+  // ScrollController scrollController = ScrollController();
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
   final AddOptionOnPollUsecase _addOptionOnPollUsecase;
 
@@ -34,7 +29,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   final Map<int, int?> postSelectedOption = {};
 
   CommentModelInCommunity? commentToReply;
-  // String commentContent = '';
+  bool isLoadingMoreForScroll = false;
+  bool isLastPage = false;
+  int _currentPage = 1;
 
   TextEditingController commentContent = TextEditingController();
   int changeCounter = 0;
@@ -44,11 +41,17 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   getCommentsInCommunity(String postId, PostCommunityModel feed,
       {String? highlightedCommentId}) async {
     commentToReply = null;
+    _currentPage = 1;
     // Emit loading state only if no silent refresh
     if (highlightedCommentId == null) {
       emit(const ShowSingleFeedState.loading());
 
-      final result = await _getCommentsInCommunityUsecase.execute(postId);
+      final result = await _getCommentsInCommunityUsecase.execute(
+        GetCommentsInCommunityUsecaseInput(
+          postId: postId,
+          page: _currentPage,
+        ),
+      );
       result.fold(
         (l) {
           emit(ShowSingleFeedState.error(l.message));
@@ -60,11 +63,15 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
                 r,
                 changeCounter,
                 feed,
-                false, // No general loading
-                false, // Successfully loaded comments
-                '', // No message
-                null, // Highlighted comment ID
-                false, false, false, false,
+                false,
+                false,
+                '',
+                null,
+                false,
+                false,
+                false,
+                false,
+                false,
               ),
             );
           }
@@ -84,22 +91,114 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             false,
             true,
             '',
-            null, // Clear highlight
-            false, false, false, false,
+            null,
+            false,
+            false,
+            false,
+            false,
+            false,
           ),
         ),
       );
-      // emit(ShowSingleFeedState.loaded(
-      //   r,
-      //   changeCounter,
-      //   feed,
-      //   false,
-      //   true,
-      //   '',
-      //   null, // Clear highlight
-      //   false, false,
-      // ));
     }
+  }
+
+  loadMoreComments(String postId) async {
+    // Don't load more if we're already at the last page or currently loading
+    if (isLastPage) return;
+
+    _currentPage++;
+    isLoadingMoreForScroll = true;
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => ShowSingleFeedState.loaded(
+        value.commentsResponse,
+        value.changeCounter,
+        value.feed,
+        value.isSendCommentLoading,
+        value.isSendCommentLoaded,
+        '',
+        value.highlightedCommentId,
+        value.isDeleteCommentLoading,
+        value.isDeleteCommentLoaded,
+        value.isSendReplyLoading,
+        value.isSendReplyLoaded,
+        true, // isSeeMore = true while loading
+      ),
+    ));
+
+    final result = await _getCommentsInCommunityUsecase.execute(
+      GetCommentsInCommunityUsecaseInput(
+        postId: postId,
+        page: _currentPage,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        _currentPage--;
+        isLoadingMoreForScroll = false;
+        emit(state.maybeMap(
+          orElse: () => ShowSingleFeedState.error(failure.message),
+          loaded: (value) => ShowSingleFeedState.loaded(
+            value.commentsResponse,
+            value.changeCounter,
+            value.feed,
+            value.isSendCommentLoading,
+            value.isSendCommentLoaded,
+            failure.message,
+            value.highlightedCommentId,
+            value.isDeleteCommentLoading,
+            value.isDeleteCommentLoaded,
+            value.isSendReplyLoading,
+            value.isSendReplyLoaded,
+            false,
+          ),
+        ));
+      },
+      (loadMoreComments) {
+        isLoadingMoreForScroll = false;
+
+        // Update the state with the new comments
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) {
+            // Check if we've reached the last page
+            isLastPage = loadMoreComments.data?.lastPage == null ||
+                _currentPage >= loadMoreComments.data!.lastPage!;
+
+            // Merge the existing comments with the new ones
+            final updatedComments = value.commentsResponse.copyWith(
+              data: value.commentsResponse.data?.copyWith(
+                data: [
+                  ...(value.commentsResponse.data?.data ?? []),
+                  ...(loadMoreComments.data?.data ?? []),
+                ],
+                currentPage: _currentPage,
+                lastPage: loadMoreComments.data?.lastPage,
+                nextPageUrl: loadMoreComments.data?.nextPageUrl,
+              ),
+            );
+
+            return ShowSingleFeedState.loaded(
+              updatedComments,
+              value.changeCounter + 1, // Increment to trigger UI updates
+              value.feed,
+              value.isSendCommentLoading,
+              value.isSendCommentLoaded,
+              '',
+              value.highlightedCommentId,
+              value.isDeleteCommentLoading,
+              value.isDeleteCommentLoaded,
+              value.isSendReplyLoading,
+              value.isSendReplyLoaded,
+              false, // isSeeMore = false after loading
+            );
+          },
+        ));
+      },
+    );
   }
 
   refreshScreen() {
@@ -117,8 +216,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           null,
           value.isDeleteCommentLoading,
           value.isDeleteCommentLoaded,
-          false,
-          false,
+          value.isSendReplyLoading,
+          value.isSendReplyLoaded,
+          value.isSeeMore,
         ),
       ),
     );
@@ -165,14 +265,15 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               isLiked: !isCurrentlyLiked, // Toggle the isLiked flag
               likesCount: updatedLikesCount, // Update likes count
             ),
-            false,
-            false,
+            value.isSendCommentLoading,
+            value.isSendCommentLoaded,
             '',
             null,
-            false,
-            false,
-            false,
-            false,
+            value.isDeleteCommentLoading,
+            value.isDeleteCommentLoaded,
+            value.isSendReplyLoading,
+            value.isSendReplyLoaded,
+            value.isSeeMore,
           );
         },
       ),
@@ -228,8 +329,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             null,
             value.isDeleteCommentLoading,
             value.isDeleteCommentLoaded,
-            false,
-            false,
+            value.isSendReplyLoading,
+            value.isSendReplyLoaded,
+            value.isSeeMore,
           );
         },
       ),
@@ -477,7 +579,10 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           '',
           value.highlightedCommentId,
           value.isDeleteCommentLoading,
-          value.isDeleteCommentLoaded, false, false,
+          value.isDeleteCommentLoaded,
+          value.isSendReplyLoading,
+          value.isSendReplyLoaded,
+          value.isSeeMore,
         ),
       ),
     );
@@ -504,7 +609,10 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               l.message,
               value.highlightedCommentId,
               value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded, false, false,
+              value.isDeleteCommentLoaded,
+              value.isSendReplyLoading,
+              value.isSendReplyLoaded,
+              value.isSeeMore,
             ),
           ),
         );
@@ -560,7 +668,10 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               '',
               r.data!.id.toString(),
               value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded, false, false,
+              value.isDeleteCommentLoaded,
+              value.isSendReplyLoading,
+              value.isSendReplyLoaded,
+              value.isSeeMore,
             ),
           ),
         );
@@ -581,7 +692,10 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               '',
               null,
               value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded, false, false,
+              value.isDeleteCommentLoaded,
+              value.isSendReplyLoading,
+              value.isSendReplyLoaded,
+              value.isSeeMore,
             ),
           ),
         );
@@ -605,118 +719,135 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   deleteCommentOnPostInCommunity(
     String commentId,
     PostCommunityModel feed,
-    int index, // Pass the index to delete and animate the comment smoothly
+    int index,
     HomeModelResponse homeDataModel,
     DoctorModel currentDoctorModel,
   ) async {
     deleteCommentId = commentId;
-    // Access the current state
     final currentState = state.maybeMap(
       orElse: () => null,
-      loaded: (value) => value, // Capture the current loaded state
+      loaded: (value) => value,
     );
 
-    if (currentState == null) return; // Exit if the current state is not loaded
+    if (currentState == null) return;
 
-    // Emit a loading state with deletion in progress
-    emit(
-      ShowSingleFeedState.loaded(
-        currentState.commentsResponse,
-        changeCounter,
-        currentState.feed,
-        false,
-        false,
-        '',
-        null,
-        true,
-        false,
-        false,
-        false,
-      ),
-    );
+    final deletedComment = currentState.commentsResponse.data?.data?[index];
+    if (deletedComment == null) return;
+
+    final isReply = deletedComment.parentId != null;
+
+    emit(ShowSingleFeedState.loaded(
+      currentState.commentsResponse,
+      changeCounter,
+      currentState.feed,
+      false,
+      false,
+      '',
+      null,
+      true,
+      false,
+      false,
+      false,
+      false,
+    ));
 
     final result =
         await _deleteCommentOnPostInCommunityUsecase.execute(commentId);
 
     result.fold(
-      // Handle error case
       (l) {
-        emit(
-          ShowSingleFeedState.loaded(
-            currentState.commentsResponse,
-            changeCounter,
-            currentState.feed,
-            false,
-            false,
-            l.message,
-            null,
-            false,
-            false,
-            false,
-            false,
-          ),
-        );
+        emit(ShowSingleFeedState.loaded(
+          currentState.commentsResponse,
+          changeCounter,
+          currentState.feed,
+          false,
+          false,
+          l.message,
+          null,
+          false,
+          false,
+          false,
+          false,
+          false,
+        ));
       },
-      // Handle success case
       (r) async {
+        final List<CommentModelInCommunity> updatedComments = [
+          ...?currentState.commentsResponse.data?.data
+        ];
+
+        int totalDeleted = 1;
+
+        // If main comment, delete replies too
+        if (!isReply) {
+          final repliesToDelete = updatedComments
+              .where((c) => c.parentId == deletedComment.id)
+              .toList();
+
+          totalDeleted += repliesToDelete.length;
+
+          updatedComments.removeWhere((c) =>
+              c.id.toString() == commentId || c.parentId == deletedComment.id);
+        } else {
+          // If reply, update parent's repliesCount
+          final parentIndex = updatedComments
+              .indexWhere((c) => c.id == deletedComment.parentId);
+          if (parentIndex != -1) {
+            final parent = updatedComments[parentIndex];
+            updatedComments[parentIndex] = parent.copyWith(
+              repliesCount: (parent.repliesCount ?? 1) - 1,
+            );
+          }
+          updatedComments.removeWhere((c) => c.id.toString() == commentId);
+        }
+
         final updatedFeed = feed.copyWith(
-          commentsCount:
-              (feed.commentsCount ?? 0) - 1, // Decrement comments count
+          commentsCount: (feed.commentsCount ?? 0) - totalDeleted,
         );
 
-        // Safely filter the comments list
-        final updatedCommentsData = currentState.commentsResponse.data?.data
-            ?.where((comment) => comment.id.toString() != commentId)
-            .toList();
-
-        // Construct the updated comments response
-        final updatedCommentsResponse = currentState.commentsResponse.copyWith(
+        final updatedResponse = currentState.commentsResponse.copyWith(
           data: currentState.commentsResponse.data?.copyWith(
-            data: updatedCommentsData,
+            data: updatedComments,
           ),
         );
 
-        // Update the CommunityCubit with the new post
         sl<CommunityCubit>().updatePost(updatedFeed);
 
-        // Trigger the smooth deletion animation in the UI
         if (listKeyForComments.currentState != null) {
           listKeyForComments.currentState?.removeItem(
             index,
-            (context, animation) {
-              return SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: 0.0,
-                child: CommentWidgetInCommunity(
-                  commentModel:
-                      currentState.commentsResponse.data!.data![index],
-                  homeDataModel: homeDataModel,
-                  currentDoctorModel: currentDoctorModel,
-                  commentsResponse: currentState.commentsResponse,
-                  index: index,
-                  updatedFeed: updatedFeed,
-                ),
-              );
-            },
+            (context, animation) => SizeTransition(
+              sizeFactor: animation,
+              child: CommentWidgetInCommunity(
+                commentModel: deletedComment,
+                homeDataModel: homeDataModel,
+                currentDoctorModel: currentDoctorModel,
+                commentsResponse: currentState.commentsResponse,
+                index: index,
+                updatedFeed: updatedFeed,
+              ),
+            ),
             duration: const Duration(milliseconds: 300),
           );
         }
 
-        emit(
-          ShowSingleFeedState.loaded(
-            updatedCommentsResponse, // Use the updated comments list
-            changeCounter,
-            updatedFeed,
-            false,
-            false,
-            '',
-            null,
-            false,
-            true, false, false,
-          ),
-        );
+        emit(ShowSingleFeedState.loaded(
+          updatedResponse,
+          changeCounter + 1,
+          updatedFeed,
+          false,
+          false,
+          '',
+          null,
+          false,
+          true,
+          false,
+          false,
+          false,
+        ));
       },
     );
+
     deleteCommentId = '';
   }
 
@@ -754,6 +885,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         false,
         false,
         false,
+        false,
       ),
     );
 
@@ -771,6 +903,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             false,
             failure.message,
             null,
+            false,
             false,
             false,
             false,
@@ -838,6 +971,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             true,
             false,
             false,
+            false,
           ),
         );
       },
@@ -849,7 +983,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
   //! create reply
 
-  createReplyOnComment(
+  Future<void> createReplyOnComment(
     String postId,
     String commentId,
     CommentModelInCommunity parentComment,
@@ -863,14 +997,15 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           value.commentsResponse,
           changeCounter,
           value.feed,
-          false, // Not sending a comment
-          false, // Not sending a comment
+          false,
+          false,
           '',
           value.highlightedCommentId,
           value.isDeleteCommentLoading,
           value.isDeleteCommentLoaded,
           true, // Sending a reply
           false,
+          value.isSeeMore,
         ),
       ),
     );
@@ -895,20 +1030,34 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               value.commentsResponse,
               changeCounter,
               value.feed,
-              false, // Not sending a comment
-              false, // Not sending a comment
-              failure.message, // Show error message
+              false,
+              false,
+              failure.message,
               value.highlightedCommentId,
               value.isDeleteCommentLoading,
               value.isDeleteCommentLoaded,
-              false, // Not sending a reply
               false,
+              false,
+              value.isSeeMore,
             ),
           ),
         );
       },
       // Success case
       (success) async {
+        // Get current state
+        final currentState = state.maybeMap(
+          orElse: () => null,
+          loaded: (value) => value,
+        );
+
+        if (currentState == null) return;
+
+        // Update the feed's comments count
+        final updatedFeed = currentState.feed.copyWith(
+          commentsCount: (currentState.feed.commentsCount ?? 0) + 1,
+        );
+
         // Create the new reply model
         final newReply = CommentModelInCommunity(
           id: success.data!.id,
@@ -924,73 +1073,71 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           replies: [],
         );
 
-        // Update the replies list of the parent comment
+        // Update the parent comment with new reply and incremented count
         final updatedParentComment = parentComment.copyWith(
           replies: [...(parentComment.replies ?? []), newReply],
+          repliesCount: (parentComment.repliesCount ?? 0) + 1,
         );
 
-        // Update the list of comments in the state
-        final updatedComments = state
-            .maybeMap(
-          orElse: () => <CommentModelInCommunity>[],
-          loaded: (loadedState) =>
-              loadedState.commentsResponse.data?.data ?? [],
-        )
-            .map((comment) {
-          if (comment.id == parentComment.id) {
-            return updatedParentComment;
-          }
-          return comment;
-        }).toList();
+        // Update the list of comments
+        final updatedComments = (currentState.commentsResponse.data?.data ?? [])
+            .map((comment) =>
+                comment.id == parentComment.id ? updatedParentComment : comment)
+            .toList();
+
+        // Create updated comments response
+        final updatedCommentsResponse = currentState.commentsResponse.copyWith(
+          data: currentState.commentsResponse.data?.copyWith(
+            data: updatedComments,
+          ),
+        );
+
+        // Animate the new reply into the list
+        if (listKeyForReplies[parentComment.id]?.currentState != null) {
+          final replyIndex = updatedParentComment.replies?.length ?? 0;
+          listKeyForReplies[parentComment.id]!.currentState!.insertItem(
+                replyIndex - 1,
+                duration: const Duration(milliseconds: 300),
+              );
+        }
 
         emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => ShowSingleFeedState.loaded(
-              value.commentsResponse.copyWith(
-                data: value.commentsResponse.data?.copyWith(
-                  data: updatedComments,
-                ),
-              ),
-              changeCounter,
-              value.feed,
-              false, // Not sending a comment
-              false, // Not sending a comment
-              '',
-              success.data!.id.toString(),
-              value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded,
-              false, // Not sending a reply
-              true, // Reply sent successfully
-            ),
+          ShowSingleFeedState.loaded(
+            updatedCommentsResponse,
+            changeCounter + 1,
+            updatedFeed,
+            false,
+            false,
+            '',
+            success.data!.id.toString(), // Highlight the new reply
+            currentState.isDeleteCommentLoading,
+            currentState.isDeleteCommentLoaded,
+            false,
+            true, // Reply sent successfully
+            currentState.isSeeMore,
           ),
         );
 
         await Future.delayed(const Duration(milliseconds: 100));
 
-        // Emit the updated state with the new reply
+        // Remove highlight after delay
         emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => ShowSingleFeedState.loaded(
-              value.commentsResponse.copyWith(
-                data: value.commentsResponse.data?.copyWith(
-                  data: updatedComments,
-                ),
-              ),
-              changeCounter,
-              value.feed,
-              false, // Not sending a comment
-              false, // Not sending a comment
-              '',
-              null,
-              value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded,
-              false, // Not sending a reply
-              true, // Reply sent successfully
-            ),
+          ShowSingleFeedState.loaded(
+            updatedCommentsResponse,
+            changeCounter + 2, // Increment again to trigger rebuild
+            updatedFeed,
+            false,
+            false,
+            '',
+            null, // Remove highlight
+            currentState.isDeleteCommentLoading,
+            currentState.isDeleteCommentLoaded,
+            false,
+            true,
+            currentState.isSeeMore,
           ),
         );
+
         commentToReply = null;
         commentContent.clear();
       },
@@ -1038,6 +1185,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             value.isDeleteCommentLoaded,
             value.isSendReplyLoading,
             value.isSendReplyLoaded,
+            value.isSeeMore,
           );
         },
       ),
@@ -1128,7 +1276,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           value.isDeleteCommentLoading,
           value.isDeleteCommentLoaded,
           value.isSendReplyLoading,
-          value.isSendReplyLoaded,
+          value.isSendReplyLoaded, value.isSeeMore,
         ),
       ),
     );
@@ -1155,7 +1303,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               value.isDeleteCommentLoading,
               value.isDeleteCommentLoaded,
               value.isSendReplyLoading,
-              value.isSendReplyLoaded,
+              value.isSendReplyLoaded, value.isSeeMore,
             ),
           ),
         );
@@ -1203,7 +1351,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
                 value.isDeleteCommentLoading,
                 value.isDeleteCommentLoaded,
                 value.isSendReplyLoading,
-                value.isSendReplyLoaded,
+                value.isSendReplyLoaded, value.isSeeMore,
               );
             },
           ),

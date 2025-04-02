@@ -16,6 +16,7 @@ abstract class GroupDetailsInCommunityState
     bool isDeleteGroupLoaded,
     int changeCounter,
     bool isSeeMore,
+    bool isAcceptOrDeclineGroupInvitation,
   ) = _Loaded;
   const factory GroupDetailsInCommunityState.error(String message) = _Error;
 }

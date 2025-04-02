@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_annotation_target
 
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
+import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_all_notifications_model_response.freezed.dart';
 part 'get_all_notifications_model_response.g.dart';
@@ -50,8 +51,10 @@ class NotificationsModel with _$NotificationsModel {
     String? content,
     @JsonKey(name: 'type_id') int? typeId,
     @JsonKey(name: 'created_at') String? createdAt,
+    @JsonKey(name: 'group_id') int? groupId,
     PatientNotificationModel? patient,
     @JsonKey(name: 'type_doctor') TypeDoctorForNotificationModel? typeDoctor,
+    @JsonKey(name: 'feed') PostCommunityModel? feed,
   }) = _NotificationsModel;
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>
       _$NotificationsModelFromJson(json);

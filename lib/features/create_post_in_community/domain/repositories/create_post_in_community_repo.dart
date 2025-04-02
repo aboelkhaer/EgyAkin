@@ -33,6 +33,7 @@ abstract class CreatePostInCommunityRepository {
     required String visibility,
     required String? groupId,
     required String postId,
+    required List<String> existingMediaPath,
   });
   Future<Either<Failure, EditPostInCommunityModelResponse>>
       editPostWithTextInCommunity({
@@ -41,5 +42,6 @@ abstract class CreatePostInCommunityRepository {
     required String visibility,
     required String? groupId,
     required String postId,
+    required PollModel? pollModel,
   });
 }

@@ -273,7 +273,7 @@ class _SplashScreenState extends State<SplashScreen>
                 ),
               ),
               const SizedBox(
-                height: 50,
+                height: 40,
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,

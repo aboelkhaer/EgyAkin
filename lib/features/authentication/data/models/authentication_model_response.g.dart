@@ -48,6 +48,7 @@ _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
       registrationNumber: json['registration_number'] as String?,
       emailVerifiedAt: json['email_verified_at'] as String?,
       phoneVerifiedAt: json['phone_verified_at'] as String?,
+      invitationId: (json['invitation_id'] as num?)?.toInt(),
       blocked: json['blocked'] as bool?,
       limited: json['limited'] as bool?,
       patients: (json['patients'] as List<dynamic>?)
@@ -81,6 +82,7 @@ Map<String, dynamic> _$$DoctorModelImplToJson(_$DoctorModelImpl instance) =>
       'registration_number': instance.registrationNumber,
       'email_verified_at': instance.emailVerifiedAt,
       'phone_verified_at': instance.phoneVerifiedAt,
+      'invitation_id': instance.invitationId,
       'blocked': instance.blocked,
       'limited': instance.limited,
       'patients': instance.patients,

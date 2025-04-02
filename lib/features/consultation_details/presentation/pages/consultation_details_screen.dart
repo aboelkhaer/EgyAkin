@@ -411,7 +411,9 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                                       lastName:
                                                                           doctorConsultation.doctorLastName ??
                                                                               '',
-                                                                      role: '',
+                                                                      role: doctorConsultation
+                                                                          .isVerified
+                                                                          .toString(),
                                                                     ),
                                                                     style:
                                                                         TextStyle(

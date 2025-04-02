@@ -14,7 +14,7 @@ class ProfileImage extends StatelessWidget {
     return Stack(
       children: [
         CircleAvatar(
-          radius: 50.r, // hidden widget to add stack raduis size
+          radius: 50.r,
           backgroundColor: AppColors.transparent,
           child: Container(
             margin: const EdgeInsets.only(top: 3),

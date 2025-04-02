@@ -5,7 +5,7 @@ import '../../../../../exports.dart';
 
 class PostType extends StatelessWidget {
   final HomeCubit cubit;
-  final PostModel postModel;
+  final PostCommunityModel postModel;
   const PostType({super.key, required this.cubit, required this.postModel});
 
   @override
@@ -22,14 +22,12 @@ class PostType extends StatelessWidget {
         splashColor: AppColors.subBG, // Splash color
         onTap: () {
           navigatorKey.currentState?.pushNamed(
-            AppRoutes.postDetails,
-            arguments: AppRoutesArgs.postDetailsRouteArgs(
-                postModel: postModel,
-                doctorModel: cubit.currentDoctorModel,
-                verified: cubit.accountVerification!,
-                currentDoctorRole: cubit.currentDoctorRole,
-                homeDataModel: cubit.homeDataModel,
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired),
+            AppRoutes.showSingleFeed,
+            arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+              homeDataModel: cubit.homeDataModel,
+              currentDoctorModel: cubit.currentDoctorModel,
+              feed: postModel,
+            ),
           );
         },
 
@@ -42,35 +40,38 @@ class PostType extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          bottomLeft: Radius.circular(8)),
-                      child: Hero(
-                        tag: 'postImage${postModel.id}',
-                        child: CachedNetworkImage(
-                          imageUrl: postModel.image.toString(),
-                          fadeInDuration: const Duration(milliseconds: 300),
-                          width: size.width * 0.3,
-                          fadeInCurve: Curves.easeIn,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) =>
-                              Lottie.asset(AppImages.imageLoader),
-                          errorWidget: (context, url, error) {
-                            return Container(
-                              color: Colors.transparent,
-                              child: const Center(
-                                child: Icon(
-                                  Icons.error_outline,
-                                  color: AppColors.primary,
-                                  size: 40.0,
-                                ),
+                    postModel.mediaPath!.isEmpty
+                        ? const SizedBox.shrink()
+                        : ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                bottomLeft: Radius.circular(8)),
+                            child: Hero(
+                              tag: 'postImage${postModel.id}',
+                              child: CachedNetworkImage(
+                                imageUrl: postModel.mediaPath![0].toString(),
+                                fadeInDuration:
+                                    const Duration(milliseconds: 300),
+                                width: size.width * 0.3,
+                                fadeInCurve: Curves.easeIn,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) =>
+                                    Lottie.asset(AppImages.imageLoader),
+                                errorWidget: (context, url, error) {
+                                  return Container(
+                                    color: Colors.transparent,
+                                    child: const Center(
+                                      child: Icon(
+                                        Icons.error_outline,
+                                        color: AppColors.primary,
+                                        size: 40.0,
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
+                            ),
+                          ),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(8),
@@ -83,7 +84,7 @@ class PostType extends StatelessWidget {
                                 Flexible(
                                   child: Text(
                                     capitalizeFirstText(
-                                        postModel.title.toString()),
+                                        postModel.content.toString()),
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.title,

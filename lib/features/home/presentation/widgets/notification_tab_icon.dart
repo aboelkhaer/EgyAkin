@@ -29,6 +29,7 @@ class NotificationTabIcon extends StatelessWidget {
                       message,
                       checkUpdateMessageCounter,
                       isUserBlocked,
+                      changesCounter,
                     ) {
                       return Positioned(
                         left: 0,
@@ -66,6 +67,7 @@ class NotificationTabIcon extends StatelessWidget {
           message,
           checkUpdateMessageCounter,
           isUserBlocked,
+          changesCounter,
         ) {
           return GestureDetector(
             onTap: () {
@@ -114,6 +116,7 @@ class NotificationTabIcon extends StatelessWidget {
                         message,
                         checkUpdateMessageCounter,
                         isUserBlocked,
+                        changesCounter,
                       ) {
                         return Positioned(
                           left: 0,

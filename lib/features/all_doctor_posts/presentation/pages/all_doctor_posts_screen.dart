@@ -116,9 +116,42 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                   EdgeInsets.only(bottom: 60.h),
                               itemBuilder: (context, index) {
                                 var feed = response.data!.data![index];
+                                final poll = feed
+                                    .poll; // Store poll in a variable to avoid multiple null checks
+
+                                if (poll != null) {
+                                  // Ensure initial values are set in postSelectedOptions
+                                  if (poll.allowMultipleChoice == true &&
+                                      !_cubit!.postSelectedOptions
+                                          .containsKey(feed.id)) {
+                                    _cubit!.postSelectedOptions[feed.id!] = {
+                                      ...poll.options
+                                              ?.where((option) =>
+                                                  option.isVoted ?? false)
+                                              .map((option) => option.id!)
+                                              .toSet() ??
+                                          {}
+                                    };
+                                  }
+
+                                  // Ensure initial value for single-choice poll
+                                  if (poll.allowMultipleChoice == false &&
+                                      !_cubit!.postSelectedOption
+                                          .containsKey(feed.id)) {
+                                    _cubit!.postSelectedOption[feed.id!] = poll
+                                        .options
+                                        ?.firstWhere(
+                                            (option) => option.isVoted ?? false,
+                                            orElse: () =>
+                                                const PollOptionsModelResponse(
+                                                    id: -1))
+                                        .id;
+                                  }
+                                }
                                 return PostCard(
                                   feed: feed,
                                   homeDataModel: widget.homeDataModel,
+                                  isCommunitySearch: true,
                                   currentDoctorModel: widget.currentDoctorModel,
                                   viewPollWidget: ViewPollWidget(
                                     poll: feed.poll,

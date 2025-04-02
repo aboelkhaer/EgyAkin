@@ -17,6 +17,7 @@ class GroupsTab extends StatefulWidget {
 
 class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
   late final GroupsCubit _cubit;
+  late ScrollController scrollController;
 
   @override
   void initState() {
@@ -27,8 +28,8 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
     _cubit = context.read<GroupsCubit>();
 
     // Initialize ScrollController
-    _cubit.scrollController = ScrollController();
-    _cubit.scrollController!.addListener(_onScroll);
+    scrollController = ScrollController();
+    scrollController.addListener(_onScroll);
 
     if (_cubit.callGroupsTabTimes == 0) {
       _cubit.getGroupsTab();
@@ -39,7 +40,7 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _cubit.scrollController!.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -53,8 +54,8 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
   void _onScroll() {
     if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
 
-    final maxScroll = _cubit.scrollController!.position.maxScrollExtent;
-    final currentScroll = _cubit.scrollController!.position.pixels;
+    final maxScroll = scrollController.position.maxScrollExtent;
+    final currentScroll = scrollController.position.pixels;
     const threshold = 200.0;
 
     if (maxScroll - currentScroll <= threshold) {
@@ -80,8 +81,7 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
           await _cubit.getGroupsTab();
         },
         child: CustomScrollView(
-          controller:
-              _cubit.scrollController, // ✅ Directly using the controller
+          controller: scrollController, // ✅ Directly using the controller
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
             SliverToBoxAdapter(
@@ -132,6 +132,34 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                             isSeeMore,
                             changeCounter,
                           ) {
+                            if (response.data!.latestGroups!.isEmpty) {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.createGroupInCommunity,
+                                        arguments: AppRoutesArgs
+                                            .createGroupInCommunityRouteArgs(
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          homeDataModel: widget.homeDataModel,
+                                          isCreateNewGroup: true,
+                                          groupModel: null,
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
+                                      'Create first group in community',
+                                      style: TextStyle(
+                                        color: Colors.blue,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
                             return Column(
                               children: List.generate(
                                 response.data!.latestGroups!.length,
@@ -170,6 +198,20 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                     isSeeMore,
                     changeCounter,
                   ) {
+                    if (response.data!.randomPosts!.data!.isEmpty) {
+                      return SliverToBoxAdapter(
+                        // Wrap Column in SliverToBoxAdapter
+                        child: Column(
+                          children: [
+                            SizedBox(height: 100.h),
+                            Image.asset(
+                              AppImages.notFound,
+                              width: 150,
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     return SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {

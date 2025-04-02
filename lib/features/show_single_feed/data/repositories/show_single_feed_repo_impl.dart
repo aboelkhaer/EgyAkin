@@ -1,8 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/add_like_or_unlike_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_comment_on_post_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/create_reply_on_comment_in_community_model_response.dart';
-import 'package:egy_akin/features/show_single_feed/data/models/delete_comment_on_post_in_community_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -14,13 +10,18 @@ class ShowSingleFeedRepositoryImpl extends ShowSingleFeedRepository {
 
   @override
   Future<Either<Failure, GetCommentsInCommunityModelResponse>>
-      getCommentsInCommunity({required String postId}) async {
+      getCommentsInCommunity({
+    required String postId,
+    required int page,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await showSingleFeedDatasource.getCommentsInCommunity(
-            postId: postId);
+          postId: postId,
+          page: page,
+        );
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

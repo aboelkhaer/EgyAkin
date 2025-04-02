@@ -26,7 +26,10 @@ mixin _$GroupMembersState {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -41,7 +44,10 @@ mixin _$GroupMembersState {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -56,7 +62,10 @@ mixin _$GroupMembersState {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -159,7 +168,10 @@ class _$InitialImpl implements _Initial {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -177,7 +189,10 @@ class _$InitialImpl implements _Initial {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -195,7 +210,10 @@ class _$InitialImpl implements _Initial {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -297,7 +315,10 @@ class _$LoadingImpl implements _Loading {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -315,7 +336,10 @@ class _$LoadingImpl implements _Loading {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -333,7 +357,10 @@ class _$LoadingImpl implements _Loading {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -398,9 +425,13 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       GetGroupMembersModelResponse response,
       bool isSeeMore,
       bool isRemoveMemberFromGroupLoading,
-      bool isRemoveMemberFromGroupLoaded});
+      bool isRemoveMemberFromGroupLoaded,
+      bool isAcceptLoading,
+      bool isDeclineLoading,
+      GetPostLikesModelResponse postLikesResponse});
 
   $GetGroupMembersModelResponseCopyWith<$Res> get response;
+  $GetPostLikesModelResponseCopyWith<$Res> get postLikesResponse;
 }
 
 /// @nodoc
@@ -422,6 +453,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isSeeMore = null,
     Object? isRemoveMemberFromGroupLoading = null,
     Object? isRemoveMemberFromGroupLoaded = null,
+    Object? isAcceptLoading = null,
+    Object? isDeclineLoading = null,
+    Object? postLikesResponse = null,
   }) {
     return _then(_$LoadedImpl(
       null == snackBarMessage
@@ -448,6 +482,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isRemoveMemberFromGroupLoaded
           : isRemoveMemberFromGroupLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isAcceptLoading
+          ? _value.isAcceptLoading
+          : isAcceptLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isDeclineLoading
+          ? _value.isDeclineLoading
+          : isDeclineLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == postLikesResponse
+          ? _value.postLikesResponse
+          : postLikesResponse // ignore: cast_nullable_to_non_nullable
+              as GetPostLikesModelResponse,
     ));
   }
 
@@ -461,6 +507,17 @@ class __$$LoadedImplCopyWithImpl<$Res>
       return _then(_value.copyWith(response: value));
     });
   }
+
+  /// Create a copy of GroupMembersState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetPostLikesModelResponseCopyWith<$Res> get postLikesResponse {
+    return $GetPostLikesModelResponseCopyWith<$Res>(_value.postLikesResponse,
+        (value) {
+      return _then(_value.copyWith(postLikesResponse: value));
+    });
+  }
 }
 
 /// @nodoc
@@ -472,7 +529,10 @@ class _$LoadedImpl implements _Loaded {
       this.response,
       this.isSeeMore,
       this.isRemoveMemberFromGroupLoading,
-      this.isRemoveMemberFromGroupLoaded);
+      this.isRemoveMemberFromGroupLoaded,
+      this.isAcceptLoading,
+      this.isDeclineLoading,
+      this.postLikesResponse);
 
   @override
   final String snackBarMessage;
@@ -486,10 +546,16 @@ class _$LoadedImpl implements _Loaded {
   final bool isRemoveMemberFromGroupLoading;
   @override
   final bool isRemoveMemberFromGroupLoaded;
+  @override
+  final bool isAcceptLoading;
+  @override
+  final bool isDeclineLoading;
+  @override
+  final GetPostLikesModelResponse postLikesResponse;
 
   @override
   String toString() {
-    return 'GroupMembersState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response, isSeeMore: $isSeeMore, isRemoveMemberFromGroupLoading: $isRemoveMemberFromGroupLoading, isRemoveMemberFromGroupLoaded: $isRemoveMemberFromGroupLoaded)';
+    return 'GroupMembersState.loaded(snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, response: $response, isSeeMore: $isSeeMore, isRemoveMemberFromGroupLoading: $isRemoveMemberFromGroupLoading, isRemoveMemberFromGroupLoaded: $isRemoveMemberFromGroupLoaded, isAcceptLoading: $isAcceptLoading, isDeclineLoading: $isDeclineLoading, postLikesResponse: $postLikesResponse)';
   }
 
   @override
@@ -512,7 +578,13 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isRemoveMemberFromGroupLoaded,
                     isRemoveMemberFromGroupLoaded) ||
                 other.isRemoveMemberFromGroupLoaded ==
-                    isRemoveMemberFromGroupLoaded));
+                    isRemoveMemberFromGroupLoaded) &&
+            (identical(other.isAcceptLoading, isAcceptLoading) ||
+                other.isAcceptLoading == isAcceptLoading) &&
+            (identical(other.isDeclineLoading, isDeclineLoading) ||
+                other.isDeclineLoading == isDeclineLoading) &&
+            (identical(other.postLikesResponse, postLikesResponse) ||
+                other.postLikesResponse == postLikesResponse));
   }
 
   @override
@@ -523,7 +595,10 @@ class _$LoadedImpl implements _Loaded {
       response,
       isSeeMore,
       isRemoveMemberFromGroupLoading,
-      isRemoveMemberFromGroupLoaded);
+      isRemoveMemberFromGroupLoaded,
+      isAcceptLoading,
+      isDeclineLoading,
+      postLikesResponse);
 
   /// Create a copy of GroupMembersState
   /// with the given fields replaced by the non-null parameter values.
@@ -544,12 +619,23 @@ class _$LoadedImpl implements _Loaded {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(snackBarMessage, dialogMessage, response, isSeeMore,
-        isRemoveMemberFromGroupLoading, isRemoveMemberFromGroupLoaded);
+    return loaded(
+        snackBarMessage,
+        dialogMessage,
+        response,
+        isSeeMore,
+        isRemoveMemberFromGroupLoading,
+        isRemoveMemberFromGroupLoaded,
+        isAcceptLoading,
+        isDeclineLoading,
+        postLikesResponse);
   }
 
   @override
@@ -563,12 +649,23 @@ class _$LoadedImpl implements _Loaded {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(snackBarMessage, dialogMessage, response, isSeeMore,
-        isRemoveMemberFromGroupLoading, isRemoveMemberFromGroupLoaded);
+    return loaded?.call(
+        snackBarMessage,
+        dialogMessage,
+        response,
+        isSeeMore,
+        isRemoveMemberFromGroupLoading,
+        isRemoveMemberFromGroupLoaded,
+        isAcceptLoading,
+        isDeclineLoading,
+        postLikesResponse);
   }
 
   @override
@@ -582,14 +679,25 @@ class _$LoadedImpl implements _Loaded {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(snackBarMessage, dialogMessage, response, isSeeMore,
-          isRemoveMemberFromGroupLoading, isRemoveMemberFromGroupLoaded);
+      return loaded(
+          snackBarMessage,
+          dialogMessage,
+          response,
+          isSeeMore,
+          isRemoveMemberFromGroupLoading,
+          isRemoveMemberFromGroupLoaded,
+          isAcceptLoading,
+          isDeclineLoading,
+          postLikesResponse);
     }
     return orElse();
   }
@@ -639,7 +747,10 @@ abstract class _Loaded implements GroupMembersState {
       final GetGroupMembersModelResponse response,
       final bool isSeeMore,
       final bool isRemoveMemberFromGroupLoading,
-      final bool isRemoveMemberFromGroupLoaded) = _$LoadedImpl;
+      final bool isRemoveMemberFromGroupLoaded,
+      final bool isAcceptLoading,
+      final bool isDeclineLoading,
+      final GetPostLikesModelResponse postLikesResponse) = _$LoadedImpl;
 
   String get snackBarMessage;
   String get dialogMessage;
@@ -647,6 +758,9 @@ abstract class _Loaded implements GroupMembersState {
   bool get isSeeMore;
   bool get isRemoveMemberFromGroupLoading;
   bool get isRemoveMemberFromGroupLoaded;
+  bool get isAcceptLoading;
+  bool get isDeclineLoading;
+  GetPostLikesModelResponse get postLikesResponse;
 
   /// Create a copy of GroupMembersState
   /// with the given fields replaced by the non-null parameter values.
@@ -731,7 +845,10 @@ class _$ErrorImpl implements _Error {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -749,7 +866,10 @@ class _$ErrorImpl implements _Error {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -767,7 +887,10 @@ class _$ErrorImpl implements _Error {
             GetGroupMembersModelResponse response,
             bool isSeeMore,
             bool isRemoveMemberFromGroupLoading,
-            bool isRemoveMemberFromGroupLoaded)?
+            bool isRemoveMemberFromGroupLoaded,
+            bool isAcceptLoading,
+            bool isDeclineLoading,
+            GetPostLikesModelResponse postLikesResponse)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

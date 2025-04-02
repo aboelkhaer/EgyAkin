@@ -27,7 +27,8 @@ mixin _$GroupDetailsInCommunityState {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -43,7 +44,8 @@ mixin _$GroupDetailsInCommunityState {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -59,7 +61,8 @@ mixin _$GroupDetailsInCommunityState {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -166,7 +169,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -185,7 +189,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -204,7 +209,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -307,7 +313,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -326,7 +333,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -345,7 +353,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -411,7 +420,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isDeleteGroupLoading,
       bool isDeleteGroupLoaded,
       int changeCounter,
-      bool isSeeMore});
+      bool isSeeMore,
+      bool isAcceptOrDeclineGroupInvitation});
 
   $GetGroupDetailsInCommunityModelResponseCopyWith<$Res> get groupDetails;
 }
@@ -436,6 +446,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isDeleteGroupLoaded = null,
     Object? changeCounter = null,
     Object? isSeeMore = null,
+    Object? isAcceptOrDeclineGroupInvitation = null,
   }) {
     return _then(_$LoadedImpl(
       null == groupDetails
@@ -466,6 +477,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSeeMore
           : isSeeMore // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isAcceptOrDeclineGroupInvitation
+          ? _value.isAcceptOrDeclineGroupInvitation
+          : isAcceptOrDeclineGroupInvitation // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -491,7 +506,8 @@ class _$LoadedImpl implements _Loaded {
       this.isDeleteGroupLoading,
       this.isDeleteGroupLoaded,
       this.changeCounter,
-      this.isSeeMore);
+      this.isSeeMore,
+      this.isAcceptOrDeclineGroupInvitation);
 
   @override
   final GetGroupDetailsInCommunityModelResponse groupDetails;
@@ -507,10 +523,12 @@ class _$LoadedImpl implements _Loaded {
   final int changeCounter;
   @override
   final bool isSeeMore;
+  @override
+  final bool isAcceptOrDeclineGroupInvitation;
 
   @override
   String toString() {
-    return 'GroupDetailsInCommunityState.loaded(groupDetails: $groupDetails, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isDeleteGroupLoading: $isDeleteGroupLoading, isDeleteGroupLoaded: $isDeleteGroupLoaded, changeCounter: $changeCounter, isSeeMore: $isSeeMore)';
+    return 'GroupDetailsInCommunityState.loaded(groupDetails: $groupDetails, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isDeleteGroupLoading: $isDeleteGroupLoading, isDeleteGroupLoaded: $isDeleteGroupLoaded, changeCounter: $changeCounter, isSeeMore: $isSeeMore, isAcceptOrDeclineGroupInvitation: $isAcceptOrDeclineGroupInvitation)';
   }
 
   @override
@@ -531,7 +549,11 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.changeCounter, changeCounter) ||
                 other.changeCounter == changeCounter) &&
             (identical(other.isSeeMore, isSeeMore) ||
-                other.isSeeMore == isSeeMore));
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.isAcceptOrDeclineGroupInvitation,
+                    isAcceptOrDeclineGroupInvitation) ||
+                other.isAcceptOrDeclineGroupInvitation ==
+                    isAcceptOrDeclineGroupInvitation));
   }
 
   @override
@@ -543,7 +565,8 @@ class _$LoadedImpl implements _Loaded {
       isDeleteGroupLoading,
       isDeleteGroupLoaded,
       changeCounter,
-      isSeeMore);
+      isSeeMore,
+      isAcceptOrDeclineGroupInvitation);
 
   /// Create a copy of GroupDetailsInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -565,12 +588,20 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(groupDetails, snackBarMessage, dialogMessage,
-        isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
+    return loaded(
+        groupDetails,
+        snackBarMessage,
+        dialogMessage,
+        isDeleteGroupLoading,
+        isDeleteGroupLoaded,
+        changeCounter,
+        isSeeMore,
+        isAcceptOrDeclineGroupInvitation);
   }
 
   @override
@@ -585,12 +616,20 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(groupDetails, snackBarMessage, dialogMessage,
-        isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
+    return loaded?.call(
+        groupDetails,
+        snackBarMessage,
+        dialogMessage,
+        isDeleteGroupLoading,
+        isDeleteGroupLoaded,
+        changeCounter,
+        isSeeMore,
+        isAcceptOrDeclineGroupInvitation);
   }
 
   @override
@@ -605,14 +644,22 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(groupDetails, snackBarMessage, dialogMessage,
-          isDeleteGroupLoading, isDeleteGroupLoaded, changeCounter, isSeeMore);
+      return loaded(
+          groupDetails,
+          snackBarMessage,
+          dialogMessage,
+          isDeleteGroupLoading,
+          isDeleteGroupLoaded,
+          changeCounter,
+          isSeeMore,
+          isAcceptOrDeclineGroupInvitation);
     }
     return orElse();
   }
@@ -663,7 +710,8 @@ abstract class _Loaded implements GroupDetailsInCommunityState {
       final bool isDeleteGroupLoading,
       final bool isDeleteGroupLoaded,
       final int changeCounter,
-      final bool isSeeMore) = _$LoadedImpl;
+      final bool isSeeMore,
+      final bool isAcceptOrDeclineGroupInvitation) = _$LoadedImpl;
 
   GetGroupDetailsInCommunityModelResponse get groupDetails;
   String get snackBarMessage;
@@ -672,6 +720,7 @@ abstract class _Loaded implements GroupDetailsInCommunityState {
   bool get isDeleteGroupLoaded;
   int get changeCounter;
   bool get isSeeMore;
+  bool get isAcceptOrDeclineGroupInvitation;
 
   /// Create a copy of GroupDetailsInCommunityState
   /// with the given fields replaced by the non-null parameter values.
@@ -757,7 +806,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -776,7 +826,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -795,7 +846,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteGroupLoading,
             bool isDeleteGroupLoaded,
             int changeCounter,
-            bool isSeeMore)?
+            bool isSeeMore,
+            bool isAcceptOrDeclineGroupInvitation)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

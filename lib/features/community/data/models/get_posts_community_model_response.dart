@@ -50,6 +50,7 @@ class PostCommunityModel with _$PostCommunityModel {
     @JsonKey(name: 'comments_count') int? commentsCount,
     @JsonKey(name: 'isSaved') bool? isSaved,
     @JsonKey(name: 'isLiked') bool? isLiked,
+    @JsonKey(name: 'existing_media_path') List<String>? existingMediaPath,
     GroupDetails? group,
     DoctorModel? doctor,
     PollModelResponse? poll,

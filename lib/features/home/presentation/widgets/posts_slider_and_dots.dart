@@ -32,20 +32,21 @@ class PostsSliderAndDots extends StatelessWidget {
                 message,
                 checkUpdateMessageCounter,
                 isUserBlocked,
+                changesCounter,
               ) {
-                if (cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com') {
+                if (homeData.data!.feeds == null) {
                   return const SizedBox.shrink();
                 }
                 return FadeIn(
                   duration: const Duration(seconds: 2),
                   child: CarouselSlider.builder(
-                    itemCount: homeData.data!.posts!.length,
+                    itemCount: homeData.data!.feeds!.length,
                     carouselController: cubit.carouselController,
                     itemBuilder:
                         (BuildContext context, int index, int pageViewIndex) {
                       return checkPostType(
                         cubit: cubit,
-                        postModel: homeData.data!.posts![index],
+                        postModel: homeData.data!.feeds![index],
                       );
                     },
                     options: CarouselOptions(
@@ -54,7 +55,7 @@ class PostsSliderAndDots extends StatelessWidget {
                       viewportFraction: 1,
                       initialPage: 0,
                       enableInfiniteScroll:
-                          homeData.data!.posts!.length <= 1 ? false : true,
+                          homeData.data!.feeds!.length <= 1 ? false : true,
                       reverse: false,
                       onPageChanged: (index, reason) {
                         cubit.dotsPosition = index;
@@ -92,14 +93,13 @@ class PostsSliderAndDots extends StatelessWidget {
                 message,
                 checkUpdateMessageCounter,
                 isUserBlocked,
+                changesCounter,
               ) {
-                if (cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com') {
-                  return const SizedBox.shrink();
-                }
-                return homeData.data!.posts!.isEmpty
+                return homeData.data!.feeds == null ||
+                        homeData.data!.feeds!.isEmpty
                     ? const SizedBox.shrink()
                     : DotsIndicator(
-                        dotsCount: homeData.data!.posts!.length,
+                        dotsCount: homeData.data!.feeds!.length,
                         position: cubit.dotsPosition,
                         decorator: DotsDecorator(
                           activeColor: AppColors.primary.withOpacity(0.6),
@@ -116,29 +116,10 @@ class PostsSliderAndDots extends StatelessWidget {
   }
 }
 
-Widget checkPostType({required HomeCubit cubit, required PostModel postModel}) {
-  switch (postModel.postType) {
-    case 'webinar':
-      return WebinarType(
-        cubit: cubit,
-        postModel: postModel,
-      );
-    case 'article':
-      return PostType(
-        cubit: cubit,
-        postModel: postModel,
-      );
-    case 'post':
-      return PostType(
-        cubit: cubit,
-        postModel: postModel,
-      );
-
-    default:
-      return const Center(
-          child: Text(
-        AppStrings.somethingWentWrong,
-        style: TextStyle(color: AppColors.title),
-      ));
-  }
+Widget checkPostType(
+    {required HomeCubit cubit, required PostCommunityModel postModel}) {
+  return PostType(
+    cubit: cubit,
+    postModel: postModel,
+  );
 }

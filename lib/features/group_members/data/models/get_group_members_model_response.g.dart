@@ -25,27 +25,46 @@ _$GetGroupMembersDataModelResponseImpl
     _$$GetGroupMembersDataModelResponseImplFromJson(
             Map<String, dynamic> json) =>
         _$GetGroupMembersDataModelResponseImpl(
-          currentPage: (json['current_page'] as num?)?.toInt(),
-          data: (json['data'] as List<dynamic>?)
+          members: json['members'] == null
+              ? null
+              : MembersDataModelResponse.fromJson(
+                  json['members'] as Map<String, dynamic>),
+          pendingInvitations: (json['pending_invitations'] as List<dynamic>?)
               ?.map((e) => DoctorModel.fromJson(e as Map<String, dynamic>))
               .toList(),
-          firstPageUrl: json['first_page_url'] as String?,
-          from: (json['from'] as num?)?.toInt(),
-          lastPage: (json['last_page'] as num?)?.toInt(),
-          lastPageUrl: json['last_page_url'] as String?,
-          links: (json['links'] as List<dynamic>?)
-              ?.map((e) => Link.fromJson(e as Map<String, dynamic>))
-              .toList(),
-          nextPageUrl: json['next_page_url'] as String?,
-          path: json['path'] as String?,
-          perPage: (json['perPage'] as num?)?.toInt(),
-          prevPageUrl: json['prev_page_url'] as String?,
-          to: (json['to'] as num?)?.toInt(),
-          total: (json['total'] as num?)?.toInt(),
         );
 
 Map<String, dynamic> _$$GetGroupMembersDataModelResponseImplToJson(
         _$GetGroupMembersDataModelResponseImpl instance) =>
+    <String, dynamic>{
+      'members': instance.members,
+      'pending_invitations': instance.pendingInvitations,
+    };
+
+_$MembersDataModelResponseImpl _$$MembersDataModelResponseImplFromJson(
+        Map<String, dynamic> json) =>
+    _$MembersDataModelResponseImpl(
+      currentPage: (json['current_page'] as num?)?.toInt(),
+      data: (json['data'] as List<dynamic>?)
+          ?.map((e) => DoctorModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      firstPageUrl: json['first_page_url'] as String?,
+      from: (json['from'] as num?)?.toInt(),
+      lastPage: (json['last_page'] as num?)?.toInt(),
+      lastPageUrl: json['last_page_url'] as String?,
+      links: (json['links'] as List<dynamic>?)
+          ?.map((e) => Link.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      nextPageUrl: json['next_page_url'] as String?,
+      path: json['path'] as String?,
+      perPage: (json['perPage'] as num?)?.toInt(),
+      prevPageUrl: json['prev_page_url'] as String?,
+      to: (json['to'] as num?)?.toInt(),
+      total: (json['total'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$$MembersDataModelResponseImplToJson(
+        _$MembersDataModelResponseImpl instance) =>
     <String, dynamic>{
       'current_page': instance.currentPage,
       'data': instance.data,

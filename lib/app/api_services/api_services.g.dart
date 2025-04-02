@@ -2197,9 +2197,11 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
-      String postId) async {
+    String postId,
+    int pageNumber,
+  ) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options =
@@ -2358,6 +2360,7 @@ class _ApiServices implements ApiServices {
     String? mediaType,
     String visibility,
     String? groupId,
+    Map<String, dynamic>? pollModel,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2368,6 +2371,7 @@ class _ApiServices implements ApiServices {
       'media_type': mediaType,
       'visibility': visibility,
       'group_id': groupId,
+      'poll': pollModel,
     };
     _data.removeWhere((k, v) => v == null);
     final _options = _setStreamType<EditPostInCommunityModelResponse>(Options(
@@ -2405,6 +2409,7 @@ class _ApiServices implements ApiServices {
     String visibility,
     String? groupId,
     List<MultipartFile> images,
+    List<String> existingMediaPath,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -2432,6 +2437,9 @@ class _ApiServices implements ApiServices {
       ));
     }
     _data.files.addAll(images.map((i) => MapEntry('media_path[]', i)));
+    existingMediaPath.forEach((i) {
+      _data.fields.add(MapEntry('existing_media_path[]', i));
+    });
     final _options = _setStreamType<EditPostInCommunityModelResponse>(Options(
       method: 'POST',
       headers: _headers,
@@ -2678,7 +2686,7 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<GetGroupMembersModelResponse> getPostLikes(
+  Future<GetPostLikesModelResponse> getPostLikes(
     int pageNumber,
     String postId,
   ) async {
@@ -2686,7 +2694,7 @@ class _ApiServices implements ApiServices {
     final queryParameters = <String, dynamic>{r'page': pageNumber};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<GetGroupMembersModelResponse>(Options(
+    final _options = _setStreamType<GetPostLikesModelResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
@@ -2703,9 +2711,9 @@ class _ApiServices implements ApiServices {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late GetGroupMembersModelResponse _value;
+    late GetPostLikesModelResponse _value;
     try {
-      _value = GetGroupMembersModelResponse.fromJson(_result.data!);
+      _value = GetPostLikesModelResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
@@ -3369,6 +3377,85 @@ class _ApiServices implements ApiServices {
     late GetPollVotersModelResponse _value;
     try {
       _value = GetPollVotersModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetDoctorInvitationForGroupsModelResponse>
+      getDoctorInvitationsForGroups(
+    String doctorId,
+    int page,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': page};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options =
+        _setStreamType<GetDoctorInvitationForGroupsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://test.egyakin.com/api/groups/invitations/${doctorId}',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetDoctorInvitationForGroupsModelResponse _value;
+    try {
+      _value =
+          GetDoctorInvitationForGroupsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AcceptOrDeclineMemberModelResponse> acceptOrDeclineMemberInGroup(
+    String groupId,
+    String status,
+    int invitationId,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'status': status,
+      'invitation_id': invitationId,
+    };
+    final _options = _setStreamType<AcceptOrDeclineMemberModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://test.egyakin.com/api/groups/${groupId}/invitation',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AcceptOrDeclineMemberModelResponse _value;
+    try {
+      _value = AcceptOrDeclineMemberModelResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

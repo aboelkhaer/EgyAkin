@@ -253,124 +253,115 @@ class CommunityCubit extends Cubit<CommunityState> {
       (success) {
         // delete post from the list
 
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => CommunityState.loaded(
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) {
+            final currentPosts = value.feedsResponse.data?.data ?? [];
+            // Final cleanup - ensure post is removed
+            return CommunityState.loaded(
               value.feedsResponse.copyWith(
-                data: value.feedsResponse.data!.copyWith(
-                  data: value.feedsResponse.data!.data!
-                      .where((element) => element.id.toString() != postId)
+                data: value.feedsResponse.data?.copyWith(
+                  data: currentPosts
+                      .where((post) => post.id.toString() != postId)
                       .toList(),
                 ),
               ),
-              false,
-              true,
+              false, // isDeletePostLoading
+              true, // isDeletePostLoaded
               success.message.toString(),
-              false,
-              changeCounter,
-            ),
-          ),
-        );
+              value.isSeeMore,
+              value.changeCounter + 1,
+            );
+          },
+        ));
       },
     );
     postIdDeleted = '';
   }
 
-  bool _isUpdatingPostLikeStatus = false; // Add this as a private flag
+  final Set<String> _updatingPostIds = {};
 
-  addLikeOrUnlikeOnPost(String postId) async {
-    // Prevent multiple simultaneous actions
-    if (_isUpdatingPostLikeStatus) return;
+  Future<void> addLikeOrUnlikeOnPost(String postId) async {
+    if (_updatingPostIds.contains(postId)) return;
 
-    _isUpdatingPostLikeStatus = true; // Set the flag to true
-    bool isCurrentlyLiked = false;
+    _updatingPostIds.add(postId);
+
+    bool wasLiked = false;
 
     emit(
       state.maybeMap(
-        orElse: () => state,
-        loaded: (value) {
-          final feedsResponse = value.feedsResponse;
-          if (feedsResponse.data == null) {
-            return value; // Return unchanged state if feedsResponse is null
-          }
+        loaded: (loadedState) {
+          final posts = loadedState.feedsResponse.data?.data;
+          if (posts == null) return loadedState;
 
-          final updatedData = feedsResponse.copyWith(
-            data: feedsResponse.data!.copyWith(
-              data: feedsResponse.data!.data!.map((post) {
-                if (post.id.toString() == postId) {
-                  // Toggle isLiked and adjust likesCount
-                  isCurrentlyLiked =
-                      post.isLiked ?? false; // Default to false if null
-                  final updatedLikesCount = isCurrentlyLiked
-                      ? post.likesCount! - 1 // Decrement if liked
-                      : post.likesCount! + 1; // Increment if not liked
+          final index =
+              posts.indexWhere((post) => post.id.toString() == postId);
+          if (index == -1) return loadedState;
 
-                  return post.copyWith(
-                    isLiked: !isCurrentlyLiked, // Toggle isLiked
-                    likesCount: updatedLikesCount, // Update likesCount
-                  );
-                }
-                return post; // Return unchanged post if ID doesn't match
-              }).toList(),
-            ),
+          final post = posts[index];
+          wasLiked = post.isLiked ?? false;
+
+          final updatedPost = post.copyWith(
+            isLiked: !wasLiked,
+            likesCount: (post.likesCount ?? 0) + (wasLiked ? -1 : 1),
           );
 
-          return value.copyWith(feedsResponse: updatedData);
+          final updatedPosts = [...posts]..[index] = updatedPost;
+
+          final updatedResponse = loadedState.feedsResponse.copyWith(
+            data: loadedState.feedsResponse.data!.copyWith(data: updatedPosts),
+          );
+
+          return loadedState.copyWith(feedsResponse: updatedResponse);
         },
+        orElse: () => state,
       ),
     );
-
-    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
 
     final result = await _addLikeOnPostUsecase.execute(
       AddLikeOnPostUsecaseInput(
         postId: postId,
-        likeOrUnlike: likeOrUnlike,
+        likeOrUnlike: wasLiked ? 'unlike' : 'like',
       ),
     );
 
     result.fold(
       (failure) {
-        // Rollback UI changes on failure
         emit(
           state.maybeMap(
-            orElse: () => state,
-            loaded: (value) {
-              final feedsResponse = value.feedsResponse;
-              if (feedsResponse.data == null) {
-                return value;
-              }
+            loaded: (loadedState) {
+              final posts = loadedState.feedsResponse.data?.data;
+              if (posts == null) return loadedState;
 
-              final revertedData = feedsResponse.copyWith(
-                data: feedsResponse.data!.copyWith(
-                  data: feedsResponse.data!.data!.map((post) {
-                    if (post.id.toString() == postId) {
-                      final revertedLikesCount = !isCurrentlyLiked
-                          ? post.likesCount! - 1
-                          : post.likesCount! + 1;
+              final index =
+                  posts.indexWhere((post) => post.id.toString() == postId);
+              if (index == -1) return loadedState;
 
-                      return post.copyWith(
-                        isLiked: isCurrentlyLiked,
-                        likesCount: revertedLikesCount,
-                      );
-                    }
-                    return post;
-                  }).toList(),
-                ),
+              final originalPost = posts[index].copyWith(
+                isLiked: wasLiked,
+                likesCount:
+                    (posts[index].likesCount ?? 0) + (wasLiked ? 1 : -1),
               );
 
-              return value.copyWith(feedsResponse: revertedData);
+              final updatedPosts = [...posts]..[index] = originalPost;
+
+              final updatedResponse = loadedState.feedsResponse.copyWith(
+                data: loadedState.feedsResponse.data!
+                    .copyWith(data: updatedPosts),
+              );
+
+              return loadedState.copyWith(feedsResponse: updatedResponse);
             },
+            orElse: () => state,
           ),
         );
       },
       (success) {
-        // Optionally handle success
+        // success handled optimistically
       },
     );
 
-    _isUpdatingPostLikeStatus = false; // Reset the flag
+    _updatingPostIds.remove(postId);
   }
 
   void updatePost(PostCommunityModel updatedPost) {
@@ -409,86 +400,82 @@ class CommunityCubit extends Cubit<CommunityState> {
     );
   }
 
-  bool _isUpdatingPostSaveStatus = false; // Add this as a private flag
+  final Set<String> _updatingSavePostIds = {};
 
-  addSaveOrUnsaveOnPost(String postId) async {
-    // Prevent multiple simultaneous actions
-    if (_isUpdatingPostSaveStatus) return;
+  Future<void> addSaveOrUnsaveOnPost(String postId) async {
+    if (_updatingSavePostIds.contains(postId)) return;
 
-    _isUpdatingPostSaveStatus = true; // Set the flag to true
-    bool isCurrentlySaved = false;
+    _updatingSavePostIds.add(postId);
+    bool wasSaved = false;
 
     emit(
       state.maybeMap(
-        orElse: () => state,
-        loaded: (value) {
-          final feedsResponse = value.feedsResponse;
-          if (feedsResponse.data == null) {
-            return value;
-          }
+        loaded: (loadedState) {
+          final posts = loadedState.feedsResponse.data?.data;
+          if (posts == null) return loadedState;
 
-          final updatedData = feedsResponse.copyWith(
-            data: feedsResponse.data!.copyWith(
-              data: feedsResponse.data!.data!.map((post) {
-                if (post.id.toString() == postId) {
-                  isCurrentlySaved = post.isSaved ?? false;
-                  return post.copyWith(
-                    isSaved: !isCurrentlySaved,
-                  );
-                }
-                return post;
-              }).toList(),
-            ),
+          final index =
+              posts.indexWhere((post) => post.id.toString() == postId);
+          if (index == -1) return loadedState;
+
+          final post = posts[index];
+          wasSaved = post.isSaved ?? false;
+
+          final updatedPost = post.copyWith(isSaved: !wasSaved);
+          final updatedPosts = [...posts]..[index] = updatedPost;
+
+          final updatedResponse = loadedState.feedsResponse.copyWith(
+            data: loadedState.feedsResponse.data!.copyWith(data: updatedPosts),
           );
-          return value.copyWith(feedsResponse: updatedData);
+
+          return loadedState.copyWith(feedsResponse: updatedResponse);
         },
+        orElse: () => state,
       ),
     );
 
-    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+    final action = wasSaved ? 'unsave' : 'save';
 
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
-        saveOrUnsave: saveOrUnsave,
+        saveOrUnsave: action,
       ),
     );
 
     result.fold(
       (failure) {
-        // Rollback UI changes on failure
+        // Rollback UI update on failure
         emit(
           state.maybeMap(
-            orElse: () => state,
-            loaded: (value) {
-              final feedsResponse = value.feedsResponse;
-              if (feedsResponse.data == null) {
-                return value;
-              }
+            loaded: (loadedState) {
+              final posts = loadedState.feedsResponse.data?.data;
+              if (posts == null) return loadedState;
 
-              final revertedData = feedsResponse.copyWith(
-                data: feedsResponse.data!.copyWith(
-                  data: feedsResponse.data!.data!.map((post) {
-                    if (post.id.toString() == postId) {
-                      return post.copyWith(
-                        isSaved: isCurrentlySaved, // Revert to original state
-                      );
-                    }
-                    return post;
-                  }).toList(),
-                ),
+              final index =
+                  posts.indexWhere((post) => post.id.toString() == postId);
+              if (index == -1) return loadedState;
+
+              final revertedPost = posts[index].copyWith(isSaved: wasSaved);
+              final revertedPosts = [...posts]..[index] = revertedPost;
+
+              final updatedResponse = loadedState.feedsResponse.copyWith(
+                data: loadedState.feedsResponse.data!
+                    .copyWith(data: revertedPosts),
               );
-              return value.copyWith(feedsResponse: revertedData);
+
+              return loadedState.copyWith(feedsResponse: updatedResponse);
             },
+            orElse: () => state,
           ),
         );
       },
-      (success) {
+      (_) {
         // Optionally handle success
       },
     );
 
-    _isUpdatingPostSaveStatus = false; // Reset the flag
+    _updatingSavePostIds.remove(postId);
   }
 
   addOptionOnPoll(

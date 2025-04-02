@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/profile_tab_icon.dart';
@@ -71,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   message,
                   checkUpdateMessageCounter,
                   isUserBlocked,
+                  changesCounter,
                 ) {
                   if (cubit!.isUpdateMessageHidden2 == false) {
                     showUpdateDialog(
@@ -148,6 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   message,
                   checkUpdateMessageCounter,
                   isUserBlocked,
+                  changesCounter,
                 ) {
                   if (homeIndex == 2) {
                     return const SizedBox.shrink();
@@ -256,6 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
               message,
               checkUpdateMessageCounter,
               isUserBlocked,
+              changesCounter,
             ) {
               return state.maybeWhen(
                 orElse: () {
@@ -271,6 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   message,
                   checkUpdateMessageCounter,
                   isUserBlocked,
+                  changesCounter,
                 ) {
                   return ProfileScreen(
                     isSyndicateCardRequired: cubit.isSyndicateCardRequired,
@@ -298,15 +304,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 homeDataModel: cubit.homeDataModel,
               );
             },
-            loaded: (homeData,
-                currentDoctorModel,
-                dotsPosition,
-                homeIndex,
-                isUploadingSyndicateCard,
-                isUploadedSyndicateCard,
-                message,
-                checkUpdateMessageCounter,
-                isUserBlocked) {
+            loaded: (
+              homeData,
+              currentDoctorModel,
+              dotsPosition,
+              homeIndex,
+              isUploadingSyndicateCard,
+              isUploadedSyndicateCard,
+              message,
+              checkUpdateMessageCounter,
+              isUserBlocked,
+              changesCounter,
+            ) {
               return MoreScreen(
                 currentDoctorModel: currentDoctorModel,
                 accountVerification: homeData.verified ?? true,

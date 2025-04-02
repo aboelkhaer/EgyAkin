@@ -99,4 +99,7 @@ class ApiEndPoint {
   static const addVoteForPollInPosts = '$baseUrl/api/polls';
   static const addOptionOnPoll = '$baseUrl/api/polls';
   static const getPollVoters = '$baseUrl/api/polls';
+  static const getDoctorInvitationsForGroups =
+      '$baseUrl/api/groups/invitations';
+  static const acceptOrDeclineMemberInGroup = '$baseUrl/api/groups';
 }

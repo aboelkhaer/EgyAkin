@@ -82,6 +82,7 @@ class HomeHeader extends StatelessWidget {
                             message,
                             checkUpdateMessageCounter,
                             isUserBlocked,
+                            changesCounter,
                           ) {
                             return ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
@@ -137,11 +138,12 @@ class HomeHeader extends StatelessWidget {
                               message,
                               checkUpdateMessageCounter,
                               isUserBlocked,
+                              changesCounter,
                             ) {
-                              context
-                                  .read<ProfileCubit>()
-                                  .getDoctorDataFromHomeCubit(
-                                      currentDoctorModel);
+                              // context
+                              //     .read<ProfileCubit>()
+                              //     .getDoctorDataFromHomeCubit(
+                              //         currentDoctorModel);
                             },
                           );
                         },
@@ -155,7 +157,9 @@ class HomeHeader extends StatelessWidget {
                                             '',
                                     lastName:
                                         cubit.currentDoctorModel.lastName ?? '',
-                                    role: cubit.currentDoctorRole,
+                                    role: cubit
+                                        .homeDataModel.isSyndicateCardRequired
+                                        .toString(),
                                   ),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -189,6 +193,7 @@ class HomeHeader extends StatelessWidget {
                               message,
                               checkUpdateMessageCounter,
                               isUserBlocked,
+                              changesCounter,
                             ) {
                               if (homeData.isSyndicateCardRequired ==
                                   'Verified') {
@@ -249,7 +254,30 @@ class HomeHeader extends StatelessWidget {
                 message,
                 checkUpdateMessageCounter,
                 isUserBlocked,
+                changesCounter,
               ) {
+                if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                  return Tooltip(
+                    message: 'Add Post',
+                    child: IconButton(
+                      onPressed: () {
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.createPostInCommunity,
+                          arguments:
+                              AppRoutesArgs.createPostInCommunityRouteArgs(
+                            currentDoctorModel: currentDoctorModel,
+                            homeDataModel: homeData,
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.add,
+                        color: AppColors.description,
+                        size: 30.r,
+                      ),
+                    ),
+                  );
+                }
                 return Tooltip(
                   message: 'Add patient',
                   child: IconButton(

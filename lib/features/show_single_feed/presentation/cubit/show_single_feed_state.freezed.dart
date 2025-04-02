@@ -31,7 +31,8 @@ mixin _$ShowSingleFeedState {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)
+            bool isSendReplyLoaded,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -51,7 +52,8 @@ mixin _$ShowSingleFeedState {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -71,7 +73,8 @@ mixin _$ShowSingleFeedState {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -179,7 +182,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)
+            bool isSendReplyLoaded,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -202,7 +206,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -225,7 +230,8 @@ class _$InitialImpl implements _Initial {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -332,7 +338,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)
+            bool isSendReplyLoaded,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -355,7 +362,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -378,7 +386,8 @@ class _$LoadingImpl implements _Loading {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -448,7 +457,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isDeleteCommentLoading,
       bool isDeleteCommentLoaded,
       bool isSendReplyLoading,
-      bool isSendReplyLoaded});
+      bool isSendReplyLoaded,
+      bool isSeeMore});
 
   $GetCommentsInCommunityModelResponseCopyWith<$Res> get commentsResponse;
   $PostCommunityModelCopyWith<$Res> get feed;
@@ -478,6 +488,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isDeleteCommentLoaded = null,
     Object? isSendReplyLoading = null,
     Object? isSendReplyLoaded = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$LoadedImpl(
       null == commentsResponse
@@ -524,6 +535,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSendReplyLoaded
           : isSendReplyLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -563,7 +578,8 @@ class _$LoadedImpl implements _Loaded {
       this.isDeleteCommentLoading,
       this.isDeleteCommentLoaded,
       this.isSendReplyLoading,
-      this.isSendReplyLoaded);
+      this.isSendReplyLoaded,
+      this.isSeeMore);
 
   @override
   final GetCommentsInCommunityModelResponse commentsResponse;
@@ -587,10 +603,12 @@ class _$LoadedImpl implements _Loaded {
   final bool isSendReplyLoading;
   @override
   final bool isSendReplyLoaded;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'ShowSingleFeedState.loaded(commentsResponse: $commentsResponse, changeCounter: $changeCounter, feed: $feed, isSendCommentLoading: $isSendCommentLoading, isSendCommentLoaded: $isSendCommentLoaded, message: $message, highlightedCommentId: $highlightedCommentId, isDeleteCommentLoading: $isDeleteCommentLoading, isDeleteCommentLoaded: $isDeleteCommentLoaded, isSendReplyLoading: $isSendReplyLoading, isSendReplyLoaded: $isSendReplyLoaded)';
+    return 'ShowSingleFeedState.loaded(commentsResponse: $commentsResponse, changeCounter: $changeCounter, feed: $feed, isSendCommentLoading: $isSendCommentLoading, isSendCommentLoaded: $isSendCommentLoaded, message: $message, highlightedCommentId: $highlightedCommentId, isDeleteCommentLoading: $isDeleteCommentLoading, isDeleteCommentLoaded: $isDeleteCommentLoaded, isSendReplyLoading: $isSendReplyLoading, isSendReplyLoaded: $isSendReplyLoaded, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -617,7 +635,9 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isSendReplyLoading, isSendReplyLoading) ||
                 other.isSendReplyLoading == isSendReplyLoading) &&
             (identical(other.isSendReplyLoaded, isSendReplyLoaded) ||
-                other.isSendReplyLoaded == isSendReplyLoaded));
+                other.isSendReplyLoaded == isSendReplyLoaded) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
@@ -633,7 +653,8 @@ class _$LoadedImpl implements _Loaded {
       isDeleteCommentLoading,
       isDeleteCommentLoaded,
       isSendReplyLoading,
-      isSendReplyLoaded);
+      isSendReplyLoaded,
+      isSeeMore);
 
   /// Create a copy of ShowSingleFeedState
   /// with the given fields replaced by the non-null parameter values.
@@ -659,7 +680,8 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)
+            bool isSendReplyLoaded,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -674,7 +696,8 @@ class _$LoadedImpl implements _Loaded {
         isDeleteCommentLoading,
         isDeleteCommentLoaded,
         isSendReplyLoading,
-        isSendReplyLoaded);
+        isSendReplyLoaded,
+        isSeeMore);
   }
 
   @override
@@ -693,7 +716,8 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -708,7 +732,8 @@ class _$LoadedImpl implements _Loaded {
         isDeleteCommentLoading,
         isDeleteCommentLoaded,
         isSendReplyLoading,
-        isSendReplyLoaded);
+        isSendReplyLoaded,
+        isSeeMore);
   }
 
   @override
@@ -727,7 +752,8 @@ class _$LoadedImpl implements _Loaded {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -744,7 +770,8 @@ class _$LoadedImpl implements _Loaded {
           isDeleteCommentLoading,
           isDeleteCommentLoaded,
           isSendReplyLoading,
-          isSendReplyLoaded);
+          isSendReplyLoaded,
+          isSeeMore);
     }
     return orElse();
   }
@@ -799,7 +826,8 @@ abstract class _Loaded implements ShowSingleFeedState {
       final bool isDeleteCommentLoading,
       final bool isDeleteCommentLoaded,
       final bool isSendReplyLoading,
-      final bool isSendReplyLoaded) = _$LoadedImpl;
+      final bool isSendReplyLoaded,
+      final bool isSeeMore) = _$LoadedImpl;
 
   GetCommentsInCommunityModelResponse get commentsResponse;
   int get changeCounter;
@@ -812,6 +840,7 @@ abstract class _Loaded implements ShowSingleFeedState {
   bool get isDeleteCommentLoaded;
   bool get isSendReplyLoading;
   bool get isSendReplyLoaded;
+  bool get isSeeMore;
 
   /// Create a copy of ShowSingleFeedState
   /// with the given fields replaced by the non-null parameter values.
@@ -901,7 +930,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)
+            bool isSendReplyLoaded,
+            bool isSeeMore)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -924,7 +954,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -947,7 +978,8 @@ class _$ErrorImpl implements _Error {
             bool isDeleteCommentLoading,
             bool isDeleteCommentLoaded,
             bool isSendReplyLoading,
-            bool isSendReplyLoaded)?
+            bool isSendReplyLoaded,
+            bool isSeeMore)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

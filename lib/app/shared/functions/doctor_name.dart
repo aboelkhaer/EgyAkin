@@ -5,8 +5,10 @@ String doctorName({
   required String? lastName,
   required String role,
 }) {
-  // if (role == 'Admin') {
-  //   return 'Admin';
-  // }
-  return 'Dr.${capitalizeFirstText(firstName ?? '')} ${firstName == lastName ? '' : capitalizeFirstText(lastName ?? '')}';
+  bool isVerifiedUserVar = isVerifiedUser(role);
+
+  if (isVerifiedUserVar) {
+    return 'Dr.${capitalizeFirstText(firstName ?? '')} ${firstName == lastName ? '' : capitalizeFirstText(lastName ?? '')}';
+  }
+  return '${capitalizeFirstText(firstName ?? '')} ${firstName == lastName ? '' : capitalizeFirstText(lastName ?? '')}';
 }

@@ -29,7 +29,8 @@ mixin _$HomeState {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)
+            bool isUserBlocked,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -47,7 +48,8 @@ mixin _$HomeState {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -65,7 +67,8 @@ mixin _$HomeState {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -170,7 +173,8 @@ class _$InitialImpl implements _Initial {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)
+            bool isUserBlocked,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -191,7 +195,8 @@ class _$InitialImpl implements _Initial {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -212,7 +217,8 @@ class _$InitialImpl implements _Initial {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -345,7 +351,8 @@ class _$LoadingImpl implements _Loading {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)
+            bool isUserBlocked,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -366,7 +373,8 @@ class _$LoadingImpl implements _Loading {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -387,7 +395,8 @@ class _$LoadingImpl implements _Loading {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -463,7 +472,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isUploadedSyndicateCard,
       String message,
       int checkUpdateMessageCounter,
-      bool isUserBlocked});
+      bool isUserBlocked,
+      int changesCounter});
 
   $HomeModelResponseCopyWith<$Res> get homeData;
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
@@ -491,6 +501,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? message = null,
     Object? checkUpdateMessageCounter = null,
     Object? isUserBlocked = null,
+    Object? changesCounter = null,
   }) {
     return _then(_$LoadedImpl(
       null == homeData
@@ -529,6 +540,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isUserBlocked
           : isUserBlocked // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == changesCounter
+          ? _value.changesCounter
+          : changesCounter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -565,7 +580,8 @@ class _$LoadedImpl implements _Loaded {
       this.isUploadedSyndicateCard,
       this.message,
       this.checkUpdateMessageCounter,
-      this.isUserBlocked);
+      this.isUserBlocked,
+      this.changesCounter);
 
   @override
   final HomeModelResponse homeData;
@@ -585,10 +601,12 @@ class _$LoadedImpl implements _Loaded {
   final int checkUpdateMessageCounter;
   @override
   final bool isUserBlocked;
+  @override
+  final int changesCounter;
 
   @override
   String toString() {
-    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message, checkUpdateMessageCounter: $checkUpdateMessageCounter, isUserBlocked: $isUserBlocked)';
+    return 'HomeState.loaded(homeData: $homeData, currentDoctorModel: $currentDoctorModel, dotsPosition: $dotsPosition, homeIndex: $homeIndex, isUploadingSyndicateCard: $isUploadingSyndicateCard, isUploadedSyndicateCard: $isUploadedSyndicateCard, message: $message, checkUpdateMessageCounter: $checkUpdateMessageCounter, isUserBlocked: $isUserBlocked, changesCounter: $changesCounter)';
   }
 
   @override
@@ -615,7 +633,9 @@ class _$LoadedImpl implements _Loaded {
                     checkUpdateMessageCounter) ||
                 other.checkUpdateMessageCounter == checkUpdateMessageCounter) &&
             (identical(other.isUserBlocked, isUserBlocked) ||
-                other.isUserBlocked == isUserBlocked));
+                other.isUserBlocked == isUserBlocked) &&
+            (identical(other.changesCounter, changesCounter) ||
+                other.changesCounter == changesCounter));
   }
 
   @override
@@ -629,7 +649,8 @@ class _$LoadedImpl implements _Loaded {
       isUploadedSyndicateCard,
       message,
       checkUpdateMessageCounter,
-      isUserBlocked);
+      isUserBlocked,
+      changesCounter);
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -653,7 +674,8 @@ class _$LoadedImpl implements _Loaded {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)
+            bool isUserBlocked,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -666,7 +688,8 @@ class _$LoadedImpl implements _Loaded {
         isUploadedSyndicateCard,
         message,
         checkUpdateMessageCounter,
-        isUserBlocked);
+        isUserBlocked,
+        changesCounter);
   }
 
   @override
@@ -683,7 +706,8 @@ class _$LoadedImpl implements _Loaded {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -696,7 +720,8 @@ class _$LoadedImpl implements _Loaded {
         isUploadedSyndicateCard,
         message,
         checkUpdateMessageCounter,
-        isUserBlocked);
+        isUserBlocked,
+        changesCounter);
   }
 
   @override
@@ -713,7 +738,8 @@ class _$LoadedImpl implements _Loaded {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -728,7 +754,8 @@ class _$LoadedImpl implements _Loaded {
           isUploadedSyndicateCard,
           message,
           checkUpdateMessageCounter,
-          isUserBlocked);
+          isUserBlocked,
+          changesCounter);
     }
     return orElse();
   }
@@ -781,7 +808,8 @@ abstract class _Loaded implements HomeState {
       final bool isUploadedSyndicateCard,
       final String message,
       final int checkUpdateMessageCounter,
-      final bool isUserBlocked) = _$LoadedImpl;
+      final bool isUserBlocked,
+      final int changesCounter) = _$LoadedImpl;
 
   HomeModelResponse get homeData;
   DoctorModel get currentDoctorModel;
@@ -792,6 +820,7 @@ abstract class _Loaded implements HomeState {
   String get message;
   int get checkUpdateMessageCounter;
   bool get isUserBlocked;
+  int get changesCounter;
 
   /// Create a copy of HomeState
   /// with the given fields replaced by the non-null parameter values.
@@ -879,7 +908,8 @@ class _$ErrorImpl implements _Error {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)
+            bool isUserBlocked,
+            int changesCounter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -900,7 +930,8 @@ class _$ErrorImpl implements _Error {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -921,7 +952,8 @@ class _$ErrorImpl implements _Error {
             bool isUploadedSyndicateCard,
             String message,
             int checkUpdateMessageCounter,
-            bool isUserBlocked)?
+            bool isUserBlocked,
+            int changesCounter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

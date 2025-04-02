@@ -206,25 +206,10 @@ GetGroupMembersDataModelResponse _$GetGroupMembersDataModelResponseFromJson(
 
 /// @nodoc
 mixin _$GetGroupMembersDataModelResponse {
-  @JsonKey(name: 'current_page')
-  int? get currentPage => throw _privateConstructorUsedError;
-  List<DoctorModel>? get data => throw _privateConstructorUsedError;
-  @JsonKey(name: 'first_page_url')
-  String? get firstPageUrl => throw _privateConstructorUsedError;
-  int? get from => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_page')
-  int? get lastPage => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_page_url')
-  String? get lastPageUrl => throw _privateConstructorUsedError;
-  List<Link>? get links => throw _privateConstructorUsedError;
-  @JsonKey(name: 'next_page_url')
-  String? get nextPageUrl => throw _privateConstructorUsedError;
-  String? get path => throw _privateConstructorUsedError;
-  int? get perPage => throw _privateConstructorUsedError;
-  @JsonKey(name: 'prev_page_url')
-  String? get prevPageUrl => throw _privateConstructorUsedError;
-  int? get to => throw _privateConstructorUsedError;
-  int? get total => throw _privateConstructorUsedError;
+  MembersDataModelResponse? get members => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pending_invitations')
+  List<DoctorModel>? get pendingInvitations =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this GetGroupMembersDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -245,6 +230,245 @@ abstract class $GetGroupMembersDataModelResponseCopyWith<$Res> {
           GetGroupMembersDataModelResponse>;
   @useResult
   $Res call(
+      {MembersDataModelResponse? members,
+      @JsonKey(name: 'pending_invitations')
+      List<DoctorModel>? pendingInvitations});
+
+  $MembersDataModelResponseCopyWith<$Res>? get members;
+}
+
+/// @nodoc
+class _$GetGroupMembersDataModelResponseCopyWithImpl<$Res,
+        $Val extends GetGroupMembersDataModelResponse>
+    implements $GetGroupMembersDataModelResponseCopyWith<$Res> {
+  _$GetGroupMembersDataModelResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of GetGroupMembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? members = freezed,
+    Object? pendingInvitations = freezed,
+  }) {
+    return _then(_value.copyWith(
+      members: freezed == members
+          ? _value.members
+          : members // ignore: cast_nullable_to_non_nullable
+              as MembersDataModelResponse?,
+      pendingInvitations: freezed == pendingInvitations
+          ? _value.pendingInvitations
+          : pendingInvitations // ignore: cast_nullable_to_non_nullable
+              as List<DoctorModel>?,
+    ) as $Val);
+  }
+
+  /// Create a copy of GetGroupMembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $MembersDataModelResponseCopyWith<$Res>? get members {
+    if (_value.members == null) {
+      return null;
+    }
+
+    return $MembersDataModelResponseCopyWith<$Res>(_value.members!, (value) {
+      return _then(_value.copyWith(members: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$GetGroupMembersDataModelResponseImplCopyWith<$Res>
+    implements $GetGroupMembersDataModelResponseCopyWith<$Res> {
+  factory _$$GetGroupMembersDataModelResponseImplCopyWith(
+          _$GetGroupMembersDataModelResponseImpl value,
+          $Res Function(_$GetGroupMembersDataModelResponseImpl) then) =
+      __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {MembersDataModelResponse? members,
+      @JsonKey(name: 'pending_invitations')
+      List<DoctorModel>? pendingInvitations});
+
+  @override
+  $MembersDataModelResponseCopyWith<$Res>? get members;
+}
+
+/// @nodoc
+class __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>
+    extends _$GetGroupMembersDataModelResponseCopyWithImpl<$Res,
+        _$GetGroupMembersDataModelResponseImpl>
+    implements _$$GetGroupMembersDataModelResponseImplCopyWith<$Res> {
+  __$$GetGroupMembersDataModelResponseImplCopyWithImpl(
+      _$GetGroupMembersDataModelResponseImpl _value,
+      $Res Function(_$GetGroupMembersDataModelResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of GetGroupMembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? members = freezed,
+    Object? pendingInvitations = freezed,
+  }) {
+    return _then(_$GetGroupMembersDataModelResponseImpl(
+      members: freezed == members
+          ? _value.members
+          : members // ignore: cast_nullable_to_non_nullable
+              as MembersDataModelResponse?,
+      pendingInvitations: freezed == pendingInvitations
+          ? _value._pendingInvitations
+          : pendingInvitations // ignore: cast_nullable_to_non_nullable
+              as List<DoctorModel>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$GetGroupMembersDataModelResponseImpl
+    implements _GetGroupMembersDataModelResponse {
+  const _$GetGroupMembersDataModelResponseImpl(
+      {this.members,
+      @JsonKey(name: 'pending_invitations')
+      final List<DoctorModel>? pendingInvitations})
+      : _pendingInvitations = pendingInvitations;
+
+  factory _$GetGroupMembersDataModelResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$GetGroupMembersDataModelResponseImplFromJson(json);
+
+  @override
+  final MembersDataModelResponse? members;
+  final List<DoctorModel>? _pendingInvitations;
+  @override
+  @JsonKey(name: 'pending_invitations')
+  List<DoctorModel>? get pendingInvitations {
+    final value = _pendingInvitations;
+    if (value == null) return null;
+    if (_pendingInvitations is EqualUnmodifiableListView)
+      return _pendingInvitations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'GetGroupMembersDataModelResponse(members: $members, pendingInvitations: $pendingInvitations)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$GetGroupMembersDataModelResponseImpl &&
+            (identical(other.members, members) || other.members == members) &&
+            const DeepCollectionEquality()
+                .equals(other._pendingInvitations, _pendingInvitations));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, members,
+      const DeepCollectionEquality().hash(_pendingInvitations));
+
+  /// Create a copy of GetGroupMembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$GetGroupMembersDataModelResponseImplCopyWith<
+          _$GetGroupMembersDataModelResponseImpl>
+      get copyWith => __$$GetGroupMembersDataModelResponseImplCopyWithImpl<
+          _$GetGroupMembersDataModelResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$GetGroupMembersDataModelResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _GetGroupMembersDataModelResponse
+    implements GetGroupMembersDataModelResponse {
+  const factory _GetGroupMembersDataModelResponse(
+          {final MembersDataModelResponse? members,
+          @JsonKey(name: 'pending_invitations')
+          final List<DoctorModel>? pendingInvitations}) =
+      _$GetGroupMembersDataModelResponseImpl;
+
+  factory _GetGroupMembersDataModelResponse.fromJson(
+          Map<String, dynamic> json) =
+      _$GetGroupMembersDataModelResponseImpl.fromJson;
+
+  @override
+  MembersDataModelResponse? get members;
+  @override
+  @JsonKey(name: 'pending_invitations')
+  List<DoctorModel>? get pendingInvitations;
+
+  /// Create a copy of GetGroupMembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$GetGroupMembersDataModelResponseImplCopyWith<
+          _$GetGroupMembersDataModelResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+MembersDataModelResponse _$MembersDataModelResponseFromJson(
+    Map<String, dynamic> json) {
+  return _MembersDataModelResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$MembersDataModelResponse {
+  @JsonKey(name: 'current_page')
+  int? get currentPage => throw _privateConstructorUsedError;
+  List<DoctorModel>? get data => throw _privateConstructorUsedError;
+  @JsonKey(name: 'first_page_url')
+  String? get firstPageUrl => throw _privateConstructorUsedError;
+  int? get from => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_page')
+  int? get lastPage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'last_page_url')
+  String? get lastPageUrl => throw _privateConstructorUsedError;
+  List<Link>? get links => throw _privateConstructorUsedError;
+  @JsonKey(name: 'next_page_url')
+  String? get nextPageUrl => throw _privateConstructorUsedError;
+  String? get path => throw _privateConstructorUsedError;
+  int? get perPage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'prev_page_url')
+  String? get prevPageUrl => throw _privateConstructorUsedError;
+  int? get to => throw _privateConstructorUsedError;
+  int? get total => throw _privateConstructorUsedError;
+
+  /// Serializes this MembersDataModelResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of MembersDataModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $MembersDataModelResponseCopyWith<MembersDataModelResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $MembersDataModelResponseCopyWith<$Res> {
+  factory $MembersDataModelResponseCopyWith(MembersDataModelResponse value,
+          $Res Function(MembersDataModelResponse) then) =
+      _$MembersDataModelResponseCopyWithImpl<$Res, MembersDataModelResponse>;
+  @useResult
+  $Res call(
       {@JsonKey(name: 'current_page') int? currentPage,
       List<DoctorModel>? data,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
@@ -261,17 +485,17 @@ abstract class $GetGroupMembersDataModelResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$GetGroupMembersDataModelResponseCopyWithImpl<$Res,
-        $Val extends GetGroupMembersDataModelResponse>
-    implements $GetGroupMembersDataModelResponseCopyWith<$Res> {
-  _$GetGroupMembersDataModelResponseCopyWithImpl(this._value, this._then);
+class _$MembersDataModelResponseCopyWithImpl<$Res,
+        $Val extends MembersDataModelResponse>
+    implements $MembersDataModelResponseCopyWith<$Res> {
+  _$MembersDataModelResponseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of GetGroupMembersDataModelResponse
+  /// Create a copy of MembersDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -348,12 +572,12 @@ class _$GetGroupMembersDataModelResponseCopyWithImpl<$Res,
 }
 
 /// @nodoc
-abstract class _$$GetGroupMembersDataModelResponseImplCopyWith<$Res>
-    implements $GetGroupMembersDataModelResponseCopyWith<$Res> {
-  factory _$$GetGroupMembersDataModelResponseImplCopyWith(
-          _$GetGroupMembersDataModelResponseImpl value,
-          $Res Function(_$GetGroupMembersDataModelResponseImpl) then) =
-      __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>;
+abstract class _$$MembersDataModelResponseImplCopyWith<$Res>
+    implements $MembersDataModelResponseCopyWith<$Res> {
+  factory _$$MembersDataModelResponseImplCopyWith(
+          _$MembersDataModelResponseImpl value,
+          $Res Function(_$MembersDataModelResponseImpl) then) =
+      __$$MembersDataModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -373,16 +597,16 @@ abstract class _$$GetGroupMembersDataModelResponseImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>
-    extends _$GetGroupMembersDataModelResponseCopyWithImpl<$Res,
-        _$GetGroupMembersDataModelResponseImpl>
-    implements _$$GetGroupMembersDataModelResponseImplCopyWith<$Res> {
-  __$$GetGroupMembersDataModelResponseImplCopyWithImpl(
-      _$GetGroupMembersDataModelResponseImpl _value,
-      $Res Function(_$GetGroupMembersDataModelResponseImpl) _then)
+class __$$MembersDataModelResponseImplCopyWithImpl<$Res>
+    extends _$MembersDataModelResponseCopyWithImpl<$Res,
+        _$MembersDataModelResponseImpl>
+    implements _$$MembersDataModelResponseImplCopyWith<$Res> {
+  __$$MembersDataModelResponseImplCopyWithImpl(
+      _$MembersDataModelResponseImpl _value,
+      $Res Function(_$MembersDataModelResponseImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of GetGroupMembersDataModelResponse
+  /// Create a copy of MembersDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -401,7 +625,7 @@ class __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>
     Object? to = freezed,
     Object? total = freezed,
   }) {
-    return _then(_$GetGroupMembersDataModelResponseImpl(
+    return _then(_$MembersDataModelResponseImpl(
       currentPage: freezed == currentPage
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
@@ -460,9 +684,8 @@ class __$$GetGroupMembersDataModelResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$GetGroupMembersDataModelResponseImpl
-    implements _GetGroupMembersDataModelResponse {
-  const _$GetGroupMembersDataModelResponseImpl(
+class _$MembersDataModelResponseImpl implements _MembersDataModelResponse {
+  const _$MembersDataModelResponseImpl(
       {@JsonKey(name: 'current_page') this.currentPage,
       final List<DoctorModel>? data,
       @JsonKey(name: 'first_page_url') this.firstPageUrl,
@@ -479,9 +702,8 @@ class _$GetGroupMembersDataModelResponseImpl
       : _data = data,
         _links = links;
 
-  factory _$GetGroupMembersDataModelResponseImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$GetGroupMembersDataModelResponseImplFromJson(json);
+  factory _$MembersDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MembersDataModelResponseImplFromJson(json);
 
   @override
   @JsonKey(name: 'current_page')
@@ -534,14 +756,14 @@ class _$GetGroupMembersDataModelResponseImpl
 
   @override
   String toString() {
-    return 'GetGroupMembersDataModelResponse(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
+    return 'MembersDataModelResponse(currentPage: $currentPage, data: $data, firstPageUrl: $firstPageUrl, from: $from, lastPage: $lastPage, lastPageUrl: $lastPageUrl, links: $links, nextPageUrl: $nextPageUrl, path: $path, perPage: $perPage, prevPageUrl: $prevPageUrl, to: $to, total: $total)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetGroupMembersDataModelResponseImpl &&
+            other is _$MembersDataModelResponseImpl &&
             (identical(other.currentPage, currentPage) ||
                 other.currentPage == currentPage) &&
             const DeepCollectionEquality().equals(other._data, _data) &&
@@ -581,27 +803,25 @@ class _$GetGroupMembersDataModelResponseImpl
       to,
       total);
 
-  /// Create a copy of GetGroupMembersDataModelResponse
+  /// Create a copy of MembersDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$GetGroupMembersDataModelResponseImplCopyWith<
-          _$GetGroupMembersDataModelResponseImpl>
-      get copyWith => __$$GetGroupMembersDataModelResponseImplCopyWithImpl<
-          _$GetGroupMembersDataModelResponseImpl>(this, _$identity);
+  _$$MembersDataModelResponseImplCopyWith<_$MembersDataModelResponseImpl>
+      get copyWith => __$$MembersDataModelResponseImplCopyWithImpl<
+          _$MembersDataModelResponseImpl>(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$GetGroupMembersDataModelResponseImplToJson(
+    return _$$MembersDataModelResponseImplToJson(
       this,
     );
   }
 }
 
-abstract class _GetGroupMembersDataModelResponse
-    implements GetGroupMembersDataModelResponse {
-  const factory _GetGroupMembersDataModelResponse(
+abstract class _MembersDataModelResponse implements MembersDataModelResponse {
+  const factory _MembersDataModelResponse(
       {@JsonKey(name: 'current_page') final int? currentPage,
       final List<DoctorModel>? data,
       @JsonKey(name: 'first_page_url') final String? firstPageUrl,
@@ -614,11 +834,10 @@ abstract class _GetGroupMembersDataModelResponse
       final int? perPage,
       @JsonKey(name: 'prev_page_url') final String? prevPageUrl,
       final int? to,
-      final int? total}) = _$GetGroupMembersDataModelResponseImpl;
+      final int? total}) = _$MembersDataModelResponseImpl;
 
-  factory _GetGroupMembersDataModelResponse.fromJson(
-          Map<String, dynamic> json) =
-      _$GetGroupMembersDataModelResponseImpl.fromJson;
+  factory _MembersDataModelResponse.fromJson(Map<String, dynamic> json) =
+      _$MembersDataModelResponseImpl.fromJson;
 
   @override
   @JsonKey(name: 'current_page')
@@ -653,11 +872,10 @@ abstract class _GetGroupMembersDataModelResponse
   @override
   int? get total;
 
-  /// Create a copy of GetGroupMembersDataModelResponse
+  /// Create a copy of MembersDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GetGroupMembersDataModelResponseImplCopyWith<
-          _$GetGroupMembersDataModelResponseImpl>
+  _$$MembersDataModelResponseImplCopyWith<_$MembersDataModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }

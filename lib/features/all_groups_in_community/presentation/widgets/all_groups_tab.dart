@@ -1,8 +1,5 @@
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/all_groups_in_community_state.dart';
-import 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/group_row.dart';
-import 'package:egy_akin/features/community/presentation/widgets/community_tabs/widgets/loading_for_group_row.dart';
-
 import '../../../../exports.dart';
 
 class AllGroupsTab extends StatefulWidget {

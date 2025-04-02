@@ -1,3 +1,7 @@
+import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
+import 'package:egy_akin/features/home/presentation/widgets/community_button.dart';
+import 'package:egy_akin/features/home/presentation/widgets/groups_home_view.dart';
+import 'package:egy_akin/features/home/presentation/widgets/latest_trends_hashtags.dart';
 import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 import 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
 import 'package:flutter/scheduler.dart';
@@ -39,11 +43,6 @@ class _HomeTabState extends State<HomeTab> {
       color: AppColors.primary,
       onRefresh: () {
         animateToTopOfScreen(widget.cubit.homeTabScrollController);
-        // if (cubit.scrollController.hasClients) {
-        //   cubit.scrollController.animateTo(0,
-        //       duration: const Duration(milliseconds: 300),
-        //       curve: Curves.easeInOut);
-        // }
 
         if (widget.cubit.isUnreadNotification) {
           context.read<NotificationCubit>().getAllNotifications();
@@ -55,61 +54,61 @@ class _HomeTabState extends State<HomeTab> {
         color: Colors.grey.shade100,
         child: Column(
           children: [
-            widget.cubit.currentDoctorModel.email == 'aboelkhaer@yandex.com'
-                ? const SizedBox.shrink()
-                : BlocConsumer<HomeCubit, HomeState>(
-                    listener: (context, state) {
-                      state.maybeWhen(
-                        orElse: () {},
-                        loaded: (
-                          homeData,
-                          currentDoctorModel,
-                          dotsPosition,
-                          homeIndex,
-                          isUploadingSyndicateCard,
-                          isUploadedSyndicateCard,
-                          message,
-                          checkUpdateMessageCounter,
-                          isUserBlocked,
-                        ) {},
-                        error: (message) {
-                          customSnackBar(message: message, context: context);
-                          // todo fix crash here
-                          if (message == 'Unauthenticated.') {
-                            SchedulerBinding.instance.addPostFrameCallback((_) {
-                              context
-                                  .read<HomeCubit>()
-                                  .signOutForUnUnauthenticated();
-                              navigatorKey.currentState
-                                  ?.pushReplacementNamed(AppRoutes.signIn);
-                            });
-                          }
-                        },
-                      );
-                    },
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        loaded: (
-                          homeData,
-                          currentDoctorModel,
-                          dotsPosition,
-                          homeIndex,
-                          isUploadingSyndicateCard,
-                          isUploadedSyndicateCard,
-                          message,
-                          checkUpdateMessageCounter,
-                          isUserBlocked,
-                        ) {
-                          return CheckIfVerified(
-                            verified: homeData.verified!,
-                            isSyndicateCardRequired:
-                                homeData.isSyndicateCardRequired!,
-                          );
-                        },
-                        orElse: () => const SizedBox.shrink(),
-                      );
-                    },
-                  ),
+            BlocConsumer<HomeCubit, HomeState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                  orElse: () {},
+                  loaded: (
+                    homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message,
+                    checkUpdateMessageCounter,
+                    isUserBlocked,
+                    changesCounter,
+                  ) {},
+                  error: (message) {
+                    customSnackBar(message: message, context: context);
+
+                    if (message == 'Unauthenticated.') {
+                      SchedulerBinding.instance.addPostFrameCallback((_) {
+                        context.read<HomeCubit>().signOutForUnUnauthenticated();
+                        navigatorKey.currentState
+                            ?.pushReplacementNamed(AppRoutes.signIn);
+                      });
+                    }
+                  },
+                );
+              },
+              builder: (context, state) {
+                return state.maybeWhen(
+                  loaded: (
+                    homeData,
+                    currentDoctorModel,
+                    dotsPosition,
+                    homeIndex,
+                    isUploadingSyndicateCard,
+                    isUploadedSyndicateCard,
+                    message,
+                    checkUpdateMessageCounter,
+                    isUserBlocked,
+                    changesCounter,
+                  ) {
+                    return CheckIfVerified(
+                      verified: homeData.verified!,
+                      isSyndicateCardRequired:
+                          homeData.isSyndicateCardRequired!,
+                      isExitVerification:
+                          homeCubit.isExistVerificationBanner ?? false,
+                    );
+                  },
+                  orElse: () => const SizedBox.shrink(),
+                );
+              },
+            ),
             Expanded(
               child: SingleChildScrollView(
                 controller: widget.cubit.homeTabScrollController,
@@ -136,6 +135,7 @@ class _HomeTabState extends State<HomeTab> {
                               message,
                               checkUpdateMessageCounter,
                               isUserBlocked,
+                              changesCounter,
                             ) {
                               return HomeSearchBotton(
                                 currentDoctorModel: currentDoctorModel,
@@ -151,30 +151,12 @@ class _HomeTabState extends State<HomeTab> {
                           );
                         },
                       ),
-                      widget.cubit.currentDoctorModel.email ==
-                              'aboelkhaer@yandex.com'
-                          ? const SizedBox.shrink()
-                          : PostsSliderAndDots(cubit: widget.cubit),
-                      widget.cubit.currentDoctorModel.email ==
-                              'aboelkhaer@yandex.com'
-                          ? const SizedBox.shrink()
-                          : SizedBox(height: 10.h),
-                      TextButton(
-                          onPressed: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.community,
-                              arguments: AppRoutesArgs.communityRouteArgs(
-                                homeDataModel: widget.cubit.homeDataModel,
-                                currentDoctorModel:
-                                    widget.cubit.currentDoctorModel,
-                                initialTab: 0,
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Community',
-                            style: TextStyle(color: AppColors.primary),
-                          )),
+                      PostsSliderAndDots(cubit: widget.cubit),
+                      SizedBox(height: 10.h),
+                      const CommunityButton(),
+                      SizedBox(height: 10.h),
+                      const LatestTrendsHashtags(),
+                      const GroupsHomeView(),
                       const DoctorsActivation(),
                       SizedBox(height: 10.h),
                       TopDoctors(cubit: widget.cubit),

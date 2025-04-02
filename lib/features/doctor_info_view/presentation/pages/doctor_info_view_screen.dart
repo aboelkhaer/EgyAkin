@@ -385,7 +385,9 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                             .toString(),
                                         lastName: doctorInfo.data!.lastName
                                             .toString(),
-                                        role: ''),
+                                        role: doctorInfo
+                                            .data!.isSyndicateCardRequired
+                                            .toString()),
                                   ),
                                 );
                               },
@@ -404,9 +406,12 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                     homeDataModel: widget.homeDataModel,
                                     doctorId: widget.doctorId,
                                     doctorName: doctorName(
-                                        firstName: doctorInfo!.data!.firstName,
-                                        lastName: doctorInfo.data!.lastName,
-                                        role: ''),
+                                      firstName: doctorInfo!.data!.firstName,
+                                      lastName: doctorInfo.data!.lastName,
+                                      role: doctorInfo
+                                          .data!.isSyndicateCardRequired
+                                          .toString(),
+                                    ),
                                   ),
                                 );
                               },

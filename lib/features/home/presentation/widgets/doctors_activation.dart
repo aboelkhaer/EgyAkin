@@ -13,15 +13,21 @@ class DoctorsActivation extends StatelessWidget {
           orElse: () {
             return const SizedBox.shrink();
           },
-          loaded: (homeData,
-              currentDoctorModel,
-              dotsPosition,
-              homeIndex,
-              isUploadingSyndicateCard,
-              isUploadedSyndicateCard,
-              message,
-              checkUpdateMessageCounter,
-              isUserBlocked) {
+          loaded: (
+            homeData,
+            currentDoctorModel,
+            dotsPosition,
+            homeIndex,
+            isUploadingSyndicateCard,
+            isUploadedSyndicateCard,
+            message,
+            checkUpdateMessageCounter,
+            isUserBlocked,
+            changesCounter,
+          ) {
+            if (!isAdmin(homeData.role)) {
+              return const SizedBox.shrink();
+            }
             if (cubit.homeDataModel.data!.pendingSyndicateCard!.isEmpty) {
               return const SizedBox.shrink();
             }
@@ -53,7 +59,11 @@ class DoctorsActivation extends StatelessWidget {
                           message,
                           checkUpdateMessageCounter,
                           isUserBlocked,
+                          changesCounter,
                         ) {
+                          if (!isAdmin(homeData.role)) {
+                            return const SizedBox.shrink();
+                          }
                           return FadeIn(
                             duration: const Duration(seconds: 2),
                             child: ListView.builder(

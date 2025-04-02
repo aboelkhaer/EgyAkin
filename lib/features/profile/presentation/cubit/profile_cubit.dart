@@ -22,9 +22,14 @@ class ProfileCubit extends Cubit<ProfileState> {
   static ProfileCubit get(context) => BlocProvider.of(context);
   File? imagePicked;
   DoctorModel currentDoctor = const DoctorModel();
-  getDoctorDataFromHomeCubit(DoctorModel doctorModel) {
-    currentDoctor = doctorModel;
-    emit(ProfileState.loaded(doctorModel, false));
+  // getDoctorDataFromHomeCubit(DoctorModel doctorModel) {
+  //   currentDoctor = doctorModel;
+  //   emit(ProfileState.loaded(doctorModel, false));
+  // }
+
+  getDoctorDataFromLocal() async {
+    currentDoctor = (await sl<AppPreferences>().getDoctorData())!;
+    emit(ProfileState.loaded(currentDoctor, false));
   }
 
   Future<void> uploadProfileImage() async {

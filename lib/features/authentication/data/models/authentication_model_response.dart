@@ -41,6 +41,7 @@ class DoctorModel with _$DoctorModel {
     @JsonKey(name: 'registration_number') String? registrationNumber,
     @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
     @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
+    @JsonKey(name: 'invitation_id') int? invitationId,
     bool? blocked,
     bool? limited,
     List<PatientHomeDataModel>? patients,

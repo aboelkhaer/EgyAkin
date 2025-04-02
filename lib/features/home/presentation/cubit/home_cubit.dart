@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:egy_akin/app/constants/local_storage_key.dart';
+import 'package:egy_akin/app/routes/app_routes.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
+import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
+import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
 import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
@@ -13,6 +16,7 @@ import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_use
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/injection_container.dart';
+import 'package:egy_akin/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -71,6 +75,7 @@ class HomeCubit extends Cubit<HomeState> {
         '',
         checkUpdateMessageCounter,
         false,
+        value.changesCounter,
       ),
     ));
   }
@@ -115,6 +120,7 @@ class HomeCubit extends Cubit<HomeState> {
           '',
           value.checkUpdateMessageCounter,
           value.isUserBlocked,
+          value.changesCounter,
         ),
       ),
     );
@@ -162,6 +168,37 @@ class HomeCubit extends Cubit<HomeState> {
         '',
         checkUpdateMessageCounter,
         false,
+        value.changesCounter,
+      ),
+    ));
+  }
+
+  bool? isExistVerificationBanner;
+
+  checkVerifyBanner() async {
+    isExistVerificationBanner = (await sl<AppPreferences>()
+            .getBool(AppLocalStrings.isExistVerificationBanner)) ??
+        false;
+  }
+
+  int changesCounter = 0;
+  setVerifyBanner() async {
+    isExistVerificationBanner = (await sl<AppPreferences>()
+        .setBool(AppLocalStrings.isExistVerificationBanner, true));
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => HomeState.loaded(
+        value.homeData,
+        value.currentDoctorModel,
+        value.dotsPosition,
+        value.homeIndex,
+        value.isUploadingSyndicateCard,
+        value.isUploadedSyndicateCard,
+        '',
+        value.checkUpdateMessageCounter,
+        value.isUserBlocked,
+        changesCounter + 1,
       ),
     ));
   }
@@ -180,6 +217,7 @@ class HomeCubit extends Cubit<HomeState> {
         '',
         checkUpdateMessageCounter,
         false,
+        value.changesCounter,
       ),
     ));
   }
@@ -197,7 +235,7 @@ class HomeCubit extends Cubit<HomeState> {
           value.isUploadedSyndicateCard,
           '',
           checkUpdateMessageCounter,
-          false,
+          false, value.changesCounter,
         ),
       ),
     );
@@ -231,6 +269,7 @@ class HomeCubit extends Cubit<HomeState> {
         isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
         currentDoctorRole = homeData.role.toString();
         homeDataModel = homeData;
+        checkVerifyBanner();
 
         // Only emit new state if the Cubit is still active
         emit(
@@ -244,10 +283,22 @@ class HomeCubit extends Cubit<HomeState> {
             '',
             checkUpdateMessageCounter,
             false,
+            changesCounter,
           ),
         );
       },
     );
+    log('${isVerifiedUser(homeDataModel.isSyndicateCardRequired)} moatz123');
+    if (isVerifiedUser(homeDataModel.isSyndicateCardRequired)) {
+      navigatorKey.currentState?.pushNamed(
+        AppRoutes.community,
+        arguments: AppRoutesArgs.communityRouteArgs(
+          homeDataModel: homeDataModel,
+          currentDoctorModel: currentDoctorModel,
+          initialTab: 0,
+        ),
+      );
+    }
   }
 
   File? imagePicked;
@@ -266,6 +317,7 @@ class HomeCubit extends Cubit<HomeState> {
           '',
           checkUpdateMessageCounter,
           false,
+          value.changesCounter,
         ),
       ),
     );
@@ -296,6 +348,7 @@ class HomeCubit extends Cubit<HomeState> {
                 'Failed to optimize image: $e',
                 checkUpdateMessageCounter,
                 false,
+                value.changesCounter,
               ),
             ),
           );
@@ -320,6 +373,7 @@ class HomeCubit extends Cubit<HomeState> {
                   l.message,
                   checkUpdateMessageCounter,
                   false,
+                  value.changesCounter,
                 ),
               ),
             );
@@ -340,6 +394,7 @@ class HomeCubit extends Cubit<HomeState> {
                   r.message!,
                   checkUpdateMessageCounter,
                   false,
+                  value.changesCounter,
                 ),
               ),
             );
@@ -359,6 +414,7 @@ class HomeCubit extends Cubit<HomeState> {
               '',
               checkUpdateMessageCounter,
               false,
+              value.changesCounter,
             ),
           ),
         );
@@ -378,6 +434,7 @@ class HomeCubit extends Cubit<HomeState> {
               'Photo access denied. Please allow photo access from settings.',
               checkUpdateMessageCounter,
               false,
+              value.changesCounter,
             ),
           ),
         );
@@ -397,6 +454,7 @@ class HomeCubit extends Cubit<HomeState> {
               'An unexpected error occurred: ${e.message}',
               checkUpdateMessageCounter,
               false,
+              value.changesCounter,
             ),
           ),
         );
@@ -415,6 +473,7 @@ class HomeCubit extends Cubit<HomeState> {
             'An unexpected error occurred: $e',
             checkUpdateMessageCounter,
             false,
+            value.changesCounter,
           ),
         ),
       );
@@ -435,6 +494,7 @@ class HomeCubit extends Cubit<HomeState> {
           '',
           checkUpdateMessageCounter,
           true,
+          value.changesCounter,
         ),
       ),
     );
@@ -471,6 +531,7 @@ class HomeCubit extends Cubit<HomeState> {
           '',
           checkUpdateMessageCounter,
           value.isUserBlocked,
+          value.changesCounter,
         ),
       ),
     );

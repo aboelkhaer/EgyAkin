@@ -49,6 +49,7 @@ class CommentWidgetInCommunity extends StatelessWidget {
                 isDeleteCommentLoaded,
                 isSendReplyLoading,
                 isSendReplyLoaded,
+                isSeeMore,
               ) {
                 return AnimatedContainer(
                   decoration: BoxDecoration(
@@ -171,7 +172,9 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                         .doctor!.firstName,
                                                     lastName: commentModel
                                                         .doctor!.lastName,
-                                                    role: '',
+                                                    role: commentModel.doctor!
+                                                        .isSyndicateCardRequired
+                                                        .toString(),
                                                   ),
                                             style: TextStyle(
                                               color: commentModel.doctor == null
@@ -252,6 +255,7 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                           isDeleteCommentLoaded,
                                           isSendReplyLoading,
                                           isSendReplyLoaded,
+                                          isSeeMore,
                                         ) {
                                           return GestureDetector(
                                             onTap: () {
@@ -334,6 +338,7 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                           isDeleteCommentLoaded,
                                           isSendReplyLoading,
                                           isSendReplyLoaded,
+                                          isSeeMore,
                                         ) {
                                           return homeDataModel.role ==
                                                       AppStrings.roleAdmin ||

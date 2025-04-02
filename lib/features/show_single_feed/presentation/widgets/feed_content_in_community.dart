@@ -107,17 +107,20 @@ class FeedContentInCommunity extends StatelessWidget {
                   onOptionToggled: (optionId, isSelected) {},
                 );
               },
-              loaded: (commentsResponse,
-                  changeCounter,
-                  updatedFeed,
-                  isSendCommentLoading,
-                  isSendCommentLoaded,
-                  message,
-                  highlightedCommentId,
-                  isDeleteCommentLoading,
-                  isDeleteCommentLoaded,
-                  isSendReplyLoading,
-                  isSendReplyLoaded) {
+              loaded: (
+                commentsResponse,
+                changeCounter,
+                updatedFeed,
+                isSendCommentLoading,
+                isSendCommentLoaded,
+                message,
+                highlightedCommentId,
+                isDeleteCommentLoading,
+                isDeleteCommentLoaded,
+                isSendReplyLoading,
+                isSendReplyLoaded,
+                isSeeMore,
+              ) {
                 if (updatedFeed.poll == null) {
                   return const SizedBox.shrink();
                 }
@@ -223,6 +226,7 @@ class FeedContentInCommunity extends StatelessWidget {
                           isDeleteCommentLoaded,
                           isSendReplyLoading,
                           isSendReplyLoaded,
+                          isSeeMore,
                         ) {
                           return Row(
                             children: [
@@ -241,7 +245,7 @@ class FeedContentInCommunity extends StatelessWidget {
                               ),
                               const SizedBox(width: 5),
                               feedResponse.likesCount! > 0
-                                  ? InkWell(
+                                  ? InkResponse(
                                       onTap: () async {
                                         showCustomBottomSheet(
                                           context: context,
@@ -249,7 +253,11 @@ class FeedContentInCommunity extends StatelessWidget {
                                             return BlocProvider(
                                               create: (context) =>
                                                   GroupMembersCubit(
-                                                      sl(), sl(), sl()),
+                                                sl(),
+                                                sl(),
+                                                sl(),
+                                                sl(),
+                                              ),
                                               child: GroupMembersScreen(
                                                 groupId: '',
                                                 currentDoctorModel:
@@ -266,10 +274,17 @@ class FeedContentInCommunity extends StatelessWidget {
                                       },
                                       highlightColor: Colors.transparent,
                                       splashColor: Colors.transparent,
-                                      child: Text(
-                                        feedResponse.likesCount.toString(),
-                                        style: const TextStyle(
-                                          color: AppColors.primary,
+                                      radius:
+                                          20, // This increases the ripple effect area
+                                      containedInkWell: true,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Text(
+                                          feedResponse.likesCount.toString(),
+                                          style: const TextStyle(
+                                            color: AppColors.primary,
+                                          ),
                                         ),
                                       ),
                                     )
@@ -319,6 +334,7 @@ class FeedContentInCommunity extends StatelessWidget {
                                 isDeleteCommentLoaded,
                                 isSendReplyLoading,
                                 isSendReplyLoaded,
+                                isSeeMore,
                               ) {
                                 return Text(
                                   updatedFeed.commentsCount.toString(),
@@ -369,6 +385,7 @@ class FeedContentInCommunity extends StatelessWidget {
                       isDeleteCommentLoaded,
                       isSendReplyLoading,
                       isSendReplyLoaded,
+                      isSeeMore,
                     ) {
                       return InkWell(
                         onTap: () {

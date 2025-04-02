@@ -105,13 +105,13 @@ class _ImagesInPostCardState extends State<ImagesInPostCard> {
                               controller:
                                   _pageController, // Use the same PageController
                               count: feed.mediaPath!.length,
-                              effect: const WormEffect(
+                              effect: WormEffect(
                                 activeDotColor: AppColors
                                     .primary, // Color of the active dot
-                                dotColor:
-                                    Colors.grey, // Color of the inactive dots
-                                dotHeight: 5,
-                                dotWidth: 5,
+                                dotColor: Colors.grey
+                                    .shade400, // Color of the inactive dots
+                                dotHeight: 6,
+                                dotWidth: 6,
                               ),
                             ),
                           ),
