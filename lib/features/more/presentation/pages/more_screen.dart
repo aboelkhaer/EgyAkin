@@ -134,9 +134,39 @@ class _MoreScreenState extends State<MoreScreen> {
                     trailing: widget.homeDataModel.isSyndicateCardRequired ==
                             VerificationBySyndicateCard.Pending.name
                         ? const SizedBox.shrink()
-                        : Icon(
-                            Icons.arrow_forward_ios,
-                            size: 15.r,
+                        : BlocBuilder<HomeCubit, HomeState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return Icon(
+                                    Icons.verified,
+                                    color: Colors.grey.shade600,
+                                  );
+                                },
+                                loaded: (homeData,
+                                    currentDoctorModel,
+                                    dotsPosition,
+                                    homeIndex,
+                                    isUploadingSyndicateCard,
+                                    isUploadedSyndicateCard,
+                                    message,
+                                    checkUpdateMessageCounter,
+                                    isUserBlocked,
+                                    changesCounter) {
+                                  if (isUploadingSyndicateCard) {
+                                    return const SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return Icon(
+                                    Icons.arrow_forward_ios,
+                                    size: 15.r,
+                                  );
+                                },
+                              );
+                            },
                           ),
                     onTap: () {
                       if (widget.homeDataModel.isSyndicateCardRequired ==

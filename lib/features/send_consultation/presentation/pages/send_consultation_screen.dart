@@ -39,7 +39,7 @@ class SendConsultationScreen extends StatelessWidget {
                     context: context,
                     title: isSendConsultation ? 'Consultation' : 'Invitation',
                     noColoredButtonText: 'Cancel',
-                    isWithTextField: true,
+                    isWithTextField: isSendConsultation ? true : false,
                     textFormFieldMaxLines: 3,
                     textInputType: TextInputType.multiline,
                     onChangedTextFormField: (value) {
@@ -48,8 +48,10 @@ class SendConsultationScreen extends StatelessWidget {
                     noColoredButtonOnTap: () {
                       Navigator.pop(context);
                     },
-                    description: 'Write note for chosen doctors.',
-                    coloredButtonText: 'Send',
+                    description: isSendConsultation
+                        ? 'Write note for chosen doctors.'
+                        : 'You are done?',
+                    coloredButtonText: isSendConsultation ? 'Send' : 'Invite',
                     coloredButtonOnTap: () {
                       Navigator.pop(context);
                       if (isSendConsultation) {

@@ -249,7 +249,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                     return state.maybeWhen(
                       orElse: () {
                         return Text(
-                          capitalizeFirstText(AppStrings.empty),
+                          capitalizeFirstText(AppStrings.empty)!,
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 12.sp,
@@ -264,7 +264,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           changesCounter) {
                         return Text(
                           capitalizeFirstText(
-                              doctorInfo!.data!.specialty ?? AppStrings.empty),
+                              doctorInfo!.data!.specialty ?? AppStrings.empty)!,
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 12.sp,

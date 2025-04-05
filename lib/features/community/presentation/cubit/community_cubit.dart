@@ -28,7 +28,6 @@ class CommunityCubit extends Cubit<CommunityState> {
   int changeCounter = 0;
 
   // ScrollController? feedsScrollController;
-
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
   int _currentPage = 1;

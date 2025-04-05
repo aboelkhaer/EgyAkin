@@ -82,7 +82,6 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
       content: json['content'] as String?,
       typeId: (json['type_id'] as num?)?.toInt(),
       createdAt: json['created_at'] as String?,
-      groupId: (json['group_id'] as num?)?.toInt(),
       patient: json['patient'] == null
           ? null
           : PatientNotificationModel.fromJson(
@@ -91,9 +90,6 @@ _$NotificationsModelImpl _$$NotificationsModelImplFromJson(
           ? null
           : TypeDoctorForNotificationModel.fromJson(
               json['type_doctor'] as Map<String, dynamic>),
-      feed: json['feed'] == null
-          ? null
-          : PostCommunityModel.fromJson(json['feed'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$NotificationsModelImplToJson(
@@ -105,10 +101,8 @@ Map<String, dynamic> _$$NotificationsModelImplToJson(
       'content': instance.content,
       'type_id': instance.typeId,
       'created_at': instance.createdAt,
-      'group_id': instance.groupId,
       'patient': instance.patient,
       'type_doctor': instance.typeDoctor,
-      'feed': instance.feed,
     };
 
 _$TypeDoctorForNotificationModelImpl

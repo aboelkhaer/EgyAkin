@@ -755,14 +755,10 @@ mixin _$NotificationsModel {
   int? get typeId => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'group_id')
-  int? get groupId => throw _privateConstructorUsedError;
   PatientNotificationModel? get patient => throw _privateConstructorUsedError;
   @JsonKey(name: 'type_doctor')
   TypeDoctorForNotificationModel? get typeDoctor =>
       throw _privateConstructorUsedError;
-  @JsonKey(name: 'feed')
-  PostCommunityModel? get feed => throw _privateConstructorUsedError;
 
   /// Serializes this NotificationsModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -787,14 +783,12 @@ abstract class $NotificationsModelCopyWith<$Res> {
       String? content,
       @JsonKey(name: 'type_id') int? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'group_id') int? groupId,
       PatientNotificationModel? patient,
-      @JsonKey(name: 'type_doctor') TypeDoctorForNotificationModel? typeDoctor,
-      @JsonKey(name: 'feed') PostCommunityModel? feed});
+      @JsonKey(name: 'type_doctor')
+      TypeDoctorForNotificationModel? typeDoctor});
 
   $PatientNotificationModelCopyWith<$Res>? get patient;
   $TypeDoctorForNotificationModelCopyWith<$Res>? get typeDoctor;
-  $PostCommunityModelCopyWith<$Res>? get feed;
 }
 
 /// @nodoc
@@ -818,10 +812,8 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
     Object? content = freezed,
     Object? typeId = freezed,
     Object? createdAt = freezed,
-    Object? groupId = freezed,
     Object? patient = freezed,
     Object? typeDoctor = freezed,
-    Object? feed = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -848,10 +840,6 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      groupId: freezed == groupId
-          ? _value.groupId
-          : groupId // ignore: cast_nullable_to_non_nullable
-              as int?,
       patient: freezed == patient
           ? _value.patient
           : patient // ignore: cast_nullable_to_non_nullable
@@ -860,10 +848,6 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
           ? _value.typeDoctor
           : typeDoctor // ignore: cast_nullable_to_non_nullable
               as TypeDoctorForNotificationModel?,
-      feed: freezed == feed
-          ? _value.feed
-          : feed // ignore: cast_nullable_to_non_nullable
-              as PostCommunityModel?,
     ) as $Val);
   }
 
@@ -895,20 +879,6 @@ class _$NotificationsModelCopyWithImpl<$Res, $Val extends NotificationsModel>
       return _then(_value.copyWith(typeDoctor: value) as $Val);
     });
   }
-
-  /// Create a copy of NotificationsModel
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $PostCommunityModelCopyWith<$Res>? get feed {
-    if (_value.feed == null) {
-      return null;
-    }
-
-    return $PostCommunityModelCopyWith<$Res>(_value.feed!, (value) {
-      return _then(_value.copyWith(feed: value) as $Val);
-    });
-  }
 }
 
 /// @nodoc
@@ -926,17 +896,14 @@ abstract class _$$NotificationsModelImplCopyWith<$Res>
       String? content,
       @JsonKey(name: 'type_id') int? typeId,
       @JsonKey(name: 'created_at') String? createdAt,
-      @JsonKey(name: 'group_id') int? groupId,
       PatientNotificationModel? patient,
-      @JsonKey(name: 'type_doctor') TypeDoctorForNotificationModel? typeDoctor,
-      @JsonKey(name: 'feed') PostCommunityModel? feed});
+      @JsonKey(name: 'type_doctor')
+      TypeDoctorForNotificationModel? typeDoctor});
 
   @override
   $PatientNotificationModelCopyWith<$Res>? get patient;
   @override
   $TypeDoctorForNotificationModelCopyWith<$Res>? get typeDoctor;
-  @override
-  $PostCommunityModelCopyWith<$Res>? get feed;
 }
 
 /// @nodoc
@@ -958,10 +925,8 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
     Object? content = freezed,
     Object? typeId = freezed,
     Object? createdAt = freezed,
-    Object? groupId = freezed,
     Object? patient = freezed,
     Object? typeDoctor = freezed,
-    Object? feed = freezed,
   }) {
     return _then(_$NotificationsModelImpl(
       id: freezed == id
@@ -988,10 +953,6 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
               as String?,
-      groupId: freezed == groupId
-          ? _value.groupId
-          : groupId // ignore: cast_nullable_to_non_nullable
-              as int?,
       patient: freezed == patient
           ? _value.patient
           : patient // ignore: cast_nullable_to_non_nullable
@@ -1000,10 +961,6 @@ class __$$NotificationsModelImplCopyWithImpl<$Res>
           ? _value.typeDoctor
           : typeDoctor // ignore: cast_nullable_to_non_nullable
               as TypeDoctorForNotificationModel?,
-      feed: freezed == feed
-          ? _value.feed
-          : feed // ignore: cast_nullable_to_non_nullable
-              as PostCommunityModel?,
     ));
   }
 }
@@ -1018,10 +975,8 @@ class _$NotificationsModelImpl implements _NotificationsModel {
       this.content,
       @JsonKey(name: 'type_id') this.typeId,
       @JsonKey(name: 'created_at') this.createdAt,
-      @JsonKey(name: 'group_id') this.groupId,
       this.patient,
-      @JsonKey(name: 'type_doctor') this.typeDoctor,
-      @JsonKey(name: 'feed') this.feed});
+      @JsonKey(name: 'type_doctor') this.typeDoctor});
 
   factory _$NotificationsModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$NotificationsModelImplFromJson(json);
@@ -1041,20 +996,14 @@ class _$NotificationsModelImpl implements _NotificationsModel {
   @JsonKey(name: 'created_at')
   final String? createdAt;
   @override
-  @JsonKey(name: 'group_id')
-  final int? groupId;
-  @override
   final PatientNotificationModel? patient;
   @override
   @JsonKey(name: 'type_doctor')
   final TypeDoctorForNotificationModel? typeDoctor;
-  @override
-  @JsonKey(name: 'feed')
-  final PostCommunityModel? feed;
 
   @override
   String toString() {
-    return 'NotificationsModel(id: $id, read: $read, type: $type, content: $content, typeId: $typeId, createdAt: $createdAt, groupId: $groupId, patient: $patient, typeDoctor: $typeDoctor, feed: $feed)';
+    return 'NotificationsModel(id: $id, read: $read, type: $type, content: $content, typeId: $typeId, createdAt: $createdAt, patient: $patient, typeDoctor: $typeDoctor)';
   }
 
   @override
@@ -1069,17 +1018,15 @@ class _$NotificationsModelImpl implements _NotificationsModel {
             (identical(other.typeId, typeId) || other.typeId == typeId) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
-            (identical(other.groupId, groupId) || other.groupId == groupId) &&
             (identical(other.patient, patient) || other.patient == patient) &&
             (identical(other.typeDoctor, typeDoctor) ||
-                other.typeDoctor == typeDoctor) &&
-            (identical(other.feed, feed) || other.feed == feed));
+                other.typeDoctor == typeDoctor));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, read, type, content, typeId,
-      createdAt, groupId, patient, typeDoctor, feed);
+      createdAt, patient, typeDoctor);
 
   /// Create a copy of NotificationsModel
   /// with the given fields replaced by the non-null parameter values.
@@ -1106,11 +1053,9 @@ abstract class _NotificationsModel implements NotificationsModel {
           final String? content,
           @JsonKey(name: 'type_id') final int? typeId,
           @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'group_id') final int? groupId,
           final PatientNotificationModel? patient,
           @JsonKey(name: 'type_doctor')
-          final TypeDoctorForNotificationModel? typeDoctor,
-          @JsonKey(name: 'feed') final PostCommunityModel? feed}) =
+          final TypeDoctorForNotificationModel? typeDoctor}) =
       _$NotificationsModelImpl;
 
   factory _NotificationsModel.fromJson(Map<String, dynamic> json) =
@@ -1131,16 +1076,10 @@ abstract class _NotificationsModel implements NotificationsModel {
   @JsonKey(name: 'created_at')
   String? get createdAt;
   @override
-  @JsonKey(name: 'group_id')
-  int? get groupId;
-  @override
   PatientNotificationModel? get patient;
   @override
   @JsonKey(name: 'type_doctor')
   TypeDoctorForNotificationModel? get typeDoctor;
-  @override
-  @JsonKey(name: 'feed')
-  PostCommunityModel? get feed;
 
   /// Create a copy of NotificationsModel
   /// with the given fields replaced by the non-null parameter values.

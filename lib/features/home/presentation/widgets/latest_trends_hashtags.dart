@@ -27,75 +27,83 @@ class LatestTrendsHashtags extends StatelessWidget {
               return const SizedBox.shrink();
             }
 
-            return Card(
-              color: Colors.white,
-              elevation: 0.8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: GestureDetector(
-                onTap: () {
-                  navigatorKey.currentState?.pushNamed(
-                    AppRoutes.community,
-                    arguments: AppRoutesArgs.communityRouteArgs(
-                      homeDataModel: homeData,
-                      currentDoctorModel: currentDoctorModel,
-                      initialTab: 1,
+            return Column(
+              children: [
+                SizedBox(height: 10.h),
+                GestureDetector(
+                  onTap: () {
+                    context.read<TrendingCubit>().callTrendsTabTimes = 0;
+                    navigatorKey.currentState?.pushNamed(
+                      AppRoutes.community,
+                      arguments: AppRoutesArgs.communityRouteArgs(
+                        homeDataModel: homeData,
+                        currentDoctorModel: currentDoctorModel,
+                        initialTab: 1,
+                      ),
+                    );
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 0.8,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  );
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 100.h,
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Image.asset(
-                          'assets/images/trend.jpg',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      VerticalDivider(
-                        color: Colors.grey.shade200,
-                      ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 5),
-                            Expanded(
-                              // Add Expanded here to constrain the Column's width
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ...homeData.data!.trendsHashtags!
-                                      .take(6)
-                                      .toList()
-                                      .asMap()
-                                      .entries
-                                      .map(
-                                        (entry) => Flexible(
-                                          // Or use Expanded
-                                          child: Text(
-                                            '${entry.key + 1}. #${entry.value.tag}',
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.blue,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
-                                ],
-                              ),
+                    child: Container(
+                      width: double.infinity,
+                      height: 100.h,
+                      padding: const EdgeInsets.all(16),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Image.asset(
+                              'assets/images/trend.jpg',
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
+                          ),
+                          VerticalDivider(
+                            color: Colors.grey.shade200,
+                          ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 5),
+                                Expanded(
+                                  // Add Expanded here to constrain the Column's width
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ...homeData.data!.trendsHashtags!
+                                          .take(6)
+                                          .toList()
+                                          .asMap()
+                                          .entries
+                                          .map(
+                                            (entry) => Flexible(
+                                              // Or use Expanded
+                                              child: Text(
+                                                '${entry.key + 1}. #${entry.value.tag}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.blue,
+                                                ),
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(height: 10.h),
+              ],
             );
           },
         );

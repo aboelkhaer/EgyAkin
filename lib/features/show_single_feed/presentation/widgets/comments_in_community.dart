@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../exports.dart';
 
 class CommentsInCommunity extends StatelessWidget {
@@ -21,6 +23,7 @@ class CommentsInCommunity extends StatelessWidget {
           orElse: () {},
           error: (message) {
             customSnackBar(context: context, message: message);
+            Navigator.pop(context);
           },
           loaded: (
             commentsResponse,

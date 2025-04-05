@@ -108,8 +108,8 @@ class _HomeTabState extends State<HomeTab> {
                 controller: widget.cubit.homeTabScrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 20) +
+                      const EdgeInsets.only(top: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -146,13 +146,10 @@ class _HomeTabState extends State<HomeTab> {
                         },
                       ),
                       PostsSliderAndDots(cubit: widget.cubit),
-                      SizedBox(height: 10.h),
                       const CommunityButton(),
-                      SizedBox(height: 10.h),
                       const LatestTrendsHashtags(),
                       const GroupsHomeView(),
                       const DoctorsActivation(),
-                      SizedBox(height: 10.h),
                       TopDoctors(cubit: widget.cubit),
                       const YourPatientSection(),
                       const AllPatientSection(),

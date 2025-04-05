@@ -1,7 +1,11 @@
-String capitalizeFirstText(String text) {
-  if (text == 'null') {
-    return 'No description';
+String? capitalizeFirstText(String text, [bool isGroupRow = false]) {
+  if (text == 'null' && isGroupRow == false) {
+    return '';
   }
+  if (text == 'null' && isGroupRow == true) {
+    return null;
+  }
+
   if (text.isEmpty) {
     return text; // Return empty string if input is empty
   }

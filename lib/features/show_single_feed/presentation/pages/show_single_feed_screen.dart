@@ -304,10 +304,54 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                 break;
                                               case 'Delete':
                                                 // Handle delete action
-                                                navigatorKey.currentState
-                                                    ?.pop();
-                                                sl<CommunityCubit>().deletePost(
-                                                  feedToUse.id.toString(),
+
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      title: const Text(
+                                                          'Delete Post'),
+                                                      content: const Text(
+                                                          'Are you sure you want to delete this post?'),
+                                                      actions: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.pop(
+                                                                context); // Close the dialog
+                                                          },
+                                                          child: Text(
+                                                            'Cancel',
+                                                            style: TextStyle(
+                                                              color: Colors.grey
+                                                                  .shade600,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            // Perform the deletion logic here
+                                                            // For example, update the state or call a callback
+                                                            sl<CommunityCubit>()
+                                                                .deletePost(
+                                                              feedToUse.id
+                                                                  .toString(),
+                                                            );
+                                                            Navigator.pop(
+                                                                context); // Close the dialog
+                                                            navigatorKey
+                                                                .currentState
+                                                                ?.pop();
+                                                          },
+                                                          child: const Text(
+                                                            'Delete',
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.red),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    );
+                                                  },
                                                 );
 
                                                 break;
@@ -359,20 +403,20 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                 ),
                                               );
                                             }
-                                            items.add(
-                                              PopupMenuItem(
-                                                value: 'Report',
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(Icons.report,
-                                                        color: AppColors
-                                                            .description),
-                                                    SizedBox(width: 8.w),
-                                                    const Text('Report'),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
+                                            // items.add(
+                                            //   PopupMenuItem(
+                                            //     value: 'Report',
+                                            //     child: Row(
+                                            //       children: [
+                                            //         const Icon(Icons.report,
+                                            //             color: AppColors
+                                            //                 .description),
+                                            //         SizedBox(width: 8.w),
+                                            //         const Text('Report'),
+                                            //       ],
+                                            //     ),
+                                            //   ),
+                                            // );
 
                                             return items;
                                           },
@@ -597,10 +641,49 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                         );
                                         break;
                                       case 'Delete':
-                                        // Handle delete action
-                                        navigatorKey.currentState?.pop();
-                                        sl<CommunityCubit>().deletePost(
-                                          feedToUse.id.toString(),
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: const Text('Delete Post'),
+                                              content: const Text(
+                                                  'Are you sure you want to delete this post?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context); // Close the dialog
+                                                  },
+                                                  child: Text(
+                                                    'Cancel',
+                                                    style: TextStyle(
+                                                      color:
+                                                          Colors.grey.shade600,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    // Perform the deletion logic here
+                                                    // For example, update the state or call a callback
+                                                    sl<CommunityCubit>()
+                                                        .deletePost(
+                                                      feedToUse.id.toString(),
+                                                    );
+                                                    Navigator.pop(
+                                                        context); // Close the dialog
+                                                    navigatorKey.currentState
+                                                        ?.pop();
+                                                  },
+                                                  child: const Text(
+                                                    'Delete',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
                                         );
 
                                         break;
@@ -647,19 +730,19 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                         ),
                                       );
                                     }
-                                    items.add(
-                                      PopupMenuItem(
-                                        value: 'Report',
-                                        child: Row(
-                                          children: [
-                                            const Icon(Icons.report,
-                                                color: AppColors.description),
-                                            SizedBox(width: 8.w),
-                                            const Text('Report'),
-                                          ],
-                                        ),
-                                      ),
-                                    );
+                                    // items.add(
+                                    //   PopupMenuItem(
+                                    //     value: 'Report',
+                                    //     child: Row(
+                                    //       children: [
+                                    //         const Icon(Icons.report,
+                                    //             color: AppColors.description),
+                                    //         SizedBox(width: 8.w),
+                                    //         const Text('Report'),
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // );
 
                                     return items;
                                   },

@@ -370,10 +370,98 @@ class PostCard extends StatelessWidget {
                                                 case 'Delete':
                                                   if (isGroupPosts ||
                                                       isCommunitySearch) {
-                                                    onDeleteAdditional!();
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Delete Post'),
+                                                          content: const Text(
+                                                              'Are you sure you want to delete this post?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context); // Close the dialog
+                                                              },
+                                                              child: Text(
+                                                                'Cancel',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade600,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                // Perform the deletion logic here
+                                                                // For example, update the state or call a callback
+
+                                                                Navigator.pop(
+                                                                    context); // Close the dialog
+                                                                onDeleteAdditional!();
+                                                              },
+                                                              child: const Text(
+                                                                'Delete',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
+                                                    );
                                                   } else {
-                                                    cubit.deletePost(
-                                                      feed.id.toString(),
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                          title: const Text(
+                                                              'Delete Post'),
+                                                          content: const Text(
+                                                              'Are you sure you want to delete this post?'),
+                                                          actions: [
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context); // Close the dialog
+                                                              },
+                                                              child: Text(
+                                                                'Cancel',
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .shade600,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                // Perform the deletion logic here
+                                                                // For example, update the state or call a callback
+
+                                                                Navigator.pop(
+                                                                    context); // Close the dialog
+                                                                cubit
+                                                                    .deletePost(
+                                                                  feed.id
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                              child: const Text(
+                                                                'Delete',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      },
                                                     );
                                                   }
 
@@ -439,20 +527,20 @@ class PostCard extends StatelessWidget {
                                                 );
                                               }
 
-                                              items.add(
-                                                PopupMenuItem(
-                                                  value: 'Report',
-                                                  child: Row(
-                                                    children: [
-                                                      const Icon(Icons.report,
-                                                          color: AppColors
-                                                              .description),
-                                                      SizedBox(width: 8.w),
-                                                      const Text('Report'),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
+                                              // items.add(
+                                              //   PopupMenuItem(
+                                              //     value: 'Report',
+                                              //     child: Row(
+                                              //       children: [
+                                              //         const Icon(Icons.report,
+                                              //             color: AppColors
+                                              //                 .description),
+                                              //         SizedBox(width: 8.w),
+                                              //         const Text('Report'),
+                                              //       ],
+                                              //     ),
+                                              //   ),
+                                              // );
 
                                               return items;
                                             },

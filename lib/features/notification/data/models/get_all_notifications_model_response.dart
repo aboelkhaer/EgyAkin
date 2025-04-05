@@ -51,10 +51,8 @@ class NotificationsModel with _$NotificationsModel {
     String? content,
     @JsonKey(name: 'type_id') int? typeId,
     @JsonKey(name: 'created_at') String? createdAt,
-    @JsonKey(name: 'group_id') int? groupId,
     PatientNotificationModel? patient,
     @JsonKey(name: 'type_doctor') TypeDoctorForNotificationModel? typeDoctor,
-    @JsonKey(name: 'feed') PostCommunityModel? feed,
   }) = _NotificationsModel;
   factory NotificationsModel.fromJson(Map<String, dynamic> json) =>
       _$NotificationsModelFromJson(json);

@@ -1,7 +1,5 @@
 import 'dart:developer';
 
-import 'package:egy_akin/features/community/data/models/get_trending_tab_in_community_model_response.dart';
-import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_state.dart';
 
 import '../../../../../exports.dart';
@@ -9,10 +7,11 @@ import '../../../../../exports.dart';
 class TrendingTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
-  const TrendingTab(
-      {super.key,
-      required this.currentDoctorModel,
-      required this.homeDataModel});
+  const TrendingTab({
+    super.key,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
+  });
 
   @override
   State<TrendingTab> createState() => _TrendingTabState();
@@ -52,15 +51,14 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
   }
 
   void _onScroll() {
-    if (_cubit.isLastPage) return;
+    // Return early if we're already at the last page OR currently loading
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
 
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
     const threshold = 200.0;
 
-    if (!_cubit.isLoadingMoreForScroll &&
-        maxScroll - currentScroll <= threshold) {
-      _cubit.isLoadingMoreForScroll = true;
+    if (maxScroll - currentScroll <= threshold) {
       _cubit.loadMoreTrends();
     }
   }

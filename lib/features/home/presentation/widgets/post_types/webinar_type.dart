@@ -83,7 +83,7 @@ class WebinarType extends StatelessWidget {
                                 Flexible(
                                   child: Text(
                                     capitalizeFirstText(
-                                        postModel.content.toString()),
+                                        postModel.content.toString())!,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.title,

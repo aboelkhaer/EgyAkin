@@ -110,6 +110,9 @@ class RouteGenerator {
                 BlocProvider<MoreCubit>(
                   create: (context) => di.sl<MoreCubit>(),
                 ),
+                BlocProvider.value(value: di.sl<TrendingCubit>()),
+                BlocProvider.value(value: di.sl<GroupsCubit>()),
+                BlocProvider.value(value: di.sl<CommunityCubit>()),
               ],
               child: HomeScreen(
                 page: arguments,

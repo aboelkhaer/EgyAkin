@@ -28,29 +28,36 @@ class AllPatientSection extends StatelessWidget {
                 if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
                   return const SizedBox.shrink();
                 }
-                return HomePatientTitleHeader(
-                  title: AppStrings.allPatients,
-                  patientCount: homeData.allPatientCount.toString(),
-                  leftArrow: ' ( ',
-                  rightArrow: ' ) ',
-                  onTap: () {
-                    navigatorKey.currentState?.pushNamed(AppRoutes.allPatients,
-                        arguments: AppRoutesArgs.allDoctorsPatientsRouteArgs(
-                          accountVerification: homeData.verified!,
-                          currentDoctorModel: currentDoctorModel,
-                          isSyndicateCardRequired:
-                              homeData.isSyndicateCardRequired!,
-                          currentDoctorRole: homeData.role.toString(),
-                          currentDoctorPoints: int.parse(homeData.scoreValue!),
-                          homeDataModel: homeData,
-                        ));
-                  },
+                return Column(
+                  children: [
+                    HomePatientTitleHeader(
+                      title: AppStrings.allPatients,
+                      patientCount: homeData.allPatientCount.toString(),
+                      leftArrow: ' ( ',
+                      rightArrow: ' ) ',
+                      onTap: () {
+                        navigatorKey.currentState?.pushNamed(
+                            AppRoutes.allPatients,
+                            arguments:
+                                AppRoutesArgs.allDoctorsPatientsRouteArgs(
+                              accountVerification: homeData.verified!,
+                              currentDoctorModel: currentDoctorModel,
+                              isSyndicateCardRequired:
+                                  homeData.isSyndicateCardRequired!,
+                              currentDoctorRole: homeData.role.toString(),
+                              currentDoctorPoints:
+                                  int.parse(homeData.scoreValue!),
+                              homeDataModel: homeData,
+                            ));
+                      },
+                    ),
+                    SizedBox(height: 10.h),
+                  ],
                 );
               },
             );
           },
         ),
-        SizedBox(height: 10.h),
         BlocBuilder<HomeCubit, HomeState>(builder: (context, state) {
           return state.maybeWhen(
             orElse: () {

@@ -29,13 +29,18 @@ class TopDoctors extends StatelessWidget {
                 if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
                   return const SizedBox.shrink();
                 }
-                return HomePatientTitleHeader(
-                  title: 'Top Doctors',
-                  patientCount: '',
-                  leftArrow: '',
-                  isWithIcon: false,
-                  rightArrow: '',
-                  onTap: () {},
+                return Column(
+                  children: [
+                    SizedBox(height: 10.h),
+                    HomePatientTitleHeader(
+                      title: 'Top Doctors',
+                      patientCount: '',
+                      leftArrow: '',
+                      isWithIcon: false,
+                      rightArrow: '',
+                      onTap: () {},
+                    ),
+                  ],
                 );
               },
             );

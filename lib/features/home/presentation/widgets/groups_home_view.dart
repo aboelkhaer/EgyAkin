@@ -32,6 +32,7 @@ class GroupsHomeView extends StatelessWidget {
                 SizedBox(height: 10.h),
                 GestureDetector(
                   onTap: () {
+                    context.read<GroupsCubit>().callGroupsTabTimes = 0;
                     navigatorKey.currentState?.pushNamed(
                       AppRoutes.community,
                       arguments: AppRoutesArgs.communityRouteArgs(

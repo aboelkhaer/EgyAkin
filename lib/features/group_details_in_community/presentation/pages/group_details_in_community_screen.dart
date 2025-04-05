@@ -353,17 +353,17 @@ class _GroupDetailsInCommunityScreenState
                           },
                           itemBuilder: (BuildContext context) {
                             return <PopupMenuEntry<String>>[
-                              PopupMenuItem(
-                                value: 'report',
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.report,
-                                        color: AppColors.description),
-                                    SizedBox(width: 8.w),
-                                    const Text('Report'),
-                                  ],
-                                ),
-                              ),
+                              // PopupMenuItem(
+                              //   value: 'report',
+                              //   child: Row(
+                              //     children: [
+                              //       const Icon(Icons.report,
+                              //           color: AppColors.description),
+                              //       SizedBox(width: 8.w),
+                              //       const Text('Report'),
+                              //     ],
+                              //   ),
+                              // ),
                             ];
                           },
                         );
@@ -420,17 +420,17 @@ class _GroupDetailsInCommunityScreenState
                                 },
                                 itemBuilder: (BuildContext context) {
                                   final items = <PopupMenuEntry<String>>[
-                                    PopupMenuItem(
-                                      value: 'report',
-                                      child: Row(
-                                        children: [
-                                          const Icon(Icons.report,
-                                              color: AppColors.description),
-                                          SizedBox(width: 8.w),
-                                          const Text('Report'),
-                                        ],
-                                      ),
-                                    ),
+                                    // PopupMenuItem(
+                                    //   value: 'report',
+                                    //   child: Row(
+                                    //     children: [
+                                    //       const Icon(Icons.report,
+                                    //           color: AppColors.description),
+                                    //       SizedBox(width: 8.w),
+                                    //       const Text('Report'),
+                                    //     ],
+                                    //   ),
+                                    // ),
                                   ];
 
                                   if (groupDetails.data!.group!.userStatus ==
@@ -885,14 +885,10 @@ class _GroupDetailsInCommunityScreenState
                               isSeeMore,
                               isAcceptOrDeclineGroupInvitation,
                             ) {
-                              if ((groupDetails.data!.group!.userStatus ==
-                                          GroupInviteStatus.invited.name &&
-                                      groupDetails.data!.group!.privacy ==
-                                          GroupStatus.public.name ||
+                              if (groupDetails.data!.group!.userStatus ==
+                                      GroupInviteStatus.accepted.name ||
                                   groupDetails.data!.group!.userStatus ==
-                                      GroupInviteStatus.joined.name ||
-                                  groupDetails.data!.group!.userStatus ==
-                                      GroupInviteStatus.accepted.name)) {
+                                      GroupInviteStatus.joined.name) {
                                 return FadeIn(
                                   child: Column(
                                     children: [
@@ -1137,7 +1133,12 @@ class _GroupDetailsInCommunityScreenState
                         isSeeMore,
                         isAcceptOrDeclineGroupInvitation,
                       ) {
-                        return groupDetails.data!.posts!.data!.isEmpty
+                        return groupDetails.data!.posts!.data!.isEmpty ||
+                                groupDetails.data!.group!.userStatus == null ||
+                                groupDetails.data!.group!.userStatus ==
+                                    GroupInviteStatus.pending.name ||
+                                groupDetails.data!.group!.userStatus ==
+                                    GroupInviteStatus.declined.name
                             ? Column(
                                 children: [
                                   SizedBox(height: 50.h),

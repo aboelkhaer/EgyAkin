@@ -146,31 +146,36 @@ class GroupRow extends StatelessWidget {
                                 Icons.group_add,
                               ),
                               const SizedBox(width: 5),
+                              //todo
                               Text(
-                                (groupModel.userStatus ==
-                                            GroupInviteStatus.invited.name &&
-                                        groupModel.privacy ==
-                                            GroupStatus.private.name)
-                                    ? 'Invited'
-                                    : (groupModel.userStatus ==
-                                                    GroupInviteStatus
-                                                        .invited.name &&
-                                                groupModel.privacy ==
-                                                    GroupStatus.private.name) ||
-                                            (groupModel.userStatus ==
-                                                GroupInviteStatus.pending.name)
-                                        ? 'Pending'
-                                        : groupModel.userStatus ==
-                                                    GroupInviteStatus
-                                                        .accepted.name ||
-                                                groupModel.userStatus ==
-                                                    GroupInviteStatus
-                                                        .joined.name ||
-                                                groupModel.userStatus ==
-                                                    GroupInviteStatus
-                                                        .invited.name
-                                            ? 'Joined'
-                                            : 'Join',
+                                // (groupModel.userStatus ==
+                                //             GroupInviteStatus.invited.name &&
+                                //         groupModel.privacy ==
+                                //             GroupStatus.private.name)
+                                //     ? 'Invited'
+                                //     : (groupModel.userStatus ==
+                                //                     GroupInviteStatus
+                                //                         .invited.name &&
+                                //                 groupModel.privacy ==
+                                //                     GroupStatus.private.name) ||
+                                //             (groupModel.userStatus ==
+                                //                 GroupInviteStatus.pending.name)
+                                //         ? 'Pending'
+                                //         : groupModel.userStatus ==
+                                //                     GroupInviteStatus
+                                //                         .accepted.name ||
+                                //                 groupModel.userStatus ==
+                                //                     GroupInviteStatus
+                                //                         .joined.name ||
+                                //                 groupModel.userStatus ==
+                                //                     GroupInviteStatus
+                                //                         .invited.name
+                                //             ? 'Joined'
+                                //             : 'Join',
+                                capitalizeFirstText(
+                                        groupModel.userStatus.toString(),
+                                        true) ??
+                                    'Join',
                                 style: const TextStyle(
                                   fontSize: 14,
                                 ),

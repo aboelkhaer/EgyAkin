@@ -47,28 +47,24 @@ class _CurrentDoctorPatientsScreenState
   }
 
   void _onScroll() {
-    if (context.read<CurrentDoctorPatientsCubit>().isLastPage) {
-      return;
-    } else {
-      final maxScroll = context
-          .read<CurrentDoctorPatientsCubit>()
-          .scrollController!
-          .position
-          .maxScrollExtent;
-      final currentScroll = context
-          .read<CurrentDoctorPatientsCubit>()
-          .scrollController!
-          .position
-          .pixels;
-      const threshold = 200.0;
-      if (context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll ==
-              false &&
-          maxScroll - currentScroll <= threshold) {
-        context.read<CurrentDoctorPatientsCubit>().isLoadingMoreForScroll =
-            true;
+    final cubit = context.read<CurrentDoctorPatientsCubit>();
 
-        context.read<CurrentDoctorPatientsCubit>().loadMorePatients();
-      }
+    // Early return conditions in a single check
+    if (cubit.isLastPage ||
+        cubit.isLoadingMoreForScroll ||
+        cubit.scrollController == null) {
+      return;
+    }
+
+    final position = cubit.scrollController!.position;
+    final maxScroll = position.maxScrollExtent;
+    final currentScroll = position.pixels;
+    const threshold = 200.0;
+
+    // Trigger load more when near bottom
+    if (maxScroll - currentScroll <= threshold) {
+      cubit.isLoadingMoreForScroll = true;
+      cubit.loadMorePatients();
     }
   }
 

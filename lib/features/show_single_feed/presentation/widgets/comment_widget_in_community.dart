@@ -469,22 +469,22 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                         final items =
                                                             <PopupMenuEntry<
                                                                 String>>[
-                                                          PopupMenuItem(
-                                                            value: 'Report',
-                                                            child: Row(
-                                                              children: [
-                                                                const Icon(
-                                                                    Icons
-                                                                        .report,
-                                                                    color: AppColors
-                                                                        .description),
-                                                                SizedBox(
-                                                                    width: 8.w),
-                                                                const Text(
-                                                                    'Report'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          // PopupMenuItem(
+                                                          //   value: 'Report',
+                                                          //   child: Row(
+                                                          //     children: [
+                                                          //       const Icon(
+                                                          //           Icons
+                                                          //               .report,
+                                                          //           color: AppColors
+                                                          //               .description),
+                                                          //       SizedBox(
+                                                          //           width: 8.w),
+                                                          //       const Text(
+                                                          //           'Report'),
+                                                          //     ],
+                                                          //   ),
+                                                          // ),
                                                         ];
 
                                                         if (commentModel

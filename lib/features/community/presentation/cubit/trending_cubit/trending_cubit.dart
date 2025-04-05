@@ -35,14 +35,19 @@ class TrendingCubit extends Cubit<TrendingState> {
   }
 
   void loadMoreTrends() async {
+    // Add this check at the start of the method
+    if (isLastPage || isLoadingMoreForScroll) return;
+
+    isLoadingMoreForScroll = true;
     _currentPage++;
+
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => TrendingState.loaded(
         '',
         '',
         value.response,
-        true,
+        true, // Show loading indicator
       ),
     ));
 
@@ -50,40 +55,38 @@ class TrendingCubit extends Cubit<TrendingState> {
         await _getTrendingPostsInCommunityUsecase.execute(_currentPage);
 
     result.fold(
-      (l) {
-        _currentPage--;
-        emit(TrendingState.error(l.message));
+      (failure) {
+        _currentPage--; // Rollback page increment on failure
+        isLoadingMoreForScroll = false;
+        emit(TrendingState.error(failure.message));
       },
-      (loadMoreTrends) async {
+      (newData) {
         final currentState = state;
-        currentState.when(
-          initial: () {},
-          loading: () {},
-          loaded: (
-            snackBarMessage,
-            dialogMessage,
-            response,
-            isSeeMore,
-          ) {
+        currentState.maybeWhen(
+          loaded: (_, __, response, ___) {
+            // Check if we've reached the last page
+            isLastPage = (response.lastPage != null &&
+                _currentPage >= response.lastPage!);
+
             final updatedData = response.copyWith(
               data: [
                 ...(response.data ?? []),
-                ...(loadMoreTrends.data ?? []),
+                ...(newData.data ?? []),
               ],
             );
 
-            isLastPage = (response.lastPage != null &&
-                _currentPage >= response.lastPage!);
             isLoadingMoreForScroll = false;
 
             emit(TrendingState.loaded(
               '',
               '',
               updatedData,
-              false,
+              false, // Hide loading indicator
             ));
           },
-          error: (error) {},
+          orElse: () {
+            isLoadingMoreForScroll = false;
+          },
         );
       },
     );

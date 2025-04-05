@@ -64,7 +64,7 @@ class ProfileNameAndJob extends StatelessWidget {
                 SizedBox(height: 3.h),
                 Text(
                   capitalizeFirstText(
-                      cubit.currentDoctor.specialty ?? AppStrings.empty),
+                      cubit.currentDoctor.specialty ?? AppStrings.empty)!,
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
@@ -161,7 +161,7 @@ class ProfileNameAndJob extends StatelessWidget {
                 SizedBox(height: 3.h),
                 Text(
                   capitalizeFirstText(
-                      doctorModel.specialty ?? AppStrings.empty),
+                      doctorModel.specialty ?? AppStrings.empty)!,
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,

@@ -216,7 +216,7 @@ class HomeHeader extends StatelessWidget {
                           return Text(
                             capitalizeFirstText(
                                 cubit.currentDoctorModel.specialty ??
-                                    AppStrings.empty),
+                                    AppStrings.empty)!,
                             style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10.sp,

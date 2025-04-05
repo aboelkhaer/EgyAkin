@@ -1804,7 +1804,7 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
                 currentDoctorModel: currentDoctorModel,
                 homeDataModel: homeDataModel,
-                groupId: notificationModel.groupId.toString(),
+                groupId: notificationModel.typeId.toString(),
               ),
             );
           },
@@ -1947,7 +1947,7 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
                 currentDoctorModel: currentDoctorModel,
                 homeDataModel: homeDataModel,
-                groupId: notificationModel.groupId.toString(),
+                groupId: notificationModel.typeId.toString(),
               ),
             );
           },

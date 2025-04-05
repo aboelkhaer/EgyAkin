@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/utilities/enums.dart';
@@ -301,13 +302,13 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
         ),
       ),
     );
-
+    log(editableGroupModel!.privacy.toString());
     final result = await _updateGroupTextsInCommunityUsecase.execute(
       UpdateGroupTextsInCommunityUsecaseInput(
         groupId: groupId,
         name: groupHeaderText,
         description: groupDescriptionText,
-        privacy: editableGroupModel!.privacy.toString(),
+        privacy: _privacy.name,
       ),
     );
     result.fold(
