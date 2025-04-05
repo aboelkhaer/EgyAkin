@@ -885,14 +885,14 @@ class _GroupDetailsInCommunityScreenState
                               isSeeMore,
                               isAcceptOrDeclineGroupInvitation,
                             ) {
-                              if (groupDetails.data!.group!.userStatus ==
+                              if ((groupDetails.data!.group!.userStatus ==
                                           GroupInviteStatus.invited.name &&
                                       groupDetails.data!.group!.privacy ==
                                           GroupStatus.public.name ||
                                   groupDetails.data!.group!.userStatus ==
                                       GroupInviteStatus.joined.name ||
                                   groupDetails.data!.group!.userStatus ==
-                                      GroupInviteStatus.accepted.name) {
+                                      GroupInviteStatus.accepted.name)) {
                                 return FadeIn(
                                   child: Column(
                                     children: [

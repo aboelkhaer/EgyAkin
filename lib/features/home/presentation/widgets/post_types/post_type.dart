@@ -27,6 +27,8 @@ class PostType extends StatelessWidget {
               homeDataModel: cubit.homeDataModel,
               currentDoctorModel: cubit.currentDoctorModel,
               feed: postModel,
+              isComeFromNotification: false,
+              feedId: '',
             ),
           );
         },
@@ -79,23 +81,23 @@ class PostType extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             // const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    capitalizeFirstText(
-                                        postModel.content.toString()),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.title,
-                                        fontSize: 12.sp),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: size.height * 0.01),
+                            // Row(
+                            //   children: [
+                            //     Flexible(
+                            //       child: Text(
+                            //         capitalizeFirstText(
+                            //             postModel.content.toString()),
+                            //         style: TextStyle(
+                            //             fontWeight: FontWeight.bold,
+                            //             color: AppColors.title,
+                            //             fontSize: 12.sp),
+                            //         maxLines: 2,
+                            //         overflow: TextOverflow.ellipsis,
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
+                            // SizedBox(height: size.height * 0.01),
                             Row(
                               children: [
                                 Flexible(
@@ -108,8 +110,8 @@ class PostType extends StatelessWidget {
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: AppColors.description,
-                                        fontSize: 8.sp),
-                                    maxLines: 4,
+                                        fontSize: 10.sp),
+                                    maxLines: 5,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),

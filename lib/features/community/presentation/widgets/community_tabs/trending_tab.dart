@@ -101,11 +101,25 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
               isSeeMore,
             ) {
               return response.data!.isEmpty
-                  ? Center(
-                      child: Image.asset(
-                        AppImages.notFound,
-                        width: 150.w,
-                        height: 150.h,
+                  ? RefreshIndicator(
+                      onRefresh: () {
+                        return cubit.getTrendingPostsInCommunity();
+                      },
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: Center(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 150.h),
+                              Image.asset(
+                                AppImages.notFound,
+                                width: 150.w,
+                                height: 150.h,
+                              ),
+                              SizedBox(height: 150.h),
+                            ],
+                          ),
+                        ),
                       ),
                     )
                   : RefreshIndicator(

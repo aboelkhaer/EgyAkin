@@ -58,11 +58,20 @@ class _MyGroupsTabState extends State<MyGroupsTab> {
               isSeeMore,
             ) {
               if (response.data!.data!.isEmpty) {
-                return Center(
-                  child: Image.asset(
-                    AppImages.notFound,
-                    width: 200,
-                    height: 200,
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 150.h),
+                        Image.asset(
+                          AppImages.notFound,
+                          width: 150.w,
+                          height: 150.h,
+                        ),
+                        SizedBox(height: 150.h),
+                      ],
+                    ),
                   ),
                 );
               }

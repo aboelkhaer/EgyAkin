@@ -1,9 +1,3 @@
-import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
-import 'package:egy_akin/features/home/presentation/widgets/community_button.dart';
-import 'package:egy_akin/features/home/presentation/widgets/groups_home_view.dart';
-import 'package:egy_akin/features/home/presentation/widgets/latest_trends_hashtags.dart';
-import 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
-import 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../../../../exports.dart';
@@ -112,7 +106,7 @@ class _HomeTabState extends State<HomeTab> {
             Expanded(
               child: SingleChildScrollView(
                 controller: widget.cubit.homeTabScrollController,
-                physics: const BouncingScrollPhysics(),
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

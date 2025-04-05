@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
+
 import '../../../../exports.dart';
 
 abstract class ShowSingleFeedDatasource {
@@ -25,6 +27,9 @@ abstract class ShowSingleFeedDatasource {
     required String postId,
     required String comment,
     required int? parentId,
+  });
+  Future<GetPostByIdModelResponse> getPostById({
+    required String postId,
   });
 }
 
@@ -80,5 +85,10 @@ class ShowSingleFeedDatasourceImpl implements ShowSingleFeedDatasource {
           required int? parentId}) async {
     return await _apiServices.createReplyOnCommentInCommunity(
         postId, comment, parentId);
+  }
+
+  @override
+  Future<GetPostByIdModelResponse> getPostById({required String postId}) async {
+    return await _apiServices.getPostById(postId);
   }
 }

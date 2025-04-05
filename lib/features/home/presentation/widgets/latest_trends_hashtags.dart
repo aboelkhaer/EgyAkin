@@ -63,22 +63,31 @@ class LatestTrendsHashtags extends StatelessWidget {
                         child: Row(
                           children: [
                             const SizedBox(width: 5),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ...homeData.data!.trendsHashtags!
-                                    .take(6)
-                                    .toList()
-                                    .asMap()
-                                    .entries
-                                    .map((entry) => Text(
-                                          '${entry.key + 1}. #${entry.value.tag}',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.blue,
+                            Expanded(
+                              // Add Expanded here to constrain the Column's width
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...homeData.data!.trendsHashtags!
+                                      .take(6)
+                                      .toList()
+                                      .asMap()
+                                      .entries
+                                      .map(
+                                        (entry) => Flexible(
+                                          // Or use Expanded
+                                          child: Text(
+                                            '${entry.key + 1}. #${entry.value.tag}',
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.blue,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        )),
-                              ],
+                                        ),
+                                      ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

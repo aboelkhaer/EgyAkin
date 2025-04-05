@@ -299,11 +299,15 @@ class AppRoutesArgs {
     required HomeModelResponse homeDataModel,
     required DoctorModel currentDoctorModel,
     required PostCommunityModel feed,
+    required bool isComeFromNotification,
+    required String feedId,
   }) {
     return {
       'homeDataModel': homeDataModel,
       'currentDoctorModel': currentDoctorModel,
       'feed': feed,
+      'isComeFromNotification': isComeFromNotification,
+      'feedId': feedId,
     };
   }
 

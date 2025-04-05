@@ -23,7 +23,16 @@ class _PostsTabState extends State<PostsTab> {
     CommunityCubit cubit = CommunityCubit.get(context);
 
     return Container(
-      color: Colors.grey.shade200,
+      // color: Colors.grey.shade200,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(
+            color: Colors.grey.shade200,
+            width: 1.0,
+          ),
+        ),
+      ),
       child: BlocBuilder<CommunityCubit, CommunityState>(
         builder: (context, state) {
           return state.maybeWhen(
@@ -49,11 +58,20 @@ class _PostsTabState extends State<PostsTab> {
                         await cubit.getAllFeeds();
                       },
                       child: feedsResponse.data!.data!.isEmpty
-                          ? Center(
-                              child: Image.asset(
-                                AppImages.notFound,
-                                width: 150.w,
-                                height: 150.h,
+                          ? SingleChildScrollView(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              child: Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(height: 150.h),
+                                    Image.asset(
+                                      AppImages.notFound,
+                                      width: 150.w,
+                                      height: 150.h,
+                                    ),
+                                    SizedBox(height: 150.h),
+                                  ],
+                                ),
                               ),
                             )
                           : ListView.builder(

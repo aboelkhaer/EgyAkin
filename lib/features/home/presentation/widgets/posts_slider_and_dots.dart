@@ -39,38 +39,42 @@ class PostsSliderAndDots extends StatelessWidget {
                 }
                 return FadeIn(
                   duration: const Duration(seconds: 2),
-                  child: CarouselSlider.builder(
-                    itemCount: homeData.data!.feeds!.length,
-                    carouselController: cubit.carouselController,
-                    itemBuilder:
-                        (BuildContext context, int index, int pageViewIndex) {
-                      return checkPostType(
-                        cubit: cubit,
-                        postModel: homeData.data!.feeds![index],
-                      );
-                    },
-                    options: CarouselOptions(
-                      height: 150.h,
-                      aspectRatio: 16 / 9,
-                      viewportFraction: 1,
-                      initialPage: 0,
-                      enableInfiniteScroll:
-                          homeData.data!.feeds!.length <= 1 ? false : true,
-                      reverse: false,
-                      onPageChanged: (index, reason) {
-                        cubit.dotsPosition = index;
-                        cubit.changeDotsPositions();
-                      },
-                      autoPlay: true,
-                      autoPlayInterval: const Duration(seconds: 3),
-                      autoPlayAnimationDuration:
-                          const Duration(milliseconds: 800),
-                      autoPlayCurve: Curves.fastOutSlowIn,
-                      enlargeCenterPage: false,
-                      enlargeFactor: 0.3,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
+                  child: homeData.data!.feeds!.isEmpty
+                      ? const SizedBox.shrink()
+                      : CarouselSlider.builder(
+                          itemCount: homeData.data!.feeds!.length,
+                          carouselController: cubit.carouselController,
+                          itemBuilder: (BuildContext context, int index,
+                              int pageViewIndex) {
+                            return checkPostType(
+                              cubit: cubit,
+                              postModel: homeData.data!.feeds![index],
+                            );
+                          },
+                          options: CarouselOptions(
+                            height: 150.h,
+                            aspectRatio: 16 / 9,
+                            viewportFraction: 1,
+                            initialPage: 0,
+                            enableInfiniteScroll:
+                                homeData.data!.feeds!.length <= 1
+                                    ? false
+                                    : true,
+                            reverse: false,
+                            onPageChanged: (index, reason) {
+                              cubit.dotsPosition = index;
+                              cubit.changeDotsPositions();
+                            },
+                            autoPlay: true,
+                            autoPlayInterval: const Duration(seconds: 3),
+                            autoPlayAnimationDuration:
+                                const Duration(milliseconds: 800),
+                            autoPlayCurve: Curves.fastOutSlowIn,
+                            enlargeCenterPage: false,
+                            enlargeFactor: 0.3,
+                            scrollDirection: Axis.horizontal,
+                          ),
+                        ),
                 );
               },
             );

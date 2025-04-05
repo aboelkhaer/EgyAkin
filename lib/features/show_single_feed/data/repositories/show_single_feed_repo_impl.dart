@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -108,6 +109,24 @@ class ShowSingleFeedRepositoryImpl extends ShowSingleFeedRepository {
         final response =
             await showSingleFeedDatasource.createReplyOnCommentInCommunity(
                 postId: postId, comment: comment, parentId: parentId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+
+  @override
+  Future<Either<Failure, GetPostByIdModelResponse>> getPostById(
+      {required String postId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await showSingleFeedDatasource.getPostById(postId: postId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

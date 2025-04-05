@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
+import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
 part 'api_services.g.dart';
@@ -56,6 +57,7 @@ abstract class ApiServices {
     @Field("phone") String phone,
     @Field("job") String job,
     @Field("highestdegree") String highestDegree,
+    @Field("registration_number") String registrationNumber,
   );
 
   @GET('${ApiEndPoint.sections}/{patientId}')
@@ -548,5 +550,10 @@ abstract class ApiServices {
     @Path('groupId') String groupId,
     @Field('status') String status,
     @Field('invitation_id') int invitationId,
+  );
+
+  @GET('${ApiEndPoint.getPostById}/{postId}')
+  Future<GetPostByIdModelResponse> getPostById(
+    @Path('postId') String postId,
   );
 }

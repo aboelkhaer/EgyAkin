@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
+
 import '../../../../exports.dart';
 
 class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
@@ -8,7 +10,8 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       this._deleteCommentOnPostInCommunityUsecase,
       this._createReplyOnCommentInCommunityUsecase,
       this._addVoteAndUnvoteUsecase,
-      this._addOptionOnPollUsecase)
+      this._addOptionOnPollUsecase,
+      this._getPostByIdUsecase)
       : super(const ShowSingleFeedState.initial());
   static ShowSingleFeedCubit get(context) => BlocProvider.of(context);
 
@@ -24,6 +27,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   // ScrollController scrollController = ScrollController();
   final AddVoteAndUnvoteUsecase _addVoteAndUnvoteUsecase;
   final AddOptionOnPollUsecase _addOptionOnPollUsecase;
+  final GetPostByIdUsecase _getPostByIdUsecase;
 
   final Map<int, Set<int>> postSelectedOptions = {};
   final Map<int, int?> postSelectedOption = {};
@@ -38,13 +42,51 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   final GlobalKey<AnimatedListState> listKeyForComments =
       GlobalKey<AnimatedListState>();
 
-  getCommentsInCommunity(String postId, PostCommunityModel feed,
+  Future<PostCommunityModel> getPostByIdWhenComeFromNotification(
+      String postId) async {
+    emit(const ShowSingleFeedState.loading());
+
+    final result = await _getPostByIdUsecase.execute(postId);
+    return result.fold(
+      (l) {
+        // Handle error case
+        emit(ShowSingleFeedState.error(l.message));
+        return const PostCommunityModel(); // Return default/empty model
+      },
+      (r) {
+        // Handle success case
+        emit(ShowSingleFeedState.loaded(
+          // You'll need to provide all required parameters for the loaded state
+          // This is just a placeholder - adjust according to your actual state
+          const GetCommentsInCommunityModelResponse(),
+          0,
+          r.data!,
+          false,
+          false,
+          '',
+          null,
+          false,
+          false,
+          false,
+          false,
+          false,
+        ));
+        return r.data!;
+      },
+    );
+  }
+
+  getCommentsInCommunity(
+      String postId, PostCommunityModel feed, bool isComeFromNotification,
       {String? highlightedCommentId}) async {
     commentToReply = null;
     _currentPage = 1;
     // Emit loading state only if no silent refresh
     if (highlightedCommentId == null) {
-      emit(const ShowSingleFeedState.loading());
+      // if(isComeFromNotification ==true)
+      if (!isComeFromNotification) {
+        emit(const ShowSingleFeedState.loading());
+      }
 
       final result = await _getCommentsInCommunityUsecase.execute(
         GetCommentsInCommunityUsecaseInput(
@@ -54,7 +96,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       );
       result.fold(
         (l) {
-          emit(ShowSingleFeedState.error(l.message));
+          if (!isComeFromNotification) {
+            emit(ShowSingleFeedState.error(l.message));
+          }
         },
         (r) async {
           if (highlightedCommentId == null) {
@@ -105,7 +149,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
   loadMoreComments(String postId) async {
     // Don't load more if we're already at the last page or currently loading
-    if (isLastPage) return;
+    if (isLoadingMoreForScroll || isLastPage) return;
 
     _currentPage++;
     isLoadingMoreForScroll = true;
@@ -247,7 +291,10 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               : (currentFeed.likesCount ?? 0) + 1; // Increase likes count
 
           // Call the like/unlike API
-          sl<CommunityCubit>().addLikeOrUnlikeOnPost(currentFeed.id.toString());
+          sl<CommunityCubit>().addLikeOrUnlikeOnPost(
+            currentFeed.id.toString(),
+            likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like',
+          );
 
           // Update the post state with the new like status and likes count
           sl<CommunityCubit>().updatePost(
@@ -278,14 +325,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         },
       ),
     );
-
-    // Reset the flag after the operation is complete (assuming the API call is async)
-    Future.delayed(
-      const Duration(milliseconds: 500),
-      () {
-        _isLikingOrUnlikingPost = false;
-      },
-    );
+    _isLikingOrUnlikingPost = false;
   }
 
   bool _isSavingOrUnsavingPost = false; // Add this as a private flag
@@ -704,6 +744,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         await getCommentsInCommunity(
           postId,
           updatedFeed, // Pass updated feed
+          false,
           highlightedCommentId: r.data!.id.toString(),
         );
       },

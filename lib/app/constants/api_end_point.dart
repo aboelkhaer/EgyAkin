@@ -102,4 +102,5 @@ class ApiEndPoint {
   static const getDoctorInvitationsForGroups =
       '$baseUrl/api/groups/invitations';
   static const acceptOrDeclineMemberInGroup = '$baseUrl/api/groups';
+  static const getPostById = '$baseUrl/api/feed/posts';
 }

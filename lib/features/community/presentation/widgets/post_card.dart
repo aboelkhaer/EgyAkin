@@ -120,6 +120,8 @@ class PostCard extends StatelessWidget {
                         homeDataModel: homeDataModel,
                         currentDoctorModel: currentDoctorModel,
                         feed: feed,
+                        isComeFromNotification: false,
+                        feedId: '',
                       ),
                     );
                   },
@@ -582,6 +584,8 @@ class PostCard extends StatelessWidget {
                   homeDataModel: homeDataModel,
                   currentDoctorModel: currentDoctorModel,
                   feed: feed,
+                  isComeFromNotification: false,
+                  feedId: '',
                 ),
               );
             },
@@ -601,7 +605,10 @@ class PostCard extends StatelessWidget {
                           if (isGroupPosts || isCommunitySearch) {
                             onLikeAndUnlikeAdditional!();
                           } else {
-                            cubit.addLikeOrUnlikeOnPost(feed.id.toString());
+                            cubit.addLikeOrUnlikeOnPost(
+                              feed.id.toString(),
+                              likeOrUnlike: feed.isLiked! ? 'unlike' : 'like',
+                            );
                           }
                         },
                         highlightColor: Colors.transparent,
@@ -633,6 +640,8 @@ class PostCard extends StatelessWidget {
                               homeDataModel: homeDataModel,
                               currentDoctorModel: currentDoctorModel,
                               feed: feed,
+                              isComeFromNotification: false,
+                              feedId: '',
                             ),
                           );
                         },

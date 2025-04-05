@@ -118,23 +118,32 @@ class _MoreScreenState extends State<MoreScreen> {
                       widget.homeDataModel.isSyndicateCardRequired)) {
                     return const SizedBox.shrink();
                   }
+
                   return ListTile(
                     title: Text(
-                      'Syndicate card verification',
+                      widget.homeDataModel.isSyndicateCardRequired ==
+                              VerificationBySyndicateCard.Pending.name
+                          ? 'Verification is loading...'
+                          : 'Syndicate card verification',
                       style: TextStyle(fontSize: 13.5.sp),
                     ),
                     leading: Icon(
                       Icons.verified,
                       color: Colors.grey.shade600,
                     ),
-                    trailing: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 15.r,
-                    ),
+                    trailing: widget.homeDataModel.isSyndicateCardRequired ==
+                            VerificationBySyndicateCard.Pending.name
+                        ? const SizedBox.shrink()
+                        : Icon(
+                            Icons.arrow_forward_ios,
+                            size: 15.r,
+                          ),
                     onTap: () {
-                      navigatorKey.currentState?.pushNamed(
-                          AppRoutes.emailVerification,
-                          arguments: widget.currentDoctorModel);
+                      if (widget.homeDataModel.isSyndicateCardRequired ==
+                          VerificationBySyndicateCard.Pending.name) {
+                      } else {
+                        context.read<HomeCubit>().uploadSyndicateCard();
+                      }
                     },
                   );
                 },
@@ -225,13 +234,19 @@ class _MoreScreenState extends State<MoreScreen> {
                     },
                     loaded: () {
                       return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          'v${context.read<HomeCubit>().currentUserVersion}',
-                          style: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 12.sp,
-                          ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'v${context.read<HomeCubit>().currentUserVersion}',
+                              style: TextStyle(
+                                color: Colors.grey.shade500,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },

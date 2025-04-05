@@ -45,6 +45,8 @@ class _ImagesInPostCardState extends State<ImagesInPostCard> {
                   homeDataModel: homeDataModel,
                   currentDoctorModel: currentDoctorModel,
                   feed: feed,
+                  isComeFromNotification: false,
+                  feedId: '',
                 ),
               );
             },

@@ -17,7 +17,7 @@ class DoctorProfileViewRepositoryImpl extends DoctorProfileViewRepository {
       required String age,
       required String job,
       required String workplace,
-      required String registerationNumber,
+      required String registrationNumber,
       required String specialty,
       required String highestDegree}) async {
     if (await networkInfo.isConnected) {
@@ -32,7 +32,7 @@ class DoctorProfileViewRepositoryImpl extends DoctorProfileViewRepository {
             age: age,
             job: job,
             workplace: workplace,
-            registerationNumber: registerationNumber,
+            registrationNumber: registrationNumber,
             specialty: specialty,
             highestDegree: highestDegree);
         return Right(response);

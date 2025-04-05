@@ -286,6 +286,7 @@ class _ApiServices implements ApiServices {
     String phone,
     String job,
     String highestDegree,
+    String registrationNumber,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -300,6 +301,7 @@ class _ApiServices implements ApiServices {
       'phone': phone,
       'job': job,
       'highestdegree': highestDegree,
+      'registration_number': registrationNumber,
     };
     final _options = _setStreamType<UpdateDoctorProfileModelResponse>(Options(
       method: 'PUT',
@@ -3456,6 +3458,39 @@ class _ApiServices implements ApiServices {
     late AcceptOrDeclineMemberModelResponse _value;
     try {
       _value = AcceptOrDeclineMemberModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetPostByIdModelResponse> getPostById(String postId) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetPostByIdModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://test.egyakin.com/api/feed/posts/${postId}',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPostByIdModelResponse _value;
+    try {
+      _value = GetPostByIdModelResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

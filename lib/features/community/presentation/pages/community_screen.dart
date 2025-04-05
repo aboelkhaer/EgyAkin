@@ -24,6 +24,7 @@ class _CommunityScreenState extends State<CommunityScreen>
   bool _isFabVisible = false;
 
   late CommunityCubit _communityCubit; // Store a reference to the cubit
+
   @override
   void initState() {
     super.initState();
@@ -37,12 +38,22 @@ class _CommunityScreenState extends State<CommunityScreen>
       length: 3,
       vsync: this,
       initialIndex: widget.initialTab,
-    );
+    )..addListener(_handleTabChange); // Add tab change listener
 
     _isFabVisible = false;
   }
 
+  // Add this new method to handle tab changes
+  void _handleTabChange() {
+    if (_tabController.index != 0 && _isFabVisible) {
+      setState(() {
+        _isFabVisible = false;
+      });
+    }
+  }
+
   void _handleFeedsScroll() {
+    // Only handle scroll events when on the Feeds tab (index 0)
     if (!feedsScrollController.hasClients || _tabController.index != 0) {
       if (_isFabVisible) {
         setState(() {
@@ -72,37 +83,33 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   @override
   void dispose() {
-    // _scrollController.removeListener(_scrollListener); // Remove the listener
-    // _scrollController.dispose(); // Dispose of the main scroll controller
-    _tabController.dispose(); // Dispose of the tab controller
-
-    // Dispose of the feedsScrollController
-    feedsScrollController.removeListener(_onScroll); // Remove the listener
-    feedsScrollController.dispose(); // Dispose of the feedsScrollController
-
+    _tabController.removeListener(_handleTabChange); // Remove tab listener
+    _tabController.dispose();
+    feedsScrollController.removeListener(_handleFeedsScroll);
+    feedsScrollController.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    if (!feedsScrollController.hasClients) {
-      return;
-    }
+  // void _onScroll() {
+  //   if (!feedsScrollController.hasClients) {
+  //     return;
+  //   }
 
-    final scrollController = feedsScrollController;
-    if (_communityCubit.isLastPage) {
-      return; // Stop if all data has been loaded
-    }
+  //   final scrollController = feedsScrollController;
+  //   if (_communityCubit.isLastPage) {
+  //     return; // Stop if all data has been loaded
+  //   }
 
-    final maxScroll = scrollController.position.maxScrollExtent;
-    final currentScroll = scrollController.position.pixels;
-    const threshold = 200.0;
+  //   final maxScroll = scrollController.position.maxScrollExtent;
+  //   final currentScroll = scrollController.position.pixels;
+  //   const threshold = 200.0;
 
-    if (!_communityCubit.isLoadingMoreForScroll &&
-        maxScroll - currentScroll <= threshold) {
-      _communityCubit.isLoadingMoreForScroll = true;
-      _communityCubit.loadMoreFeeds(); // Load more feeds
-    }
-  }
+  //   if (!_communityCubit.isLoadingMoreForScroll &&
+  //       maxScroll - currentScroll <= threshold) {
+  //     _communityCubit.isLoadingMoreForScroll = true;
+  //     _communityCubit.loadMoreFeeds(); // Load more feeds
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

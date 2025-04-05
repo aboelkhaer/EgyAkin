@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -54,8 +55,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
   sl.registerLazySingleton(
       () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerLazySingleton(
-      () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(() =>
+      ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ConsultationFromAICubit(sl(), sl()));
   sl.registerFactory(() => CreatePostInCommunityCubit(sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(
@@ -568,5 +569,8 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<AcceptOrDeclineMemberInGroupUsecase>()) {
     sl.registerFactory<AcceptOrDeclineMemberInGroupUsecase>(
         () => AcceptOrDeclineMemberInGroupUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetPostByIdUsecase>()) {
+    sl.registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(sl()));
   }
 }

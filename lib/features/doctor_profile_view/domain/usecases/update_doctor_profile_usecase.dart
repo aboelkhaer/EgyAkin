@@ -20,7 +20,7 @@ class UpdateDoctorProfileUsecase
       age: input.age,
       job: input.job,
       workplace: input.workplace,
-      registerationNumber: input.registerationNumber,
+      registrationNumber: input.registrationNumber,
       specialty: input.specialty,
       highestDegree: input.highestDegree,
     );
@@ -35,7 +35,7 @@ class UpdateDoctorProfileUsecaseInput {
   final String age;
   final String job;
   final String workplace;
-  final String registerationNumber;
+  final String registrationNumber;
   final String specialty;
   final String highestDegree;
 
@@ -47,7 +47,7 @@ class UpdateDoctorProfileUsecaseInput {
       required this.age,
       required this.job,
       required this.workplace,
-      required this.registerationNumber,
+      required this.registrationNumber,
       required this.specialty,
       required this.highestDegree});
 }

@@ -1,4 +1,7 @@
 String capitalizeFirstText(String text) {
+  if (text == 'null') {
+    return 'No description';
+  }
   if (text.isEmpty) {
     return text; // Return empty string if input is empty
   }

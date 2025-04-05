@@ -522,3 +522,8 @@ export 'package:egy_akin/features/invite_member_to_group_in_community/presentati
 export 'package:egy_akin/features/saved_posts/presentation/pages/saved_posts_screen.dart';
 export 'package:egy_akin/features/show_single_feed/presentation/pages/show_single_feed_screen.dart';
 export 'package:egy_akin/app/shared/functions/check_verified_user.dart';
+export 'package:egy_akin/features/home/presentation/widgets/community_button.dart';
+export 'package:egy_akin/features/home/presentation/widgets/groups_home_view.dart';
+export 'package:egy_akin/features/home/presentation/widgets/latest_trends_hashtags.dart';
+export 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
+export 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';

@@ -16,7 +16,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
   String age = '';
   String job = '';
   String workplace = '';
-  String registerationNumber = '';
+  String registrationNumber = '';
   String specialty = '';
   String highestDegree = '';
 
@@ -36,7 +36,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
     age = currentDoctorModel.age ?? '';
     job = currentDoctorModel.job ?? '';
     workplace = currentDoctorModel.workingplace ?? '';
-    registerationNumber = currentDoctorModel.registrationNumber ?? '';
+    registrationNumber = currentDoctorModel.registrationNumber ?? '';
     specialty = currentDoctorModel.specialty ?? '';
     highestDegree = currentDoctorModel.highestdegree ?? '';
     emit(DoctorProfileViewState.loaded(
@@ -75,7 +75,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           age: age,
           job: job,
           workplace: workplace,
-          registerationNumber: registerationNumber,
+          registrationNumber: registrationNumber,
           specialty: specialty,
           highestDegree: highestDegree,
         ),
@@ -95,7 +95,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           age: age,
           job: job,
           workplace: workplace,
-          registerationNumber: registerationNumber,
+          registerationNumber: registrationNumber,
           specialty: specialty,
           highestDegree: highestDegree,
         );

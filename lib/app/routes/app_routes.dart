@@ -716,6 +716,9 @@ class RouteGenerator {
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                   feed: args['feed'] as PostCommunityModel,
+                  isComeFromNotification:
+                      args['isComeFromNotification'] as bool,
+                  feedId: args['feedId'] as String,
                 ),
               ),
             );

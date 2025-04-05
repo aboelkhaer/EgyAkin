@@ -281,87 +281,99 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   final Set<String> _updatingPostIds = {};
 
-  Future<void> addLikeOrUnlikeOnPost(String postId) async {
+  Future<void> addLikeOrUnlikeOnPost(
+    String postId, {
+    required String likeOrUnlike, // 'like' or 'unlike'
+  }) async {
     if (_updatingPostIds.contains(postId)) return;
-
     _updatingPostIds.add(postId);
 
-    bool wasLiked = false;
+    try {
+      // First get the current like status if not explicitly provided
+      bool? wasLiked;
+      emit(
+        state.maybeMap(
+          loaded: (loadedState) {
+            final posts = loadedState.feedsResponse.data?.data;
+            if (posts == null) return loadedState;
 
-    emit(
-      state.maybeMap(
-        loaded: (loadedState) {
-          final posts = loadedState.feedsResponse.data?.data;
-          if (posts == null) return loadedState;
+            final index =
+                posts.indexWhere((post) => post.id.toString() == postId);
+            if (index == -1) return loadedState;
 
-          final index =
-              posts.indexWhere((post) => post.id.toString() == postId);
-          if (index == -1) return loadedState;
+            final post = posts[index];
+            wasLiked = post.isLiked ?? false;
 
-          final post = posts[index];
-          wasLiked = post.isLiked ?? false;
+            // Determine the new like status based on the action
+            final newLikeStatus = likeOrUnlike == 'like' ? true : false;
+            final likesCountChange = likeOrUnlike == 'like' ? 1 : -1;
 
-          final updatedPost = post.copyWith(
-            isLiked: !wasLiked,
-            likesCount: (post.likesCount ?? 0) + (wasLiked ? -1 : 1),
+            final updatedPost = post.copyWith(
+              isLiked: newLikeStatus,
+              likesCount: (post.likesCount ?? 0) + likesCountChange,
+            );
+
+            final updatedPosts = [...posts]..[index] = updatedPost;
+            final updatedResponse = loadedState.feedsResponse.copyWith(
+              data:
+                  loadedState.feedsResponse.data!.copyWith(data: updatedPosts),
+            );
+
+            return loadedState.copyWith(feedsResponse: updatedResponse);
+          },
+          orElse: () => state,
+        ),
+      );
+
+      // Make the API call
+      final result = await _addLikeOnPostUsecase.execute(
+        AddLikeOnPostUsecaseInput(
+          postId: postId,
+          likeOrUnlike: likeOrUnlike,
+        ),
+      );
+
+      result.fold(
+        (failure) {
+          // Revert the changes if the API call fails
+          emit(
+            state.maybeMap(
+              loaded: (loadedState) {
+                final posts = loadedState.feedsResponse.data?.data;
+                if (posts == null) return loadedState;
+
+                final index =
+                    posts.indexWhere((post) => post.id.toString() == postId);
+                if (index == -1) return loadedState;
+
+                // Revert to the original like status
+                final originalPost = posts[index].copyWith(
+                  isLiked: wasLiked,
+                  likesCount: (posts[index].likesCount ?? 0) +
+                      (likeOrUnlike == 'like' ? -1 : 1),
+                );
+
+                final updatedPosts = [...posts]..[index] = originalPost;
+                final updatedResponse = loadedState.feedsResponse.copyWith(
+                  data: loadedState.feedsResponse.data!
+                      .copyWith(data: updatedPosts),
+                );
+
+                return loadedState.copyWith(feedsResponse: updatedResponse);
+              },
+              orElse: () => state,
+            ),
           );
-
-          final updatedPosts = [...posts]..[index] = updatedPost;
-
-          final updatedResponse = loadedState.feedsResponse.copyWith(
-            data: loadedState.feedsResponse.data!.copyWith(data: updatedPosts),
-          );
-
-          return loadedState.copyWith(feedsResponse: updatedResponse);
         },
-        orElse: () => state,
-      ),
-    );
-
-    final result = await _addLikeOnPostUsecase.execute(
-      AddLikeOnPostUsecaseInput(
-        postId: postId,
-        likeOrUnlike: wasLiked ? 'unlike' : 'like',
-      ),
-    );
-
-    result.fold(
-      (failure) {
-        emit(
-          state.maybeMap(
-            loaded: (loadedState) {
-              final posts = loadedState.feedsResponse.data?.data;
-              if (posts == null) return loadedState;
-
-              final index =
-                  posts.indexWhere((post) => post.id.toString() == postId);
-              if (index == -1) return loadedState;
-
-              final originalPost = posts[index].copyWith(
-                isLiked: wasLiked,
-                likesCount:
-                    (posts[index].likesCount ?? 0) + (wasLiked ? 1 : -1),
-              );
-
-              final updatedPosts = [...posts]..[index] = originalPost;
-
-              final updatedResponse = loadedState.feedsResponse.copyWith(
-                data: loadedState.feedsResponse.data!
-                    .copyWith(data: updatedPosts),
-              );
-
-              return loadedState.copyWith(feedsResponse: updatedResponse);
-            },
-            orElse: () => state,
-          ),
-        );
-      },
-      (success) {
-        // success handled optimistically
-      },
-    );
-
-    _updatingPostIds.remove(postId);
+        (success) {
+          // Success case is already handled by the optimistic update
+        },
+      );
+    } catch (e) {
+      debugPrint('Error in addLikeOrUnlikeOnPost: $e');
+    } finally {
+      _updatingPostIds.remove(postId);
+    }
   }
 
   void updatePost(PostCommunityModel updatedPost) {

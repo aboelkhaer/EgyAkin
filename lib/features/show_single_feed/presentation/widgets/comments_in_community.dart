@@ -67,20 +67,22 @@ class CommentsInCommunity extends StatelessWidget {
             isSendReplyLoaded,
             isSeeMore,
           ) {
+            if (commentsResponse.data == null) {
+              return const SizedBox.shrink();
+            }
             return Column(
               children: [
-                AnimatedList(
+                ListView.builder(
+                  // Changed from AnimatedList to ListView.builder
                   key: cubit.listKeyForComments,
-                  initialItemCount: commentsResponse.data!.data!.length,
+                  itemCount: commentsResponse.data!.data!.length,
                   shrinkWrap: true,
-                  padding: const EdgeInsets.only(
-                    top: 10,
-                  ),
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index, animation) {
+                  padding: const EdgeInsets.only(top: 10),
+                  physics:
+                      const NeverScrollableScrollPhysics(), // This is fine since parent scrolls
+                  itemBuilder: (context, index) {
                     if (index >= commentsResponse.data!.data!.length) {
-                      return const SizedBox
-                          .shrink(); // Return an empty widget if out of bounds
+                      return const SizedBox.shrink();
                     }
                     var commentModel = commentsResponse.data!.data![index];
                     return CommentWidgetInCommunity(
@@ -93,18 +95,17 @@ class CommentsInCommunity extends StatelessWidget {
                     );
                   },
                 ),
-                isSeeMore
-                    ? Column(
-                        children: [
-                          const SizedBox(
-                            height: 15,
-                            width: 15,
-                            child: CircularProgressIndicator(strokeWidth: 3),
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
+                if (isSeeMore)
+                  Column(
+                    children: [
+                      const SizedBox(
+                        height: 15,
+                        width: 15,
+                        child: CircularProgressIndicator(strokeWidth: 3),
+                      ),
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
               ],
             );
           },

@@ -204,10 +204,13 @@ class FeedContentInCommunity extends StatelessWidget {
                                       : Colors.grey.shade400,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  feed.likesCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Text(
+                                    feed.likesCount.toString(),
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -288,10 +291,22 @@ class FeedContentInCommunity extends StatelessWidget {
                                         ),
                                       ),
                                     )
-                                  : Text(
-                                      feedResponse.likesCount.toString(),
-                                      style: TextStyle(
-                                        color: Colors.grey.shade400,
+                                  : InkResponse(
+                                      onTap: () async {},
+                                      highlightColor: Colors.transparent,
+                                      splashColor: Colors.transparent,
+                                      radius:
+                                          20, // This increases the ripple effect area
+                                      containedInkWell: true,
+                                      child: Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 10),
+                                        child: Text(
+                                          feedResponse.likesCount.toString(),
+                                          style: TextStyle(
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
                                       ),
                                     ),
                             ],

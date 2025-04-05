@@ -1081,7 +1081,9 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.showSingleFeedRouteArgs(
                 homeDataModel: homeDataModel,
                 currentDoctorModel: currentDoctorModel,
-                feed: notificationModel.feed ?? const PostCommunityModel(),
+                feed: const PostCommunityModel(),
+                isComeFromNotification: true,
+                feedId: notificationModel.typeId.toString(),
               ),
             );
           },
@@ -1224,7 +1226,9 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.showSingleFeedRouteArgs(
                 homeDataModel: homeDataModel,
                 currentDoctorModel: currentDoctorModel,
-                feed: notificationModel.feed ?? const PostCommunityModel(),
+                feed: const PostCommunityModel(),
+                isComeFromNotification: true,
+                feedId: notificationModel.typeId.toString(),
               ),
             );
           },
@@ -1367,7 +1371,9 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.showSingleFeedRouteArgs(
                 homeDataModel: homeDataModel,
                 currentDoctorModel: currentDoctorModel,
-                feed: notificationModel.feed ?? const PostCommunityModel(),
+                feed: const PostCommunityModel(),
+                isComeFromNotification: true,
+                feedId: notificationModel.typeId.toString(),
               ),
             );
           },
@@ -1510,7 +1516,9 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.showSingleFeedRouteArgs(
                 homeDataModel: homeDataModel,
                 currentDoctorModel: currentDoctorModel,
-                feed: notificationModel.feed ?? const PostCommunityModel(),
+                feed: const PostCommunityModel(),
+                isComeFromNotification: true,
+                feedId: notificationModel.typeId.toString(),
               ),
             );
           },
@@ -1653,7 +1661,7 @@ class CheckNotificationType extends StatelessWidget {
               arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
                 currentDoctorModel: currentDoctorModel,
                 homeDataModel: homeDataModel,
-                groupId: notificationModel.groupId.toString(),
+                groupId: notificationModel.typeId.toString(),
               ),
             );
           },

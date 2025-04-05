@@ -47,6 +47,7 @@ class HomeCubit extends Cubit<HomeState> {
   String currentDoctorRole = '';
   String currentUserVersion = '';
   bool getCurrentUserVersion = false;
+  bool isGoneToCommunityForFirstTime = false;
 
   HomeModelResponse homeDataModel = const HomeModelResponse(
     data: HomeDataModelResponse(
@@ -126,23 +127,23 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  bool isUpdateMessageHidden2 = true;
+  bool isUpdateMessageHidden3 = true;
 
   int checkUpdateMessageCounter = 0;
 
   getUpdateMessageStatusFromLocal() async {
     if (checkUpdateMessageCounter == 0) {
-      isUpdateMessageHidden2 = (await sl<AppPreferences>()
-              .getBool(AppLocalStrings.isUpdateMessageHidden2)) ??
+      isUpdateMessageHidden3 = (await sl<AppPreferences>()
+              .getBool(AppLocalStrings.isUpdateMessageHidden3)) ??
           false;
       checkUpdateMessageCounter++;
     }
   }
 
   setUpdateMessageStatusToLocal() async {
-    isUpdateMessageHidden2 = true;
+    isUpdateMessageHidden3 = true;
     (await sl<AppPreferences>()
-        .setBool(AppLocalStrings.isUpdateMessageHidden2, true));
+        .setBool(AppLocalStrings.isUpdateMessageHidden3, true));
   }
 
   getDoctorDataFromLocal() async {
@@ -288,8 +289,9 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
     );
-    log('${isVerifiedUser(homeDataModel.isSyndicateCardRequired)} moatz123');
-    if (isVerifiedUser(homeDataModel.isSyndicateCardRequired)) {
+    if (!isVerifiedUser(homeDataModel.isSyndicateCardRequired) &&
+        isGoneToCommunityForFirstTime == false) {
+      isGoneToCommunityForFirstTime = true;
       navigatorKey.currentState?.pushNamed(
         AppRoutes.community,
         arguments: AppRoutesArgs.communityRouteArgs(

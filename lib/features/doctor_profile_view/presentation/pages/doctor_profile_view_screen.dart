@@ -220,7 +220,9 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                   child: CustomTextFormField(
                                     title:
                                         'Registration Number (رقم القيد الخاص بالنقابة)',
-                                    enabled: false,
+                                    enabled: true,
+                                    onChanged: (value) =>
+                                        cubit.registrationNumber = value,
                                     initialValue:
                                         currentDoctorModel.registrationNumber ??
                                             '',
