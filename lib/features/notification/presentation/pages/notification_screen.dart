@@ -70,6 +70,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
               color: Colors.grey.shade100,
               child: SingleChildScrollView(
                 controller: _cubit.scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(

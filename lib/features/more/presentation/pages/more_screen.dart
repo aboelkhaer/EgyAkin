@@ -123,7 +123,7 @@ class _MoreScreenState extends State<MoreScreen> {
                     title: Text(
                       widget.homeDataModel.isSyndicateCardRequired ==
                               VerificationBySyndicateCard.Pending.name
-                          ? 'Verification is loading...'
+                          ? 'Waiting for approval...'
                           : 'Syndicate card verification',
                       style: TextStyle(fontSize: 13.5.sp),
                     ),

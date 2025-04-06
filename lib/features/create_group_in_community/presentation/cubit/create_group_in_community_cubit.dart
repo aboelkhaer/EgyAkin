@@ -7,6 +7,7 @@ import 'package:egy_akin/features/create_group_in_community/domain/usecases/crea
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_header_image_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_image_in_community_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_texts_in_community_usecase.dart';
+import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/presentation/cubit/create_group_in_community_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -16,7 +17,8 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
       this._createGroupInCommunityUsecase,
       this._updateGroupTextsInCommunityUsecase,
       this._updateGroupHeaderImageInCommunityUsecase,
-      this._updateGroupImageInCommunityUsecase)
+      this._updateGroupImageInCommunityUsecase,
+      this._updateGroupWithHeaderAndGroupImageUsecase)
       : super(const CreateGroupInCommunityState.loaded(
           '',
           '',
@@ -32,6 +34,8 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
   final UpdateGroupHeaderImageInCommunityUsecase
       _updateGroupHeaderImageInCommunityUsecase;
   final UpdateGroupImageInCommunityUsecase _updateGroupImageInCommunityUsecase;
+  final UpdateGroupWithHeaderAndGroupImageUsecase
+      _updateGroupWithHeaderAndGroupImageUsecase;
 
   File? imagePickedForGroupHeader;
   File? imagePickedForGroupImage;
@@ -368,6 +372,68 @@ class CreateGroupInCommunityCubit extends Cubit<CreateGroupInCommunityState> {
         groupId: groupId,
         name: groupHeaderText,
         headerImage: imagePickedForGroupHeader,
+        description: groupDescriptionText,
+        privacy: editableGroupModel!.privacy.toString(),
+      ),
+    );
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreateGroupInCommunityState.loaded(
+              l.message,
+              '',
+              false,
+              false,
+              counterChanges,
+              false,
+              false,
+            ),
+          ),
+        );
+      },
+      (response) async {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => CreateGroupInCommunityState.loaded(
+              response.message.toString(),
+              '',
+              false,
+              false,
+              counterChanges,
+              false,
+              true,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  updateGroupHeaderImageAndGroupImage(String groupId) async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => CreateGroupInCommunityState.loaded(
+          '',
+          '',
+          false,
+          false,
+          counterChanges,
+          true,
+          false,
+        ),
+      ),
+    );
+
+    final result = await _updateGroupWithHeaderAndGroupImageUsecase.execute(
+      UpdateGroupWithHeaderAndGroupImageUsecaseInput(
+        groupId: groupId,
+        name: groupHeaderText,
+        headerImage: imagePickedForGroupHeader!,
+        groupImage: imagePickedForGroupImage!,
         description: groupDescriptionText,
         privacy: editableGroupModel!.privacy.toString(),
       ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import '../../../../exports.dart';
 
 class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
@@ -113,13 +115,17 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
 
   bool _isUpdatingPostLikeStatus = false;
 
-  Future<void> addLikeOrUnlikeOnPost(String postId) async {
+  Future<void> addLikeOrUnlikeOnPost(
+    String postId, {
+    required String likeOrUnlike, // 'like' or 'unlike' (required)
+  }) async {
     if (_isUpdatingPostLikeStatus) return;
     _isUpdatingPostLikeStatus = true;
 
     // Store the original state for potential rollback
     final originalState = state;
     bool isCurrentlyLiked = false;
+    int? originalLikesCount;
 
     /// **1️⃣ Optimistically Update UI**
     emit(
@@ -132,16 +138,21 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
 
           final postList = response.data!.data!;
 
-          /// **Find Post & Toggle Like Status**
+          /// **Find Post & Update Like Status**
           final updatedPosts = postList.map((post) {
             if (post.id == int.tryParse(postId)) {
               isCurrentlyLiked = post.isLiked ?? false;
-              final updatedLikesCount =
-                  (post.likesCount ?? 0) + (isCurrentlyLiked ? -1 : 1);
+              originalLikesCount = post.likesCount ?? 0;
+
+              // Determine new state based on explicit action
+              final newLikeStatus = likeOrUnlike == 'like';
+              final likesCountChange = newLikeStatus
+                  ? (isCurrentlyLiked ? 0 : 1) // Like action
+                  : (isCurrentlyLiked ? -1 : 0); // Unlike action
 
               return post.copyWith(
-                isLiked: !isCurrentlyLiked,
-                likesCount: updatedLikesCount,
+                isLiked: newLikeStatus,
+                likesCount: originalLikesCount! + likesCountChange,
               );
             }
             return post;
@@ -159,8 +170,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
             false,
             false,
             false,
-            changeCounter +
-                1, // CRITICAL: Increment changeCounter to trigger UI update
+            changeCounter + 1, // Increment changeCounter
           );
         },
         orElse: () => state,
@@ -168,7 +178,6 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
     );
 
     /// **2️⃣ Send API Request**
-    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
     final result = await _addLikeOnPostUsecase.execute(
       AddLikeOnPostUsecaseInput(
         postId: postId,
@@ -205,13 +214,15 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
   bool _isUpdatingPostSaveStatus =
       false; // Private flag to prevent multiple simultaneous actions
 
-  Future<void> addSaveOrUnsaveOnPost(String postId) async {
+  Future<void> addSaveOrUnsaveOnPost(
+    String postId, {
+    required String saveOrUnsave, // 'save' or 'unsave' (required)
+  }) async {
     // Prevent multiple simultaneous actions
     if (_isUpdatingPostSaveStatus) return;
     _isUpdatingPostSaveStatus = true;
 
-    bool isCurrentlySaved =
-        false; // Store the current save status for rollback in case of failure
+    bool isCurrentlySaved = false; // Store current save status for rollback
 
     /// **1️⃣ Optimistically Update UI**
     emit(
@@ -220,21 +231,26 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
           final response = value.response;
           if (response.data == null || response.data!.data == null) {
             debugPrint("[Save] ❌ No data found in response");
-            return value; // Return unchanged state if data is null
+            return value;
           }
 
           final postList = response.data!.data!;
 
-          /// **Find Post & Toggle Save Status**
+          /// **Find Post & Update Save Status**
           final updatedPosts = postList.map((post) {
             if (post.id == int.tryParse(postId)) {
-              isCurrentlySaved =
-                  post.isSaved ?? false; // Default to false if null
+              isCurrentlySaved = post.isSaved ?? false;
+
+              // Determine new state based on explicit action
+              final newSavedStatus = saveOrUnsave == 'save';
+              debugPrint(
+                  "[Save] 🔄 Changing save status from $isCurrentlySaved to $newSavedStatus");
+
               return post.copyWith(
-                isSaved: !isCurrentlySaved, // Toggle isSaved
+                isSaved: newSavedStatus,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
           /// **Update State with a New Instance**
@@ -253,13 +269,12 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
             changeCounter,
           );
         },
-        orElse: () =>
-            state, // Return unchanged state if not in the loaded state
+        orElse: () => state,
       ),
     );
 
     /// **2️⃣ Send API Request**
-    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+    debugPrint("[Save] 📡 Sending $saveOrUnsave request for post $postId");
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
@@ -285,8 +300,10 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
               /// **Revert Save Status**
               final revertedPosts = postList.map((post) {
                 if (post.id == int.tryParse(postId)) {
+                  debugPrint(
+                      "[Save] ↩️ Reverting to original save status: $isCurrentlySaved");
                   return post.copyWith(
-                    isSaved: isCurrentlySaved, // Revert to original state
+                    isSaved: isCurrentlySaved,
                   );
                 }
                 return post;
@@ -313,11 +330,12 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
         );
       },
       (success) {
-        debugPrint("[Save] ✅ API Success: Save/Unsave applied");
+        debugPrint("[Save] ✅ API Success: $saveOrUnsave applied successfully");
       },
     );
 
     _isUpdatingPostSaveStatus = false; // Reset the flag
+    debugPrint("[Save] 🏁 Operation completed for post $postId");
   }
 
   String postIdDeleted = '';

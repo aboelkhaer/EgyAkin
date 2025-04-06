@@ -188,14 +188,20 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                                     isAcceptLoading: isAcceptLoading,
                                     isDeclineLoading: isDeclineLoading,
                                   ),
-                                  const Divider(
-                                    color: AppColors.primary,
-                                    thickness: 0.5,
-                                  ),
-                                  SizedBox(height: 10.h),
                                 ],
                               );
                             }),
+                          response.data!.pendingInvitations!.isEmpty
+                              ? const SizedBox.shrink()
+                              : Column(
+                                  children: [
+                                    const Divider(
+                                      color: AppColors.primary,
+                                      thickness: 0.5,
+                                    ),
+                                    SizedBox(height: 10.h),
+                                  ],
+                                ),
 
                           // Members List
                           if (response.data!.members!.data!.isNotEmpty)

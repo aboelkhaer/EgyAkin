@@ -27,7 +27,7 @@ class GroupsCubit extends Cubit<GroupsState> {
   int changeCounter = 0;
 
   getGroupsTab() async {
-    _currentPage = 0;
+    _currentPage = 1;
     emit(const GroupsState.loading());
     final result = await _getGroupsTabUsecase.execute(_currentPage);
     result.fold(
@@ -171,14 +171,17 @@ class GroupsCubit extends Cubit<GroupsState> {
   }
 
   bool _isUpdatingPostLikeStatus = false; // Add this as a private flag
-  void addLikeOrUnlikeOnPost(String postId) async {
+  void addLikeOrUnlikeOnPost(
+    String postId, {
+    required String likeOrUnlike, // 'like' or 'unlike'
+  }) async {
     // Prevent multiple simultaneous actions
     if (_isUpdatingPostLikeStatus) return;
-
-    _isUpdatingPostLikeStatus = true; // Set the flag to true
+    _isUpdatingPostLikeStatus = true;
 
     // Store the current like status for rollback in case of failure
     bool isCurrentlyLiked = false;
+    int? currentLikesCount;
 
     emit(
       state.maybeMap(
@@ -187,49 +190,48 @@ class GroupsCubit extends Cubit<GroupsState> {
           final feedsResponse = value.response;
           if (feedsResponse.data == null ||
               feedsResponse.data!.randomPosts == null) {
-            return value; // Return unchanged state if feedsResponse or randomPosts is null
+            return value;
           }
 
           final randomPosts = feedsResponse.data!.randomPosts!;
           if (randomPosts.data == null) {
-            return value; // Return unchanged state if randomPosts.data is null
+            return value;
           }
 
-          // Create a new list of posts with the updated like status
+          // Create updated posts list
           final updatedPosts = randomPosts.data!.map((post) {
             if (post.id.toString() == postId) {
-              // Toggle isLiked and adjust likesCount
-              isCurrentlyLiked =
-                  post.isLiked ?? false; // Default to false if null
-              final updatedLikesCount =
-                  (post.likesCount ?? 0) + (isCurrentlyLiked ? -1 : 1);
+              // Store current values
+              isCurrentlyLiked = post.isLiked ?? false;
+              currentLikesCount = post.likesCount ?? 0;
+
+              // Determine new values based on explicit action
+              final newLikeStatus = likeOrUnlike == 'like';
+              final likesCountChange = newLikeStatus
+                  ? (isCurrentlyLiked ? 0 : 1)
+                  : // Like: only increment if not already liked
+                  (isCurrentlyLiked
+                      ? -1
+                      : 0); // Unlike: only decrement if currently liked
 
               return post.copyWith(
-                isLiked: !isCurrentlyLiked, // Toggle isLiked
-                likesCount: updatedLikesCount, // Update likesCount
+                isLiked: newLikeStatus,
+                likesCount: currentLikesCount! + likesCountChange,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
-          // Create a new randomPosts object with the updated posts
+          // Update state hierarchy
           final updatedRandomPosts = randomPosts.copyWith(data: updatedPosts);
-
-          // Create a new data object with the updated randomPosts
           final updatedData =
               feedsResponse.data!.copyWith(randomPosts: updatedRandomPosts);
-
-          // Create a new response object with the updated data
           final updatedResponse = feedsResponse.copyWith(data: updatedData);
 
-          // Return a new state with the updated response
           return value.copyWith(response: updatedResponse);
         },
       ),
     );
-
-    // Determine the action (like or unlike) based on the current state
-    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
 
     // Send the request to the server
     final result = await _addLikeOnPostUsecase.execute(
@@ -257,56 +259,46 @@ class GroupsCubit extends Cubit<GroupsState> {
                 return value;
               }
 
-              // Revert the like status and likes count
+              // Revert to original values
               final revertedPosts = randomPosts.data!.map((post) {
                 if (post.id.toString() == postId) {
-                  final revertedLikesCount = !isCurrentlyLiked
-                      ? post.likesCount! - 1
-                      : post.likesCount! + 1;
-
                   return post.copyWith(
                     isLiked: isCurrentlyLiked,
-                    likesCount: revertedLikesCount,
+                    likesCount: currentLikesCount,
                   );
                 }
                 return post;
               }).toList();
 
-              // Create a new randomPosts object with the reverted posts
               final revertedRandomPosts =
                   randomPosts.copyWith(data: revertedPosts);
-
-              // Create a new data object with the reverted randomPosts
               final revertedData = feedsResponse.data!
                   .copyWith(randomPosts: revertedRandomPosts);
-
-              // Create a new response object with the reverted data
               final revertedResponse =
                   feedsResponse.copyWith(data: revertedData);
 
-              // Return a new state with the reverted response
               return value.copyWith(response: revertedResponse);
             },
           ),
         );
       },
       (success) {
-        // Optionally handle success (e.g., show a toast or update other state)
+        // Success case - no action needed as UI was already updated
       },
     );
 
-    _isUpdatingPostLikeStatus = false; // Reset the flag
+    _isUpdatingPostLikeStatus = false;
   }
 
   bool _isUpdatingPostSaveStatus = false; // Add this as a private flag
 
-  void addSaveOrUnsaveOnPost(String postId) async {
-    // Prevent multiple simultaneous actions
+  Future<void> addSaveOrUnsaveOnPost(
+    String postId, {
+    required String saveOrUnsave, // 'save' or 'unsave' (required)
+  }) async {
     if (_isUpdatingPostSaveStatus) return;
+    _isUpdatingPostSaveStatus = true;
 
-    _isUpdatingPostSaveStatus = true; // Set the flag to true
-
-    // Store the current save status for rollback in case of failure
     bool isCurrentlySaved = false;
 
     emit(
@@ -316,46 +308,37 @@ class GroupsCubit extends Cubit<GroupsState> {
           final feedsResponse = value.response;
           if (feedsResponse.data == null ||
               feedsResponse.data!.randomPosts == null) {
-            return value; // Return unchanged state if feedsResponse or randomPosts is null
+            return value;
           }
 
           final randomPosts = feedsResponse.data!.randomPosts!;
           if (randomPosts.data == null) {
-            return value; // Return unchanged state if randomPosts.data is null
+            return value;
           }
 
-          // Create a new list of posts with the updated save status
           final updatedPosts = randomPosts.data!.map((post) {
             if (post.id.toString() == postId) {
-              isCurrentlySaved =
-                  post.isSaved ?? false; // Default to false if null
+              isCurrentlySaved = post.isSaved ?? false;
+
+              // Determine new state based on explicit action
+              final newSavedStatus = saveOrUnsave == 'save';
               return post.copyWith(
-                isSaved: !isCurrentlySaved, // Toggle isSaved
+                isSaved: newSavedStatus,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
-          // Create a new randomPosts object with the updated posts
           final updatedRandomPosts = randomPosts.copyWith(data: updatedPosts);
-
-          // Create a new data object with the updated randomPosts
           final updatedData =
               feedsResponse.data!.copyWith(randomPosts: updatedRandomPosts);
-
-          // Create a new response object with the updated data
           final updatedResponse = feedsResponse.copyWith(data: updatedData);
 
-          // Return a new state with the updated response
           return value.copyWith(response: updatedResponse);
         },
       ),
     );
 
-    // Determine the action (save or unsave) based on the current state
-    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
-
-    // Send the request to the server
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
@@ -365,7 +348,6 @@ class GroupsCubit extends Cubit<GroupsState> {
 
     result.fold(
       (failure) {
-        // Rollback UI changes on failure
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -381,40 +363,33 @@ class GroupsCubit extends Cubit<GroupsState> {
                 return value;
               }
 
-              // Revert the save status
               final revertedPosts = randomPosts.data!.map((post) {
                 if (post.id.toString() == postId) {
                   return post.copyWith(
-                    isSaved: isCurrentlySaved, // Revert to original state
+                    isSaved: isCurrentlySaved,
                   );
                 }
                 return post;
               }).toList();
 
-              // Create a new randomPosts object with the reverted posts
               final revertedRandomPosts =
                   randomPosts.copyWith(data: revertedPosts);
-
-              // Create a new data object with the reverted randomPosts
               final revertedData = feedsResponse.data!
                   .copyWith(randomPosts: revertedRandomPosts);
-
-              // Create a new response object with the reverted data
               final revertedResponse =
                   feedsResponse.copyWith(data: revertedData);
 
-              // Return a new state with the reverted response
               return value.copyWith(response: revertedResponse);
             },
           ),
         );
       },
       (success) {
-        // Optionally handle success (e.g., show a toast or update other state)
+        // Success case - no action needed
       },
     );
 
-    _isUpdatingPostSaveStatus = false; // Reset the flag
+    _isUpdatingPostSaveStatus = false;
   }
 
   Future<void> deletePost(String postId) async {

@@ -708,6 +708,7 @@ class RouteGenerator {
                     value: di
                         .sl<ShowSingleFeedCubit>(), // Reuse the existing Cubit
                   ),
+
                   // BlocProvider.value(
                   //   value: di.sl<CommunityCubit>(), // Reuse the existing Cubit
                   // ),
@@ -722,6 +723,7 @@ class RouteGenerator {
                   isComeFromNotification:
                       args['isComeFromNotification'] as bool,
                   feedId: args['feedId'] as String,
+                  showPostFrom: args['showPostFrom'] as String,
                 ),
               ),
             );
@@ -929,8 +931,7 @@ class RouteGenerator {
               pageBuilder: (context, animation, secondaryAnimation) =>
                   MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                      create: (context) => di.sl<CommunitySearchCubit>()),
+                  BlocProvider.value(value: di.sl<CommunitySearchCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                   BlocProvider.value(value: di.sl<TrendingCubit>()),
                   BlocProvider.value(value: di.sl<GroupsCubit>()),
@@ -970,7 +971,8 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider(create: (context) => di.sl<SavedPostsCubit>()),
+                  // BlocProvider(create: (context) => di.sl<SavedPostsCubit>()),
+                  BlocProvider.value(value: di.sl<SavedPostsCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                 ],
                 child: SavedPostsScreen(
@@ -999,9 +1001,8 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                      create: (context) => di.sl<AllDoctorPostsCubit>()),
                   // BlocProvider(create: (context) => di.sl<CommunityCubit>()),
+                  BlocProvider.value(value: di.sl<AllDoctorPostsCubit>()),
                   BlocProvider.value(value: di.sl<CommunityCubit>()),
                 ],
                 child: AllDoctorPostsScreen(

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
@@ -76,11 +77,14 @@ Future<void> diInit() async {
   sl.registerFactory(() => AllGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => MyGroupsInCommunityCubit(sl(), sl()));
   sl.registerFactory(() => InviteMemberToGroupInCommunityCubit());
-  sl.registerFactory(() => CreateGroupInCommunityCubit(sl(), sl(), sl(), sl()));
-  sl.registerLazySingleton(() => TrendingCubit(sl()));
-  sl.registerFactory(() => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(
+      () => CreateGroupInCommunityCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(() => TrendingCubit(sl()));
+  sl.registerLazySingleton(
+      () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(
+      () => SavedPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(
       () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupsInvitationsCubit(sl(), sl(), sl()));
 
@@ -572,5 +576,9 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<GetPostByIdUsecase>()) {
     sl.registerFactory<GetPostByIdUsecase>(() => GetPostByIdUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UpdateGroupWithHeaderAndGroupImageUsecase>()) {
+    sl.registerFactory<UpdateGroupWithHeaderAndGroupImageUsecase>(
+        () => UpdateGroupWithHeaderAndGroupImageUsecase(sl()));
   }
 }

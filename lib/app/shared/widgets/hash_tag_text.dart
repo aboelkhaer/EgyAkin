@@ -187,71 +187,157 @@ TextSpan buildHashtagText(
     }
   }
 
-  // First pass: Handle URLs
-  for (final urlMatch in urlRegExp.allMatches(content)) {
-    addPlainText(currentIndex, urlMatch.start);
-    spans.add(const TextSpan(text: ' '));
-    currentIndex = urlMatch.end;
-  }
-
-  // Process remaining text after URLs
-  if (currentIndex < content.length) {
-    final remainingAfterUrls = content.substring(currentIndex);
+  // First pass: Split content into segments (URLs vs non-URLs)
+  final urlMatches = urlRegExp.allMatches(content);
+  if (urlMatches.isEmpty) {
+    // Process entire content if no URLs
+    _processTextSegment(
+      content,
+      spans,
+      currentDoctorModel,
+      homeDataModel,
+      highlightWord,
+      defaultTextStyle,
+      highlightStyle,
+      hashtagStyle,
+      hashtagRegExp,
+      wordRegExp,
+      normalizedHighlight,
+      isHighlightHashtag,
+      highlightWithoutHash,
+    );
+  } else {
+    // Process segments between URLs
     currentIndex = 0;
-
-    for (final wordMatch in wordRegExp.allMatches(remainingAfterUrls)) {
-      final String? wordText = wordMatch.group(0);
-      if (wordText == null) continue;
-
-      final String lowerWordText = wordText.toLowerCase();
-      final bool isWordHashtag = wordText.startsWith('#');
-      final String wordWithoutHash =
-          isWordHashtag ? lowerWordText.substring(1) : lowerWordText;
-
-      // Add text before the word
-      addPlainText(currentIndex, wordMatch.start);
-
-      // Check for highlight match
-      if (normalizedHighlight != null &&
-          (lowerWordText == normalizedHighlight ||
-              (isHighlightHashtag && lowerWordText == normalizedHighlight) ||
-              (!isWordHashtag && wordWithoutHash == highlightWithoutHash) ||
-              (isWordHashtag && wordWithoutHash == highlightWithoutHash))) {
-        spans.add(TextSpan(
-          text: wordText,
-          style: highlightStyle,
-        ));
-      } else if (hashtagRegExp.hasMatch(wordText)) {
-        // Clickable hashtag
-        spans.add(TextSpan(
-          text: wordText,
-          style: hashtagStyle,
-          recognizer: TapGestureRecognizer()
-            ..onTap = () {
-              navigatorKey.currentState?.pushNamed(
-                AppRoutes.communitySearch,
-                arguments: AppRoutesArgs.communitySearchRouteArgs(
-                  currentDoctorModel: currentDoctorModel,
-                  homeDataModel: homeDataModel,
-                  initialValueInSearch: wordText,
-                ),
-              );
-            },
-        ));
-      } else {
-        // Normal text
-        spans.add(TextSpan(
-          text: wordText,
-          style: defaultTextStyle,
-        ));
+    for (final urlMatch in urlMatches) {
+      // Process text before URL
+      if (urlMatch.start > currentIndex) {
+        final segment = content.substring(currentIndex, urlMatch.start);
+        _processTextSegment(
+          segment,
+          spans,
+          currentDoctorModel,
+          homeDataModel,
+          highlightWord,
+          defaultTextStyle,
+          highlightStyle,
+          hashtagStyle,
+          hashtagRegExp,
+          wordRegExp,
+          normalizedHighlight,
+          isHighlightHashtag,
+          highlightWithoutHash,
+        );
       }
 
-      currentIndex = wordMatch.end;
+      // Skip adding the URL text (we'll show the preview instead)
+      // Just add a space to maintain text flow if needed
+      spans.add(const TextSpan(text: ' '));
+
+      currentIndex = urlMatch.end;
     }
 
-    // Add remaining text after last word
-    addPlainText(currentIndex, remainingAfterUrls.length);
+    // Process remaining text after last URL
+    if (currentIndex < content.length) {
+      final segment = content.substring(currentIndex);
+      _processTextSegment(
+        segment,
+        spans,
+        currentDoctorModel,
+        homeDataModel,
+        highlightWord,
+        defaultTextStyle,
+        highlightStyle,
+        hashtagStyle,
+        hashtagRegExp,
+        wordRegExp,
+        normalizedHighlight,
+        isHighlightHashtag,
+        highlightWithoutHash,
+      );
+    }
   }
 
   return TextSpan(children: spans);
+}
+
+void _processTextSegment(
+  String segment,
+  List<TextSpan> spans,
+  DoctorModel currentDoctorModel,
+  HomeModelResponse homeDataModel,
+  String? highlightWord,
+  TextStyle defaultTextStyle,
+  TextStyle highlightStyle,
+  TextStyle hashtagStyle,
+  RegExp hashtagRegExp,
+  RegExp wordRegExp,
+  String? normalizedHighlight,
+  bool isHighlightHashtag,
+  String? highlightWithoutHash,
+) {
+  int currentIndex = 0;
+
+  for (final wordMatch in wordRegExp.allMatches(segment)) {
+    final String? wordText = wordMatch.group(0);
+    if (wordText == null) continue;
+
+    final String lowerWordText = wordText.toLowerCase();
+    final bool isWordHashtag = wordText.startsWith('#');
+    final String wordWithoutHash =
+        isWordHashtag ? lowerWordText.substring(1) : lowerWordText;
+
+    // Add text before the word
+    if (wordMatch.start > currentIndex) {
+      spans.add(TextSpan(
+        text: segment.substring(currentIndex, wordMatch.start),
+        style: defaultTextStyle,
+      ));
+    }
+
+    // Check for highlight match
+    if (normalizedHighlight != null &&
+        (lowerWordText == normalizedHighlight ||
+            (isHighlightHashtag && lowerWordText == normalizedHighlight) ||
+            (!isWordHashtag && wordWithoutHash == highlightWithoutHash) ||
+            (isWordHashtag && wordWithoutHash == highlightWithoutHash))) {
+      spans.add(TextSpan(
+        text: wordText,
+        style: highlightStyle,
+      ));
+    } else if (hashtagRegExp.hasMatch(wordText)) {
+      // Clickable hashtag
+      spans.add(TextSpan(
+        text: wordText,
+        style: hashtagStyle,
+        recognizer: TapGestureRecognizer()
+          ..onTap = () {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.communitySearch,
+              arguments: AppRoutesArgs.communitySearchRouteArgs(
+                currentDoctorModel: currentDoctorModel,
+                homeDataModel: homeDataModel,
+                initialValueInSearch: wordText,
+              ),
+            );
+          },
+      ));
+    } else {
+      // Normal text
+      spans.add(TextSpan(
+        text: wordText,
+        style: defaultTextStyle,
+      ));
+    }
+
+    currentIndex = wordMatch.end;
+  }
+
+  // Add remaining text after last word
+  if (currentIndex < segment.length) {
+    spans.add(TextSpan(
+      text: segment.substring(currentIndex),
+      style: defaultTextStyle,
+    ));
+  }
 }

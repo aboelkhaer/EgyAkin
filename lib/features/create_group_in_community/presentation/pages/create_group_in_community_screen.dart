@@ -552,6 +552,15 @@ class _CreateGroupInCommunityScreenState
                                           .toString());
                                       return;
                                     }
+                                    if (cubit.imagePickedForGroupHeader !=
+                                            null &&
+                                        cubit.imagePickedForGroupImage !=
+                                            null) {
+                                      cubit.updateGroupHeaderImageAndGroupImage(
+                                          cubit.editableGroupModel!.id
+                                              .toString());
+                                      return;
+                                    }
                                   }
                                 },
                                 title: widget.isCreateNewGroup

@@ -172,42 +172,56 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
   bool _isUpdatingPostLikeStatus = false;
 
-  Future<void> addLikeOrUnlikeOnPost(String postId) async {
+  Future<void> addLikeOrUnlikeOnPost(
+    String postId, {
+    required String likeOrUnlike, // 'like' or 'unlike' (required)
+  }) async {
+    // Prevent multiple simultaneous actions
     if (_isUpdatingPostLikeStatus) return;
     _isUpdatingPostLikeStatus = true;
 
+    // Store the current like status for rollback in case of failure
     bool isCurrentlyLiked = false;
+    int? currentLikesCount;
 
-    /// **1️⃣ Optimistically Update UI**
+    /// 1️⃣ Optimistic UI Update
     emit(
       state.maybeMap(
+        orElse: () => state,
         loaded: (value) {
           final response = value.response;
+
+          // Null checks for response data structure
           if (response.data == null || response.data!.data == null) {
             return value;
           }
 
           final postList = response.data!.data!;
 
-          /// **Find Post & Toggle Like Status**
+          // Create updated posts list
           final updatedPosts = postList.map((post) {
-            if (post.id == int.tryParse(postId)) {
+            if (post.id.toString() == postId) {
+              // Store current values
               isCurrentlyLiked = post.isLiked ?? false;
-              final updatedLikesCount =
-                  (post.likesCount ?? 0) + (isCurrentlyLiked ? -1 : 1);
+              currentLikesCount = post.likesCount ?? 0;
+
+              // Calculate new state based on explicit action
+              final newLikeStatus = likeOrUnlike == 'like';
+              final likesCountChange = newLikeStatus
+                  ? (isCurrentlyLiked ? 0 : 1) // Like action
+                  : (isCurrentlyLiked ? -1 : 0); // Unlike action
 
               return post.copyWith(
-                isLiked: !isCurrentlyLiked,
-                likesCount: updatedLikesCount,
+                isLiked: newLikeStatus,
+                likesCount: currentLikesCount! + likesCountChange,
               );
             }
             return post;
           }).toList();
 
-          /// **Update State with a New Instance**
-          final updatedResponse = response.copyWith(
-            data: response.data!.copyWith(data: [...updatedPosts]),
-          );
+          // Update state hierarchy
+          final updatedData = response.data!.copyWith(data: updatedPosts);
+          final updatedResponse = response.copyWith(data: updatedData);
 
           return CommunitySearchState.loaded(
             '',
@@ -217,12 +231,10 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
             changeCounter,
           );
         },
-        orElse: () => state,
       ),
     );
 
-    /// **2️⃣ Send API Request**
-    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
+    /// 2️⃣ API Request
     final result = await _addLikeOnPostUsecase.execute(
       AddLikeOnPostUsecaseInput(
         postId: postId,
@@ -232,32 +244,29 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        /// **3️⃣ Rollback UI on Failure**
+        /// 3️⃣ Rollback on Failure
         emit(
           state.maybeMap(
+            orElse: () => state,
             loaded: (value) {
               final response = value.response;
               if (response.data == null || response.data!.data == null) {
                 return value;
               }
 
+              // Revert to original values
               final revertedPosts = response.data!.data!.map((post) {
-                if (post.id == int.tryParse(postId)) {
-                  final revertedLikesCount = !isCurrentlyLiked
-                      ? (post.likesCount ?? 1) - 1
-                      : (post.likesCount ?? 0) + 1;
-
+                if (post.id.toString() == postId) {
                   return post.copyWith(
                     isLiked: isCurrentlyLiked,
-                    likesCount: revertedLikesCount,
+                    likesCount: currentLikesCount,
                   );
                 }
                 return post;
               }).toList();
 
-              final revertedResponse = response.copyWith(
-                data: response.data!.copyWith(data: [...revertedPosts]),
-              );
+              final revertedData = response.data!.copyWith(data: revertedPosts);
+              final revertedResponse = response.copyWith(data: revertedData);
 
               return CommunitySearchState.loaded(
                 '',
@@ -267,11 +276,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
                 changeCounter,
               );
             },
-            orElse: () => state,
           ),
         );
       },
-      (success) {},
+      (success) {
+        // Optional success handling can be added here
+      },
     );
 
     _isUpdatingPostLikeStatus = false;
@@ -280,13 +290,15 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   bool _isUpdatingPostSaveStatus =
       false; // Private flag to prevent multiple simultaneous actions
 
-  Future<void> addSaveOrUnsaveOnPost(String postId) async {
+  Future<void> addSaveOrUnsaveOnPost(
+    String postId, {
+    required String saveOrUnsave, // 'save' or 'unsave' (required)
+  }) async {
     // Prevent multiple simultaneous actions
     if (_isUpdatingPostSaveStatus) return;
     _isUpdatingPostSaveStatus = true;
 
-    bool isCurrentlySaved =
-        false; // Store the current save status for rollback in case of failure
+    bool isCurrentlySaved = false; // Store current save status for rollback
 
     /// **1️⃣ Optimistically Update UI**
     emit(
@@ -295,21 +307,26 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
           final response = value.response;
           if (response.data == null || response.data!.data == null) {
             debugPrint("[Save] ❌ No data found in response");
-            return value; // Return unchanged state if data is null
+            return value;
           }
 
           final postList = response.data!.data!;
 
-          /// **Find Post & Toggle Save Status**
+          /// **Find Post & Update Save Status**
           final updatedPosts = postList.map((post) {
             if (post.id == int.tryParse(postId)) {
-              isCurrentlySaved =
-                  post.isSaved ?? false; // Default to false if null
+              isCurrentlySaved = post.isSaved ?? false;
+
+              // Determine new state based on explicit action
+              final newSavedStatus = saveOrUnsave == 'save';
+              debugPrint(
+                  "[Save] 🔄 Changing save status from $isCurrentlySaved to $newSavedStatus");
+
               return post.copyWith(
-                isSaved: !isCurrentlySaved, // Toggle isSaved
+                isSaved: newSavedStatus,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
           /// **Update State with a New Instance**
@@ -326,13 +343,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
             changeCounter,
           );
         },
-        orElse: () =>
-            state, // Return unchanged state if not in the loaded state
+        orElse: () => state,
       ),
     );
 
     /// **2️⃣ Send API Request**
-    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
+    debugPrint("[Save] 📡 Sending $saveOrUnsave request for post $postId");
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
@@ -358,8 +374,10 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
               /// **Revert Save Status**
               final revertedPosts = postList.map((post) {
                 if (post.id == int.tryParse(postId)) {
+                  debugPrint(
+                      "[Save] ↩️ Reverting to original save status: $isCurrentlySaved");
                   return post.copyWith(
-                    isSaved: isCurrentlySaved, // Revert to original state
+                    isSaved: isCurrentlySaved,
                   );
                 }
                 return post;
@@ -384,11 +402,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         );
       },
       (success) {
-        debugPrint("[Save] ✅ API Success: Save/Unsave applied");
+        debugPrint("[Save] ✅ API Success: $saveOrUnsave applied successfully");
       },
     );
 
     _isUpdatingPostSaveStatus = false; // Reset the flag
+    debugPrint("[Save] 🏁 Operation completed for post $postId");
   }
 
   Future<void> deletePost(String postId) async {

@@ -218,6 +218,7 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
                 members: updatedMembers,
               ),
             );
+            sl<GroupDetailsInCommunityCubit>().increaseOrDecreaseMembers(false);
 
             return GroupMembersState.loaded(
               '', // snackBarMessage
@@ -305,6 +306,8 @@ class GroupMembersCubit extends Cubit<GroupMembersState> {
 
             if (status == AcceptOrDeclineMemberInGroup.accepted.name) {
               updatedMembers.add(pendingDoctor);
+              sl<GroupDetailsInCommunityCubit>()
+                  .increaseOrDecreaseMembers(true);
             }
 
             // Create updated response

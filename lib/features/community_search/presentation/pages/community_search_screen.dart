@@ -174,6 +174,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                 feed: feed,
                                 homeDataModel: widget.homeDataModel,
                                 isCommunitySearch: true,
+                                showPostFrom: ShowPostFromEnum.searchTab.name,
                                 currentDoctorModel: widget.currentDoctorModel,
                                 highlightWord: _cubit.searchValue,
                                 viewPollWidget: ViewPollWidget(
@@ -216,11 +217,17 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                 ),
                                 onLikeAndUnlikeAdditional: () {
                                   cubit.addLikeOrUnlikeOnPost(
-                                      feed.id.toString());
+                                    feed.id.toString(),
+                                    likeOrUnlike:
+                                        feed.isLiked! ? 'unlike' : 'like',
+                                  );
                                 },
                                 onSaveAndUnSaveAdditional: () {
                                   cubit.addSaveOrUnsaveOnPost(
-                                      feed.id.toString());
+                                    feed.id.toString(),
+                                    saveOrUnsave:
+                                        feed.isSaved! ? 'unsave' : 'save',
+                                  );
                                 },
                                 onDeleteAdditional: () {
                                   cubit.deletePost(feed.id.toString());

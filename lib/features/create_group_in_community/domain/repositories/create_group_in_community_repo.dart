@@ -38,4 +38,13 @@ abstract class CreateGroupInCommunityRepository {
     String? description,
     String privacy,
   );
+  Future<Either<Failure, UpdateGroupInCommunityModelResponse>>
+      updateGroupWithHeaderAndGroupImageInCommunity(
+    String groupId,
+    File groupImage,
+    File headerImage,
+    String name,
+    String? description,
+    String privacy,
+  );
 }

@@ -1084,6 +1084,7 @@ class CheckNotificationType extends StatelessWidget {
                 feed: const PostCommunityModel(),
                 isComeFromNotification: true,
                 feedId: notificationModel.typeId.toString(),
+                showPostFrom: ShowPostFromEnum.notification.name,
               ),
             );
           },
@@ -1229,6 +1230,7 @@ class CheckNotificationType extends StatelessWidget {
                 feed: const PostCommunityModel(),
                 isComeFromNotification: true,
                 feedId: notificationModel.typeId.toString(),
+                showPostFrom: ShowPostFromEnum.notification.name,
               ),
             );
           },
@@ -1374,6 +1376,7 @@ class CheckNotificationType extends StatelessWidget {
                 feed: const PostCommunityModel(),
                 isComeFromNotification: true,
                 feedId: notificationModel.typeId.toString(),
+                showPostFrom: ShowPostFromEnum.notification.name,
               ),
             );
           },
@@ -1519,6 +1522,7 @@ class CheckNotificationType extends StatelessWidget {
                 feed: const PostCommunityModel(),
                 isComeFromNotification: true,
                 feedId: notificationModel.typeId.toString(),
+                showPostFrom: ShowPostFromEnum.notification.name,
               ),
             );
           },

@@ -36,6 +36,7 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   int _currentPage = 1;
   getGroupDetails(String groupId) async {
     emit(const GroupDetailsInCommunityState.loading());
+    _currentPage = 1;
     final result = await _getGroupDetailsInCommunityUsecase.execute(
       GetGroupDetailsInCommunityUsecaseInput(
         groupId: groupId,
@@ -285,14 +286,17 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   bool _isUpdatingPostLikeStatus =
       false; // Private flag to prevent multiple simultaneous actions
 
-  void addLikeOrUnlikeOnPost(String postId) async {
+  void addLikeOrUnlikeOnPost(
+    String postId, {
+    required String likeOrUnlike, // 'like' or 'unlike'
+  }) async {
     // Prevent multiple simultaneous actions
     if (_isUpdatingPostLikeStatus) return;
-
-    _isUpdatingPostLikeStatus = true; // Set the flag to true
+    _isUpdatingPostLikeStatus = true;
 
     // Store the current like status for rollback in case of failure
     bool isCurrentlyLiked = false;
+    int? currentLikesCount;
 
     emit(
       state.maybeMap(
@@ -300,49 +304,49 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         loaded: (value) {
           final groupDetails = value.groupDetails;
           if (groupDetails.data == null || groupDetails.data!.posts == null) {
-            return value; // Return unchanged state if groupDetails or posts is null
+            return value;
           }
 
           final posts = groupDetails.data!.posts!;
           if (posts.data == null) {
-            return value; // Return unchanged state if posts.data is null
+            return value;
           }
 
-          // Create a new list of posts with the updated like status
+          // Create updated posts list
           final updatedPosts = posts.data!.map((post) {
             if (post.id.toString() == postId) {
-              // Toggle isLiked and adjust likesCount
-              isCurrentlyLiked =
-                  post.isLiked ?? false; // Default to false if null
-              final updatedLikesCount =
-                  (post.likesCount ?? 0) + (isCurrentlyLiked ? -1 : 1);
+              // Store current values
+              isCurrentlyLiked = post.isLiked ?? false;
+              currentLikesCount = post.likesCount ?? 0;
+
+              // Determine new values based on explicit action
+              final newLikeStatus = likeOrUnlike == 'like';
+              final likesCountChange = newLikeStatus
+                  ? (isCurrentlyLiked
+                      ? 0
+                      : 1) // Like: only increment if not already liked
+                  : (isCurrentlyLiked
+                      ? -1
+                      : 0); // Unlike: only decrement if currently liked
 
               return post.copyWith(
-                isLiked: !isCurrentlyLiked, // Toggle isLiked
-                likesCount: updatedLikesCount, // Update likesCount
+                isLiked: newLikeStatus,
+                likesCount: currentLikesCount! + likesCountChange,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
-          // Create a new posts object with the updated posts
+          // Update state hierarchy
           final updatedPostsData = posts.copyWith(data: updatedPosts);
-
-          // Create a new data object with the updated posts
           final updatedData =
               groupDetails.data!.copyWith(posts: updatedPostsData);
-
-          // Create a new groupDetails object with the updated data
           final updatedGroupDetails = groupDetails.copyWith(data: updatedData);
 
-          // Return a new state with the updated groupDetails
           return value.copyWith(groupDetails: updatedGroupDetails);
         },
       ),
     );
-
-    // Determine the action (like or unlike) based on the current state
-    final likeOrUnlike = isCurrentlyLiked ? 'unlike' : 'like';
 
     // Send the request to the server
     final result = await _addLikeOnPostUsecase.execute(
@@ -370,56 +374,46 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
                 return value;
               }
 
-              // Revert the like status and likes count
+              // Revert to original values
               final revertedPosts = posts.data!.map((post) {
                 if (post.id.toString() == postId) {
-                  final revertedLikesCount = !isCurrentlyLiked
-                      ? post.likesCount! - 1
-                      : post.likesCount! + 1;
-
                   return post.copyWith(
                     isLiked: isCurrentlyLiked,
-                    likesCount: revertedLikesCount,
+                    likesCount: currentLikesCount,
                   );
                 }
                 return post;
               }).toList();
 
-              // Create a new posts object with the reverted posts
               final revertedPostsData = posts.copyWith(data: revertedPosts);
-
-              // Create a new data object with the reverted posts
               final revertedData =
                   groupDetails.data!.copyWith(posts: revertedPostsData);
-
-              // Create a new groupDetails object with the reverted data
               final revertedGroupDetails =
                   groupDetails.copyWith(data: revertedData);
 
-              // Return a new state with the reverted groupDetails
               return value.copyWith(groupDetails: revertedGroupDetails);
             },
           ),
         );
       },
       (success) {
-        // Optionally handle success (e.g., show a toast or update other state)
+        // Success case - no action needed as UI was already updated
       },
     );
 
-    _isUpdatingPostLikeStatus = false; // Reset the flag
+    _isUpdatingPostLikeStatus = false;
   }
 
   bool _isUpdatingPostSaveStatus =
       false; // Private flag to prevent multiple simultaneous actions
 
-  void addSaveOrUnsaveOnPost(String postId) async {
-    // Prevent multiple simultaneous actions
+  Future<void> addSaveOrUnsaveOnPost(
+    String postId, {
+    required String saveOrUnsave, // 'save' or 'unsave' (required)
+  }) async {
     if (_isUpdatingPostSaveStatus) return;
+    _isUpdatingPostSaveStatus = true;
 
-    _isUpdatingPostSaveStatus = true; // Set the flag to true
-
-    // Store the current save status for rollback in case of failure
     bool isCurrentlySaved = false;
 
     emit(
@@ -428,47 +422,37 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         loaded: (value) {
           final groupDetails = value.groupDetails;
           if (groupDetails.data == null || groupDetails.data!.posts == null) {
-            return value; // Return unchanged state if groupDetails or posts is null
+            return value;
           }
 
           final posts = groupDetails.data!.posts!;
           if (posts.data == null) {
-            return value; // Return unchanged state if posts.data is null
+            return value;
           }
 
-          // Create a new list of posts with the updated save status
           final updatedPosts = posts.data!.map((post) {
             if (post.id.toString() == postId) {
-              // Toggle isSaved
-              isCurrentlySaved =
-                  post.isSaved ?? false; // Default to false if null
+              isCurrentlySaved = post.isSaved ?? false;
+
+              // Determine new state based on explicit action
+              final newSavedStatus = saveOrUnsave == 'save';
               return post.copyWith(
-                isSaved: !isCurrentlySaved, // Toggle isSaved
+                isSaved: newSavedStatus,
               );
             }
-            return post; // Return unchanged post if ID doesn't match
+            return post;
           }).toList();
 
-          // Create a new posts object with the updated posts
           final updatedPostsData = posts.copyWith(data: updatedPosts);
-
-          // Create a new data object with the updated posts
           final updatedData =
               groupDetails.data!.copyWith(posts: updatedPostsData);
-
-          // Create a new groupDetails object with the updated data
           final updatedGroupDetails = groupDetails.copyWith(data: updatedData);
 
-          // Return a new state with the updated groupDetails
           return value.copyWith(groupDetails: updatedGroupDetails);
         },
       ),
     );
 
-    // Determine the action (save or unsave) based on the current state
-    final saveOrUnsave = isCurrentlySaved ? 'unsave' : 'save';
-
-    // Send the request to the server
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
@@ -478,7 +462,6 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
 
     result.fold(
       (failure) {
-        // Rollback UI changes on failure
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -494,39 +477,32 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
                 return value;
               }
 
-              // Revert the save status
               final revertedPosts = posts.data!.map((post) {
                 if (post.id.toString() == postId) {
                   return post.copyWith(
-                    isSaved: isCurrentlySaved, // Revert to original state
+                    isSaved: isCurrentlySaved,
                   );
                 }
                 return post;
               }).toList();
 
-              // Create a new posts object with the reverted posts
               final revertedPostsData = posts.copyWith(data: revertedPosts);
-
-              // Create a new data object with the reverted posts
               final revertedData =
                   groupDetails.data!.copyWith(posts: revertedPostsData);
-
-              // Create a new groupDetails object with the reverted data
               final revertedGroupDetails =
                   groupDetails.copyWith(data: revertedData);
 
-              // Return a new state with the reverted groupDetails
               return value.copyWith(groupDetails: revertedGroupDetails);
             },
           ),
         );
       },
       (success) {
-        // Optionally handle success (e.g., show a toast or update other state)
+        // Success case - no action needed
       },
     );
 
-    _isUpdatingPostSaveStatus = false; // Reset the flag
+    _isUpdatingPostSaveStatus = false;
   }
 
   deletePost(String postId) async {
@@ -877,5 +853,50 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
       );
       getGroupDetails(groupId);
     });
+  }
+
+  void increaseOrDecreaseMembers(bool isIncrease) {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          // Check for null group data first
+          if (value.groupDetails.data?.group == null) {
+            return state;
+          }
+
+          // Calculate new member count
+          final currentCount = value.groupDetails.data!.group!.memberCount ?? 0;
+          final newCount = isIncrease ? currentCount + 1 : currentCount - 1;
+
+          // Create updated group
+          final updatedGroup = value.groupDetails.data!.group!.copyWith(
+            memberCount: newCount,
+          );
+
+          // Create updated data
+          final updatedData = value.groupDetails.data!.copyWith(
+            group: updatedGroup,
+          );
+
+          // Create final updated group details
+          final updatedGroupDetails = value.groupDetails.copyWith(
+            data: updatedData,
+          );
+
+          // Return new state
+          return GroupDetailsInCommunityState.loaded(
+            updatedGroupDetails,
+            value.snackBarMessage,
+            value.dialogMessage,
+            value.isDeleteGroupLoading,
+            value.isDeleteGroupLoaded,
+            changeCounter,
+            value.isSeeMore,
+            value.isAcceptOrDeclineGroupInvitation,
+          );
+        },
+      ),
+    );
   }
 }

@@ -36,9 +36,11 @@ void showUpdateDialog({
               SizedBox(height: 5.h),
               HtmlWidget(
                 '''<ul>
-      <li><strong>AI Consultations</strong>: Use advanced AI to analyze patient data and provide intelligent recommendations for care.</li>
-      <li><strong>Fix Bugs and Improve Performance</strong>: Enjoy a smoother and more reliable app experience with various fixes and optimizations.</li>
-  </ul>''',
+  <li><strong>Community Discussions</strong>: Connect with other users, share experiences, and get support from the community.</li>
+  <li><strong>Group Features</strong>: Join interest groups and participate in focused discussions with like-minded members.</li>
+  <li><strong>Trending Topics</strong>: Discover what's popular in the community and join the hottest conversations.</li>
+  <li><strong>Bug Fixes & Performance</strong>: Enjoy a smoother and more reliable app experience with various fixes and optimizations.</li>
+</ul>''',
                 onTapUrl: (url) {
                   launchURL(
                     url: url,

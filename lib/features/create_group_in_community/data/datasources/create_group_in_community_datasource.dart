@@ -32,6 +32,15 @@ abstract class CreateGroupInCommunityDatasource {
     String? description,
     String privacy,
   );
+  Future<UpdateGroupInCommunityModelResponse>
+      updateGroupWithHeaderAndGroupImageInCommunity(
+    String groupId,
+    File groupImage,
+    File headerImage,
+    String name,
+    String? description,
+    String privacy,
+  );
 }
 
 class CreateGroupInCommunityDatasourceImpl
@@ -83,5 +92,18 @@ class CreateGroupInCommunityDatasourceImpl
       String groupId, String name, String? description, String privacy) async {
     return await _apiServices.updateGroupTextsInCommunity(
         groupId, name, description!, privacy);
+  }
+
+  @override
+  Future<UpdateGroupInCommunityModelResponse>
+      updateGroupWithHeaderAndGroupImageInCommunity(
+          String groupId,
+          File groupImage,
+          File headerImage,
+          String name,
+          String? description,
+          String privacy) async {
+    return await _apiServices.updateGroupWithHeaderAndGroupImageInCommunity(
+        groupId, name, groupImage, headerImage, description!, privacy);
   }
 }

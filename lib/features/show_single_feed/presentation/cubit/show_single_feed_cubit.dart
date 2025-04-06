@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 
 import '../../../../exports.dart';
@@ -96,9 +98,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       );
       result.fold(
         (l) {
-          if (!isComeFromNotification) {
-            emit(ShowSingleFeedState.error(l.message));
-          }
+          emit(ShowSingleFeedState.error(l.message));
         },
         (r) async {
           if (highlightedCommentId == null) {
@@ -269,7 +269,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   }
 
   bool _isLikingOrUnlikingPost = false; // Add this private flag
-
+  String showPostFrom = '';
   void addOrRemoveLike() {
     // Prevent multiple simultaneous actions
     if (_isLikingOrUnlikingPost) return;
@@ -290,19 +290,45 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               ? (currentFeed.likesCount ?? 0) - 1 // Decrease likes count
               : (currentFeed.likesCount ?? 0) + 1; // Increase likes count
 
-          // Call the like/unlike API
-          sl<CommunityCubit>().addLikeOrUnlikeOnPost(
-            currentFeed.id.toString(),
-            likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like',
-          );
+          if (showPostFrom == ShowPostFromEnum.feedsTab.name) {
+            // Call the like/unlike API
+            sl<CommunityCubit>().addLikeOrUnlikeOnPost(
+              currentFeed.id.toString(),
+              likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like',
+            );
 
-          // Update the post state with the new like status and likes count
-          sl<CommunityCubit>().updatePost(
-            currentFeed.copyWith(
-              isLiked: !isCurrentlyLiked,
-              likesCount: updatedLikesCount,
-            ),
-          );
+            // Update the post state with the new like status and likes count
+            sl<CommunityCubit>().updatePost(
+              currentFeed.copyWith(
+                isLiked: !isCurrentlyLiked,
+                likesCount: updatedLikesCount,
+              ),
+            );
+          }
+          if (showPostFrom == ShowPostFromEnum.groupsTab.name) {
+            sl<GroupsCubit>().addLikeOrUnlikeOnPost(currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
+          if (showPostFrom == ShowPostFromEnum.groupDetails.name) {
+            sl<GroupDetailsInCommunityCubit>().addLikeOrUnlikeOnPost(
+                currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
+          if (showPostFrom == ShowPostFromEnum.searchTab.name) {
+            sl<CommunitySearchCubit>().addLikeOrUnlikeOnPost(
+                currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
+          if (showPostFrom == ShowPostFromEnum.allDoctorPosts.name) {
+            sl<AllDoctorPostsCubit>().addLikeOrUnlikeOnPost(
+                currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
+          if (showPostFrom == ShowPostFromEnum.savedPosts.name) {
+            sl<SavedPostsCubit>().addLikeOrUnlikeOnPost(
+                currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
 
           // Emit the new state with updated data
           return ShowSingleFeedState.loaded(
@@ -346,15 +372,56 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           // Toggle the save status
           final isCurrentlySaved = currentFeed.isSaved ?? false;
 
-          // Call the save or unsave API
-          sl<CommunityCubit>().addSaveOrUnsaveOnPost(currentFeed.id.toString());
+          //! feedsTab
+          if (showPostFrom == ShowPostFromEnum.feedsTab.name) {
+            // Call the save or unsave API
+            sl<CommunityCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
 
-          // Update the post state with the new save status
-          sl<CommunityCubit>().updatePost(
-            currentFeed.copyWith(
-              isSaved: !isCurrentlySaved,
-            ),
-          );
+            // Update the post state with the new save status
+            sl<CommunityCubit>().updatePost(
+              currentFeed.copyWith(
+                isSaved: !isCurrentlySaved,
+              ),
+            );
+          }
+          //! groupsTab
+          if (showPostFrom == ShowPostFromEnum.groupsTab.name) {
+            sl<GroupsCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
+          //! groupDetails
+          if (showPostFrom == ShowPostFromEnum.groupDetails.name) {
+            sl<GroupDetailsInCommunityCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
+          //! searchTab
+          if (showPostFrom == ShowPostFromEnum.searchTab.name) {
+            sl<CommunitySearchCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
+          //! allDoctorPosts
+          if (showPostFrom == ShowPostFromEnum.allDoctorPosts.name) {
+            sl<AllDoctorPostsCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
+          //! savedPosts
+          if (showPostFrom == ShowPostFromEnum.savedPosts.name) {
+            sl<SavedPostsCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
 
           // Emit the new state with updated data
           return ShowSingleFeedState.loaded(

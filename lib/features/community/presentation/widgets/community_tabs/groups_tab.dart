@@ -295,20 +295,28 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                                 },
                               ),
                               onLikeAndUnlikeAdditional: () {
-                                _cubit.addLikeOrUnlikeOnPost(response
-                                    .data!.randomPosts!.data![index].id
-                                    .toString());
+                                _cubit.addLikeOrUnlikeOnPost(
+                                    response.data!.randomPosts!.data![index].id
+                                        .toString(),
+                                    likeOrUnlike: response.data!.randomPosts!
+                                            .data![index].isLiked!
+                                        ? 'unlike'
+                                        : 'like');
                               },
                               onSaveAndUnSaveAdditional: () {
-                                _cubit.addSaveOrUnsaveOnPost(response
-                                    .data!.randomPosts!.data![index].id
-                                    .toString());
+                                _cubit.addSaveOrUnsaveOnPost(
+                                  response.data!.randomPosts!.data![index].id
+                                      .toString(),
+                                  saveOrUnsave:
+                                      feed.isSaved! ? 'unsave' : 'save',
+                                );
                               },
                               onDeleteAdditional: () {
                                 _cubit.deletePost(response
                                     .data!.randomPosts!.data![index].id
                                     .toString());
                               },
+                              showPostFrom: ShowPostFromEnum.groupsTab.name,
                             ),
                           );
                         },

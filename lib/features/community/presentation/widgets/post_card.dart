@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
 import 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
@@ -15,6 +17,7 @@ class PostCard extends StatelessWidget {
   final Widget? allDoctorPostsMenu;
   final Widget? viewPollWidget;
   final String? highlightWord;
+  final String showPostFrom;
 
   final void Function()? onLikeAndUnlikeAdditional;
   final void Function()? onSaveAndUnSaveAdditional;
@@ -34,6 +37,7 @@ class PostCard extends StatelessWidget {
     this.isAllDoctorPosts = false,
     this.isCommunitySearch = false,
     this.highlightWord,
+    required this.showPostFrom,
   });
 
   @override
@@ -122,6 +126,7 @@ class PostCard extends StatelessWidget {
                         feed: feed,
                         isComeFromNotification: false,
                         feedId: '',
+                        showPostFrom: showPostFrom,
                       ),
                     );
                   },
@@ -250,7 +255,8 @@ class PostCard extends StatelessWidget {
                                           ),
                                         ),
                                       ),
-                                      'Verified' == 'Verified'
+                                      isVerifiedUser(feed
+                                              .doctor!.isSyndicateCardRequired)
                                           ? const VerificationIcon(
                                               isPatientCard: false,
                                             )
@@ -343,208 +349,237 @@ class PostCard extends StatelessWidget {
                                             );
                                           }
 
-                                          return PopupMenuButton<String>(
-                                            icon: const Icon(Icons.more_vert),
-                                            onSelected: (String value) {
-                                              switch (value) {
-                                                case 'Report':
-                                                  // Handle report action
-                                                  debugPrint('Report clicked');
-                                                  break;
-                                                case 'Edit':
-                                                  // Handle edit action
-                                                  navigatorKey.currentState
-                                                      ?.pushNamed(
-                                                    AppRoutes
-                                                        .createPostInCommunity,
-                                                    arguments: AppRoutesArgs
-                                                        .createPostInCommunityRouteArgs(
-                                                      currentDoctorModel:
-                                                          currentDoctorModel,
-                                                      homeDataModel:
-                                                          homeDataModel,
-                                                      feed: feed,
-                                                    ),
-                                                  );
-                                                  break;
-                                                case 'Delete':
-                                                  if (isGroupPosts ||
-                                                      isCommunitySearch) {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              'Delete Post'),
-                                                          content: const Text(
-                                                              'Are you sure you want to delete this post?'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context); // Close the dialog
-                                                              },
-                                                              child: Text(
-                                                                'Cancel',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade600,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                // Perform the deletion logic here
-                                                                // For example, update the state or call a callback
-
-                                                                Navigator.pop(
-                                                                    context); // Close the dialog
-                                                                onDeleteAdditional!();
-                                                              },
-                                                              child: const Text(
-                                                                'Delete',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .red),
-                                                              ),
-                                                            ),
-                                                          ],
+                                          return (homeDataModel.role !=
+                                                      AppStrings.roleAdmin &&
+                                                  currentDoctorModel.id
+                                                          .toString() !=
+                                                      feed.doctor!.id
+                                                          .toString())
+                                              ? const SizedBox.shrink()
+                                              : PopupMenuButton<String>(
+                                                  icon: const Icon(
+                                                      Icons.more_vert),
+                                                  onSelected: (String value) {
+                                                    switch (value) {
+                                                      case 'Report':
+                                                        // Handle report action
+                                                        debugPrint(
+                                                            'Report clicked');
+                                                        break;
+                                                      case 'Edit':
+                                                        // Handle edit action
+                                                        navigatorKey
+                                                            .currentState
+                                                            ?.pushNamed(
+                                                          AppRoutes
+                                                              .createPostInCommunity,
+                                                          arguments: AppRoutesArgs
+                                                              .createPostInCommunityRouteArgs(
+                                                            currentDoctorModel:
+                                                                currentDoctorModel,
+                                                            homeDataModel:
+                                                                homeDataModel,
+                                                            feed: feed,
+                                                          ),
                                                         );
-                                                      },
-                                                    );
-                                                  } else {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                          title: const Text(
-                                                              'Delete Post'),
-                                                          content: const Text(
-                                                              'Are you sure you want to delete this post?'),
-                                                          actions: [
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context); // Close the dialog
-                                                              },
-                                                              child: Text(
-                                                                'Cancel',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .grey
-                                                                      .shade600,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            TextButton(
-                                                              onPressed: () {
-                                                                // Perform the deletion logic here
-                                                                // For example, update the state or call a callback
+                                                        break;
+                                                      case 'Delete':
+                                                        if (isGroupPosts ||
+                                                            isCommunitySearch) {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    'Delete Post'),
+                                                                content: const Text(
+                                                                    'Are you sure you want to delete this post?'),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context); // Close the dialog
+                                                                    },
+                                                                    child: Text(
+                                                                      'Cancel',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade600,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      // Perform the deletion logic here
+                                                                      // For example, update the state or call a callback
 
-                                                                Navigator.pop(
-                                                                    context); // Close the dialog
-                                                                cubit
-                                                                    .deletePost(
-                                                                  feed.id
-                                                                      .toString(),
-                                                                );
-                                                              },
-                                                              child: const Text(
-                                                                'Delete',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .red),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  }
+                                                                      Navigator.pop(
+                                                                          context); // Close the dialog
+                                                                      onDeleteAdditional!();
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Delete',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        } else {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return AlertDialog(
+                                                                title: const Text(
+                                                                    'Delete Post'),
+                                                                content: const Text(
+                                                                    'Are you sure you want to delete this post?'),
+                                                                actions: [
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context); // Close the dialog
+                                                                    },
+                                                                    child: Text(
+                                                                      'Cancel',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .shade600,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      // Perform the deletion logic here
+                                                                      // For example, update the state or call a callback
 
-                                                  break;
-                                              }
-                                            },
-                                            itemBuilder:
-                                                (BuildContext context) {
-                                              final items =
-                                                  <PopupMenuEntry<String>>[
-                                                // PopupMenuItem(
-                                                //   value: 'Report',
-                                                //   child: Row(
-                                                //     children: [
-                                                //       const Icon(Icons.report,
-                                                //           color:
-                                                //               AppColors.description),
-                                                //       SizedBox(width: 8.w),
-                                                //       const Text('Report'),
-                                                //     ],
-                                                //   ),
-                                                // ),
-                                              ];
+                                                                      Navigator.pop(
+                                                                          context); // Close the dialog
+                                                                      cubit
+                                                                          .deletePost(
+                                                                        feed.id
+                                                                            .toString(),
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        const Text(
+                                                                      'Delete',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Colors.red),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              );
+                                                            },
+                                                          );
+                                                        }
 
-                                              if (feed.doctor!.id.toString() ==
-                                                      currentDoctorModel.id
-                                                          .toString() ||
-                                                  homeDataModel.role ==
-                                                      AppStrings.roleAdmin) {
-                                                items.add(
-                                                  PopupMenuItem(
-                                                    value: 'Edit',
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.edit,
-                                                            color: AppColors
-                                                                .description),
-                                                        SizedBox(width: 8.w),
-                                                        const Text('Edit'),
-                                                      ],
-                                                    ),
-                                                  ),
+                                                        break;
+                                                    }
+                                                  },
+                                                  itemBuilder:
+                                                      (BuildContext context) {
+                                                    final items =
+                                                        <PopupMenuEntry<
+                                                            String>>[
+                                                      // PopupMenuItem(
+                                                      //   value: 'Report',
+                                                      //   child: Row(
+                                                      //     children: [
+                                                      //       const Icon(Icons.report,
+                                                      //           color:
+                                                      //               AppColors.description),
+                                                      //       SizedBox(width: 8.w),
+                                                      //       const Text('Report'),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
+                                                    ];
+
+                                                    if (feed.doctor!.id
+                                                                .toString() ==
+                                                            currentDoctorModel
+                                                                .id
+                                                                .toString() ||
+                                                        homeDataModel.role ==
+                                                            AppStrings
+                                                                .roleAdmin) {
+                                                      items.add(
+                                                        PopupMenuItem(
+                                                          value: 'Edit',
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(
+                                                                  Icons.edit,
+                                                                  color: AppColors
+                                                                      .description),
+                                                              SizedBox(
+                                                                  width: 8.w),
+                                                              const Text(
+                                                                  'Edit'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                    if ((feed.doctor!.id
+                                                                .toString() ==
+                                                            currentDoctorModel
+                                                                .id
+                                                                .toString() ||
+                                                        homeDataModel.role ==
+                                                            AppStrings
+                                                                .roleAdmin)) {
+                                                      items.add(
+                                                        PopupMenuItem(
+                                                          value: 'Delete',
+                                                          child: Row(
+                                                            children: [
+                                                              const Icon(
+                                                                  Icons.delete,
+                                                                  color: AppColors
+                                                                      .description),
+                                                              SizedBox(
+                                                                  width: 8.w),
+                                                              const Text(
+                                                                  'Delete'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+
+                                                    // items.add(
+                                                    //   PopupMenuItem(
+                                                    //     value: 'Report',
+                                                    //     child: Row(
+                                                    //       children: [
+                                                    //         const Icon(Icons.report,
+                                                    //             color: AppColors
+                                                    //                 .description),
+                                                    //         SizedBox(width: 8.w),
+                                                    //         const Text('Report'),
+                                                    //       ],
+                                                    //     ),
+                                                    //   ),
+                                                    // );
+
+                                                    return items;
+                                                  },
                                                 );
-                                              }
-                                              if ((feed.doctor!.id.toString() ==
-                                                      currentDoctorModel.id
-                                                          .toString() ||
-                                                  homeDataModel.role ==
-                                                      AppStrings.roleAdmin)) {
-                                                items.add(
-                                                  PopupMenuItem(
-                                                    value: 'Delete',
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.delete,
-                                                            color: AppColors
-                                                                .description),
-                                                        SizedBox(width: 8.w),
-                                                        const Text('Delete'),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }
-
-                                              // items.add(
-                                              //   PopupMenuItem(
-                                              //     value: 'Report',
-                                              //     child: Row(
-                                              //       children: [
-                                              //         const Icon(Icons.report,
-                                              //             color: AppColors
-                                              //                 .description),
-                                              //         SizedBox(width: 8.w),
-                                              //         const Text('Report'),
-                                              //       ],
-                                              //     ),
-                                              //   ),
-                                              // );
-
-                                              return items;
-                                            },
-                                          );
                                         },
                                       );
                                     },
@@ -660,9 +695,11 @@ class PostCard extends StatelessWidget {
               ),
 
           ImagesInPostCard(
-              feed: feed,
-              homeDataModel: homeDataModel,
-              currentDoctorModel: currentDoctorModel),
+            feed: feed,
+            homeDataModel: homeDataModel,
+            currentDoctorModel: currentDoctorModel,
+            showPostFrom: showPostFrom,
+          ),
 
           InkWell(
             onTap: () {
@@ -674,6 +711,7 @@ class PostCard extends StatelessWidget {
                   feed: feed,
                   isComeFromNotification: false,
                   feedId: '',
+                  showPostFrom: showPostFrom,
                 ),
               );
             },
@@ -730,6 +768,7 @@ class PostCard extends StatelessWidget {
                               feed: feed,
                               isComeFromNotification: false,
                               feedId: '',
+                              showPostFrom: showPostFrom,
                             ),
                           );
                         },
@@ -757,7 +796,10 @@ class PostCard extends StatelessWidget {
                       if (isGroupPosts || isCommunitySearch) {
                         onSaveAndUnSaveAdditional!();
                       } else {
-                        cubit.addSaveOrUnsaveOnPost(feed.id.toString());
+                        cubit.addSaveOrUnsaveOnPost(
+                          feed.id.toString(),
+                          saveOrUnsave: feed.isSaved! ? 'unsave' : 'save',
+                        );
                       }
                     },
                     highlightColor: Colors.transparent,

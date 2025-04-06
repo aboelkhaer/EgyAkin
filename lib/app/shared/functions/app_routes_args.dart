@@ -301,6 +301,7 @@ class AppRoutesArgs {
     required PostCommunityModel feed,
     required bool isComeFromNotification,
     required String feedId,
+    required String showPostFrom,
   }) {
     return {
       'homeDataModel': homeDataModel,
@@ -308,6 +309,7 @@ class AppRoutesArgs {
       'feed': feed,
       'isComeFromNotification': isComeFromNotification,
       'feedId': feedId,
+      'showPostFrom': showPostFrom,
     };
   }
 

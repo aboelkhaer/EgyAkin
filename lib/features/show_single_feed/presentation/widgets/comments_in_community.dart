@@ -22,8 +22,12 @@ class CommentsInCommunity extends StatelessWidget {
         state.maybeWhen(
           orElse: () {},
           error: (message) {
-            customSnackBar(context: context, message: message);
             Navigator.pop(context);
+            if (message != 'An error occurred while retrieving post comments') {
+              customSnackBar(context: context, message: message);
+            } else {
+              customSnackBar(context: context, message: message);
+            }
           },
           loaded: (
             commentsResponse,

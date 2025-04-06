@@ -413,7 +413,10 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   final Set<String> _updatingSavePostIds = {};
 
-  Future<void> addSaveOrUnsaveOnPost(String postId) async {
+  Future<void> addSaveOrUnsaveOnPost(
+    String postId, {
+    required String saveOrUnsave, // 'save' or 'unsave' (required)
+  }) async {
     if (_updatingSavePostIds.contains(postId)) return;
 
     _updatingSavePostIds.add(postId);
@@ -432,7 +435,9 @@ class CommunityCubit extends Cubit<CommunityState> {
           final post = posts[index];
           wasSaved = post.isSaved ?? false;
 
-          final updatedPost = post.copyWith(isSaved: !wasSaved);
+          // Determine new state based on parameter
+          final newSavedStatus = saveOrUnsave == 'save';
+          final updatedPost = post.copyWith(isSaved: newSavedStatus);
           final updatedPosts = [...posts]..[index] = updatedPost;
 
           final updatedResponse = loadedState.feedsResponse.copyWith(
@@ -445,12 +450,10 @@ class CommunityCubit extends Cubit<CommunityState> {
       ),
     );
 
-    final action = wasSaved ? 'unsave' : 'save';
-
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
-        saveOrUnsave: action,
+        saveOrUnsave: saveOrUnsave, // Use the provided parameter directly
       ),
     );
 

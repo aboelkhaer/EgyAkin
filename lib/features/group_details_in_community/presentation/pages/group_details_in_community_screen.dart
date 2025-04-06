@@ -752,11 +752,15 @@ class _GroupDetailsInCommunityScreenState
                                                       color: Colors.grey[600]),
                                                 ),
                                           const SizedBox(width: 5),
-                                          (widget.currentDoctorModel.id
-                                                          .toString() ==
-                                                      groupDetails.data!.group!
-                                                          .owner!.id
-                                                          .toString()) &&
+                                          ((widget.currentDoctorModel.id
+                                                              .toString() ==
+                                                          groupDetails.data!
+                                                              .group!.owner!.id
+                                                              .toString()) ||
+                                                      widget.homeDataModel
+                                                              .role ==
+                                                          AppStrings
+                                                              .roleAdmin) &&
                                                   groupDetails.data!.group!
                                                       .isHasPendingInvitations!
                                               ? Column(
@@ -1203,6 +1207,8 @@ class _GroupDetailsInCommunityScreenState
                                       currentDoctorModel:
                                           widget.currentDoctorModel,
                                       isGroupPosts: true,
+                                      showPostFrom:
+                                          ShowPostFromEnum.groupDetails.name,
                                       viewPollWidget: ViewPollWidget(
                                         poll: poll,
                                         currentDoctorModel:
@@ -1249,11 +1255,18 @@ class _GroupDetailsInCommunityScreenState
                                       ),
                                       onLikeAndUnlikeAdditional: () {
                                         cubit.addLikeOrUnlikeOnPost(
-                                            postModel.id.toString());
+                                            postModel.id.toString(),
+                                            likeOrUnlike: postModel.isLiked!
+                                                ? 'unlike'
+                                                : 'like');
                                       },
                                       onSaveAndUnSaveAdditional: () {
                                         cubit.addSaveOrUnsaveOnPost(
-                                            postModel.id.toString());
+                                          postModel.id.toString(),
+                                          saveOrUnsave: postModel.isSaved!
+                                              ? 'unsave'
+                                              : 'save',
+                                        );
                                       },
                                       onDeleteAdditional: () {
                                         cubit.deletePost(

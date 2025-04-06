@@ -3,6 +3,11 @@ import 'dart:io';
 import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
+import 'package:egy_akin/features/community/presentation/cubit/community_cubit.dart';
+import 'package:egy_akin/features/community/presentation/cubit/groups_cubit/groups_cubit.dart';
+import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_cubit.dart';
+import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
+import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/features/profile/domain/usecases/upload_profile_image_usecase.dart';
 import 'package:egy_akin/features/profile/presentation/cubit/profile_state.dart';
@@ -79,8 +84,29 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  void _resetCubit<T extends Cubit>(T Function() createFn) {
+    final cubit = sl<T>();
+    sl.unregister<T>();
+    if (!cubit.isClosed) {
+      cubit.close();
+    }
+    sl.registerLazySingleton<T>(createFn);
+  }
+
   signOut() async {
     emit(const ProfileState.signOutLoading());
+    // Reset each cubit
+    _resetCubit<CommunityCubit>(
+        () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+    _resetCubit<TrendingCubit>(() => TrendingCubit(sl()));
+    _resetCubit<GroupsCubit>(
+        () => GroupsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
+    _resetCubit<GroupDetailsInCommunityCubit>(() =>
+        GroupDetailsInCommunityCubit(
+            sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+    _resetCubit<CommunitySearchCubit>(
+        () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
+
     final result = await _signOutUsecase.execute(NoParams());
 
     result.fold(
@@ -89,8 +115,7 @@ class ProfileCubit extends Cubit<ProfileState> {
       },
       (r) async {
         await sl<AppPreferences>().removeDoctorData();
-        // await sl<AppPreferences>()
-        //     .setBool(AppLocalStrings.isUpdateMessageHidden, false);
+
         emit(const ProfileState.signOutLoaded());
       },
     );

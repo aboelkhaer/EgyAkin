@@ -45,3 +45,14 @@ enum VerificationBySyndicateCard {
   Pending,
   Verified,
 }
+
+enum ShowPostFromEnum {
+  feedsTab,
+  searchTab,
+  groupsTab,
+  groupDetails,
+  homeSlider,
+  allDoctorPosts,
+  notification,
+  savedPosts,
+}

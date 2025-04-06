@@ -29,6 +29,7 @@ class PostType extends StatelessWidget {
               feed: postModel,
               isComeFromNotification: false,
               feedId: '',
+              showPostFrom: ShowPostFromEnum.homeSlider.name,
             ),
           );
         },

@@ -86,6 +86,7 @@ class _PostsTabState extends State<PostsTab> {
                                   feed: feed,
                                   homeDataModel: widget.homeDataModel,
                                   currentDoctorModel: widget.currentDoctorModel,
+                                  showPostFrom: ShowPostFromEnum.feedsTab.name,
                                 );
                               },
                             ),

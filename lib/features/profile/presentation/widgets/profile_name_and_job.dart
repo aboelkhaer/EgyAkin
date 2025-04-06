@@ -185,25 +185,37 @@ class ProfileNameAndJob extends StatelessWidget {
                                   .doctorPatientCount
                                   .toString(),
                               label: 'Patient',
-                              onTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.profilePatients,
-                                  arguments:
-                                      AppRoutesArgs.profilePatientsRouteArgs(
-                                    doctorId: cubit.currentDoctor.id.toString(),
-                                    currentDoctorModel: cubit.currentDoctor,
-                                    accountVerification: accountVerification,
-                                    currentDoctorPoints: currentDoctorPoints,
-                                    isSyndicateCardRequired:
-                                        isSyndicateCardRequired,
-                                    doctorFirstName: cubit
-                                        .currentDoctor.firstName
-                                        .toString(),
-                                    currentDoctorRole: currentDoctorRole,
-                                    homeDataModel: homeDataModel,
-                                  ),
-                                );
-                              },
+                              onTap: isVerifiedUser(
+                                      homeDataModel.isSyndicateCardRequired)
+                                  ? () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.profilePatients,
+                                        arguments: AppRoutesArgs
+                                            .profilePatientsRouteArgs(
+                                          doctorId:
+                                              cubit.currentDoctor.id.toString(),
+                                          currentDoctorModel:
+                                              cubit.currentDoctor,
+                                          accountVerification:
+                                              accountVerification,
+                                          currentDoctorPoints:
+                                              currentDoctorPoints,
+                                          isSyndicateCardRequired:
+                                              isSyndicateCardRequired,
+                                          doctorFirstName: cubit
+                                              .currentDoctor.firstName
+                                              .toString(),
+                                          currentDoctorRole: currentDoctorRole,
+                                          homeDataModel: homeDataModel,
+                                        ),
+                                      );
+                                    }
+                                  : () {
+                                      customSnackBar(
+                                          context: context,
+                                          message:
+                                              'You should verify your syndicate card at first.');
+                                    },
                             ),
                             _buildDivider(),
                             _buildStatItem(

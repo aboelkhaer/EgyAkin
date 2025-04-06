@@ -530,6 +530,17 @@ abstract class ApiServices {
     @Part(name: "description") String description,
     @Part(name: "privacy") String privacy,
   );
+  @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
+  @MultiPart()
+  Future<UpdateGroupInCommunityModelResponse>
+      updateGroupWithHeaderAndGroupImageInCommunity(
+    @Path('groupId') String groupId,
+    @Part(name: "name") String name,
+    @Part(name: "group_image") File groupImage,
+    @Part(name: "header_picture") File headerImage,
+    @Part(name: "description") String description,
+    @Part(name: "privacy") String privacy,
+  );
 
   @GET('${ApiEndPoint.getPollVoters}/{pollId}/options/{optionId}/voters')
   Future<GetPollVotersModelResponse> getPollVoters(

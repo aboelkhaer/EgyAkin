@@ -527,3 +527,4 @@ export 'package:egy_akin/features/home/presentation/widgets/groups_home_view.dar
 export 'package:egy_akin/features/home/presentation/widgets/latest_trends_hashtags.dart';
 export 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 export 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
+export 'package:egy_akin/app/shared/functions/safe_close_for_cubit.dart';

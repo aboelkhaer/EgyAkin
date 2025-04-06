@@ -6,12 +6,14 @@ class ImagesInPostCard extends StatefulWidget {
   final PostCommunityModel feed;
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
+  final String showPostFrom;
 
   const ImagesInPostCard({
     super.key,
     required this.feed,
     required this.homeDataModel,
     required this.currentDoctorModel,
+    required this.showPostFrom,
   });
 
   @override
@@ -47,6 +49,7 @@ class _ImagesInPostCardState extends State<ImagesInPostCard> {
                   feed: feed,
                   isComeFromNotification: false,
                   feedId: '',
+                  showPostFrom: widget.showPostFrom,
                 ),
               );
             },

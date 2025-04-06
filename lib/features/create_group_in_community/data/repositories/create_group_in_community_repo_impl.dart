@@ -93,4 +93,29 @@ class CreateGroupInCommunityRepositoryImpl
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+
+  @override
+  Future<Either<Failure, UpdateGroupInCommunityModelResponse>>
+      updateGroupWithHeaderAndGroupImageInCommunity(
+          String groupId,
+          File groupImage,
+          File headerImage,
+          String name,
+          String? description,
+          String privacy) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await createGroupInCommunityDatasource
+            .updateGroupWithHeaderAndGroupImageInCommunity(
+                groupId, groupImage, headerImage, name, description, privacy);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

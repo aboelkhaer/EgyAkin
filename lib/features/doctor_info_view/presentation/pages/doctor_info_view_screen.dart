@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
 
 import '../../../../exports.dart';
@@ -326,27 +328,37 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               icon: Icons.group,
                               title: 'Patients',
                               value: doctorInfo?.patientCount.toString() ?? '0',
-                              onTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.profilePatients,
-                                  arguments:
-                                      AppRoutesArgs.profilePatientsRouteArgs(
-                                    doctorId: widget.doctorId,
-                                    currentDoctorModel:
-                                        widget.currentDoctorModel,
-                                    accountVerification:
-                                        widget.accountVerification,
-                                    currentDoctorPoints:
-                                        widget.currentDoctorPoints,
-                                    isSyndicateCardRequired:
-                                        widget.isSyndicateCardRequired,
-                                    doctorFirstName:
-                                        doctorInfo!.data!.firstName.toString(),
-                                    currentDoctorRole: widget.currentDoctorRole,
-                                    homeDataModel: widget.homeDataModel,
-                                  ),
-                                );
-                              },
+                              onTap: isVerifiedUser(widget
+                                      .homeDataModel.isSyndicateCardRequired)
+                                  ? () {
+                                      navigatorKey.currentState?.pushNamed(
+                                        AppRoutes.profilePatients,
+                                        arguments: AppRoutesArgs
+                                            .profilePatientsRouteArgs(
+                                          doctorId: widget.doctorId,
+                                          currentDoctorModel:
+                                              widget.currentDoctorModel,
+                                          accountVerification:
+                                              widget.accountVerification,
+                                          currentDoctorPoints:
+                                              widget.currentDoctorPoints,
+                                          isSyndicateCardRequired:
+                                              widget.isSyndicateCardRequired,
+                                          doctorFirstName: doctorInfo!
+                                              .data!.firstName
+                                              .toString(),
+                                          currentDoctorRole:
+                                              widget.currentDoctorRole,
+                                          homeDataModel: widget.homeDataModel,
+                                        ),
+                                      );
+                                    }
+                                  : () {
+                                      customSnackBar(
+                                          context: context,
+                                          message:
+                                              'You should verify your syndicate card at first.');
+                                    },
                             ),
                             _buildStatCard(
                               icon: Icons.star,
@@ -484,7 +496,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
     required IconData icon,
     required String title,
     required String value,
-    required VoidCallback onTap,
+    required VoidCallback? onTap,
   }) {
     return Material(
       color: Colors.white, // Ensure proper ripple effect
