@@ -39,6 +39,100 @@ class _BuildQuestionState extends State<BuildQuestion> {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
 
     switch (cubit.questionModelList[widget.index].type) {
+      //! double
+      case AppStrings.questionTypeDouble:
+        // Get current value (null if no answer exists)
+        final currentAnswer = cubit.questionModelList[widget.index].answer;
+
+        // Split into whole and decimal parts only if value exists
+        String? initialWhole;
+        String? initialDecimal;
+
+        if (currentAnswer != null) {
+          final currentValue = currentAnswer is String
+              ? double.tryParse(currentAnswer) ?? 0.0
+              : currentAnswer as double;
+          final parts = currentValue.toString().split('.');
+          initialWhole = parts[0];
+          initialDecimal = parts.length > 1
+              ? parts[1].padRight(2, '0').substring(0, 2)
+              : '00';
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            // Whole number part
+            SizedBox(
+              width: 50,
+              child: CustomTextFormField(
+                title: '00',
+                textInputType: TextInputType.number,
+                contentPadding: EdgeInsets.zero,
+                maxLength: 2,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                textAlign: TextAlign.center,
+                initialValue: initialWhole, // null will show title '00'
+                onChanged: (wholeValue) {
+                  final decimalValue =
+                      cubit.getCurrentDecimalValue(widget.index);
+                  _updateDoubleValue(
+                    cubit: cubit,
+                    index: widget.index,
+                    whole: wholeValue,
+                    decimal: decimalValue,
+                  );
+                },
+                validator: (val) {
+                  if (cubit.questionModelList[widget.index].mandatory == true &&
+                      (val == null || val.isEmpty)) {
+                    return AppStrings.thisFieldIsRequired;
+                  }
+                  return null;
+                },
+              ),
+            ),
+
+            // Decimal point
+            Container(
+              width: 4,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade500,
+                shape: BoxShape.circle,
+              ),
+            ),
+
+            // Decimal part
+            SizedBox(
+              width: 50,
+              child: CustomTextFormField(
+                title: '00',
+                textInputType: TextInputType.number,
+                contentPadding: EdgeInsets.zero,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(2),
+                ],
+                maxLength: 2,
+                textAlign: TextAlign.center,
+                initialValue: initialDecimal, // null will show title '00'
+                onChanged: (decimalValue) {
+                  final wholeValue = cubit.getCurrentWholeValue(widget.index);
+                  _updateDoubleValue(
+                    cubit: cubit,
+                    index: widget.index,
+                    whole: wholeValue,
+                    decimal: decimalValue,
+                  );
+                },
+                validator: (value) => null,
+              ),
+            ),
+          ],
+        );
+
       //! String
       case AppStrings.questionTypeString:
         var questionAnswer = cubit.questionModelList[widget.index].answer;
@@ -697,5 +791,21 @@ class _BuildQuestionState extends State<BuildQuestion> {
       default:
         return Container();
     }
+  }
+
+  void _updateDoubleValue({
+    required PatientSectionDetailsCubit cubit,
+    required int index,
+    required String whole,
+    required String decimal,
+  }) {
+    final wholeNum = whole.isEmpty ? 0 : int.parse(whole);
+    final decimalNum = decimal.padRight(2, '0');
+    final doubleValue = wholeNum + (int.parse(decimalNum) / 100);
+
+    cubit.updateQuestionAnswer(
+      cubit.questionModelList[index].id.toString(),
+      doubleValue,
+    );
   }
 }

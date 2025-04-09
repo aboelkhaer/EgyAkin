@@ -19,19 +19,17 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> animation;
   bool _isUpToDate = true;
   String currentUserVersion = '';
+  bool _isConnected = true;
 
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
-        vsync: this, duration: const Duration(seconds: AppStrings.splashDelay));
-    animation = Tween(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(animationController);
+      vsync: this,
+      duration: const Duration(seconds: AppStrings.splashDelay),
+    );
+    animation = Tween(begin: 0.0, end: 1.0).animate(animationController);
     _checkConnection();
-
-    // Perform check for updates
     checkForUpdates();
   }
 
@@ -42,10 +40,10 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Future<void> checkForUpdates() async {
-    await getCurrentVersion(); // Ensure version is fetched before update check
+    await getCurrentVersion();
     await sl<AppPreferences>().setData('userAppVersion', currentUserVersion);
 
-    if (!mounted) return; // Check if widget is still mounted before continuing
+    if (!mounted) return;
 
     if (Theme.of(context).platform == TargetPlatform.android) {
       await _checkForAndroidUpdate();
@@ -57,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> getCurrentVersion() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
-      if (!mounted) return; // Avoid calling setState if widget is not mounted
+      if (!mounted) return;
       setState(() {
         currentUserVersion = packageInfo.version;
       });
@@ -68,184 +66,150 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<void> _checkForAndroidUpdate() async {
     try {
-      AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+      final updateInfo = await InAppUpdate.checkForUpdate();
       if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        _isUpToDate = false; // Update available
+        if (!mounted) return;
+        setState(() => _isUpToDate = false);
+
         if (updateInfo.immediateUpdateAllowed) {
-          // Force an immediate update
           await InAppUpdate.performImmediateUpdate();
         } else {
-          // Immediate update not allowed, show custom force update dialog
-          _showForceUpdateDialog();
+          _showForceUpdateDialog(isAndroid: true);
         }
       }
     } catch (e) {
-      if (mounted) {
-        debugPrint('Failed to check for updates on Android: $e');
-      }
+      debugPrint('Android update check failed: $e');
     }
   }
 
   Future<void> _checkForiOSUpdate() async {
-    debugPrint('Starting iOS update check...');
-
-    final packageInfo = await PackageInfo.fromPlatform();
-    final currentVersion = Version.parse(packageInfo.version);
-    final bundleId = packageInfo.packageName;
-
-    debugPrint('Current version: $currentVersion');
-    debugPrint('Bundle ID: $bundleId');
-
-    if (!mounted) return;
-
-    setState(() {
-      currentUserVersion = packageInfo.version;
-    });
-
     try {
+      final packageInfo = await PackageInfo.fromPlatform();
       final response = await http.get(
-        Uri.parse(ApiEndPoint.baseUrl == 'https://api.egyakin.com'
-            ? 'https://itunes.apple.com/lookup?bundleId=$bundleId'
-            : ''),
+        Uri.parse(
+            'https://itunes.apple.com/lookup?bundleId=${packageInfo.packageName}'),
       );
-
-      debugPrint('Response status: ${response.statusCode}');
-      debugPrint('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
-        debugPrint('Decoded JSON: $jsonData');
-
-        if (jsonData['resultCount'] > 0 && jsonData['results'].isNotEmpty) {
+        if (jsonData['resultCount'] > 0) {
           final appStoreVersion =
-              Version.parse(jsonData['results'][0]['version']);
-          debugPrint('App Store version: $appStoreVersion');
+              _parseVersion(jsonData['results'][0]['version']);
+          final currentVersion = _parseVersion(packageInfo.version);
+          final appStoreUrl = jsonData['results'][0]['trackViewUrl'];
 
-          if (appStoreVersion > currentVersion) {
-            debugPrint('App is outdated. Showing update dialog...');
-            if (mounted) {
-              setState(() {
-                _isUpToDate = false;
-              });
-            }
-            _showForceUpdateDialog();
-          } else {
-            debugPrint('App is up-to-date.');
-            if (mounted) {
-              setState(() {
-                _isUpToDate = true;
-              });
-            }
+          if (appStoreVersion != null &&
+              currentVersion != null &&
+              appStoreVersion > currentVersion) {
+            if (!mounted) return;
+            setState(() => _isUpToDate = false);
+            _showForceUpdateDialog(
+              isAndroid: false,
+              appStoreUrl: appStoreUrl,
+            );
           }
-        } else {
-          debugPrint('No results found in the App Store.');
         }
-      } else {
-        debugPrint(
-            'Failed to fetch App Store data. Status code: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('Error occurred while checking for iOS update: $e');
+      debugPrint('iOS update check failed: $e');
     }
-
-    debugPrint('Finished iOS update check.');
   }
 
-  void _showForceUpdateDialog() {
+  Version? _parseVersion(String? versionString) {
+    if (versionString == null) return null;
+    try {
+      return Version.parse(versionString.split('.').take(3).join('.'));
+    } catch (e) {
+      debugPrint('Version parse error: $e');
+      return null;
+    }
+  }
+
+  void _showForceUpdateDialog({required bool isAndroid, String? appStoreUrl}) {
     if (!mounted) return;
+
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent dismissing the dialog
-      builder: (BuildContext context) {
-        return PopScope(
-          onPopInvokedWithResult: (bool success, dynamic result) {
-            // Prevent the dialog from being dismissed
-          },
-          child: AlertDialog(
-            title: const Text('Mandatory Update'),
-            content: const Text(
-                'A new version of the app is available. You must update to continue using it.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () async {
-                  if (Theme.of(context).platform == TargetPlatform.android) {
-                    await InAppUpdate.completeFlexibleUpdate();
-                  } else if (Theme.of(context).platform == TargetPlatform.iOS) {
-                    const url =
-                        'https://apps.apple.com/eg/app/egyakin/id6738606085'; // Replace with your App Store URL
-                    if (await canLaunch(url)) {
-                      await launch(url);
-                    } else {
-                      _showErrorDialog(
-                          'Could not launch the App Store. Please try again later.');
+      barrierDismissible: false,
+      builder: (context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: const Text('Update Required'),
+          content: const Text(
+            'A new version is available. Please update to continue using the app.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                if (isAndroid) {
+                  await InAppUpdate.performImmediateUpdate();
+                } else {
+                  final url =
+                      appStoreUrl ?? 'https://apps.apple.com/app/id6738606085';
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Could not launch app store')),
+                      );
                     }
                   }
-                },
-                child: const Text('Update Now'),
-              ),
-            ],
-          ),
-        );
+                }
+              },
+              child: const Text('Update Now'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _checkConnection() async {
+    _isConnected = await InternetConnectionChecker().hasConnection;
+    if (mounted) setState(() {});
+  }
+
+  void _navigateToNextScreen() {
+    if (!_isUpToDate) return;
+
+    final cubit = SplashCubit.get(context);
+    cubit.state.maybeWhen(
+      loaded: (isAuth, isWelcomed, isAppFreeze, isForceUpdate) {
+        if (isAppFreeze) {
+          _showErrorDialog('App is currently unavailable. Please try later.');
+          return;
+        }
+
+        if (!_isConnected) return;
+
+        if (isAuth && isWelcomed) {
+          Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: 0);
+        } else if (isWelcomed) {
+          Navigator.pushReplacementNamed(context, AppRoutes.signIn);
+        } else {
+          Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+        }
       },
+      orElse: () => Navigator.pushReplacementNamed(context, AppRoutes.welcome),
     );
   }
 
   void _showErrorDialog(String message) {
-    if (!mounted) return;
     showDialog(
       context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text('Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
     );
-  }
-
-  void _navigateToNextScreen() {
-    if (_isUpToDate) {
-      final SplashCubit cubit = SplashCubit.get(context);
-      cubit.state.maybeWhen(
-        loaded: (isAuthentication, isWelcomed, isAppFreeze, isForceUpdate) {
-          if (isAppFreeze) {
-            return _showErrorDialog(
-                'EgyAkin is currently experiencing a technical issue. Please try accessing the application again at a later time.');
-          }
-          if (isForceUpdate) {
-            WidgetsBinding.instance.addPostFrameCallback((_) async {
-              checkForUpdates();
-            });
-          }
-          if (isAuthentication && isWelcomed) {
-            Navigator.of(context)
-                .pushReplacementNamed(AppRoutes.home, arguments: 0);
-          } else if (isWelcomed) {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.signIn);
-          } else {
-            Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
-          }
-        },
-        orElse: () {
-          Navigator.of(context).pushReplacementNamed(AppRoutes.welcome);
-        },
-      );
-    }
-  }
-
-  bool _isConnected = true;
-  Future<void> _checkConnection() async {
-    _isConnected = await InternetConnectionChecker().hasConnection;
-    setState(() {}); // Update the UI based on connection status
   }
 
   @override
@@ -253,41 +217,28 @@ class _SplashScreenState extends State<SplashScreen>
     animationController.forward();
     return Scaffold(
       body: BlocListener<SplashCubit, SplashState>(
-        listener: (context, state) {
-          _navigateToNextScreen();
-        },
+        listener: (context, state) => _navigateToNextScreen(),
         child: SizedBox(
-          height: double.infinity,
           width: double.infinity,
+          height: double.infinity,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               FadeTransition(
                 opacity: animation,
                 child: Image.asset(
-                  // AppImages.logoForSplash,
                   'assets/images/splash.png',
                   width: double.infinity,
                   height: 80.h,
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(
-                height: 40,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!_isConnected)
-                    const Text(
-                      'Check your connection and try again later.',
-                      style: TextStyle(color: Colors.red, fontSize: 16),
-                      textAlign: TextAlign.center,
-                    )
-                  else
-                    const SizedBox.shrink(),
-                ],
-              ),
+              const SizedBox(height: 40),
+              if (!_isConnected)
+                const Text(
+                  'No internet connection',
+                  style: TextStyle(color: Colors.red, fontSize: 16),
+                ),
               SizedBox(height: 60.h),
             ],
           ),

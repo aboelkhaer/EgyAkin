@@ -102,7 +102,7 @@ class _CreatePostInCommunityScreenState
         CreatePostInCommunityCubit.get(context);
 
     ValueNotifier<TextDirection> textDirectionNotifier =
-        ValueNotifier(TextDirection.ltr);
+        ValueNotifier(TextDirection.rtl); // Changed default to RTL
 
     return Scaffold(
       appBar: AppBar(
@@ -336,14 +336,18 @@ class _CreatePostInCommunityScreenState
                                         cubit.editFeedContentForEditableFeed(
                                             value);
                                       }
-                                      if (value.isNotEmpty &&
-                                          RegExp(r'^[\u0600-\u06FF]')
-                                              .hasMatch(value[0])) {
+                                      if (value.isNotEmpty) {
+                                        // Check if text contains Arabic characters
+                                        final hasArabic =
+                                            RegExp(r'[\u0600-\u06FF]')
+                                                .hasMatch(value);
+                                        textDirectionNotifier.value = hasArabic
+                                            ? TextDirection.rtl
+                                            : TextDirection.ltr;
+                                      } else {
+                                        // Default to RTL when empty
                                         textDirectionNotifier.value =
                                             TextDirection.rtl;
-                                      } else {
-                                        textDirectionNotifier.value =
-                                            TextDirection.ltr;
                                       }
                                       cubit.changePostLength(value.length);
                                     },

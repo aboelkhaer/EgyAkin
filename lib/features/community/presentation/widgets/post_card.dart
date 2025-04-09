@@ -1,9 +1,5 @@
 import 'dart:developer';
 
-import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
-import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
-import 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
@@ -594,18 +590,23 @@ class PostCard extends StatelessWidget {
                 // const SizedBox(height: 20),
                 feed.content == null
                     ? const SizedBox.shrink()
-                    : Row(
-                        children: [
-                          Flexible(
-                            child: HashtagText(
-                              content: feed.content.toString(),
-                              trimLines: 4,
-                              currentDoctorModel: currentDoctorModel,
-                              homeDataModel: homeDataModel,
-                              highlightWord: highlightWord,
+                    : Directionality(
+                        textDirection: isArabic(feed.content.toString())
+                            ? TextDirection.rtl
+                            : TextDirection.ltr,
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: HashtagText(
+                                content: feed.content.toString(),
+                                trimLines: 4,
+                                currentDoctorModel: currentDoctorModel,
+                                homeDataModel: homeDataModel,
+                                highlightWord: highlightWord,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
               ],
             ),

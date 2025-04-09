@@ -41,6 +41,7 @@ class AppStrings {
   static const String questionTypeSelect = 'select';
   static const String questionTypeDate = 'date';
   static const String questionTypeFiles = 'files';
+  static const String questionTypeDouble = 'double';
   static const String specialty = 'Specialty';
   static const String highestDegree = 'Highest Degree';
   static const String pleaseEnterYourPassword = 'Please enter your password';

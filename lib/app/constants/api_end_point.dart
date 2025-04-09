@@ -1,9 +1,9 @@
 class ApiEndPoint {
   //! test url
-  // static const baseUrl = 'https://test.egyakin.com';
+  static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  static const baseUrl = 'https://api.egyakin.com';
+  // static const baseUrl = 'https://api.egyakin.com';
 
   static const home = '$baseUrl/api/homeNew';
   static const signIn = '$baseUrl/api/login';

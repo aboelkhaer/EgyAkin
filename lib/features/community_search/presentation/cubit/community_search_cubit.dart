@@ -32,6 +32,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   int changeCounter = 0;
 
   void getResponseOfSearchInCommunity([int? milliseconds]) {
+    currentPage = 1;
     _debounce
         ?.cancel(); // Cancel the previous request if the user is still typing
 

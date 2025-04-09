@@ -35,6 +35,7 @@ class CustomTextFormField extends StatefulWidget {
   final void Function()? onTextClick;
   final int? maxLength;
   final TextStyle? style;
+  final EdgeInsetsGeometry? contentPadding;
 
   const CustomTextFormField({
     super.key,
@@ -69,6 +70,7 @@ class CustomTextFormField extends StatefulWidget {
     required this.validator,
     this.onChanged,
     this.inputFormatters,
+    this.contentPadding,
   });
 
   @override
@@ -149,8 +151,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             obscureText: widget.obscureText,
             textInputAction: widget.textInputAction,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(
-                  left: 11, right: 3, top: 14, bottom: 14),
+              contentPadding: widget.contentPadding ??
+                  const EdgeInsets.only(
+                      left: 11, right: 3, top: 14, bottom: 14),
               counterText: '',
               hintText: widget.title,
               hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),

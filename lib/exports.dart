@@ -528,3 +528,8 @@ export 'package:egy_akin/features/home/presentation/widgets/latest_trends_hashta
 export 'package:egy_akin/features/home/presentation/widgets/top_doctors.dart';
 export 'package:egy_akin/features/home/presentation/widgets/doctors_activation.dart';
 export 'package:egy_akin/app/shared/functions/safe_close_for_cubit.dart';
+export 'package:egy_akin/app/shared/functions/is_arabic.dart';
+export 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
+export 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+export 'package:egy_akin/features/community/presentation/widgets/images_in_post_card.dart';
+export 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
