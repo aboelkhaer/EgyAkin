@@ -14,6 +14,7 @@ class SignInUsecase
       email: input.email,
       password: input.password,
       fcmToken: input.fcmToken,
+      deviceId: input.deviceId,
     );
   }
 }
@@ -22,10 +23,12 @@ class SignInUseCaseInput {
   final String email;
   final String password;
   final String fcmToken;
+  final String deviceId;
 
   const SignInUseCaseInput({
     required this.email,
     required this.password,
     required this.fcmToken,
+    required this.deviceId,
   });
 }

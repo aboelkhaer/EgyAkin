@@ -103,4 +103,10 @@ class ApiEndPoint {
       '$baseUrl/api/groups/invitations';
   static const acceptOrDeclineMemberInGroup = '$baseUrl/api/groups';
   static const getPostById = '$baseUrl/api/feed/posts';
+  static const getRecommendations = '$baseUrl/api/recommendations';
+  static const createPatientRecommendation = '$baseUrl/api/recommendations';
+  static const searchForDoseInMedicationSection = '$baseUrl/api/dose/search';
+  static const deletePatientRecommendation = '$baseUrl/api/recommendations';
+  static const updatePatientRecommendation = '$baseUrl/api/recommendations';
+  static const createNewMedicine = '$baseUrl/api/dose';
 }

@@ -36,6 +36,8 @@ class CustomTextFormField extends StatefulWidget {
   final int? maxLength;
   final TextStyle? style;
   final EdgeInsetsGeometry? contentPadding;
+  final bool showClearButton;
+  final VoidCallback? onClear;
 
   const CustomTextFormField({
     super.key,
@@ -71,6 +73,8 @@ class CustomTextFormField extends StatefulWidget {
     this.onChanged,
     this.inputFormatters,
     this.contentPadding,
+    this.showClearButton = false,
+    this.onClear,
   });
 
   @override
@@ -132,6 +136,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 ],
             enableSuggestions: widget.enableSuggestions,
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
+            
             enabled: widget.enabled,
             onTap: widget.onTextClick,
             autofocus: widget.autoFocus,
@@ -212,7 +217,23 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                           onTap: widget.unVisiblePasswordIconFunction,
                           child: const Icon(Icons.visibility),
                         )
-                      : null,
+                      : widget.showClearButton && !_isTextEmpty
+                          ? GestureDetector(
+                              onTap: () {
+                                _controller.clear();
+                                widget.onChanged?.call('');
+                                widget.onClear?.call();
+                                setState(() {
+                                  _isTextEmpty = true;
+                                });
+                              },
+                              child: const Icon(
+                                Icons.clear,
+                                color: Colors.grey,
+                                size: 20,
+                              ),
+                            )
+                          : null,
               prefixIcon: widget.prefixIcon,
               prefixIconConstraints: widget.prefixIconConstraints,
             ),

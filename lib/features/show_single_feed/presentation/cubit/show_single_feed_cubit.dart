@@ -329,6 +329,11 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
                 currentFeed.id.toString(),
                 likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
           }
+          if (showPostFrom == ShowPostFromEnum.notification.name) {
+            sl<CommunityCubit>().addLikeOrUnlikeOnPost(
+                currentFeed.id.toString(),
+                likeOrUnlike: currentFeed.isLiked! ? 'unlike' : 'like');
+          }
 
           // Emit the new state with updated data
           return ShowSingleFeedState.loaded(
@@ -417,6 +422,13 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           }
           //! savedPosts
           if (showPostFrom == ShowPostFromEnum.savedPosts.name) {
+            sl<SavedPostsCubit>().addSaveOrUnsaveOnPost(
+              currentFeed.id.toString(),
+              saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',
+            );
+          }
+          //! notification
+          if (showPostFrom == ShowPostFromEnum.notification.name) {
             sl<SavedPostsCubit>().addSaveOrUnsaveOnPost(
               currentFeed.id.toString(),
               saveOrUnsave: currentFeed.isSaved! ? 'unsave' : 'save',

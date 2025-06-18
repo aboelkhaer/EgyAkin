@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
@@ -792,31 +795,36 @@ class PostCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (isGroupPosts || isCommunitySearch) {
-                        onSaveAndUnSaveAdditional!();
-                      } else {
-                        cubit.addSaveOrUnsaveOnPost(
-                          feed.id.toString(),
-                          saveOrUnsave: feed.isSaved! ? 'unsave' : 'save',
-                        );
-                      }
-                    },
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    child: Row(
-                      children: [
-                        Icon(
-                          feed.isSaved == true
-                              ? Icons.bookmark
-                              : Icons.bookmark_outline,
-                          color: feed.isSaved == true
-                              ? Colors.amber
-                              : Colors.grey.shade400,
+                  Row(
+                    children: [
+                      ShareButton(feed: feed),
+                      InkWell(
+                        onTap: () {
+                          if (isGroupPosts || isCommunitySearch) {
+                            onSaveAndUnSaveAdditional!();
+                          } else {
+                            cubit.addSaveOrUnsaveOnPost(
+                              feed.id.toString(),
+                              saveOrUnsave: feed.isSaved! ? 'unsave' : 'save',
+                            );
+                          }
+                        },
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Icon(
+                              feed.isSaved == true
+                                  ? Icons.bookmark
+                                  : Icons.bookmark_outline,
+                              color: feed.isSaved == true
+                                  ? Colors.amber
+                                  : Colors.grey.shade400,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -67,6 +67,13 @@ class SectionSubmitButton extends StatelessWidget {
                       isChooseFilesLoading,
                       isChooseFilesLoaded,
                       uploadFilesProgress,
+                      isGetMedicationsLoading,
+                      isGetMedicationsLoaded,
+                      isSearchMedicationLoading,
+                      counterChanges,
+                      isCreateMedicationLoading,
+                      isCreateMedicationLoaded,
+                      dialogMessage,
                     ) {
                       if (message.isNotEmpty) {
                         // customSnackBar(context: context, message: message);
@@ -129,6 +136,13 @@ class SectionSubmitButton extends StatelessWidget {
                       isChooseFilesLoading,
                       isChooseFilesLoaded,
                       uploadFilesProgress,
+                      isGetMedicationsLoading,
+                      isGetMedicationsLoaded,
+                      isSearchMedicationLoading,
+                      counterChanges,
+                      isCreateMedicationLoading,
+                      isCreateMedicationLoaded,
+                      dialogMessage,
                     ) {
                       if (isSubmitLoading) {
                         return const Column(
@@ -149,13 +163,6 @@ class SectionSubmitButton extends StatelessWidget {
                             );
                           },
                           title: AppStrings.submit,
-                          // isDisable: (doctorId.toString() ==
-                          //                 currentDoctorModel.id.toString() ||
-                          //             currentDoctorRole ==
-                          //                 AppStrings.roleAdmin) &&
-                          //         cubit.formData.isNotEmpty
-                          //     ? false
-                          //     : true,
                           isDisable: false,
                         );
                       }
@@ -166,6 +173,40 @@ class SectionSubmitButton extends StatelessWidget {
                         width: 25,
                         child: CircularProgressIndicator(),
                       );
+                    },
+                    medicationSectionLoaded: (
+                      response,
+                      changesCounter,
+                      snackBarMessage,
+                      dialogMessage,
+                      isSubmitLoading,
+                      isSubmitLoaded,
+                      isSearchMedicationLoading,
+                      searchForDoseInMedicationSectionResponse,
+                      isDeletePatientRecommendationLoading,
+                    ) {
+                      if (isSubmitLoading) {
+                        return const Column(
+                          children: [
+                            SizedBox(
+                              height: 25,
+                              width: 25,
+                              child: CircularProgressIndicator(),
+                            ),
+                          ],
+                        );
+                      } else {
+                        return CustomElevatedButton(
+                          onPressed: () {
+                            cubit.updatePatientSectionDetails(
+                              sectionModel.sectionId.toString(),
+                              patientId.toString(),
+                            );
+                          },
+                          title: AppStrings.submit,
+                          isDisable: false,
+                        );
+                      }
                     },
                   );
                 },

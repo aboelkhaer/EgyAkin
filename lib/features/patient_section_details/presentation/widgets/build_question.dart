@@ -562,6 +562,13 @@ class _BuildQuestionState extends State<BuildQuestion> {
                             isChooseFilesLoading,
                             isChooseFilesLoaded,
                             uploadFilesProgress,
+                            isGetMedicationsLoading,
+                            isGetMedicationsLoaded,
+                            isSearchMedicationLoading,
+                            counterChanges,
+                            isCreateMedicationLoading,
+                            isCreateMedicationLoaded,
+                            dialogMessage,
                           ) {
                             if (cubit.questionIndexWhichDoctorClicked ==
                                 widget.index.toString()) {
@@ -609,14 +616,23 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   error: (message) {
                     customSnackBar(context: context, message: message);
                   },
-                  loaded: (questions,
-                      isSubmitLoading,
-                      isSubmitted,
-                      message,
-                      snackbarErrorCounter,
-                      isChooseFilesLoading,
-                      isChooseFilesLoaded,
-                      uploadFilesProgress) {
+                  loaded: (
+                    questions,
+                    isSubmitLoading,
+                    isSubmitted,
+                    message,
+                    snackbarErrorCounter,
+                    isChooseFilesLoading,
+                    isChooseFilesLoaded,
+                    uploadFilesProgress,
+                    isGetMedicationsLoading,
+                    isGetMedicationsLoaded,
+                    isSearchMedicationLoading,
+                    counterChanges,
+                    isCreateMedicationLoading,
+                    isCreateMedicationLoaded,
+                    dialogMessage,
+                  ) {
                     if (message != '') {
                       customSnackBar(context: context, message: message);
                     }
@@ -628,14 +644,23 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   orElse: () {
                     return const SizedBox.shrink();
                   },
-                  loaded: (questions,
-                      isSubmitLoading,
-                      isSubmitted,
-                      message,
-                      snackbarErrorCounter,
-                      isChooseFilesLoading,
-                      isChooseFilesLoaded,
-                      uploadFilesProgress) {
+                  loaded: (
+                    questions,
+                    isSubmitLoading,
+                    isSubmitted,
+                    message,
+                    snackbarErrorCounter,
+                    isChooseFilesLoading,
+                    isChooseFilesLoaded,
+                    uploadFilesProgress,
+                    isGetMedicationsLoading,
+                    isGetMedicationsLoaded,
+                    isSearchMedicationLoading,
+                    counterChanges,
+                    isCreateMedicationLoading,
+                    isCreateMedicationLoaded,
+                    dialogMessage,
+                  ) {
                     if (cubit.formData.containsKey(cubit
                             .questionModelList[widget.index].id
                             .toString()) &&
@@ -759,14 +784,23 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   orElse: () {
                     return const SizedBox.shrink();
                   },
-                  loaded: (questions,
-                      isSubmitLoading,
-                      isSubmitted,
-                      message,
-                      snackbarErrorCounter,
-                      isChooseFilesLoading,
-                      isChooseFilesLoaded,
-                      uploadFilesProgress) {
+                  loaded: (
+                    questions,
+                    isSubmitLoading,
+                    isSubmitted,
+                    message,
+                    snackbarErrorCounter,
+                    isChooseFilesLoading,
+                    isChooseFilesLoaded,
+                    uploadFilesProgress,
+                    isGetMedicationsLoading,
+                    isGetMedicationsLoaded,
+                    isSearchMedicationLoading,
+                    counterChanges,
+                    isCreateMedicationLoading,
+                    isCreateMedicationLoaded,
+                    dialogMessage,
+                  ) {
                     if (cubit.formData[cubit.questionModelList[widget.index].id
                                 .toString()] ==
                             null ||

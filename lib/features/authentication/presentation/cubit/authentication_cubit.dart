@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:egy_akin/app/shared/functions/device_info_helper.dart';
+
 import '../../../../exports.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
@@ -44,13 +46,16 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   signIn() async {
     if (signInFormKey.currentState!.validate()) {
       emit(const AuthenticationState.loading());
+      final String deviceId = await DeviceIdService.getPersistentDeviceId();
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+      log(deviceId);
       final result = await _signInUsecase.execute(
         SignInUseCaseInput(
           email: signInEmail,
           password: signInPassword,
           fcmToken: fcmToken,
+          deviceId: deviceId,
         ),
       );
       result.fold(
@@ -86,24 +91,31 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     if (isConfirmationChecked) {
       if (registerFormKey.currentState!.validate()) {
         emit(const AuthenticationState.loading());
+        final String deviceId = await DeviceIdService.getPersistentDeviceId();
 
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-        final result = await _registerUsecase.execute(DoctorModel(
-          firstName: registerFirstName,
-          lastName: registerLastName,
-          email: registerEmail,
-          password: registerPasswordController.text,
-          passwordConfirmation: registerPasswordConformation,
-          phone: registerPhone,
-          age: registerAge,
-          job: registerJop,
-          workingplace: registerWorkplace,
-          registrationNumber: registerRegistrationNumber,
-          specialty: registerSpecialty,
-          highestdegree: registerHighestDegree,
-          fcmToken: fcmToken,
-        ));
+
+        final result = await _registerUsecase.execute(
+          RegisterUsecaseInput(
+            doctorModel: DoctorModel(
+              firstName: registerFirstName,
+              lastName: registerLastName,
+              email: registerEmail,
+              password: registerPasswordController.text,
+              passwordConfirmation: registerPasswordConformation,
+              phone: registerPhone,
+              age: registerAge,
+              job: registerJop,
+              workingplace: registerWorkplace,
+              registrationNumber: registerRegistrationNumber,
+              specialty: registerSpecialty,
+              highestdegree: registerHighestDegree,
+              fcmToken: fcmToken,
+            ),
+            deviceId: deviceId,
+          ),
+        );
         result.fold(
           (l) {
             emit(AuthenticationState.error(l.message));

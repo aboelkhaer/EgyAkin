@@ -1,5 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/delete_patient_recommendation_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/get_recommendations_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/search_for_dose_in_medication_section_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_recommendation_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
@@ -39,7 +45,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => OutcomeCubit(sl(), sl()));
   sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
-  sl.registerFactory(() => PatientSectionDetailsCubit(sl(), sl()));
+  sl.registerFactory(() => PatientSectionDetailsCubit(sl(), sl(), sl(),sl(),sl(),sl(),sl(),sl()));
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
@@ -580,5 +586,31 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<UpdateGroupWithHeaderAndGroupImageUsecase>()) {
     sl.registerFactory<UpdateGroupWithHeaderAndGroupImageUsecase>(
         () => UpdateGroupWithHeaderAndGroupImageUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetRecommendationsUsecase>()) {
+    sl.registerFactory<GetRecommendationsUsecase>(
+        () => GetRecommendationsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreateRecommendationsUsecase>()) {
+    sl.registerFactory<CreateRecommendationsUsecase>(
+        () => CreateRecommendationsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SearchForDoseInMedicationSectionUsecase>()) {
+    sl.registerFactory<SearchForDoseInMedicationSectionUsecase>(
+        () => SearchForDoseInMedicationSectionUsecase(sl()));
+  }
+
+  if (!GetIt.I.isRegistered<DeletePatientRecommendationUsecase>()) {
+    sl.registerFactory<DeletePatientRecommendationUsecase>(
+        () => DeletePatientRecommendationUsecase(sl()));
+  }
+
+  if (!GetIt.I.isRegistered<UpdatePatientRecommendationUsecase>()) {
+    sl.registerFactory<UpdatePatientRecommendationUsecase>(
+        () => UpdatePatientRecommendationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<CreateNewMedicineUsecase>()) {
+    sl.registerFactory<CreateNewMedicineUsecase>(
+        () => CreateNewMedicineUsecase(sl()));
   }
 }

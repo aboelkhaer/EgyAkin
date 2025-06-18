@@ -26,11 +26,11 @@ class NotificationCubit extends Cubit<NotificationState> {
     );
   }
 
-  int currentPage = 0;
+  int currentPage = 1;
 
   getAllNotifications() async {
     emit(const NotificationState.loading());
-    currentPage = 0;
+    currentPage = 1;
     final result = await _getAllNotificationUsecase.execute(currentPage);
 
     result.fold(

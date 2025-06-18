@@ -1,0 +1,16 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.incode.EgyAkin",
+            "sha256_cert_fingerprints": [
+                "A7:52:07:45:64:89:F3:2B:09:28:08:14:30:48:7C:D1:CC:A7:07:7A:AC:3A:36:4A:7B:39:4D:E8:1C:B3:34:41",
+                "FD:33:8F:46:C3:85:2B:76:3F:3B:0D:C4:53:B0:60:4C:DF:66:67:68:C5:18:61:D1:81:47:EF:88:03:66:AE:C9",
+                "A5:98:03:1D:CF:96:21:09:61:05:41:42:77:67:DC:AF:47:B0:99:AE:DE:BA:02:92:42:AE:0E:C4:53:DE:07:AD"
+            ]
+        }
+    }
+]

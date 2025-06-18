@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_dose_section.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
 
@@ -8,10 +9,10 @@ class PatientSectionDetailsScreen extends StatefulWidget {
   final SectionModel sectionModel;
   final bool finalSubmitStatus;
   final String patientId;
-  final String currentDoctorRole;
-  final int currentDoctorPoints;
   final String doctorId;
   final HomeModelResponse homeDataModel;
+  final String currentDoctorRole;
+  final int currentDoctorPoints;
   final bool isAllDataOpen;
   const PatientSectionDetailsScreen({
     super.key,
@@ -35,8 +36,15 @@ class _PatientSectionDetailsScreenState
     extends State<PatientSectionDetailsScreen> {
   @override
   void initState() {
-    context.read<PatientSectionDetailsCubit>().getPatientSectionDetails(
-        widget.sectionModel.sectionId.toString(), widget.patientId.toString());
+    if (widget.sectionModel.sectionId == 12) {
+      context
+          .read<PatientSectionDetailsCubit>()
+          .getMedicationSection(widget.patientId.toString());
+    } else {
+      context.read<PatientSectionDetailsCubit>().getPatientSectionDetails(
+          widget.sectionModel.sectionId.toString(),
+          widget.patientId.toString());
+    }
     super.initState();
   }
 
@@ -55,6 +63,7 @@ class _PatientSectionDetailsScreenState
             )),
         centerTitle: true,
         backgroundColor: AppColors.primary,
+        actions: const [],
       ),
       body:
           BlocConsumer<PatientSectionDetailsCubit, PatientSectionDetailsState>(
@@ -64,6 +73,11 @@ class _PatientSectionDetailsScreenState
             error: (message) {
               customSnackBar(context: context, message: message);
             },
+            medicationSectionLoaded: (response, changesCounter, snackBarMessage, dialogMessage, isSubmitLoading, isSubmitLoaded, isSearchMedicationLoading, searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading) {
+              if(snackBarMessage.isNotEmpty){
+                customSnackBar(context: context, message: snackBarMessage);
+              }
+            }
           );
         },
         builder: (context, state) {
@@ -80,6 +94,13 @@ class _PatientSectionDetailsScreenState
               isChooseFilesLoading,
               isChooseFilesLoaded,
               uploadFilesProgress,
+              isGetMedicationsLoading,
+              isGetMedicationsLoaded,
+              isSearchMedicationLoading,
+              counterChanges,
+              isCreateMedicationLoading,
+              isCreateMedicationLoaded,
+              dialogMessage,
             ) {
               if (widget.currentDoctorRole == AppStrings.roleAdmin) {
                 return BuildSectionDetailsIfFinalSubmitFalse(
@@ -110,6 +131,7 @@ class _PatientSectionDetailsScreenState
                   currentDoctorId: widget.currentDoctorModel.id.toString(),
                 );
               }
+
               return BuildSectionDetailsIfFinalSubmitFalse(
                 questions: questions,
                 patientId: widget.patientId,
@@ -120,24 +142,30 @@ class _PatientSectionDetailsScreenState
                 finalSubmitStatus: widget.finalSubmitStatus,
                 isAllDataOpen: widget.isAllDataOpen,
               );
-              // return widget.finalSubmitStatus
-              //     ? BuildSectionDetailsIfFinalSubmitTrue(
-              //         questionList: cubit.questionModelList,
-              //         doctorId: widget.doctorId,
-              //         currentDoctorId: widget.currentDoctorModel.id.toString(),
-              //       )
-              //     : widget.doctorId.toString() !=
-              //             widget.currentDoctorModel.id.toString()
-              //         ? BuildSectionDetailsIfFinalSubmitTrue(
-              //             questionList: cubit.questionModelList,
-              //             doctorId: widget.doctorId,
-              //             currentDoctorId:
-              //                 widget.currentDoctorModel.id.toString(),
-              //           )
-              //         : buildSectionForm(
-              //             size: size,
-              //             cubit: cubit,
-              //             questions: cubit.questionModelList);
+            },
+            medicationSectionLoaded: (
+              response,
+              changesCounter,
+              snackBarMessage,
+              dialogMessage,
+              isSubmitLoading,
+              isSubmitLoaded,
+              isSearchMedicationLoading,
+              searchForDoseInMedicationSectionResponse,
+              isDeletePatientRecommendationLoading,
+            ) {
+            
+return BlocProvider<PatientSectionDetailsCubit>.value(
+  value: cubit,
+  child: BuildDoseSection(
+    currentDoctorModel: widget.currentDoctorModel,
+    patientId: widget.patientId,
+    doctorId: widget.doctorId,
+    sectionModel: widget.sectionModel,
+    homeDataModel: widget.homeDataModel,
+    finalSubmitStatus: widget.finalSubmitStatus,
+  ),
+);
             },
           );
         },

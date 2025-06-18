@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_dose_section.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_question.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_submit_button.dart';
 
@@ -103,14 +104,23 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                     orElse: () {
                                       return const SizedBox.shrink();
                                     },
-                                    loaded: (questions,
-                                        isSubmitLoading,
-                                        isSubmitted,
-                                        message,
-                                        snackbarErrorCounter,
-                                        isChooseFilesLoading,
-                                        isChooseFilesLoaded,
-                                        uploadFilesProgress) {
+                                    loaded: (
+                                      questions,
+                                      isSubmitLoading,
+                                      isSubmitted,
+                                      message,
+                                      snackbarErrorCounter,
+                                      isChooseFilesLoading,
+                                      isChooseFilesLoaded,
+                                      uploadFilesProgress,
+                                      isGetMedicationsLoading,
+                                      isGetMedicationsLoaded,
+                                      isSearchMedicationLoading,
+                                      counterChanges,
+                                      isCreateMedicationLoading,
+                                      isCreateMedicationLoaded,
+                                      dialogMessage,
+                                    ) {
                                       // question condition
                                       if (questionModel.type ==
                                           AppStrings.questionTypeFiles) {

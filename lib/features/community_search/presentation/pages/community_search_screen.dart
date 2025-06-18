@@ -105,6 +105,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                       } else {
                         cubit.isSearchContentEmpty = true;
                         cubit.searchValue = value;
+                        // Reset to empty state when search is cleared
+                        cubit.resetPostsList();
                       }
                     },
                     validator: (value) {
@@ -139,7 +141,27 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               builder: (context, state) {
                 return state.maybeWhen(
                   orElse: () {
-                    return const SizedBox.shrink();
+                    // Show empty state for initial state
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            AppImages.notFound,
+                            width: 200,
+                            height: 200,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Start typing to search for posts',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                   loading: () {
                     return const ShimmerLoadingFeeds(
@@ -153,13 +175,50 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                     isSeeMore,
                     changeCounter,
                   ) {
+                    // Check if search is empty and show initial state
+                    if (cubit.isSearchContentEmpty || (cubit.searchValue?.isEmpty ?? true)) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AppImages.notFound,
+                              width: 150,
+                              height: 150,
+                            ),
+                            Text(
+                              'Start typing to search for posts',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                            SizedBox(height: 50.h),
+                          ],
+                        ),
+                      );
+                    }
+                    
                     return response.data!.data!.isEmpty ||
                             response.data!.data == null
                         ? Center(
-                            child: Image.asset(
-                              AppImages.notFound,
-                              width: 200,
-                              height: 200,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  AppImages.notFound,
+                                  width: 200,
+                                  height: 200,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No posts found for "${cubit.searchValue}"',
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
                           )
                         : ListView.builder(

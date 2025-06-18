@@ -5,7 +5,15 @@ import 'dart:io';
 import 'package:egy_akin/app/constants/app_strings.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/delete_patient_recommendation_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/get_patient_section_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/get_recommendations_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/search_for_dose_in_medication_section_usecase.dart';
+import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_recommendation_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
 import 'package:file_picker/file_picker.dart';
@@ -14,11 +22,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image/image.dart' as img;
 
 class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
-  PatientSectionDetailsCubit(this._getPatientSectionDetailsUsecase,
-      this._updatePatientSectionDetailsUsecase)
+  PatientSectionDetailsCubit(
+      this._getPatientSectionDetailsUsecase,
+      this._updatePatientSectionDetailsUsecase,
+      this._getRecommendationsUsecase,
+      this._createRecommendationsUsecase,
+      this._searchForDoseInMedicationSectionUsecase,
+      this._deletePatientRecommendationUsecase, this._updateRecommendationUsecase, this._createNewMedicineUsecase)
       : super(const PatientSectionDetailsState.initial());
   final GetPatientSectionDetailsUsecase _getPatientSectionDetailsUsecase;
   final UpdatePatientSectionDetailsUsecase _updatePatientSectionDetailsUsecase;
+  final GetRecommendationsUsecase _getRecommendationsUsecase;
+  final SearchForDoseInMedicationSectionUsecase
+      _searchForDoseInMedicationSectionUsecase;
+  final DeletePatientRecommendationUsecase _deletePatientRecommendationUsecase;
+  final CreateRecommendationsUsecase _createRecommendationsUsecase;
+  final UpdatePatientRecommendationUsecase _updateRecommendationUsecase;
+  final CreateNewMedicineUsecase _createNewMedicineUsecase;
   static PatientSectionDetailsCubit get(context) => BlocProvider.of(context);
 
   ScrollController patientSectionDetailsScrollController = ScrollController();
@@ -27,6 +47,132 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   GlobalKey<FormState> sectionDetailsKeyForm = GlobalKey<FormState>();
   int snackbarErrorCounter = 0;
   String removeFilesId = '';
+  int counterChanges = 0;
+
+
+
+  String deletePatientRecommendationId = '';
+  deletePatientRecommendation(String patientId) async {
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        value.isSubmitLoading,
+        value.isSubmitLoaded,
+        value.isSearchMedicationLoading,
+        value.searchForDoseInMedicationSectionResponse,
+        true,
+      ),
+    ));
+    final result = await _deletePatientRecommendationUsecase.execute(
+        DeletePatientRecommendationUsecaseInput(
+            patientId: patientId,
+            ids: [int.parse(deletePatientRecommendationId)]));
+
+    result.fold(
+      (l) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            l.message,
+            '',
+            value.isSubmitLoading,
+            value.isSubmitLoaded,
+            false,
+            value.searchForDoseInMedicationSectionResponse,
+            false,
+          ),
+        ));
+      },
+      (deleteResponse) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response.copyWith(
+                data: value.response.data
+                    ?.where((element) =>
+                        element.id != int.parse(deletePatientRecommendationId))
+                    .toList()),
+            value.changesCounter,
+            deleteResponse.message ?? '',
+            '',
+            value.isSubmitLoading,
+            value.isSubmitLoaded,
+            false,
+            value.searchForDoseInMedicationSectionResponse,
+            false,
+          ),
+        ));
+      },
+    );
+
+    deletePatientRecommendationId = '';
+  }
+
+  searchForDoseInMedicationSection(String dose) async {
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        value.isSubmitLoading,
+        value.isSubmitLoaded,
+        true,
+        value.searchForDoseInMedicationSectionResponse,
+        value.isDeletePatientRecommendationLoading,
+      ),
+    ));
+    final result = await _searchForDoseInMedicationSectionUsecase.execute(
+        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: 1));
+    result.fold(
+      (l) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            l.message,
+            '',
+            value.isSubmitLoading,
+            value.isSubmitLoaded,
+            false,
+            value.searchForDoseInMedicationSectionResponse,
+            value.isDeletePatientRecommendationLoading,
+          ),
+        ));
+      },
+      (medicationResponse) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            '',
+            '',
+            value.isSubmitLoading,
+            value.isSubmitLoaded,
+            false,
+            medicationResponse,
+            value.isDeletePatientRecommendationLoading,
+          ),
+        ));
+      },
+    );
+  }
+
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
     final updatedQuestionModelList =
@@ -48,6 +194,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         false,
         false,
         0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ));
     }
   }
@@ -73,6 +226,37 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           false,
           false,
           0.0,
+          false,
+          false,
+          false,
+          counterChanges,
+          false,
+          false,
+          '',
+        ));
+      },
+    );
+  }
+
+  getMedicationSection(String patientId) async {
+    emit(const PatientSectionDetailsState.loading());
+    final result = await _getRecommendationsUsecase.execute(patientId);
+
+    result.fold(
+      (l) {
+        emit(PatientSectionDetailsState.error(l.message));
+      },
+      (response) async {
+        emit(PatientSectionDetailsState.medicationSectionLoaded(
+          response,
+          counterChanges,
+          '',
+          '',
+          false,
+          false,
+          false,
+          null,
+          false,
         ));
       },
     );
@@ -90,6 +274,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         false,
         false,
         0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ),
     ));
   }
@@ -126,6 +317,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
 
@@ -149,6 +347,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   false,
                   false,
                   0.0,
+                  false,
+                  false,
+                  false,
+                  counterChanges,
+                  false,
+                  false,
+                  '',
                 ),
               ));
               isValid = false;
@@ -169,6 +374,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   false,
                   false,
                   0.0,
+                  false,
+                  false,
+                  false,
+                  counterChanges,
+                  false,
+                  false,
+                  '',
                 ),
               ));
 
@@ -191,6 +403,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   false,
                   false,
                   0.0,
+                  false,
+                  false,
+                  false,
+                  counterChanges,
+                  false,
+                  false,
+                  '',
                 ),
               ));
 
@@ -217,6 +436,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
 
@@ -241,6 +467,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
 
@@ -259,6 +492,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
 
@@ -283,6 +523,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
 
@@ -306,6 +553,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
                 isValid = false;
@@ -324,6 +578,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     false,
                     false,
                     0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
                   ),
                 ));
                 isValid = false;
@@ -343,6 +604,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 false,
                 false,
                 0.0,
+                false,
+                false,
+                false,
+                counterChanges,
+                false,
+                false,
+                '',
               ),
             ));
 
@@ -364,6 +632,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             false,
             false,
             0.0,
+            false,
+            false,
+            false,
+            counterChanges,
+            false,
+            false,
+            '',
           ),
         ));
 
@@ -384,6 +659,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 false,
                 false,
                 0.0,
+                false,
+                false,
+                false,
+                counterChanges,
+                false,
+                false,
+                '',
               ),
             ));
           },
@@ -399,6 +681,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 false,
                 false,
                 0.0,
+                false,
+                false,
+                false,
+                counterChanges,
+                false,
+                false,
+                '',
               ),
             ));
           },
@@ -416,6 +705,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           false,
           false,
           0.0,
+          false,
+          false,
+          false,
+          counterChanges,
+          false,
+          false,
+          '',
         ),
       ));
     }
@@ -438,6 +734,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isChooseFilesLoading,
         value.isChooseFilesLoaded,
         0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ),
     ));
 
@@ -464,7 +767,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         snackbarErrorCounter += 1,
         value.isChooseFilesLoading,
         value.isChooseFilesLoaded,
-        0.0,
+        0.0, false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ),
     ));
 
@@ -501,6 +810,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         true,
         false,
         0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ),
     ));
 
@@ -530,6 +846,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               false,
               false,
               0.0,
+              false,
+              false,
+              false,
+              counterChanges,
+              false,
+              false,
+              '',
             ),
           ));
           return;
@@ -554,6 +877,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             false,
             false,
             0.0,
+            false,
+            false,
+            false,
+            counterChanges,
+            false,
+            false,
+            '',
           ),
         ));
         return;
@@ -606,6 +936,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           false,
           true,
           0.0,
+          false,
+          false,
+          false,
+          counterChanges,
+          false,
+          false,
+          '',
         ),
       ));
 
@@ -659,6 +996,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         false,
         false,
         0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
       ),
     ));
   }
@@ -690,5 +1034,271 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       }
     }
     return '00';
+  }
+
+  void addPatientRecommendation(
+      PatientRecommendationModel medication, String patientId) async {
+    // Show loading state
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        true, // Set loading to true
+        value.isSubmitLoaded,
+        value.isSearchMedicationLoading,
+        value.searchForDoseInMedicationSectionResponse,
+        value.isDeletePatientRecommendationLoading,
+      ),
+    ));
+
+    // Prepare the request body
+    final Map<String, dynamic> body = {
+      'recommendations': [
+        {
+          'dose_name': medication.doseName,
+          'dose': medication.dose,
+          'route': medication.route,
+          'frequency': medication.frequency,
+          'duration': medication.duration,
+        }
+      ],
+    };
+
+    // Call the API
+    final result = await _createRecommendationsUsecase.execute(
+      CreateRecommendationsUsecaseInput(
+        patientId: patientId,
+        body: body,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Handle failure
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            failure.message,
+            '',
+            false,
+            value.isSubmitLoaded,
+            value.isSearchMedicationLoading,
+            value.searchForDoseInMedicationSectionResponse,
+            value.isDeletePatientRecommendationLoading,
+          ),
+        ));
+      },
+      (response) {
+        // Handle success
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) {
+            final updatedData = List<GetRecommendationsDataModelResponse>.from(
+                value.response.data ?? []);
+            final newMedication = GetRecommendationsDataModelResponse(
+              id: int.tryParse(medication.id),
+              doseName: medication.doseName,
+              dose: medication.dose,
+              route: medication.route,
+              frequency: medication.frequency,
+              duration: medication.duration,
+            );
+            updatedData.insert(0, newMedication);
+            return PatientSectionDetailsState.medicationSectionLoaded(
+              value.response.copyWith(data: updatedData),
+              value.changesCounter + 1,
+              response.message ?? '',
+              '',
+              false,
+              value.isSubmitLoaded,
+              value.isSearchMedicationLoading,
+              value.searchForDoseInMedicationSectionResponse,
+              value.isDeletePatientRecommendationLoading,
+            );
+          },
+        ));
+      },
+    );
+  }
+
+  void updatePatientRecommendation(
+    PatientRecommendationModel medication,
+    String patientId,
+  ) async {
+    // Show loading state
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        true, // Set loading to true
+        value.isSubmitLoaded,
+        value.isSearchMedicationLoading,
+        value.searchForDoseInMedicationSectionResponse,
+        value.isDeletePatientRecommendationLoading,
+      ),
+    ));
+
+    // Prepare the request body
+    final Map<String, dynamic> body = {
+      'recommendations': [
+        {
+          'id': int.parse(medication.id),
+          'dose_name': medication.doseName,
+          'dose': medication.dose,
+          'route': medication.route,
+          'frequency': medication.frequency,
+          'duration': medication.duration,
+        }
+      ],
+    };
+
+    // Call the API
+    final result = await _updateRecommendationUsecase.execute(
+      UpdatePatientRecommendationUsecaseInput(
+        patientId: patientId,
+        body: body,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Handle failure
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            failure.message,
+            '',
+            false,
+            value.isSubmitLoaded,
+            value.isSearchMedicationLoading,
+            value.searchForDoseInMedicationSectionResponse,
+            value.isDeletePatientRecommendationLoading,
+          ),
+        ));
+      },
+      (response) {
+        // Handle success
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) {
+            // Update the existing medication in the list
+            final updatedData = List<GetRecommendationsDataModelResponse>.from(
+                value.response.data ?? []);
+            final index = updatedData.indexWhere(
+                (element) => element.id == int.parse(medication.id));
+            
+            if (index != -1) {
+              updatedData[index] = GetRecommendationsDataModelResponse(
+                id: int.parse(medication.id),
+                doseName: medication.doseName,
+                dose: medication.dose,
+                route: medication.route,
+                frequency: medication.frequency,
+                duration: medication.duration,
+              );
+            }
+
+            return PatientSectionDetailsState.medicationSectionLoaded(
+              value.response.copyWith(data: updatedData),
+              value.changesCounter + 1,
+              response.message ?? '',
+              '',
+              false,
+              value.isSubmitLoaded,
+              value.isSearchMedicationLoading,
+              value.searchForDoseInMedicationSectionResponse,
+              value.isDeletePatientRecommendationLoading,
+            );
+          },
+        ));
+      },
+    );
+  }
+
+  void createNewMedicine(
+    String title,
+    String description,
+    String dose,
+  ) async {
+    // Show loading state
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        true, // Set loading to true
+        value.isSubmitLoaded,
+        value.isSearchMedicationLoading,
+        value.searchForDoseInMedicationSectionResponse,
+        value.isDeletePatientRecommendationLoading,
+      ),
+    ));
+
+    // Call the API
+    final result = await _createNewMedicineUsecase.execute(
+      CreateNewMedicineUsecaseInput(
+        title: title,
+        description: description,
+        dose: dose,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Handle failure
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            failure.message,
+            '',
+            false,
+            value.isSubmitLoaded,
+            value.isSearchMedicationLoading,
+            value.searchForDoseInMedicationSectionResponse,
+            value.isDeletePatientRecommendationLoading,
+          ),
+        ));
+      },
+      (response) {
+        // Handle success
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) {
+          
+            return PatientSectionDetailsState.medicationSectionLoaded(
+              value.response,
+              value.changesCounter + 1,
+              response.message ?? '',
+              '',
+              false,
+              value.isSubmitLoaded,
+              value.isSearchMedicationLoading,
+              value.searchForDoseInMedicationSectionResponse,
+              value.isDeletePatientRecommendationLoading,
+            );
+          },
+        ));
+      },
+    );
   }
 }

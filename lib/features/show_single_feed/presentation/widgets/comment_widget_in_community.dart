@@ -219,20 +219,29 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                commentModel.comment ?? '',
-                                style: const TextStyle(
-                                  color: ui.Color.fromRGBO(117, 117, 117, 1),
-                                  // fontWeight: FontWeight.w400,
-                                  fontFamily: 'Tajawal',
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.6,
-                                ),
-                                textDirection: RegExp(r'[\u0600-\u06FF]')
-                                        .hasMatch(
-                                            commentModel.comment.toString())
-                                    ? ui.TextDirection.rtl
-                                    : ui.TextDirection.ltr,
+                              Row(
+                                mainAxisAlignment:
+                                    isArabic(commentModel.comment ?? '')
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    commentModel.comment ?? '',
+                                    style: const TextStyle(
+                                      color:
+                                          ui.Color.fromRGBO(117, 117, 117, 1),
+                                      // fontWeight: FontWeight.w400,
+                                      fontFamily: 'Tajawal',
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.6,
+                                    ),
+                                    textDirection: RegExp(r'[\u0600-\u06FF]')
+                                            .hasMatch(
+                                                commentModel.comment.toString())
+                                        ? ui.TextDirection.rtl
+                                        : ui.TextDirection.ltr,
+                                  ),
+                                ],
                               ),
                               Row(
                                 children: [

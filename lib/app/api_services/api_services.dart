@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/create_patient_recommendation_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/delete_patient_recommendation_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/search_for_dose_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/update_patient_recommendation_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
@@ -19,10 +25,12 @@ abstract class ApiServices {
     @Field("email") String email,
     @Field("password") String password,
     @Field("fcmToken") String fcmToken,
+    @Field("deviceId") String deviceId,
   );
   @POST(ApiEndPoint.register)
   Future<AuthenticationModelResponse> register(
     @Body() Map<String, dynamic> doctorModel,
+    @Field("deviceId") String deviceId,
   );
 
   @GET(ApiEndPoint.allPatients)
@@ -521,6 +529,7 @@ abstract class ApiServices {
     @Part(name: "description") String description,
     @Part(name: "privacy") String privacy,
   );
+
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
   @MultiPart()
   Future<UpdateGroupInCommunityModelResponse> updateGroupImageInCommunity(
@@ -530,6 +539,7 @@ abstract class ApiServices {
     @Part(name: "description") String description,
     @Part(name: "privacy") String privacy,
   );
+
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
   @MultiPart()
   Future<UpdateGroupInCommunityModelResponse>
@@ -566,5 +576,41 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.getPostById}/{postId}')
   Future<GetPostByIdModelResponse> getPostById(
     @Path('postId') String postId,
+  );
+
+  @GET('${ApiEndPoint.getRecommendations}/{patientId}')
+  Future<GetRecommendationsModelResponse> getRecommendations(
+    @Path('patientId') String patientId,
+  );
+
+  @POST('${ApiEndPoint.createPatientRecommendation}/{patientId}')
+  Future<CreatePatientRecommendationModelResponse> createPatientRecommendation(
+    @Path('patientId') String patientId,
+  @Body() Map<String, dynamic> body,
+  );
+
+  @PUT('${ApiEndPoint.updatePatientRecommendation}/{patientId}')
+  Future<UpdatePatientRecommendationModelResponse> updatePatientRecommendation(
+    @Path('patientId') String patientId,
+  @Body() Map<String, dynamic> body,
+  );
+
+  @GET('${ApiEndPoint.searchForDoseInMedicationSection}/{dose}')
+  Future<SearchForDoseInMedicationSectionModelResponse> searchForDoseInMedicationSection(
+    @Path('dose') String dose,
+    @Query('page') int page,
+  );
+
+  @DELETE('${ApiEndPoint.deletePatientRecommendation}/{patientId}')
+  Future<DeletePatientRecommendationModelResponse> deletePatientRecommendation(
+    @Path('patientId') String patientId,
+    @Body() Map<String, dynamic> ids,
+  );
+
+  @POST(ApiEndPoint.createNewMedicine)
+  Future<CreateNewMedicineModelResponse> createNewMedicine(
+    @Field('title') String title,
+    @Field('description') String? description,
+    @Field('dose') String dose,
   );
 }

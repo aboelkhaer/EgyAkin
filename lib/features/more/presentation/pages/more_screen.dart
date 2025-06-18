@@ -118,6 +118,9 @@ class _MoreScreenState extends State<MoreScreen> {
                       widget.homeDataModel.isSyndicateCardRequired)) {
                     return const SizedBox.shrink();
                   }
+                  if (widget.homeDataModel.verified == false) {
+                    return const SizedBox.shrink();
+                  }
 
                   return ListTile(
                     title: Text(

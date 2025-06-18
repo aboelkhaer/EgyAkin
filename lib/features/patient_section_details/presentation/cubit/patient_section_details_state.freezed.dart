@@ -28,8 +28,27 @@ mixin _$PatientSectionDetailsState {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
         loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -45,8 +64,27 @@ mixin _$PatientSectionDetailsState {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -62,8 +100,27 @@ mixin _$PatientSectionDetailsState {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -73,6 +130,8 @@ mixin _$PatientSectionDetailsState {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -81,6 +140,7 @@ mixin _$PatientSectionDetailsState {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -89,6 +149,7 @@ mixin _$PatientSectionDetailsState {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -169,8 +230,27 @@ class _$InitialImpl implements _Initial {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
         loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -189,8 +269,27 @@ class _$InitialImpl implements _Initial {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -209,8 +308,27 @@ class _$InitialImpl implements _Initial {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -226,6 +344,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -237,6 +357,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -248,6 +369,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -313,8 +435,27 @@ class _$LoadingImpl implements _Loading {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
         loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -333,8 +474,27 @@ class _$LoadingImpl implements _Loading {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -353,8 +513,27 @@ class _$LoadingImpl implements _Loading {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -370,6 +549,8 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -381,6 +562,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -392,6 +574,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -420,7 +603,14 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       int snackbarErrorCounter,
       bool isChooseFilesLoading,
       bool isChooseFilesLoaded,
-      double uploadFilesProgress});
+      double uploadFilesProgress,
+      bool isGetMedicationsLoading,
+      bool isGetMedicationsLoaded,
+      bool isSearchMedicationLoading,
+      int counterChanges,
+      bool isCreateMedicationLoading,
+      bool isCreateMedicationLoaded,
+      String dialogMessage});
 }
 
 /// @nodoc
@@ -444,6 +634,13 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isChooseFilesLoading = null,
     Object? isChooseFilesLoaded = null,
     Object? uploadFilesProgress = null,
+    Object? isGetMedicationsLoading = null,
+    Object? isGetMedicationsLoaded = null,
+    Object? isSearchMedicationLoading = null,
+    Object? counterChanges = null,
+    Object? isCreateMedicationLoading = null,
+    Object? isCreateMedicationLoaded = null,
+    Object? dialogMessage = null,
   }) {
     return _then(_$LoadedImpl(
       null == questions
@@ -478,6 +675,34 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.uploadFilesProgress
           : uploadFilesProgress // ignore: cast_nullable_to_non_nullable
               as double,
+      null == isGetMedicationsLoading
+          ? _value.isGetMedicationsLoading
+          : isGetMedicationsLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isGetMedicationsLoaded
+          ? _value.isGetMedicationsLoaded
+          : isGetMedicationsLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSearchMedicationLoading
+          ? _value.isSearchMedicationLoading
+          : isSearchMedicationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == counterChanges
+          ? _value.counterChanges
+          : counterChanges // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == isCreateMedicationLoading
+          ? _value.isCreateMedicationLoading
+          : isCreateMedicationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isCreateMedicationLoaded
+          ? _value.isCreateMedicationLoaded
+          : isCreateMedicationLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == dialogMessage
+          ? _value.dialogMessage
+          : dialogMessage // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -493,7 +718,14 @@ class _$LoadedImpl implements Loaded {
       this.snackbarErrorCounter,
       this.isChooseFilesLoading,
       this.isChooseFilesLoaded,
-      this.uploadFilesProgress)
+      this.uploadFilesProgress,
+      this.isGetMedicationsLoading,
+      this.isGetMedicationsLoaded,
+      this.isSearchMedicationLoading,
+      this.counterChanges,
+      this.isCreateMedicationLoading,
+      this.isCreateMedicationLoaded,
+      this.dialogMessage)
       : _questions = questions;
 
   final List<QuestionModel> _questions;
@@ -518,10 +750,24 @@ class _$LoadedImpl implements Loaded {
   final bool isChooseFilesLoaded;
   @override
   final double uploadFilesProgress;
+  @override
+  final bool isGetMedicationsLoading;
+  @override
+  final bool isGetMedicationsLoaded;
+  @override
+  final bool isSearchMedicationLoading;
+  @override
+  final int counterChanges;
+  @override
+  final bool isCreateMedicationLoading;
+  @override
+  final bool isCreateMedicationLoaded;
+  @override
+  final String dialogMessage;
 
   @override
   String toString() {
-    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isChooseFilesLoading: $isChooseFilesLoading, isChooseFilesLoaded: $isChooseFilesLoaded, uploadFilesProgress: $uploadFilesProgress)';
+    return 'PatientSectionDetailsState.loaded(questions: $questions, isSubmitLoading: $isSubmitLoading, isSubmitted: $isSubmitted, message: $message, snackbarErrorCounter: $snackbarErrorCounter, isChooseFilesLoading: $isChooseFilesLoading, isChooseFilesLoaded: $isChooseFilesLoaded, uploadFilesProgress: $uploadFilesProgress, isGetMedicationsLoading: $isGetMedicationsLoading, isGetMedicationsLoaded: $isGetMedicationsLoaded, isSearchMedicationLoading: $isSearchMedicationLoading, counterChanges: $counterChanges, isCreateMedicationLoading: $isCreateMedicationLoading, isCreateMedicationLoaded: $isCreateMedicationLoaded, dialogMessage: $dialogMessage)';
   }
 
   @override
@@ -543,7 +789,25 @@ class _$LoadedImpl implements Loaded {
             (identical(other.isChooseFilesLoaded, isChooseFilesLoaded) ||
                 other.isChooseFilesLoaded == isChooseFilesLoaded) &&
             (identical(other.uploadFilesProgress, uploadFilesProgress) ||
-                other.uploadFilesProgress == uploadFilesProgress));
+                other.uploadFilesProgress == uploadFilesProgress) &&
+            (identical(
+                    other.isGetMedicationsLoading, isGetMedicationsLoading) ||
+                other.isGetMedicationsLoading == isGetMedicationsLoading) &&
+            (identical(other.isGetMedicationsLoaded, isGetMedicationsLoaded) ||
+                other.isGetMedicationsLoaded == isGetMedicationsLoaded) &&
+            (identical(other.isSearchMedicationLoading,
+                    isSearchMedicationLoading) ||
+                other.isSearchMedicationLoading == isSearchMedicationLoading) &&
+            (identical(other.counterChanges, counterChanges) ||
+                other.counterChanges == counterChanges) &&
+            (identical(other.isCreateMedicationLoading,
+                    isCreateMedicationLoading) ||
+                other.isCreateMedicationLoading == isCreateMedicationLoading) &&
+            (identical(
+                    other.isCreateMedicationLoaded, isCreateMedicationLoaded) ||
+                other.isCreateMedicationLoaded == isCreateMedicationLoaded) &&
+            (identical(other.dialogMessage, dialogMessage) ||
+                other.dialogMessage == dialogMessage));
   }
 
   @override
@@ -556,7 +820,14 @@ class _$LoadedImpl implements Loaded {
       snackbarErrorCounter,
       isChooseFilesLoading,
       isChooseFilesLoaded,
-      uploadFilesProgress);
+      uploadFilesProgress,
+      isGetMedicationsLoading,
+      isGetMedicationsLoaded,
+      isSearchMedicationLoading,
+      counterChanges,
+      isCreateMedicationLoading,
+      isCreateMedicationLoaded,
+      dialogMessage);
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -579,8 +850,27 @@ class _$LoadedImpl implements Loaded {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
         loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
     return loaded(
@@ -591,7 +881,14 @@ class _$LoadedImpl implements Loaded {
         snackbarErrorCounter,
         isChooseFilesLoading,
         isChooseFilesLoaded,
-        uploadFilesProgress);
+        uploadFilesProgress,
+        isGetMedicationsLoading,
+        isGetMedicationsLoaded,
+        isSearchMedicationLoading,
+        counterChanges,
+        isCreateMedicationLoading,
+        isCreateMedicationLoaded,
+        dialogMessage);
   }
 
   @override
@@ -607,8 +904,27 @@ class _$LoadedImpl implements Loaded {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(
@@ -619,7 +935,14 @@ class _$LoadedImpl implements Loaded {
         snackbarErrorCounter,
         isChooseFilesLoading,
         isChooseFilesLoaded,
-        uploadFilesProgress);
+        uploadFilesProgress,
+        isGetMedicationsLoading,
+        isGetMedicationsLoaded,
+        isSearchMedicationLoading,
+        counterChanges,
+        isCreateMedicationLoading,
+        isCreateMedicationLoaded,
+        dialogMessage);
   }
 
   @override
@@ -635,8 +958,27 @@ class _$LoadedImpl implements Loaded {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -649,7 +991,14 @@ class _$LoadedImpl implements Loaded {
           snackbarErrorCounter,
           isChooseFilesLoading,
           isChooseFilesLoaded,
-          uploadFilesProgress);
+          uploadFilesProgress,
+          isGetMedicationsLoading,
+          isGetMedicationsLoaded,
+          isSearchMedicationLoading,
+          counterChanges,
+          isCreateMedicationLoading,
+          isCreateMedicationLoaded,
+          dialogMessage);
     }
     return orElse();
   }
@@ -660,6 +1009,8 @@ class _$LoadedImpl implements Loaded {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -671,6 +1022,7 @@ class _$LoadedImpl implements Loaded {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -682,6 +1034,7 @@ class _$LoadedImpl implements Loaded {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -701,7 +1054,14 @@ abstract class Loaded implements PatientSectionDetailsState {
       final int snackbarErrorCounter,
       final bool isChooseFilesLoading,
       final bool isChooseFilesLoaded,
-      final double uploadFilesProgress) = _$LoadedImpl;
+      final double uploadFilesProgress,
+      final bool isGetMedicationsLoading,
+      final bool isGetMedicationsLoaded,
+      final bool isSearchMedicationLoading,
+      final int counterChanges,
+      final bool isCreateMedicationLoading,
+      final bool isCreateMedicationLoaded,
+      final String dialogMessage) = _$LoadedImpl;
 
   List<QuestionModel> get questions;
   bool get isSubmitLoading;
@@ -711,12 +1071,450 @@ abstract class Loaded implements PatientSectionDetailsState {
   bool get isChooseFilesLoading;
   bool get isChooseFilesLoaded;
   double get uploadFilesProgress;
+  bool get isGetMedicationsLoading;
+  bool get isGetMedicationsLoaded;
+  bool get isSearchMedicationLoading;
+  int get counterChanges;
+  bool get isCreateMedicationLoading;
+  bool get isCreateMedicationLoaded;
+  String get dialogMessage;
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$MedicationSectionLoadedImplCopyWith<$Res> {
+  factory _$$MedicationSectionLoadedImplCopyWith(
+          _$MedicationSectionLoadedImpl value,
+          $Res Function(_$MedicationSectionLoadedImpl) then) =
+      __$$MedicationSectionLoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {GetRecommendationsModelResponse response,
+      int changesCounter,
+      String snackBarMessage,
+      String dialogMessage,
+      bool isSubmitLoading,
+      bool isSubmitLoaded,
+      bool isSearchMedicationLoading,
+      SearchForDoseInMedicationSectionModelResponse?
+          searchForDoseInMedicationSectionResponse,
+      bool isDeletePatientRecommendationLoading});
+
+  $GetRecommendationsModelResponseCopyWith<$Res> get response;
+  $SearchForDoseInMedicationSectionModelResponseCopyWith<$Res>?
+      get searchForDoseInMedicationSectionResponse;
+}
+
+/// @nodoc
+class __$$MedicationSectionLoadedImplCopyWithImpl<$Res>
+    extends _$PatientSectionDetailsStateCopyWithImpl<$Res,
+        _$MedicationSectionLoadedImpl>
+    implements _$$MedicationSectionLoadedImplCopyWith<$Res> {
+  __$$MedicationSectionLoadedImplCopyWithImpl(
+      _$MedicationSectionLoadedImpl _value,
+      $Res Function(_$MedicationSectionLoadedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PatientSectionDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? response = null,
+    Object? changesCounter = null,
+    Object? snackBarMessage = null,
+    Object? dialogMessage = null,
+    Object? isSubmitLoading = null,
+    Object? isSubmitLoaded = null,
+    Object? isSearchMedicationLoading = null,
+    Object? searchForDoseInMedicationSectionResponse = freezed,
+    Object? isDeletePatientRecommendationLoading = null,
+  }) {
+    return _then(_$MedicationSectionLoadedImpl(
+      null == response
+          ? _value.response
+          : response // ignore: cast_nullable_to_non_nullable
+              as GetRecommendationsModelResponse,
+      null == changesCounter
+          ? _value.changesCounter
+          : changesCounter // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == snackBarMessage
+          ? _value.snackBarMessage
+          : snackBarMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == dialogMessage
+          ? _value.dialogMessage
+          : dialogMessage // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isSubmitLoading
+          ? _value.isSubmitLoading
+          : isSubmitLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSubmitLoaded
+          ? _value.isSubmitLoaded
+          : isSubmitLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSearchMedicationLoading
+          ? _value.isSearchMedicationLoading
+          : isSearchMedicationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      freezed == searchForDoseInMedicationSectionResponse
+          ? _value.searchForDoseInMedicationSectionResponse
+          : searchForDoseInMedicationSectionResponse // ignore: cast_nullable_to_non_nullable
+              as SearchForDoseInMedicationSectionModelResponse?,
+      null == isDeletePatientRecommendationLoading
+          ? _value.isDeletePatientRecommendationLoading
+          : isDeletePatientRecommendationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+
+  /// Create a copy of PatientSectionDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetRecommendationsModelResponseCopyWith<$Res> get response {
+    return $GetRecommendationsModelResponseCopyWith<$Res>(_value.response,
+        (value) {
+      return _then(_value.copyWith(response: value));
+    });
+  }
+
+  /// Create a copy of PatientSectionDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SearchForDoseInMedicationSectionModelResponseCopyWith<$Res>?
+      get searchForDoseInMedicationSectionResponse {
+    if (_value.searchForDoseInMedicationSectionResponse == null) {
+      return null;
+    }
+
+    return $SearchForDoseInMedicationSectionModelResponseCopyWith<$Res>(
+        _value.searchForDoseInMedicationSectionResponse!, (value) {
+      return _then(
+          _value.copyWith(searchForDoseInMedicationSectionResponse: value));
+    });
+  }
+}
+
+/// @nodoc
+
+class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
+  const _$MedicationSectionLoadedImpl(
+      this.response,
+      this.changesCounter,
+      this.snackBarMessage,
+      this.dialogMessage,
+      this.isSubmitLoading,
+      this.isSubmitLoaded,
+      this.isSearchMedicationLoading,
+      this.searchForDoseInMedicationSectionResponse,
+      this.isDeletePatientRecommendationLoading);
+
+  @override
+  final GetRecommendationsModelResponse response;
+  @override
+  final int changesCounter;
+  @override
+  final String snackBarMessage;
+  @override
+  final String dialogMessage;
+  @override
+  final bool isSubmitLoading;
+  @override
+  final bool isSubmitLoaded;
+  @override
+  final bool isSearchMedicationLoading;
+  @override
+  final SearchForDoseInMedicationSectionModelResponse?
+      searchForDoseInMedicationSectionResponse;
+  @override
+  final bool isDeletePatientRecommendationLoading;
+
+  @override
+  String toString() {
+    return 'PatientSectionDetailsState.medicationSectionLoaded(response: $response, changesCounter: $changesCounter, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isSubmitLoading: $isSubmitLoading, isSubmitLoaded: $isSubmitLoaded, isSearchMedicationLoading: $isSearchMedicationLoading, searchForDoseInMedicationSectionResponse: $searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading: $isDeletePatientRecommendationLoading)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$MedicationSectionLoadedImpl &&
+            (identical(other.response, response) ||
+                other.response == response) &&
+            (identical(other.changesCounter, changesCounter) ||
+                other.changesCounter == changesCounter) &&
+            (identical(other.snackBarMessage, snackBarMessage) ||
+                other.snackBarMessage == snackBarMessage) &&
+            (identical(other.dialogMessage, dialogMessage) ||
+                other.dialogMessage == dialogMessage) &&
+            (identical(other.isSubmitLoading, isSubmitLoading) ||
+                other.isSubmitLoading == isSubmitLoading) &&
+            (identical(other.isSubmitLoaded, isSubmitLoaded) ||
+                other.isSubmitLoaded == isSubmitLoaded) &&
+            (identical(other.isSearchMedicationLoading,
+                    isSearchMedicationLoading) ||
+                other.isSearchMedicationLoading == isSearchMedicationLoading) &&
+            (identical(other.searchForDoseInMedicationSectionResponse,
+                    searchForDoseInMedicationSectionResponse) ||
+                other.searchForDoseInMedicationSectionResponse ==
+                    searchForDoseInMedicationSectionResponse) &&
+            (identical(other.isDeletePatientRecommendationLoading,
+                    isDeletePatientRecommendationLoading) ||
+                other.isDeletePatientRecommendationLoading ==
+                    isDeletePatientRecommendationLoading));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      response,
+      changesCounter,
+      snackBarMessage,
+      dialogMessage,
+      isSubmitLoading,
+      isSubmitLoaded,
+      isSearchMedicationLoading,
+      searchForDoseInMedicationSectionResponse,
+      isDeletePatientRecommendationLoading);
+
+  /// Create a copy of PatientSectionDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$MedicationSectionLoadedImplCopyWith<_$MedicationSectionLoadedImpl>
+      get copyWith => __$$MedicationSectionLoadedImplCopyWithImpl<
+          _$MedicationSectionLoadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
+        loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
+    required TResult Function(String message) error,
+  }) {
+    return medicationSectionLoaded(
+        response,
+        changesCounter,
+        snackBarMessage,
+        dialogMessage,
+        isSubmitLoading,
+        isSubmitLoaded,
+        isSearchMedicationLoading,
+        searchForDoseInMedicationSectionResponse,
+        isDeletePatientRecommendationLoading);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
+        loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
+    TResult? Function(String message)? error,
+  }) {
+    return medicationSectionLoaded?.call(
+        response,
+        changesCounter,
+        snackBarMessage,
+        dialogMessage,
+        isSubmitLoading,
+        isSubmitLoaded,
+        isSearchMedicationLoading,
+        searchForDoseInMedicationSectionResponse,
+        isDeletePatientRecommendationLoading);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+            List<QuestionModel> questions,
+            bool isSubmitLoading,
+            bool isSubmitted,
+            String message,
+            int snackbarErrorCounter,
+            bool isChooseFilesLoading,
+            bool isChooseFilesLoaded,
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
+        loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (medicationSectionLoaded != null) {
+      return medicationSectionLoaded(
+          response,
+          changesCounter,
+          snackBarMessage,
+          dialogMessage,
+          isSubmitLoading,
+          isSubmitLoaded,
+          isSearchMedicationLoading,
+          searchForDoseInMedicationSectionResponse,
+          isDeletePatientRecommendationLoading);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
+    required TResult Function(_Error value) error,
+  }) {
+    return medicationSectionLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
+    TResult? Function(_Error value)? error,
+  }) {
+    return medicationSectionLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (medicationSectionLoaded != null) {
+      return medicationSectionLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class MedicationSectionLoaded implements PatientSectionDetailsState {
+  const factory MedicationSectionLoaded(
+          final GetRecommendationsModelResponse response,
+          final int changesCounter,
+          final String snackBarMessage,
+          final String dialogMessage,
+          final bool isSubmitLoading,
+          final bool isSubmitLoaded,
+          final bool isSearchMedicationLoading,
+          final SearchForDoseInMedicationSectionModelResponse?
+              searchForDoseInMedicationSectionResponse,
+          final bool isDeletePatientRecommendationLoading) =
+      _$MedicationSectionLoadedImpl;
+
+  GetRecommendationsModelResponse get response;
+  int get changesCounter;
+  String get snackBarMessage;
+  String get dialogMessage;
+  bool get isSubmitLoading;
+  bool get isSubmitLoaded;
+  bool get isSearchMedicationLoading;
+  SearchForDoseInMedicationSectionModelResponse?
+      get searchForDoseInMedicationSectionResponse;
+  bool get isDeletePatientRecommendationLoading;
+
+  /// Create a copy of PatientSectionDetailsState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$MedicationSectionLoadedImplCopyWith<_$MedicationSectionLoadedImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -797,8 +1595,27 @@ class _$ErrorImpl implements _Error {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)
         loaded,
+    required TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)
+        medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -817,8 +1634,27 @@ class _$ErrorImpl implements _Error {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult? Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -837,8 +1673,27 @@ class _$ErrorImpl implements _Error {
             int snackbarErrorCounter,
             bool isChooseFilesLoading,
             bool isChooseFilesLoaded,
-            double uploadFilesProgress)?
+            double uploadFilesProgress,
+            bool isGetMedicationsLoading,
+            bool isGetMedicationsLoaded,
+            bool isSearchMedicationLoading,
+            int counterChanges,
+            bool isCreateMedicationLoading,
+            bool isCreateMedicationLoaded,
+            String dialogMessage)?
         loaded,
+    TResult Function(
+            GetRecommendationsModelResponse response,
+            int changesCounter,
+            String snackBarMessage,
+            String dialogMessage,
+            bool isSubmitLoading,
+            bool isSubmitLoaded,
+            bool isSearchMedicationLoading,
+            SearchForDoseInMedicationSectionModelResponse?
+                searchForDoseInMedicationSectionResponse,
+            bool isDeletePatientRecommendationLoading)?
+        medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -854,6 +1709,8 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Initial value) initial,
     required TResult Function(_Loading value) loading,
     required TResult Function(Loaded value) loaded,
+    required TResult Function(MedicationSectionLoaded value)
+        medicationSectionLoaded,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -865,6 +1722,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Initial value)? initial,
     TResult? Function(_Loading value)? loading,
     TResult? Function(Loaded value)? loaded,
+    TResult? Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -876,6 +1734,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Initial value)? initial,
     TResult Function(_Loading value)? loading,
     TResult Function(Loaded value)? loaded,
+    TResult Function(MedicationSectionLoaded value)? medicationSectionLoaded,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
