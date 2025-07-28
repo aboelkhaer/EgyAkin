@@ -47,7 +47,8 @@ mixin _$PatientSectionDetailsState {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) =>
@@ -83,7 +84,8 @@ mixin _$PatientSectionDetailsState {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) =>
@@ -119,7 +121,8 @@ mixin _$PatientSectionDetailsState {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -249,7 +252,8 @@ class _$InitialImpl implements _Initial {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
@@ -288,7 +292,8 @@ class _$InitialImpl implements _Initial {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
@@ -327,7 +332,8 @@ class _$InitialImpl implements _Initial {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -454,7 +460,8 @@ class _$LoadingImpl implements _Loading {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
@@ -493,7 +500,8 @@ class _$LoadingImpl implements _Loading {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
@@ -532,7 +540,8 @@ class _$LoadingImpl implements _Loading {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -869,7 +878,8 @@ class _$LoadedImpl implements Loaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
@@ -923,7 +933,8 @@ class _$LoadedImpl implements Loaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
@@ -977,7 +988,8 @@ class _$LoadedImpl implements Loaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -1103,7 +1115,8 @@ abstract class _$$MedicationSectionLoadedImplCopyWith<$Res> {
       bool isSearchMedicationLoading,
       SearchForDoseInMedicationSectionModelResponse?
           searchForDoseInMedicationSectionResponse,
-      bool isDeletePatientRecommendationLoading});
+      bool isDeletePatientRecommendationLoading,
+      bool isSeeMore});
 
   $GetRecommendationsModelResponseCopyWith<$Res> get response;
   $SearchForDoseInMedicationSectionModelResponseCopyWith<$Res>?
@@ -1134,6 +1147,7 @@ class __$$MedicationSectionLoadedImplCopyWithImpl<$Res>
     Object? isSearchMedicationLoading = null,
     Object? searchForDoseInMedicationSectionResponse = freezed,
     Object? isDeletePatientRecommendationLoading = null,
+    Object? isSeeMore = null,
   }) {
     return _then(_$MedicationSectionLoadedImpl(
       null == response
@@ -1171,6 +1185,10 @@ class __$$MedicationSectionLoadedImplCopyWithImpl<$Res>
       null == isDeletePatientRecommendationLoading
           ? _value.isDeletePatientRecommendationLoading
           : isDeletePatientRecommendationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isSeeMore
+          ? _value.isSeeMore
+          : isSeeMore // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
   }
@@ -1216,7 +1234,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
       this.isSubmitLoaded,
       this.isSearchMedicationLoading,
       this.searchForDoseInMedicationSectionResponse,
-      this.isDeletePatientRecommendationLoading);
+      this.isDeletePatientRecommendationLoading,
+      this.isSeeMore);
 
   @override
   final GetRecommendationsModelResponse response;
@@ -1237,10 +1256,12 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
       searchForDoseInMedicationSectionResponse;
   @override
   final bool isDeletePatientRecommendationLoading;
+  @override
+  final bool isSeeMore;
 
   @override
   String toString() {
-    return 'PatientSectionDetailsState.medicationSectionLoaded(response: $response, changesCounter: $changesCounter, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isSubmitLoading: $isSubmitLoading, isSubmitLoaded: $isSubmitLoaded, isSearchMedicationLoading: $isSearchMedicationLoading, searchForDoseInMedicationSectionResponse: $searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading: $isDeletePatientRecommendationLoading)';
+    return 'PatientSectionDetailsState.medicationSectionLoaded(response: $response, changesCounter: $changesCounter, snackBarMessage: $snackBarMessage, dialogMessage: $dialogMessage, isSubmitLoading: $isSubmitLoading, isSubmitLoaded: $isSubmitLoaded, isSearchMedicationLoading: $isSearchMedicationLoading, searchForDoseInMedicationSectionResponse: $searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading: $isDeletePatientRecommendationLoading, isSeeMore: $isSeeMore)';
   }
 
   @override
@@ -1270,7 +1291,9 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
             (identical(other.isDeletePatientRecommendationLoading,
                     isDeletePatientRecommendationLoading) ||
                 other.isDeletePatientRecommendationLoading ==
-                    isDeletePatientRecommendationLoading));
+                    isDeletePatientRecommendationLoading) &&
+            (identical(other.isSeeMore, isSeeMore) ||
+                other.isSeeMore == isSeeMore));
   }
 
   @override
@@ -1284,7 +1307,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
       isSubmitLoaded,
       isSearchMedicationLoading,
       searchForDoseInMedicationSectionResponse,
-      isDeletePatientRecommendationLoading);
+      isDeletePatientRecommendationLoading,
+      isSeeMore);
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1327,7 +1351,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
@@ -1340,7 +1365,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
         isSubmitLoaded,
         isSearchMedicationLoading,
         searchForDoseInMedicationSectionResponse,
-        isDeletePatientRecommendationLoading);
+        isDeletePatientRecommendationLoading,
+        isSeeMore);
   }
 
   @override
@@ -1375,7 +1401,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
@@ -1388,7 +1415,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
         isSubmitLoaded,
         isSearchMedicationLoading,
         searchForDoseInMedicationSectionResponse,
-        isDeletePatientRecommendationLoading);
+        isDeletePatientRecommendationLoading,
+        isSeeMore);
   }
 
   @override
@@ -1423,7 +1451,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -1438,7 +1467,8 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
           isSubmitLoaded,
           isSearchMedicationLoading,
           searchForDoseInMedicationSectionResponse,
-          isDeletePatientRecommendationLoading);
+          isDeletePatientRecommendationLoading,
+          isSeeMore);
     }
     return orElse();
   }
@@ -1487,17 +1517,17 @@ class _$MedicationSectionLoadedImpl implements MedicationSectionLoaded {
 
 abstract class MedicationSectionLoaded implements PatientSectionDetailsState {
   const factory MedicationSectionLoaded(
-          final GetRecommendationsModelResponse response,
-          final int changesCounter,
-          final String snackBarMessage,
-          final String dialogMessage,
-          final bool isSubmitLoading,
-          final bool isSubmitLoaded,
-          final bool isSearchMedicationLoading,
-          final SearchForDoseInMedicationSectionModelResponse?
-              searchForDoseInMedicationSectionResponse,
-          final bool isDeletePatientRecommendationLoading) =
-      _$MedicationSectionLoadedImpl;
+      final GetRecommendationsModelResponse response,
+      final int changesCounter,
+      final String snackBarMessage,
+      final String dialogMessage,
+      final bool isSubmitLoading,
+      final bool isSubmitLoaded,
+      final bool isSearchMedicationLoading,
+      final SearchForDoseInMedicationSectionModelResponse?
+          searchForDoseInMedicationSectionResponse,
+      final bool isDeletePatientRecommendationLoading,
+      final bool isSeeMore) = _$MedicationSectionLoadedImpl;
 
   GetRecommendationsModelResponse get response;
   int get changesCounter;
@@ -1509,6 +1539,7 @@ abstract class MedicationSectionLoaded implements PatientSectionDetailsState {
   SearchForDoseInMedicationSectionModelResponse?
       get searchForDoseInMedicationSectionResponse;
   bool get isDeletePatientRecommendationLoading;
+  bool get isSeeMore;
 
   /// Create a copy of PatientSectionDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -1614,7 +1645,8 @@ class _$ErrorImpl implements _Error {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)
         medicationSectionLoaded,
     required TResult Function(String message) error,
   }) {
@@ -1653,7 +1685,8 @@ class _$ErrorImpl implements _Error {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult? Function(String message)? error,
   }) {
@@ -1692,7 +1725,8 @@ class _$ErrorImpl implements _Error {
             bool isSearchMedicationLoading,
             SearchForDoseInMedicationSectionModelResponse?
                 searchForDoseInMedicationSectionResponse,
-            bool isDeletePatientRecommendationLoading)?
+            bool isDeletePatientRecommendationLoading,
+            bool isSeeMore)?
         medicationSectionLoaded,
     TResult Function(String message)? error,
     required TResult orElse(),

@@ -7,6 +7,7 @@ import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/search_for_dose_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/delete_patient_recommendation_usecase.dart';
@@ -49,6 +50,9 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   String removeFilesId = '';
   int counterChanges = 0;
 
+  // Pagination variables for search
+  bool isLastPageInSearch = false;
+  bool isLoadingMoreForScrollInSearch = false;
 
 
   String deletePatientRecommendationId = '';
@@ -65,7 +69,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isSubmitLoaded,
         value.isSearchMedicationLoading,
         value.searchForDoseInMedicationSectionResponse,
-        true,
+        true,false,
       ),
     ));
     final result = await _deletePatientRecommendationUsecase.execute(
@@ -87,7 +91,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            false,
+            false,false,
           ),
         ));
       },
@@ -108,7 +112,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            false,
+            false,false,
           ),
         ));
       },
@@ -118,6 +122,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   }
 
   searchForDoseInMedicationSection(String dose) async {
+    // Reset pagination for new search
+    currentPageInSearch = 1;
+    isLastPageInSearch = false;
+    isLoadingMoreForScrollInSearch = false;
+    
+
+    
     emit(state.maybeMap(
       orElse: () => state,
       medicationSectionLoaded: (value) =>
@@ -131,10 +142,11 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         true,
         value.searchForDoseInMedicationSectionResponse,
         value.isDeletePatientRecommendationLoading,
+        false,
       ),
     ));
     final result = await _searchForDoseInMedicationSectionUsecase.execute(
-        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: 1));
+        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: currentPageInSearch));
     result.fold(
       (l) {
         emit(state.maybeMap(
@@ -149,11 +161,18 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            value.isDeletePatientRecommendationLoading,
+            value.isDeletePatientRecommendationLoading, false,
           ),
         ));
       },
       (medicationResponse) {
+        // Check if this is the last page based on the initial response
+        // If the response is empty or has very few items, it's likely the last page
+        if (medicationResponse.data?.data == null || 
+            medicationResponse.data!.data!.isEmpty) {
+          isLastPageInSearch = true;
+        }
+        
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) =>
@@ -167,11 +186,132 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             false,
             medicationResponse,
             value.isDeletePatientRecommendationLoading,
+            false,
           ),
         ));
       },
     );
   }
+  int currentPageInSearch = 1;
+   loadMoreSearchForDoseInMedicationSection(String dose) async {
+    // Don't load more if we're already at the last page or currently loading
+    if (isLoadingMoreForScrollInSearch || isLastPageInSearch) return;
+
+    currentPageInSearch++;
+    isLoadingMoreForScrollInSearch = true;
+    
+    emit(state.maybeMap(
+      orElse: () => state,
+      medicationSectionLoaded: (value) =>
+          PatientSectionDetailsState.medicationSectionLoaded(
+        value.response,
+        value.changesCounter,
+        '',
+        '',
+        value.isSubmitLoading,
+        value.isSubmitLoaded,
+        false, // Keep existing search results visible
+        value.searchForDoseInMedicationSectionResponse,
+        value.isDeletePatientRecommendationLoading,
+        true, // Show loading more indicator
+      ),
+    ));
+    final result = await _searchForDoseInMedicationSectionUsecase.execute(
+        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: currentPageInSearch));
+    result.fold(
+      (l) {
+        currentPageInSearch--; // Roll back the page increment if the API call fails
+        isLoadingMoreForScrollInSearch = false;
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) =>
+              PatientSectionDetailsState.medicationSectionLoaded(
+            value.response,
+            value.changesCounter,
+            l.message,
+            '',
+            value.isSubmitLoading,
+            value.isSubmitLoaded,
+            false,
+            value.searchForDoseInMedicationSectionResponse,
+            value.isDeletePatientRecommendationLoading,
+            false,
+          ),
+        ));
+      },
+      (medicationResponse) {
+        emit(state.maybeMap(
+          orElse: () => state,
+          medicationSectionLoaded: (value) {
+            // Get existing search results
+            final existingSearchResponse = value.searchForDoseInMedicationSectionResponse;
+            
+            // If we have existing results, append new data to it
+            if (existingSearchResponse != null && 
+                existingSearchResponse.data != null && 
+                medicationResponse.data != null &&
+                medicationResponse.data!.data != null) {
+              
+              // Get existing dose list
+              final existingDoses = List<DoseModelInSearch>.from(existingSearchResponse.data!.data ?? []);
+              // Get new dose list
+              final newDoses = List<DoseModelInSearch>.from(medicationResponse.data!.data ?? []);
+              
+              // Combine the lists
+              existingDoses.addAll(newDoses);
+              
+              // Create updated data model with combined doses
+              final updatedDataModel = SearchForDoseInMedicationSectionDataModelResponse(
+                data: existingDoses,
+              );
+              
+              // Create updated response with combined data
+              final updatedResponse = medicationResponse.copyWith(data: updatedDataModel);
+              
+              // Check if this is the last page based on response data
+              // If the new response is empty, it's definitely the last page
+              if (newDoses.isEmpty) {
+                isLastPageInSearch = true;
+              }
+              
+              isLoadingMoreForScrollInSearch = false;
+              
+              return PatientSectionDetailsState.medicationSectionLoaded(
+                value.response,
+                value.changesCounter,
+                '',
+                '',
+                value.isSubmitLoading,
+                value.isSubmitLoaded,
+                false,
+                updatedResponse,
+                value.isDeletePatientRecommendationLoading,
+                false,
+              );
+            } else {
+              // If no existing results, just use the new response
+              isLoadingMoreForScrollInSearch = false;
+              
+              return PatientSectionDetailsState.medicationSectionLoaded(
+                value.response,
+                value.changesCounter,
+                '',
+                '',
+                value.isSubmitLoading,
+                value.isSubmitLoaded,
+                false,
+                medicationResponse,
+                value.isDeletePatientRecommendationLoading,
+                false,
+              );
+            }
+          },
+        ));
+      },
+    );
+  }
+
+
 
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
@@ -256,6 +396,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           false,
           false,
           null,
+          false,
           false,
         ));
       },
@@ -1052,6 +1193,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isSearchMedicationLoading,
         value.searchForDoseInMedicationSectionResponse,
         value.isDeletePatientRecommendationLoading,
+        false,
       ),
     ));
 
@@ -1091,7 +1233,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             value.isSearchMedicationLoading,
             value.searchForDoseInMedicationSectionResponse,
-            value.isDeletePatientRecommendationLoading,
+            value.isDeletePatientRecommendationLoading, 
+            false,
           ),
         ));
       },
@@ -1121,6 +1264,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               value.isSearchMedicationLoading,
               value.searchForDoseInMedicationSectionResponse,
               value.isDeletePatientRecommendationLoading,
+              false,
             );
           },
         ));
@@ -1146,6 +1290,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isSearchMedicationLoading,
         value.searchForDoseInMedicationSectionResponse,
         value.isDeletePatientRecommendationLoading,
+        false,
       ),
     ));
 
@@ -1187,6 +1332,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSearchMedicationLoading,
             value.searchForDoseInMedicationSectionResponse,
             value.isDeletePatientRecommendationLoading,
+            false,
           ),
         ));
       },
@@ -1222,6 +1368,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               value.isSearchMedicationLoading,
               value.searchForDoseInMedicationSectionResponse,
               value.isDeletePatientRecommendationLoading,
+              false,
             );
           },
         ));
@@ -1229,7 +1376,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     );
   }
 
-  void createNewMedicine(
+  Future<bool> createNewMedicine(
     String title,
     String description,
     String dose,
@@ -1248,6 +1395,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isSearchMedicationLoading,
         value.searchForDoseInMedicationSectionResponse,
         value.isDeletePatientRecommendationLoading,
+        false,
       ),
     ));
 
@@ -1260,9 +1408,10 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       ),
     );
 
-    result.fold(
+    return result.fold(
       (failure) {
         // Handle failure
+        print('Medicine creation failed: ${failure.message}'); // Debug print
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) =>
@@ -1276,11 +1425,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSearchMedicationLoading,
             value.searchForDoseInMedicationSectionResponse,
             value.isDeletePatientRecommendationLoading,
+            false,
           ),
         ));
+        return false; // Return false for failure
       },
       (response) {
         // Handle success
+        print('Medicine creation succeeded: ${response.message}'); // Debug print
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) {
@@ -1295,9 +1447,11 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               value.isSearchMedicationLoading,
               value.searchForDoseInMedicationSectionResponse,
               value.isDeletePatientRecommendationLoading,
+              false,
             );
           },
         ));
+        return true; // Return true for success
       },
     );
   }

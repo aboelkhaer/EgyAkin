@@ -35,6 +35,7 @@ abstract class PatientSectionDetailsState with _$PatientSectionDetailsState {
     bool isSearchMedicationLoading,
     SearchForDoseInMedicationSectionModelResponse? searchForDoseInMedicationSectionResponse,
     bool isDeletePatientRecommendationLoading,
+    bool isSeeMore,
   ) = MedicationSectionLoaded;
 
   const factory PatientSectionDetailsState.error(String message) = _Error;

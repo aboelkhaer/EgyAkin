@@ -841,5 +841,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
       cubit.questionModelList[index].id.toString(),
       doubleValue,
     );
+    
+    // Also update formData to prevent the "You should update and data to submit" dialog
+    cubit.formData[cubit.questionModelList[index].id.toString()] = doubleValue;
   }
 }

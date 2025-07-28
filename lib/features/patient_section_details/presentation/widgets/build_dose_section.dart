@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
 
@@ -39,7 +41,14 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
   bool _isOverlayVisible = false;
   bool _isSearching = false; // Track if a search is in progress
   bool _hasSearched = false; // Track if any search has been performed
+  bool _isCreatingMedicine = false; // Track if creating medicine
   late PatientSectionDetailsCubit cubit;
+  late ScrollController _searchScrollController;
+  VoidCallback? _currentScrollListener;
+  
+  // Form validation state
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _editFormKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -49,6 +58,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     routeController = TextEditingController();
     frequencyController = TextEditingController();
     durationController = TextEditingController();
+    _searchScrollController = ScrollController();
     cubit = PatientSectionDetailsCubit.get(context);
   }
 
@@ -61,6 +71,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     routeController.dispose();
     frequencyController.dispose();
     durationController.dispose();
+    _searchScrollController.dispose();
     super.dispose();
   }
 
@@ -69,6 +80,11 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
       _overlayEntry?.remove();
       _overlayEntry = null;
       _isOverlayVisible = false;
+    }
+    // Remove scroll listener when overlay is removed
+    if (_currentScrollListener != null) {
+      _searchScrollController.removeListener(_currentScrollListener!);
+      _currentScrollListener = null;
     }
   }
 
@@ -87,204 +103,323 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     _showSearchOverlay();
   }
 
-  void _showAddMedicationDialog(String medicationName) {
+  void _showAddMedicationDialog(String medicationName, {String? doseValue}) {
+    print('Showing Add New Dose dialog for: $medicationName with dose: $doseValue'); // Debug print
     // Hide overlay before showing bottom sheet
     _removeOverlay();
+    
+    // Pre-fill dose controller with dose value from search if available
+    if (doseValue != null && doseValue.isNotEmpty) {
+      doseController.text = doseValue;
+      print('Set dose controller text to: $doseValue'); // Debug print
+    } else {
+      print('No dose value provided or empty'); // Debug print
+    }
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 24,
-            right: 24,
-            top: 24,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Add New Dose',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Add New Dose',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              medicationName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        medicationName,
-                        style: TextStyle(
-                          fontSize: 14.sp,
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          // Clear controllers
+                          doseController.clear();
+                          routeController.clear();
+                          frequencyController.clear();
+                          durationController.clear();
+                        },
+                        icon: Icon(
+                          Icons.close,
                           color: Colors.grey[600],
+                          size: 24,
                         ),
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Clear controllers
-                      doseController.clear();
-                      routeController.clear();
-                      frequencyController.clear();
-                      durationController.clear();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.grey[600],
-                      size: 24,
+                  const SizedBox(height: 16),
+                  // Form Fields
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[50],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          // Dose Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Dose',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: doseController,
+                                textInputType: TextInputType.multiline,
+                                maxLines: 3,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter dose';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Route Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Route',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: routeController,
+                                textInputType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter route';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Frequency Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Frequency',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: frequencyController,
+                                textInputType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter frequency';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Duration Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Duration',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: durationController,
+                                textInputType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter duration';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 24),
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Validate form using Form validation
+                        if (!_formKey.currentState!.validate()) {
+                          // Form validation failed - errors will be shown on the fields
+                          return;
+                        }
+
+                        // Create new medication
+                        final newMedication = PatientRecommendationModel(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          doseName: medicationName,
+                          dose: doseController.text,
+                          route: routeController.text,
+                          frequency: frequencyController.text,
+                          duration: durationController.text,
+                        );
+
+                        // Add to list
+                        cubit.addPatientRecommendation(
+                            newMedication, widget.patientId);
+
+                        // Clear and close
+                        doseController.clear();
+                        routeController.clear();
+                        frequencyController.clear();
+                        durationController.clear();
+                        Navigator.pop(context);
+                        searchContentController.clear();
+                        setState(() {
+                          searchText = '';
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Text(
+                        'Add Medicine',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
-              const SizedBox(height: 24),
-              // Form Fields
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    CustomTextFormField(
-                      title: 'Dose',
-                      textFormFieldController: doseController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter dose';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Route',
-                      textFormFieldController: routeController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter route';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Frequency',
-                      textFormFieldController: frequencyController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter frequency';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Duration',
-                      textFormFieldController: durationController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter duration';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate form
-                    if (doseController.text.isEmpty ||
-                        routeController.text.isEmpty ||
-                        frequencyController.text.isEmpty ||
-                        durationController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill all fields'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      return;
-                    }
-
-                    // Create new medication
-                    final newMedication = PatientRecommendationModel(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      doseName: medicationName,
-                      dose: doseController.text,
-                      route: routeController.text,
-                      frequency: frequencyController.text,
-                      duration: durationController.text,
-                    );
-
-                    // Add to list
-                    cubit.addPatientRecommendation(
-                        newMedication, widget.patientId);
-
-                    // Clear and close
-                    doseController.clear();
-                    routeController.clear();
-                    frequencyController.clear();
-                    durationController.clear();
-                    Navigator.pop(context);
-                    searchContentController.clear();
-                    setState(() {
-                      searchText = '';
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Add Medicine',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
         ),
       ),
@@ -298,198 +433,328 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     frequencyController.text = medication.frequency ?? '';
     durationController.text = medication.duration ?? '';
 
+    // Store original values for comparison
+    final originalDose = medication.dose ?? '';
+    final originalRoute = medication.route ?? '';
+    final originalFrequency = medication.frequency ?? '';
+    final originalDuration = medication.duration ?? '';
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 24,
-            right: 24,
-            top: 24,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              // Function to check if any changes were made
+              bool hasChanges() {
+                return doseController.text != originalDose ||
+                       routeController.text != originalRoute ||
+                       frequencyController.text != originalFrequency ||
+                       durationController.text != originalDuration;
+              }
+
+              // Add listeners to controllers to trigger state updates
+              doseController.addListener(() => setState(() {}));
+              routeController.addListener(() => setState(() {}));
+              frequencyController.addListener(() => setState(() {}));
+              durationController.addListener(() => setState(() {}));
+
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Edit Medication',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                      // Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Edit Medication',
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                medication.doseName ?? 'Unknown',
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              // Clear controllers
+                              // doseController.clear();
+                              // routeController.clear();
+                              // frequencyController.clear();
+                              // durationController.clear();
+                            },
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.grey[600],
+                              size: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      // Form Fields
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(16),
+                        child: Form(
+                          key: _editFormKey,
+                          child: Column(
+                            children: [
+                              // Dose Field
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Dose',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        ' *',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  CustomTextFormField(
+                                    title: '',
+                                    textFormFieldController: doseController,
+                                    textInputType: TextInputType.multiline,
+                                    maxLines: 3,
+                                    validator: (value) {
+                                      if (value == null || value.trim().isEmpty) {
+                                        return 'Please enter dose';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Route Field
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Route',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        ' *',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  CustomTextFormField(
+                                    title: '',
+                                    textFormFieldController: routeController,
+                                    textInputType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value == null || value.trim().isEmpty) {
+                                        return 'Please enter route';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Frequency Field
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Frequency',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        ' *',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  CustomTextFormField(
+                                    title: '',
+                                    textFormFieldController: frequencyController,
+                                    textInputType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value == null || value.trim().isEmpty) {
+                                        return 'Please enter frequency';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              // Duration Field
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Duration',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Text(
+                                        ' *',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  CustomTextFormField(
+                                    title: '',
+                                    textFormFieldController: durationController,
+                                    textInputType: TextInputType.text,
+                                    validator: (value) {
+                                      if (value == null || value.trim().isEmpty) {
+                                        return 'Please enter duration';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        medication.doseName ?? 'Unknown',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey[600],
+                      const SizedBox(height: 24),
+                      // Action Button
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: hasChanges() ? () {
+                            // Validate form using Form validation
+                            if (!_editFormKey.currentState!.validate()) {
+                              // Form validation failed - errors will be shown on the fields
+                              return;
+                            }
+
+                            // Create updated medication
+                            final updatedMedication = PatientRecommendationModel(
+                              id: medication.id?.toString() ?? '',
+                              doseName: medication.doseName ?? '',
+                              dose: doseController.text,
+                              route: routeController.text,
+                              frequency: frequencyController.text,
+                              duration: durationController.text,
+                            );
+
+                            // Update medication
+                            cubit.updatePatientRecommendation(
+                              updatedMedication,
+                              widget.patientId,
+                            );
+
+                            // Clear and close
+                            doseController.clear();
+                            routeController.clear();
+                            frequencyController.clear();
+                            durationController.clear();
+                            Navigator.pop(context);
+                          } : null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hasChanges() ? AppColors.primary : Colors.grey,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            'Update Medicine',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
+                      const SizedBox(height: 24),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Clear controllers
-                      doseController.clear();
-                      routeController.clear();
-                      frequencyController.clear();
-                      durationController.clear();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.grey[600],
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              // Form Fields
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
                 ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    CustomTextFormField(
-                      title: 'Dose',
-                      textFormFieldController: doseController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter dose';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Route',
-                      textFormFieldController: routeController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter route';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Frequency',
-                      textFormFieldController: frequencyController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter frequency';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Duration',
-                      textFormFieldController: durationController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter duration';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate form
-                    if (doseController.text.isEmpty ||
-                        routeController.text.isEmpty ||
-                        frequencyController.text.isEmpty ||
-                        durationController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill all fields'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      return;
-                    }
-
-                    // Create updated medication
-                    final updatedMedication = PatientRecommendationModel(
-                      id: medication.id?.toString() ?? '',
-                      doseName: medication.doseName ?? '',
-                      dose: doseController.text,
-                      route: routeController.text,
-                      frequency: frequencyController.text,
-                      duration: durationController.text,
-                    );
-
-                    // Update medication
-                    cubit.updatePatientRecommendation(
-                      updatedMedication,
-                      widget.patientId,
-                    );
-
-                    // Clear and close
-                    doseController.clear();
-                    routeController.clear();
-                    frequencyController.clear();
-                    durationController.clear();
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Update Medicine',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -500,172 +765,340 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     // Create a new controller with the preserved search text
     final medicineNameController = TextEditingController(text: medicineName);
     doseController.clear();
+    
+    // Add form key for validation
+    final createFormKey = GlobalKey<FormState>();
+    
+    // Add description controller
+    final descriptionController = TextEditingController();
+    
+
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 24,
-            right: 24,
-            top: 24,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Create New Medicine',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Add a new medicine',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      // Clear controllers
-                      medicineNameController.dispose();
-                      doseController.clear();
-                    },
-                    icon: Icon(
-                      Icons.close,
-                      color: Colors.grey[600],
-                      size: 24,
-                    ),
-                  ),
-                ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
               ),
-              const SizedBox(height: 24),
-              // Form Fields
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding: const EdgeInsets.all(16),
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: createFormKey,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomTextFormField(
-                      title: 'Medicine Name',
-                      textFormFieldController: medicineNameController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter medicine name';
-                        }
-                        return null;
-                      },
+                    // Header
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Create New Medicine',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Add a new medicine',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            // Clear controllers
+                            medicineNameController.dispose();
+                            doseController.clear();
+                            descriptionController.dispose();
+                          },
+                          icon: Icon(
+                            Icons.close,
+                            color: Colors.grey[600],
+                            size: 24,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Description',
-                      textFormFieldController: TextEditingController(),
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter description';
-                        }
-                        return null;
-                      },
+                    const SizedBox(height: 24),
+                    // Form Fields
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        children: [
+                          // Medicine Name Field
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Medicine Name',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: medicineNameController,
+                                textInputType: TextInputType.text,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter medicine name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Dose Field (now before Description, with red asterisk and required)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Dose',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  Text(
+                                    ' *',
+                                    style: TextStyle(
+                                      fontSize: 12.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: doseController,
+                                textInputType: TextInputType.multiline,
+                                maxLines: 3,
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Please enter dose';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          // Description Field (now after Dose, optional)
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Description',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              CustomTextFormField(
+                                title: '',
+                                textFormFieldController: descriptionController,
+                                textInputType: TextInputType.text,
+                                validator: (value) {
+                                  // Description is optional, so no validation needed
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    CustomTextFormField(
-                      title: 'Dose',
-                      textFormFieldController: doseController,
-                      textInputType: TextInputType.text,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter dose';
-                        }
-                        return null;
-                      },
+                    const SizedBox(height: 24),
+                    // Action Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          // Validate form using FormKey
+                          if (createFormKey.currentState!.validate()) {
+                            // Store medicine info for later use
+                            final medicineName = medicineNameController.text.trim();
+                            final doseValue = doseController.text.trim();
+                            print('Stored dose value: "$doseValue"'); // Debug print
+                            
+                            // Show loading dialog
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => Dialog(
+                                backgroundColor: Colors.transparent,
+                                elevation: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Loading indicator
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: AppColors.primary.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(30),
+                                        ),
+                                        child: Center(
+                                          child: SizedBox(
+                                            width: 30,
+                                            height: 30,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 3,
+                                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      // Loading text
+                                      Text(
+                                        'Creating Medicine...',
+                                        style: TextStyle(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Please wait while we save your medicine',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          color: Colors.grey[600],
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                            
+                            // Form is valid, create new medicine
+                            final success = await cubit.createNewMedicine(
+                              medicineName,
+                              descriptionController.text.trim(),
+                              doseValue,
+                            );
+                            
+                            print('Medicine creation success: $success'); // Debug print
+
+                            // Close loading dialog
+                            Navigator.pop(context);
+                            
+                            // Close the create medicine dialog
+                            Navigator.pop(context);
+
+                            // If medicine was created successfully, show Add New Dose dialog
+                            if (success) {
+                              // Wait a bit for the dialog to close completely
+                              await Future.delayed(const Duration(milliseconds: 500));
+                              if (mounted) {
+                                print('Calling _showAddMedicationDialog with doseValue: "$doseValue"'); // Debug print
+                                _showAddMedicationDialog(
+                                  medicineName,
+                                  doseValue: doseValue,
+                                );
+                              }
+                            }
+                            
+                            // Clean up controllers after dialog is closed
+                            medicineNameController.dispose();
+                            descriptionController.dispose();
+                          } else {
+                            // Form validation failed - errors will be shown on the fields
+                            return;
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                                                child: Text(
+                          'Create Medicine',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
                     ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              // Action Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Validate form
-                    if (medicineNameController.text.isEmpty ||
-                        doseController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill all fields'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                      return;
-                    }
-
-                    // Create new medicine
-                    cubit.createNewMedicine(
-                      medicineNameController.text,
-                      'Description', // You might want to add a description field
-                      doseController.text,
-                    );
-
-                    // Clear and close
-                    medicineNameController.dispose();
-                    doseController.clear();
-                    Navigator.pop(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Create Medicine',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-            ],
+            ),
           ),
         ),
       ),
@@ -676,7 +1109,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     return BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
       bloc: cubit,
       builder: (context, state) {
-        // Show loading state when searching or if local search is in progress
+        // Show loading state only for initial search, not for load more
         if (_isSearching ||
             state.maybeWhen(
               medicationSectionLoaded: (response,
@@ -687,8 +1120,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                       isSubmitLoaded,
                       isSearchMedicationLoading,
                       searchForDoseInMedicationSectionResponse,
-                      isDeletePatientRecommendationLoading) =>
-                  isSearchMedicationLoading,
+                      isDeletePatientRecommendationLoading,isSeeMore,) =>
+                  isSearchMedicationLoading && !isSeeMore, // Only show full loading for initial search
               orElse: () => false,
             )) {
           return Container(
@@ -734,7 +1167,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
             isSubmitLoaded,
             isSearchMedicationLoading,
             searchForDoseInMedicationSectionResponse,
-            isDeletePatientRecommendationLoading,
+            isDeletePatientRecommendationLoading,isSeeMore,
           ) {
             // If no search has been performed yet, show instruction
             if (!_hasSearched) {
@@ -806,67 +1239,249 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 searchForDoseInMedicationSectionResponse.data!;
 
             return ListView.builder(
+              controller: _searchScrollController,
               shrinkWrap: true,
               padding: const EdgeInsets.all(8),
-              itemCount: searchDataList.data!.length,
+              itemCount: (searchDataList.data!.length + 
+                  (state.maybeWhen(
+                    medicationSectionLoaded: (response,
+                            changesCounter,
+                            snackBarMessage,
+                            dialogMessage,
+                            isSubmitLoading,
+                            isSubmitLoaded,
+                            isSearchMedicationLoading,
+                            searchForDoseInMedicationSectionResponse,
+                            isDeletePatientRecommendationLoading,isSeeMore,) =>
+                        isSeeMore ? 1 : 0, // Add 1 for loading indicator
+                    orElse: () => 0,
+                  )) +
+                  (searchDataList.data!.length >= 5 && 
+                   !cubit.isLastPageInSearch && 
+                   searchDataList.data!.isNotEmpty && 
+                   !state.maybeWhen(
+                     medicationSectionLoaded: (response,
+                             changesCounter,
+                             snackBarMessage,
+                             dialogMessage,
+                             isSubmitLoading,
+                             isSubmitLoaded,
+                             isSearchMedicationLoading,
+                             searchForDoseInMedicationSectionResponse,
+                             isDeletePatientRecommendationLoading,isSeeMore,) =>
+                         isSeeMore,
+                     orElse: () => false,
+                   ) ? 1 : 0)).toInt(), // Add 1 for load more button
               itemBuilder: (context, index) {
-                final searchData = searchDataList.data![index];
-                return InkWell(
-                  onTap: () {
-                    // Show add medication dialog
-                    _showAddMedicationDialog(searchData.title ?? 'Unknown');
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    margin: const EdgeInsets.symmetric(vertical: 2),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey.shade50,
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                searchData.title ?? 'Unknown',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.sp,
-                                ),
-                              ),
-                              if (searchData.dose != null)
-                                HtmlWidget(
-                                  '${searchData.dose}'.toString(),
-                                  textStyle: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: Colors.grey.shade600,
+                // Show search results
+                if (index < searchDataList.data!.length) {
+                  final searchData = searchDataList.data![index];
+                  return InkWell(
+                    onTap: () {
+                      // Show add medication dialog
+                      _showAddMedicationDialog(
+                        searchData.title ?? 'Unknown',
+                        doseValue: searchData.dose,
+                      );
+                    },
+                    child: Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      margin: const EdgeInsets.symmetric(vertical: 2),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey.shade50,
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  searchData.title ?? 'Unknown',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.sp,
                                   ),
                                 ),
-                            ],
+                                if (searchData.dose != null)
+                                  HtmlWidget(
+                                    '${searchData.dose}'.toString(),
+                                    textStyle: TextStyle(
+                                      fontSize: 10.sp,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
+                          IconButton(
+                            icon: Icon(Icons.add, size: 20.r),
+                            color: AppColors.primary,
+                            onPressed: () {
+                              // Show add medication dialog
+                              _showAddMedicationDialog(
+                                searchData.title ?? 'Unknown',
+                                doseValue: searchData.dose,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+                
+                // Show loading indicator
+                if (state.maybeWhen(
+                  medicationSectionLoaded: (response,
+                          changesCounter,
+                          snackBarMessage,
+                          dialogMessage,
+                          isSubmitLoading,
+                          isSubmitLoaded,
+                          isSearchMedicationLoading,
+                          searchForDoseInMedicationSectionResponse,
+                          isDeletePatientRecommendationLoading,isSeeMore,) =>
+                      isSeeMore && index == searchDataList.data!.length,
+                  orElse: () => false,
+                )) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         ),
-                        IconButton(
-                          icon: Icon(Icons.add, size: 20.r),
-                          color: AppColors.primary,
-                          onPressed: () {
-                            // Show add medication dialog
-                            _showAddMedicationDialog(
-                                searchData.title ?? 'Unknown');
-                          },
+                        SizedBox(width: 8),
+                        Text(
+                          'Loading more...',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                );
+                  );
+                }
+                
+                // Show load more button
+                if (searchDataList.data!.length >= 5 && 
+                    !cubit.isLastPageInSearch && 
+                    searchDataList.data!.isNotEmpty && 
+                    !state.maybeWhen(
+                      medicationSectionLoaded: (response,
+                              changesCounter,
+                              snackBarMessage,
+                              dialogMessage,
+                              isSubmitLoading,
+                              isSubmitLoaded,
+                              isSearchMedicationLoading,
+                              searchForDoseInMedicationSectionResponse,
+                              isDeletePatientRecommendationLoading,isSeeMore,) =>
+                          isSeeMore,
+                      orElse: () => false,
+                    ) && 
+                    index == searchDataList.data!.length + 
+                        (state.maybeWhen(
+                          medicationSectionLoaded: (response,
+                                  changesCounter,
+                                  snackBarMessage,
+                                  dialogMessage,
+                                  isSubmitLoading,
+                                  isSubmitLoaded,
+                                  isSearchMedicationLoading,
+                                  searchForDoseInMedicationSectionResponse,
+                                  isDeletePatientRecommendationLoading,isSeeMore,) =>
+                              isSeeMore ? 1 : 0,
+                          orElse: () => 0,
+                        ))) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: GestureDetector(
+                      onTap: () {
+                        if (!cubit.isLoadingMoreForScrollInSearch) {
+                          cubit.loadMoreSearchForDoseInMedicationSection(searchText);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.keyboard_arrow_down,
+                              size: 14,
+                              color: AppColors.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Load More',
+                              style: TextStyle(
+                                color: AppColors.primary,
+                                fontSize: 11.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                
+                return const SizedBox.shrink(); // Fallback empty widget
               },
             );
           },
         );
       },
     );
+  }
+
+  void _setupScrollListener() {
+    void scrollListener() {
+      if (_searchScrollController.position.pixels >=
+          _searchScrollController.position.maxScrollExtent - 50) {
+        // Load more when user scrolls near the bottom
+        if (searchText.isNotEmpty) {
+          // Check current state to see if we can load more
+          final currentState = cubit.state;
+          currentState.maybeWhen(
+            medicationSectionLoaded: (response,
+                    changesCounter,
+                    snackBarMessage,
+                    dialogMessage,
+                    isSubmitLoading,
+                    isSubmitLoaded,
+                    isSearchMedicationLoading,
+                    searchForDoseInMedicationSectionResponse,
+                    isDeletePatientRecommendationLoading,isSeeMore,) {
+              // Only load more if not currently loading and not at last page
+              if (!isSeeMore && !cubit.isLastPageInSearch) {
+                cubit.loadMoreSearchForDoseInMedicationSection(searchText);
+              }
+            },
+            orElse: () {},
+          );
+        }
+      }
+    }
+    
+    _searchScrollController.addListener(scrollListener);
+    
+    // Store the listener reference for removal
+    _currentScrollListener = scrollListener;
   }
 
   void _showSearchOverlay() {
@@ -902,6 +1517,11 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
 
     Overlay.of(context).insert(_overlayEntry!);
     _isOverlayVisible = true;
+    
+    // Setup scroll listener after overlay is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _setupScrollListener();
+    });
   }
 
   @override
@@ -923,104 +1543,114 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    // Search Bar
-                    SizedBox(
-                      key: _searchFieldKey,
-                      height: 55,
-                      child: CustomTextFormField(
-                        textFormFieldController: searchContentController,
-                        prefixIcon: const Icon(
-                          Icons.search,
-                          color: AppColors.primary,
-                        ),
-                        showClearButton: true,
-                        onClear: () {
-                          setState(() {
-                            searchText = '';
-                            _hasSearched = false;
-                          });
-                          _removeOverlay();
-                        },
-                        onChanged: (value) {
-                          // Cancel previous timer
-                          _debounceTimer?.cancel();
-
-                          // Update search text immediately for UI
-                          setState(() {
-                            searchText = value;
-                            // Set searching state immediately when typing starts
-                            if (value.isNotEmpty) {
-                              _isSearching = true;
-                              _hasSearched = true;
-                            }
-                          });
-
-                          // Remove overlay if search is cleared
-                          if (value.isEmpty) {
+                    // Search Bar - Only show if finalSubmitStatus is false
+                    if (!widget.finalSubmitStatus) ...[
+                      SizedBox(
+                        key: _searchFieldKey,
+                        height: 55,
+                        child: CustomTextFormField(
+                          textFormFieldController: searchContentController,
+                          prefixIcon: const Icon(
+                            Icons.search,
+                            color: AppColors.primary,
+                          ),
+                          showClearButton: true,
+                          onClear: () {
+                            setState(() {
+                              searchText = '';
+                              _hasSearched = false;
+                            });
                             _removeOverlay();
-                            _hasSearched = false;
-                            _isSearching = false;
-                            return;
-                          }
+                            // Reset pagination when search is cleared
+                            cubit.currentPageInSearch = 1;
+                            cubit.isLastPageInSearch = false;
+                            cubit.isLoadingMoreForScrollInSearch = false;
+                          },
+                          onChanged: (value) {
+                            // Cancel previous timer
+                            _debounceTimer?.cancel();
 
-                          // Show overlay immediately when typing
-                          if (!_isOverlayVisible) {
-                            _showSearchOverlay();
-                          }
+                            // Update search text immediately for UI
+                            setState(() {
+                              searchText = value;
+                              // Set searching state immediately when typing starts
+                              if (value.isNotEmpty) {
+                                _isSearching = true;
+                                _hasSearched = true;
+                              }
+                            });
 
-                          // Store the current value in a local variable
-                          final currentValue = value;
-
-                          // Perform search after a short delay
-                          _debounceTimer =
-                              Timer(const Duration(milliseconds: 300), () {
-                            // Verify the value hasn't changed during the delay
-                            if (currentValue == searchContentController.text) {
-                              // Call cubit to search with the current value
-                              cubit
-                                  .searchForDoseInMedicationSection(
-                                      currentValue)
-                                  .then((_) {
-                                if (mounted) {
-                                  setState(() {
-                                    _isSearching = false;
-                                  });
-                                }
-                              }).catchError((_) {
-                                if (mounted) {
-                                  setState(() {
-                                    _isSearching = false;
-                                  });
-                                }
-                              });
+                            // Remove overlay if search is cleared
+                            if (value.isEmpty) {
+                              _removeOverlay();
+                              _hasSearched = false;
+                              _isSearching = false;
+                              // Reset pagination when search is cleared
+                              cubit.currentPageInSearch = 1;
+                              cubit.isLastPageInSearch = false;
+                              cubit.isLoadingMoreForScrollInSearch = false;
+                              return;
                             }
 
-                            _updateOverlay();
-                          });
-                        },
-                        onTextClick: () {
-                          if (searchText.isNotEmpty && !_isOverlayVisible) {
-                            _showSearchOverlay();
-                          }
-                        },
-                        title: 'Search with medication...',
-                        textInputType: TextInputType.text,
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Please enter a medication name';
-                          }
-                          return null;
-                        },
-                        contentPadding: const EdgeInsets.only(
-                            left: 11, right: 11, top: 14, bottom: 14),
-                        style: TextStyle(
-                          decoration: TextDecoration.none,
-                          decorationThickness: 0,
-                          fontSize: 12.sp,
+                            // Show overlay immediately when typing
+                            if (!_isOverlayVisible) {
+                              _showSearchOverlay();
+                            }
+
+                            // Store the current value in a local variable
+                            final currentValue = value;
+
+                            // Perform search after a short delay
+                            _debounceTimer =
+                                Timer(const Duration(milliseconds: 300), () {
+                              // Verify the value hasn't changed during the delay
+                              if (currentValue == searchContentController.text) {
+                                // Call cubit to search with the current value
+                                cubit
+                                    .searchForDoseInMedicationSection(
+                                        currentValue)
+                                    .then((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isSearching = false;
+                                    });
+                                  }
+                                }).catchError((_) {
+                                  if (mounted) {
+                                    setState(() {
+                                      _isSearching = false;
+                                    });
+                                  }
+                                });
+                              }
+
+                              _updateOverlay();
+                            });
+                          },
+                          onTextClick: () {
+                            if (searchText.isNotEmpty && !_isOverlayVisible) {
+                              _showSearchOverlay();
+                            }
+                          },
+                          title: 'Search with medication...',
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Please enter a medication name';
+                            }
+                            return null;
+                          },
+                          contentPadding: const EdgeInsets.only(
+                              left: 11, right: 11, top: 14, bottom: 14),
+                          style: TextStyle(
+                            decoration: TextDecoration.none,
+                            decorationThickness: 0,
+                            fontSize: 12.sp,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                      const SizedBox(height: 20),
+                    ],
                     // Medications List
                     BlocBuilder<PatientSectionDetailsCubit,
                         PatientSectionDetailsState>(
@@ -1039,6 +1669,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             isSearchMedicationLoading,
                             searchForDoseInMedicationSectionResponse,
                             isDeletePatientRecommendationLoading,
+                            isSeeMore,
                           ) {
                             if (response.data == null) {
                               return const Center(
@@ -1093,63 +1724,65 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                               .ellipsis,
                                                         ),
                                                       ),
-                                                      Row(
-                                                        children: [
-                                                          IconButton(
-                                                            icon: const Icon(
-                                                                Icons.edit,
-                                                                size: 20,
-                                                                color: Colors
-                                                                    .blueAccent),
-                                                            onPressed: () {
-                                                              // Open edit modal
-                                                              _showEditMedicationDialog(medication);
-                                                            },
-                                                          ),
-                                                          isDeletePatientRecommendationLoading &&
-                                                                  medication.id
-                                                                          .toString() ==
-                                                                      cubit
-                                                                          .deletePatientRecommendationId
-                                                              ? const IconButton(
-                                                                  hoverColor: Colors
-                                                                      .transparent,
-                                                                  highlightColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  splashColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  onPressed:
-                                                                      null,
-                                                                  icon: SizedBox(
-                                                                      width: 15,
-                                                                      height: 15,
-                                                                      child: CircularProgressIndicator(
-                                                                        strokeWidth:
-                                                                            2,
-                                                                      )))
-                                                              : IconButton(
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .delete,
-                                                                      size: 20,
-                                                                      color: Colors
-                                                                          .redAccent),
-                                                                  onPressed:
-                                                                      () {
-                                                                    // Show confirmation
-                                                                    cubit.deletePatientRecommendationId =
-                                                                        medication
-                                                                            .id
-                                                                            .toString();
-                                                                    cubit.deletePatientRecommendation(
-                                                                        widget
-                                                                            .patientId);
-                                                                  },
-                                                                ),
-                                                        ],
-                                                      ),
+                                                      // Only show edit/delete buttons if finalSubmitStatus is false
+                                                      if (!widget.finalSubmitStatus)
+                                                        Row(
+                                                          children: [
+                                                            IconButton(
+                                                              icon: const Icon(
+                                                                  Icons.edit,
+                                                                  size: 20,
+                                                                  color: Colors
+                                                                      .blueAccent),
+                                                              onPressed: () {
+                                                                // Open edit modal
+                                                                _showEditMedicationDialog(medication);
+                                                              },
+                                                            ),
+                                                            isDeletePatientRecommendationLoading &&
+                                                                    medication.id
+                                                                            .toString() ==
+                                                                        cubit
+                                                                            .deletePatientRecommendationId
+                                                                ? const IconButton(
+                                                                    hoverColor: Colors
+                                                                        .transparent,
+                                                                    highlightColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    splashColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    onPressed:
+                                                                        null,
+                                                                    icon: SizedBox(
+                                                                        width: 15,
+                                                                        height: 15,
+                                                                        child: CircularProgressIndicator(
+                                                                          strokeWidth:
+                                                                              2,
+                                                                        )))
+                                                                : IconButton(
+                                                                    icon: const Icon(
+                                                                        Icons
+                                                                            .delete,
+                                                                        size: 20,
+                                                                        color: Colors
+                                                                            .redAccent),
+                                                                    onPressed:
+                                                                        () {
+                                                                      // Show confirmation
+                                                                      cubit.deletePatientRecommendationId =
+                                                                          medication
+                                                                              .id
+                                                                              .toString();
+                                                                      cubit.deletePatientRecommendation(
+                                                                          widget
+                                                                              .patientId);
+                                                                    },
+                                                                  ),
+                                                          ],
+                                                        ),
                                                     ],
                                                   ),
                                                   const SizedBox(height: 12),

@@ -184,6 +184,7 @@ class SectionSubmitButton extends StatelessWidget {
                       isSearchMedicationLoading,
                       searchForDoseInMedicationSectionResponse,
                       isDeletePatientRecommendationLoading,
+                      isSeeMore,
                     ) {
                       if (isSubmitLoading) {
                         return const Column(

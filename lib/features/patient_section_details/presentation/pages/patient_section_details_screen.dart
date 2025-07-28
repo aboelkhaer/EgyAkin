@@ -73,7 +73,7 @@ class _PatientSectionDetailsScreenState
             error: (message) {
               customSnackBar(context: context, message: message);
             },
-            medicationSectionLoaded: (response, changesCounter, snackBarMessage, dialogMessage, isSubmitLoading, isSubmitLoaded, isSearchMedicationLoading, searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading) {
+            medicationSectionLoaded: (response, changesCounter, snackBarMessage, dialogMessage, isSubmitLoading, isSubmitLoaded, isSearchMedicationLoading, searchForDoseInMedicationSectionResponse, isDeletePatientRecommendationLoading,isSeeMore,) {
               if(snackBarMessage.isNotEmpty){
                 customSnackBar(context: context, message: snackBarMessage);
               }
@@ -114,7 +114,7 @@ class _PatientSectionDetailsScreenState
                   isAllDataOpen: widget.isAllDataOpen,
                 );
               }
-              if (widget.finalSubmitStatus) {
+              if (widget.finalSubmitStatus && widget.sectionModel.sectionId != 12) {
                 return BuildSectionDetailsIfFinalSubmitTrue(
                   questionList: cubit.questionModelList,
                   doctorId: widget.doctorId,
@@ -152,7 +152,7 @@ class _PatientSectionDetailsScreenState
               isSubmitLoaded,
               isSearchMedicationLoading,
               searchForDoseInMedicationSectionResponse,
-              isDeletePatientRecommendationLoading,
+              isDeletePatientRecommendationLoading,isSeeMore,
             ) {
             
 return BlocProvider<PatientSectionDetailsCubit>.value(
