@@ -797,7 +797,7 @@ class PostCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      ShareButton(feed: feed),
+                      // ShareButton(feed: feed),
                       InkWell(
                         onTap: () {
                           if (isGroupPosts || isCommunitySearch) {

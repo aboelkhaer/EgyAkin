@@ -72,13 +72,7 @@ class _CommunityScreenState extends State<CommunityScreen>
       });
     }
 
-    // Handle load more
-    if (!_communityCubit.isLastPage &&
-        !_communityCubit.isLoadingMoreForScroll &&
-        feedsScrollController.position.extentAfter < 200) {
-      _communityCubit.isLoadingMoreForScroll = true;
-      _communityCubit.loadMoreFeeds();
-    }
+    // Remove pagination logic from here - let PostsTab handle it
   }
 
   @override

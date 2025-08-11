@@ -14,7 +14,7 @@ class _ApiServices implements ApiServices {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://test.egyakin.com';
+    baseUrl ??= 'https://api.egyakin.com';
   }
 
   final Dio _dio;
@@ -36,7 +36,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/logout',
+          'https://api.egyakin.com/api/logout',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -79,7 +79,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/login',
+          'https://api.egyakin.com/api/login',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -116,7 +116,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/register',
+          'https://api.egyakin.com/api/register',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -150,7 +150,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/allPatientsNew',
+          'https://api.egyakin.com/api/allPatientsNew',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -186,7 +186,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/doctorProfileGetPatients/${doctorId}',
+          'https://api.egyakin.com/api/doctorProfileGetPatients/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -220,7 +220,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/currentPatientsNew',
+          'https://api.egyakin.com/api/currentPatientsNew',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -259,7 +259,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/searchNew',
+          'https://api.egyakin.com/api/searchNew',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -314,7 +314,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/users',
+          'https://api.egyakin.com/api/users',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -348,7 +348,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/showSections/${patientId}',
+          'https://api.egyakin.com/api/showSections/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -385,7 +385,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/patient/${sectionId}/${patientId}',
+              'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -418,7 +418,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/patient/${patientId}',
+          'https://api.egyakin.com/api/patient/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -457,7 +457,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/patientsection/${sectionId}/${patientId}',
+              'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -492,7 +492,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/questions/${sectionId}',
+              'https://api.egyakin.com/api/questions/${sectionId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -529,7 +529,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/patient',
+              'https://api.egyakin.com/api/patient',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -567,7 +567,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/patientsection/${sectionId}/${patientId}',
+          'https://api.egyakin.com/api/patientsection/${sectionId}/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -603,7 +603,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/patient/${sectionId}/${patientId}',
+          'https://api.egyakin.com/api/patient/${sectionId}/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -636,7 +636,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/submitStatus/${patientId}',
+          'https://api.egyakin.com/api/submitStatus/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -670,7 +670,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/comment/${patientId}',
+          'https://api.egyakin.com/api/comment/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -709,7 +709,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/comment',
+          'https://api.egyakin.com/api/comment',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -743,7 +743,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/comment/${commentId}',
+          'https://api.egyakin.com/api/comment/${commentId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -778,7 +778,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/contact',
+              'https://api.egyakin.com/api/contact',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -811,7 +811,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/Postcomments/${postId}',
+          'https://api.egyakin.com/api/Postcomments/${postId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -845,7 +845,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/Postcomments/${commentId}',
+          'https://api.egyakin.com/api/Postcomments/${commentId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -879,7 +879,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/shownotification',
+          'https://api.egyakin.com/api/shownotification',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -912,7 +912,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/notification',
+          'https://api.egyakin.com/api/notification',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -951,7 +951,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/Postcomments',
+          'https://api.egyakin.com/api/Postcomments',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -985,7 +985,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/forgotpassword',
+          'https://api.egyakin.com/api/forgotpassword',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1024,7 +1024,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/resetpasswordverification',
+          'https://api.egyakin.com/api/resetpasswordverification',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1063,7 +1063,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/resetpassword',
+          'https://api.egyakin.com/api/resetpassword',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1097,7 +1097,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/sendverificationmail',
+              'https://api.egyakin.com/api/sendverificationmail',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1132,7 +1132,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/emailverification',
+              'https://api.egyakin.com/api/emailverification',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1165,7 +1165,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/homeNew',
+          'https://api.egyakin.com/api/homeNew',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1206,7 +1206,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/upload-profile-image',
+          'https://api.egyakin.com/api/upload-profile-image',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1239,7 +1239,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/showAnotherProfile/${doctorId}',
+          'https://api.egyakin.com/api/showAnotherProfile/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1273,7 +1273,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/generatePDF/${patientId}',
+          'https://api.egyakin.com/api/generatePDF/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1306,7 +1306,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/settings',
+          'https://api.egyakin.com/api/settings',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1348,7 +1348,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/uploadSyndicateCard',
+          'https://api.egyakin.com/api/uploadSyndicateCard',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1387,7 +1387,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/changePassword',
+          'https://api.egyakin.com/api/changePassword',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1420,7 +1420,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/storeFCM',
+          'https://api.egyakin.com/api/storeFCM',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1456,7 +1456,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/doctorProfileGetScoreHistory/${doctorId}',
+          'https://api.egyakin.com/api/doctorProfileGetScoreHistory/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1490,7 +1490,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/consultationDoctorSearch/${searchContent}',
+          'https://api.egyakin.com/api/consultationDoctorSearch/${searchContent}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1531,7 +1531,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/consultations',
+          'https://api.egyakin.com/api/consultations',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1566,7 +1566,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/consultations/sent',
+              'https://api.egyakin.com/api/consultations/sent',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1605,7 +1605,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/consultations/received',
+              'https://api.egyakin.com/api/consultations/received',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1644,7 +1644,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/consultations/${consultationId}',
+              'https://api.egyakin.com/api/consultations/${consultationId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -1680,7 +1680,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/consultations/${consultationId}',
+          'https://api.egyakin.com/api/consultations/${consultationId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1714,7 +1714,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/users/${doctorId}/achievements',
+          'https://api.egyakin.com/api/users/${doctorId}/achievements',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1753,7 +1753,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/users/${doctorId}',
+          'https://api.egyakin.com/api/users/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1789,7 +1789,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/users/${doctorId}',
+          'https://api.egyakin.com/api/users/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1825,7 +1825,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/users/${doctorId}',
+          'https://api.egyakin.com/api/users/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1862,7 +1862,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/patientFilters',
+          'https://api.egyakin.com/api/patientFilters',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1895,7 +1895,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts',
+          'https://api.egyakin.com/api/feed/posts',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1931,7 +1931,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}/likeOrUnlikePost',
+          'https://api.egyakin.com/api/feed/posts/${postId}/likeOrUnlikePost',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -1967,7 +1967,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}/saveOrUnsavePost',
+          'https://api.egyakin.com/api/feed/posts/${postId}/saveOrUnsavePost',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2004,7 +2004,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/AIconsultation-history/${patientId}',
+              'https://api.egyakin.com/api/AIconsultation-history/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2039,7 +2039,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/AIconsultation/${patientId}',
+              'https://api.egyakin.com/api/AIconsultation/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2072,7 +2072,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}',
+          'https://api.egyakin.com/api/feed/posts/${postId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2134,7 +2134,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts',
+          'https://api.egyakin.com/api/feed/posts',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2181,7 +2181,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts',
+          'https://api.egyakin.com/api/feed/posts',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2218,7 +2218,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/posts/${postId}/comments',
+              'https://api.egyakin.com/api/posts/${postId}/comments',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2257,7 +2257,7 @@ class _ApiServices implements ApiServices {
     )
                 .compose(
                   _dio.options,
-                  'https://test.egyakin.com/api/comments/${commentId}/likeOrUnlikeComment',
+                  'https://api.egyakin.com/api/comments/${commentId}/likeOrUnlikeComment',
                   queryParameters: queryParameters,
                   data: _data,
                 )
@@ -2302,7 +2302,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/feed/posts/${postId}/comment',
+              'https://api.egyakin.com/api/feed/posts/${postId}/comment',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2338,7 +2338,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/feed/comments/${commentId}',
+              'https://api.egyakin.com/api/feed/comments/${commentId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2387,7 +2387,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}',
+          'https://api.egyakin.com/api/feed/posts/${postId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2454,7 +2454,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}',
+          'https://api.egyakin.com/api/feed/posts/${postId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2498,7 +2498,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/feed/posts/${postId}/comment',
+              'https://api.egyakin.com/api/feed/posts/${postId}/comment',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2536,7 +2536,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}/detailsWithPosts',
+              'https://api.egyakin.com/api/groups/${groupId}/detailsWithPosts',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2569,7 +2569,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/latest-groups-with-random-posts',
+          'https://api.egyakin.com/api/latest-groups-with-random-posts',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2602,7 +2602,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/join',
+          'https://api.egyakin.com/api/groups/${groupId}/join',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2635,7 +2635,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/leave',
+          'https://api.egyakin.com/api/groups/${groupId}/leave',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2671,7 +2671,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/members',
+          'https://api.egyakin.com/api/groups/${groupId}/members',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2707,7 +2707,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/posts/${postId}/likes',
+          'https://api.egyakin.com/api/posts/${postId}/likes',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2742,7 +2742,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/mygroups',
+              'https://api.egyakin.com/api/mygroups',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2782,7 +2782,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/invite',
+          'https://api.egyakin.com/api/groups/${groupId}/invite',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2818,7 +2818,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/removeMember',
+          'https://api.egyakin.com/api/groups/${groupId}/removeMember',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -2853,7 +2853,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups',
+              'https://api.egyakin.com/api/groups',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2920,7 +2920,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups',
+              'https://api.egyakin.com/api/groups',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2955,7 +2955,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}',
+              'https://api.egyakin.com/api/groups/${groupId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -2990,7 +2990,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/feed/trendingPosts',
+              'https://api.egyakin.com/api/feed/trendingPosts',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3026,7 +3026,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/searchPosts',
+          'https://api.egyakin.com/api/feed/searchPosts',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3062,7 +3062,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/doctorposts/${doctorId}',
+          'https://api.egyakin.com/api/doctorposts/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3098,7 +3098,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/doctorsavedposts/${doctorId}',
+          'https://api.egyakin.com/api/doctorsavedposts/${doctorId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3134,7 +3134,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/polls/${pollId}/vote',
+          'https://api.egyakin.com/api/polls/${pollId}/vote',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3170,7 +3170,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/polls/${pollId}/options',
+          'https://api.egyakin.com/api/polls/${pollId}/options',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3213,7 +3213,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}',
+              'https://api.egyakin.com/api/groups/${groupId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3273,7 +3273,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}',
+              'https://api.egyakin.com/api/groups/${groupId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3333,7 +3333,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}',
+              'https://api.egyakin.com/api/groups/${groupId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3402,7 +3402,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/${groupId}',
+              'https://api.egyakin.com/api/groups/${groupId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3439,7 +3439,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/polls/${pollId}/options/${optionId}/voters',
+          'https://api.egyakin.com/api/polls/${pollId}/options/${optionId}/voters',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3477,7 +3477,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/groups/invitations/${doctorId}',
+              'https://api.egyakin.com/api/groups/invitations/${doctorId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3518,7 +3518,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/groups/${groupId}/invitation',
+          'https://api.egyakin.com/api/groups/${groupId}/invitation',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3551,7 +3551,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/feed/posts/${postId}',
+          'https://api.egyakin.com/api/feed/posts/${postId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3585,7 +3585,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/recommendations/${patientId}',
+          'https://api.egyakin.com/api/recommendations/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -3623,7 +3623,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/recommendations/${patientId}',
+              'https://api.egyakin.com/api/recommendations/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3661,7 +3661,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/recommendations/${patientId}',
+              'https://api.egyakin.com/api/recommendations/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3699,7 +3699,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/dose/search/${dose}',
+              'https://api.egyakin.com/api/dose/search/${dose}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3738,7 +3738,7 @@ class _ApiServices implements ApiServices {
     )
             .compose(
               _dio.options,
-              'https://test.egyakin.com/api/recommendations/${patientId}',
+              'https://api.egyakin.com/api/recommendations/${patientId}',
               queryParameters: queryParameters,
               data: _data,
             )
@@ -3781,7 +3781,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/dose',
+          'https://api.egyakin.com/api/dose',
           queryParameters: queryParameters,
           data: _data,
         )

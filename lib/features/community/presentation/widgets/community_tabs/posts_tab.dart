@@ -18,6 +18,73 @@ class PostsTab extends StatefulWidget {
 }
 
 class _PostsTabState extends State<PostsTab> {
+  bool _isLoadingMore = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setupScrollListener();
+    // Reset pagination state when widget is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      CommunityCubit.get(context).resetPaginationState();
+    });
+  }
+
+  @override
+  void didUpdateWidget(PostsTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.feedsScrollController != widget.feedsScrollController) {
+      _setupScrollListener();
+    }
+  }
+
+  void _setupScrollListener() {
+    // Remove any existing listener first to prevent duplicates
+    widget.feedsScrollController.removeListener(_onScroll);
+    // Add the new listener
+    widget.feedsScrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    // Check if scroll controller is still valid
+    if (!widget.feedsScrollController.hasClients) return;
+    
+    final cubit = CommunityCubit.get(context);
+    
+    // Debug prints
+    debugPrint('Scroll position: ${widget.feedsScrollController.position.pixels}');
+    debugPrint('Max scroll extent: ${widget.feedsScrollController.position.maxScrollExtent}');
+    debugPrint('Is loading more (local): $_isLoadingMore');
+    debugPrint('Is loading more (cubit): ${cubit.isLoadingMoreForScroll}');
+    debugPrint('Is last page: ${cubit.isLastPage}');
+    
+    // Don't load more if already loading, at last page, or not near bottom
+    if (!_isLoadingMore && 
+        !cubit.isLoadingMoreForScroll &&
+        !cubit.isLastPage &&
+        widget.feedsScrollController.position.pixels >=
+        widget.feedsScrollController.position.maxScrollExtent - 300) {
+      print('Triggering loadMoreFeeds');
+      _isLoadingMore = true;
+      cubit.isLoadingMoreForScroll = true;
+      cubit.loadMoreFeeds();
+      // Reset loading flag after a delay to prevent multiple calls
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          setState(() {
+            _isLoadingMore = false;
+          });
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.feedsScrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     CommunityCubit cubit = CommunityCubit.get(context);
@@ -75,12 +142,26 @@ class _PostsTabState extends State<PostsTab> {
                               ),
                             )
                           : ListView.builder(
-                              itemCount: feedsResponse.data!.data!.length,
+                              itemCount: feedsResponse.data!.data!.length + (isSeeMore ? 1 : 0),
                               controller: widget.feedsScrollController,
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: const EdgeInsets.all(20) +
                                   EdgeInsets.only(bottom: 60.h),
                               itemBuilder: (context, index) {
+                                if (index == feedsResponse.data!.data!.length) {
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(vertical: 20.h),
+                                    child: Center(
+                                      child: SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
                                 var feed = feedsResponse.data!.data![index];
                                 return PostCard(
                                   feed: feed,
@@ -91,32 +172,6 @@ class _PostsTabState extends State<PostsTab> {
                               },
                             ),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      isSeeMore
-                          ? Column(
-                              children: [
-                                const SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                  ),
-                                ),
-                                SizedBox(height: 20.h),
-                              ],
-                            )
-                          : GestureDetector(
-                              onTap: () {
-                                // Add logic here if needed
-                              },
-                              child: const Text(
-                                '',
-                              ),
-                            ),
-                    ],
                   ),
                 ],
               );

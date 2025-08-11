@@ -28,7 +28,7 @@ _$AddOptionInPollDataModelResponseImpl
             Map<String, dynamic> json) =>
         _$AddOptionInPollDataModelResponseImpl(
           id: (json['id'] as num?)?.toInt(),
-          pollId: json['poll_id'] as String?,
+          pollId: (json['poll_id'] as num?)?.toInt(),
           option: json['option_text'] as String?,
           createdAt: json['created_at'] as String?,
           updatedAt: json['updated_at'] as String?,

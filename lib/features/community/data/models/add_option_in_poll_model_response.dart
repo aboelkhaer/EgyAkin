@@ -18,7 +18,7 @@ class AddOptionInPollModelResponse with _$AddOptionInPollModelResponse {
 class AddOptionInPollDataModelResponse with _$AddOptionInPollDataModelResponse {
   const factory AddOptionInPollDataModelResponse({
     int? id,
-    @JsonKey(name: 'poll_id') String? pollId,
+    @JsonKey(name: 'poll_id') int? pollId,
     @JsonKey(name: 'option_text') String? option,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,

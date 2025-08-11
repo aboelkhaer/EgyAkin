@@ -34,6 +34,8 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   getAllFeeds() async {
     _currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
     postSelectedOptions.clear();
     postSelectedOption.clear();
     emit(const CommunityState.loading());
@@ -211,6 +213,14 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   String postIdDeleted = '';
+  
+  // Reset pagination state
+  void resetPaginationState() {
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
+    _currentPage = 1;
+  }
+  
   // make delete post function
   deletePost(
     String postId,
@@ -523,7 +533,7 @@ class CommunityCubit extends Cubit<CommunityState> {
         // Extract the option from AddOptionInPollModelResponse
         PollOptionsModelResponse newOption = PollOptionsModelResponse(
           id: newOptionResponse.data!.id,
-          pollId: int.parse(newOptionResponse.data!.pollId!),
+          pollId: int.parse(newOptionResponse.data!.pollId.toString()),
           optionText: newOptionResponse.data!.option.toString(),
           createdAt: newOptionResponse.data!.createdAt,
           updatedAt: newOptionResponse.data!.updatedAt,

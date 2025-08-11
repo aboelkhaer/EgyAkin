@@ -224,7 +224,7 @@ AddOptionInPollDataModelResponse _$AddOptionInPollDataModelResponseFromJson(
 mixin _$AddOptionInPollDataModelResponse {
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'poll_id')
-  String? get pollId => throw _privateConstructorUsedError;
+  int? get pollId => throw _privateConstructorUsedError;
   @JsonKey(name: 'option_text')
   String? get option => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
@@ -252,7 +252,7 @@ abstract class $AddOptionInPollDataModelResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'poll_id') String? pollId,
+      @JsonKey(name: 'poll_id') int? pollId,
       @JsonKey(name: 'option_text') String? option,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
@@ -288,7 +288,7 @@ class _$AddOptionInPollDataModelResponseCopyWithImpl<$Res,
       pollId: freezed == pollId
           ? _value.pollId
           : pollId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       option: freezed == option
           ? _value.option
           : option // ignore: cast_nullable_to_non_nullable
@@ -316,7 +316,7 @@ abstract class _$$AddOptionInPollDataModelResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {int? id,
-      @JsonKey(name: 'poll_id') String? pollId,
+      @JsonKey(name: 'poll_id') int? pollId,
       @JsonKey(name: 'option_text') String? option,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
@@ -351,7 +351,7 @@ class __$$AddOptionInPollDataModelResponseImplCopyWithImpl<$Res>
       pollId: freezed == pollId
           ? _value.pollId
           : pollId // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       option: freezed == option
           ? _value.option
           : option // ignore: cast_nullable_to_non_nullable
@@ -387,7 +387,7 @@ class _$AddOptionInPollDataModelResponseImpl
   final int? id;
   @override
   @JsonKey(name: 'poll_id')
-  final String? pollId;
+  final int? pollId;
   @override
   @JsonKey(name: 'option_text')
   final String? option;
@@ -444,7 +444,7 @@ abstract class _AddOptionInPollDataModelResponse
     implements AddOptionInPollDataModelResponse {
   const factory _AddOptionInPollDataModelResponse(
           {final int? id,
-          @JsonKey(name: 'poll_id') final String? pollId,
+          @JsonKey(name: 'poll_id') final int? pollId,
           @JsonKey(name: 'option_text') final String? option,
           @JsonKey(name: 'created_at') final String? createdAt,
           @JsonKey(name: 'updated_at') final String? updatedAt}) =
@@ -458,7 +458,7 @@ abstract class _AddOptionInPollDataModelResponse
   int? get id;
   @override
   @JsonKey(name: 'poll_id')
-  String? get pollId;
+  int? get pollId;
   @override
   @JsonKey(name: 'option_text')
   String? get option;

@@ -101,8 +101,20 @@ class _CreatePostInCommunityScreenState
     final CreatePostInCommunityCubit cubit =
         CreatePostInCommunityCubit.get(context);
 
+    // Initialize text direction based on existing content or default to LTR for better English support
+    TextDirection getInitialTextDirection() {
+      final content = cubit.editableFeed?.content ?? '';
+      if (content.isNotEmpty) {
+        // Check if the first character is Arabic
+        final firstChar = content.trim().isNotEmpty ? content.trim()[0] : '';
+        final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(firstChar);
+        return hasArabic ? TextDirection.rtl : TextDirection.ltr;
+      }
+      return TextDirection.ltr; // Default to LTR for better English support
+    }
+
     ValueNotifier<TextDirection> textDirectionNotifier =
-        ValueNotifier(TextDirection.rtl); // Changed default to RTL
+        ValueNotifier(getInitialTextDirection());
 
     return Scaffold(
       appBar: AppBar(
@@ -336,19 +348,27 @@ class _CreatePostInCommunityScreenState
                                         cubit.editFeedContentForEditableFeed(
                                             value);
                                       }
+                                      
+                                      // Determine text direction based on the content
                                       if (value.isNotEmpty) {
-                                        // Check if text contains Arabic characters
-                                        final hasArabic =
-                                            RegExp(r'[\u0600-\u06FF]')
-                                                .hasMatch(value);
-                                        textDirectionNotifier.value = hasArabic
-                                            ? TextDirection.rtl
-                                            : TextDirection.ltr;
+                                        // Get the first non-whitespace character
+                                        final trimmedValue = value.trim();
+                                        if (trimmedValue.isNotEmpty) {
+                                          final firstChar = trimmedValue[0];
+                                          // Check if the first character is Arabic
+                                          final hasArabic = RegExp(r'[\u0600-\u06FF]').hasMatch(firstChar);
+                                          textDirectionNotifier.value = hasArabic
+                                              ? TextDirection.rtl
+                                              : TextDirection.ltr;
+                                        } else {
+                                          // If only whitespace, maintain current direction
+                                          // Don't change the text direction
+                                        }
                                       } else {
-                                        // Default to RTL when empty
-                                        textDirectionNotifier.value =
-                                            TextDirection.rtl;
+                                        // When empty, maintain the last used direction or default to LTR
+                                        // Don't change the text direction to avoid flickering
                                       }
+                                      
                                       cubit.changePostLength(value.length);
                                     },
                                   );

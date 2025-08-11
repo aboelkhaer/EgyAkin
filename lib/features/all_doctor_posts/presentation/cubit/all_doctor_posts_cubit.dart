@@ -550,7 +550,7 @@ class AllDoctorPostsCubit extends Cubit<AllDoctorPostsState> {
 
         PollOptionsModelResponse newOption = PollOptionsModelResponse(
           id: newOptionResponse.data!.id,
-          pollId: int.parse(newOptionResponse.data!.pollId!),
+          pollId: int.parse(newOptionResponse.data!.pollId.toString()),
           optionText: newOptionResponse.data!.option.toString(),
           createdAt: newOptionResponse.data!.createdAt,
           updatedAt: newOptionResponse.data!.updatedAt,
