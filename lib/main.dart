@@ -1,5 +1,7 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
+import 'package:egy_akin/app/services/deep_link_handler.dart';
+import 'package:egy_akin/app/services/deep_link_navigation_service.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -29,6 +31,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   late NotificationServices notificationServices;
+  final DeepLinkHandler _deepLinkHandler = DeepLinkHandler();
+  final DeepLinkNavigationService _deepLinkNavigationService = DeepLinkNavigationService();
 
   @override
   void initState() {
@@ -39,6 +43,7 @@ class _MyAppState extends State<MyApp> {
     // Call post frame callback to ensure context is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeNotificationServices();
+      _initializeDeepLinks();
     });
   }
 
@@ -46,6 +51,27 @@ class _MyAppState extends State<MyApp> {
     await notificationServices.requestNotificationPermissions();
     notificationServices.firebaseInit(navigatorKey.currentContext!);
     await notificationServices.getDeviceToken();
+  }
+
+  Future<void> _initializeDeepLinks() async {
+    _deepLinkHandler.initialize(navigatorKey.currentContext!);
+    
+    // Don't process deep links immediately - wait for home screen to be ready
+    // The deep link will be processed when the home screen finishes loading
+  }
+
+  void _handlePendingDeepLink(String postId) {
+    // This will be called when the app is ready to handle deep links
+    // We'll implement this after the app is fully initialized
+    debugPrint('Handling pending deep link for post: $postId');
+    
+    // Use the navigation service to handle the deep link
+    if (navigatorKey.currentContext != null) {
+      _deepLinkNavigationService.navigateToPostFromDeepLink(
+        postId, 
+        navigatorKey.currentContext!
+      );
+    }
   }
 
   @override
@@ -68,9 +94,14 @@ class _MyAppState extends State<MyApp> {
           navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           theme: Themes().lightTheme,
-          onGenerateRoute: RouteGenerator.getRoute,
+          onGenerateRoute: (settings) {
+            debugPrint('Route requested: ${settings.name}');
+            return RouteGenerator.getRoute(settings);
+          },
         ),
       ),
     );
   }
 }
+
+

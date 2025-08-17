@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
+import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
@@ -366,65 +367,71 @@ class FeedContentInCommunity extends StatelessWidget {
                   ),
                 ],
               ),
-              BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return InkWell(
-                        onTap: () {},
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        child: Row(
-                          children: [
-                            Icon(
-                              feed.isSaved == true
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_outline,
-                              color: feed.isSaved == true
-                                  ? Colors.amber
-                                  : Colors.grey.shade400,
+             
+              Row(
+                children: [
+                    ShareButton(feed: feed),
+                  BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return InkWell(
+                            onTap: () {},
+                            highlightColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  feed.isSaved == true
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline,
+                                  color: feed.isSaved == true
+                                      ? Colors.amber
+                                      : Colors.grey.shade400,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                    loaded: (
-                      commentsResponse,
-                      changeCounter,
-                      feed,
-                      isSendCommentLoading,
-                      isSendCommentLoaded,
-                      message,
-                      highlightedCommentId,
-                      isDeleteCommentLoading,
-                      isDeleteCommentLoaded,
-                      isSendReplyLoading,
-                      isSendReplyLoaded,
-                      isSeeMore,
-                    ) {
-                      return InkWell(
-                        onTap: () {
-                          // Handle save functionality here
-                          cubit.addOrRemoveSave();
+                          );
                         },
-                        highlightColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        child: Row(
-                          children: [
-                            Icon(
-                              feed.isSaved == true
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_outline,
-                              color: feed.isSaved == true
-                                  ? Colors.amber
-                                  : Colors.grey.shade400,
+                        loaded: (
+                          commentsResponse,
+                          changeCounter,
+                          feed,
+                          isSendCommentLoading,
+                          isSendCommentLoaded,
+                          message,
+                          highlightedCommentId,
+                          isDeleteCommentLoading,
+                          isDeleteCommentLoaded,
+                          isSendReplyLoading,
+                          isSendReplyLoaded,
+                          isSeeMore,
+                        ) {
+                          return InkWell(
+                            onTap: () {
+                              // Handle save functionality here
+                              cubit.addOrRemoveSave();
+                            },
+                            highlightColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  feed.isSaved == true
+                                      ? Icons.bookmark
+                                      : Icons.bookmark_outline,
+                                  color: feed.isSaved == true
+                                      ? Colors.amber
+                                      : Colors.grey.shade400,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
             ],
           ),

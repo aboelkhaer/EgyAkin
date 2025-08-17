@@ -21,7 +21,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.11</string>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>8</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
@@ -69,13 +69,20 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 	<dict>
-		<key>CFBundleURLSchemes</key>
-		<array>
-		<string>api.egyakin.com</string>
-		</array>
 		<key>CFBundleURLName</key>
 		<string>com.incode.EgyAkin</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+			<string>egyakin</string>
+		</array>
 	</dict>
+	</array>
+	
+	<!-- Note: Update the associated domains below to match your API base URL -->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:test.egyakin.com</string>
+		<string>applinks:api.egyakin.com</string>
 	</array>
 
 	<key>UISupportedInterfaceOrientations~ipad</key>

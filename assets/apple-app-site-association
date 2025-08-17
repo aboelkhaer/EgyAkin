@@ -1,18 +1,12 @@
+
 {
     "applinks": {
-        "apps": [],
-        "details": [
-            {
-                "appIDs": [
-                    "com.incode.EgyAkin"
-                ],
-                "components": [
-                    {
-                        "/": "/post/*",
-                        "comment": "Matches any URL with a path that starts with /post/."
-                    }
-                ]
-            }
-        ]
+      "apps": [],
+      "details": [
+        {
+          "appID": "TEAM_ID.com.incode.EgyAkin",
+          "paths": ["/post/*"]
+        }
+      ]
     }
-}
+  }

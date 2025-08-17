@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -797,7 +796,7 @@ class PostCard extends StatelessWidget {
                   ),
                   Row(
                     children: [
-                      // ShareButton(feed: feed),
+                      ShareButton(feed: feed),
                       InkWell(
                         onTap: () {
                           if (isGroupPosts || isCommunitySearch) {

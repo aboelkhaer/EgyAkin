@@ -537,7 +537,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                             accountVerification:
                                 widget.homeDataModel.verified ?? false,
                             isSyndicateCardRequired:
-                                widget.homeDataModel.isSyndicateCardRequired!,
+                                widget.homeDataModel.isSyndicateCardRequired??'Required',
                             feed: feedToUse,
                             currentDoctorModel: widget.currentDoctorModel,
                           ),

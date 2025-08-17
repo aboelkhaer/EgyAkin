@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 import '../../../../exports.dart';
+import '../../../../app/services/deep_link_handler.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    debugPrint('=== SPLASH SCREEN: initState called ===');
     animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: AppStrings.splashDelay),
@@ -183,6 +185,14 @@ class _SplashScreenState extends State<SplashScreen>
         }
 
         if (!_isConnected) return;
+
+        // Check if there's a pending deep link
+        final deepLinkHandler = DeepLinkHandler();
+        final hasPendingDeepLink = deepLinkHandler.hasPendingDeepLink();
+        
+        if (hasPendingDeepLink) {
+          debugPrint('Splash screen: Found pending deep link, navigating to home to process it');
+        }
 
         if (isAuth && isWelcomed) {
           Navigator.pushReplacementNamed(context, AppRoutes.home, arguments: 0);

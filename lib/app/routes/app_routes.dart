@@ -1,5 +1,6 @@
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -46,7 +47,50 @@ class AppRoutes {
 }
 
 class RouteGenerator {
+  static void _storeDeepLinkPostId(String postId) {
+    // Store the post ID in shared preferences for later processing
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('pending_post_id', postId);
+      debugPrint('=== ROUTE GENERATOR: Stored deep link post ID: $postId ===');
+    });
+  }
+
   static Route<dynamic> getRoute(RouteSettings settings) {
+    // Check if this is a deep link pattern (just a number or /post/number)
+    final routeName = settings.name;
+    if (routeName != null) {
+      // Check if it's just a number (like /46 from egyakin://post/46)
+      if (RegExp(r'^/\d+$').hasMatch(routeName)) {
+        debugPrint('=== ROUTE GENERATOR: Deep link route detected: $routeName ===');
+        // Extract post ID from route and store it before redirecting to splash
+        final postId = routeName.substring(1); // Remove the leading '/'
+        _storeDeepLinkPostId(postId);
+        debugPrint('=== ROUTE GENERATOR: Redirecting to splash screen ===');
+        // Redirect to splash screen which will handle the deep link after app initialization
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<SplashCubit>(
+            create: (context) => di.sl<SplashCubit>()..loadData(),
+            child: const SplashScreen(),
+          ),
+        );
+      }
+      // Check if it's /post/number pattern
+      if (RegExp(r'^/post/\d+$').hasMatch(routeName)) {
+        debugPrint('Deep link route detected: $routeName - redirecting to splash');
+        // Extract post ID from route and store it before redirecting to splash
+        final pathSegments = routeName.split('/');
+        final postId = pathSegments.last; // Get the last segment (the post ID)
+        _storeDeepLinkPostId(postId);
+        // Redirect to splash screen which will handle the deep link after app initialization
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<SplashCubit>(
+            create: (context) => di.sl<SplashCubit>()..loadData(),
+            child: const SplashScreen(),
+          ),
+        );
+      }
+    }
+    
     switch (settings.name) {
       case AppRoutes.splash:
         return MaterialPageRoute(

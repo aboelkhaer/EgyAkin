@@ -4,6 +4,7 @@ import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/profile_tab_icon.dart';
 import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
+import 'package:egy_akin/app/services/deep_link_handler.dart';
 
 import '../../../../exports.dart';
 
@@ -17,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   HomeCubit? cubit;
+  int _deepLinkRetryCount = 0;
 
   @override
   void didChangeDependencies() {
@@ -42,6 +44,40 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _checkForPendingDeepLinks() {
+    // Add a small delay to ensure the UI is fully ready
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        // Check if the home cubit has loaded data, which means we're ready
+        final homeCubit = context.read<HomeCubit>();
+        final hasHomeData = homeCubit.homeDataModel.data != null;
+        final hasDoctorData = homeCubit.currentDoctorModel.id != null;
+        
+        debugPrint('Home screen checking deep links - Has home data: $hasHomeData, Has doctor data: $hasDoctorData');
+        
+        if (hasHomeData && hasDoctorData) {
+          debugPrint('Home screen is ready, processing deep links');
+          final deepLinkHandler = DeepLinkHandler();
+          deepLinkHandler.checkAndProcessPendingDeepLinks(context);
+        } else {
+          debugPrint('Home screen not ready yet, will check again later');
+          // Try again after a longer delay, but limit retries
+          if (_deepLinkRetryCount < 5) {
+            _deepLinkRetryCount++;
+            Future.delayed(const Duration(seconds: 2), () {
+              if (mounted) {
+                _checkForPendingDeepLinks();
+              }
+            });
+          } else {
+            debugPrint('Max retries reached, stopping deep link processing');
+            _deepLinkRetryCount = 0;
+          }
+        }
+      }
+    });
   }
 
   @override
@@ -97,6 +133,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     navigatorKey.currentState
                         ?.pushReplacementNamed(AppRoutes.signIn);
                   }
+
+                  // Check for pending deep links after home data is loaded
+                  // Add a longer delay to ensure the UI is fully ready
+                  Future.delayed(const Duration(seconds: 1), () {
+                    if (mounted) {
+                      _checkForPendingDeepLinks();
+                    }
+                  });
                 },
               );
             },

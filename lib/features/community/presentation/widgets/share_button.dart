@@ -1,5 +1,6 @@
 import 'package:egy_akin/exports.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:egy_akin/app/services/deep_link_handler.dart';
 
 class ShareButton extends StatelessWidget {
   final PostCommunityModel feed;
@@ -13,10 +14,10 @@ class ShareButton extends StatelessWidget {
         InkWell(
           onTap: () async {
             try {
-              // Generate the deep link URL
-              final deepLink = 'https://egyakin.com/post/${feed.id}';
-              // Alternative custom URL scheme (if you have it configured)
-              final customSchemeLink = 'egyakin://post/${feed.id}';
+              // Generate the deep link URLs using the handler
+              final deepLinkHandler = DeepLinkHandler();
+              final universalLink = deepLinkHandler.generatePostDeepLink(feed.id.toString());
+              final customSchemeLink = deepLinkHandler.generateCustomSchemeLink(feed.id.toString());
 
               // App store links as fallback
               const appStoreUrl =
@@ -27,8 +28,7 @@ class ShareButton extends StatelessWidget {
               final shareText = '''
 Check out this post on EgyAkin!
 
-Open in app: $deepLink
-(or use this link: $customSchemeLink)
+Open in app: $universalLink
 
 Don't have the app yet?
 iOS: $appStoreUrl
@@ -38,6 +38,7 @@ Android: $playStoreUrl
               await Share.share(
                 shareText,
                 subject: 'EgyAkin Post',
+                
               );
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(

@@ -51,12 +51,7 @@ class _PostsTabState extends State<PostsTab> {
     
     final cubit = CommunityCubit.get(context);
     
-    // Debug prints
-    debugPrint('Scroll position: ${widget.feedsScrollController.position.pixels}');
-    debugPrint('Max scroll extent: ${widget.feedsScrollController.position.maxScrollExtent}');
-    debugPrint('Is loading more (local): $_isLoadingMore');
-    debugPrint('Is loading more (cubit): ${cubit.isLoadingMoreForScroll}');
-    debugPrint('Is last page: ${cubit.isLastPage}');
+
     
     // Don't load more if already loading, at last page, or not near bottom
     if (!_isLoadingMore && 
@@ -64,7 +59,7 @@ class _PostsTabState extends State<PostsTab> {
         !cubit.isLastPage &&
         widget.feedsScrollController.position.pixels >=
         widget.feedsScrollController.position.maxScrollExtent - 300) {
-      print('Triggering loadMoreFeeds');
+      debugPrint('Triggering loadMoreFeeds');
       _isLoadingMore = true;
       cubit.isLoadingMoreForScroll = true;
       cubit.loadMoreFeeds();
