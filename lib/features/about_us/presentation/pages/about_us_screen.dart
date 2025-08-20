@@ -53,7 +53,7 @@ class AboutUsScreen extends StatelessWidget {
               <body>
           <div class="container">
         <h1>Welcome to EgyAkin</h1>
-        <p>EgyAkin is dedicated to empowering Egypt's fight against kidney failure through cutting-edge data collection, insightful analytics, and robust community support. Our mission is to provide healthcare professionals and patients with the tools they need to effectively manage and monitor kidney health.</p>
+        <p>EgyAkin is a comprehensive kidney health management platform dedicated to empowering Egypt's fight against kidney failure. We provide cutting-edge data collection, insightful analytics, and robust community support to help healthcare professionals and patients effectively manage and monitor kidney health.</p>
         
         <h2>Our Mission</h2>
         <p>Our mission is to improve kidney health outcomes in Egypt by offering a comprehensive platform for managing patient data, calculating key health metrics, and tracking patient progress over time. We strive to provide valuable insights and support to both healthcare providers and patients, fostering a collaborative approach to combating kidney failure.</p>
@@ -64,6 +64,8 @@ class AboutUsScreen extends StatelessWidget {
             <li><strong>GFR Calculation:</strong> Utilize accurate CKD-EPI, MDRD and Sobh equations to calculate the Glomerular Filtration Rate (GFR) for better kidney health management.</li>
             <li><strong>Historical Data Tracking:</strong> Monitor patient progress with detailed historical data tracking.</li>
             <li><strong>Health Insights:</strong> Gain valuable insights to improve kidney health outcomes.</li>
+            <li><strong>Community Support:</strong> Connect with healthcare professionals and patients through our community platform for knowledge sharing and support.</li>
+            <li><strong>AI-Powered Consultations:</strong> Get instant medical guidance through our advanced AI consultation system.</li>
         </ul>
         
         <h2>Disclaimer</h2>
@@ -73,7 +75,8 @@ class AboutUsScreen extends StatelessWidget {
         <p>Your privacy is important to us. Please review our <a href="https://egyakin.com/policy">Privacy Policy</a> to understand how we collect, use, and protect your information.</p>
         
         <h2>Contact Us</h2>
-        <p>For support, please contact us at: <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
+        <p>For support, questions, or feedback, please contact us at: <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
+        <p>Visit our website: <a href="https://egyakin.com">https://egyakin.com</a></p>
         
          <h2>Supervisor and responsible</h2>
           <ul>
@@ -89,7 +92,7 @@ class AboutUsScreen extends StatelessWidget {
             
         </ul>
           <ul>
-            <li><strong>Aboelkhaer AboElyazed:</strong> Software Engineer with expertise in mobile application development. Aboelkhaer focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaer@yandex.com">aboelkhaer@yandex.com</a></li>
+            <li><strong>Moatz AboElyazed:</strong> Software Engineer with expertise in mobile application development. Moatz focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaer@yandex.com">aboelkhaer@yandex.com</a></li>
          </ul>
         <p>Thank you for choosing EgyAkin.</p>
           </div>

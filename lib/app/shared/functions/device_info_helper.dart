@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:platform_device_id/platform_device_id.dart';
 import 'package:uuid/uuid.dart';
 
 class DeviceIdService {
@@ -20,23 +19,16 @@ class DeviceIdService {
         // Use identifierForVendor (persistent for vendor apps)
         return iosInfo.identifierForVendor ?? await _generateFallbackId();
       }
-      return await _generateFallbackId();
+      // For web, macOS, Linux, Windows
+      else {
+        return await _generateFallbackId();
+      }
     } catch (e) {
       return await _generateFallbackId();
     }
   }
 
   static Future<String> _generateFallbackId() async {
-    // Try to get device ID using platform_device_id package
-    try {
-      final deviceId = await PlatformDeviceId.getDeviceId;
-      if (deviceId != null && deviceId.isNotEmpty) {
-        return deviceId;
-      }
-    } catch (e) {
-      print('Failed to get platform device ID: $e');
-    }
-
     // Final fallback - store in secure storage
     const storageKey = 'persistent_device_id';
     const storage = FlutterSecureStorage();

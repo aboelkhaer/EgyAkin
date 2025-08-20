@@ -110,7 +110,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     
     // Pre-fill dose controller with dose value from search if available
     if (doseValue != null && doseValue.isNotEmpty) {
-      doseController.text = doseValue;
+      // todo: add dose value to the dose controller
+      // doseController.text = doseValue;
       print('Set dose controller text to: $doseValue'); // Debug print
     } else {
       print('No dose value provided or empty'); // Debug print
@@ -1725,7 +1726,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                         ),
                                                       ),
                                                       // Only show edit/delete buttons if finalSubmitStatus is false
-                                                      if (!widget.finalSubmitStatus)
+                                                      if (!widget.finalSubmitStatus || widget.homeDataModel.role == AppStrings.roleAdmin)
                                                         Row(
                                                           children: [
                                                             IconButton(

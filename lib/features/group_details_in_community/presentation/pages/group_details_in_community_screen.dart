@@ -292,12 +292,13 @@ class _GroupDetailsInCommunityScreenState
                                     child: Stack(
                                       fit: StackFit.expand,
                                       children: [
-                                        NetworkImageWithErrorHandler(
-                                          imageUrl: groupDetails
-                                              .data!.group!.headerPicture
-                                              .toString(),
-                                          fit: BoxFit.cover,
-                                        ),
+                                        // NetworkImageWithErrorHandler(
+                                        //   imageUrl: groupDetails
+                                        //       .data!.group!.headerPicture
+                                        //       .toString(),
+                                        //   fit: BoxFit.cover,
+                                        // ),
+                                        CustomCachedNetworkImage(imageUrl: groupDetails.data!.group!.headerPicture.toString(), width: double.infinity,fit: BoxFit.cover,),
                                         Container(
                                           color: Colors.black.withOpacity(
                                               0.2), // Overlay for readability
@@ -582,13 +583,14 @@ class _GroupDetailsInCommunityScreenState
                                                 height: 40
                                                     .r, // Match the size of the CircleAvatar
                                                 child: ClipOval(
-                                                  child:
-                                                      NetworkImageWithErrorHandler(
-                                                    imageUrl: groupDetails
-                                                        .data!.group!.groupImage
-                                                        .toString(),
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                                  // child:
+                                                  //     NetworkImageWithErrorHandler(
+                                                  //   imageUrl: groupDetails
+                                                  //       .data!.group!.groupImage
+                                                  //       .toString(),
+                                                  //   fit: BoxFit.cover,
+                                                  // ),
+                                                  child: CustomCachedNetworkImage(imageUrl: groupDetails.data!.group!.groupImage.toString(), width: double.infinity,fit: BoxFit.cover,),
                                                 ),
                                               ),
                                             ),

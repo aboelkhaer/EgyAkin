@@ -25,3 +25,43 @@
 
 # Retain the names of annotated methods and fields.
 -keep @com.google.android.gms.common.annotation.KeepName class * { *; }
+
+# Kotlin specific rules - simplified
+-dontwarn kotlin.**
+-keep class kotlin.** { *; }
+-keep class kotlin.Metadata { *; }
+-keepclassmembers class **$WhenMappings {
+    <fields>;
+}
+-keepclassmembers class kotlin.Metadata {
+    public <methods>;
+}
+
+# Keep all Kotlin stdlib
+-keep class kotlinx.** { *; }
+-keep class kotlin.reflect.** { *; }
+
+# Keep Kotlin coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+
+# Keep Kotlin serialization
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.serialization.AnnotationsKt
+
+# Keep Kotlin reflection
+-keep class kotlin.reflect.** { *; }
+
+# Keep all Flutter classes
+-keep class io.flutter.** { *; }
+-keep class io.flutter.plugins.** { *; }
+
+# Keep Google Play Core classes for Flutter deferred components
+-keep class com.google.android.play.core.** { *; }
+-keep class com.google.android.play.core.splitcompat.** { *; }
+-keep class com.google.android.play.core.splitinstall.** { *; }
+-keep class com.google.android.play.core.tasks.** { *; }
+-keep class com.google.android.play.core.appupdate.** { *; }
+-keep class com.google.android.play.core.install.** { *; }
+-keep class com.google.android.play.core.review.** { *; }
+-keep class com.google.android.play.core.missingsplits.** { *; }
