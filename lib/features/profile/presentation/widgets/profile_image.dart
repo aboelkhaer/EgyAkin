@@ -62,28 +62,42 @@ class ProfileImage extends StatelessWidget {
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(80.r),
-                            child: CachedNetworkImage(
-                              imageUrl: cubit.currentDoctor.image.toString(),
-                              width: 100.w,
-                              height: 100.h,
-                              fadeInDuration: const Duration(milliseconds: 200),
-                              fadeInCurve: Curves.easeIn,
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) =>
-                                  Lottie.asset(AppImages.imageLoader),
-                              errorWidget: (context, url, error) {
-                                return Container(
-                                  color: Colors.transparent,
-                                  child: const Center(
+                            child: cubit.currentDoctor.image != null && cubit.currentDoctor.image!.isNotEmpty
+                                ? CachedNetworkImage(
+                                    imageUrl: cubit.currentDoctor.image!,
+                                    width: 100.w,
+                                    height: 100.h,
+                                    fadeInDuration: const Duration(milliseconds: 200),
+                                    fadeInCurve: Curves.easeIn,
+                                    fit: BoxFit.cover,
+                                    placeholder: (context, url) =>
+                                        Lottie.asset(AppImages.imageLoader),
+                                    errorWidget: (context, url, error) {
+                                      return Container(
+                                        color: Colors.transparent,
+                                        child: const Center(
+                                          child: Icon(
+                                            Icons.error_outline,
+                                            color: AppColors.primary,
+                                            size: 40.0,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    width: 100.w,
+                                    height: 100.h,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primary.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
                                     child: Icon(
-                                      Icons.error_outline,
+                                      Icons.person,
+                                      size: 50.r,
                                       color: AppColors.primary,
-                                      size: 40.0,
                                     ),
                                   ),
-                                );
-                              },
-                            ),
                           ),
                         );
                       },
@@ -155,29 +169,43 @@ class ProfileImage extends StatelessWidget {
                                   },
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(80.r),
-                                    child: CachedNetworkImage(
-                                      imageUrl: doctorModel.image.toString(),
-                                      width: 100.w,
-                                      height: 100.h,
-                                      fadeInDuration:
-                                          const Duration(milliseconds: 200),
-                                      fadeInCurve: Curves.easeIn,
-                                      fit: BoxFit.cover,
-                                      placeholder: (context, url) =>
-                                          Lottie.asset(AppImages.imageLoader),
-                                      errorWidget: (context, url, error) {
-                                        return Container(
-                                          color: Colors.transparent,
-                                          child: const Center(
+                                    child: doctorModel.image != null && doctorModel.image!.isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: doctorModel.image!,
+                                            width: 100.w,
+                                            height: 100.h,
+                                            fadeInDuration:
+                                                const Duration(milliseconds: 200),
+                                            fadeInCurve: Curves.easeIn,
+                                            fit: BoxFit.cover,
+                                            placeholder: (context, url) =>
+                                                Lottie.asset(AppImages.imageLoader),
+                                            errorWidget: (context, url, error) {
+                                              return Container(
+                                                color: Colors.transparent,
+                                                child: const Center(
+                                                  child: Icon(
+                                                    Icons.error_outline,
+                                                    color: AppColors.primary,
+                                                    size: 40.0,
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          )
+                                        : Container(
+                                            width: 100.w,
+                                            height: 100.h,
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primary.withOpacity(0.1),
+                                              shape: BoxShape.circle,
+                                            ),
                                             child: Icon(
-                                              Icons.error_outline,
+                                              Icons.person,
+                                              size: 50.r,
                                               color: AppColors.primary,
-                                              size: 40.0,
                                             ),
                                           ),
-                                        );
-                                      },
-                                    ),
                                   ),
                                 ),
                               );

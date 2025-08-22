@@ -127,23 +127,23 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  bool isUpdateMessageHidden3 = true;
+  bool isUpdateMessageHidden4 = true;
 
   int checkUpdateMessageCounter = 0;
 
   getUpdateMessageStatusFromLocal() async {
     if (checkUpdateMessageCounter == 0) {
-      isUpdateMessageHidden3 = (await sl<AppPreferences>()
-              .getBool(AppLocalStrings.isUpdateMessageHidden3)) ??
+      isUpdateMessageHidden4 = (await sl<AppPreferences>()
+              .getBool(AppLocalStrings.isUpdateMessageHidden4)) ??
           false;
       checkUpdateMessageCounter++;
     }
   }
 
   setUpdateMessageStatusToLocal() async {
-    isUpdateMessageHidden3 = true;
+    isUpdateMessageHidden4 = true;
     (await sl<AppPreferences>()
-        .setBool(AppLocalStrings.isUpdateMessageHidden3, true));
+        .setBool(AppLocalStrings.isUpdateMessageHidden4, true));
   }
 
   getDoctorDataFromLocal() async {

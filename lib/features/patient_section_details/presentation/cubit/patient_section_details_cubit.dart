@@ -57,6 +57,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
   String deletePatientRecommendationId = '';
   deletePatientRecommendation(String patientId) async {
+    // Set loading to true at the start
     emit(state.maybeMap(
       orElse: () => state,
       medicationSectionLoaded: (value) =>
@@ -67,7 +68,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         '',
         value.isSubmitLoading,
         value.isSubmitLoaded,
-        value.isSearchMedicationLoading,
+        false,
         value.searchForDoseInMedicationSectionResponse,
         true,false,
       ),
@@ -1206,6 +1207,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           'route': medication.route,
           'frequency': medication.frequency,
           'duration': medication.duration,
+          'type': medication.type,
+          'content': medication.content,
         }
       ],
     };
@@ -1245,15 +1248,26 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           medicationSectionLoaded: (value) {
             final updatedData = List<GetRecommendationsDataModelResponse>.from(
                 value.response.data ?? []);
-            final newMedication = GetRecommendationsDataModelResponse(
-              id: int.tryParse(medication.id),
-              doseName: medication.doseName,
-              dose: medication.dose,
-              route: medication.route,
-              frequency: medication.frequency,
-              duration: medication.duration,
-            );
-            updatedData.insert(0, newMedication);
+            
+            // Use the actual data from the API response if available
+            if (response.data != null && response.data!.isNotEmpty) {
+              // Add the newly created recommendation with the actual ID from the API
+              updatedData.insertAll(0, response.data!);
+            } else {
+              // Fallback to creating a new recommendation with the temporary ID
+              final newMedication = GetRecommendationsDataModelResponse(
+                id: int.tryParse(medication.id),
+                doseName: medication.doseName,
+                dose: medication.dose,
+                route: medication.route,
+                frequency: medication.frequency,
+                duration: medication.duration,
+                type: medication.type,
+                content: medication.content,
+              );
+              updatedData.insert(0, newMedication);
+            }
+            
             return PatientSectionDetailsState.medicationSectionLoaded(
               value.response.copyWith(data: updatedData),
               value.changesCounter + 1,
@@ -1304,6 +1318,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           'route': medication.route,
           'frequency': medication.frequency,
           'duration': medication.duration,
+          'type': medication.type,
+          'content': medication.content,
         }
       ],
     };
@@ -1355,6 +1371,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 route: medication.route,
                 frequency: medication.frequency,
                 duration: medication.duration,
+                type: medication.type,
+                content: medication.content,
               );
             }
 

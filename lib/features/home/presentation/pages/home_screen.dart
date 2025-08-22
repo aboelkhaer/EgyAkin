@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   isUserBlocked,
                   changesCounter,
                 ) {
-                  if (cubit!.isUpdateMessageHidden3 == false) {
+                  if (cubit!.isUpdateMessageHidden4 == false) {
                     showUpdateDialog(
                       context: context,
                       onDismissed: () {

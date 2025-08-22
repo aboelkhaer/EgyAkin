@@ -382,6 +382,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           route: routeController.text,
                           frequency: frequencyController.text,
                           duration: durationController.text,
+                          type: MedicineTypeEnum.rec.name,
+                          content: null,
                         );
 
                         // Add to list
@@ -427,18 +429,88 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     );
   }
 
-  void _showEditMedicationDialog(GetRecommendationsDataModelResponse medication) {
-    // Pre-fill the controllers with existing values
-    doseController.text = medication.dose ?? '';
-    routeController.text = medication.route ?? '';
-    frequencyController.text = medication.frequency ?? '';
-    durationController.text = medication.duration ?? '';
+  void _showDeleteConfirmationDialog(BuildContext context, GetRecommendationsDataModelResponse medication, PatientSectionDetailsCubit cubit) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(
+            'Delete ${medication.type == MedicineTypeEnum.note.name ? 'Recommendation' : 'Medicine'}',
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+              color: AppColors.primary,
+            ),
+          ),
+          content: Text(
+            'Are you sure you want to delete this ${medication.type == MedicineTypeEnum.note.name ? 'recommendation' : 'medicine'}? This action cannot be undone.',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.grey[700],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Set the delete ID and call delete
+                cubit.deletePatientRecommendationId = medication.id.toString();
+                cubit.deletePatientRecommendation(widget.patientId);
+                Navigator.pop(dialogContext);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'Delete',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
+  void _showEditMedicationDialog(BuildContext context, GetRecommendationsDataModelResponse medication) {
+    // Get the cubit from the original context before StatefulBuilder
+    final cubit = PatientSectionDetailsCubit.get(context);
+    
     // Store original values for comparison
     final originalDose = medication.dose ?? '';
     final originalRoute = medication.route ?? '';
     final originalFrequency = medication.frequency ?? '';
     final originalDuration = medication.duration ?? '';
+    final originalContent = medication.content ?? '';
+
+    // Controllers
+    final doseController = TextEditingController(text: originalDose);
+    final routeController = TextEditingController(text: originalRoute);
+    final frequencyController = TextEditingController(text: originalFrequency);
+    final durationController = TextEditingController(text: originalDuration);
+    final contentController = TextEditingController(text: originalContent);
+
+    // Form key
+    final _editFormKey = GlobalKey<FormState>();
 
     showModalBottomSheet(
       context: context,
@@ -464,17 +536,21 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
             builder: (context, setState) {
               // Function to check if any changes were made
               bool hasChanges() {
-                return doseController.text != originalDose ||
-                       routeController.text != originalRoute ||
-                       frequencyController.text != originalFrequency ||
-                       durationController.text != originalDuration;
+                if (medication.type == MedicineTypeEnum.note.name) {
+                  final hasContentChanges = contentController.text != originalContent;
+                  print('Note type - hasContentChanges: $hasContentChanges, current: "${contentController.text}", original: "$originalContent"'); // Debug
+                  return hasContentChanges;
+                } else {
+                  final hasDoseChanges = doseController.text != originalDose;
+                  final hasRouteChanges = routeController.text != originalRoute;
+                  final hasFrequencyChanges = frequencyController.text != originalFrequency;
+                  final hasDurationChanges = durationController.text != originalDuration;
+                  
+                  final hasChanges = hasDoseChanges || hasRouteChanges || hasFrequencyChanges || hasDurationChanges;
+                  print('Medication type - hasChanges: $hasChanges'); // Debug
+                  return hasChanges;
+                }
               }
-
-              // Add listeners to controllers to trigger state updates
-              doseController.addListener(() => setState(() {}));
-              routeController.addListener(() => setState(() {}));
-              frequencyController.addListener(() => setState(() {}));
-              durationController.addListener(() => setState(() {}));
 
               return SingleChildScrollView(
                 child: Padding(
@@ -491,7 +567,9 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Edit Medication',
+                                medication.type == MedicineTypeEnum.note.name 
+                                    ? 'Edit Recommendation' 
+                                    : 'Edit Medication',
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w600,
@@ -500,7 +578,9 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                medication.doseName ?? 'Unknown',
+                                medication.type == MedicineTypeEnum.note.name 
+                                    ? 'Edit recommendation note'
+                                    : (medication.doseName ?? 'Unknown'),
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   color: Colors.grey[600],
@@ -511,11 +591,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           IconButton(
                             onPressed: () {
                               Navigator.pop(context);
-                              // Clear controllers
-                              // doseController.clear();
-                              // routeController.clear();
-                              // frequencyController.clear();
-                              // durationController.clear();
+                              contentController.dispose();
                             },
                             icon: Icon(
                               Icons.close,
@@ -533,169 +609,228 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         padding: const EdgeInsets.all(16),
-                        child: Form(
-                          key: _editFormKey,
-                          child: Column(
-                            children: [
-                              // Dose Field
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                        child: medication.type == MedicineTypeEnum.note.name
+                            ? Column(
                                 children: [
-                                  Row(
+                                  // Recommendation Content Field for note type
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Dose',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black87,
-                                        ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            'Recommendation',
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black87,
+                                            ),
+                                          ),
+                                          Text(
+                                            ' *',
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.red,
-                                        ),
+                                      const SizedBox(height: 4),
+                                      CustomTextFormField(
+                                        title: '',
+                                        textFormFieldController: contentController,
+                                        textInputType: TextInputType.multiline,
+                                        maxLines: 5,
+                                        onChanged: (value) {
+                                          setState(() {}); // Trigger rebuild when text changes
+                                        },
+                                        validator: (value) {
+                                          if (value == null || value.trim().isEmpty) {
+                                            return 'Please enter recommendation';
+                                          }
+                                          return null;
+                                        },
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  CustomTextFormField(
-                                    title: '',
-                                    textFormFieldController: doseController,
-                                    textInputType: TextInputType.multiline,
-                                    maxLines: 3,
-                                    validator: (value) {
-                                      if (value == null || value.trim().isEmpty) {
-                                        return 'Please enter dose';
-                                      }
-                                      return null;
-                                    },
-                                  ),
                                 ],
+                              )
+                            : Form(
+                                key: _editFormKey,
+                                child: Column(
+                                  children: [
+                                    // Dose Field
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Dose',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        CustomTextFormField(
+                                          title: '',
+                                          textFormFieldController: doseController,
+                                          textInputType: TextInputType.multiline,
+                                          maxLines: 3,
+                                          onChanged: (value) {
+                                            setState(() {}); // Trigger rebuild when text changes
+                                          },
+                                          validator: (value) {
+                                            if (value == null || value.trim().isEmpty) {
+                                              return 'Please enter dose';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Route Field
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Route',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        CustomTextFormField(
+                                          title: '',
+                                          textFormFieldController: routeController,
+                                          textInputType: TextInputType.text,
+                                          onChanged: (value) {
+                                            setState(() {}); // Trigger rebuild when text changes
+                                          },
+                                          validator: (value) {
+                                            if (value == null || value.trim().isEmpty) {
+                                              return 'Please enter route';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Frequency Field
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Frequency',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        CustomTextFormField(
+                                          title: '',
+                                          textFormFieldController: frequencyController,
+                                          textInputType: TextInputType.text,
+                                          onChanged: (value) {
+                                            setState(() {}); // Trigger rebuild when text changes
+                                          },
+                                          validator: (value) {
+                                            if (value == null || value.trim().isEmpty) {
+                                              return 'Please enter frequency';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    // Duration Field
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Duration',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                            Text(
+                                              ' *',
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.red,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 4),
+                                        CustomTextFormField(
+                                          title: '',
+                                          textFormFieldController: durationController,
+                                          textInputType: TextInputType.text,
+                                          onChanged: (value) {
+                                            setState(() {}); // Trigger rebuild when text changes
+                                          },
+                                          validator: (value) {
+                                            if (value == null || value.trim().isEmpty) {
+                                              return 'Please enter duration';
+                                            }
+                                            return null;
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: 16),
-                              // Route Field
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Route',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  CustomTextFormField(
-                                    title: '',
-                                    textFormFieldController: routeController,
-                                    textInputType: TextInputType.text,
-                                    validator: (value) {
-                                      if (value == null || value.trim().isEmpty) {
-                                        return 'Please enter route';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Frequency Field
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Frequency',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  CustomTextFormField(
-                                    title: '',
-                                    textFormFieldController: frequencyController,
-                                    textInputType: TextInputType.text,
-                                    validator: (value) {
-                                      if (value == null || value.trim().isEmpty) {
-                                        return 'Please enter frequency';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              // Duration Field
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Duration',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                      Text(
-                                        ' *',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  CustomTextFormField(
-                                    title: '',
-                                    textFormFieldController: durationController,
-                                    textInputType: TextInputType.text,
-                                    validator: (value) {
-                                      if (value == null || value.trim().isEmpty) {
-                                        return 'Please enter duration';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                       const SizedBox(height: 24),
                       // Action Button
@@ -703,29 +838,49 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: hasChanges() ? () {
-                            // Validate form using Form validation
-                            if (!_editFormKey.currentState!.validate()) {
-                              // Form validation failed - errors will be shown on the fields
-                              return;
+                            print('Update button pressed - hasChanges: ${hasChanges()}'); // Debug
+                            
+                            // Validate form based on type
+                            if (medication.type == MedicineTypeEnum.note.name) {
+                              print('Validating note type - content: "${contentController.text.trim()}"'); // Debug
+                              if (contentController.text.trim().isEmpty) {
+                                print('Content is empty, returning'); // Debug
+                                return;
+                              }
+                            } else {
+                              print('Validating medication type'); // Debug
+                              if (!_editFormKey.currentState!.validate()) {
+                                print('Form validation failed'); // Debug
+                                return;
+                              }
                             }
 
-                            // Create updated medication
-                            final updatedMedication = PatientRecommendationModel(
+                            print('Creating updated recommendation...'); // Debug
+
+                            // Create updated recommendation
+                            final updatedRecommendation = PatientRecommendationModel(
                               id: medication.id?.toString() ?? '',
                               doseName: medication.doseName ?? '',
-                              dose: doseController.text,
-                              route: routeController.text,
-                              frequency: frequencyController.text,
-                              duration: durationController.text,
+                              dose: medication.type == MedicineTypeEnum.note.name ? null : doseController.text,
+                              route: medication.type == MedicineTypeEnum.note.name ? null : routeController.text,
+                              frequency: medication.type == MedicineTypeEnum.note.name ? null : frequencyController.text,
+                              duration: medication.type == MedicineTypeEnum.note.name ? null : durationController.text,
+                              type: medication.type ?? MedicineTypeEnum.rec.name,
+                              content: medication.type == MedicineTypeEnum.note.name ? contentController.text.trim() : null,
                             );
 
-                            // Update medication
+                            print('Calling updatePatientRecommendation...'); // Debug
+
+                            // Update recommendation
                             cubit.updatePatientRecommendation(
-                              updatedMedication,
+                              updatedRecommendation,
                               widget.patientId,
                             );
 
+                            print('Update completed, closing dialog...'); // Debug
+
                             // Clear and close
+                            contentController.clear();
                             doseController.clear();
                             routeController.clear();
                             frequencyController.clear();
@@ -741,7 +896,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             ),
                           ),
                           child: Text(
-                            'Update Medicine',
+                            '${medication.type == MedicineTypeEnum.note.name ? 'Update Recommendation' : 'Update Medicine'}${hasChanges() ? '' : ' (No Changes)'}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
@@ -1692,15 +1847,17 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           width: double.infinity,
                                           margin:
                                               const EdgeInsets.only(bottom: 16),
-                                          child: Card(
-                                            elevation: 4,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(14),
-                                              child: Column(
+                                          child: Stack(
+                                            children: [
+                                              Card(
+                                                elevation: 4,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(14),
+                                                  child: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
@@ -1712,8 +1869,10 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                     children: [
                                                       Expanded(
                                                         child: Text(
-                                                          medication.doseName ??
-                                                              'Unknown',
+                                                          // Show different header based on type
+                                                          medication.type == MedicineTypeEnum.note.name
+                                                              ? 'Recommendation'
+                                                              : (medication.doseName ?? 'Unknown'),
                                                           style: TextStyle(
                                                             fontSize: 14.sp,
                                                             fontWeight:
@@ -1737,7 +1896,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                                       .blueAccent),
                                                               onPressed: () {
                                                                 // Open edit modal
-                                                                _showEditMedicationDialog(medication);
+                                                                _showEditMedicationDialog(context, medication);
                                                               },
                                                             ),
                                                             isDeletePatientRecommendationLoading &&
@@ -1772,14 +1931,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                                             .redAccent),
                                                                     onPressed:
                                                                         () {
-                                                                      // Show confirmation
-                                                                      cubit.deletePatientRecommendationId =
-                                                                          medication
-                                                                              .id
-                                                                              .toString();
-                                                                      cubit.deletePatientRecommendation(
-                                                                          widget
-                                                                              .patientId);
+                                                                      // Show confirmation dialog
+                                                                      _showDeleteConfirmationDialog(context, medication, cubit);
                                                                     },
                                                                   ),
                                                           ],
@@ -1787,25 +1940,90 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                     ],
                                                   ),
                                                   const SizedBox(height: 12),
-                                                  _buildInfoRow(
-                                                      Icons
-                                                          .medical_services_outlined,
-                                                      'Dose: ${medication.dose ?? 'N/A'}'),
-                                                  _buildInfoRow(
-                                                      Icons.route_outlined,
-                                                      'Route: ${medication.route ?? 'N/A'}'),
-                                                  _buildInfoRow(
-                                                      Icons.access_time,
-                                                      'Frequency: ${medication.frequency ?? 'N/A'}'),
-                                                  _buildInfoRow(
-                                                      Icons
-                                                          .calendar_today_outlined,
-                                                      'Duration: ${medication.duration ?? 'N/A'}'),
+                                                  // Show different content based on type
+                                                  if (medication.type == MedicineTypeEnum.note.name) ...[
+                                                    // For note type, show content
+                                                    if (medication.content != null && medication.content!.isNotEmpty)
+                                                      Container(
+                                                        width: double.infinity,
+                                                        padding: const EdgeInsets.all(12),
+                                                        decoration: BoxDecoration(
+                                                          color: Colors.grey[50],
+                                                          borderRadius: BorderRadius.circular(8),
+                                                          border: Border.all(color: Colors.grey[300]!),
+                                                        ),
+                                                        child: Text(
+                                                          medication.content!,
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: Colors.grey[800],
+                                                            height: 1.4,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  ] else ...[
+                                                    // For rec type, show medication details
+                                                    _buildInfoRow(
+                                                        Icons
+                                                            .medical_services_outlined,
+                                                        'Dose: ${medication.dose ?? 'N/A'}'),
+                                                    _buildInfoRow(
+                                                        Icons.route_outlined,
+                                                        'Route: ${medication.route ?? 'N/A'}'),
+                                                    _buildInfoRow(
+                                                        Icons.access_time,
+                                                        'Frequency: ${medication.frequency ?? 'N/A'}'),
+                                                    _buildInfoRow(
+                                                        Icons
+                                                            .calendar_today_outlined,
+                                                        'Duration: ${medication.duration ?? 'N/A'}'),
+                                                  ],
                                                 ],
                                               ),
                                             ),
+                                                                                    ),
+                                          // Debug: Check loading state
+                                          Builder(
+                                            builder: (context) {
+                                              print('Card ${medication.id}: isDeleteLoading=$isDeletePatientRecommendationLoading, deleteId=${cubit.deletePatientRecommendationId}'); // Debug
+                                              return const SizedBox.shrink();
+                                            },
                                           ),
-                                        ))
+                                          // Loading overlay when deleting
+                                          if (isDeletePatientRecommendationLoading &&
+                                              medication.id.toString() ==
+                                                  cubit.deletePatientRecommendationId)
+                                            Positioned.fill(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.black.withOpacity(0.3),
+                                                  borderRadius: BorderRadius.circular(16),
+                                                ),
+                                                child: const Center(
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                        strokeWidth: 3,
+                                                      ),
+                                                      SizedBox(height: 8),
+                                                      Text(
+                                                        'Deleting...',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
+                                                          fontWeight: FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ))
                                     .toList(),
                               ],
                             );

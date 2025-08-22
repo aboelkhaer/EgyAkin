@@ -1,6 +1,7 @@
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_dose_section.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
+import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
 
 import '../../../../exports.dart';
 
@@ -34,8 +35,12 @@ class PatientSectionDetailsScreen extends StatefulWidget {
 
 class _PatientSectionDetailsScreenState
     extends State<PatientSectionDetailsScreen> {
+  late TextEditingController _recommendationController;
+  final GlobalKey<FormState> _recommendationFormKey = GlobalKey<FormState>();
+
   @override
   void initState() {
+    _recommendationController = TextEditingController();
     if (widget.sectionModel.sectionId == 12) {
       context
           .read<PatientSectionDetailsCubit>()
@@ -46,6 +51,207 @@ class _PatientSectionDetailsScreenState
           widget.patientId.toString());
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _recommendationController.dispose();
+    super.dispose();
+  }
+
+  void _showAddRecommendationBottomSheet(BuildContext context) {
+    final cubit = PatientSectionDetailsCubit.get(context);
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => BlocProvider<PatientSectionDetailsCubit>.value(
+        value: cubit,
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Form(
+                      key: _recommendationFormKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Header
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Add Recommendation',
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Add a new recommendation note',
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  _recommendationController.clear();
+                                },
+                                icon: Icon(
+                                  Icons.close,
+                                  color: Colors.grey[600],
+                                  size: 24,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          // Form Fields
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[50],
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              children: [
+                                // Recommendation Content Field
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Recommendation',
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                        Text(
+                                          ' *',
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    CustomTextFormField(
+                                      title: '',
+                                      textFormFieldController: _recommendationController,
+                                      textInputType: TextInputType.multiline,
+                                      maxLines: 5,
+                                      onChanged: (value) {
+                                        setState(() {}); // Trigger rebuild when text changes
+                                      },
+                                      validator: (value) {
+                                        if (value == null || value.trim().isEmpty) {
+                                          return 'Please enter recommendation';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          // Action Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _recommendationController.text.trim().isEmpty ? null : () {
+                                // Validate form
+                                if (!_recommendationFormKey.currentState!.validate()) {
+                                  return;
+                                }
+
+                                // Create new recommendation
+                                final newRecommendation = PatientRecommendationModel(
+                                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                                  doseName: null,
+                                  dose: null,
+                                  route: null,
+                                  frequency: null,
+                                  duration: null,
+                                  type: MedicineTypeEnum.note.name,
+                                  content: _recommendationController.text.trim(),
+                                );
+
+                                // Add to list
+                                context.read<PatientSectionDetailsCubit>().addPatientRecommendation(
+                                  newRecommendation,
+                                  widget.patientId,
+                                );
+                                
+                                // Clear and close
+                                _recommendationController.clear();
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: _recommendationController.text.trim().isEmpty 
+                                    ? Colors.grey 
+                                    : AppColors.primary,
+                                padding: const EdgeInsets.symmetric(vertical: 12),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              ),
+                              child: Text(
+                                'Add Recommendation',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -63,7 +269,20 @@ class _PatientSectionDetailsScreenState
             )),
         centerTitle: true,
         backgroundColor: AppColors.primary,
-        actions: const [],
+        actions: [
+          // Only show add recommendation button for medication section and when not final submitted
+          if (widget.sectionModel.sectionId == 12 && !widget.finalSubmitStatus)
+            IconButton(
+              onPressed: () {
+                // Show add recommendation bottom sheet
+                _showAddRecommendationBottomSheet(context);
+              },
+              icon: const Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
+            ),
+        ],
       ),
       body:
           BlocConsumer<PatientSectionDetailsCubit, PatientSectionDetailsState>(

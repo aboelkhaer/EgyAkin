@@ -209,6 +209,8 @@ mixin _$GetRecommendationsDataModelResponse {
   String? get route => throw _privateConstructorUsedError;
   String? get frequency => throw _privateConstructorUsedError;
   String? get duration => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get content => throw _privateConstructorUsedError;
 
   /// Serializes this GetRecommendationsDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -238,7 +240,9 @@ abstract class $GetRecommendationsDataModelResponseCopyWith<$Res> {
       String? dose,
       String? route,
       String? frequency,
-      String? duration});
+      String? duration,
+      String? type,
+      String? content});
 }
 
 /// @nodoc
@@ -266,6 +270,8 @@ class _$GetRecommendationsDataModelResponseCopyWithImpl<$Res,
     Object? route = freezed,
     Object? frequency = freezed,
     Object? duration = freezed,
+    Object? type = freezed,
+    Object? content = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -304,6 +310,14 @@ class _$GetRecommendationsDataModelResponseCopyWithImpl<$Res,
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -326,7 +340,9 @@ abstract class _$$GetRecommendationsDataModelResponseImplCopyWith<$Res>
       String? dose,
       String? route,
       String? frequency,
-      String? duration});
+      String? duration,
+      String? type,
+      String? content});
 }
 
 /// @nodoc
@@ -353,6 +369,8 @@ class __$$GetRecommendationsDataModelResponseImplCopyWithImpl<$Res>
     Object? route = freezed,
     Object? frequency = freezed,
     Object? duration = freezed,
+    Object? type = freezed,
+    Object? content = freezed,
   }) {
     return _then(_$GetRecommendationsDataModelResponseImpl(
       id: freezed == id
@@ -391,6 +409,14 @@ class __$$GetRecommendationsDataModelResponseImplCopyWithImpl<$Res>
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
               as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -408,7 +434,9 @@ class _$GetRecommendationsDataModelResponseImpl
       this.dose,
       this.route,
       this.frequency,
-      this.duration});
+      this.duration,
+      this.type,
+      this.content});
 
   factory _$GetRecommendationsDataModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -436,10 +464,14 @@ class _$GetRecommendationsDataModelResponseImpl
   final String? frequency;
   @override
   final String? duration;
+  @override
+  final String? type;
+  @override
+  final String? content;
 
   @override
   String toString() {
-    return 'GetRecommendationsDataModelResponse(id: $id, patientId: $patientId, doseName: $doseName, createdAt: $createdAt, updatedAt: $updatedAt, dose: $dose, route: $route, frequency: $frequency, duration: $duration)';
+    return 'GetRecommendationsDataModelResponse(id: $id, patientId: $patientId, doseName: $doseName, createdAt: $createdAt, updatedAt: $updatedAt, dose: $dose, route: $route, frequency: $frequency, duration: $duration, type: $type, content: $content)';
   }
 
   @override
@@ -461,13 +493,15 @@ class _$GetRecommendationsDataModelResponseImpl
             (identical(other.frequency, frequency) ||
                 other.frequency == frequency) &&
             (identical(other.duration, duration) ||
-                other.duration == duration));
+                other.duration == duration) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.content, content) || other.content == content));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, patientId, doseName,
-      createdAt, updatedAt, dose, route, frequency, duration);
+      createdAt, updatedAt, dose, route, frequency, duration, type, content);
 
   /// Create a copy of GetRecommendationsDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -498,7 +532,9 @@ abstract class _GetRecommendationsDataModelResponse
       final String? dose,
       final String? route,
       final String? frequency,
-      final String? duration}) = _$GetRecommendationsDataModelResponseImpl;
+      final String? duration,
+      final String? type,
+      final String? content}) = _$GetRecommendationsDataModelResponseImpl;
 
   factory _GetRecommendationsDataModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -526,6 +562,10 @@ abstract class _GetRecommendationsDataModelResponse
   String? get frequency;
   @override
   String? get duration;
+  @override
+  String? get type;
+  @override
+  String? get content;
 
   /// Create a copy of GetRecommendationsDataModelResponse
   /// with the given fields replaced by the non-null parameter values.

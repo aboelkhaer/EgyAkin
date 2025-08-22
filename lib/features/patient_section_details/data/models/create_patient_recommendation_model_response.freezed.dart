@@ -23,6 +23,8 @@ CreatePatientRecommendationModelResponse
 /// @nodoc
 mixin _$CreatePatientRecommendationModelResponse {
   String? get message => throw _privateConstructorUsedError;
+  List<GetRecommendationsDataModelResponse>? get data =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this CreatePatientRecommendationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -43,7 +45,7 @@ abstract class $CreatePatientRecommendationModelResponseCopyWith<$Res> {
       _$CreatePatientRecommendationModelResponseCopyWithImpl<$Res,
           CreatePatientRecommendationModelResponse>;
   @useResult
-  $Res call({String? message});
+  $Res call({String? message, List<GetRecommendationsDataModelResponse>? data});
 }
 
 /// @nodoc
@@ -64,12 +66,17 @@ class _$CreatePatientRecommendationModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? message = freezed,
+    Object? data = freezed,
   }) {
     return _then(_value.copyWith(
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetRecommendationsDataModelResponse>?,
     ) as $Val);
   }
 }
@@ -83,7 +90,7 @@ abstract class _$$CreatePatientRecommendationModelResponseImplCopyWith<$Res>
       __$$CreatePatientRecommendationModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? message});
+  $Res call({String? message, List<GetRecommendationsDataModelResponse>? data});
 }
 
 /// @nodoc
@@ -102,12 +109,17 @@ class __$$CreatePatientRecommendationModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? message = freezed,
+    Object? data = freezed,
   }) {
     return _then(_$CreatePatientRecommendationModelResponseImpl(
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      data: freezed == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as List<GetRecommendationsDataModelResponse>?,
     ));
   }
 }
@@ -116,7 +128,9 @@ class __$$CreatePatientRecommendationModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CreatePatientRecommendationModelResponseImpl
     implements _CreatePatientRecommendationModelResponse {
-  const _$CreatePatientRecommendationModelResponseImpl({this.message});
+  const _$CreatePatientRecommendationModelResponseImpl(
+      {this.message, final List<GetRecommendationsDataModelResponse>? data})
+      : _data = data;
 
   factory _$CreatePatientRecommendationModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -124,10 +138,19 @@ class _$CreatePatientRecommendationModelResponseImpl
 
   @override
   final String? message;
+  final List<GetRecommendationsDataModelResponse>? _data;
+  @override
+  List<GetRecommendationsDataModelResponse>? get data {
+    final value = _data;
+    if (value == null) return null;
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'CreatePatientRecommendationModelResponse(message: $message)';
+    return 'CreatePatientRecommendationModelResponse(message: $message, data: $data)';
   }
 
   @override
@@ -135,12 +158,14 @@ class _$CreatePatientRecommendationModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreatePatientRecommendationModelResponseImpl &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(
+      runtimeType, message, const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of CreatePatientRecommendationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -164,7 +189,9 @@ class _$CreatePatientRecommendationModelResponseImpl
 abstract class _CreatePatientRecommendationModelResponse
     implements CreatePatientRecommendationModelResponse {
   const factory _CreatePatientRecommendationModelResponse(
-      {final String? message}) = _$CreatePatientRecommendationModelResponseImpl;
+          {final String? message,
+          final List<GetRecommendationsDataModelResponse>? data}) =
+      _$CreatePatientRecommendationModelResponseImpl;
 
   factory _CreatePatientRecommendationModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -172,6 +199,8 @@ abstract class _CreatePatientRecommendationModelResponse
 
   @override
   String? get message;
+  @override
+  List<GetRecommendationsDataModelResponse>? get data;
 
   /// Create a copy of CreatePatientRecommendationModelResponse
   /// with the given fields replaced by the non-null parameter values.

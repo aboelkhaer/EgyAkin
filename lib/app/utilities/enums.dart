@@ -56,3 +56,8 @@ enum ShowPostFromEnum {
   notification,
   savedPosts,
 }
+
+enum MedicineTypeEnum {
+  rec,
+  note,
+}

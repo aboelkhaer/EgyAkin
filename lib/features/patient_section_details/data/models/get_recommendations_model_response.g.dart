@@ -34,6 +34,8 @@ _$GetRecommendationsDataModelResponseImpl
           route: json['route'] as String?,
           frequency: json['frequency'] as String?,
           duration: json['duration'] as String?,
+          type: json['type'] as String?,
+          content: json['content'] as String?,
         );
 
 Map<String, dynamic> _$$GetRecommendationsDataModelResponseImplToJson(
@@ -48,4 +50,6 @@ Map<String, dynamic> _$$GetRecommendationsDataModelResponseImplToJson(
       'route': instance.route,
       'frequency': instance.frequency,
       'duration': instance.duration,
+      'type': instance.type,
+      'content': instance.content,
     };

@@ -106,6 +106,46 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
           ),
         ),
         actions: [
+            BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return SizedBox.shrink();
+                },
+                loaded: (
+                  response,
+                  isSeeMore,
+                  message,
+                  isApplyFilterLoading,
+                  isApplyFilterLoaded,
+                ) {
+                  return IconButton(
+                    onPressed: () {
+                   
+                    },
+                    icon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        cubit.totalPatientInFilter == 0
+                            ? const SizedBox.shrink()
+                            : FadeIn(
+                              child: Text(
+                               response.data!.data!.length.toString(),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 9.sp,
+                                  ),
+                                ),
+                            ),
+                       
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
           BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
             builder: (context, state) {
               return state.maybeWhen(

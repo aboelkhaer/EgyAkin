@@ -10,11 +10,13 @@ _$PatientRecommendationModelImpl _$$PatientRecommendationModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PatientRecommendationModelImpl(
       id: json['id'] as String,
-      doseName: json['doseName'] as String,
-      dose: json['dose'] as String,
-      route: json['route'] as String,
-      frequency: json['frequency'] as String,
-      duration: json['duration'] as String,
+      doseName: json['doseName'] as String?,
+      dose: json['dose'] as String?,
+      route: json['route'] as String?,
+      frequency: json['frequency'] as String?,
+      duration: json['duration'] as String?,
+      type: json['type'] as String?,
+      content: json['content'] as String?,
     );
 
 Map<String, dynamic> _$$PatientRecommendationModelImplToJson(
@@ -26,4 +28,6 @@ Map<String, dynamic> _$$PatientRecommendationModelImplToJson(
       'route': instance.route,
       'frequency': instance.frequency,
       'duration': instance.duration,
+      'type': instance.type,
+      'content': instance.content,
     };

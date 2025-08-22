@@ -26,6 +26,8 @@ class GetRecommendationsDataModelResponse
     String? route,
     String? frequency,
     String? duration,
+    String? type,
+    String? content,
   }) = _GetRecommendationsDataModelResponse;
   factory GetRecommendationsDataModelResponse.fromJson(
           Map<String, dynamic> json) =>

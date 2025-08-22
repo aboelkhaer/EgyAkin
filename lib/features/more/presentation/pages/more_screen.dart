@@ -273,12 +273,15 @@ class _MoreScreenState extends State<MoreScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'v${context.read<HomeCubit>().currentUserVersion}',
+                              'v${context.read<HomeCubit>().currentUserVersion} ${ApiEndPoint.baseUrl == 'https://test.egyakin.com' ? 'T' : 'P'}',
                               style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontSize: 12.sp,
                               ),
                             ),
+
+                          
+
                           ],
                         ),
                       );

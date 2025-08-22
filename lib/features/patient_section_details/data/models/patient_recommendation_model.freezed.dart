@@ -22,11 +22,13 @@ PatientRecommendationModel _$PatientRecommendationModelFromJson(
 /// @nodoc
 mixin _$PatientRecommendationModel {
   String get id => throw _privateConstructorUsedError;
-  String get doseName => throw _privateConstructorUsedError;
-  String get dose => throw _privateConstructorUsedError;
-  String get route => throw _privateConstructorUsedError;
-  String get frequency => throw _privateConstructorUsedError;
-  String get duration => throw _privateConstructorUsedError;
+  String? get doseName => throw _privateConstructorUsedError;
+  String? get dose => throw _privateConstructorUsedError;
+  String? get route => throw _privateConstructorUsedError;
+  String? get frequency => throw _privateConstructorUsedError;
+  String? get duration => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get content => throw _privateConstructorUsedError;
 
   /// Serializes this PatientRecommendationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,11 +49,13 @@ abstract class $PatientRecommendationModelCopyWith<$Res> {
   @useResult
   $Res call(
       {String id,
-      String doseName,
-      String dose,
-      String route,
-      String frequency,
-      String duration});
+      String? doseName,
+      String? dose,
+      String? route,
+      String? frequency,
+      String? duration,
+      String? type,
+      String? content});
 }
 
 /// @nodoc
@@ -71,37 +75,47 @@ class _$PatientRecommendationModelCopyWithImpl<$Res,
   @override
   $Res call({
     Object? id = null,
-    Object? doseName = null,
-    Object? dose = null,
-    Object? route = null,
-    Object? frequency = null,
-    Object? duration = null,
+    Object? doseName = freezed,
+    Object? dose = freezed,
+    Object? route = freezed,
+    Object? frequency = freezed,
+    Object? duration = freezed,
+    Object? type = freezed,
+    Object? content = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      doseName: null == doseName
+      doseName: freezed == doseName
           ? _value.doseName
           : doseName // ignore: cast_nullable_to_non_nullable
-              as String,
-      dose: null == dose
+              as String?,
+      dose: freezed == dose
           ? _value.dose
           : dose // ignore: cast_nullable_to_non_nullable
-              as String,
-      route: null == route
+              as String?,
+      route: freezed == route
           ? _value.route
           : route // ignore: cast_nullable_to_non_nullable
-              as String,
-      frequency: null == frequency
+              as String?,
+      frequency: freezed == frequency
           ? _value.frequency
           : frequency // ignore: cast_nullable_to_non_nullable
-              as String,
-      duration: null == duration
+              as String?,
+      duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -117,11 +131,13 @@ abstract class _$$PatientRecommendationModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {String id,
-      String doseName,
-      String dose,
-      String route,
-      String frequency,
-      String duration});
+      String? doseName,
+      String? dose,
+      String? route,
+      String? frequency,
+      String? duration,
+      String? type,
+      String? content});
 }
 
 /// @nodoc
@@ -140,37 +156,47 @@ class __$$PatientRecommendationModelImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
-    Object? doseName = null,
-    Object? dose = null,
-    Object? route = null,
-    Object? frequency = null,
-    Object? duration = null,
+    Object? doseName = freezed,
+    Object? dose = freezed,
+    Object? route = freezed,
+    Object? frequency = freezed,
+    Object? duration = freezed,
+    Object? type = freezed,
+    Object? content = freezed,
   }) {
     return _then(_$PatientRecommendationModelImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
-      doseName: null == doseName
+      doseName: freezed == doseName
           ? _value.doseName
           : doseName // ignore: cast_nullable_to_non_nullable
-              as String,
-      dose: null == dose
+              as String?,
+      dose: freezed == dose
           ? _value.dose
           : dose // ignore: cast_nullable_to_non_nullable
-              as String,
-      route: null == route
+              as String?,
+      route: freezed == route
           ? _value.route
           : route // ignore: cast_nullable_to_non_nullable
-              as String,
-      frequency: null == frequency
+              as String?,
+      frequency: freezed == frequency
           ? _value.frequency
           : frequency // ignore: cast_nullable_to_non_nullable
-              as String,
-      duration: null == duration
+              as String?,
+      duration: freezed == duration
           ? _value.duration
           : duration // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
+      type: freezed == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String?,
+      content: freezed == content
+          ? _value.content
+          : content // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -184,7 +210,9 @@ class _$PatientRecommendationModelImpl implements _PatientRecommendationModel {
       required this.dose,
       required this.route,
       required this.frequency,
-      required this.duration});
+      required this.duration,
+      required this.type,
+      required this.content});
 
   factory _$PatientRecommendationModelImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -193,19 +221,23 @@ class _$PatientRecommendationModelImpl implements _PatientRecommendationModel {
   @override
   final String id;
   @override
-  final String doseName;
+  final String? doseName;
   @override
-  final String dose;
+  final String? dose;
   @override
-  final String route;
+  final String? route;
   @override
-  final String frequency;
+  final String? frequency;
   @override
-  final String duration;
+  final String? duration;
+  @override
+  final String? type;
+  @override
+  final String? content;
 
   @override
   String toString() {
-    return 'PatientRecommendationModel(id: $id, doseName: $doseName, dose: $dose, route: $route, frequency: $frequency, duration: $duration)';
+    return 'PatientRecommendationModel(id: $id, doseName: $doseName, dose: $dose, route: $route, frequency: $frequency, duration: $duration, type: $type, content: $content)';
   }
 
   @override
@@ -221,13 +253,15 @@ class _$PatientRecommendationModelImpl implements _PatientRecommendationModel {
             (identical(other.frequency, frequency) ||
                 other.frequency == frequency) &&
             (identical(other.duration, duration) ||
-                other.duration == duration));
+                other.duration == duration) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.content, content) || other.content == content));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, id, doseName, dose, route, frequency, duration);
+  int get hashCode => Object.hash(runtimeType, id, doseName, dose, route,
+      frequency, duration, type, content);
 
   /// Create a copy of PatientRecommendationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -250,11 +284,13 @@ abstract class _PatientRecommendationModel
     implements PatientRecommendationModel {
   const factory _PatientRecommendationModel(
       {required final String id,
-      required final String doseName,
-      required final String dose,
-      required final String route,
-      required final String frequency,
-      required final String duration}) = _$PatientRecommendationModelImpl;
+      required final String? doseName,
+      required final String? dose,
+      required final String? route,
+      required final String? frequency,
+      required final String? duration,
+      required final String? type,
+      required final String? content}) = _$PatientRecommendationModelImpl;
 
   factory _PatientRecommendationModel.fromJson(Map<String, dynamic> json) =
       _$PatientRecommendationModelImpl.fromJson;
@@ -262,15 +298,19 @@ abstract class _PatientRecommendationModel
   @override
   String get id;
   @override
-  String get doseName;
+  String? get doseName;
   @override
-  String get dose;
+  String? get dose;
   @override
-  String get route;
+  String? get route;
   @override
-  String get frequency;
+  String? get frequency;
   @override
-  String get duration;
+  String? get duration;
+  @override
+  String? get type;
+  @override
+  String? get content;
 
   /// Create a copy of PatientRecommendationModel
   /// with the given fields replaced by the non-null parameter values.

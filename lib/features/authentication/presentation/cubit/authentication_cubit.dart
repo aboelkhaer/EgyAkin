@@ -49,7 +49,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       final String deviceId = await DeviceIdService.getPersistentDeviceId();
       await Future.delayed(const Duration(
           milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-      log(deviceId);
+      debugPrint(deviceId);
       final result = await _signInUsecase.execute(
         SignInUseCaseInput(
           email: signInEmail,
