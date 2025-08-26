@@ -1868,20 +1868,25 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                             .spaceBetween,
                                                     children: [
                                                       Expanded(
-                                                        child: Text(
-                                                          // Show different header based on type
-                                                          medication.type == MedicineTypeEnum.note.name
+                                                        child: Tooltip(
+                                                          message: medication.type == MedicineTypeEnum.note.name
                                                               ? 'Recommendation'
                                                               : (medication.doseName ?? 'Unknown'),
-                                                          style: TextStyle(
-                                                            fontSize: 14.sp,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: AppColors
-                                                                .primary,
+                                                          child: Text(
+                                                            // Show different header based on type
+                                                            medication.type == MedicineTypeEnum.note.name
+                                                                ? 'Recommendation'
+                                                                : (medication.doseName ?? 'Unknown'),
+                                                            style: TextStyle(
+                                                              fontSize: 14.sp,
+                                                              fontWeight:
+                                                                  FontWeight.w600,
+                                                              color: AppColors
+                                                                  .primary,
+                                                            ),
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
                                                           ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
                                                         ),
                                                       ),
                                                       // Only show edit/delete buttons if finalSubmitStatus is false
