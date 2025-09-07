@@ -44,6 +44,8 @@ mixin _$GetCurrentDoctorConsultationModelResponse {
   String? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'consult_message')
   String? get consultMessage => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_open')
+  bool? get isOpen => throw _privateConstructorUsedError;
 
   /// Serializes this GetCurrentDoctorConsultationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -77,7 +79,8 @@ abstract class $GetCurrentDoctorConsultationModelResponseCopyWith<$Res> {
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'consult_message') String? consultMessage});
+      @JsonKey(name: 'consult_message') String? consultMessage,
+      @JsonKey(name: 'is_open') bool? isOpen});
 }
 
 /// @nodoc
@@ -110,6 +113,7 @@ class _$GetCurrentDoctorConsultationModelResponseCopyWithImpl<$Res,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? consultMessage = freezed,
+    Object? isOpen = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -164,6 +168,10 @@ class _$GetCurrentDoctorConsultationModelResponseCopyWithImpl<$Res,
           ? _value.consultMessage
           : consultMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOpen: freezed == isOpen
+          ? _value.isOpen
+          : isOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -190,7 +198,8 @@ abstract class _$$GetCurrentDoctorConsultationModelResponseImplCopyWith<$Res>
       String? status,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'consult_message') String? consultMessage});
+      @JsonKey(name: 'consult_message') String? consultMessage,
+      @JsonKey(name: 'is_open') bool? isOpen});
 }
 
 /// @nodoc
@@ -221,6 +230,7 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? consultMessage = freezed,
+    Object? isOpen = freezed,
   }) {
     return _then(_$GetCurrentDoctorConsultationModelResponseImpl(
       id: freezed == id
@@ -275,6 +285,10 @@ class __$$GetCurrentDoctorConsultationModelResponseImplCopyWithImpl<$Res>
           ? _value.consultMessage
           : consultMessage // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOpen: freezed == isOpen
+          ? _value.isOpen
+          : isOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -296,7 +310,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       this.status,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'consult_message') this.consultMessage});
+      @JsonKey(name: 'consult_message') this.consultMessage,
+      @JsonKey(name: 'is_open') this.isOpen});
 
   factory _$GetCurrentDoctorConsultationModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -337,10 +352,13 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
   @override
   @JsonKey(name: 'consult_message')
   final String? consultMessage;
+  @override
+  @JsonKey(name: 'is_open')
+  final bool? isOpen;
 
   @override
   String toString() {
-    return 'GetCurrentDoctorConsultationModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, image: $image, workingplace: $workingplace, isSyndicateCard: $isSyndicateCard, patientName: $patientName, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultMessage: $consultMessage)';
+    return 'GetCurrentDoctorConsultationModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, image: $image, workingplace: $workingplace, isSyndicateCard: $isSyndicateCard, patientName: $patientName, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, consultMessage: $consultMessage, isOpen: $isOpen)';
   }
 
   @override
@@ -370,7 +388,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
             (identical(other.consultMessage, consultMessage) ||
-                other.consultMessage == consultMessage));
+                other.consultMessage == consultMessage) &&
+            (identical(other.isOpen, isOpen) || other.isOpen == isOpen));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -389,7 +408,8 @@ class _$GetCurrentDoctorConsultationModelResponseImpl
       status,
       createdAt,
       updatedAt,
-      consultMessage);
+      consultMessage,
+      isOpen);
 
   /// Create a copy of GetCurrentDoctorConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -426,7 +446,8 @@ abstract class _GetCurrentDoctorConsultationModelResponse
           final String? status,
           @JsonKey(name: 'created_at') final String? createdAt,
           @JsonKey(name: 'updated_at') final String? updatedAt,
-          @JsonKey(name: 'consult_message') final String? consultMessage}) =
+          @JsonKey(name: 'consult_message') final String? consultMessage,
+          @JsonKey(name: 'is_open') final bool? isOpen}) =
       _$GetCurrentDoctorConsultationModelResponseImpl;
 
   factory _GetCurrentDoctorConsultationModelResponse.fromJson(
@@ -468,6 +489,9 @@ abstract class _GetCurrentDoctorConsultationModelResponse
   @override
   @JsonKey(name: 'consult_message')
   String? get consultMessage;
+  @override
+  @JsonKey(name: 'is_open')
+  bool? get isOpen;
 
   /// Create a copy of GetCurrentDoctorConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.

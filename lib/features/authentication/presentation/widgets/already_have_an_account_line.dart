@@ -11,7 +11,7 @@ class AlreadyHaveAnAccountLine extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          AppStrings.alreadyHaveAnAccount,
+          context.tr(AppStrings.alreadyHaveAnAccount),
           style: TextStyle(
             color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
@@ -36,7 +36,7 @@ class AlreadyHaveAnAccountLine extends StatelessWidget {
               ),
             ),
             child: Text(
-              AppStrings.signInNow,
+              context.tr(AppStrings.signInNow),
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 10.sp,

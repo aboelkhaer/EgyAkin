@@ -22,7 +22,7 @@ class SignInUsecase
 class SignInUseCaseInput {
   final String email;
   final String password;
-  final String fcmToken;
+  final String? fcmToken;
   final String deviceId;
 
   const SignInUseCaseInput({

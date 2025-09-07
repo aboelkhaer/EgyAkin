@@ -56,9 +56,9 @@ class IfOutcomeSubmitted extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Flexible(
+                         Flexible(
                           child: Text(
-                            AppStrings.submitBy,
+                            context.tr(AppStrings.submitBy),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,

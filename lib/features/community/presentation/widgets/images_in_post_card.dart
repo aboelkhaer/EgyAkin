@@ -54,7 +54,10 @@ class _ImagesInPostCardState extends State<ImagesInPostCard> {
               );
             },
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5),
+                topRight: Radius.circular(5),
+              ),
               child: Hero(
                 tag: feed.id.toString(),
                 child: SizedBox(

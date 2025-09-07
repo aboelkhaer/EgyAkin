@@ -245,6 +245,8 @@ class AppRoutesArgs {
     required String patientId,
     required bool isSendConsultation,
     required String groupId,
+    required bool isForAddNewDoctors,
+    required String consultationId,
   }) {
     return {
       'homeDataModel': homeDataModel,
@@ -252,6 +254,8 @@ class AppRoutesArgs {
       'patientId': patientId,
       'isSendConsultation': isSendConsultation,
       'groupId': groupId,
+      'isForAddNewDoctors': isForAddNewDoctors,
+      'consultationId': consultationId,
     };
   }
 
@@ -273,6 +277,8 @@ class AppRoutesArgs {
     required bool isReceivedConsultation,
     required String consultationId,
     required String patientName,
+    required bool isOpen,
+ 
   }) {
     return {
       'homeDataModel': homeDataModel,
@@ -280,6 +286,8 @@ class AppRoutesArgs {
       'consultationId': consultationId,
       'patientName': patientName,
       'isReceivedConsultation': isReceivedConsultation,
+      'isOpen': isOpen,
+
     };
   }
 

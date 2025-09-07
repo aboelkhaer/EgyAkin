@@ -46,7 +46,7 @@ class PatientComments extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Comments:',
+                      '${LocalizationService.instance.translate(AppStrings.comments)}:',
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 13.sp),
                     ),

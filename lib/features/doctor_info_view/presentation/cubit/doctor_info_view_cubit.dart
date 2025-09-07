@@ -186,33 +186,37 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     final result = await _getDoctorInfoViewUsecase.execute(doctorId);
     result.fold(
       (l) {
-        emit(DoctorInfoViewState.error(l.message));
+        if (!isClosed) {
+          emit(DoctorInfoViewState.error(l.message));
+        }
       },
       (doctorInfo) async {
-        if (doctorInfo.data!.isSyndicateCardRequired == 'Verified') {
-          isSyndicateCardVerified = true;
-        } else {
-          isSyndicateCardVerified = false;
+        if (!isClosed) {
+          if (doctorInfo.data!.isSyndicateCardRequired == 'Verified') {
+            isSyndicateCardVerified = true;
+          } else {
+            isSyndicateCardVerified = false;
+          }
+          if (doctorInfo.data!.blocked == true) {
+            doctorBlocked = true;
+          } else {
+            doctorBlocked = false;
+          }
+          if (doctorInfo.data!.emailVerifiedAt != null) {
+            doctorVerifiedEmail = true;
+          } else {
+            doctorVerifiedEmail = false;
+          }
+          updatedDoctor = doctorInfo;
+          emit(DoctorInfoViewState.loaded(
+            updatedDoctor,
+            false,
+            false,
+            '',
+            null,
+            changesCounter,
+          ));
         }
-        if (doctorInfo.data!.blocked == true) {
-          doctorBlocked = true;
-        } else {
-          doctorBlocked = false;
-        }
-        if (doctorInfo.data!.emailVerifiedAt != null) {
-          doctorVerifiedEmail = true;
-        } else {
-          doctorVerifiedEmail = false;
-        }
-        updatedDoctor = doctorInfo;
-        emit(DoctorInfoViewState.loaded(
-          updatedDoctor,
-          false,
-          false,
-          '',
-          null,
-          changesCounter,
-        ));
       },
     );
     getAchievementsV1(doctorId);
@@ -225,61 +229,71 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     final result = await _getAchievementsUsecase.execute(doctorId);
     result.fold(
       (l) {
-        emit(DoctorInfoViewState.error(l.message));
+        if (!isClosed) {
+          emit(DoctorInfoViewState.error(l.message));
+        }
       },
       (achievements) async {
-        emit(DoctorInfoViewState.loaded(
-            null, false, true, '', achievements, changesCounter));
+        if (!isClosed) {
+          emit(DoctorInfoViewState.loaded(
+              null, false, true, '', achievements, changesCounter));
+        }
       },
     );
   }
 
   getAchievementsV1(String doctorId) async {
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => DoctorInfoViewState.loaded(
-          value.doctorInfo,
-          true,
-          false,
-          '',
-          null,
-          changesCounter,
+    if (!isClosed) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => DoctorInfoViewState.loaded(
+            value.doctorInfo,
+            true,
+            false,
+            '',
+            null,
+            changesCounter,
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     final result = await _getAchievementsUsecase.execute(doctorId);
     result.fold(
       (l) {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => DoctorInfoViewState.loaded(
-              value.doctorInfo,
-              false,
-              false,
-              l.message,
-              null,
-              changesCounter,
+        if (!isClosed) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => DoctorInfoViewState.loaded(
+                value.doctorInfo,
+                false,
+                false,
+                l.message,
+                null,
+                changesCounter,
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
       (achievements) async {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => DoctorInfoViewState.loaded(
-              value.doctorInfo,
-              false,
-              true,
-              '',
-              achievements,
-              changesCounter,
+        if (!isClosed) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => DoctorInfoViewState.loaded(
+                value.doctorInfo,
+                false,
+                true,
+                '',
+                achievements,
+                changesCounter,
+              ),
             ),
-          ),
-        );
+          );
+        }
       },
     );
   }

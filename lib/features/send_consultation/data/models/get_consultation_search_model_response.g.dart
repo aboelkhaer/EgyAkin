@@ -28,7 +28,7 @@ _$DoctorModelInConsultationModelResponseImpl
     _$$DoctorModelInConsultationModelResponseImplFromJson(
             Map<String, dynamic> json) =>
         _$DoctorModelInConsultationModelResponseImpl(
-          id: (json['id'] as num?)?.toInt(),
+          id: _parseId(json['id']),
           firstName: json['name'] as String?,
           lastName: json['lname'] as String?,
           email: json['email'] as String?,
@@ -40,6 +40,9 @@ _$DoctorModelInConsultationModelResponseImpl
           isSyndicateCardRequired: json['isSyndicateCardRequired'] as String?,
           patientsCount: json['patients_count'] as String?,
           score: json['score'] as String?,
+          role: json['role'] as String?,
+          status: json['status'] as String?,
+          isVerified: json['isVerified'] as String?,
         );
 
 Map<String, dynamic> _$$DoctorModelInConsultationModelResponseImplToJson(
@@ -57,4 +60,7 @@ Map<String, dynamic> _$$DoctorModelInConsultationModelResponseImplToJson(
       'isSyndicateCardRequired': instance.isSyndicateCardRequired,
       'patients_count': instance.patientsCount,
       'score': instance.score,
+      'role': instance.role,
+      'status': instance.status,
+      'isVerified': instance.isVerified,
     };

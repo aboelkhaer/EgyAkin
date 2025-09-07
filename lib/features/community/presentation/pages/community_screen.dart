@@ -134,7 +134,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                 ),
                 Expanded(
                   child: CustomTextFormField(
-                    title: 'Search',
+                    title: context.tr(AppStrings.search),
                     textAlign: TextAlign.center,
                     onTextClick: () {
                       navigatorKey.currentState?.pushNamed(
@@ -191,7 +191,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                 color: AppColors.primary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              tabs: const [
+              tabs:  [
                 Tab(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -199,7 +199,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                       Icon(Icons.article_outlined, size: 16),
                       SizedBox(width: 5),
                       Text(
-                        'Feeds',
+                        context.tr(AppStrings.feeds),
+
                         style: TextStyle(
                           fontSize: 14,
                         ),
@@ -214,7 +215,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                       Icon(Icons.trending_up, size: 16),
                       SizedBox(width: 5),
                       Text(
-                        'Trending',
+                        context.tr(AppStrings.trending),
+
                         style: TextStyle(
                           fontSize: 14,
                         ),
@@ -229,7 +231,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                       Icon(Icons.group, size: 16),
                       SizedBox(width: 5),
                       Text(
-                        'Groups',
+                        context.tr(AppStrings.groups),
                         style: TextStyle(
                           fontSize: 14,
                         ),

@@ -1,7 +1,7 @@
 import 'package:egy_akin/features/notification/presentation/widgets/achievement_check.dart';
+import 'package:egy_akin/features/notification/presentation/widgets/unread_red_circle.dart';
 
 import '../../../../exports.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class CheckNotificationType extends StatelessWidget {
   final NotificationsModel notificationModel;
@@ -152,11 +152,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -169,17 +168,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                 UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -209,9 +198,11 @@ class CheckNotificationType extends StatelessWidget {
                 patientName: notificationModel.patient!.name.toString(),
                 consultationId: notificationModel.typeId.toString(),
                 isReceivedConsultation: true,
+                isOpen: notificationModel.isOpen ?? false,
               ),
             );
           },
+          
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -305,11 +296,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -322,17 +312,8 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
+                  
                 ],
               ),
               const Divider(
@@ -473,11 +454,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -490,17 +470,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -643,11 +613,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -660,17 +629,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -732,10 +691,10 @@ class CheckNotificationType extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                    timeago
-                        .format(DateTime.parse(
-                            notificationModel.createdAt.toString()))
-                        .toString(),
+                    TimeAgoService.instance.formatTimeAgoFromString(
+                      notificationModel.createdAt.toString(),
+                      context,
+                    ),
                     style: TextStyle(
                       color: Colors.grey.shade500,
                       fontSize: 8.sp,
@@ -877,11 +836,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -894,17 +852,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1035,11 +983,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                      TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1052,17 +999,8 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1181,11 +1119,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1198,17 +1135,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1327,11 +1254,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1344,17 +1270,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1473,11 +1389,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1490,17 +1405,9 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
+
+                  
                 ],
               ),
               const Divider(
@@ -1619,11 +1526,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1636,17 +1542,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1762,11 +1658,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1779,17 +1674,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(
@@ -1905,11 +1790,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -1922,17 +1806,8 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
+                  
                 ],
               ),
               const Divider(
@@ -2048,11 +1923,10 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(notificationModel
-                                          .createdAt
-                                          .toString()))
-                                      .toString(),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                    notificationModel.createdAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
                                     color: Colors.grey.shade500,
                                     fontSize: 8.sp,
@@ -2065,17 +1939,7 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  notificationModel.read!
-                      ? const SizedBox.shrink()
-                      : Positioned(
-                          left: 0,
-                          // right: 0.w,
-                          // top: 2.h,
-                          child: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            radius: 5.r,
-                          ),
-                        ),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
               const Divider(

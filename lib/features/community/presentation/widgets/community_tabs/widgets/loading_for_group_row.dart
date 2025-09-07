@@ -81,7 +81,7 @@ class LoadingForGroupRow extends StatelessWidget {
                         ? const SizedBox.shrink()
                         : TextButton(
                             onPressed: () {},
-                            child: const Row(
+                            child:  Row(
                               children: [
                                 Icon(
                                   Icons.group_add,
@@ -89,7 +89,7 @@ class LoadingForGroupRow extends StatelessWidget {
                                 ),
                                 SizedBox(width: 5),
                                 Text(
-                                  'Join',
+                                  context.tr(AppStrings.join),
                                   style: TextStyle(
                                     color: AppColors.primary,
                                     fontSize: 14,

@@ -93,7 +93,7 @@ class ProfileFeatures extends StatelessWidget {
                 signOutLoading: () {
                   return GestureDetector(
                     onTap:
-                        _profileScreensData(context)[index].title == 'Sign out'
+                        _profileScreensData(context)[index].title == LocalizationService.instance.translate(AppStrings.signOut)
                             ? () {}
                             : _profileScreensData(context)[index].onTap,
                     child: Container(
@@ -105,7 +105,7 @@ class ProfileFeatures extends StatelessWidget {
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: _profileScreensData(context)[index].title ==
-                              'Sign out'
+                              LocalizationService.instance.translate(AppStrings.signOut)
                           ? Container(
                               padding: const EdgeInsets.all(3),
                               child: const Row(
@@ -239,16 +239,16 @@ class ProfileFeatures extends StatelessWidget {
     return <ProfileScreens>[
       ProfileScreens(
         icon: Icons.person_outline,
-        title: 'Account',
-        description: 'Manage your personal info.',
+        title: LocalizationService.instance.translate(AppStrings.account),
+        description: LocalizationService.instance.translate(AppStrings.manageYourPersonalInfo),
         onTap: () {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
       ),
       ProfileScreens(
         icon: Icons.chat_bubble_outline,
-        title: 'Consultation',
-        description: 'Initiate or view consultations.',
+        title: LocalizationService.instance.translate(AppStrings.consultation),
+        description: LocalizationService.instance.translate(AppStrings.initateOrViewConsultations),
         onTap: () {
           navigatorKey.currentState?.pushNamed(
             AppRoutes.consultation,
@@ -262,8 +262,8 @@ class ProfileFeatures extends StatelessWidget {
       ),
       ProfileScreens(
         icon: Icons.emoji_events_outlined,
-        title: 'Achievements',
-        description: 'Explore your accomplishments.',
+        title: LocalizationService.instance.translate(AppStrings.achievements),
+        description: LocalizationService.instance.translate(AppStrings.exploreYourAccomplishments),
         onTap: () {
           showCustomBottomSheet(
             context: context,
@@ -282,7 +282,7 @@ class ProfileFeatures extends StatelessWidget {
       ),
       ProfileScreens(
           icon: Icons.exit_to_app_outlined,
-          title: 'Sign out',
+          title: LocalizationService.instance.translate(AppStrings.signOut),
           description: '',
           isHaveDescription: false,
           onTap: () {

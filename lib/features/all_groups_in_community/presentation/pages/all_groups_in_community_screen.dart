@@ -119,7 +119,9 @@ class _AllGroupsInCommunityScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Groups'),
+        title:  Text(
+          context.tr(AppStrings.groups),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -152,15 +154,16 @@ class _AllGroupsInCommunityScreenState
                 isScrollable: false,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 unselectedLabelColor: Colors.white.withOpacity(0.7),
-                tabs: const [
-                  Tab(text: 'My Groups'),
+                tabs:  [
+                  Tab(text: context.tr(AppStrings.myGroups),),
                   Tab(
                     child: Text(
-                      'Group\nInvitations',
+                      context.tr(AppStrings.groupInvitationsWithNewLine),
+
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  Tab(text: 'All Groups'),
+                  Tab(text: context.tr(AppStrings.allGroups),),
                 ],
               ),
             ),

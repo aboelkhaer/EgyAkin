@@ -104,7 +104,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
             child: Row(
               children: [
                 Text(
-                  widget.isPostLikes ? 'Post Likes:' : 'Group Members:',
+                  widget.isPostLikes ? context.tr(AppStrings.postLikes) : context.tr(AppStrings.groupMembers),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
@@ -520,10 +520,10 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                             ),
                             Text(
                               doctorModel.id.toString() == widget.ownerId
-                                  ? 'Admin'
+                                  ? context.tr(AppStrings.adminOfGroup)
                                   : isPending
-                                      ? 'Pending'
-                                      : 'Member',
+                                      ? context.tr(AppStrings.pending)
+                                      : context.tr(AppStrings.memberOfGroup),
                               style: TextStyle(
                                 color: Colors.grey.shade500,
                                 fontWeight: FontWeight.bold,

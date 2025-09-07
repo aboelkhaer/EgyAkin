@@ -1,6 +1,6 @@
 import '../../../../exports.dart';
 
-class EmailVerificationCubit extends Cubit<EmailVerificationState> {
+class EmailVerificationCubit extends Cubit<EmailVerificationState> with WidgetsBindingObserver {
   EmailVerificationCubit(
     this._sendEmailForVerificationUsecase,
     this._sendOTPForEmailVerificationUsecase,
@@ -16,21 +16,57 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> {
   Timer? _timer;
   int countdown = AppStrings.resendTimer;
   bool isOTPDone = false;
+  DateTime? _backgroundTime;
+  bool _isTimerActive = false;
 
   @override
   Future<void> close() {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
+    WidgetsBinding.instance.removeObserver(this);
     firstOTPFocusNode.dispose();
     return super.close();
   }
 
+  void initializeLifecycleObserver() {
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      // App went to background
+      if (_isTimerActive && _timer != null && _timer!.isActive) {
+        _backgroundTime = DateTime.now();
+        _timer!.cancel();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      // App came back to foreground
+      if (_isTimerActive && _backgroundTime != null) {
+        final timeInBackground = DateTime.now().difference(_backgroundTime!).inSeconds;
+        countdown = (countdown - timeInBackground).clamp(0, AppStrings.resendTimer);
+        
+        if (countdown <= 0) {
+          emit(const EmailVerificationState.countDowncompleted());
+          _isTimerActive = false;
+        } else {
+          startCountdown();
+        }
+        _backgroundTime = null;
+      }
+    }
+  }
+
   void startCountdown() {
+    _isTimerActive = true;
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       countdown--;
       if (countdown <= 0) {
         _timer!.cancel();
+        _isTimerActive = false;
         emit(const EmailVerificationState.countDowncompleted());
       } else {
         emit(EmailVerificationState.countDownInProgress(countdown));

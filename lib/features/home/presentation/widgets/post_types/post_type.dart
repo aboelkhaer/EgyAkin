@@ -1,5 +1,4 @@
 import 'package:html/parser.dart' show parse;
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../../exports.dart';
 
@@ -123,11 +122,11 @@ class PostType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago
-                                      .format(DateTime.parse(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                         postModel.updatedAt.toString(),
-                                      ))
-                                      .toString(),
+                                        context,
+                                      ),
                                   style: TextStyle(
                                     color: AppColors.description,
                                     fontSize: 9.sp,

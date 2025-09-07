@@ -2,9 +2,10 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/community/data/models/get_posts_community_model_response.dart';
-import 'package:egy_akin/features/community/domain/usecases/add_option_on_poll_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/data/models/poll_model.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/creat_post_with_text_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/create_post_with_image_in_community_usecase.dart';
@@ -12,7 +13,7 @@ import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_
 import 'package:egy_akin/features/create_post_in_community/domain/usecases/edit_post_with_text_in_community_usecase.dart';
 import 'package:egy_akin/features/create_post_in_community/presentation/cubit/create_post_in_community_state.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
@@ -103,7 +104,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     }
   }
 
-  Future<void> pickImageAndShowIt(bool isCamera) async {
+  Future<void> pickImageAndShowIt(bool isCamera, BuildContext context) async {
     try {
       emit(loadingState()); // Show loading state
 
@@ -124,7 +125,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       emit(loadedState()); // Update with new images
     } catch (e) {
       debugPrint('Error picking images: $e');
-      emit(loadedState(errorMessage: 'Failed to pick images'));
+      emit(loadedState(errorMessage: LocalizationService.instance.translate(AppStrings.failedToPickImages)));
     }
   }
 
@@ -245,7 +246,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       if (imagesPicked.isEmpty && postContent.trim() == '') {
         customSnackBar(
           context: context,
-          message: 'Write something to publish.',
+          message: LocalizationService.instance.translate(AppStrings.writeSomethingToPublish),
         );
         return;
       }
@@ -264,13 +265,13 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           editableFeed!.mediaPath!.isEmpty) {
         customSnackBar(
           context: context,
-          message: 'Write something to publish.',
+          message: LocalizationService.instance.translate(AppStrings.writeSomethingToPublish),
         );
         return;
       }
       if (imagesPicked.isNotEmpty ||
           editableFeed!.existingMediaPath!.isNotEmpty) {
-        editPostWithImageInCommunity(groupId); // Handle multiple images
+        editPostWithImageInCommunity(groupId, context); // Handle multiple images
         return;
       }
       // if (pollModel != null) {
@@ -288,7 +289,6 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           editableFeed!.content != null &&
           editableFeed!.content != '' &&
           editableFeed!.mediaPath!.isEmpty) {
-        log('text type');
         editPostWithTextInCommunity(groupId, pollModel == null ? 'text' : null,
             pollModel ?? const PollModel());
         return;
@@ -420,7 +420,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  Future<void> editPostWithImageInCommunity(String? groupId) async {
+  Future<void> editPostWithImageInCommunity(String? groupId,  context) async {
     if (editableFeed == null) {
       emit(
         state.maybeMap(
@@ -431,7 +431,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
             false,
             false,
             false,
-            'No post data available for editing',
+            LocalizationService.instance.translate(AppStrings.noPostDataAvailableForEditing),
           ),
         ),
       );
@@ -469,7 +469,6 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
       final multipartFiles = await convertFilesToMultipart(optimizedFiles);
 
-      log('Sending existingMediaPaths: ${editableFeed!.existingMediaPath}');
 
       final result = await _editPostWithImageInCommunityUsecase.execute(
         EditPostWithImageInCommunityUsecaseInput(

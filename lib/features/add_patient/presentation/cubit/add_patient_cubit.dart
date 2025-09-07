@@ -57,7 +57,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'You must select at least one choice. \n{${question.question}}',
+                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
                     snackbarErrorCounter += 1),
               ));
 
@@ -77,7 +77,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                   false,
                   0,
                   false,
-                  AppStrings.somethingWentWrong,
+                  LocalizationService.instance.translate(AppStrings.somethingWentWrong),
                   snackbarErrorCounter += 1),
             ));
             isValid = false;
@@ -94,7 +94,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                   false,
                   0,
                   false,
-                  'You must add "Others" field in \n{${question.question}}',
+                  '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
                   snackbarErrorCounter += 1),
             ));
 
@@ -117,7 +117,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'Name should contain only English letters',
+                    LocalizationService.instance.translate(AppStrings.nameShouldContainOnlyEnglishLetters),
                     snackbarErrorCounter += 1),
               ));
 
@@ -137,7 +137,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'National ID should have 14 digits',
+                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1),
               ));
 
@@ -152,7 +152,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'National ID should have 14 digits',
+                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1),
               ));
               isValid = false;
@@ -172,7 +172,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'Phone should have 11 digits',
+                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1),
               ));
 
@@ -187,7 +187,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'Phone should have 11 digits',
+                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1),
               ));
               isValid = false;
@@ -211,7 +211,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    'Age should be less than 120',
+                    LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120),
                     snackbarErrorCounter += 1),
               ));
 
@@ -229,7 +229,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                 false,
                 0,
                 false,
-                'This question is required \n{${question.question}}',
+                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
                 snackbarErrorCounter += 1),
           ));
 

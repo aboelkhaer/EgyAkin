@@ -84,7 +84,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Poll'),
+        title:  Text(context.tr(AppStrings.createPoll)),
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
@@ -102,7 +102,7 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
               children: [
                 // Question Field (Optional)
                 CustomTextFormField(
-                  title: 'Ask a question (optional)',
+                  title: context.tr(AppStrings.askAQuestion),
                   textFormFieldController: _questionController,
                   textInputType: TextInputType.text,
                   validator: (value) => null,
@@ -111,8 +111,8 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
                 const SizedBox(height: 20),
 
                 // Options Title
-                const Text(
-                  'Options',
+                 Text(
+                  context.tr(AppStrings.options),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
@@ -131,13 +131,13 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
                             child: CustomTextFormField(
                               key: ValueKey(
                                   'option_$index'), // Unique key for each CustomTextFormField
-                              title: 'Option ${index + 1}',
+                              title: '${context.tr(AppStrings.option)} ${index + 1}',
                               textFormFieldController:
                                   _optionControllers[index],
                               textInputType: TextInputType.text,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter an option';
+                                  return context.tr(AppStrings.pleaseEnterAnOption);
                                 }
                                 return null;
                               },
@@ -157,19 +157,21 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
                 // Add Another Option Button
                 TextButton(
                   onPressed: _addOption,
-                  child: const Text('+ Add another option'),
+                  child:  Text('+ ${context.tr(AppStrings.addAnotherOption)}'),
                 ),
                 const SizedBox(height: 20),
 
                 // Settings Section
-                const Text(
-                  'Settings',
+                 Text(
+                  context.tr(AppStrings.settings),
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
 
                 SwitchListTile(
-                  title: const Text('Allow members to add options'),
+                  title:  Text(
+                    context.tr(AppStrings.allowAddOptions),
+                  ),
                   value: _allowAddOptions,
                   onChanged: (value) {
                     setState(() {
@@ -178,7 +180,9 @@ class _CreatePollScreenState extends State<CreatePollScreen> {
                   },
                 ),
                 SwitchListTile(
-                  title: const Text('Allow people to choose multiple options'),
+                  title:  Text(
+                    context.tr(AppStrings.allowMultipleChoices),
+                  ),
                   value: _allowMultipleChoices,
                   onChanged: (value) {
                     setState(() {

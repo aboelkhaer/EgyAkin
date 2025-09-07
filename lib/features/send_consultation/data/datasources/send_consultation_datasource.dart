@@ -1,3 +1,6 @@
+import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 
 import '../../../../exports.dart';
@@ -16,6 +19,22 @@ abstract class SendConsultationDataSource {
     required String message,
     required List<String> doctorsIDS,
   });
+  Future<GetMembersForConsultationModelResponse> getMembersForConsultation({
+    required String consultationId,
+  });
+  Future<RemoveMemberFromConsultationModelResponse> removeMemberFromConsultation({
+    required String consultationId,
+    required String doctorId,
+  });
+  Future<AddDoctorsForConsultationModelResponse> addDoctorsForConsultation({
+    required String consultationId,
+    required String message,
+    required List<String> doctorsIDS,
+  });
+
+
+
+
 }
 
 class SendConsultationDataSourceImpl implements SendConsultationDataSource {
@@ -44,4 +63,20 @@ class SendConsultationDataSourceImpl implements SendConsultationDataSource {
       required List<String> doctorsIDS}) async {
     return await _apiServices.sendGroupInvitation(groupId, message, doctorsIDS);
   }
+  @override
+  Future<GetMembersForConsultationModelResponse> getMembersForConsultation({required String consultationId}) async {
+    return await _apiServices.getMembersForConsultation(consultationId);
+  }
+
+  @override
+  Future<RemoveMemberFromConsultationModelResponse> removeMemberFromConsultation({required String consultationId, required String doctorId}) async {
+    return await _apiServices.removeMemberFromConsultation(consultationId, doctorId);
+  }
+
+  @override
+  Future<AddDoctorsForConsultationModelResponse> addDoctorsForConsultation({required String consultationId, required String message, required List<String> doctorsIDS}) async {
+    return await _apiServices.addDoctorsForConsultation(consultationId, message, doctorsIDS);
+  }
+
+
 }

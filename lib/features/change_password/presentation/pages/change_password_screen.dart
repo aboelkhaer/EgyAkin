@@ -11,7 +11,7 @@ class ChangePasswordScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Change Password'),
+        title: Text(context.tr(AppStrings.changePassword)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -22,7 +22,7 @@ class ChangePasswordScreen extends StatelessWidget {
               child: Column(
                 children: [
                   CustomTextFormField(
-                    title: 'Old Password',
+                    title: context.tr(AppStrings.oldPassword),
                     textInputType: TextInputType.visiblePassword,
                     obscureText: true,
                     enableSuggestions: false,
@@ -34,7 +34,7 @@ class ChangePasswordScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 8.h),
                   CustomTextFormField(
-                    title: 'New Password',
+                    title: context.tr(AppStrings.newPassword),
                     textInputType: TextInputType.visiblePassword,
                     textFormFieldController: cubit.newPasswordController,
                     enableSuggestions: false,
@@ -46,18 +46,15 @@ class ChangePasswordScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: FlutterPwValidator(
+                        child: TranslatablePasswordValidator(
                             controller: cubit.newPasswordController,
                             minLength: 6,
                             uppercaseCharCount: 1,
                             numericCharCount: 2,
                             specialCharCount: 1,
                             width: 200.w,
-                            height: 100.h,
                             onSuccess: () {},
-                            onFail: () {
-                              return null;
-                            }),
+                            onFail: () {}),
                       ),
                       SizedBox(
                         width: 10.w,
@@ -94,7 +91,7 @@ class ChangePasswordScreen extends StatelessWidget {
                         onPressed: () {
                           cubit.changePassword();
                         },
-                        title: 'Save',
+                        title: context.tr(AppStrings.save),
                       );
                     },
                     loading: () {

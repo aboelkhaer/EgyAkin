@@ -20,7 +20,7 @@ class RegisterBotton extends StatelessWidget {
               width: double.infinity,
               child: CustomElevatedButton(
                 onPressed: () async => await cubit.register(context),
-                title: AppStrings.register,
+                title: context.tr(AppStrings.register),
                 // isDisable: !cubit.isConfirmationChecked,
               ),
             );

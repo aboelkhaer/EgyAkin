@@ -33,7 +33,7 @@ class TopDoctors extends StatelessWidget {
                   children: [
                     SizedBox(height: 10.h),
                     HomePatientTitleHeader(
-                      title: 'Top Doctors',
+                      title: context.tr(AppStrings.topDoctors),
                       patientCount: '',
                       leftArrow: '',
                       isWithIcon: false,

@@ -34,10 +34,10 @@ class ResetPasswordBotton extends StatelessWidget {
                   }
                 },
                 title: cubit.currentStep == 0
-                    ? AppStrings.continueText
+                    ? context.tr(AppStrings.continueText)
                     : cubit.currentStep == 1
-                        ? AppStrings.confirm
-                        : AppStrings.save),
+                        ? context.tr(AppStrings.confirm)
+                        : context.tr(AppStrings.save)),
           ),
           const SizedBox(height: 5),
           cubit.currentStep == 0
@@ -55,10 +55,11 @@ class ResetPasswordBotton extends StatelessWidget {
                             } else if (cubit.currentStep == 2) {}
                           },
                           title: cubit.currentStep == 0
-                              ? AppStrings.cancel
+                              ? context.tr(AppStrings.cancel)
                               : cubit.currentStep == 1
-                                  ? AppStrings.resend
-                                  : AppStrings.back,
+                                  ? context.tr(AppStrings.resend)
+                                  : context.tr(AppStrings.back),
+
                           isFlatBotton: true,
                         )
                       : const SizedBox.shrink(),

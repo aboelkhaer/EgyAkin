@@ -7,7 +7,7 @@ class SectionStatusText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      isSubmitStatus ? 'Completed' : 'Binding...',
+      isSubmitStatus ? context.tr(AppStrings.completed) : '${context.tr(AppStrings.pending)}...',
       style: TextStyle(
         color:
             isSubmitStatus ? AppColors.primary.withOpacity(0.7) : Colors.amber,

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import '../../../../exports.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class ShowSingleFeedScreen extends StatefulWidget {
   final HomeModelResponse homeDataModel;
@@ -316,9 +315,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                               Text(
                                                 // formatDateTimeForCommunity(
                                                 //     widget.feed.createdAt.toString()),
-                                                timeago.format(DateTime.parse(
+                                                TimeAgoService.instance.formatTimeAgoFromString(
                                                     feedToUse.createdAt
-                                                        .toString())),
+                                                        .toString(),
+                                                    context),
                                                 style: TextStyle(
                                                   color: AppColors.description,
                                                   fontSize: 11.sp,
@@ -367,10 +367,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                         context: context,
                                                         builder: (context) {
                                                           return AlertDialog(
-                                                            title: const Text(
-                                                                'Delete Post'),
-                                                            content: const Text(
-                                                                'Are you sure you want to delete this post?'),
+                                                            title:  Text(
+                                                                context.tr(AppStrings.deletePost),),
+                                                            content:  Text(
+                                                                context.tr(AppStrings.areYouSureYouWantToDeleteThisPost),),
                                                             actions: [
                                                               TextButton(
                                                                 onPressed: () {
@@ -378,7 +378,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                       context); // Close the dialog
                                                                 },
                                                                 child: Text(
-                                                                  'Cancel',
+                                                                  context.tr(AppStrings.cancel),
                                                                   style:
                                                                       TextStyle(
                                                                     color: Colors
@@ -403,8 +403,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                       ?.pop();
                                                                 },
                                                                 child:
-                                                                    const Text(
-                                                                  'Delete',
+                                                                     Text(
+                                                                  context.tr(AppStrings.delete),
                                                                   style: TextStyle(
                                                                       color: Colors
                                                                           .red),
@@ -443,7 +443,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                     .description),
                                                             SizedBox(
                                                                 width: 8.w),
-                                                            const Text('Edit'),
+                                                             Text(context.tr(AppStrings.edit),
+                                                             ),
                                                           ],
                                                         ),
                                                       ),
@@ -471,8 +472,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                     .description),
                                                             SizedBox(
                                                                 width: 8.w),
-                                                            const Text(
-                                                                'Delete'),
+                                                             Text(
+                                                                context.tr(AppStrings.delete),),
                                                           ],
                                                         ),
                                                       ),
@@ -683,8 +684,9 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                       Text(
                                         // formatDateTimeForCommunity(
                                         //     widget.feed.createdAt.toString()),
-                                        timeago.format(DateTime.parse(
-                                            feedToUse.createdAt.toString())),
+                                        TimeAgoService.instance.formatTimeAgoFromString(
+                                            feedToUse.createdAt.toString(),
+                                            context),
                                         style: TextStyle(
                                           color: AppColors.description,
                                           fontSize: 11.sp,
@@ -726,10 +728,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                 context: context,
                                                 builder: (context) {
                                                   return AlertDialog(
-                                                    title: const Text(
-                                                        'Delete Post'),
-                                                    content: const Text(
-                                                        'Are you sure you want to delete this post?'),
+                                                    title:  Text(
+                                                        context.tr(AppStrings.deletePost),),
+                                                    content:  Text(
+                                                        context.tr(AppStrings.areYouSureYouWantToDeleteThisPost),),
                                                     actions: [
                                                       TextButton(
                                                         onPressed: () {
@@ -737,7 +739,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               context); // Close the dialog
                                                         },
                                                         child: Text(
-                                                          'Cancel',
+                                                          context.tr(AppStrings.cancel),
+
                                                           style: TextStyle(
                                                             color: Colors
                                                                 .grey.shade600,
@@ -759,8 +762,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               .currentState
                                                               ?.pop();
                                                         },
-                                                        child: const Text(
-                                                          'Delete',
+                                                        child:  Text(
+                                                          context.tr(AppStrings.delete),
                                                           style: TextStyle(
                                                               color:
                                                                   Colors.red),
@@ -791,7 +794,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                         color: AppColors
                                                             .description),
                                                     SizedBox(width: 8.w),
-                                                    const Text('Edit'),
+                                                     Text(context.tr(AppStrings.edit),
+                                                     ),
                                                   ],
                                                 ),
                                               ),
@@ -812,7 +816,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                         color: AppColors
                                                             .description),
                                                     SizedBox(width: 8.w),
-                                                    const Text('Delete'),
+                                                     Text(context.tr(AppStrings.delete),
+                                                     ),
                                                   ],
                                                 ),
                                               ),

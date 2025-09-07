@@ -47,31 +47,36 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Row(
-          children: [
-            Flexible(
-              child: Tooltip(
-                message: widget.patientName,
-                child: Text(
-                  (widget.currentDoctorModel.id.toString() ==
-                              widget.doctorId.toString() ||
-                          widget.homeDataModel.role == AppStrings.roleAdmin)
-                      ? widget.patientName.toString()
-                      : convertTextToSymbols(widget.patientName),
-                  style: TextStyle(fontSize: 14.sp),
-                  overflow: TextOverflow.ellipsis,
-                  textDirection:
-                      RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
-                          ? ui.TextDirection.rtl
-                          : ui.TextDirection.ltr,
+       
+        title: Directionality(
+          textDirection:  TextDirection.ltr,
+          child: Row(
+            mainAxisAlignment: context.currentLocale?.languageCode == 'ar' ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              Flexible(
+                child: Tooltip(
+                  message: widget.patientName,
+                  child: Text(
+                    (widget.currentDoctorModel.id.toString() ==
+                                widget.doctorId.toString() ||
+                            widget.homeDataModel.role == AppStrings.roleAdmin)
+                        ? widget.patientName.toString()
+                        : convertTextToSymbols(widget.patientName),
+                    style: TextStyle(fontSize: 14.sp),
+                    overflow: TextOverflow.ellipsis,
+                    textDirection:
+                        RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
+                            ? ui.TextDirection.rtl
+                            : ui.TextDirection.ltr,
+                  ),
                 ),
               ),
-            ),
-            Text(
-              '\'s Outcome',
-              style: TextStyle(fontSize: 14.sp),
-            ),
-          ],
+              Text(
+                '${LocalizationService.instance.translate(AppStrings.sOutcome)}',
+                style: TextStyle(fontSize: 14.sp),
+              ),
+            ],
+          ),
         ),
         centerTitle: true,
       ),

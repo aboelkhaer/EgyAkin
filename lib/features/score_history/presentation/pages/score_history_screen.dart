@@ -1,5 +1,4 @@
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_state.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class ScoreHistoryScreen extends StatefulWidget {
@@ -82,7 +81,7 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
             child: Row(
               children: [
                 Text(
-                  'Score History:',
+                  context.tr(AppStrings.scoreHistory),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 14.sp,
@@ -149,8 +148,8 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
                                                 Text(
                                                   int.parse(scoreModel.score!) >
                                                           1
-                                                      ? 'Points:'
-                                                      : 'Point:',
+                                                      ? '${context.tr(AppStrings.points)}:'
+                                                      : context.currentLocale?.languageCode == 'ar' ? '${context.tr(AppStrings.points)}:' : '${context.tr(AppStrings.point)}:',
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
@@ -174,12 +173,12 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
                                               MainAxisAlignment.end,
                                           children: [
                                             Text(
-                                              timeago
-                                                  .format(DateTime.parse(
+                                              TimeAgoService.instance
+                                                  .formatTimeAgoFromString(
                                                     scoreModel.updateAt
                                                         .toString(),
-                                                  ))
-                                                  .toString(),
+                                                    context,
+                                                  ),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   color: Colors.white,

@@ -20,6 +20,7 @@ class GetConsultationDetailsModelResponse
     @JsonKey(name: 'doctor_lname') String? doctorLastName,
     @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
     List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
+    @JsonKey(name: 'is_open') bool? isOpen,
   }) = _GetConsultationDetailsModelResponse;
   factory GetConsultationDetailsModelResponse.fromJson(
           Map<String, dynamic> json) =>

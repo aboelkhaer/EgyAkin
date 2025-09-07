@@ -42,7 +42,7 @@ class RegisterScreen extends StatelessWidget {
                                 },
                               ),
                               Text(
-                                'I have read and agree to the ',
+                                '${context.tr(AppStrings.iHaveReadAndAgreeToThe)} ',  
                                 style: TextStyle(fontSize: 10.sp),
                               ),
                               GestureDetector(
@@ -55,7 +55,7 @@ class RegisterScreen extends StatelessWidget {
                                   );
                                 },
                                 child: Text(
-                                  'Privacy Policy',
+                                  context.tr(AppStrings.privacyPolicy),
                                   style: TextStyle(
                                       color: Colors.blue, fontSize: 10.sp),
                                 ),

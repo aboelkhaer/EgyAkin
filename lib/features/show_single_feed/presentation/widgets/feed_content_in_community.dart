@@ -1,11 +1,7 @@
-import 'package:egy_akin/app/shared/widgets/hash_tag_text.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
-import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/images_in_single_post.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:ui' as ui;
 import '../../../../exports.dart';
 

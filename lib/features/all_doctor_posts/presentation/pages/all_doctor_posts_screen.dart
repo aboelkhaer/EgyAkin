@@ -70,7 +70,12 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
     AllDoctorPostsCubit cubit = AllDoctorPostsCubit.get(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.doctorName),
+        title: Directionality(
+          textDirection: context.currentLocale?.languageCode == 'ar'
+              ? TextDirection.ltr
+              : TextDirection.rtl,
+          child: Text('${widget.doctorName} ${context.tr(AppStrings.posts)}'),
+        ),
       ),
       body: BlocBuilder<AllDoctorPostsCubit, AllDoctorPostsState>(
         builder: (context, state) {

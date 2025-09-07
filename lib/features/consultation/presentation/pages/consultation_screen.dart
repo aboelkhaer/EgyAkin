@@ -1,6 +1,6 @@
 import '../../../../exports.dart';
 
-class ConsultationScreen extends StatelessWidget {
+class ConsultationScreen extends StatefulWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final int initialTab;
@@ -11,14 +11,21 @@ class ConsultationScreen extends StatelessWidget {
       required this.initialTab});
 
   @override
+  State<ConsultationScreen> createState() => _ConsultationScreenState();
+}
+
+class _ConsultationScreenState extends State<ConsultationScreen> {
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Consultation'),
+        title: Text(context.tr(AppStrings.consultation)),
       ),
       body: DefaultTabController(
         length: 2,
-        initialIndex: initialTab,
+        initialIndex: widget.initialTab,
         child: Column(
           children: [
             ColoredBox(
@@ -35,12 +42,12 @@ class ConsultationScreen extends StatelessWidget {
                 isScrollable: false,
                 labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                 unselectedLabelColor: Colors.grey.shade500,
-                tabs: const [
+                tabs: [
                   Tab(
-                    text: 'My Consultations',
+                    text: context.tr(AppStrings.myConsultations),
                   ),
                   Tab(
-                    text: 'Received',
+                    text: context.tr(AppStrings.received),
                   ),
                 ],
               ),
@@ -49,12 +56,12 @@ class ConsultationScreen extends StatelessWidget {
               child: TabBarView(
                 children: [
                   MyConsultationsTab(
-                    currentDoctorModel: currentDoctorModel,
-                    homeDataModel: homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                    homeDataModel: widget.homeDataModel,
                   ),
                   ReceivedTab(
-                    currentDoctorModel: currentDoctorModel,
-                    homeDataModel: homeDataModel,
+                    currentDoctorModel: widget.currentDoctorModel,
+                    homeDataModel: widget.homeDataModel,
                   ),
                 ],
               ),

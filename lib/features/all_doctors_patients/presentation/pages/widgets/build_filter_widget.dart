@@ -52,7 +52,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                 child: Row(
                   children: [
                     Text(
-                      'Create filter',
+                      context.tr(AppStrings.createFilter),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16.sp,
@@ -119,7 +119,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         widget.cubit.resetFormData();
                         setState(() {});
                       },
-                      title: 'Reset',
+                      title: context.tr(AppStrings.reset),
                     ),
                   ),
                   SizedBox(width: 5.w),
@@ -129,7 +129,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         navigatorKey.currentState?.pop();
                         widget.cubit.applyPatientFilters();
                       },
-                      title: 'Apply',
+                      title: context.tr(AppStrings.apply),
+
                     ),
                   ),
                   // BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
@@ -218,7 +219,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
             borderRadius: BorderRadius.circular(10),
           ),
           child: DropdownButtonFormField<dynamic>(
-            hint: Text(selectedValue ?? 'Choose'),
+            hint: Text(selectedValue ?? context.tr(AppStrings.choose)),
             validator: (value) {
               return null;
             },

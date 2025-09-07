@@ -88,9 +88,12 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
           onTap: () {
             animateToTopOfScreen(cubit.scrollController!);
           },
-          child: Text(
-            'Dr.${capitalizeFirstText(widget.doctorFirstName)}\'s Patients',
-            style: const TextStyle(),
+          child: Directionality(
+            textDirection: context.currentLocale?.languageCode == 'ar' ? TextDirection.ltr : TextDirection.rtl,
+            child: Text(
+              'Dr.${capitalizeFirstText(widget.doctorFirstName)}\'s ${LocalizationService.instance.translate(AppStrings.patients)}',
+              style: const TextStyle(),
+            ),
           ),
         ),
       ),

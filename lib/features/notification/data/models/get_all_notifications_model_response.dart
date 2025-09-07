@@ -49,6 +49,7 @@ class NotificationsModel with _$NotificationsModel {
     bool? read,
     String? type,
     String? content,
+    @JsonKey(name: 'is_open') bool? isOpen,
     @JsonKey(name: 'type_id') int? typeId,
     @JsonKey(name: 'created_at') String? createdAt,
     PatientNotificationModel? patient,

@@ -12,7 +12,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   Future<Either<Failure, AuthenticationModelResponse>> signIn({
     required String email,
     required String password,
-    required String fcmToken,
+    required String? fcmToken,
     required String deviceId,
   }) async {
     if (await networkInfo.isConnected) {
@@ -60,7 +60,7 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
 
   @override
   Future<Either<Failure, SendFCMTokenModelResponse>> sendFCMToken(
-      {required String fcmToken}) async {
+      {required String? fcmToken}) async {
     if (await networkInfo.isConnected) {
       try {
         final response = await authenticationRemoteDataSource.sendFCMToken(

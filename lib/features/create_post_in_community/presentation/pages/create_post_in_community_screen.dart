@@ -62,15 +62,16 @@ class _CreatePostInCommunityScreenState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete Poll'),
-          content: const Text('Are you sure you want to delete this poll?'),
+          title:  Text(context.tr(AppStrings.deletePoll)),
+          content: Text(context.tr(AppStrings.areYouSureYouWantToDeleteThisPoll)),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close the dialog
               },
               child: Text(
-                'Cancel',
+                context.tr(AppStrings.cancel),
+
                 style: TextStyle(
                   color: Colors.grey.shade600,
                 ),
@@ -119,7 +120,7 @@ class _CreatePostInCommunityScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.feed == null ? 'Create Post' : 'Edit Post',
+          widget.feed == null ? context.tr(AppStrings.createPost) : context.tr(AppStrings.editPost),
         ),
         actions: [
           Padding(
@@ -331,8 +332,8 @@ class _CreatePostInCommunityScreenState
                                         ?.content, // Set your initial value here
                                     onTapOutside: (event) =>
                                         FocusScope.of(context).unfocus(),
-                                    decoration: const InputDecoration(
-                                      hintText: 'What\'s on your mind?',
+                                    decoration:  InputDecoration(
+                                      hintText: context.tr(AppStrings.whatsOnYourMind),
                                       hintStyle: TextStyle(
                                         color: Colors.grey,
                                       ),
@@ -433,8 +434,8 @@ class _CreatePostInCommunityScreenState
                                           CrossAxisAlignment.start,
                                       children: [
                                         // Poll Header
-                                        const Text(
-                                          'Poll',
+                                         Text(
+                                          context.tr(AppStrings.poll),
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
@@ -502,7 +503,7 @@ class _CreatePostInCommunityScreenState
                                                   icon:
                                                       Icons.check_box_outlined,
                                                   label:
-                                                      'Allow multiple choices',
+                                                     context.tr(AppStrings.allowMultipleChoices),
                                                 ),
                                               if (_poll?.allowAddOptions ??
                                                   false)
@@ -510,7 +511,7 @@ class _CreatePostInCommunityScreenState
                                                   icon:
                                                       Icons.add_circle_outline,
                                                   label:
-                                                      'Allow members to add options',
+                                                      context.tr(AppStrings.allowAddOptions),
                                                 ),
                                             ],
                                           ),
@@ -521,7 +522,8 @@ class _CreatePostInCommunityScreenState
                                   // Edit Icon
                                   Positioned(
                                     top: 8,
-                                    right: 8,
+                                    right: LocalizationService.instance.isRTL ? null : 8,
+                                    left: LocalizationService.instance.isRTL ? 8 : null,
                                     child: IconButton(
                                       icon: const Icon(
                                         Icons.edit,
@@ -536,7 +538,8 @@ class _CreatePostInCommunityScreenState
                                   // Delete Icon
                                   Positioned(
                                     top: 8,
-                                    right: 40,
+                                    right: LocalizationService.instance.isRTL ? null : 40,
+                                    left: LocalizationService.instance.isRTL ? 40 : null,
                                     child: IconButton(
                                       icon: const Icon(
                                         Icons.delete,
@@ -738,7 +741,7 @@ class _CreatePostInCommunityScreenState
                                 widget.feed!.poll != null) {
                               return Center(
                                 child: Text(
-                                  'Your poll has already been published.',
+                                  context.tr(AppStrings.yourPollHasBeenPublished),
                                   style: TextStyle(color: Colors.grey.shade600),
                                 ),
                               );
@@ -807,16 +810,16 @@ class _CreatePostInCommunityScreenState
                                     if (!hasPoll) ...[
                                       ElevatedButton.icon(
                                         onPressed: () =>
-                                            cubit.pickImageAndShowIt(false),
+                                            cubit.pickImageAndShowIt(false, context),
                                         icon: const Icon(Icons.photo_library),
-                                        label: const Text("Gallery"),
+                                        label:  Text(context.tr(AppStrings.gallery)),
                                       ),
                                       const SizedBox(width: 10),
                                       ElevatedButton.icon(
                                         onPressed: () =>
-                                            cubit.pickImageAndShowIt(true),
+                                            cubit.pickImageAndShowIt(true, context),
                                         icon: const Icon(Icons.camera_alt),
-                                        label: const Text("Camera"),
+                                        label:  Text(context.tr(AppStrings.camera)),
                                       ),
                                       const SizedBox(width: 10),
                                     ],
@@ -824,7 +827,8 @@ class _CreatePostInCommunityScreenState
                                       ElevatedButton.icon(
                                         onPressed: _createPoll,
                                         icon: const Icon(Icons.poll),
-                                        label: const Text("Poll"),
+                                        label:  Text(context.tr(AppStrings.poll),
+                                        ),
                                       ),
                                   ],
                                 ),

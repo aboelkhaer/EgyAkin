@@ -20,6 +20,7 @@ class GetCurrentDoctorConsultationModelResponse
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
     @JsonKey(name: 'consult_message') String? consultMessage,
+    @JsonKey(name: 'is_open') bool? isOpen,
   }) = _GetCurrentDoctorConsultationModelResponse;
   factory GetCurrentDoctorConsultationModelResponse.fromJson(
           Map<String, dynamic> json) =>

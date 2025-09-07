@@ -79,9 +79,9 @@ class _CurrentDoctorPatientsScreenState
           onTap: () {
             animateToTopOfScreen(cubit.scrollController!);
           },
-          child: const Text(
-            AppStrings.yourPatients,
-            style: TextStyle(),
+          child: Text(
+            context.tr(AppStrings.yourPatients),
+            style: TextStyle(fontSize: 16.sp),
           ),
         ),
       ),

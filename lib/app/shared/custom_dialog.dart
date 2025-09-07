@@ -55,7 +55,10 @@ showCustomDialog(
                   ),
                 ),
               ],
-              actionsPadding: const EdgeInsets.only(bottom: 20, right: 20),
+              actionsPadding: EdgeInsets.only(
+                  bottom: 20,
+                  right: context.currentLocale?.languageCode == 'ar' ? 0 : 20,
+                  left: context.currentLocale?.languageCode == 'ar' ? 20 : 0),
             ),
           ),
         );

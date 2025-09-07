@@ -105,7 +105,8 @@ class GroupsHomeView extends StatelessWidget {
                             ],
                           ),
                           child: Text(
-                            "JOIN OUR GROUPS",
+                            context.tr(AppStrings.joinOurGroups),
+
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,

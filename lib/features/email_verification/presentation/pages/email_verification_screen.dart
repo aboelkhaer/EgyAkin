@@ -12,6 +12,7 @@ class EmailVerifciationScreen extends StatefulWidget {
 class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
   @override
   void initState() {
+    context.read<EmailVerificationCubit>().initializeLifecycleObserver();
     context.read<EmailVerificationCubit>().sendEmailForVerification();
     super.initState();
   }
@@ -20,7 +21,12 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
   Widget build(BuildContext context) {
     EmailVerificationCubit cubit = EmailVerificationCubit.get(context);
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.emailVerification)),
+      appBar: AppBar(
+        title: Text(
+         context.tr(AppStrings.emailVerification),
+
+        ),
+      ),
       body: BlocConsumer<EmailVerificationCubit, EmailVerificationState>(
         listener: (context, state) {
           state.maybeWhen(
@@ -31,6 +37,10 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
             },
             error: (message) {
               customSnackBar(message: message, context: context);
+              Future.delayed(const Duration(milliseconds: 0), () {
+                navigatorKey.currentState
+                    ?.pop();
+              });
             },
           );
         },
@@ -196,7 +206,8 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                               onPressed: () {
                                 cubit.sendOTPForEmailVerification();
                               },
-                              title: AppStrings.confirm,
+                              title: context.tr(AppStrings.confirm),
+
                             ),
                           ),
                           BlocBuilder<EmailVerificationCubit,
@@ -210,7 +221,8 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                                       onPressed: () {
                                         cubit.resendOtp();
                                       },
-                                      title: AppStrings.resend,
+                                      title: context.tr(AppStrings.resend),
+
                                       isFlatBotton: true,
                                     ),
                                   );
@@ -382,7 +394,7 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                               onPressed: () {
                                 cubit.sendOTPForEmailVerification();
                               },
-                              title: AppStrings.confirm,
+                              title: context.tr(AppStrings.confirm),
                             ),
                           ),
                           BlocBuilder<EmailVerificationCubit,
@@ -396,7 +408,7 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                                       onPressed: () {
                                         cubit.resendOtp();
                                       },
-                                      title: AppStrings.resend,
+                                      title: context.tr(AppStrings.resend),
                                       isFlatBotton: true,
                                     ),
                                   );

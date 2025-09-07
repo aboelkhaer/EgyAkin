@@ -21,7 +21,7 @@ class GetConsultationSearchModelResponse
 class DoctorModelInConsultationModelResponse
     with _$DoctorModelInConsultationModelResponse {
   const factory DoctorModelInConsultationModelResponse({
-    int? id,
+    @JsonKey(fromJson: _parseId) int? id,
     @JsonKey(name: 'name') String? firstName,
     @JsonKey(name: 'lname') String? lastName,
     String? email,
@@ -33,8 +33,21 @@ class DoctorModelInConsultationModelResponse
     String? isSyndicateCardRequired,
     @JsonKey(name: 'patients_count') String? patientsCount,
     String? score,
+    String? role,
+    String? status,
+    String? isVerified,
   }) = _DoctorModelInConsultationModelResponse;
   factory DoctorModelInConsultationModelResponse.fromJson(
           Map<String, dynamic> json) =>
       _$DoctorModelInConsultationModelResponseFromJson(json);
+}
+
+// Helper function to parse ID from string or int
+int? _parseId(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is String) {
+    return int.tryParse(value);
+  }
+  return null;
 }

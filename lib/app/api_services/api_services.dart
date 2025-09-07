@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_patient_recommendation_model_response.dart';
@@ -8,6 +9,9 @@ import 'package:egy_akin/features/patient_section_details/data/models/delete_pat
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/search_for_dose_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/update_patient_recommendation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../exports.dart';
@@ -22,15 +26,15 @@ abstract class ApiServices {
 
   @POST(ApiEndPoint.signIn)
   Future<AuthenticationModelResponse> signIn(
-    @Field("email") String email,
-    @Field("password") String password,
-    @Field("fcmToken") String fcmToken,
-    @Field("deviceId") String deviceId,
+    @Field('email') String email,
+    @Field('password') String password,
+    @Field('fcmToken') String? fcmToken,
+    @Field('deviceId') String deviceId,
   );
   @POST(ApiEndPoint.register)
   Future<AuthenticationModelResponse> register(
     @Body() Map<String, dynamic> doctorModel,
-    @Field("deviceId") String deviceId,
+    @Field('deviceId') String deviceId,
   );
 
   @GET(ApiEndPoint.allPatients)
@@ -41,7 +45,7 @@ abstract class ApiServices {
   @GET('${ApiEndPoint.doctorProfileGetPatients}/{doctorId}')
   Future<GetProfilePatientsModelResponse> getProfilePatients(
     @Query('page') int pageNumber,
-    @Path("doctorId") String doctorId,
+    @Path('doctorId') String doctorId,
   );
 
   @GET(ApiEndPoint.currentPatientsHome)
@@ -51,50 +55,50 @@ abstract class ApiServices {
 
   @POST(ApiEndPoint.search)
   Future<GetSearchModelResponse> searchHome(
-    @Field("patient") String patient,
-    @Field("dose") String dose,
+    @Field('patient') String patient,
+    @Field('dose') String dose,
   );
   @PUT(ApiEndPoint.updateProfile)
   Future<UpdateDoctorProfileModelResponse> updateProfile(
-    @Field("name") String firstName,
-    @Field("lname") String lastName,
-    @Field("email") String email,
-    @Field("age") String age,
-    @Field("specialty") String specialty,
-    @Field("workingplace") String workingPlace,
-    @Field("phone") String phone,
-    @Field("job") String job,
-    @Field("highestdegree") String highestDegree,
-    @Field("registration_number") String registrationNumber,
+    @Field('name') String firstName,
+    @Field('lname') String lastName,
+    @Field('email') String email,
+    @Field('age') String age,
+    @Field('specialty') String specialty,
+    @Field('workingplace') String workingPlace,
+    @Field('phone') String phone,
+    @Field('job') String job,
+    @Field('highestdegree') String highestDegree,
+    @Field('registration_number') String registrationNumber,
   );
 
   @GET('${ApiEndPoint.sections}/{patientId}')
   Future<GetPatientSectionsModelResponse> getPatientSections(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
 
   @GET('${ApiEndPoint.getPatientSectionDetails}/{sectionId}/{patientId}')
   Future<GetPatientSectionDetailsModelResponse> getSectionDetails(
-    @Path("sectionId") String sectionId,
-    @Path("patientId") String patientId,
+    @Path('sectionId') String sectionId,
+    @Path('patientId') String patientId,
   );
 
   @DELETE('${ApiEndPoint.deletePatient}/{patientId}')
   Future<DeletePatientModelResponse> deletePatient(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
 
   @PUT('${ApiEndPoint.updateSectionDetails}/{sectionId}/{patientId}')
   // @POST(ApiEndPoint.updateSectionDetails)
   Future<UpdatePatientSectionDetailsModelResponse> updateSectionDetails(
-    @Path("sectionId") String sectionId,
-    @Path("patientId") String patientId,
+    @Path('sectionId') String sectionId,
+    @Path('patientId') String patientId,
     @Body() Map<String, dynamic> map,
   );
   @GET('${ApiEndPoint.getAddPatientsQuestions}/{sectionId}')
   Future<GetPatientHistoryForAddPatientModelResponse>
       getPatientHistoryForAddPatient(
-    @Path("sectionId") String sectionId,
+    @Path('sectionId') String sectionId,
   );
   @POST(ApiEndPoint.addPatientForFirstTime)
   Future<AddPatientForFirstTimeModelResponse> addPatientForFirstTime(
@@ -102,8 +106,8 @@ abstract class ApiServices {
   );
   @PUT('${ApiEndPoint.submitOutcome}/{sectionId}/{patientId}')
   Future<SubmitOutcomeModelResponse> submitOutcome(
-    @Path("sectionId") String sectionId,
-    @Path("patientId") String patientId,
+    @Path('sectionId') String sectionId,
+    @Path('patientId') String patientId,
     @Body() Map<String, dynamic> map,
   );
 
@@ -114,39 +118,39 @@ abstract class ApiServices {
 
   @GET('${ApiEndPoint.outcome}/{sectionId}/{patientId}')
   Future<GetOutcomeModelResponse> getOutcome(
-    @Path("sectionId") String sectionId,
-    @Path("patientId") String patientId,
+    @Path('sectionId') String sectionId,
+    @Path('patientId') String patientId,
   );
 
   @PUT('${ApiEndPoint.finalSubmit}/{patientId}')
   Future<FinalSubmitModelResponse> finalSubmit(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
   @GET('${ApiEndPoint.comment}/{patientId}')
   Future<GetPatientCommentsModelResponse> getPatientComments(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
   @POST(ApiEndPoint.comment)
   Future<AddPatientCommentsModelResponse> addComment(
-    @Field("patient_id") String patientId,
-    @Field("content") String content,
+    @Field('patient_id') String patientId,
+    @Field('content') String content,
   );
   @DELETE('${ApiEndPoint.comment}/{commentId}')
   Future<DeletePatientCommentsModelResponse> deleteComment(
-    @Path("commentId") String commentId,
+    @Path('commentId') String commentId,
   );
   @POST(ApiEndPoint.contactUs)
   Future<ContactUsModelResponseModelResponse> addContactUs(
-    @Field("message") String message,
+    @Field('message') String message,
   );
 
   @GET('${ApiEndPoint.postComments}/{postId}')
   Future<PostCommentsModelResponse> getPostComments(
-    @Path("postId") String postId,
+    @Path('postId') String postId,
   );
   @DELETE('${ApiEndPoint.postComments}/{commentId}')
   Future<DeletePostCommentModelResponse> deletePostComment(
-    @Path("commentId") String commentId,
+    @Path('commentId') String commentId,
   );
 
   // @GET(ApiEndPoint.notification)
@@ -162,30 +166,30 @@ abstract class ApiServices {
 
   @POST(ApiEndPoint.postComments)
   Future<AddCommentOnPostModelResponse> addCommentOnPost(
-    @Field("post_id") String postId,
-    @Field("content") String content,
+    @Field('post_id') String postId,
+    @Field('content') String content,
   );
 
   @POST(ApiEndPoint.forgetPassword)
   Future<ResetPasswordModelResponse> sendEmailForForgetPassword(
-    @Field("email") String email,
+    @Field('email') String email,
   );
   @POST(ApiEndPoint.resetPasswordVerification)
   Future<ResetPasswordModelResponse> verifyOTP(
-    @Field("email") String email,
-    @Field("otp") String otp,
+    @Field('email') String email,
+    @Field('otp') String otp,
   );
   @POST(ApiEndPoint.changePassword)
   Future<ResetPasswordModelResponse> changePassword(
-    @Field("email") String email,
-    @Field("password") String newPassword,
+    @Field('email') String email,
+    @Field('password') String newPassword,
   );
   @POST(ApiEndPoint.sendEmailVerification)
   Future<SendEmailForVerificationModelResponse> sendEmailVerification();
 
   @POST(ApiEndPoint.sendOTPForEmailVerification)
   Future<SendOTPForEmailVerificationModelResponse> sendOTPForEmailVerification(
-    @Field("otp") String otp,
+    @Field('otp') String otp,
   );
 
   @GET(ApiEndPoint.home)
@@ -199,12 +203,12 @@ abstract class ApiServices {
 
   @GET('${ApiEndPoint.getDoctorInfoView}/{doctorId}')
   Future<DoctorInfoViewModelResponse> getDoctorInfoView(
-    @Path("doctorId") String doctorId,
+    @Path('doctorId') String doctorId,
   );
 
   @GET('${ApiEndPoint.downloadPatientReport}/{patientId}')
   Future<DownloadPatientReportModelResponse> downloadPatientReport(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
 
   @GET(ApiEndPoint.appSettings)
@@ -213,35 +217,35 @@ abstract class ApiServices {
   @POST(ApiEndPoint.uploadSyndicateCard)
   @MultiPart()
   Future<UploadSyndicateCardModelResponse> uploadSyndicateCard(
-    @Part(name: "syndicate_card") File image,
+    @Part(name: 'syndicate_card') File image,
   );
 
   @POST(ApiEndPoint.changePasswordFeature)
   Future<ChangePasswordModelResponse> changePasswordFeature(
-    @Field("current_password") String oldPassword,
-    @Field("new_password") String newPassword,
+    @Field('current_password') String oldPassword,
+    @Field('new_password') String newPassword,
   );
   @POST(ApiEndPoint.sendFCMToken)
   Future<SendFCMTokenModelResponse> sendFCMToken(
-    @Field("token") String fcmToken,
+    @Field('token') String? fcmToken,
   );
 
   @GET('${ApiEndPoint.doctorProfileGetScoreHistory}/{doctorId}')
   Future<GetDoctorProfileScoreModelResponse> getDoctorProfileScoreHistory(
     @Query('page') int pageNumber,
-    @Path("doctorId") String doctorId,
+    @Path('doctorId') String doctorId,
   );
 
   @POST('${ApiEndPoint.consultationDoctorSearch}/{searchContent}')
   Future<GetConsultationSearchModelResponse> consultationDoctorSearch(
-    @Path("searchContent") String searchContent,
+    @Path('searchContent') String searchContent,
   );
 
   @POST(ApiEndPoint.createConsultation)
   Future<SendConsultationModelResponse> sendConsultation(
-    @Field("patient_id") String patientId,
-    @Field("consult_message") String message,
-    @Field("consult_doctor_ids") List<String> doctorsIDS,
+    @Field('patient_id') String patientId,
+    @Field('consult_message') String message,
+    @Field('consult_doctor_ids') List<String> doctorsIDS,
   );
 
   @GET(ApiEndPoint.getCurrentDoctorConsultation)
@@ -254,42 +258,42 @@ abstract class ApiServices {
 
   @GET('${ApiEndPoint.getConsultationDetails}/{consultationId}')
   Future<GetConsultationDetailsModelResponse> getConsultationDetails(
-    @Path("consultationId") String consultationId,
+    @Path('consultationId') String consultationId,
   );
 
   @PUT('${ApiEndPoint.addConsultationReply}/{consultationId}')
   Future<AddConsultationReplyModelResponse> addConsultationReply(
-    @Path("consultationId") String consultationId,
-    @Field("reply") String reply,
+    @Path('consultationId') String consultationId,
+    @Field('reply') String reply,
   );
 
   @GET('${ApiEndPoint.updateProfile}/{doctorId}/achievements')
   Future<List<GetAchievementsModelResponse>> getAchievements(
-    @Path("doctorId") String doctorId,
+    @Path('doctorId') String doctorId,
   );
 
   @PUT('${ApiEndPoint.syndicateCardVerifyRequest}/{doctorId}')
   Future<SyndicateCardVerifyModelResponse> changeSyndicateCardStatus(
-    @Field("isSyndicateCardRequired") String status,
-    @Path("doctorId") String doctorId,
+    @Field('isSyndicateCardRequired') String status,
+    @Path('doctorId') String doctorId,
   );
 
   @PUT('${ApiEndPoint.blockDoctor}/{doctorId}')
   Future<BlockUserModelResponse> blockDoctor(
-    @Field("blocked") bool status,
-    @Path("doctorId") String doctorId,
+    @Field('blocked') bool status,
+    @Path('doctorId') String doctorId,
   );
 
   @PUT('${ApiEndPoint.verifyDoctorEmail}/{doctorId}')
   Future<VerifyUserEmailModelResponse> verifyDoctorEmail(
-    @Field("email_verified_at") dynamic timestamp,
-    @Path("doctorId") String doctorId,
+    @Field('email_verified_at') dynamic timestamp,
+    @Path('doctorId') String doctorId,
   );
 
   @POST(ApiEndPoint.applyPatientsFilter)
   Future<ApplyPatientFiltersModelResponse> applyPatientFilters(
     @Body() Map<String, dynamic> map,
-    @Query("page") int page,
+    @Query('page') int page,
   );
 
   @GET(ApiEndPoint.getAllFeeds)
@@ -299,49 +303,49 @@ abstract class ApiServices {
 
   @POST('${ApiEndPoint.addLikeOnPost}/{postId}/likeOrUnlikePost')
   Future<AddLikeOnPostModelResponse> addLikeOrUnlikeOnPost(
-    @Path("postId") String postId,
-    @Field("status") String likeOrUnlike,
+    @Path('postId') String postId,
+    @Field('status') String likeOrUnlike,
   );
 
   @POST('${ApiEndPoint.saveOrUnsavePost}/{postId}/saveOrUnsavePost')
   Future<SaveOrUnsavePostModelResponse> saveOrUnsavePost(
-    @Path("postId") String postId,
-    @Field("status") String saveOrUnsave,
+    @Path('postId') String postId,
+    @Field('status') String saveOrUnsave,
   );
 
   @GET('${ApiEndPoint.getAIConsultationHistory}/{patientId}')
   Future<GetAiConsultationHistoryModelResponse> getAIConsultationHistory(
-    @Path("patientId") String patientId,
-    @Query("page") int page,
+    @Path('patientId') String patientId,
+    @Query('page') int page,
   );
 
   @POST('${ApiEndPoint.sendAIConsultationRequest}/{patientId}')
   Future<SendAIConsultationRequestModelResponse> sendAIConsultationRequest(
-    @Path("patientId") String patientId,
+    @Path('patientId') String patientId,
   );
 
   @DELETE('${ApiEndPoint.deletePostInFeeds}/{postId}')
   Future<DeletePostModelResponse> deletePostInFeeds(
-    @Path("postId") String postId,
+    @Path('postId') String postId,
   );
 
   @POST(ApiEndPoint.createPostInCommunity)
   @MultiPart()
   Future<CreatePostInCommunityModelResponse> createPostWithImageInCommunity(
     @Part(name: 'content') String? postContent,
-    @Part(name: "media_type") String mediaType,
-    @Part(name: "visibility") String visibility,
-    @Part(name: "group_id") String? groupId,
-    @Part(name: "media_path[]") List<MultipartFile> images,
+    @Part(name: 'media_type') String mediaType,
+    @Part(name: 'visibility') String visibility,
+    @Part(name: 'group_id') String? groupId,
+    @Part(name: 'media_path[]') List<MultipartFile> images,
   );
 
   @POST(ApiEndPoint.createPostInCommunity)
   Future<CreatePostInCommunityModelResponse> createPostWithTextInCommunity(
     @Field('content') String postContent,
-    @Field("media_type") String? mediaType,
-    @Field("visibility") String visibility,
-    @Field("group_id") String? groupId,
-    @Field("poll") Map<String, dynamic>? pollModel,
+    @Field('media_type') String? mediaType,
+    @Field('visibility') String visibility,
+    @Field('group_id') String? groupId,
+    @Field('poll') Map<String, dynamic>? pollModel,
   );
   @GET('${ApiEndPoint.getCommentsInCommunity}/{postId}/comments')
   Future<GetCommentsInCommunityModelResponse> getCommentsInCommunity(
@@ -375,10 +379,10 @@ abstract class ApiServices {
   Future<EditPostInCommunityModelResponse> editPostWithTextInCommunity(
     @Path('postId') String postId,
     @Field('content') String postContent,
-    @Field("media_type") String? mediaType,
-    @Field("visibility") String visibility,
-    @Field("group_id") String? groupId,
-    @Field("poll") Map<String, dynamic>? pollModel,
+    @Field('media_type') String? mediaType,
+    @Field('visibility') String visibility,
+    @Field('group_id') String? groupId,
+    @Field('poll') Map<String, dynamic>? pollModel,
   );
 
   @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
@@ -386,11 +390,11 @@ abstract class ApiServices {
   Future<EditPostInCommunityModelResponse> editPostWithImageInCommunity(
     @Path('postId') String postId,
     @Part(name: 'content') String? postContent,
-    @Part(name: "media_type") String mediaType,
-    @Part(name: "visibility") String visibility,
-    @Part(name: "group_id") String? groupId,
-    @Part(name: "media_path[]") List<MultipartFile> images,
-    @Part(name: "existing_media_path[]") List<String> existingMediaPath,
+    @Part(name: 'media_type') String mediaType,
+    @Part(name: 'visibility') String visibility,
+    @Part(name: 'group_id') String? groupId,
+    @Part(name: 'media_path[]') List<MultipartFile> images,
+    @Part(name: 'existing_media_path[]') List<String> existingMediaPath,
   );
 
   // @POST('${ApiEndPoint.editPostInCommunity}/{postId}')
@@ -449,14 +453,14 @@ abstract class ApiServices {
   @POST('${ApiEndPoint.sendGroupInvitation}/{groupId}/invite')
   Future<SendInvitationModelResponse> sendGroupInvitation(
     @Path('groupId') String groupId,
-    @Field("message") String message,
-    @Field("doctor_ids") List<String> doctorsIDS,
+    @Field('message') String message,
+    @Field('doctor_ids') List<String> doctorsIDS,
   );
 
   @POST('${ApiEndPoint.removeMemberFromGroup}/{groupId}/removeMember')
   Future<RemoveMemberFromGroupModelResponse> removeMemberFromGroup(
     @Path('groupId') String groupId,
-    @Field("doctor_id") String doctorId,
+    @Field('doctor_id') String doctorId,
   );
 
   @GET(ApiEndPoint.getAllGroups)
@@ -467,11 +471,11 @@ abstract class ApiServices {
   @POST(ApiEndPoint.createGroupInCommunity)
   @MultiPart()
   Future<CreateGroupInCommunityModelResponse> createGroupInCommunity(
-    @Part(name: "name") String name,
-    @Part(name: "header_picture") File headerImage,
-    @Part(name: "group_image") File groupImage,
-    @Part(name: "description") String description,
-    @Part(name: "privacy") String privacy,
+    @Part(name: 'name') String name,
+    @Part(name: 'header_picture') File headerImage,
+    @Part(name: 'group_image') File groupImage,
+    @Part(name: 'description') String description,
+    @Part(name: 'privacy') String privacy,
   );
 
   @DELETE('${ApiEndPoint.getAllGroups}/{groupId}')
@@ -487,7 +491,7 @@ abstract class ApiServices {
   @POST(ApiEndPoint.getCommunitySearchResponse)
   Future<GetResponseOfSearchModel> getCommunitySearchResponse(
     @Query('page') int page,
-    @Field("query") String searchContent,
+    @Field('query') String searchContent,
   );
 
   @GET('${ApiEndPoint.getAllDoctorPosts}/{doctorId}')
@@ -504,40 +508,40 @@ abstract class ApiServices {
   @POST('${ApiEndPoint.addVoteForPollInPosts}/{pollId}/vote')
   Future<AddVoteAndUnvoteModelResponse> addVoteForPollInPosts(
     @Path('pollId') String pollId,
-    @Field("option_id") int optionId,
+    @Field('option_id') int optionId,
   );
 
   @POST('${ApiEndPoint.addOptionOnPoll}/{pollId}/options')
   Future<AddOptionInPollModelResponse> addOptionOnPoll(
     @Path('pollId') String pollId,
-    @Field("option_text") String option,
+    @Field('option_text') String option,
   );
 
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
   Future<UpdateGroupInCommunityModelResponse> updateGroupTextsInCommunity(
     @Path('groupId') String groupId,
-    @Field("name") String name,
-    @Field("description") String description,
-    @Field("privacy") String privacy,
+    @Field('name') String name,
+    @Field('description') String description,
+    @Field('privacy') String privacy,
   );
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
   @MultiPart()
   Future<UpdateGroupInCommunityModelResponse> updateGroupHeaderImageInCommunity(
     @Path('groupId') String groupId,
-    @Part(name: "name") String name,
-    @Part(name: "header_picture") File headerImage,
-    @Part(name: "description") String description,
-    @Part(name: "privacy") String privacy,
+    @Part(name: 'name') String name,
+    @Part(name: 'header_picture') File headerImage,
+    @Part(name: 'description') String description,
+    @Part(name: 'privacy') String privacy,
   );
 
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
   @MultiPart()
   Future<UpdateGroupInCommunityModelResponse> updateGroupImageInCommunity(
     @Path('groupId') String groupId,
-    @Part(name: "name") String name,
-    @Part(name: "group_image") File groupImage,
-    @Part(name: "description") String description,
-    @Part(name: "privacy") String privacy,
+    @Part(name: 'name') String name,
+    @Part(name: 'group_image') File groupImage,
+    @Part(name: 'description') String description,
+    @Part(name: 'privacy') String privacy,
   );
 
   @POST('${ApiEndPoint.updateGroupInCommunity}/{groupId}')
@@ -545,11 +549,11 @@ abstract class ApiServices {
   Future<UpdateGroupInCommunityModelResponse>
       updateGroupWithHeaderAndGroupImageInCommunity(
     @Path('groupId') String groupId,
-    @Part(name: "name") String name,
-    @Part(name: "group_image") File groupImage,
-    @Part(name: "header_picture") File headerImage,
-    @Part(name: "description") String description,
-    @Part(name: "privacy") String privacy,
+    @Part(name: 'name') String name,
+    @Part(name: 'group_image') File groupImage,
+    @Part(name: 'header_picture') File headerImage,
+    @Part(name: 'description') String description,
+    @Part(name: 'privacy') String privacy,
   );
 
   @GET('${ApiEndPoint.getPollVoters}/{pollId}/options/{optionId}/voters')
@@ -586,17 +590,18 @@ abstract class ApiServices {
   @POST('${ApiEndPoint.createPatientRecommendation}/{patientId}')
   Future<CreatePatientRecommendationModelResponse> createPatientRecommendation(
     @Path('patientId') String patientId,
-  @Body() Map<String, dynamic> body,
+    @Body() Map<String, dynamic> body,
   );
 
   @PUT('${ApiEndPoint.updatePatientRecommendation}/{patientId}')
   Future<UpdatePatientRecommendationModelResponse> updatePatientRecommendation(
     @Path('patientId') String patientId,
-  @Body() Map<String, dynamic> body,
+    @Body() Map<String, dynamic> body,
   );
 
   @GET('${ApiEndPoint.searchForDoseInMedicationSection}/{dose}')
-  Future<SearchForDoseInMedicationSectionModelResponse> searchForDoseInMedicationSection(
+  Future<SearchForDoseInMedicationSectionModelResponse>
+      searchForDoseInMedicationSection(
     @Path('dose') String dose,
     @Query('page') int page,
   );
@@ -612,5 +617,29 @@ abstract class ApiServices {
     @Field('title') String title,
     @Field('description') String? description,
     @Field('dose') String dose,
+  );
+  @GET('${ApiEndPoint.getMembersForConsultation}/{consultationId}/members')
+  Future<GetMembersForConsultationModelResponse> getMembersForConsultation(
+    @Path('consultationId') String consultationId,
+  );
+
+  @PUT('${ApiEndPoint.lockOrUnlockConsultation}/{consultationId}/toggle-status')
+  Future<LockOrUnlockConsultationModelResponse> lockOrUnlockConsultation(
+    @Path('consultationId') String consultationId,
+    @Field('is_open') bool isOpen,
+  );
+  @DELETE(
+      '${ApiEndPoint.removeMemberFromConsultation}/{consultationId}/doctors/{doctorId}')
+  Future<RemoveMemberFromConsultationModelResponse>
+      removeMemberFromConsultation(
+    @Path('consultationId') String consultationId,
+    @Path('doctorId') String doctorId,
+  );
+
+  @POST('${ApiEndPoint.addDoctorsForConsultation}/{consultationId}/add-doctors')
+  Future<AddDoctorsForConsultationModelResponse> addDoctorsForConsultation(
+    @Path('consultationId') String consultationId,
+    @Field('consult_message') String message,
+    @Field('consult_doctor_ids') List<String> doctorsIDS,
   );
 }

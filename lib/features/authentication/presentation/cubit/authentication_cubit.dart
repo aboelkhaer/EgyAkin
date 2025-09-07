@@ -54,7 +54,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         SignInUseCaseInput(
           email: signInEmail,
           password: signInPassword,
-          fcmToken: fcmToken,
+          fcmToken: fcmToken == 'No fcmToken'?null:fcmToken,
           deviceId: deviceId,
         ),
       );

@@ -45,11 +45,18 @@ class _MyConsultationsTabState extends State<MyConsultationsTab> {
             );
           },
           myConsultationsLoaded: (consultations) {
-            return ConsultationList(
-              consultations: consultations,
-              currentDoctorModel: widget.currentDoctorModel,
-              homeDataModel: widget.homeDataModel,
-              isReceivedConsultation: false,
+            return RefreshIndicator(
+              onRefresh: () async {
+                context
+                    .read<ConsultationCubit>()
+                    .getCurrentDoctorConsultations();
+              },
+              child: ConsultationList(
+                consultations: consultations,
+                currentDoctorModel: widget.currentDoctorModel,
+                homeDataModel: widget.homeDataModel,
+                isReceivedConsultation: false,
+              ),
             );
           },
         );

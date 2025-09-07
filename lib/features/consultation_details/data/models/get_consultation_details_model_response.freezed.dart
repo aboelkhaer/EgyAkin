@@ -43,6 +43,8 @@ mixin _$GetConsultationDetailsModelResponse {
   PatientHomeDataModel? get patientModel => throw _privateConstructorUsedError;
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_open')
+  bool? get isOpen => throw _privateConstructorUsedError;
 
   /// Serializes this GetConsultationDetailsModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -75,7 +77,8 @@ abstract class $GetConsultationDetailsModelResponseCopyWith<$Res> {
       @JsonKey(name: 'doctor_fname') String? doctorFirstName,
       @JsonKey(name: 'doctor_lname') String? doctorLastName,
       @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
-      List<DoctorsConsultationDetailsModelResponse>? consultationDoctors});
+      List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
+      @JsonKey(name: 'is_open') bool? isOpen});
 
   $PatientHomeDataModelCopyWith<$Res>? get patientModel;
 }
@@ -108,6 +111,7 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
     Object? doctorLastName = freezed,
     Object? patientModel = freezed,
     Object? consultationDoctors = freezed,
+    Object? isOpen = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -158,6 +162,10 @@ class _$GetConsultationDetailsModelResponseCopyWithImpl<$Res,
           ? _value.consultationDoctors
           : consultationDoctors // ignore: cast_nullable_to_non_nullable
               as List<DoctorsConsultationDetailsModelResponse>?,
+      isOpen: freezed == isOpen
+          ? _value.isOpen
+          : isOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 
@@ -197,7 +205,8 @@ abstract class _$$GetConsultationDetailsModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'doctor_fname') String? doctorFirstName,
       @JsonKey(name: 'doctor_lname') String? doctorLastName,
       @JsonKey(name: 'patient_info') PatientHomeDataModel? patientModel,
-      List<DoctorsConsultationDetailsModelResponse>? consultationDoctors});
+      List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
+      @JsonKey(name: 'is_open') bool? isOpen});
 
   @override
   $PatientHomeDataModelCopyWith<$Res>? get patientModel;
@@ -230,6 +239,7 @@ class __$$GetConsultationDetailsModelResponseImplCopyWithImpl<$Res>
     Object? doctorLastName = freezed,
     Object? patientModel = freezed,
     Object? consultationDoctors = freezed,
+    Object? isOpen = freezed,
   }) {
     return _then(_$GetConsultationDetailsModelResponseImpl(
       id: freezed == id
@@ -280,6 +290,10 @@ class __$$GetConsultationDetailsModelResponseImplCopyWithImpl<$Res>
           ? _value._consultationDoctors
           : consultationDoctors // ignore: cast_nullable_to_non_nullable
               as List<DoctorsConsultationDetailsModelResponse>?,
+      isOpen: freezed == isOpen
+          ? _value.isOpen
+          : isOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -300,7 +314,8 @@ class _$GetConsultationDetailsModelResponseImpl
       @JsonKey(name: 'doctor_fname') this.doctorFirstName,
       @JsonKey(name: 'doctor_lname') this.doctorLastName,
       @JsonKey(name: 'patient_info') this.patientModel,
-      final List<DoctorsConsultationDetailsModelResponse>? consultationDoctors})
+      final List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
+      @JsonKey(name: 'is_open') this.isOpen})
       : _consultationDoctors = consultationDoctors;
 
   factory _$GetConsultationDetailsModelResponseImpl.fromJson(
@@ -350,8 +365,12 @@ class _$GetConsultationDetailsModelResponseImpl
   }
 
   @override
+  @JsonKey(name: 'is_open')
+  final bool? isOpen;
+
+  @override
   String toString() {
-    return 'GetConsultationDetailsModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, consultMessage: $consultMessage, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, patientName: $patientName, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, patientModel: $patientModel, consultationDoctors: $consultationDoctors)';
+    return 'GetConsultationDetailsModelResponse(id: $id, doctorId: $doctorId, patientId: $patientId, consultMessage: $consultMessage, status: $status, createdAt: $createdAt, updatedAt: $updatedAt, patientName: $patientName, doctorFirstName: $doctorFirstName, doctorLastName: $doctorLastName, patientModel: $patientModel, consultationDoctors: $consultationDoctors, isOpen: $isOpen)';
   }
 
   @override
@@ -380,7 +399,8 @@ class _$GetConsultationDetailsModelResponseImpl
             (identical(other.patientModel, patientModel) ||
                 other.patientModel == patientModel) &&
             const DeepCollectionEquality()
-                .equals(other._consultationDoctors, _consultationDoctors));
+                .equals(other._consultationDoctors, _consultationDoctors) &&
+            (identical(other.isOpen, isOpen) || other.isOpen == isOpen));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -398,7 +418,8 @@ class _$GetConsultationDetailsModelResponseImpl
       doctorFirstName,
       doctorLastName,
       patientModel,
-      const DeepCollectionEquality().hash(_consultationDoctors));
+      const DeepCollectionEquality().hash(_consultationDoctors),
+      isOpen);
 
   /// Create a copy of GetConsultationDetailsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -432,8 +453,9 @@ abstract class _GetConsultationDetailsModelResponse
       @JsonKey(name: 'doctor_fname') final String? doctorFirstName,
       @JsonKey(name: 'doctor_lname') final String? doctorLastName,
       @JsonKey(name: 'patient_info') final PatientHomeDataModel? patientModel,
-      final List<DoctorsConsultationDetailsModelResponse>?
-          consultationDoctors}) = _$GetConsultationDetailsModelResponseImpl;
+      final List<DoctorsConsultationDetailsModelResponse>? consultationDoctors,
+      @JsonKey(name: 'is_open')
+      final bool? isOpen}) = _$GetConsultationDetailsModelResponseImpl;
 
   factory _GetConsultationDetailsModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -472,6 +494,9 @@ abstract class _GetConsultationDetailsModelResponse
   PatientHomeDataModel? get patientModel;
   @override
   List<DoctorsConsultationDetailsModelResponse>? get consultationDoctors;
+  @override
+  @JsonKey(name: 'is_open')
+  bool? get isOpen;
 
   /// Create a copy of GetConsultationDetailsModelResponse
   /// with the given fields replaced by the non-null parameter values.

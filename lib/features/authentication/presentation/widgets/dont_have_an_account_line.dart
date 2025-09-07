@@ -11,7 +11,7 @@ class DontHaveAnAccountLine extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          AppStrings.dontHaveAnAccount,
+          context.tr(AppStrings.dontHaveAnAccount),
           style: TextStyle(
             color: Colors.grey.shade500,
             fontWeight: FontWeight.w500,
@@ -36,7 +36,7 @@ class DontHaveAnAccountLine extends StatelessWidget {
               ),
             ),
             child: Text(
-              AppStrings.registerNow,
+              context.tr(AppStrings.registerNow),
               style: TextStyle(
                 color: Colors.blue,
                 fontSize: 10.sp,

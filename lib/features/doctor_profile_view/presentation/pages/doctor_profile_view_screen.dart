@@ -12,7 +12,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
+        title:  Text(context.tr(AppStrings.editProfile),),
       ),
       body: BlocConsumer<DoctorProfileViewCubit, DoctorProfileViewState>(
         listener: (context, state) {
@@ -57,11 +57,11 @@ class DoctorProfileViewScreen extends StatelessWidget {
                         key: cubit.formKey,
                         child: Column(
                           children: [
-                            const Row(
+                             Row(
                               children: [
-                                Expanded(child: Text('First name')),
+                                Expanded(child: Text(context.tr(AppStrings.firstName))),
                                 SizedBox(width: 10),
-                                Expanded(child: Text('Last name')),
+                                Expanded(child: Text(context.tr(AppStrings.lastName))),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -69,7 +69,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'First name',
+                                    title: context.tr(AppStrings.firstName),
                                     initialValue:
                                         currentDoctorModel.firstName ?? '',
                                     textInputType: TextInputType.text,
@@ -77,7 +77,6 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                         cubit.firstName = value,
                                     enableSuggestions: true,
                                     validator: (value) {
-                                      print('Validating First Name: $value');
                                       return AppValidators
                                           .firstAndLastNameValidation(
                                               value ?? '');
@@ -88,7 +87,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Last name',
+                                    title: context.tr(AppStrings.lastName),
                                     initialValue:
                                         currentDoctorModel.lastName ?? '',
                                     onChanged: (value) =>
@@ -104,14 +103,14 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: size.height * 0.01),
-                            const Row(
+                             Row(
                               children: [
-                                Text('Email'),
+                                Text(context.tr(AppStrings.email)),
                               ],
                             ),
                             const SizedBox(height: 10),
                             CustomTextFormField(
-                              title: 'Email',
+                              title: context.tr(AppStrings.email),
                               initialValue: currentDoctorModel.email ?? '',
                               enableSuggestions: true,
                               textInputType: TextInputType.text,
@@ -122,11 +121,11 @@ class DoctorProfileViewScreen extends StatelessWidget {
                             ),
                             SizedBox(height: size.height * 0.01),
                             SizedBox(height: size.height * 0.01),
-                            const Row(
+                             Row(
                               children: [
-                                Expanded(child: Text('Phone')),
+                                Expanded(child: Text(context.tr(AppStrings.phone))),
                                 SizedBox(width: 10),
-                                Expanded(child: Text('Age')),
+                                Expanded(child: Text(context.tr(AppStrings.age))),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -134,7 +133,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Phone',
+                                    title: context.tr(AppStrings.phone),
                                     initialValue:
                                         currentDoctorModel.phone ?? '',
                                     onChanged: (value) => cubit.phone = value,
@@ -151,7 +150,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Age',
+                                    title: context.tr(AppStrings.age),
                                     initialValue: currentDoctorModel.age ?? '',
                                     onChanged: (value) => cubit.age = value,
                                     textInputType: TextInputType.number,
@@ -163,11 +162,11 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: size.height * 0.01),
-                            const Row(
+                             Row(
                               children: [
-                                Expanded(child: Text('Job')),
+                                Expanded(child: Text(context.tr(AppStrings.job))),
                                 SizedBox(width: 10),
-                                Expanded(child: Text('Workplace')),
+                                Expanded(child: Text(context.tr(AppStrings.workplace))),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -175,7 +174,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Job',
+                                    title: context.tr(AppStrings.job),
                                     initialValue: currentDoctorModel.job ?? '',
                                     textInputType: TextInputType.text,
                                     onChanged: (value) => cubit.job = value,
@@ -188,7 +187,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                 const SizedBox(width: 10),
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Workplace',
+                                    title: context.tr(AppStrings.workplace),
                                     initialValue:
                                         currentDoctorModel.workingplace ?? '',
                                     textInputType: TextInputType.text,
@@ -236,11 +235,11 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: size.height * 0.01),
-                            const Row(
+                             Row(
                               children: [
-                                Expanded(child: Text('Specialty')),
+                                Expanded(child: Text(context.tr(AppStrings.specialty))),
                                 SizedBox(width: 10),
-                                Expanded(child: Text('Highest Degree')),
+                                Expanded(child: Text(context.tr(AppStrings.highestDegree))),
                               ],
                             ),
                             const SizedBox(height: 10),
@@ -248,7 +247,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               children: [
                                 Expanded(
                                   child: CustomTextFormField(
-                                    title: 'Specialty',
+                                    title: context.tr(AppStrings.specialty),
                                     initialValue:
                                         currentDoctorModel.specialty ?? '',
                                     textInputType: TextInputType.text,
@@ -270,8 +269,8 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                     ),
                                     child: DropdownButtonFormField<dynamic>(
                                       value: currentDoctorModel.highestdegree ??
-                                          'Choose',
-                                      items: ['Choose', ...highestDegreeList]
+                                          context.tr(AppStrings.choose),
+                                      items: [context.tr(AppStrings.choose), ...highestDegreeList]
                                           .map((value) {
                                         return DropdownMenuItem<String>(
                                           value: value,
@@ -279,7 +278,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                         );
                                       }).toList(),
                                       onChanged: (val) =>
-                                          cubit.highestDegree = val ?? 'Choose',
+                                          cubit.highestDegree = val ?? context.tr(AppStrings.choose),
                                       validator: (value) =>
                                           AppValidators.fieldsIsEmptyValidation(
                                               value ?? ''),
@@ -297,15 +296,13 @@ class DoctorProfileViewScreen extends StatelessWidget {
                               width: double.infinity,
                               child: CustomElevatedButton(
                                 onPressed: () {
-                                  print("Button Pressed");
                                   if (cubit.formKey.currentState?.validate() ??
                                       false) {
                                     cubit.updateDoctorProfile();
                                   } else {
-                                    print("Form validation failed");
                                   }
                                 },
-                                title: 'Save',
+                                title: context.tr(AppStrings.save),
                               ),
                             ),
                             SizedBox(height: size.height * 0.02),

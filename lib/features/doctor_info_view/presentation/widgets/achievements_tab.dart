@@ -127,7 +127,8 @@ class _AchievementsTabState extends State<AchievementsTab> {
                                           title: achievement.name.toString(),
                                           description: achievement.description
                                               .toString(),
-                                          coloredButtonText: 'Cancel',
+                                          coloredButtonText: context.tr(AppStrings.cancel),
+                                        
                                           coloredButtonOnTap: () {
                                             navigatorKey.currentState?.pop();
                                           },

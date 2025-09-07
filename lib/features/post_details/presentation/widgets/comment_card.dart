@@ -1,5 +1,3 @@
-import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../../exports.dart';
 
 class CommentCard extends StatelessWidget {
@@ -35,15 +33,15 @@ class CommentCard extends StatelessWidget {
               currentDoctorRole == AppStrings.roleAdmin) {
             showCustomDialog(
                 context: context,
-                title: 'Delete',
-                description: 'Are you sure to delete comment?',
+                title: context.tr(AppStrings.delete),
+                description: context.tr(AppStrings.areYouSureToDeleteComment),
                 noColoredButtonOnTap: () {
                   Navigator.of(context).pop();
 
                   onDelete();
                 },
-                coloredButtonText: 'Cancel',
-                noColoredButtonText: 'Delete',
+                coloredButtonText: context.tr(AppStrings.cancel),
+                noColoredButtonText: context.tr(AppStrings.delete),
                 isNoColorShow: true,
                 coloredButtonOnTap: () => Navigator.of(context).pop());
           }
@@ -176,8 +174,9 @@ class CommentCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    timeago.format(
-                        DateTime.parse(commentModel.updatedAt.toString())),
+                    TimeAgoService.instance.formatTimeAgoFromString(
+                        commentModel.updatedAt.toString(),
+                        context),
                     style: const TextStyle(
                       color: AppColors.description,
                       fontSize: 12,

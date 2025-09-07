@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
@@ -6,6 +7,9 @@ import 'package:egy_akin/features/patient_section_details/domain/usecases/delete
 import 'package:egy_akin/features/patient_section_details/domain/usecases/get_recommendations_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/search_for_dose_in_medication_section_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_recommendation_usecase.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/add_doctors_for_consultation_usecase.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/get_members_for_consultation_usecase.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/remove_member_from_consultation_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
@@ -45,7 +49,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => OutcomeCubit(sl(), sl()));
   sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
-  sl.registerFactory(() => PatientSectionDetailsCubit(sl(), sl(), sl(),sl(),sl(),sl(),sl(),sl()));
+  sl.registerFactory(() => PatientSectionDetailsCubit(
+      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit());
@@ -57,9 +62,8 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));
   sl.registerFactory(() => AboutUsCubit());
-  sl.registerFactory(() => SendConsultationCubit(sl(), sl(), sl()));
   sl.registerFactory(() => ConsultationCubit(sl(), sl()));
-  sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl()));
+  sl.registerFactory(() => ConsultationDetailsCubit(sl(), sl(), sl()));
   sl.registerLazySingleton(
       () => CommunityCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerLazySingleton(() =>
@@ -392,10 +396,6 @@ Future<void> diInit() async {
     sl.registerFactory<SendConsultationUsecase>(
         () => SendConsultationUsecase(sl()));
   }
-  if (!GetIt.I.isRegistered<SendConsultationUsecase>()) {
-    sl.registerFactory<SendConsultationUsecase>(
-        () => SendConsultationUsecase(sl()));
-  }
   if (!GetIt.I.isRegistered<GetCurrentDoctorConsultationUsecase>()) {
     sl.registerFactory<GetCurrentDoctorConsultationUsecase>(
         () => GetCurrentDoctorConsultationUsecase(sl()));
@@ -612,5 +612,33 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<CreateNewMedicineUsecase>()) {
     sl.registerFactory<CreateNewMedicineUsecase>(
         () => CreateNewMedicineUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetMembersForConsultationUsecase>()) {
+    sl.registerFactory<GetMembersForConsultationUsecase>(
+        () => GetMembersForConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<LockOrUnlockConsultationUsecase>()) {
+    sl.registerFactory<LockOrUnlockConsultationUsecase>(
+        () => LockOrUnlockConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<RemoveMemberFromConsultationUsecase>()) {
+    sl.registerFactory<RemoveMemberFromConsultationUsecase>(
+        () => RemoveMemberFromConsultationUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<AddDoctorsForConsultationUsecase>()) {
+    sl.registerFactory<AddDoctorsForConsultationUsecase>(
+        () => AddDoctorsForConsultationUsecase(sl()));
+  }
+
+  // Register SendConsultationCubit after all its dependencies
+  if (!GetIt.I.isRegistered<SendConsultationCubit>()) {
+    sl.registerFactory<SendConsultationCubit>(() => SendConsultationCubit(
+          sl<GetConsultationSearchUsecase>(),
+          sl<SendConsultationUsecase>(),
+          sl<SendGroupInvitationUsecase>(),
+          sl<GetMembersForConsultationUsecase>(),
+          sl<RemoveMemberFromConsultationUsecase>(),
+          sl<AddDoctorsForConsultationUsecase>(),
+        ));
   }
 }

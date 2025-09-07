@@ -61,7 +61,8 @@ class RouteGenerator {
     if (routeName != null) {
       // Check if it's just a number (like /46 from egyakin://post/46)
       if (RegExp(r'^/\d+$').hasMatch(routeName)) {
-        debugPrint('=== ROUTE GENERATOR: Deep link route detected: $routeName ===');
+        debugPrint(
+            '=== ROUTE GENERATOR: Deep link route detected: $routeName ===');
         // Extract post ID from route and store it before redirecting to splash
         final postId = routeName.substring(1); // Remove the leading '/'
         _storeDeepLinkPostId(postId);
@@ -76,7 +77,8 @@ class RouteGenerator {
       }
       // Check if it's /post/number pattern
       if (RegExp(r'^/post/\d+$').hasMatch(routeName)) {
-        debugPrint('Deep link route detected: $routeName - redirecting to splash');
+        debugPrint(
+            'Deep link route detected: $routeName - redirecting to splash');
         // Extract post ID from route and store it before redirecting to splash
         final pathSegments = routeName.split('/');
         final postId = pathSegments.last; // Get the last segment (the post ID)
@@ -90,7 +92,7 @@ class RouteGenerator {
         );
       }
     }
-    
+
     switch (settings.name) {
       case AppRoutes.splash:
         return MaterialPageRoute(
@@ -634,7 +636,9 @@ class RouteGenerator {
 
           if (args.containsKey('homeDataModel') &&
               args.containsKey('currentDoctorModel') &&
-              args.containsKey('patientId')) {
+              args.containsKey('patientId') &&
+              args.containsKey('isForAddNewDoctors') &&
+              args.containsKey('consultationId')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<SendConsultationCubit>(
                 create: (context) => di.sl<SendConsultationCubit>(),
@@ -644,6 +648,8 @@ class RouteGenerator {
                   patientId: args['patientId'] as String,
                   isSendConsultation: args['isSendConsultation'] as bool,
                   groupId: args['groupId'] as String,
+                  isForAddNewDoctors: args['isForAddNewDoctors'] as bool,
+                  consultationId: args['consultationId'] as String,
                 ),
               ),
             );
@@ -688,7 +694,8 @@ class RouteGenerator {
               args.containsKey('homeDataModel') &&
               args.containsKey('consultationId') &&
               args.containsKey('patientName') &&
-              args.containsKey('isReceivedConsultation')) {
+              args.containsKey('isReceivedConsultation') &&
+              args.containsKey('isOpen')) {
             return MaterialPageRoute(
               builder: (_) => BlocProvider<ConsultationDetailsCubit>(
                 create: (context) => di.sl<ConsultationDetailsCubit>(),
@@ -699,6 +706,7 @@ class RouteGenerator {
                   patientName: args['patientName'] as String,
                   isReceivedConsultation:
                       args['isReceivedConsultation'] as bool,
+                  isOpen: args['isOpen'] as bool,
                 ),
               ),
             );

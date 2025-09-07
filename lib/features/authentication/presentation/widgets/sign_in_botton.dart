@@ -21,7 +21,7 @@ class SignInBotton extends StatelessWidget {
               width: double.infinity,
               child: CustomElevatedButton(
                 onPressed: () => cubit.signIn(),
-                title: AppStrings.signIn,
+                title: context.tr(AppStrings.signIn),
               ),
             );
           },

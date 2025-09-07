@@ -286,19 +286,19 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           children: [
                             _buildStatCard(
                               icon: Icons.group,
-                              title: 'Patients',
+                              title: context.tr(AppStrings.patients),
                               value: '',
                               onTap: () {},
                             ),
                             _buildStatCard(
                               icon: Icons.star,
-                              title: 'Score',
+                              title: context.tr(AppStrings.score),
                               value: '',
                               onTap: () {},
                             ),
                             _buildStatCard(
                               icon: Icons.bookmark,
-                              title: 'Saved Posts',
+                              title: context.tr(AppStrings.savedPosts),
                               value: '',
                               onTap: () {
                                 // Add action for Saved Posts
@@ -306,7 +306,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                             ),
                             _buildStatCard(
                               icon: Icons.post_add,
-                              title: 'All Posts',
+                              title: context.tr(AppStrings.allPosts),
                               value: '',
                               onTap: () {
                                 // Add action for All Posts
@@ -326,7 +326,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           children: [
                             _buildStatCard(
                               icon: Icons.group,
-                              title: 'Patients',
+                              title: context.tr(AppStrings.patients),
                               value: doctorInfo?.patientCount.toString() ?? '0',
                               onTap: isVerifiedUser(widget
                                       .homeDataModel.isSyndicateCardRequired)
@@ -357,12 +357,12 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                       customSnackBar(
                                           context: context,
                                           message:
-                                              'You should verify your syndicate card at first.');
+                                              context.tr(AppStrings.youShouldVerifyYourSyndicateCardAtFirst));
                                     },
                             ),
                             _buildStatCard(
                               icon: Icons.star,
-                              title: 'Score',
+                              title: context.tr(AppStrings.score),
                               value: doctorInfo?.scoreValue.toString() ?? '0',
                               onTap: () {
                                 showCustomBottomSheet(
@@ -381,7 +381,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                             ),
                             _buildStatCard(
                               icon: Icons.bookmark,
-                              title: 'Saved Posts',
+                              title: context.tr(AppStrings.savedPosts),
                               value:
                                   doctorInfo?.savedPostsCount.toString() ?? '0',
                               onTap: () {
@@ -406,7 +406,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                             ),
                             _buildStatCard(
                               icon: Icons.post_add,
-                              title: 'All Posts',
+                              title: context.tr(AppStrings.allPosts),
                               value: doctorInfo?.postsCount.toString() ?? '0',
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
@@ -458,12 +458,13 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                       isScrollable: false,
                       labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                       unselectedLabelColor: Colors.grey.shade500,
-                      tabs: const [
+                      tabs:  [
                         Tab(
-                          text: 'Information',
+                          text: context.tr(AppStrings.information),
+
                         ),
                         Tab(
-                          text: 'Achievements',
+                          text: context.tr(AppStrings.achievements),
                         ),
                       ],
                     ),

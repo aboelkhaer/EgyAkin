@@ -31,7 +31,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Job:',
+                          '${context.tr(AppStrings.job)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -45,7 +45,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo!.data!.job ?? 'no data',
+                          doctorInfo!.data!.job ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -56,7 +56,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Work place:',
+                          context.tr(AppStrings.workPlace),
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -71,7 +71,7 @@ class InformationTab extends StatelessWidget {
                         SizedBox(width: 60.w),
                         Flexible(
                           child: SelectableText(
-                            doctorInfo.data!.workingplace ?? 'no data',
+                            doctorInfo.data!.workingplace ?? context.tr(AppStrings.noData),
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey.shade600),
@@ -83,7 +83,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Specialty:',
+                          '${context.tr(AppStrings.specialty)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -97,7 +97,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.specialty ?? 'no data',
+                          doctorInfo.data!.specialty ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -108,7 +108,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Highest degree:',
+                          '${context.tr(AppStrings.highestDegree)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -122,7 +122,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.highestdegree ?? 'no data',
+                          doctorInfo.data!.highestdegree ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -133,7 +133,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Email:',
+                          '${context.tr(AppStrings.email)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -147,7 +147,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.email ?? 'no data',
+                          doctorInfo.data!.email ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -158,7 +158,7 @@ class InformationTab extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Phone:',
+                          '${context.tr(AppStrings.phone)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -172,7 +172,7 @@ class InformationTab extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.phone ?? 'no data',
+                          doctorInfo.data!.phone ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),

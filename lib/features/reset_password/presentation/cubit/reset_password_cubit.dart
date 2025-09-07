@@ -24,14 +24,19 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   int currentStep = 0;
   TextEditingController newPasswordController = TextEditingController();
 
-  late Timer _timer;
+  Timer? _timer;
   int countdown = AppStrings.resendTimer;
 
   void startCountdown() {
+    // Cancel existing timer if any
+    if (_timer?.isActive == true) {
+      _timer?.cancel();
+    }
+    
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       countdown--;
       if (countdown <= 0) {
-        _timer.cancel();
+        _timer?.cancel();
         isResendBottonShow = true;
         emit(const ResetPasswordState.countDowncompleted());
       } else {
@@ -45,8 +50,8 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
 
   @override
   Future<void> close() {
-    if (_timer.isActive) {
-      _timer.cancel();
+    if (_timer?.isActive == true) {
+      _timer?.cancel();
     }
     newPasswordController.dispose();
     // firstOTPFocusNode.dispose();
@@ -64,19 +69,19 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       Step(
         state: currentStep > 0 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 0,
-        title: const Text(AppStrings.email),
+        title:  Text(LocalizationService.instance.translate(AppStrings.email)),
         content: const FirstStep(),
       ),
       Step(
         state: currentStep > 1 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 1,
-        title: const Text(AppStrings.verify),
+        title:  Text(LocalizationService.instance.translate(AppStrings.verify)),
         content: const SecondStep(),
       ),
       Step(
         state: StepState.complete,
         isActive: currentStep >= 2,
-        title: const Text(AppStrings.password),
+        title:  Text(LocalizationService.instance.translate(AppStrings.password)),
         content: const ThirdStep(),
       ),
     ];
@@ -118,8 +123,8 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
 
   verifyOTP() async {
     if (secondStepFormKey.currentState!.validate()) {
-      if (_timer.isActive) {
-        _timer.cancel();
+      if (_timer?.isActive == true) {
+        _timer?.cancel();
       }
       emit(const ResetPasswordState.loading());
 

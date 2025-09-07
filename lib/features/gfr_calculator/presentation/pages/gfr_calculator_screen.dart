@@ -10,7 +10,7 @@ class GfrCalculatorScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GFR Calculator'),
+        title:  Text(context.tr(AppStrings.gfrCalculator)),
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -23,7 +23,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Equation type',
+                      context.tr(AppStrings.equationType),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
@@ -99,7 +99,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child: const Text('Close'),
+                                            child:  Text(context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -173,7 +173,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child: const Text('Close'),
+                                            child:  Text(context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -247,7 +247,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child: const Text('Close'),
+                                            child:  Text(context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -284,7 +284,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Height',
+                                      context.tr(AppStrings.height),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14.sp,
@@ -293,11 +293,11 @@ class GfrCalculatorScreen extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     CustomTextFormField(
-                                      title: 'Height/cm',
+                                      title: context.tr(AppStrings.heightCm),
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter height';
+                                          return context.tr(AppStrings.pleaseEnterHeight);
                                         }
                                         return null;
                                       },
@@ -314,7 +314,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Weight',
+                                      context.tr(AppStrings.weight),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 14.sp,
@@ -323,11 +323,14 @@ class GfrCalculatorScreen extends StatelessWidget {
                                     ),
                                     SizedBox(height: 8.h),
                                     CustomTextFormField(
-                                      title: 'Weight/kg',
+                                      title: context.tr(AppStrings.weightKg),
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter weight';
+                                          return context.tr(AppStrings.pleaseEnterWeight);
+
+
+
                                         }
                                         return null;
                                       },
@@ -358,7 +361,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                'Black Race',
+                                context.tr(AppStrings.blackRace),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14.sp,
@@ -377,7 +380,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                       Expanded(
                                         child: ListTile(
                                           title: Text(
-                                            'Yes',
+                                            context.tr(AppStrings.yes),
                                             style: TextStyle(fontSize: 13.sp),
                                           ),
                                           leading: Radio<String>(
@@ -393,7 +396,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                                       Expanded(
                                         child: ListTile(
                                           title: Text(
-                                            'No',
+                                            context.tr(AppStrings.no),
                                             style: TextStyle(fontSize: 13.sp),
                                           ),
                                           leading: Radio<String>(
@@ -425,7 +428,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Age',
+                            context.tr(AppStrings.age),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
@@ -434,11 +437,11 @@ class GfrCalculatorScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 8.h),
                           CustomTextFormField(
-                            title: 'Age',
+                            title: context.tr(AppStrings.age),
                             textInputType: TextInputType.number,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter age';
+                                return context.tr(AppStrings.pleaseEnterAge);
                               }
                               return null;
                             },
@@ -455,7 +458,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Creatinine (mg/dL)',
+                            context.tr(AppStrings.creatinineMgDl),
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 14.sp,
@@ -464,11 +467,11 @@ class GfrCalculatorScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 8.h),
                           CustomTextFormField(
-                            title: 'Creatinine (mg/dL)',
+                            title: context.tr(AppStrings.creatinineMgDl),
                             textInputType: TextInputType.text,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter creatinine level';
+                                return context.tr(AppStrings.pleaseEnterCreatinineLevel);
                               }
                               return null;
                             },
@@ -484,8 +487,9 @@ class GfrCalculatorScreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 Row(
                   children: [
+                   
                     Text(
-                      'Gender',
+                      context.tr(AppStrings.gender),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,
@@ -504,7 +508,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                             Expanded(
                               child: ListTile(
                                 title: Text(
-                                  'Male',
+                                  context.tr(AppStrings.male),
                                   style: TextStyle(fontSize: 13.sp),
                                 ),
                                 leading: Radio<String>(
@@ -519,7 +523,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                             Expanded(
                               child: ListTile(
                                 title: Text(
-                                  'Female',
+                                  context.tr(AppStrings.female),
                                   style: TextStyle(fontSize: 13.sp),
                                 ),
                                 leading: Radio<String>(
@@ -540,7 +544,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                 SizedBox(height: 30.h),
                 CustomElevatedButton(
                   onPressed: () => cubit.calculateGFR(context),
-                  title: 'Calculate',
+                  title: context.tr(AppStrings.calculate),
                 ),
                 // BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
                 //   builder: (context, state) {
@@ -566,7 +570,7 @@ class GfrCalculatorScreen extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Temporary History',
+                      context.tr(AppStrings.temporaryHistory),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14.sp,

@@ -8,10 +8,10 @@ class SearchCubit extends Cubit<SearchState> {
   TextEditingController searchController = TextEditingController();
   ScrollController? searchScrollController;
 
-  bool patientOrDoctorOrHospital = true;
-  bool dose = false;
+  bool patientOrDoctorOrHospital = false;
+  bool dose = true;
 
-  getSearchHome() async {
+  getSearchHome(bool isVerifiedUser) async {
     if (searchController.text.trim().isNotEmpty) {
       emit(const SearchState.loading());
       // _currentPage = 1;
@@ -25,7 +25,7 @@ class SearchCubit extends Cubit<SearchState> {
       }
 
       final result = await _getSearchHomeUsecase.execute(
-        GetSearchHomeUsecaseInput(patient: patientValue, dose: doseValue),
+        GetSearchHomeUsecaseInput(patient: isVerifiedUser ? patientValue : '', dose: doseValue),
       );
       result.fold(
         (l) => emit(SearchState.error(l.message)),

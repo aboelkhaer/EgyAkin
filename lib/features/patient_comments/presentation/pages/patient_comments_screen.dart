@@ -49,8 +49,8 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Patient comments',
+        title: Text(
+          LocalizationService.instance.translate(AppStrings.patientComments),
         ),
       ),
       body: Stack(
@@ -61,116 +61,7 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
             physics: const AlwaysScrollableScrollPhysics(),
             child: Column(
               children: [
-                //  Container(
-                //           margin: const EdgeInsets.only(top: 20),
-                //           child: PatientCard(
-                //             patientName:
-                //                 widget.patientName,
-                //             drFirstName: consultDetails
-                //                 .patientModel!.doctor!.firstName
-                //                 .toString(),
-                //             isAllDataOpen: true,
-                //             drLastName: consultDetails
-                //                 .patientModel!.doctor!.lastName
-                //                 .toString(),
-                //             isOutcomeStatus: consultDetails
-                //                 .patientModel!.sections!.outcomeStatus!,
-                //             hospital: consultDetails.patientModel!.hospital
-                //                 .toString(),
-                //             submitStatus: consultDetails
-                //                 .patientModel!.sections!.submitStatus!,
-                //             updatedAt: consultDetails.patientModel!.updatedAt
-                //                 .toString(),
-                //             doctorImage: consultDetails
-                //                 .patientModel!.doctor!.image
-                //                 .toString(),
-                //             doctorId: consultDetails.patientModel!.doctor!.id
-                //                 .toString(),
-                //             currentDoctorModel: widget.currentDoctorModel,
-                //             isSyndicateCardRequired: consultDetails
-                //                 .patientModel!.doctor!.isSyndicateCardRequired
-                //                 .toString(),
-                //             accountVerification: consultDetails.patientModel!
-                //                         .doctor!.emailVerifiedAt ==
-                //                     null
-                //                 ? false
-                //                 : true,
-                //             currentDoctorRole:
-                //                 widget.homeDataModel.role.toString(),
-                //             currentDoctorPoints: int.parse(
-                //                 widget.homeDataModel.scoreValue.toString()),
-                //             homeDataModel: widget.homeDataModel,
-                //             onAddCommentTap: () {
-                //               navigatorKey.currentState?.pushNamed(
-                //                 AppRoutes.comments,
-                //                 arguments: AppRoutesArgs
-                //                     .patientCommentsRouteArgs(
-                //                         patientId: consultDetails
-                //                             .patientModel!.id
-                //                             .toString(),
-                //                         currentDoctorModel: widget
-                //                             .currentDoctorModel,
-                //                         verified: widget
-                //                             .homeDataModel.verified!,
-                //                         patientName: consultDetails
-                //                             .patientModel!.name
-                //                             .toString(),
-                //                         currentDoctorPoints: int.parse(widget
-                //                             .homeDataModel.scoreValue!),
-                //                         currentDoctorRole: widget
-                //                             .homeDataModel.role
-                //                             .toString(),
-                //                         homeDataModel: widget.homeDataModel,
-                //                         isSyndicateCardRequired: widget
-                //                             .homeDataModel
-                //                             .isSyndicateCardRequired!),
-                //               );
-                //             },
-                //             onOutcomeTap: () {
-                //               navigatorKey.currentState?.pushNamed(
-                //                 AppRoutes.outcome,
-                //                 arguments: AppRoutesArgs.outcomeRouteArgs(
-                //                   verified: widget.homeDataModel.verified!,
-                //                   outcomeStatus: consultDetails
-                //                       .patientModel!.sections!.outcomeStatus!,
-                //                   patientName: consultDetails.patientModel!.name
-                //                       .toString(),
-                //                   patientId: consultDetails.patientModel!.id
-                //                       .toString(),
-                //                   currentDoctorModel: widget.currentDoctorModel,
-                //                   doctorId: consultDetails
-                //                       .patientModel!.doctor!.id
-                //                       .toString(),
-                //                   isSyndicateCardRequired: widget
-                //                       .homeDataModel.isSyndicateCardRequired!,
-                //                   currentDoctorRole:
-                //                       widget.homeDataModel.role.toString(),
-                //                   currentDoctorPoints: int.parse(
-                //                       widget.homeDataModel.scoreValue!),
-                //                   homeDataModel: widget.homeDataModel,
-                //                 ),
-                //               );
-                //             },
-                //             onTap: () {
-                //               navigatorKey.currentState?.pushNamed(
-                //                 AppRoutes.patientSections,
-                //                 arguments:
-                //                     AppRoutesArgs.patientSectionsRouteArguments(
-                //                   patientId: consultDetails.patientModel!.id
-                //                       .toString(),
-                //                   currentDoctorRole:
-                //                       widget.homeDataModel.role.toString(),
-                //                   currentDoctorPoints: int.parse(
-                //                       widget.homeDataModel.scoreValue!),
-                //                   currentDoctorModel: widget.currentDoctorModel,
-                //                   homeDataModel: widget.homeDataModel,
-                //                   isAllDataOpen: true,
-                //                 ),
-                //               );
-                //             },
-                //           ),
-                //         ),
-                //         SizedBox(height: 10.h),
+               
                 PatientComments(
                   cubit: cubit,
                   currentDoctorModel: widget.currentDoctorModel,

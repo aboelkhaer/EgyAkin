@@ -1,6 +1,5 @@
 import 'package:egy_akin/exports.dart';
 import 'dart:ui' as ui;
-import 'package:timeago/timeago.dart' as timeago;
 
 class ReplyWidgetInCommunity extends StatelessWidget {
   final CommentModelInCommunity replyModel;
@@ -188,8 +187,9 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                timeago.format(DateTime.parse(
-                                    replyModel.createdAt.toString())),
+                                TimeAgoService.instance.formatTimeAgoFromString(
+                                    replyModel.createdAt.toString(),
+                                    context),
                                 style: TextStyle(
                                   color: AppColors.description,
                                   fontSize: 9.sp,
@@ -333,11 +333,11 @@ class ReplyWidgetInCommunity extends StatelessWidget {
 
                                                         showCustomDialog(
                                                           context: context,
-                                                          title: 'Attention',
+                                                          title: context.tr(AppStrings.attention),
                                                           description:
-                                                              'Are you sure to delete comment?',
+                                                              context.tr(AppStrings.areYouSureToDeleteComment),
                                                           coloredButtonText:
-                                                              'Cancel',
+                                                              context.tr(AppStrings.cancel),
                                                           coloredButtonOnTap:
                                                               () {
                                                             Navigator.pop(
@@ -360,7 +360,7 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                                                 currentDoctorModel);
                                                           },
                                                           noColoredButtonText:
-                                                              'Delete',
+                                                              context.tr(AppStrings.delete),
                                                         );
                                                         break;
                                                     }
@@ -370,21 +370,21 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                                     final items =
                                                         <PopupMenuEntry<
                                                             String>>[
-                                                      PopupMenuItem(
-                                                        value: 'Report',
-                                                        child: Row(
-                                                          children: [
-                                                            const Icon(
-                                                                Icons.report,
-                                                                color: AppColors
-                                                                    .description),
-                                                            SizedBox(
-                                                                width: 8.w),
-                                                            const Text(
-                                                                'Report'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      // PopupMenuItem(
+                                                      //   value: 'Report',
+                                                      //   child: Row(
+                                                      //     children: [
+                                                      //       const Icon(
+                                                      //           Icons.report,
+                                                      //           color: AppColors
+                                                      //               .description),
+                                                      //       SizedBox(
+                                                      //           width: 8.w),
+                                                      //       const Text(
+                                                      //           'Report'),
+                                                      //     ],
+                                                      //   ),
+                                                      // ),
                                                     ];
 
                                                     if (replyModel.doctor!.id
@@ -406,8 +406,11 @@ class ReplyWidgetInCommunity extends StatelessWidget {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Delete'),
+                                                              Text(
+                                                                context
+                                                                    .tr(AppStrings
+                                                                        .delete),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),

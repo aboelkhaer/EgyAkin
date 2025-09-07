@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:ui' as ui;
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class CommentWidgetInCommunity extends StatelessWidget {
@@ -209,8 +208,9 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    timeago.format(DateTime.parse(
-                                        commentModel.createdAt.toString())),
+                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                        commentModel.createdAt.toString(),
+                                        context),
                                     style: TextStyle(
                                       color: AppColors.description,
                                       fontSize: 9.sp,
@@ -437,11 +437,11 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                             showCustomDialog(
                                                               context: context,
                                                               title:
-                                                                  'Attention',
+                                                                  context.tr(AppStrings.attention),
                                                               description:
-                                                                  'Are you sure to delete comment?',
+                                                                  context.tr(AppStrings.areYouSureToDeleteComment),
                                                               coloredButtonText:
-                                                                  'Cancel',
+                                                                  context.tr(AppStrings.cancel),
                                                               coloredButtonOnTap:
                                                                   () {
                                                                 Navigator.pop(
@@ -468,7 +468,8 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                 }
                                                               },
                                                               noColoredButtonText:
-                                                                  'Delete',
+                                                                  context.tr(AppStrings.delete),
+
                                                             );
                                                             break;
                                                         }
@@ -519,8 +520,8 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                   SizedBox(
                                                                       width:
                                                                           8.w),
-                                                                  const Text(
-                                                                      'Delete'),
+                                                                   Text(
+                                                                      context.tr(AppStrings.delete),),
                                                                 ],
                                                               ),
                                                             ),

@@ -3,12 +3,14 @@ import 'package:egy_akin/features/send_consultation/presentation/cubit/send_cons
 
 import '../../../../exports.dart';
 
-class SendConsultationScreen extends StatelessWidget {
+class SendConsultationScreen extends StatefulWidget {
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
   final String patientId;
   final bool isSendConsultation;
   final String groupId;
+  final bool isForAddNewDoctors;
+  final String consultationId;
   const SendConsultationScreen({
     super.key,
     required this.homeDataModel,
@@ -16,7 +18,26 @@ class SendConsultationScreen extends StatelessWidget {
     required this.patientId,
     required this.isSendConsultation,
     required this.groupId,
+    required this.isForAddNewDoctors,
+    required this.consultationId,
   });
+
+  @override
+  State<SendConsultationScreen> createState() => _SendConsultationScreenState();
+}
+
+class _SendConsultationScreenState extends State<SendConsultationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isForAddNewDoctors) {
+      context
+          .read<SendConsultationCubit>()
+          .getMembersForConsultation(widget.consultationId);
+    } else {
+      context.read<SendConsultationCubit>().emitLoadedIfNotForMembers();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +46,11 @@ class SendConsultationScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          isSendConsultation ? 'Send Consultation' : 'Invite Members',
+          widget.isSendConsultation
+              ? widget.isForAddNewDoctors
+                  ? context.tr(AppStrings.addDoctorsToConsultation)
+                  : context.tr(AppStrings.sendConsultation)
+              : context.tr(AppStrings.inviteMembers),
         ),
         actions: [
           IconButton(
@@ -33,13 +58,16 @@ class SendConsultationScreen extends StatelessWidget {
                 if (cubit.doctorsChecked.isEmpty) {
                   customSnackBar(
                       context: context,
-                      message: 'Please select at least one doctor to proceed.');
+                      message: context.tr(
+                          AppStrings.pleaseSelectAtLeastOneDoctorToProceed));
                 } else {
                   showCustomDialog(
                     context: context,
-                    title: isSendConsultation ? 'Consultation' : 'Invitation',
-                    noColoredButtonText: 'Cancel',
-                    isWithTextField: isSendConsultation ? true : false,
+                    title: widget.isSendConsultation
+                        ? context.tr(AppStrings.consultation)
+                        : context.tr(AppStrings.invitation),
+                    noColoredButtonText: context.tr(AppStrings.cancel),
+                    isWithTextField: widget.isSendConsultation ? true : false,
                     textFormFieldMaxLines: 3,
                     textInputType: TextInputType.multiline,
                     onChangedTextFormField: (value) {
@@ -48,16 +76,26 @@ class SendConsultationScreen extends StatelessWidget {
                     noColoredButtonOnTap: () {
                       Navigator.pop(context);
                     },
-                    description: isSendConsultation
-                        ? 'Write note for chosen doctors.'
-                        : 'You are done?',
-                    coloredButtonText: isSendConsultation ? 'Send' : 'Invite',
+                    description: widget.isSendConsultation
+                        ? context.tr(AppStrings.writeNoteForChosenDoctors)
+                        : context.tr(AppStrings.youAreDone),
+                    coloredButtonText: widget.isSendConsultation
+                        ? context.tr(AppStrings.send)
+                        : context.tr(AppStrings.invite),
                     coloredButtonOnTap: () {
                       Navigator.pop(context);
-                      if (isSendConsultation) {
-                        cubit.sendConsultation(patientId);
+                      if (widget.isSendConsultation) {
+                        if (widget.isForAddNewDoctors) {
+                          cubit.addDoctorsForConsultation(
+                              widget.consultationId,
+                              cubit.doctorsChecked
+                                  .map((e) => e.id.toString())
+                                  .toList());
+                        } else {
+                          cubit.sendConsultation(widget.patientId);
+                        }
                       } else {
-                        cubit.sendGroupInvitation(groupId);
+                        cubit.sendGroupInvitation(widget.groupId);
                       }
                     },
                   );
@@ -108,7 +146,8 @@ class SendConsultationScreen extends StatelessWidget {
                       // cubit.getSearchHome();
                     },
                     decoration: InputDecoration(
-                      hintText: 'Search with doctor name or email...',
+                      hintText:
+                          context.tr(AppStrings.searchWithDoctorNameOrEmail),
                       hintStyle: TextStyle(fontSize: 11.sp),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
@@ -139,29 +178,92 @@ class SendConsultationScreen extends StatelessWidget {
                 SizedBox(height: 16.h),
                 BlocBuilder<SendConsultationCubit, SendConsultationState>(
                   builder: (context, state) {
-                    return cubit.doctorsChecked.isEmpty
-                        ? const SizedBox.shrink()
-                        : FadeIn(
+                    return state.maybeWhen(
+                      orElse: () => const SizedBox.shrink(),
+                      loaded: (
+                        isSearching,
+                        isSearched,
+                        message,
+                        response,
+                        counterChanges,
+                        isSendingConsultation,
+                        isSendedConsultation,
+                        membersForConsultation,
+                        isRemoveMemberFromConsultationLoading,
+                        isRemoveMemberFromConsultationLoaded,
+                      ) {
+                        // Debug logging
+                        print('=== DEBUG: UI State ===');
+                        print(
+                            'isForAddNewDoctors: ${widget.isForAddNewDoctors}');
+                        print(
+                            'membersForConsultation: $membersForConsultation');
+                        print(
+                            'membersForConsultation.data: ${membersForConsultation?.data}');
+                        print(
+                            'membersForConsultation.data length: ${membersForConsultation?.data?.length}');
+                        print(
+                            'doctorsChecked length: ${cubit.doctorsChecked.length}');
+                        print('================================');
+
+                        // Show doctors from both doctorsChecked and membersForConsultation
+                        final allDoctors =
+                            <DoctorModelInConsultationModelResponse>[];
+
+                        // Add doctors from doctorsChecked (newly selected doctors)
+                        allDoctors.addAll(cubit.doctorsChecked);
+
+                        // Add doctors from membersForConsultation (existing consultation members)
+                        if (widget.isForAddNewDoctors &&
+                            membersForConsultation != null &&
+                            membersForConsultation.data != null) {
+                          for (var member in membersForConsultation.data!) {
+                            // Only add if not already in doctorsChecked to avoid duplicates
+                            if (!allDoctors.any((d) => d.id == member.id)) {
+                              allDoctors.add(member);
+                            }
+                          }
+                        }
+
+                        print('Final allDoctors length: ${allDoctors.length}');
+                        print(
+                            'Existing members count: ${membersForConsultation?.data?.length ?? 0}');
+                        print(
+                            'Newly selected doctors count: ${cubit.doctorsChecked.length}');
+
+                        if (allDoctors.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: FadeIn(
                             child: Column(
                               children: [
-                                // const Row(
-                                //   children: [
-                                //     Expanded(child: Divider()),
-                                //   ],
-                                // ),
-                                // SizedBox(height: 5.h),
                                 SizedBox(
                                   height: 45.h,
                                   child: ListView.builder(
-                                    itemCount: cubit.doctorsChecked.length,
+                                    itemCount: allDoctors.length,
                                     shrinkWrap: true,
                                     padding: EdgeInsets.only(top: 5.h),
                                     controller:
                                         cubit.horizontalScrollController,
                                     scrollDirection: Axis.horizontal,
                                     itemBuilder: (context, index) {
-                                      var doctorModel =
-                                          cubit.doctorsChecked[index];
+                                      var doctorModel = allDoctors[index];
+                                      // Check if this doctor is from membersForConsultation (existing member)
+                                      final isExistingMember = widget
+                                              .isForAddNewDoctors &&
+                                          membersForConsultation != null &&
+                                          membersForConsultation.data != null &&
+                                          membersForConsultation.data!.any(
+                                              (m) => m.id == doctorModel.id);
+
+                                      // Check if this doctor is newly selected (in doctorsChecked)
+                                      final isNewlySelected = cubit
+                                          .doctorsChecked
+                                          .any((d) => d.id == doctorModel.id);
+
                                       return FadeIn(
                                         child: Stack(
                                           children: [
@@ -195,24 +297,28 @@ class SendConsultationScreen extends StatelessWidget {
                                                               .id
                                                               .toString(),
                                                           initialIndex: 0,
-                                                          currentDoctorModel:
-                                                              currentDoctorModel,
+                                                          currentDoctorModel: widget
+                                                              .currentDoctorModel,
                                                           isSyndicateCardRequired:
-                                                              homeDataModel
+                                                              widget
+                                                                  .homeDataModel
                                                                   .isSyndicateCardRequired
                                                                   .toString(),
                                                           accountVerification:
-                                                              homeDataModel
+                                                              widget
+                                                                  .homeDataModel
                                                                   .verified!,
                                                           currentDoctorRole:
-                                                              homeDataModel.role
+                                                              widget
+                                                                  .homeDataModel
+                                                                  .role
                                                                   .toString(),
                                                           currentDoctorPoints:
-                                                              int.parse(
-                                                                  homeDataModel
-                                                                      .scoreValue!),
-                                                          homeDataModel:
-                                                              homeDataModel,
+                                                              int.parse(widget
+                                                                  .homeDataModel
+                                                                  .scoreValue!),
+                                                          homeDataModel: widget
+                                                              .homeDataModel,
                                                           isNavigateToTheButtonOfInformationTab:
                                                               false,
                                                         ),
@@ -269,24 +375,40 @@ class SendConsultationScreen extends StatelessWidget {
                                                 ),
                                               ],
                                             ),
-                                            Positioned(
-                                              top: 0,
-                                              right: 5.w,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  cubit.doctorsChecked
-                                                      .removeWhere((d) =>
-                                                          d.id ==
-                                                          doctorModel.id);
-                                                  cubit.updateScreen();
-                                                },
-                                                child: Icon(
-                                                  Icons.clear,
-                                                  size: 15.r,
-                                                  color: Colors.red.shade700,
+                                            // Show remove button for both newly selected doctors and existing members
+                                            // But hide it for the current doctor
+                                            if ((isNewlySelected ||
+                                                    isExistingMember) &&
+                                                doctorModel.id.toString() !=
+                                                    widget.currentDoctorModel.id
+                                                        .toString())
+                                              Positioned(
+                                                top: 0,
+                                                right: 5.w,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    if (isExistingMember) {
+                                                      // Remove existing member from consultation via API
+                                                      cubit.removeMemberFromConsultation(
+                                                          widget.consultationId,
+                                                          doctorModel.id
+                                                              .toString());
+                                                    } else {
+                                                      // Remove newly selected doctor from local list
+                                                      cubit.doctorsChecked
+                                                          .removeWhere((d) =>
+                                                              d.id ==
+                                                              doctorModel.id);
+                                                      cubit.updateScreen();
+                                                    }
+                                                  },
+                                                  child: Icon(
+                                                    Icons.clear,
+                                                    size: 15.r,
+                                                    color: Colors.red.shade700,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       );
@@ -301,7 +423,10 @@ class SendConsultationScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                          );
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
               ],
@@ -311,13 +436,18 @@ class SendConsultationScreen extends StatelessWidget {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
-                loaded: (isSearching,
-                    isSearched,
-                    message,
-                    response,
-                    counterChanges,
-                    isSendingConsultation,
-                    isSendedConsultation) {
+                loaded: (
+                  isSearching,
+                  isSearched,
+                  message,
+                  response,
+                  counterChanges,
+                  isSendingConsultation,
+                  isSendedConsultation,
+                  membersForConsultation,
+                  isRemoveMemberFromConsultationLoading,
+                  isRemoveMemberFromConsultationLoaded,
+                ) {
                   if (message != '') {
                     customSnackBar(context: context, message: message);
                   }
@@ -333,8 +463,18 @@ class SendConsultationScreen extends StatelessWidget {
                     ),
                   );
                 },
-                loaded: (isSearching, isSearched, message, response, _,
-                    isSendingConsultation, isSendedConsultation) {
+                loaded: (
+                  isSearching,
+                  isSearched,
+                  message,
+                  response,
+                  _,
+                  isSendingConsultation,
+                  isSendedConsultation,
+                  membersForConsultation,
+                  isRemoveMemberFromConsultationLoading,
+                  isRemoveMemberFromConsultationLoaded,
+                ) {
                   if (isSendingConsultation) {
                     return Column(
                       children: [
@@ -379,18 +519,19 @@ class SendConsultationScreen extends StatelessWidget {
                                     arguments:
                                         AppRoutesArgs.doctorInfoViewRouteArgs(
                                       doctorId: doctorModel.id.toString(),
-                                      currentDoctorModel: currentDoctorModel,
-                                      isSyndicateCardRequired: homeDataModel
-                                          .isSyndicateCardRequired
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      isSyndicateCardRequired: widget
+                                          .homeDataModel.isSyndicateCardRequired
                                           .toString(),
                                       initialIndex: 0,
                                       accountVerification:
-                                          homeDataModel.verified!,
+                                          widget.homeDataModel.verified!,
                                       currentDoctorRole:
-                                          homeDataModel.role.toString(),
-                                      currentDoctorPoints:
-                                          int.parse(homeDataModel.scoreValue!),
-                                      homeDataModel: homeDataModel,
+                                          widget.homeDataModel.role.toString(),
+                                      currentDoctorPoints: int.parse(
+                                          widget.homeDataModel.scoreValue!),
+                                      homeDataModel: widget.homeDataModel,
                                       isNavigateToTheButtonOfInformationTab:
                                           false,
                                     ),
@@ -434,26 +575,28 @@ class SendConsultationScreen extends StatelessWidget {
                                                               .id
                                                               .toString(),
                                                           initialIndex: 0,
-                                                          currentDoctorModel:
-                                                              currentDoctorModel,
+                                                          currentDoctorModel: widget
+                                                              .currentDoctorModel,
                                                           isSyndicateCardRequired:
-                                                              homeDataModel
+                                                              widget
+                                                                  .homeDataModel
                                                                   .isSyndicateCardRequired!,
-                                                          homeDataModel:
-                                                              homeDataModel,
+                                                          homeDataModel: widget
+                                                              .homeDataModel,
                                                           accountVerification:
-                                                              homeDataModel
+                                                              widget.homeDataModel
                                                                       .verified ??
                                                                   true,
                                                           currentDoctorRole:
-                                                              homeDataModel
+                                                              widget
+                                                                  .homeDataModel
                                                                   .role!,
                                                           isNavigateToTheButtonOfInformationTab:
                                                               false,
                                                           currentDoctorPoints:
-                                                              int.parse(
-                                                                  homeDataModel
-                                                                      .scoreValue!),
+                                                              int.parse(widget
+                                                                  .homeDataModel
+                                                                  .scoreValue!),
                                                         ),
                                                       );
                                                     },
@@ -543,22 +686,82 @@ class SendConsultationScreen extends StatelessWidget {
                                               MainAxisAlignment.end,
                                           children: [
                                             Checkbox(
-                                              value: cubit
-                                                  .isDoctorChecked(doctorModel),
-                                              onChanged: (bool? value) {
-                                                if (value == true) {
-                                                  cubit.doctorsChecked
-                                                      .add(doctorModel);
-                                                } else {
-                                                  cubit.doctorsChecked
-                                                      .removeWhere((d) =>
-                                                          d.id ==
-                                                          doctorModel.id);
-                                                }
-                                                animateToRightEndOfScreen(cubit
-                                                    .horizontalScrollController);
-                                                cubit.updateScreen();
-                                              },
+                                              value: cubit.isDoctorChecked(
+                                                      doctorModel) ||
+                                                  (widget.isForAddNewDoctors &&
+                                                      membersForConsultation !=
+                                                          null &&
+                                                      membersForConsultation
+                                                              .data !=
+                                                          null &&
+                                                      membersForConsultation
+                                                          .data!
+                                                          .any((m) =>
+                                                              m.id ==
+                                                              doctorModel.id)),
+                                              // Disable checkbox for current doctor
+                                              onChanged: doctorModel.id
+                                                          .toString() ==
+                                                      widget
+                                                          .currentDoctorModel.id
+                                                          .toString()
+                                                  ? null
+                                                  : (bool? value) {
+                                                      if (value == true) {
+                                                        // Only add to doctorsChecked if not already an existing member
+                                                        if (!(widget
+                                                                .isForAddNewDoctors &&
+                                                            membersForConsultation !=
+                                                                null &&
+                                                            membersForConsultation
+                                                                    .data !=
+                                                                null &&
+                                                            membersForConsultation
+                                                                .data!
+                                                                .any((m) =>
+                                                                    m.id ==
+                                                                    doctorModel
+                                                                        .id))) {
+                                                          cubit.doctorsChecked
+                                                              .add(doctorModel);
+                                                        }
+                                                      } else {
+                                                        // Check if this is an existing member
+                                                        final isExistingMember = widget
+                                                                .isForAddNewDoctors &&
+                                                            membersForConsultation !=
+                                                                null &&
+                                                            membersForConsultation
+                                                                    .data !=
+                                                                null &&
+                                                            membersForConsultation
+                                                                .data!
+                                                                .any((m) =>
+                                                                    m.id ==
+                                                                    doctorModel
+                                                                        .id);
+
+                                                        if (isExistingMember) {
+                                                          // Remove existing member from consultation via API
+                                                          cubit.removeMemberFromConsultation(
+                                                              widget
+                                                                  .consultationId,
+                                                              doctorModel.id
+                                                                  .toString());
+                                                        } else {
+                                                          // Remove newly selected doctor from local list
+                                                          cubit.doctorsChecked
+                                                              .removeWhere((d) =>
+                                                                  d.id ==
+                                                                  doctorModel
+                                                                      .id);
+                                                        }
+                                                      }
+                                                      animateToRightEndOfScreen(
+                                                          cubit
+                                                              .horizontalScrollController);
+                                                      cubit.updateScreen();
+                                                    },
                                               activeColor: AppColors.primary
                                                   .withOpacity(0.8),
                                             ),

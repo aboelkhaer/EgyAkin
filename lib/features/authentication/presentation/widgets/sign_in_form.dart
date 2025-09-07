@@ -18,7 +18,7 @@ class SignInForm extends StatelessWidget {
       child: Column(
         children: [
           CustomTextFormField(
-            title: AppStrings.email,
+            title: context.tr(AppStrings.email),  
             enableSuggestions: true,
             style: TextStyle(fontSize: 12.sp),
             textInputType: TextInputType.emailAddress,
@@ -35,7 +35,7 @@ class SignInForm extends StatelessWidget {
                 changePasswordVisibility:
                     (signInObscureText, signInVisiblePasswordIcon) {
                   return CustomTextFormField(
-                    title: AppStrings.password,
+                    title: context.tr(AppStrings.password),
                     style: TextStyle(fontSize: 12.sp),
                     textInputType: TextInputType.visiblePassword,
                     onChanged: (value) {
@@ -54,7 +54,7 @@ class SignInForm extends StatelessWidget {
                 },
                 orElse: () {
                   return CustomTextFormField(
-                    title: AppStrings.password,
+                    title: context.tr(AppStrings.password),
                     textInputType: TextInputType.visiblePassword,
                     style: TextStyle(fontSize: 12.sp),
                     onChanged: (value) {
@@ -85,7 +85,7 @@ class SignInForm extends StatelessWidget {
                 },
                 child: SizedBox(
                   child: Text(
-                    AppStrings.forgotPassword,
+                    context.tr(AppStrings.forgotPassword),
                     style: TextStyle(
                       color: Colors.grey.shade500,
                       fontWeight: FontWeight.w500,

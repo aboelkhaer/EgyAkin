@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class PostCard extends StatelessWidget {
@@ -51,10 +50,10 @@ class PostCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 1,
-            blurRadius: 7,
-            offset: const Offset(0, 3), // changes position of shadow
+            color: Colors.grey.withOpacity(0.4),
+            spreadRadius: 2,
+            blurRadius: 12,
+            offset: const Offset(0, 5), // changes position of shadow
           ),
         ],
       ),
@@ -88,7 +87,7 @@ class PostCard extends StatelessWidget {
                             child: Row(
                               children: [
                                 Text(
-                                  'Posted at',
+                                  context.tr(AppStrings.postedAt),
                                   style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     color: Colors.grey.shade700,
@@ -264,8 +263,9 @@ class PostCard extends StatelessWidget {
                                   Text(
                                     // formatDateTimeForCommunity(
                                     //     feed.createdAt.toString()),
-                                    timeago.format(DateTime.parse(
-                                        feed.createdAt.toString())),
+                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                        feed.createdAt.toString(),
+                                        context),
                                     style: TextStyle(
                                       color: AppColors.description,
                                       fontSize: 11.sp,
@@ -365,6 +365,7 @@ class PostCard extends StatelessWidget {
                                                             'Report clicked');
                                                         break;
                                                       case 'Edit':
+
                                                         // Handle edit action
                                                         navigatorKey
                                                             .currentState
@@ -388,10 +389,10 @@ class PostCard extends StatelessWidget {
                                                             context: context,
                                                             builder: (context) {
                                                               return AlertDialog(
-                                                                title: const Text(
-                                                                    'Delete Post'),
-                                                                content: const Text(
-                                                                    'Are you sure you want to delete this post?'),
+                                                                title:  Text(
+                                                                    context.tr(AppStrings.deletePost),),
+                                                                content:  Text(
+                                                                    context.tr(AppStrings.areYouSureYouWantToDeleteThisPost),),
                                                                 actions: [
                                                                   TextButton(
                                                                     onPressed:
@@ -400,7 +401,7 @@ class PostCard extends StatelessWidget {
                                                                           context); // Close the dialog
                                                                     },
                                                                     child: Text(
-                                                                      'Cancel',
+                                                                      context.tr(AppStrings.cancel),
                                                                       style:
                                                                           TextStyle(
                                                                         color: Colors
@@ -420,8 +421,8 @@ class PostCard extends StatelessWidget {
                                                                       onDeleteAdditional!();
                                                                     },
                                                                     child:
-                                                                        const Text(
-                                                                      'Delete',
+                                                                         Text(
+                                                                      context.tr(AppStrings.delete),
                                                                       style: TextStyle(
                                                                           color:
                                                                               Colors.red),
@@ -436,10 +437,12 @@ class PostCard extends StatelessWidget {
                                                             context: context,
                                                             builder: (context) {
                                                               return AlertDialog(
-                                                                title: const Text(
-                                                                    'Delete Post'),
-                                                                content: const Text(
-                                                                    'Are you sure you want to delete this post?'),
+                                                                title:  Text(
+                                                                    context.tr(AppStrings.deletePost),
+                                                                    ),
+                                                                content:  Text(
+                                                                    context.tr(AppStrings.areYouSureYouWantToDeleteThisPost),
+                                                                    ),
                                                                 actions: [
                                                                   TextButton(
                                                                     onPressed:
@@ -448,7 +451,7 @@ class PostCard extends StatelessWidget {
                                                                           context); // Close the dialog
                                                                     },
                                                                     child: Text(
-                                                                      'Cancel',
+                                                                      context.tr(AppStrings.cancel),
                                                                       style:
                                                                           TextStyle(
                                                                         color: Colors
@@ -472,8 +475,8 @@ class PostCard extends StatelessWidget {
                                                                       );
                                                                     },
                                                                     child:
-                                                                        const Text(
-                                                                      'Delete',
+                                                                         Text(
+                                                                      context.tr(AppStrings.delete),
                                                                       style: TextStyle(
                                                                           color:
                                                                               Colors.red),
@@ -526,8 +529,9 @@ class PostCard extends StatelessWidget {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Edit'),
+                                                               Text(
+                                                                  context.tr(AppStrings.edit),
+                                                            ),
                                                             ],
                                                           ),
                                                         ),
@@ -552,8 +556,9 @@ class PostCard extends StatelessWidget {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Delete'),
+                                                               Text(
+                                                                  context.tr(AppStrings.delete),
+                                                            ),
                                                             ],
                                                           ),
                                                         ),
@@ -722,8 +727,16 @@ class PostCard extends StatelessWidget {
             highlightColor: Colors.transparent,
             hoverColor: Colors.transparent,
             focusColor: Colors.transparent,
+           
             child: Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              decoration: const BoxDecoration(
+                color: AppColors.subBG,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

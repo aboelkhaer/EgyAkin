@@ -15,7 +15,8 @@ class SubmitButton extends StatelessWidget {
           onPressed: () {
             cubit.addPatientForFirstTime();
           },
-          title: AppStrings.submit,
+          title: context.tr(AppStrings.submit),
+
         ),
       ),
     );

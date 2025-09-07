@@ -86,7 +86,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                 ),
                 Expanded(
                   child: CustomTextFormField(
-                    title: 'Search',
+                    title: context.tr(AppStrings.search),
                     textAlign: TextAlign.center,
                     isSearchIconInCenter:
                         cubit.isSearchContentEmpty ? true : false,
@@ -153,9 +153,9 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           ),
                           const SizedBox(height: 16),
                           Text(
-                            'Start typing to search for posts',
+                            context.tr(AppStrings.startTypingToSearchForPosts),
                             style: TextStyle(
-                              fontSize: 16.sp,
+                              fontSize: 14.sp,
                               color: Colors.grey[600],
                             ),
                           ),
@@ -187,9 +187,9 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                               height: 150,
                             ),
                             Text(
-                              'Start typing to search for posts',
+                              context.tr(AppStrings.startTypingToSearchForPosts),
                               style: TextStyle(
-                                fontSize: 12.sp,
+                                fontSize: 14.sp,
                                 color: Colors.grey.shade500,
                               ),
                             ),

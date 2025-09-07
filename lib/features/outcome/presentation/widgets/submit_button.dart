@@ -42,8 +42,8 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
           noColoredButtonOnTap: () {
             Navigator.of(context).pop();
           },
-          coloredButtonText: AppStrings.verify,
-          noColoredButtonText: AppStrings.cancel,
+          coloredButtonText: context.tr(AppStrings.verify),
+          noColoredButtonText: context.tr(AppStrings.cancel),
           coloredButtonOnTap: () {
             Navigator.of(context).pop();
             navigatorKey.currentState?.pushNamed(
@@ -73,7 +73,7 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
             onPressed: () {
               widget.cubit.submitOutcome(widget.patientId);
             },
-            title: AppStrings.submit,
+            title: context.tr(AppStrings.submit),
           ),
         ),
       );
@@ -93,13 +93,14 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 showCustomDialog(
                   context: context,
-                  title: 'Syndicate card verification',
+                  title: context.tr(AppStrings.syndicateCardVerification),
                   description:
-                      'To add outcome you must verify your syndicate card.',
+                      context.tr(AppStrings.toAddOutcomeYouMustVerifyYourSyndicateCard),
+
                   noColoredButtonOnTap: () {
                     Navigator.of(context).pop();
                   },
-                  coloredButtonText: AppStrings.ok,
+                  coloredButtonText: context.tr(AppStrings.ok),
                   noColoredButtonText: '',
                   isNoColorShow: true,
                   coloredButtonOnTap: () {
@@ -108,7 +109,7 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
                 );
               });
             },
-            title: AppStrings.submit,
+            title: context.tr(AppStrings.submit),
             isDisable: false,
           ),
         ),
@@ -126,14 +127,14 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               showCustomDialog(
                 context: context,
-                title: AppStrings.emailVerification,
+                title: context.tr(AppStrings.emailVerification),
                 description:
-                    AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress,
+                    context.tr(AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress),
                 noColoredButtonOnTap: () {
                   Navigator.of(context).pop();
                 },
-                coloredButtonText: AppStrings.verify,
-                noColoredButtonText: AppStrings.cancel,
+                coloredButtonText: context.tr(AppStrings.verify),
+                noColoredButtonText: context.tr(AppStrings.cancel),
                 coloredButtonOnTap: () {
                   Navigator.of(context).pop();
                   navigatorKey.currentState?.pushNamed(
@@ -144,7 +145,7 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
               );
             });
           },
-          title: AppStrings.submit,
+          title: context.tr(AppStrings.submit),
         ),
       ),
     );

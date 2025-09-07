@@ -136,7 +136,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 ],
             enableSuggestions: widget.enableSuggestions,
             onTapOutside: (event) => FocusScope.of(context).unfocus(),
-            
             enabled: widget.enabled,
             onTap: widget.onTextClick,
             autofocus: widget.autoFocus,
@@ -157,8 +156,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             textInputAction: widget.textInputAction,
             decoration: InputDecoration(
               contentPadding: widget.contentPadding ??
-                  const EdgeInsets.only(
-                      left: 11, right: 3, top: 14, bottom: 14),
+                  EdgeInsets.only(
+                    left:  11,
+                    right: 11,
+                    top: 14,
+                    bottom: 14,
+                  ),
               counterText: '',
               hintText: widget.title,
               hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),

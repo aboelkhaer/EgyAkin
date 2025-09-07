@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
+
 import '../../../../exports.dart';
 
 abstract class ConsultationDetailsDataSource {
@@ -7,6 +9,8 @@ abstract class ConsultationDetailsDataSource {
     required String consultationId,
     required String reply,
   });
+  Future<LockOrUnlockConsultationModelResponse> lockOrUnlockConsultation(
+      String consultationId, bool isOpen);
 }
 
 class ConsultationDetailsDataSourceImpl
@@ -25,5 +29,11 @@ class ConsultationDetailsDataSourceImpl
   Future<AddConsultationReplyModelResponse> addConsultationReply(
       {required String consultationId, required String reply}) async {
     return await _apiServices.addConsultationReply(consultationId, reply);
+  }
+
+  @override
+  Future<LockOrUnlockConsultationModelResponse> lockOrUnlockConsultation(
+      String consultationId, bool isOpen) async {
+    return await _apiServices.lockOrUnlockConsultation(consultationId, isOpen);
   }
 }

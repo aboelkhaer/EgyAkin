@@ -28,6 +28,7 @@ _$GetConsultationDetailsModelResponseImpl
               ?.map((e) => DoctorsConsultationDetailsModelResponse.fromJson(
                   e as Map<String, dynamic>))
               .toList(),
+          isOpen: json['is_open'] as bool?,
         );
 
 Map<String, dynamic> _$$GetConsultationDetailsModelResponseImplToJson(
@@ -45,6 +46,7 @@ Map<String, dynamic> _$$GetConsultationDetailsModelResponseImplToJson(
       'doctor_lname': instance.doctorLastName,
       'patient_info': instance.patientModel,
       'consultationDoctors': instance.consultationDoctors,
+      'is_open': instance.isOpen,
     };
 
 _$DoctorsConsultationDetailsModelResponseImpl

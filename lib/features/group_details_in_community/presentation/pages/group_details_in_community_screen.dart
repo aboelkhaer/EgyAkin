@@ -1,12 +1,6 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/functions/date_formate_for_group.dart';
-import 'package:egy_akin/app/shared/widgets/custom_network_image.dart';
 import 'package:egy_akin/exports.dart';
-import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
-import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
-import 'package:egy_akin/features/group_members/presentation/cubit/group_members_cubit.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:readmore/readmore.dart';
 
@@ -450,7 +444,9 @@ class _GroupDetailsInCommunityScreenState
                                             const Icon(Icons.exit_to_app,
                                                 color: AppColors.description),
                                             SizedBox(width: 8.w),
-                                            const Text('Leave Group'),
+                                             Text(
+                                              context.tr(AppStrings.leaveGroup),
+                                             ),
                                           ],
                                         ),
                                       ),
@@ -470,7 +466,9 @@ class _GroupDetailsInCommunityScreenState
                                             const Icon(Icons.delete,
                                                 color: AppColors.description),
                                             SizedBox(width: 8.w),
-                                            const Text('Delete Group'),
+                                             Text(
+                                              context.tr(AppStrings.deleteGroup),
+                                             ),
                                           ],
                                         ),
                                       ),
@@ -742,14 +740,15 @@ class _GroupDetailsInCommunityScreenState
                                                   hoverColor:
                                                       Colors.transparent,
                                                   child: Text(
-                                                    '${groupDetails.data!.group!.memberCount} Members',
+                                                    '${groupDetails.data!.group!.memberCount} ${context.tr(AppStrings.fromMembers)}',
+
                                                     style: const TextStyle(
                                                         color:
                                                             AppColors.primary),
                                                   ),
                                                 )
                                               : Text(
-                                                  '${groupDetails.data!.group!.memberCount} Members',
+                                                  '${groupDetails.data!.group!.memberCount} ${context.tr(AppStrings.fromMembers)}',
                                                   style: TextStyle(
                                                       color: Colors.grey[600]),
                                                 ),
@@ -787,7 +786,7 @@ class _GroupDetailsInCommunityScreenState
                                                 ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            'Created ${formatDateForGroup(groupDetails.data!.group!.createdAt.toString())}',
+                                            '${context.tr(AppStrings.created)} ${formatDateForGroup(groupDetails.data!.group!.createdAt.toString(), context)}',
                                             style: TextStyle(
                                                 color: Colors.grey[600]),
                                           ),
@@ -825,8 +824,8 @@ class _GroupDetailsInCommunityScreenState
                                 trimMode: TrimMode.Line,
                                 trimLines: 2,
                                 colorClickableText: Colors.blue,
-                                trimCollapsedText: ' See more',
-                                trimExpandedText: ' See less ',
+                                trimCollapsedText: ' ${context.tr(AppStrings.seeMore)} ',
+                                trimExpandedText: ' ${context.tr(AppStrings.seeLess)} ',
                                 moreStyle: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.blue,
@@ -923,11 +922,13 @@ class _GroupDetailsInCommunityScreenState
                                               groupId: groupDetails
                                                   .data!.group!.id
                                                   .toString(),
+                                              isForAddNewDoctors: false,
+                                              consultationId: '',
                                             ),
                                           );
                                         },
-                                        child: const Text(
-                                          'Invite',
+                                        child:  Text(
+                                          context.tr(AppStrings.invite),
                                         ),
                                       ),
                                       const SizedBox(height: 10),
@@ -991,7 +992,7 @@ class _GroupDetailsInCommunityScreenState
                                                                       .toString(),
                                                                 );
                                                               },
-                                                              title: 'Decline',
+                                                              title: context.tr(AppStrings.decline),
                                                               color: Colors.grey
                                                                   .shade600,
                                                             ),
@@ -1025,7 +1026,8 @@ class _GroupDetailsInCommunityScreenState
                                                                 );
                                                               },
                                                               title:
-                                                                  'Accept invitation',
+                                                                  context.tr(AppStrings.acceptInvitation),
+
                                                             ),
                                                           ),
                                                         ],
@@ -1082,7 +1084,7 @@ class _GroupDetailsInCommunityScreenState
                                                               .userStatus ==
                                                           GroupInviteStatus
                                                               .pending.name)
-                                                  ? 'Pending'
+                                                  ? context.tr(AppStrings.pending)
                                                   : groupDetails.data!.group!
                                                                   .userStatus ==
                                                               GroupInviteStatus
@@ -1101,8 +1103,8 @@ class _GroupDetailsInCommunityScreenState
                                                                   .userStatus ==
                                                               GroupInviteStatus
                                                                   .invited.name
-                                                      ? 'Joined'
-                                                      : 'Join',
+                                                      ? context.tr(AppStrings.joined)
+                                                      : context.tr(AppStrings.join),
                                             ),
                                           ),
                                     const SizedBox(height: 10),

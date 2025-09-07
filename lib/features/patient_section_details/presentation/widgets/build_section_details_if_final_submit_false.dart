@@ -203,13 +203,13 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                 )
                               : questionModel.type ==
                                       AppStrings.questionTypeFiles
-                                  ? const Row(
+                                  ?  Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Flexible(
                                           child: Text(
-                                            'Attention: Files will upload directly.\nTotals should be maximum 5MB.\nSingle file size maximum 2MB.',
+                                            context.tr(AppStrings.attentionFilesWillUploadDirectlyTotalsShouldBeMaximum5MB),
                                             style: TextStyle(
                                               color: AppColors.description,
                                             ),

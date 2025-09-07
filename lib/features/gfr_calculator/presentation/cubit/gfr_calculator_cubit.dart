@@ -155,13 +155,14 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('GFR Result'),
+            title: Text(context.tr(AppStrings.gfrResult)),
             backgroundColor: Colors.grey.shade100,
-            content: Text('Your estimated GFR is ${gfr.toStringAsFixed(2)}'),
+            content: Text(context.tr(AppStrings.yourEstimatedGfrIs) + ' ${gfr.toStringAsFixed(2)}'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child:  Text(context.tr(AppStrings.ok)
+                ),
               ),
             ],
           ),
@@ -171,13 +172,14 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Input Error'),
+            title: Text(context.tr(AppStrings.inputError)),
             backgroundColor: Colors.grey.shade100,
-            content: const Text('Please enter valid input values.'),
+            content: Text(context.tr(AppStrings.pleaseEnterValidInputValues)),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
+                child:  Text(context.tr(AppStrings.ok)
+                ),
               ),
             ],
           ),

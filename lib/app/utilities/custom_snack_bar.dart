@@ -25,7 +25,7 @@ void customSnackBar({required BuildContext context, required String message}) {
     content: Text(message),
     duration: const Duration(seconds: AppStrings.snackBarDelay),
     action: SnackBarAction(
-      label: AppStrings.ok,
+      label: context.tr(AppStrings.ok), 
       onPressed: () {},
     ),
   );

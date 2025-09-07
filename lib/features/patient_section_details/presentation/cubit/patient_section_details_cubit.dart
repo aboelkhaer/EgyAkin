@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
@@ -454,7 +455,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'You must select at least one choice. \n{${question.question}}',
+                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -511,7 +512,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   value.questions,
                   false,
                   false,
-                  'You must add "Others" field in \n{${question.question}}',
+                  '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
                   snackbarErrorCounter += 1,
                   false,
                   false,
@@ -540,7 +541,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   value.questions,
                   false,
                   false,
-                  'This question is required \n{${question.question}}',
+                  '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
                   snackbarErrorCounter += 1,
                   false,
                   false,
@@ -573,7 +574,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'Name should contain only English letters',
+                    LocalizationService.instance.translate(AppStrings.nameShouldContainOnlyEnglishLetters),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -596,7 +597,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           if (question.type == AppStrings.questionTypeString) {
             if (question.question == 'National ID') {
               String nationalID = question.answer;
-              log('moatz123 $nationalID');
               if (nationalID.length != 14) {
                 emit(state.maybeMap(
                   orElse: () => state,
@@ -604,7 +604,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'National ID should have 14 digits',
+                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -629,7 +629,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'National ID should have 14 digits',
+                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -660,7 +660,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'Age should be less than 120',
+                    LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -690,7 +690,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'Phone should have 11 digits',
+                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -715,7 +715,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    'Phone should have 11 digits',
+                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -741,7 +741,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 value.questions,
                 false,
                 false,
-                'This question is required \n{${question.question}}',
+                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
                 snackbarErrorCounter += 1,
                 false,
                 false,
@@ -842,7 +842,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           value.questions,
           false,
           false,
-          'You should update any data to submit.',
+          LocalizationService.instance.translate(AppStrings.youShouldUpdateAnyDataToSubmit),
           snackbarErrorCounter += 1,
           false,
           false,
@@ -983,7 +983,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               value.questions,
               value.isSubmitLoading,
               value.isSubmitted,
-              'File ${pickedFile.name} exceeds the 2MB limit.',
+              '${LocalizationService.instance.translate(AppStrings.file)} ${pickedFile.name} ${LocalizationService.instance.translate(AppStrings.exceedsThe2MBLimit)}',
               snackbarErrorCounter += 1,
               false,
               false,
@@ -1014,7 +1014,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.questions,
             value.isSubmitLoading,
             value.isSubmitted,
-            'Total size of selected files exceeds 10MB.',
+            LocalizationService.instance.translate(AppStrings.totalSizeOfSelectedFilesExceeds10MB),
             snackbarErrorCounter += 1,
             false,
             false,
@@ -1093,7 +1093,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         context: context,
         barrierDismissible: false, // Prevent dismissing the dialog
         builder: (BuildContext context) {
-          return const Dialog(
+          return  Dialog(
             child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Row(
@@ -1101,7 +1101,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(width: 16),
-                  Text("Uploading files..."),
+                  Text(LocalizationService.instance.translate(AppStrings.uploadingFiles)),
                 ],
               ),
             ),
@@ -1429,7 +1429,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     return result.fold(
       (failure) {
         // Handle failure
-        print('Medicine creation failed: ${failure.message}'); // Debug print
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) =>
@@ -1450,7 +1449,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       },
       (response) {
         // Handle success
-        print('Medicine creation succeeded: ${response.message}'); // Debug print
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) {

@@ -45,7 +45,8 @@ class WriteCommentField extends StatelessWidget {
                   children: [
                     Expanded(
                       child: CustomTextFormField(
-                        title: AppStrings.writeComment,
+                        title: context.tr(AppStrings.writeComment),
+
                         textInputType: TextInputType.text,
                         enableSuggestions: true,
                         onChanged: (val) {
@@ -61,14 +62,13 @@ class WriteCommentField extends StatelessWidget {
                           if (!accountVerification) {
                             showCustomDialog(
                               context: context,
-                              title: AppStrings.emailVerification,
-                              description: AppStrings
-                                  .toAddCommentYouMustVerifyYourEmailAddress,
+                              title: context.tr(AppStrings.emailVerification),
+                              description: context.tr(AppStrings.toAddCommentYouMustVerifyYourEmailAddress),
                               noColoredButtonOnTap: () {
                                 Navigator.of(context).pop();
                               },
-                              coloredButtonText: AppStrings.verify,
-                              noColoredButtonText: AppStrings.cancel,
+                              coloredButtonText: context.tr(AppStrings.verify),
+                              noColoredButtonText: context.tr(AppStrings.cancel),
                               coloredButtonOnTap: () {
                                 Navigator.of(context).pop();
                                 navigatorKey.currentState?.pushNamed(
@@ -90,14 +90,13 @@ class WriteCommentField extends StatelessWidget {
                                 isSyndicateCardRequired != 'Pending') {
                               showCustomDialog(
                                 context: context,
-                                title: AppStrings.emailVerification,
-                                description: AppStrings
-                                    .toAddCommentYouMustVerifyYourEmailAddress,
+                                title: context.tr(AppStrings.emailVerification),
+                                description: context.tr(AppStrings.toAddCommentYouMustVerifyYourEmailAddress),
                                 noColoredButtonOnTap: () {
                                   Navigator.of(context).pop();
                                 },
-                                coloredButtonText: AppStrings.verify,
-                                noColoredButtonText: AppStrings.cancel,
+                                coloredButtonText: context.tr(AppStrings.verify),
+                                noColoredButtonText: context.tr(AppStrings.cancel),
                                 coloredButtonOnTap: () {
                                   Navigator.of(context).pop();
                                   navigatorKey.currentState?.pushNamed(
@@ -116,13 +115,13 @@ class WriteCommentField extends StatelessWidget {
                                   isSyndicateCardRequired == 'Pending')) {
                             showCustomDialog(
                               context: context,
-                              title: 'Syndicate card verification',
+                              title: context.tr(AppStrings.syndicateCardVerification),
                               description:
-                                  'To add comment you must verify your syndicate card.',
+                                  context.tr(AppStrings.toAddCommentYouMustVerifyYourSyndicateCard),
                               noColoredButtonOnTap: () {
                                 Navigator.of(context).pop();
                               },
-                              coloredButtonText: AppStrings.ok,
+                              coloredButtonText: context.tr(AppStrings.ok), 
                               noColoredButtonText: '',
                               isNoColorShow: true,
                               coloredButtonOnTap: () {
@@ -155,17 +154,16 @@ class WriteCommentField extends StatelessWidget {
                                           if (!accountVerification) {
                                             showCustomDialog(
                                               context: context,
-                                              title:
-                                                  AppStrings.emailVerification,
-                                              description: AppStrings
-                                                  .toAddCommentYouMustVerifyYourEmailAddress,
+                                              title: context.tr(AppStrings.emailVerification),
+                                              description: context.tr(AppStrings.toAddCommentYouMustVerifyYourEmailAddress),
                                               noColoredButtonOnTap: () {
                                                 Navigator.of(context).pop();
                                               },
                                               coloredButtonText:
-                                                  AppStrings.verify,
+                                                  context.tr(AppStrings.verify),
                                               noColoredButtonText:
-                                                  AppStrings.cancel,
+                                                  context.tr(AppStrings.cancel),
+
                                               coloredButtonOnTap: () {
                                                 Navigator.of(context).pop();
                                                 navigatorKey.currentState
@@ -193,17 +191,16 @@ class WriteCommentField extends StatelessWidget {
                                                     'Pending') {
                                               showCustomDialog(
                                                 context: context,
-                                                title: AppStrings
-                                                    .emailVerification,
-                                                description: AppStrings
-                                                    .toAddCommentYouMustVerifyYourEmailAddress,
+                                                title: context.tr(AppStrings.emailVerification),
+                                                description: context.tr(AppStrings.toAddCommentYouMustVerifyYourEmailAddress),
                                                 noColoredButtonOnTap: () {
                                                   Navigator.of(context).pop();
                                                 },
                                                 coloredButtonText:
-                                                    AppStrings.verify,
+                                                    context.tr(AppStrings.verify),
                                                 noColoredButtonText:
-                                                    AppStrings.cancel,
+                                                    context.tr(AppStrings.cancel),
+
                                                 coloredButtonOnTap: () {
                                                   Navigator.of(context).pop();
                                                   navigatorKey.currentState
@@ -226,13 +223,13 @@ class WriteCommentField extends StatelessWidget {
                                             showCustomDialog(
                                               context: context,
                                               title:
-                                                  'Syndicate card verification',
+                                                  context.tr(AppStrings.syndicateCardVerification),
                                               description:
-                                                  'To add comment you must verify your syndicate card.',
+                                                  context.tr(AppStrings.toAddCommentYouMustVerifyYourSyndicateCard),
                                               noColoredButtonOnTap: () {
                                                 Navigator.of(context).pop();
                                               },
-                                              coloredButtonText: AppStrings.ok,
+                                              coloredButtonText: context.tr(AppStrings.ok), 
                                               noColoredButtonText: '',
                                               isNoColorShow: true,
                                               coloredButtonOnTap: () {
@@ -248,9 +245,9 @@ class WriteCommentField extends StatelessWidget {
                                               .withOpacity(0.7),
                                         ),
                                       ),
-                                      SizedBox(
-                                        height: size.height * 0.012,
-                                      )
+                                      // SizedBox(
+                                      //   height: size.height * 0.012,
+                                      // )
                                     ],
                                   );
                           },

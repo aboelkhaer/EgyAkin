@@ -216,6 +216,7 @@ DoctorModelInConsultationModelResponse
 
 /// @nodoc
 mixin _$DoctorModelInConsultationModelResponse {
+  @JsonKey(fromJson: _parseId)
   int? get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'name')
   String? get firstName => throw _privateConstructorUsedError;
@@ -232,6 +233,9 @@ mixin _$DoctorModelInConsultationModelResponse {
   @JsonKey(name: 'patients_count')
   String? get patientsCount => throw _privateConstructorUsedError;
   String? get score => throw _privateConstructorUsedError;
+  String? get role => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
+  String? get isVerified => throw _privateConstructorUsedError;
 
   /// Serializes this DoctorModelInConsultationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -253,7 +257,7 @@ abstract class $DoctorModelInConsultationModelResponseCopyWith<$Res> {
           DoctorModelInConsultationModelResponse>;
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseId) int? id,
       @JsonKey(name: 'name') String? firstName,
       @JsonKey(name: 'lname') String? lastName,
       String? email,
@@ -264,7 +268,10 @@ abstract class $DoctorModelInConsultationModelResponseCopyWith<$Res> {
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
       String? isSyndicateCardRequired,
       @JsonKey(name: 'patients_count') String? patientsCount,
-      String? score});
+      String? score,
+      String? role,
+      String? status,
+      String? isVerified});
 }
 
 /// @nodoc
@@ -295,6 +302,9 @@ class _$DoctorModelInConsultationModelResponseCopyWithImpl<$Res,
     Object? isSyndicateCardRequired = freezed,
     Object? patientsCount = freezed,
     Object? score = freezed,
+    Object? role = freezed,
+    Object? status = freezed,
+    Object? isVerified = freezed,
   }) {
     return _then(_value.copyWith(
       id: freezed == id
@@ -345,6 +355,18 @@ class _$DoctorModelInConsultationModelResponseCopyWithImpl<$Res,
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
               as String?,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isVerified: freezed == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -359,7 +381,7 @@ abstract class _$$DoctorModelInConsultationModelResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseId) int? id,
       @JsonKey(name: 'name') String? firstName,
       @JsonKey(name: 'lname') String? lastName,
       String? email,
@@ -370,7 +392,10 @@ abstract class _$$DoctorModelInConsultationModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'syndicate_card') String? syndicateCard,
       String? isSyndicateCardRequired,
       @JsonKey(name: 'patients_count') String? patientsCount,
-      String? score});
+      String? score,
+      String? role,
+      String? status,
+      String? isVerified});
 }
 
 /// @nodoc
@@ -400,6 +425,9 @@ class __$$DoctorModelInConsultationModelResponseImplCopyWithImpl<$Res>
     Object? isSyndicateCardRequired = freezed,
     Object? patientsCount = freezed,
     Object? score = freezed,
+    Object? role = freezed,
+    Object? status = freezed,
+    Object? isVerified = freezed,
   }) {
     return _then(_$DoctorModelInConsultationModelResponseImpl(
       id: freezed == id
@@ -450,6 +478,18 @@ class __$$DoctorModelInConsultationModelResponseImplCopyWithImpl<$Res>
           ? _value.score
           : score // ignore: cast_nullable_to_non_nullable
               as String?,
+      role: freezed == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isVerified: freezed == isVerified
+          ? _value.isVerified
+          : isVerified // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -459,7 +499,7 @@ class __$$DoctorModelInConsultationModelResponseImplCopyWithImpl<$Res>
 class _$DoctorModelInConsultationModelResponseImpl
     implements _DoctorModelInConsultationModelResponse {
   const _$DoctorModelInConsultationModelResponseImpl(
-      {this.id,
+      {@JsonKey(fromJson: _parseId) this.id,
       @JsonKey(name: 'name') this.firstName,
       @JsonKey(name: 'lname') this.lastName,
       this.email,
@@ -470,13 +510,17 @@ class _$DoctorModelInConsultationModelResponseImpl
       @JsonKey(name: 'syndicate_card') this.syndicateCard,
       this.isSyndicateCardRequired,
       @JsonKey(name: 'patients_count') this.patientsCount,
-      this.score});
+      this.score,
+      this.role,
+      this.status,
+      this.isVerified});
 
   factory _$DoctorModelInConsultationModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$DoctorModelInConsultationModelResponseImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _parseId)
   final int? id;
   @override
   @JsonKey(name: 'name')
@@ -504,10 +548,16 @@ class _$DoctorModelInConsultationModelResponseImpl
   final String? patientsCount;
   @override
   final String? score;
+  @override
+  final String? role;
+  @override
+  final String? status;
+  @override
+  final String? isVerified;
 
   @override
   String toString() {
-    return 'DoctorModelInConsultationModelResponse(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, specialty: $specialty, workingplace: $workingplace, image: $image, syndicateCard: $syndicateCard, isSyndicateCardRequired: $isSyndicateCardRequired, patientsCount: $patientsCount, score: $score)';
+    return 'DoctorModelInConsultationModelResponse(id: $id, firstName: $firstName, lastName: $lastName, email: $email, phone: $phone, specialty: $specialty, workingplace: $workingplace, image: $image, syndicateCard: $syndicateCard, isSyndicateCardRequired: $isSyndicateCardRequired, patientsCount: $patientsCount, score: $score, role: $role, status: $status, isVerified: $isVerified)';
   }
 
   @override
@@ -534,7 +584,11 @@ class _$DoctorModelInConsultationModelResponseImpl
                 other.isSyndicateCardRequired == isSyndicateCardRequired) &&
             (identical(other.patientsCount, patientsCount) ||
                 other.patientsCount == patientsCount) &&
-            (identical(other.score, score) || other.score == score));
+            (identical(other.score, score) || other.score == score) &&
+            (identical(other.role, role) || other.role == role) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.isVerified, isVerified) ||
+                other.isVerified == isVerified));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -552,7 +606,10 @@ class _$DoctorModelInConsultationModelResponseImpl
       syndicateCard,
       isSyndicateCardRequired,
       patientsCount,
-      score);
+      score,
+      role,
+      status,
+      isVerified);
 
   /// Create a copy of DoctorModelInConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -576,7 +633,7 @@ class _$DoctorModelInConsultationModelResponseImpl
 abstract class _DoctorModelInConsultationModelResponse
     implements DoctorModelInConsultationModelResponse {
   const factory _DoctorModelInConsultationModelResponse(
-      {final int? id,
+      {@JsonKey(fromJson: _parseId) final int? id,
       @JsonKey(name: 'name') final String? firstName,
       @JsonKey(name: 'lname') final String? lastName,
       final String? email,
@@ -587,13 +644,17 @@ abstract class _DoctorModelInConsultationModelResponse
       @JsonKey(name: 'syndicate_card') final String? syndicateCard,
       final String? isSyndicateCardRequired,
       @JsonKey(name: 'patients_count') final String? patientsCount,
-      final String? score}) = _$DoctorModelInConsultationModelResponseImpl;
+      final String? score,
+      final String? role,
+      final String? status,
+      final String? isVerified}) = _$DoctorModelInConsultationModelResponseImpl;
 
   factory _DoctorModelInConsultationModelResponse.fromJson(
           Map<String, dynamic> json) =
       _$DoctorModelInConsultationModelResponseImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _parseId)
   int? get id;
   @override
   @JsonKey(name: 'name')
@@ -621,6 +682,12 @@ abstract class _DoctorModelInConsultationModelResponse
   String? get patientsCount;
   @override
   String? get score;
+  @override
+  String? get role;
+  @override
+  String? get status;
+  @override
+  String? get isVerified;
 
   /// Create a copy of DoctorModelInConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.

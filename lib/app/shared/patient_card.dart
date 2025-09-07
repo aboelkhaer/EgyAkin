@@ -1,4 +1,3 @@
-import 'package:timeago/timeago.dart' as timeago;
 import 'dart:ui' as ui;
 import '../../exports.dart';
 
@@ -165,9 +164,10 @@ class PatientCard extends StatelessWidget {
                                       ),
                                       SizedBox(width: 5.w),
                                       Text(
-                                        timeago
-                                            .format(DateTime.parse(updatedAt))
-                                            .toString(),
+                                        TimeAgoService.instance.formatTimeAgoFromString(
+                                          updatedAt,
+                                          context,
+                                        ),
                                         style: const TextStyle(
                                           color: AppColors.description,
                                           fontSize: 10,
@@ -245,7 +245,7 @@ class PatientCard extends StatelessWidget {
                                   child: isOutcomeStatus
                                       ? CustomOutlineBotton(
                                           onPressed: onOutcomeTap,
-                                          title: AppStrings.outcome,
+                                          title: context.tr(AppStrings.outcome),
                                         )
                                       // TextButton(
                                       //     onPressed: onOutcomeTap,
@@ -258,7 +258,7 @@ class PatientCard extends StatelessWidget {
                                       //   )
                                       : CustomElevatedButton(
                                           onPressed: onOutcomeTap,
-                                          title: AppStrings.outcome,
+                                          title: context.tr(AppStrings.outcome),
                                           isDisable: !submitStatus,
                                           // isDisable:
                                           //     isOutcomeStatus && !submitStatus ? false : true,
@@ -272,7 +272,7 @@ class PatientCard extends StatelessWidget {
                                   height: 30.h,
                                   child: CustomElevatedButton(
                                     onPressed: onAddCommentTap,
-                                    title: AppStrings.addComment,
+                                    title: context.tr(AppStrings.addComment),
                                   ),
                                 ),
                               ),

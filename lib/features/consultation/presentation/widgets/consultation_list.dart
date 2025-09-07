@@ -1,5 +1,3 @@
-import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../../exports.dart';
 
 class ConsultationList extends StatelessWidget {
@@ -51,6 +49,7 @@ class ConsultationList extends StatelessWidget {
                           patientName: consult.patientName.toString(),
                           consultationId: consult.id.toString(),
                           isReceivedConsultation: isReceivedConsultation,
+                          isOpen: consult.isOpen ?? false,
                         ),
                       );
                     },
@@ -201,7 +200,7 @@ class ConsultationList extends StatelessWidget {
                                                   BorderRadius.circular(8),
                                             ),
                                             child: Text(
-                                              'Patient: ${consult.patientName}',
+                                              '${context.tr(AppStrings.thePatient)}: ${consult.patientName}',
                                               style: TextStyle(
                                                 color: Colors.grey.shade700,
                                                 fontSize: 10.sp,
@@ -215,21 +214,37 @@ class ConsultationList extends StatelessWidget {
                                   ),
                                 ],
                               ),
+                              // Expanded(
+                              //   child: Tooltip(
+                              //     message: consult.status == 'pending'
+                              //         ? context.tr(AppStrings.pending)
+                              //         : context.tr(AppStrings.completed),
+
+                              //     child: Icon(
+                              //       consult.status == 'pending'
+                              //           ? AppIcons.isFinalNotSubmit
+                              //           : AppIcons.isFinalSubmit,
+                              //       color: consult.status == 'pending'
+                              //           ? Colors.amber
+                              //           : AppColors.primary.withOpacity(0.7),
+                              //     ),
+                              //   ),
+                              // )
                               Expanded(
                                 child: Tooltip(
-                                  message: consult.status == 'pending'
-                                      ? 'Pending'
-                                      : 'Completed',
+                                  message: (consult.isOpen ?? false)
+                                      ? context.tr(AppStrings.opened)
+                                      : context.tr(AppStrings.closed),
                                   child: Icon(
-                                    consult.status == 'pending'
-                                        ? AppIcons.isFinalNotSubmit
-                                        : AppIcons.isFinalSubmit,
-                                    color: consult.status == 'pending'
-                                        ? Colors.amber
-                                        : AppColors.primary.withOpacity(0.7),
+                                    (consult.isOpen ?? false)
+                                        ? AppIcons.consultationOpened
+                                        : AppIcons.consultationClosed,
+                                    color: (consult.isOpen ?? false)
+                                        ? Colors.green
+                                        : Colors.red.withOpacity(0.7),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           SizedBox(height: 8.h),
@@ -237,8 +252,8 @@ class ConsultationList extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Text(
-                                timeago.format(DateTime.parse(
-                                    consult.createdAt.toString())),
+                                TimeAgoService.instance.formatTimeAgoFromString(
+                                    consult.createdAt.toString(), context),
                                 style: TextStyle(
                                   color: AppColors.description,
                                   fontSize: 9.sp,

@@ -12,6 +12,6 @@ abstract class ConsultationDetailsState with _$ConsultationDetailsState {
       String newCommentValue,
       bool isSendingConsultation,
       bool isSendedConsultation,
-      String message) = _Loaded;
+      String message,bool isLocking,bool isLocked,) = _Loaded;
   const factory ConsultationDetailsState.error(String message) = _Error;
 }

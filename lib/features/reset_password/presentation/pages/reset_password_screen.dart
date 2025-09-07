@@ -8,7 +8,7 @@ class ResetPasswordScreen extends StatelessWidget {
     ResetPasswordCubit cubit = ResetPasswordCubit.get(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.resetPassword),
+        title:  Text(context.tr(AppStrings.resetPassword),),
       ),
       body: Theme(
         data: Theme.of(context).copyWith(
@@ -22,7 +22,7 @@ class ResetPasswordScreen extends StatelessWidget {
               passwordChagedSuccessfully: () {
                 Navigator.of(context).pop();
                 customSnackBar(
-                    message: 'Password updated successfully.',
+                    message: context.tr(AppStrings.passwordUpdatedSuccessfully),
                     context: context);
               },
               orElse: () {},

@@ -2,6 +2,7 @@ import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/app/services/deep_link_navigation_service.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -33,17 +34,20 @@ class _MyAppState extends State<MyApp> {
   late NotificationServices notificationServices;
   final DeepLinkHandler _deepLinkHandler = DeepLinkHandler();
   final DeepLinkNavigationService _deepLinkNavigationService = DeepLinkNavigationService();
+  late LocalizationBloc _localizationBloc;
 
   @override
   void initState() {
     super.initState();
 
     notificationServices = NotificationServices();
+    _localizationBloc = LocalizationBloc();
 
     // Call post frame callback to ensure context is available
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeNotificationServices();
       _initializeDeepLinks();
+      _initializeLocalization();
     });
   }
 
@@ -74,6 +78,10 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<void> _initializeLocalization() async {
+    _localizationBloc.add(InitializeLocalization());
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -82,23 +90,37 @@ class _MyAppState extends State<MyApp> {
       statusBarBrightness: Brightness.light,
     ));
 
-    return ScreenUtilInit(
-      designSize: const Size(360, 640),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      child: MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: const TextScaler.linear(1.0)),
-        child: MaterialApp(
-          title: AppStrings.appName,
-          navigatorKey: navigatorKey,
-          debugShowCheckedModeBanner: false,
-          theme: Themes().lightTheme,
-          onGenerateRoute: (settings) {
-            debugPrint('Route requested: ${settings.name}');
-            return RouteGenerator.getRoute(settings);
-          },
-        ),
+    return BlocProvider(
+      create: (context) => _localizationBloc,
+      child: BlocBuilder<LocalizationBloc, LocalizationState>(
+        builder: (context, state) {
+          return ScreenUtilInit(
+            designSize: const Size(360, 640),
+            minTextAdapt: true,
+            splitScreenMode: true,
+            child: MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(textScaler: const TextScaler.linear(1.0)),
+              child: MaterialApp(
+                title: AppStrings.appName,
+                navigatorKey: navigatorKey,
+                debugShowCheckedModeBanner: false,
+                theme: Themes().lightTheme,
+                locale: state is LocalizationLoaded ? state.locale : null,
+                supportedLocales: LocalizationService.supportedLocales,
+                localizationsDelegates: const [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                onGenerateRoute: (settings) {
+                  debugPrint('Route requested: ${settings.name}');
+                  return RouteGenerator.getRoute(settings);
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

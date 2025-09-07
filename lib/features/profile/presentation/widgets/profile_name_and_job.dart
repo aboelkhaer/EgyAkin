@@ -87,10 +87,10 @@ class ProfileNameAndJob extends StatelessWidget {
                                   .read<HomeCubit>()
                                   .doctorPatientCount
                                   .toString(),
-                              label: 'Patient',
+                              label: context.tr(AppStrings.patient),
                               onTap: () {},
                             ),
-                            _buildDivider(),
+                            _buildDivider(context),
                             _buildStatItem(
                               context: context,
                               icon: Icons.star,
@@ -98,15 +98,15 @@ class ProfileNameAndJob extends StatelessWidget {
                                   .read<HomeCubit>()
                                   .doctorScore
                                   .toString(),
-                              label: 'Score',
+                              label: context.tr(AppStrings.score),
                               onTap: () {},
                             ),
-                            _buildDivider(),
+                            _buildDivider(context),
                             _buildStatItem(
                               context: context,
                               icon: Icons.bookmark,
                               value: homeDataModel.savedPosts.toString(),
-                              label: 'Saved Posts',
+                              label: context.tr(AppStrings.savedPosts),
                               onTap: () {},
                             ),
                           ],
@@ -122,7 +122,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               context: context,
                               icon: Icons.post_add,
                               value: homeDataModel.postsCount.toString(),
-                              label: 'All Posts',
+                              label: context.tr(AppStrings.allPosts),
                               onTap: () {},
                             ),
                           ],
@@ -184,7 +184,7 @@ class ProfileNameAndJob extends StatelessWidget {
                                   .read<HomeCubit>()
                                   .doctorPatientCount
                                   .toString(),
-                              label: 'Patient',
+                              label: context.tr(AppStrings.patient),
                               onTap: isVerifiedUser(
                                       homeDataModel.isSyndicateCardRequired)
                                   ? () {
@@ -217,7 +217,7 @@ class ProfileNameAndJob extends StatelessWidget {
                                               'You should verify your syndicate card at first.');
                                     },
                             ),
-                            _buildDivider(),
+                            _buildDivider(context),
                             _buildStatItem(
                               context: context,
                               icon: Icons.star,
@@ -225,7 +225,7 @@ class ProfileNameAndJob extends StatelessWidget {
                                   .read<HomeCubit>()
                                   .doctorScore
                                   .toString(),
-                              label: 'Score',
+                              label: context.tr(AppStrings.score),
                               onTap: () {
                                 showCustomBottomSheet(
                                   context: context,
@@ -242,12 +242,12 @@ class ProfileNameAndJob extends StatelessWidget {
                                 );
                               },
                             ),
-                            _buildDivider(),
+                            _buildDivider(context),
                             _buildStatItem(
                               context: context,
                               icon: Icons.bookmark,
                               value: homeDataModel.savedPosts.toString(),
-                              label: 'Saved Posts',
+                              label: context.tr(AppStrings.savedPosts),
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.savedPosts,
@@ -281,7 +281,7 @@ class ProfileNameAndJob extends StatelessWidget {
                               context: context,
                               icon: Icons.post_add,
                               value: homeDataModel.postsCount.toString(),
-                              label: 'All Posts',
+                              label: context.tr(AppStrings.allPosts),
                               onTap: () {
                                 navigatorKey.currentState?.pushNamed(
                                   AppRoutes.allDoctorPosts,
@@ -358,12 +358,14 @@ class ProfileNameAndJob extends StatelessWidget {
     );
   }
 
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Container(
       height: 20.h,
       width: 1.w,
       color: Colors.grey.shade400,
-      margin: EdgeInsets.only(right: 5.w),
+      margin: context.currentLocale?.languageCode == 'ar'
+          ? EdgeInsets.only(left: 5.w)
+          : EdgeInsets.only(right: 5.w),
     );
   }
 }

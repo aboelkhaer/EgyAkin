@@ -61,7 +61,7 @@ class _SearchScreenState extends State<SearchScreen> {
             borderRadius: BorderRadius.circular(50.0),
           ),
           onPressed: () {
-            cubit.getSearchHome();
+            cubit.getSearchHome(isVerifiedUser(widget.isSyndicateCardRequired));
           },
           child: Icon(
             Icons.search,
@@ -85,10 +85,11 @@ class _SearchScreenState extends State<SearchScreen> {
                     onTapOutside: (event) =>
                         FocusManager.instance.primaryFocus?.unfocus(),
                     onFieldSubmitted: (value) {
-                      cubit.getSearchHome();
+                      cubit.getSearchHome(isVerifiedUser(widget.isSyndicateCardRequired));
                     },
                     decoration: InputDecoration(
-                      hintText: '${AppStrings.search}...',
+                      hintText: '${isVerifiedUser(widget.isSyndicateCardRequired)? context.tr(AppStrings.search): context.tr(AppStrings.searchForDoses)}...',
+                    
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.clear),
                         onPressed: () => cubit.searchController.clear(),
@@ -118,7 +119,8 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
           ),
-          Container(
+     !isVerifiedUser(widget.isSyndicateCardRequired)?SizedBox.shrink():  Column(children: [
+           Container(
             alignment: Alignment.center,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -135,14 +137,15 @@ class _SearchScreenState extends State<SearchScreen> {
                       activeColor: AppColors.primary,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Patient',
+                     Text(
+                      context.tr(AppStrings.patient),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 10),
+                      margin:context.currentLocale?.languageCode == 'ar' ? const EdgeInsets.only(right: 10) : const EdgeInsets.only(left: 10),
+
                       child: BlocBuilder<SearchCubit, SearchState>(
                         builder: (context, state) {
                           return state.maybeWhen(
@@ -183,14 +186,16 @@ class _SearchScreenState extends State<SearchScreen> {
                       activeColor: AppColors.primary,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Dose',
+                     Text(
+                      context.tr(AppStrings.dose),
+
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 10),
+                      margin: context.currentLocale?.languageCode == 'ar' ? const EdgeInsets.only(right: 10) : const EdgeInsets.only(left: 10),
+
                       child: BlocBuilder<SearchCubit, SearchState>(
                         builder: (context, state) {
                           return state.maybeWhen(
@@ -227,6 +232,8 @@ class _SearchScreenState extends State<SearchScreen> {
             ],
           ),
           SizedBox(height: size.height * 0.01),
+         ],
+         ),
           Expanded(
             child: BlocBuilder<SearchCubit, SearchState>(
               builder: (context, state) {

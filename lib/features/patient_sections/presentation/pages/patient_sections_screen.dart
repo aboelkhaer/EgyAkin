@@ -279,7 +279,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Request Consultation:',
+                                  '${LocalizationService.instance.translate(AppStrings.requestConsultation)}:',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 13.sp,
@@ -300,6 +300,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   patientId: widget.patientId,
                                   isSendConsultation: true,
                                   groupId: '',
+                                  isForAddNewDoctors: false,
+                                  consultationId: '',
                                 ),
                               );
                             },
@@ -318,7 +320,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Sections:',
+                                  '${LocalizationService.instance.translate(AppStrings.sections)}:',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 13.sp,

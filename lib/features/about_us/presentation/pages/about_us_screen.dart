@@ -9,7 +9,8 @@ class AboutUsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About us'),
+        title: Text(context.tr(AppStrings.aboutUs
+        )),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -18,7 +19,7 @@ class AboutUsScreen extends StatelessWidget {
           child: HtmlWidget(
             '''
               <!DOCTYPE html>
-              <html lang="en">
+              <html lang="${context.currentLocale?.languageCode ?? 'en'}">
               <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,49 +53,49 @@ class AboutUsScreen extends StatelessWidget {
               </head>
               <body>
           <div class="container">
-        <h1>Welcome to EgyAkin</h1>
-        <p>EgyAkin is a comprehensive kidney health management platform dedicated to empowering Egypt's fight against kidney failure. We provide cutting-edge data collection, insightful analytics, and robust community support to help healthcare professionals and patients effectively manage and monitor kidney health.</p>
+        <h1>${context.tr(AppStrings.welcomeToEgyAkin)}</h1>
+        <p>${context.tr(AppStrings.egyAkinDescription)}</p>
         
-        <h2>Our Mission</h2>
-        <p>Our mission is to improve kidney health outcomes in Egypt by offering a comprehensive platform for managing patient data, calculating key health metrics, and tracking patient progress over time. We strive to provide valuable insights and support to both healthcare providers and patients, fostering a collaborative approach to combating kidney failure.</p>
+        <h2>${context.tr(AppStrings.ourMission)}</h2>
+        <p>${context.tr(AppStrings.ourMissionDescription)}</p>
         
-        <h2>Key Features</h2>
+        <h2>${context.tr(AppStrings.keyFeatures)}</h2>
         <ul>
-            <li><strong>Patient Data Management:</strong> Easily add and manage patient details including name, age, gender, and medical history.</li>
-            <li><strong>GFR Calculation:</strong> Utilize accurate CKD-EPI, MDRD and Sobh equations to calculate the Glomerular Filtration Rate (GFR) for better kidney health management.</li>
-            <li><strong>Historical Data Tracking:</strong> Monitor patient progress with detailed historical data tracking.</li>
-            <li><strong>Health Insights:</strong> Gain valuable insights to improve kidney health outcomes.</li>
-            <li><strong>Community Support:</strong> Connect with healthcare professionals and patients through our community platform for knowledge sharing and support.</li>
-            <li><strong>AI-Powered Consultations:</strong> Get instant medical guidance through our advanced AI consultation system.</li>
+            <li><strong>${context.tr(AppStrings.patientDataManagement)}:</strong> ${context.tr(AppStrings.patientDataManagementDesc)}</li>
+            <li><strong>${context.tr(AppStrings.gfrCalculation)}:</strong> ${context.tr(AppStrings.gfrCalculationDesc)}</li>
+            <li><strong>${context.tr(AppStrings.historicalDataTracking)}:</strong> ${context.tr(AppStrings.historicalDataTrackingDesc)}</li>
+            <li><strong>${context.tr(AppStrings.healthInsights)}:</strong> ${context.tr(AppStrings.healthInsightsDesc)}</li>
+            <li><strong>${context.tr(AppStrings.communitySupport)}:</strong> ${context.tr(AppStrings.communitySupportDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aiPoweredConsultations)}:</strong> ${context.tr(AppStrings.aiPoweredConsultationsDesc)}</li>
         </ul>
         
-        <h2>Disclaimer</h2>
-        <p>This app is intended for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.</p>
+        <h2>${context.tr(AppStrings.disclaimer)}</h2>
+        <p>${context.tr(AppStrings.disclaimerText)}</p>
         
-        <h2>Privacy Policy</h2>
-        <p>Your privacy is important to us. Please review our <a href="https://egyakin.com/policy">Privacy Policy</a> to understand how we collect, use, and protect your information.</p>
+        <h2>${context.tr(AppStrings.privacyPolicy)}</h2>
+        <p>${context.tr(AppStrings.privacyPolicyText)} <a href="https://egyakin.com/policy">${context.tr(AppStrings.privacyPolicy)}</a></p>
         
-        <h2>Contact Us</h2>
-        <p>For support, questions, or feedback, please contact us at: <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
-        <p>Visit our website: <a href="https://egyakin.com">https://egyakin.com</a></p>
+        <h2>${context.tr(AppStrings.contactUs)}</h2>
+        <p>${context.tr(AppStrings.contactUsText)} <a href="mailto:support@egyakin.com">support@egyakin.com</a></p>
+        <p>${context.tr(AppStrings.visitOurWebsite)} <a href="https://egyakin.com">https://egyakin.com</a></p>
         
-         <h2>Supervisor and responsible</h2>
+         <h2>${context.tr(AppStrings.supervisorAndResponsible)}</h2>
           <ul>
-            <li><strong>Mostafa Abdelsalam (MD, FRCP):</strong> Professor of Medicine and Nephrology, Mansoura University and the leader of <strong>EgyAkin</strong> team.</li>
+            <li><strong>${context.tr(AppStrings.mostafaAbdelsalam)}:</strong> ${context.tr(AppStrings.mostafaAbdelsalamDesc)}</li>
           
         </ul>
          
 
 
-         <h2>Developer Information</h2>
+         <h2>${context.tr(AppStrings.developerInformation)}</h2>
      <ul>
-            <li><strong>Mohamed Ibrahiem:</strong> Software Engineer specializing in backend development. Mohamed is responsible for the backend architecture and integration of the application, contact with <a href="mailto:mohamedco215@gmail.com">mohamedco215@gmail.com</a></li>
+            <li><strong>${context.tr(AppStrings.mohamedIbrahiem)}:</strong> ${context.tr(AppStrings.mohamedIbrahiemDesc)} <a href="mailto:mohamedco215@gmail.com">mohamedco215@gmail.com</a></li>
             
         </ul>
           <ul>
-            <li><strong>Moatz AboElyazed:</strong> Software Engineer with expertise in mobile application development. Moatz focuses on the mobile app's frontend, user experience, and overall performance, contact with <a href="mailto:aboelkhaer@yandex.com">aboelkhaer@yandex.com</a></li>
+            <li><strong>${context.tr(AppStrings.moatzAboElyazed)}:</strong> ${context.tr(AppStrings.moatzAboElyazedDesc)} <a href="mailto:aboelkhaer@yandex.com">aboelkhaer@yandex.com</a></li>
          </ul>
-        <p>Thank you for choosing EgyAkin.</p>
+        <p>${context.tr(AppStrings.thankYouForChoosingEgyAkin)}</p>
           </div>
               </body>
               </html>

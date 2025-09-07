@@ -310,14 +310,13 @@ class HomeHeader extends StatelessWidget {
                       if (!homeData.verified!) {
                         showCustomDialog(
                           context: context,
-                          title: AppStrings.emailVerification,
-                          description: AppStrings
-                              .toAddPatientsYouMustVerifyYourEmailAddress,
+                          title: context.tr(AppStrings.emailVerification),
+                          description: context.tr(AppStrings.toAddPatientsYouMustVerifyYourEmailAddress),
                           noColoredButtonOnTap: () {
                             Navigator.of(context).pop();
                           },
-                          coloredButtonText: AppStrings.verify,
-                          noColoredButtonText: AppStrings.cancel,
+                          coloredButtonText: context.tr(AppStrings.verify),
+                          noColoredButtonText: context.tr(AppStrings.cancel),
                           coloredButtonOnTap: () {
                             Navigator.of(context).pop();
                             navigatorKey.currentState?.pushNamed(
@@ -334,13 +333,13 @@ class HomeHeader extends StatelessWidget {
                           homeData.isSyndicateCardRequired == 'Pending') {
                         showCustomDialog(
                           context: context,
-                          title: 'Syndicate card verification',
+                          title: context.tr(AppStrings.syndicateCardVerification),
                           description:
-                              'To add patients you must verify your syndicate card.',
+                              context.tr(AppStrings.toAddPatientsYouMustVerifyYourSyndicateCard),
                           noColoredButtonOnTap: () {
                             Navigator.of(context).pop();
                           },
-                          coloredButtonText: AppStrings.ok,
+                          coloredButtonText: context.tr(AppStrings.ok), 
                           noColoredButtonText: '',
                           isNoColorShow: true,
                           coloredButtonOnTap: () {

@@ -412,28 +412,17 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                   height: _isTikTok ? 300 : 150,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
-                    // Handle "Invalid image data" error and other image errors
+                    // Show app_icon.png when image is not available
                     return Container(
                       height: _isTikTok ? 300 : 150,
                       color: Colors.grey[200],
                       alignment: Alignment.center,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            _isTikTok ? Icons.videocam_off : Icons.image_not_supported,
-                            size: 40,
-                            color: Colors.grey[400],
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            "Image not available",
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
+                      child: Image.asset(
+                        'assets/images/app_icon.png',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.contain,
+                        
                       ),
                     );
                   },

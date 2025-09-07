@@ -23,7 +23,7 @@ class RegisterForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.firstName,
+                  title: context.tr(AppStrings.firstName),
                   style: TextStyle(fontSize: 12.sp),
                   textInputType: TextInputType.text,
                   onChanged: (value) {
@@ -38,7 +38,7 @@ class RegisterForm extends StatelessWidget {
               SizedBox(width: 10.w),
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.lastName,
+                  title: context.tr(AppStrings.lastName),
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerLastName = value;
@@ -54,7 +54,7 @@ class RegisterForm extends StatelessWidget {
           ),
           SizedBox(height: 5.h),
           CustomTextFormField(
-            title: AppStrings.email,
+            title: context.tr(AppStrings.email),
             style: TextStyle(fontSize: 12.sp),
             enableSuggestions: true,
             onChanged: (value) {
@@ -69,7 +69,7 @@ class RegisterForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.password,
+                  title: context.tr(AppStrings.password),
                   style: TextStyle(fontSize: 12.sp),
                   textFormFieldController: cubit.registerPasswordController,
                   obscureText: true,
@@ -82,7 +82,7 @@ class RegisterForm extends StatelessWidget {
               SizedBox(width: 10.w),
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.confirmPassword,
+                  title: context.tr(AppStrings.confirmPassword),
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerPasswordConformation = value;
@@ -102,29 +102,26 @@ class RegisterForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: FlutterPwValidator(
-                    controller: cubit.registerPasswordController,
-                    minLength: 6,
-                    uppercaseCharCount: 1,
-                    numericCharCount: 2,
-                    specialCharCount: 1,
-                    width: 200.w,
-                    height: 100.h,
-                    onSuccess: () {},
-                    onFail: () {
-                      return null;
-                    }),
-              ),
+                        child: TranslatablePasswordValidator(
+                            controller: cubit.registerPasswordController,
+                            minLength: 6,
+                            uppercaseCharCount: 1,
+                            numericCharCount: 2,
+                            specialCharCount: 1,
+                            width: 200.w,
+                            onSuccess: () {},
+                            onFail: () {}),
+                      ),
               SizedBox(width: 10.w),
               const Expanded(child: SizedBox.shrink()),
             ],
           ),
-          SizedBox(height: 30.h),
+          SizedBox(height: 10.h),
           Row(
             children: [
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.phone,
+                  title: context.tr(AppStrings.phone),
                   textInputType: TextInputType.phone,
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
@@ -143,7 +140,7 @@ class RegisterForm extends StatelessWidget {
               SizedBox(width: 10.w),
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.age,
+                  title: context.tr(AppStrings.age),
                   textInputType: TextInputType.number,
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
@@ -161,7 +158,7 @@ class RegisterForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.job,
+                  title: context.tr(AppStrings.job),
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerJop = value;
@@ -176,7 +173,7 @@ class RegisterForm extends StatelessWidget {
               SizedBox(width: 10.w),
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.workplace,
+                  title: context.tr(AppStrings.workplace),
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerWorkplace = value;
@@ -195,7 +192,7 @@ class RegisterForm extends StatelessWidget {
             children: [
               Expanded(
                 child: CustomTextFormField(
-                  title: AppStrings.fullRegisterationNumber,
+                  title: context.tr(AppStrings.fullRegisterationNumber),
                   style: TextStyle(fontSize: 12.sp),
                   onChanged: (value) {
                     cubit.registerRegistrationNumber = value;
@@ -217,7 +214,7 @@ class RegisterForm extends StatelessWidget {
                   children: [
                     const SizedBox(height: 10),
                     CustomTextFormField(
-                      title: AppStrings.specialty,
+                      title: context.tr(AppStrings.specialty),
                       style: TextStyle(fontSize: 12.sp),
                       onChanged: (value) {
                         cubit.registerSpecialty = value;
@@ -242,7 +239,7 @@ class RegisterForm extends StatelessWidget {
                   ),
                   child: DropdownButtonFormField<String>(
                     hint: Text(
-                      AppStrings.choose,
+                      context.tr(AppStrings.choose) ,
                       style: TextStyle(
                           fontSize: 12.sp, color: Colors.grey.shade600),
                     ),

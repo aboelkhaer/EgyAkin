@@ -25,7 +25,9 @@ mixin _$ConsultationDetailsState {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)
+            String message,
+            bool isLocking,
+            bool isLocked)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -39,7 +41,9 @@ mixin _$ConsultationDetailsState {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -53,7 +57,9 @@ mixin _$ConsultationDetailsState {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -156,7 +162,9 @@ class _$InitialImpl implements _Initial {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)
+            String message,
+            bool isLocking,
+            bool isLocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -173,7 +181,9 @@ class _$InitialImpl implements _Initial {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -190,7 +200,9 @@ class _$InitialImpl implements _Initial {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -291,7 +303,9 @@ class _$LoadingImpl implements _Loading {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)
+            String message,
+            bool isLocking,
+            bool isLocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -308,7 +322,9 @@ class _$LoadingImpl implements _Loading {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -325,7 +341,9 @@ class _$LoadingImpl implements _Loading {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -389,7 +407,9 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       String newCommentValue,
       bool isSendingConsultation,
       bool isSendedConsultation,
-      String message});
+      String message,
+      bool isLocking,
+      bool isLocked});
 
   $GetConsultationDetailsModelResponseCopyWith<$Res> get consultDetails;
 }
@@ -412,6 +432,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? isSendingConsultation = null,
     Object? isSendedConsultation = null,
     Object? message = null,
+    Object? isLocking = null,
+    Object? isLocked = null,
   }) {
     return _then(_$LoadedImpl(
       null == consultDetails
@@ -434,6 +456,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
+      null == isLocking
+          ? _value.isLocking
+          : isLocking // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isLocked
+          ? _value.isLocked
+          : isLocked // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -452,8 +482,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.consultDetails, this.newCommentValue,
-      this.isSendingConsultation, this.isSendedConsultation, this.message);
+  const _$LoadedImpl(
+      this.consultDetails,
+      this.newCommentValue,
+      this.isSendingConsultation,
+      this.isSendedConsultation,
+      this.message,
+      this.isLocking,
+      this.isLocked);
 
   @override
   final GetConsultationDetailsModelResponse consultDetails;
@@ -465,10 +501,14 @@ class _$LoadedImpl implements _Loaded {
   final bool isSendedConsultation;
   @override
   final String message;
+  @override
+  final bool isLocking;
+  @override
+  final bool isLocked;
 
   @override
   String toString() {
-    return 'ConsultationDetailsState.loaded(consultDetails: $consultDetails, newCommentValue: $newCommentValue, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation, message: $message)';
+    return 'ConsultationDetailsState.loaded(consultDetails: $consultDetails, newCommentValue: $newCommentValue, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation, message: $message, isLocking: $isLocking, isLocked: $isLocked)';
   }
 
   @override
@@ -484,12 +524,23 @@ class _$LoadedImpl implements _Loaded {
                 other.isSendingConsultation == isSendingConsultation) &&
             (identical(other.isSendedConsultation, isSendedConsultation) ||
                 other.isSendedConsultation == isSendedConsultation) &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isLocking, isLocking) ||
+                other.isLocking == isLocking) &&
+            (identical(other.isLocked, isLocked) ||
+                other.isLocked == isLocked));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, consultDetails, newCommentValue,
-      isSendingConsultation, isSendedConsultation, message);
+  int get hashCode => Object.hash(
+      runtimeType,
+      consultDetails,
+      newCommentValue,
+      isSendingConsultation,
+      isSendedConsultation,
+      message,
+      isLocking,
+      isLocked);
 
   /// Create a copy of ConsultationDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -509,12 +560,14 @@ class _$LoadedImpl implements _Loaded {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)
+            String message,
+            bool isLocking,
+            bool isLocked)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(consultDetails, newCommentValue, isSendingConsultation,
-        isSendedConsultation, message);
+        isSendedConsultation, message, isLocking, isLocked);
   }
 
   @override
@@ -527,12 +580,14 @@ class _$LoadedImpl implements _Loaded {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(consultDetails, newCommentValue, isSendingConsultation,
-        isSendedConsultation, message);
+        isSendedConsultation, message, isLocking, isLocked);
   }
 
   @override
@@ -545,14 +600,16 @@ class _$LoadedImpl implements _Loaded {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(consultDetails, newCommentValue, isSendingConsultation,
-          isSendedConsultation, message);
+          isSendedConsultation, message, isLocking, isLocked);
     }
     return orElse();
   }
@@ -601,13 +658,17 @@ abstract class _Loaded implements ConsultationDetailsState {
       final String newCommentValue,
       final bool isSendingConsultation,
       final bool isSendedConsultation,
-      final String message) = _$LoadedImpl;
+      final String message,
+      final bool isLocking,
+      final bool isLocked) = _$LoadedImpl;
 
   GetConsultationDetailsModelResponse get consultDetails;
   String get newCommentValue;
   bool get isSendingConsultation;
   bool get isSendedConsultation;
   String get message;
+  bool get isLocking;
+  bool get isLocked;
 
   /// Create a copy of ConsultationDetailsState
   /// with the given fields replaced by the non-null parameter values.
@@ -691,7 +752,9 @@ class _$ErrorImpl implements _Error {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)
+            String message,
+            bool isLocking,
+            bool isLocked)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -708,7 +771,9 @@ class _$ErrorImpl implements _Error {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -725,7 +790,9 @@ class _$ErrorImpl implements _Error {
             String newCommentValue,
             bool isSendingConsultation,
             bool isSendedConsultation,
-            String message)?
+            String message,
+            bool isLocking,
+            bool isLocked)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

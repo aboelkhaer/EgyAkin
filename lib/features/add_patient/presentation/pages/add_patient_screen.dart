@@ -51,7 +51,9 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.addPatient),
+        title:  Text(context.tr(AppStrings.addPatient),
+        ),
+
         centerTitle: true,
         backgroundColor: AppColors.primary,
       ),
@@ -206,9 +208,11 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                     error: (message) {
                       showCustomDialog(
                         context: context,
-                        title: 'Attention!',
+                        title: context.tr(AppStrings.attention),
                         description: message,
-                        coloredButtonText: 'Cancel',
+                        coloredButtonText: context.tr(AppStrings.cancel),
+
+                        
                         isNoColorShow: false,
                         coloredButtonOnTap: () {
                           Navigator.of(context).pop();
@@ -395,7 +399,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   Map.from(answerMapForSelect);
             });
 
-            log('onChanged: ${cubit.formData}');
+            debugPrint('onChanged: ${cubit.formData}');
           },
           onChangedForOtherField: (value) {
             setState(() {
@@ -407,7 +411,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   Map.from(answerMapForSelect);
             });
 
-            log('onChangedForOtherField: ${cubit.formData}');
+            debugPrint('onChangedForOtherField: ${cubit.formData}');
           },
         );
 
@@ -432,7 +436,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               AppStrings.answers: List.from(answerMap[AppStrings.answers]),
               AppStrings.otherField: answerMap[AppStrings.otherField],
             };
-            log('map ${cubit.formData}');
+            debugPrint('map ${cubit.formData}');
           },
           validator: (val) {
             if (questionList[index].mandatory == true &&
@@ -481,7 +485,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                         List.from(answerMap[AppStrings.answers]),
                     AppStrings.otherField: answerMap[AppStrings.otherField],
                   };
-                  log('map ${cubit.formData}');
+                  debugPrint('map ${cubit.formData}');
                 },
               ),
             );

@@ -33,7 +33,7 @@ class YourPatientSection extends StatelessWidget {
                 return Column(
                   children: [
                     HomePatientTitleHeader(
-                      title: AppStrings.yourPatients,
+                      title: context.tr(AppStrings.yourPatients),
                       patientCount: homeData.doctorPatientCount.toString(),
                       leftArrow: ' ( ',
                       rightArrow: ' ) ',

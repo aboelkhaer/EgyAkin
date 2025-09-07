@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
+
 import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
 
@@ -10,4 +12,7 @@ abstract class ConsultationDetailsRepository {
     required String consultationId,
     required String reply,
   });
+
+  Future<Either<Failure, LockOrUnlockConsultationModelResponse>>
+      lockOrUnlockConsultation(String consultationId, bool isOpen);
 }

@@ -220,9 +220,10 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       showCustomDialog(
                         context: context,
-                        title: 'Attention!',
+                        title: context.tr(AppStrings.attention),
                         description: message,
-                        coloredButtonText: 'Cancel',
+                        coloredButtonText: context.tr(AppStrings.cancel),
+                        
                         isNoColorShow: false,
                         coloredButtonOnTap: () {
                           Navigator.of(context).pop();

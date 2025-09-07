@@ -1,4 +1,3 @@
-import 'package:egy_akin/features/community/data/models/get_groups_tab_model_response.dart';
 import '../../../../../../exports.dart';
 
 class GroupRow extends StatelessWidget {
@@ -65,7 +64,10 @@ class GroupRow extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10),
+                    padding: EdgeInsets.only(
+                      left: context.currentLocale?.languageCode == 'ar' ? 0 : 10,
+                      right: context.currentLocale?.languageCode == 'ar' ? 10 : 0,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -78,7 +80,7 @@ class GroupRow extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '${groupModel.memberCount} People joined community',
+                          '${groupModel.memberCount} ${context.tr(AppStrings.peopleJoinedCommunity)}',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -146,7 +148,6 @@ class GroupRow extends StatelessWidget {
                                 Icons.group_add,
                               ),
                               const SizedBox(width: 5),
-                              //todo
                               Text(
                                 // (groupModel.userStatus ==
                                 //             GroupInviteStatus.invited.name &&
@@ -172,10 +173,9 @@ class GroupRow extends StatelessWidget {
                                 //                         .invited.name
                                 //             ? 'Joined'
                                 //             : 'Join',
-                                capitalizeFirstText(
+                                translateGroupStatus(
                                         groupModel.userStatus.toString(),
-                                        true) ??
-                                    'Join',
+                                        context),
                                 style: const TextStyle(
                                   fontSize: 14,
                                 ),

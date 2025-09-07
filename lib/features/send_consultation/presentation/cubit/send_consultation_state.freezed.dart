@@ -27,7 +27,10 @@ mixin _$SendConsultationState {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -43,7 +46,10 @@ mixin _$SendConsultationState {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -59,7 +65,10 @@ mixin _$SendConsultationState {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -164,7 +173,10 @@ class _$InitialImpl implements _Initial {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -183,7 +195,10 @@ class _$InitialImpl implements _Initial {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -202,7 +217,10 @@ class _$InitialImpl implements _Initial {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -305,7 +323,10 @@ class _$LoadingImpl implements _Loading {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -324,7 +345,10 @@ class _$LoadingImpl implements _Loading {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -343,7 +367,10 @@ class _$LoadingImpl implements _Loading {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -409,9 +436,14 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       GetConsultationSearchModelResponse? response,
       int counterChanges,
       bool isSendingConsultation,
-      bool isSendedConsultation});
+      bool isSendedConsultation,
+      GetMembersForConsultationModelResponse? membersForConsultation,
+      bool isRemoveMemberFromConsultationLoading,
+      bool isRemoveMemberFromConsultationLoaded});
 
   $GetConsultationSearchModelResponseCopyWith<$Res>? get response;
+  $GetMembersForConsultationModelResponseCopyWith<$Res>?
+      get membersForConsultation;
 }
 
 /// @nodoc
@@ -434,6 +466,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? counterChanges = null,
     Object? isSendingConsultation = null,
     Object? isSendedConsultation = null,
+    Object? membersForConsultation = freezed,
+    Object? isRemoveMemberFromConsultationLoading = null,
+    Object? isRemoveMemberFromConsultationLoaded = null,
   }) {
     return _then(_$LoadedImpl(
       null == isSearching
@@ -464,6 +499,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSendedConsultation
           : isSendedConsultation // ignore: cast_nullable_to_non_nullable
               as bool,
+      freezed == membersForConsultation
+          ? _value.membersForConsultation
+          : membersForConsultation // ignore: cast_nullable_to_non_nullable
+              as GetMembersForConsultationModelResponse?,
+      null == isRemoveMemberFromConsultationLoading
+          ? _value.isRemoveMemberFromConsultationLoading
+          : isRemoveMemberFromConsultationLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isRemoveMemberFromConsultationLoaded
+          ? _value.isRemoveMemberFromConsultationLoaded
+          : isRemoveMemberFromConsultationLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -481,6 +528,22 @@ class __$$LoadedImplCopyWithImpl<$Res>
       return _then(_value.copyWith(response: value));
     });
   }
+
+  /// Create a copy of SendConsultationState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $GetMembersForConsultationModelResponseCopyWith<$Res>?
+      get membersForConsultation {
+    if (_value.membersForConsultation == null) {
+      return null;
+    }
+
+    return $GetMembersForConsultationModelResponseCopyWith<$Res>(
+        _value.membersForConsultation!, (value) {
+      return _then(_value.copyWith(membersForConsultation: value));
+    });
+  }
 }
 
 /// @nodoc
@@ -493,7 +556,10 @@ class _$LoadedImpl implements _Loaded {
       this.response,
       this.counterChanges,
       this.isSendingConsultation,
-      this.isSendedConsultation);
+      this.isSendedConsultation,
+      this.membersForConsultation,
+      this.isRemoveMemberFromConsultationLoading,
+      this.isRemoveMemberFromConsultationLoaded);
 
   @override
   final bool isSearching;
@@ -509,10 +575,16 @@ class _$LoadedImpl implements _Loaded {
   final bool isSendingConsultation;
   @override
   final bool isSendedConsultation;
+  @override
+  final GetMembersForConsultationModelResponse? membersForConsultation;
+  @override
+  final bool isRemoveMemberFromConsultationLoading;
+  @override
+  final bool isRemoveMemberFromConsultationLoaded;
 
   @override
   String toString() {
-    return 'SendConsultationState.loaded(isSearching: $isSearching, isSearched: $isSearched, message: $message, response: $response, counterChanges: $counterChanges, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation)';
+    return 'SendConsultationState.loaded(isSearching: $isSearching, isSearched: $isSearched, message: $message, response: $response, counterChanges: $counterChanges, isSendingConsultation: $isSendingConsultation, isSendedConsultation: $isSendedConsultation, membersForConsultation: $membersForConsultation, isRemoveMemberFromConsultationLoading: $isRemoveMemberFromConsultationLoading, isRemoveMemberFromConsultationLoaded: $isRemoveMemberFromConsultationLoaded)';
   }
 
   @override
@@ -532,12 +604,32 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isSendingConsultation, isSendingConsultation) ||
                 other.isSendingConsultation == isSendingConsultation) &&
             (identical(other.isSendedConsultation, isSendedConsultation) ||
-                other.isSendedConsultation == isSendedConsultation));
+                other.isSendedConsultation == isSendedConsultation) &&
+            (identical(other.membersForConsultation, membersForConsultation) ||
+                other.membersForConsultation == membersForConsultation) &&
+            (identical(other.isRemoveMemberFromConsultationLoading,
+                    isRemoveMemberFromConsultationLoading) ||
+                other.isRemoveMemberFromConsultationLoading ==
+                    isRemoveMemberFromConsultationLoading) &&
+            (identical(other.isRemoveMemberFromConsultationLoaded,
+                    isRemoveMemberFromConsultationLoaded) ||
+                other.isRemoveMemberFromConsultationLoaded ==
+                    isRemoveMemberFromConsultationLoaded));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isSearching, isSearched, message,
-      response, counterChanges, isSendingConsultation, isSendedConsultation);
+  int get hashCode => Object.hash(
+      runtimeType,
+      isSearching,
+      isSearched,
+      message,
+      response,
+      counterChanges,
+      isSendingConsultation,
+      isSendedConsultation,
+      membersForConsultation,
+      isRemoveMemberFromConsultationLoading,
+      isRemoveMemberFromConsultationLoaded);
 
   /// Create a copy of SendConsultationState
   /// with the given fields replaced by the non-null parameter values.
@@ -559,12 +651,24 @@ class _$LoadedImpl implements _Loaded {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(isSearching, isSearched, message, response, counterChanges,
-        isSendingConsultation, isSendedConsultation);
+    return loaded(
+        isSearching,
+        isSearched,
+        message,
+        response,
+        counterChanges,
+        isSendingConsultation,
+        isSendedConsultation,
+        membersForConsultation,
+        isRemoveMemberFromConsultationLoading,
+        isRemoveMemberFromConsultationLoaded);
   }
 
   @override
@@ -579,12 +683,24 @@ class _$LoadedImpl implements _Loaded {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(isSearching, isSearched, message, response,
-        counterChanges, isSendingConsultation, isSendedConsultation);
+    return loaded?.call(
+        isSearching,
+        isSearched,
+        message,
+        response,
+        counterChanges,
+        isSendingConsultation,
+        isSendedConsultation,
+        membersForConsultation,
+        isRemoveMemberFromConsultationLoading,
+        isRemoveMemberFromConsultationLoaded);
   }
 
   @override
@@ -599,14 +715,26 @@ class _$LoadedImpl implements _Loaded {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(isSearching, isSearched, message, response, counterChanges,
-          isSendingConsultation, isSendedConsultation);
+      return loaded(
+          isSearching,
+          isSearched,
+          message,
+          response,
+          counterChanges,
+          isSendingConsultation,
+          isSendedConsultation,
+          membersForConsultation,
+          isRemoveMemberFromConsultationLoading,
+          isRemoveMemberFromConsultationLoaded);
     }
     return orElse();
   }
@@ -657,7 +785,10 @@ abstract class _Loaded implements SendConsultationState {
       final GetConsultationSearchModelResponse? response,
       final int counterChanges,
       final bool isSendingConsultation,
-      final bool isSendedConsultation) = _$LoadedImpl;
+      final bool isSendedConsultation,
+      final GetMembersForConsultationModelResponse? membersForConsultation,
+      final bool isRemoveMemberFromConsultationLoading,
+      final bool isRemoveMemberFromConsultationLoaded) = _$LoadedImpl;
 
   bool get isSearching;
   bool get isSearched;
@@ -666,6 +797,9 @@ abstract class _Loaded implements SendConsultationState {
   int get counterChanges;
   bool get isSendingConsultation;
   bool get isSendedConsultation;
+  GetMembersForConsultationModelResponse? get membersForConsultation;
+  bool get isRemoveMemberFromConsultationLoading;
+  bool get isRemoveMemberFromConsultationLoaded;
 
   /// Create a copy of SendConsultationState
   /// with the given fields replaced by the non-null parameter values.
@@ -751,7 +885,10 @@ class _$ErrorImpl implements _Error {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -770,7 +907,10 @@ class _$ErrorImpl implements _Error {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -789,7 +929,10 @@ class _$ErrorImpl implements _Error {
             GetConsultationSearchModelResponse? response,
             int counterChanges,
             bool isSendingConsultation,
-            bool isSendedConsultation)?
+            bool isSendedConsultation,
+            GetMembersForConsultationModelResponse? membersForConsultation,
+            bool isRemoveMemberFromConsultationLoading,
+            bool isRemoveMemberFromConsultationLoaded)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

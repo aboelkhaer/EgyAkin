@@ -1,6 +1,4 @@
 import 'package:egy_akin/app/shared/section_status_text.dart';
-import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../../exports.dart';
 
 class SectionCard extends StatelessWidget {
@@ -85,10 +83,10 @@ class SectionCard extends StatelessWidget {
                                       Text(
                                         updatedAt == null || updatedAt!.isEmpty
                                             ? ''
-                                            : timeago
-                                                .format(
-                                                    DateTime.parse(updatedAt!))
-                                                .toString(),
+                                            : TimeAgoService.instance
+                                                .formatTimeAgoFromString(
+                                                    updatedAt!,
+                                                    context),
                                         style: const TextStyle(
                                           color: AppColors.description,
                                           fontSize: 10,

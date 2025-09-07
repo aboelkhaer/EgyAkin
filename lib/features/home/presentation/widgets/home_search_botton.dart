@@ -21,7 +21,7 @@ class HomeSearchBotton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (isVerifiedUser(isSyndicateCardRequired)) {
+        // if (isVerifiedUser(isSyndicateCardRequired)) {
           navigatorKey.currentState?.pushNamed(
             AppRoutes.search,
             arguments: AppRoutesArgs.searchRouteArgs(
@@ -33,16 +33,16 @@ class HomeSearchBotton extends StatelessWidget {
               homeDataModel: homeDataModel,
             ),
           );
-        } else {
-          navigatorKey.currentState?.pushNamed(
-            AppRoutes.communitySearch,
-            arguments: AppRoutesArgs.communitySearchRouteArgs(
-              currentDoctorModel: currentDoctorModel,
-              homeDataModel: homeDataModel,
-              initialValueInSearch: null,
-            ),
-          );
-        }
+        // } else {
+        //   navigatorKey.currentState?.pushNamed(
+        //     AppRoutes.communitySearch,
+        //     arguments: AppRoutesArgs.communitySearchRouteArgs(
+        //       currentDoctorModel: currentDoctorModel,
+        //       homeDataModel: homeDataModel,
+        //       initialValueInSearch: null,
+        //     ),
+        //   );
+        // }
       },
       child: SizedBox(
         height: 55,
@@ -51,7 +51,8 @@ class HomeSearchBotton extends StatelessWidget {
           onTapOutside: (event) =>
               FocusManager.instance.primaryFocus?.unfocus(),
           decoration: InputDecoration(
-            hintText: '${AppStrings.search}...',
+            hintText: '${context.tr(AppStrings.search)}...',
+            
             // Add a clear button to the search bar
             suffixIcon: IconButton(
               icon: const Icon(Icons.clear),

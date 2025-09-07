@@ -100,9 +100,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
           onTap: () {
             animateToTopOfScreen(cubit.scrollController!);
           },
-          child: const Text(
-            AppStrings.allPatients,
-            style: TextStyle(),
+          child: Text(
+            context.tr(AppStrings.allPatients),
+            style: TextStyle(fontSize: 16.sp),
           ),
         ),
         actions: [
@@ -189,6 +189,15 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                                 ),
                               ),
                         const Icon(Icons.filter_list),
+                        const SizedBox(height: 2),
+                        Text(
+                          context.tr(AppStrings.filter),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ],
                     ),
                   );

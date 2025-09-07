@@ -1,6 +1,5 @@
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_state.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
-import 'package:timeago/timeago.dart' as timeago;
 import '../../../../exports.dart';
 
 class ConsultationFromAiScreen extends StatefulWidget {
@@ -84,7 +83,7 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
     ConsultationFromAICubit cubit = ConsultationFromAICubit.get(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI Opinions'),
+        title:  Text(context.tr(AppStrings.aiOpinions)),
       ),
       body: BlocConsumer<ConsultationFromAICubit, ConsultationFromAIState>(
         listener: (context, state) {
@@ -185,8 +184,9 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  timeago.format(DateTime.parse(
-                                      aiHistory.createdAt.toString())),
+                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                      aiHistory.createdAt.toString(),
+                                      context),
                                   style: TextStyle(
                                       color: AppColors.description,
                                       fontSize: 9.sp),
@@ -215,7 +215,7 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
                         child: Column(
                           children: [
                             Text(
-                              'You have ${aiHistoryResponse.trialCount ?? 0} remaining trial(s).',
+                              '${context.tr(AppStrings.youHave) } ${aiHistoryResponse.trialCount ?? 0} ${context.tr(AppStrings.remainingTrial)}',
                               style: TextStyle(
                                 color: Colors.grey.shade600,
                               ),
@@ -228,7 +228,7 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
                                   cubit.sendAIConsultationRequest(
                                       widget.patientId);
                                 },
-                                title: 'Request AI Opinion',
+                                title: context.tr(AppStrings.requestAiOpinion),
                               ),
                             ),
                           ],

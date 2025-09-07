@@ -1,4 +1,3 @@
-import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 
 import '../../../../exports.dart';
 
@@ -116,7 +115,8 @@ class SectionSubmitButton extends StatelessWidget {
                             patientId.toString(),
                           );
                         },
-                        title: AppStrings.submit,
+                        title: context.tr(AppStrings.submit),
+                        
                         // isDisable: (doctorId.toString() ==
                         //                 currentDoctorModel.id.toString() ||
                         //             currentDoctorRole ==
@@ -162,7 +162,7 @@ class SectionSubmitButton extends StatelessWidget {
                               patientId.toString(),
                             );
                           },
-                          title: AppStrings.submit,
+                          title: context.tr(AppStrings.submit),
                           isDisable: false,
                         );
                       }
@@ -204,7 +204,7 @@ class SectionSubmitButton extends StatelessWidget {
                               patientId.toString(),
                             );
                           },
-                          title: AppStrings.submit,
+                          title: context.tr(AppStrings.submit),
                           isDisable: false,
                         );
                       }

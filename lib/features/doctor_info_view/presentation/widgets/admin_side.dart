@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class AdminSide extends StatelessWidget {
   final HomeModelResponse homeDataModel;
@@ -29,7 +28,7 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Age:',
+                          '${context.tr(AppStrings.age)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -43,7 +42,7 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.age ?? 'no data',
+                          doctorInfo.data!.age ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
@@ -55,7 +54,7 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'ID:',
+                          '${context.tr(AppStrings.id)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -81,7 +80,7 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Join us:',
+                          '${context.tr(AppStrings.joinUs)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -95,10 +94,10 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          timeago
-                              .format(DateTime.parse(
-                                  doctorInfo.data!.createdAt.toString()))
-                              .toString(),
+                          TimeAgoService.instance
+                              .formatTimeAgoFromString(
+                                  doctorInfo.data!.createdAt.toString(),
+                                  context),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
@@ -110,7 +109,7 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Email verification:',
+                          '${context.tr(AppStrings.emailVerification)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -135,26 +134,29 @@ class AdminSide extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         SizedBox(width: 60.w),
-                        SelectableText(
-                          doctorInfo.data!.emailVerifiedAt == null
-                              ? 'no data'
-                              : timeago
-                                  .format(DateTime.parse(doctorInfo
-                                      .data!.emailVerifiedAt
-                                      .toString()))
-                                  .toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
+                                                  SelectableText(
+                            doctorInfo.data!.emailVerifiedAt == null
+                                ? context.tr(AppStrings.noData)
+                               
+
+                                : TimeAgoService.instance
+                                    .formatTimeAgoFromString(doctorInfo
+                                        .data!.emailVerifiedAt
+                                        .toString(),
+                                    context),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                     SizedBox(height: 15.h),
                     Row(
                       children: [
                         Text(
-                          'Registration number:',
+                          '${context.tr(AppStrings.registrationNumber)}:',
+
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -168,7 +170,7 @@ class AdminSide extends StatelessWidget {
                       children: [
                         SizedBox(width: 60.w),
                         SelectableText(
-                          doctorInfo.data!.registrationNumber ?? 'no data',
+                          doctorInfo.data!.registrationNumber ?? context.tr(AppStrings.noData),
                           style: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.grey.shade600),
@@ -180,7 +182,7 @@ class AdminSide extends StatelessWidget {
                       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Syndicate card status:',
+                          '${context.tr(AppStrings.syndicateCardStatus)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14
@@ -219,7 +221,8 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Syndicate Card:',
+                          '${context.tr(AppStrings.syndicateCard)}:',
+
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -236,8 +239,8 @@ class AdminSide extends StatelessWidget {
                                 highlightColor: Colors.transparent,
                                 child: Container(
                                   padding: const EdgeInsets.all(10),
-                                  child: const Text(
-                                    'Reject',
+                                  child:  Text(
+                                    context.tr(AppStrings.reject),
                                     style: TextStyle(
                                         color: Colors.blue,
                                         fontWeight: FontWeight.w600),
@@ -254,7 +257,7 @@ class AdminSide extends StatelessWidget {
                             children: [
                               SizedBox(width: 60.w),
                               SelectableText(
-                                'No syndicate card yet.',
+                                context.tr(AppStrings.noSyndicateCard),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   color: Colors.grey.shade600,
@@ -295,7 +298,7 @@ class AdminSide extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          'Blocked:',
+                          '${context.tr(AppStrings.blocked)}:',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 14.sp,
@@ -322,8 +325,8 @@ class AdminSide extends StatelessWidget {
                         SizedBox(width: 60.w),
                         SelectableText(
                           doctorInfo.data!.blocked.toString() == 'false'
-                              ? 'No'
-                              : 'Yes',
+                              ? context.tr(AppStrings.no)
+                              : context.tr(AppStrings.yes),
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             color: Colors.grey.shade600,
@@ -344,7 +347,7 @@ class AdminSide extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     color: Colors.grey.shade100,
                     child: Text(
-                      'Admin side',
+                      context.tr(AppStrings.adminSide),
                       style: TextStyle(
                           fontSize: 12.sp, fontWeight: FontWeight.bold),
                     ),

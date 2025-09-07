@@ -26,23 +26,23 @@ class ShareButton extends StatelessWidget {
                   'https://play.google.com/store/apps/details?id=com.incode.EgyAkin&hl=en';
 
               final shareText = '''
-Check out this post on EgyAkin!
+${context.tr(AppStrings.checkOutThisPostOnEgyAkin)}
 
-Open in app: $universalLink
+${context.tr(AppStrings.openInApp)}: $universalLink
 
-Don't have the app yet?
+${context.tr(AppStrings.dontHaveTheAppYet)}
 iOS: $appStoreUrl
 Android: $playStoreUrl
 ''';
 
               await Share.share(
                 shareText,
-                subject: 'EgyAkin Post',
+                subject: context.tr(AppStrings.egyAkinFeed),
                 
               );
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to share: ${e.toString()}')),
+                SnackBar(content: Text('${context.tr(AppStrings.failedToShare)}: ${e.toString()}')),
               );
             }
           },

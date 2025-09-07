@@ -4,7 +4,7 @@ abstract class AuthenticationDataSource {
   Future<AuthenticationModelResponse> signIn({
     required String email,
     required String password,
-    required String fcmToken,
+    required String? fcmToken,
     required String deviceId,
   });
   Future<AuthenticationModelResponse> register({
@@ -12,7 +12,7 @@ abstract class AuthenticationDataSource {
     required String deviceId,
   });
   Future<SendFCMTokenModelResponse> sendFCMToken({
-    required String fcmToken,
+    required String? fcmToken,
   });
 }
 
@@ -25,7 +25,7 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   Future<AuthenticationModelResponse> signIn({
     required String email,
     required String password,
-    required String fcmToken,
+    required String? fcmToken,
     required String deviceId,
   }) async {
     return await _apiServices.signIn(email, password, fcmToken, deviceId);
@@ -44,7 +44,7 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
 
   @override
   Future<SendFCMTokenModelResponse> sendFCMToken(
-      {required String fcmToken}) async {
+      {required String? fcmToken}) async {
     return await _apiServices.sendFCMToken(fcmToken);
   }
 }

@@ -23,6 +23,7 @@ _$GetCurrentDoctorConsultationModelResponseImpl
           createdAt: json['created_at'] as String?,
           updatedAt: json['updated_at'] as String?,
           consultMessage: json['consult_message'] as String?,
+          isOpen: json['is_open'] as bool?,
         );
 
 Map<String, dynamic> _$$GetCurrentDoctorConsultationModelResponseImplToJson(
@@ -41,4 +42,5 @@ Map<String, dynamic> _$$GetCurrentDoctorConsultationModelResponseImplToJson(
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'consult_message': instance.consultMessage,
+      'is_open': instance.isOpen,
     };

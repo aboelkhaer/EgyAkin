@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import '../../../../exports.dart';
 
@@ -46,7 +45,7 @@ class CommentsInCommunity extends StatelessWidget {
             if (message == 'This option already exists for the poll') {
               customSnackBar(
                   context: context,
-                  message: 'This option already exists for the poll');
+                  message: LocalizationService.instance.translate(AppStrings.thisOptionAlreadyExistsForThePoll));
             }
           },
         );

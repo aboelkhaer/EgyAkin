@@ -17,10 +17,10 @@ class FirstStep extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const Row(
+         Row(
           children: [
             Text(
-              AppStrings.email,
+              context.tr(AppStrings.email), 
               style: TextStyle(
                   color: AppColors.title, fontWeight: FontWeight.bold),
             ),
@@ -30,7 +30,7 @@ class FirstStep extends StatelessWidget {
         Form(
           key: cubit.firstStepFormKey,
           child: CustomTextFormField(
-            title: AppStrings.email,
+            title: context.tr(AppStrings.email),
             textInputType: TextInputType.emailAddress,
             autoFocus: true,
             onChanged: (value) {

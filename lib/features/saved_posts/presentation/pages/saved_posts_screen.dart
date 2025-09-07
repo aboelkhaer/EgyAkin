@@ -72,7 +72,8 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
     SavedPostsCubit cubit = SavedPostsCubit.get(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.doctorName),
+        // title: Text(widget.doctorName),
+        title: Text(context.tr(AppStrings.savedPosts)),
       ),
       body: BlocBuilder<SavedPostsCubit, SavedPostsState>(
         builder: (context, state) {
@@ -386,8 +387,11 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Delete'),
+                                                              Text(
+                                                                context
+                                                                    .tr(AppStrings
+                                                                        .delete),
+                                                              ),
                                                             ],
                                                           ),
                                                         ),

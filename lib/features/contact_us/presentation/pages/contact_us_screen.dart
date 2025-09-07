@@ -12,7 +12,8 @@ class ContactUsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(AppStrings.contactUs),
+        title:  Text(context.tr(AppStrings.contactUs)
+        ),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -39,7 +40,7 @@ class ContactUsScreen extends StatelessWidget {
                     key: cubit.formKey,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
                     child: CustomTextFormField(
-                      title: AppStrings.content,
+                      title: context.tr(AppStrings.content),
                       textInputType: TextInputType.multiline,
                       textInputAction: TextInputAction.newline,
                       maxLines: 10,
@@ -79,7 +80,7 @@ class ContactUsScreen extends StatelessWidget {
                             onPressed: () {
                               cubit.addContactUs();
                             },
-                            title: AppStrings.send,
+                            title: context.tr(AppStrings.send),
                           );
                         },
                         loading: () {

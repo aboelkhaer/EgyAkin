@@ -42,11 +42,11 @@ class FooterButtons extends StatelessWidget {
                           onPressed: () {
                             showCustomDialog(
                                 context: context,
-                                title: 'Attention !!',
+                                title: context.tr(AppStrings.attention),
                                 description:
-                                    'Are you sure you want to delete\n$patientName?',
-                                coloredButtonText: 'Cancel',
-                                noColoredButtonText: 'Delete',
+                                    '${context.tr(AppStrings.areYouSureYouWantToDelete)}\n$patientName?',
+                                coloredButtonText: context.tr(AppStrings.cancel),
+                                noColoredButtonText: context.tr(AppStrings.delete),
                                 coloredButtonOnTap: () =>
                                     Navigator.of(context).pop(),
                                 noColoredButtonOnTap: () {
@@ -54,7 +54,7 @@ class FooterButtons extends StatelessWidget {
                                   cubit.deletePatient(patientId);
                                 });
                           },
-                          title: 'Delete',
+                          title: context.tr(AppStrings.delete),
                           isDelete: true,
                           isDisable: currentDoctorRole == AppStrings.roleAdmin
                               ? false
@@ -77,7 +77,8 @@ class FooterButtons extends StatelessWidget {
                           onPressed: () {
                             cubit.downloadPatientReport(patientId);
                           },
-                          title: 'Request report',
+                          title: context.tr(AppStrings.requestReport),
+
                           // isDisable: doctorId == currentDoctorId ? false : true,
                         )
                       : CustomElevatedButton(

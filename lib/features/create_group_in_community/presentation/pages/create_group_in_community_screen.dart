@@ -50,7 +50,9 @@ class _CreateGroupInCommunityScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.isCreateNewGroup ? 'Create Group' : 'Update Group',
+          widget.isCreateNewGroup
+              ? context.tr(AppStrings.createGroup)
+              : context.tr(AppStrings.updateGroup),
         ),
       ),
       body: SingleChildScrollView(
@@ -378,7 +380,7 @@ class _CreateGroupInCommunityScreenState
                   ),
                   Expanded(
                     child: CustomTextFormField(
-                      title: 'Title',
+                      title: context.tr(AppStrings.title),
                       textInputType: TextInputType.text,
                       initialValue: widget.isCreateNewGroup
                           ? null
@@ -398,7 +400,7 @@ class _CreateGroupInCommunityScreenState
                 height: 100.h,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: CustomTextFormField(
-                  title: 'Description',
+                  title: context.tr(AppStrings.description),
                   textInputType: TextInputType.text,
                   initialValue: widget.isCreateNewGroup
                       ? null
@@ -418,8 +420,8 @@ class _CreateGroupInCommunityScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Privacy Radio Buttons
-                    const Text(
-                      'Privacy',
+                     Text(
+                      context.tr(AppStrings.privacy),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -448,8 +450,8 @@ class _CreateGroupInCommunityScreenState
                             );
                           },
                         ),
-                        const Text(
-                          'Public',
+                        Text(
+                          context.tr(AppStrings.public),
                           style: TextStyle(
                             color: AppColors.primary, // Use AppColors.primary
                             fontWeight: FontWeight.bold,
@@ -474,8 +476,8 @@ class _CreateGroupInCommunityScreenState
                             );
                           },
                         ),
-                        const Text(
-                          'Private',
+                        Text(
+                          context.tr(AppStrings.private),
                           style: TextStyle(
                             color: AppColors.primary, // Use AppColors.primary
                             fontWeight: FontWeight.bold,
@@ -564,8 +566,8 @@ class _CreateGroupInCommunityScreenState
                                   }
                                 },
                                 title: widget.isCreateNewGroup
-                                    ? 'Create'
-                                    : 'Update',
+                                    ? context.tr(AppStrings.create)
+                                    : context.tr(AppStrings.update),
                               );
                       },
                     );

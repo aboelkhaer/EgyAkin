@@ -102,7 +102,7 @@ class _PatientSectionDetailsScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Add Recommendation',
+                                    context.tr(AppStrings.addRecommendation),
                                     style: TextStyle(
                                       fontSize: 14.sp,
                                       fontWeight: FontWeight.w600,
@@ -111,7 +111,7 @@ class _PatientSectionDetailsScreenState
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Add a new recommendation note',
+                                    context.tr(AppStrings.addANewRecommendationNote),
                                     style: TextStyle(
                                       fontSize: 11.sp,
                                       color: Colors.grey[600],
@@ -149,7 +149,7 @@ class _PatientSectionDetailsScreenState
                                     Row(
                                       children: [
                                         Text(
-                                          'Recommendation',
+                                          context.tr(AppStrings.recommendation),
                                           style: TextStyle(
                                             fontSize: 12.sp,
                                             fontWeight: FontWeight.w500,
@@ -177,7 +177,7 @@ class _PatientSectionDetailsScreenState
                                       },
                                       validator: (value) {
                                         if (value == null || value.trim().isEmpty) {
-                                          return 'Please enter recommendation';
+                                          return context.tr(AppStrings.pleaseEnterRecommendation);
                                         }
                                         return null;
                                       },
@@ -231,7 +231,7 @@ class _PatientSectionDetailsScreenState
                                 ),
                               ),
                               child: Text(
-                                'Add Recommendation',
+                                context.tr(AppStrings.addRecommendation),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14.sp,

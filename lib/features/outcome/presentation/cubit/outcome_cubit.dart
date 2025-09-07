@@ -110,7 +110,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'You must select at least one choice. \n{${question.question}}',
+                  '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -131,7 +131,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               loaded: (value) => OutcomeState.loaded(
                 value.questionList,
                 false,
-                AppStrings.somethingWentWrong,
+                LocalizationService.instance.translate(AppStrings.somethingWentWrong),
                 snackbarErrorCounter += 1,
                 false,
                 submitterModel,
@@ -149,7 +149,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               loaded: (value) => OutcomeState.loaded(
                 value.questionList,
                 false,
-                'You must add "Others" field in \n{${question.question}}',
+                '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
                 snackbarErrorCounter += 1,
                 false,
                 submitterModel,
@@ -169,7 +169,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
               loaded: (value) => OutcomeState.loaded(
                 value.questionList,
                 false,
-                'This question is required \n{${question.question}}',
+                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
                 snackbarErrorCounter += 1,
                 false,
                 submitterModel,
@@ -190,7 +190,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'National ID should have 14 digits',
+                  '${LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits)}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -206,7 +206,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'National ID should have 14 digits',
+                  '${LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits)}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -228,7 +228,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'Age should be less than 120',
+                  '${LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120)}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -249,7 +249,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'Phone should have 11 digits',
+                  '${LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits)}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -265,7 +265,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
                 loaded: (value) => OutcomeState.loaded(
                   value.questionList,
                   false,
-                  'Phone should have 11 digits',
+                  '${LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits)}',
                   snackbarErrorCounter += 1,
                   false,
                   submitterModel,
@@ -282,7 +282,7 @@ class OutcomeCubit extends Cubit<OutcomeState> {
             loaded: (value) => OutcomeState.loaded(
               value.questionList,
               false,
-              'This question is required \n{${question.question}}',
+              '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
               snackbarErrorCounter += 1,
               false,
               submitterModel,

@@ -68,11 +68,14 @@ class CommunityButton extends StatelessWidget {
                               const Icon(Icons.rocket_launch,
                                   color: Colors.white),
                               SizedBox(width: 8.w),
-                              const Text('EXPLORE COMMUNITY',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1)),
+                               Text(
+                                context.tr(AppStrings.exploreCommunity),
+                                
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 1),
+                              ),
                             ],
                           ),
                         ),

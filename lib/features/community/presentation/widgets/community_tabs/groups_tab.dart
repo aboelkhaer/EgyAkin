@@ -93,8 +93,8 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Join Group',
+                         Text(
+                          context.tr(AppStrings.joinGroup),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         TextButton(
@@ -113,8 +113,8 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                             overlayColor:
                                 MaterialStateProperty.all(Colors.transparent),
                           ),
-                          child: const Text(
-                            'See All',
+                          child:  Text(
+                            context.tr(AppStrings.seeAll),
                             style: TextStyle(color: AppColors.primary),
                           ),
                         ),
@@ -150,8 +150,9 @@ class _GroupsTabState extends State<GroupsTab> with WidgetsBindingObserver {
                                         ),
                                       );
                                     },
-                                    child: const Text(
-                                      'Create first group in community',
+                                    child:  Text(
+                                      context.tr(AppStrings.createFirstGroupInCommunity),
+
                                       style: TextStyle(
                                         color: Colors.blue,
                                       ),

@@ -22,7 +22,7 @@ class ConsultationButtonsRow extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.primary),
               ),
-              child: const Padding(
+              child:  Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -30,7 +30,7 @@ class ConsultationButtonsRow extends StatelessWidget {
                     Icon(Icons.person, color: AppColors.primary),
                     SizedBox(width: 8),
                     Text(
-                      'From Doctor',
+                      context.tr(AppStrings.fromDoctor),
                       style: TextStyle(color: AppColors.primary),
                       textAlign: TextAlign.center,
                     ),
@@ -46,7 +46,7 @@ class ConsultationButtonsRow extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.primary),
               ),
-              child: const Padding(
+              child:  Padding(
                 padding: EdgeInsets.symmetric(vertical: 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -54,7 +54,7 @@ class ConsultationButtonsRow extends StatelessWidget {
                     Icon(Icons.memory, color: AppColors.primary),
                     SizedBox(width: 8),
                     Text(
-                      'From AI',
+                      context.tr(AppStrings.fromAi),
                       style: TextStyle(color: AppColors.primary),
                       textAlign: TextAlign.center,
                     ),

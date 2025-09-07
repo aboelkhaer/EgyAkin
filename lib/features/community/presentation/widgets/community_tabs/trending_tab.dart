@@ -151,7 +151,7 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
                                         );
                                       },
                                       child: Container(
-                                        alignment: Alignment.topLeft,
+                                        alignment: context.currentLocale?.languageCode == 'ar' ? Alignment.topRight : Alignment.topLeft,
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 20, vertical: 10),
                                         child: Column(

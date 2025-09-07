@@ -60,7 +60,7 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Reply to'),
+                                 Text(context.tr(AppStrings.replyTo)),
                                 const SizedBox(width: 5),
                                 Text(
                                   '@${doctorName(
@@ -99,7 +99,8 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                     children: [
                       Expanded(
                         child: CustomTextFormField(
-                          title: AppStrings.writeComment,
+                          title: context.tr(AppStrings.writeComment),
+
                           textInputType: TextInputType.text,
                           enableSuggestions: true,
                           onChanged: (val) {
@@ -123,9 +124,9 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                               color: AppColors.primary.withOpacity(0.7),
                             ),
                           ),
-                          SizedBox(
-                            height: size.height * 0.012,
-                          )
+                          // SizedBox(
+                          //   height: size.height * 0.012,
+                          // )
                         ],
                       ),
                     ],
@@ -183,7 +184,8 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                const Text('Reply to'),
+                                 Text(context.tr(AppStrings.replyTo),
+                                 ),
                                 const SizedBox(width: 5),
                                 Text(
                                   '@${doctorName(
@@ -222,7 +224,8 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                     children: [
                       Expanded(
                         child: CustomTextFormField(
-                          title: AppStrings.writeComment,
+                          title: context.tr(AppStrings.writeComment),
+
                           textInputType: TextInputType.text,
                           enableSuggestions: true,
                           onChanged: (val) {
@@ -263,9 +266,9 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
                               color: AppColors.primary.withOpacity(0.7),
                             ),
                           ),
-                          SizedBox(
-                            height: size.height * 0.012,
-                          )
+                          // SizedBox(
+                          //   height: size.height * 0.012,
+                          // )
                         ],
                       ),
                     ],

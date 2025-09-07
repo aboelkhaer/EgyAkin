@@ -36,18 +36,18 @@ class OTPAllContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Row(
+         Row(
           children: [
             Text(
-              'Verification code',
+              context.tr(AppStrings.verificationCode),
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
-        const Row(
+         Row(
           children: [
             Text(
-              'We have sent the code verification to',
+              context.tr(AppStrings.weHaveSentTheCodeVerificationTo),
               style: TextStyle(fontSize: 16, color: AppColors.description),
             ),
           ],
@@ -70,7 +70,8 @@ class OTPAllContent extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Change your email?',
+                context.tr(AppStrings.changeYourEmail),
+
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.blue.shade600,
@@ -98,8 +99,8 @@ class OTPAllContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Resend code after',
+             Text(
+              context.tr(AppStrings.resendCodeAfter),
               style: TextStyle(color: AppColors.description),
             ),
             const SizedBox(width: 5),

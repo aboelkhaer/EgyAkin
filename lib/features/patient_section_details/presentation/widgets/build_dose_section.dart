@@ -104,7 +104,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
   }
 
   void _showAddMedicationDialog(String medicationName, {String? doseValue}) {
-    print('Showing Add New Dose dialog for: $medicationName with dose: $doseValue'); // Debug print
+    debugPrint('Showing Add New Dose dialog for: $medicationName with dose: $doseValue'); // Debug print
     // Hide overlay before showing bottom sheet
     _removeOverlay();
     
@@ -112,9 +112,9 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     if (doseValue != null && doseValue.isNotEmpty) {
       // todo: add dose value to the dose controller
       // doseController.text = doseValue;
-      print('Set dose controller text to: $doseValue'); // Debug print
+      debugPrint('Set dose controller text to: $doseValue'); // Debug print
     } else {
-      print('No dose value provided or empty'); // Debug print
+      debugPrint('No dose value provided or empty'); // Debug print
     }
 
     showModalBottomSheet(
@@ -153,7 +153,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Add New Dose',
+                              context.tr(AppStrings.addNewDose),
+
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
@@ -209,7 +210,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Dose',
+                                    context.tr(AppStrings.dose),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -234,7 +235,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 maxLines: 3,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter dose';
+                                    return context.tr(AppStrings.pleaseEnterDose);
                                   }
                                   return null;
                                 },
@@ -249,7 +250,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Route',
+                                    context.tr(AppStrings.route),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -273,7 +274,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 textInputType: TextInputType.text,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter route';
+                                    return context.tr(AppStrings.pleaseEnterRoute);
                                   }
                                   return null;
                                 },
@@ -288,7 +289,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Frequency',
+                                    context.tr(AppStrings.frequency),
+
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -312,7 +314,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 textInputType: TextInputType.text,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter frequency';
+                                    return context.tr(AppStrings.pleaseEnterFrequency);
                                   }
                                   return null;
                                 },
@@ -327,7 +329,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Duration',
+                                    context.tr(AppStrings.duration),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -351,7 +353,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 textInputType: TextInputType.text,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter duration';
+                                    return context.tr(AppStrings.pleaseEnterDuration);
                                   }
                                   return null;
                                 },
@@ -410,7 +412,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                         ),
                       ),
                       child: Text(
-                        'Add Medicine',
+                        context.tr(AppStrings.addMedicine),
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14.sp,
@@ -435,7 +437,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(
-            'Delete ${medication.type == MedicineTypeEnum.note.name ? 'Recommendation' : 'Medicine'}',
+            '${context.tr(AppStrings.delete)} ${medication.type == MedicineTypeEnum.note.name ? context.tr(AppStrings.recommendation) : context.tr(AppStrings.medicine)}',
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
@@ -443,7 +445,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
             ),
           ),
           content: Text(
-            'Are you sure you want to delete this ${medication.type == MedicineTypeEnum.note.name ? 'recommendation' : 'medicine'}? This action cannot be undone.',
+            '${context.tr(AppStrings.areYouSureYouWantToDeleteThis)} ${medication.type == MedicineTypeEnum.note.name ? context.tr(AppStrings.recommendation) : context.tr(AppStrings.medicine)}? ${context.tr(AppStrings.thisActionCannotBeUndone)}.',
             style: TextStyle(
               fontSize: 14.sp,
               color: Colors.grey[700],
@@ -455,7 +457,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 Navigator.pop(dialogContext);
               },
               child: Text(
-                'Cancel',
+                context.tr(AppStrings.cancel),
+
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.grey[600],
@@ -477,7 +480,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 ),
               ),
               child: Text(
-                'Delete',
+                context.tr(AppStrings.delete),
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.white,
@@ -538,7 +541,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
               bool hasChanges() {
                 if (medication.type == MedicineTypeEnum.note.name) {
                   final hasContentChanges = contentController.text != originalContent;
-                  print('Note type - hasContentChanges: $hasContentChanges, current: "${contentController.text}", original: "$originalContent"'); // Debug
+                  debugPrint('Note type - hasContentChanges: $hasContentChanges, current: "${contentController.text}", original: "$originalContent"'); // Debug
                   return hasContentChanges;
                 } else {
                   final hasDoseChanges = doseController.text != originalDose;
@@ -547,7 +550,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                   final hasDurationChanges = durationController.text != originalDuration;
                   
                   final hasChanges = hasDoseChanges || hasRouteChanges || hasFrequencyChanges || hasDurationChanges;
-                  print('Medication type - hasChanges: $hasChanges'); // Debug
+                  debugPrint('Medication type - hasChanges: $hasChanges'); // Debug
                   return hasChanges;
                 }
               }
@@ -568,8 +571,9 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             children: [
                               Text(
                                 medication.type == MedicineTypeEnum.note.name 
-                                    ? 'Edit Recommendation' 
-                                    : 'Edit Medication',
+                                    ? context.tr(AppStrings.editRecommendation) 
+                                    : context.tr(AppStrings.editMedication),
+                               
                                 style: TextStyle(
                                   fontSize: 16.sp,
                                   fontWeight: FontWeight.w600,
@@ -579,8 +583,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               const SizedBox(height: 4),
                               Text(
                                 medication.type == MedicineTypeEnum.note.name 
-                                    ? 'Edit recommendation note'
-                                    : (medication.doseName ?? 'Unknown'),
+                                    ? context.tr(AppStrings.editRecommendationNote)
+                                    : (medication.doseName ?? context.tr(AppStrings.unknown)),
                                 style: TextStyle(
                                   fontSize: 11.sp,
                                   color: Colors.grey[600],
@@ -619,7 +623,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                       Row(
                                         children: [
                                           Text(
-                                            'Recommendation',
+                                            context.tr(AppStrings.recommendation),
                                             style: TextStyle(
                                               fontSize: 12.sp,
                                               fontWeight: FontWeight.w500,
@@ -647,7 +651,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                         },
                                         validator: (value) {
                                           if (value == null || value.trim().isEmpty) {
-                                            return 'Please enter recommendation';
+                                            return context.tr(AppStrings.pleaseEnterRecommendation);
                                           }
                                           return null;
                                         },
@@ -667,7 +671,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Dose',
+                                              context.tr(AppStrings.dose),
                                               style: TextStyle(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w500,
@@ -695,7 +699,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           },
                                           validator: (value) {
                                             if (value == null || value.trim().isEmpty) {
-                                              return 'Please enter dose';
+                                              return context.tr(AppStrings.pleaseEnterDose);
                                             }
                                             return null;
                                           },
@@ -710,7 +714,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Route',
+                                              context.tr(AppStrings.route),
                                               style: TextStyle(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w500,
@@ -737,7 +741,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           },
                                           validator: (value) {
                                             if (value == null || value.trim().isEmpty) {
-                                              return 'Please enter route';
+                                              return context.tr(AppStrings.pleaseEnterRoute);
                                             }
                                             return null;
                                           },
@@ -752,7 +756,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Frequency',
+                                              context.tr(AppStrings.frequency),
                                               style: TextStyle(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w500,
@@ -779,7 +783,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           },
                                           validator: (value) {
                                             if (value == null || value.trim().isEmpty) {
-                                              return 'Please enter frequency';
+                                              return context.tr(AppStrings.pleaseEnterFrequency);
                                             }
                                             return null;
                                           },
@@ -794,7 +798,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                         Row(
                                           children: [
                                             Text(
-                                              'Duration',
+                                              context.tr(AppStrings.duration),
                                               style: TextStyle(
                                                 fontSize: 12.sp,
                                                 fontWeight: FontWeight.w500,
@@ -821,7 +825,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           },
                                           validator: (value) {
                                             if (value == null || value.trim().isEmpty) {
-                                              return 'Please enter duration';
+                                              return context.tr(AppStrings.pleaseEnterDuration);
                                             }
                                             return null;
                                           },
@@ -838,24 +842,24 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: hasChanges() ? () {
-                            print('Update button pressed - hasChanges: ${hasChanges()}'); // Debug
+                            debugPrint('Update button pressed - hasChanges: ${hasChanges()}'); // Debug
                             
                             // Validate form based on type
                             if (medication.type == MedicineTypeEnum.note.name) {
-                              print('Validating note type - content: "${contentController.text.trim()}"'); // Debug
+                              debugPrint('Validating note type - content: "${contentController.text.trim()}"'); // Debug
                               if (contentController.text.trim().isEmpty) {
-                                print('Content is empty, returning'); // Debug
+                                debugPrint('Content is empty, returning'); // Debug
                                 return;
                               }
                             } else {
-                              print('Validating medication type'); // Debug
+                              debugPrint('Validating medication type'); // Debug
                               if (!_editFormKey.currentState!.validate()) {
-                                print('Form validation failed'); // Debug
+                                debugPrint('Form validation failed'); // Debug
                                 return;
                               }
                             }
 
-                            print('Creating updated recommendation...'); // Debug
+                            debugPrint('Creating updated recommendation...'); // Debug
 
                             // Create updated recommendation
                             final updatedRecommendation = PatientRecommendationModel(
@@ -869,7 +873,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               content: medication.type == MedicineTypeEnum.note.name ? contentController.text.trim() : null,
                             );
 
-                            print('Calling updatePatientRecommendation...'); // Debug
+                            debugPrint('Calling updatePatientRecommendation...'); // Debug
 
                             // Update recommendation
                             cubit.updatePatientRecommendation(
@@ -877,7 +881,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               widget.patientId,
                             );
 
-                            print('Update completed, closing dialog...'); // Debug
+                            debugPrint('Update completed, closing dialog...'); // Debug
 
                             // Clear and close
                             contentController.clear();
@@ -896,7 +900,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             ),
                           ),
                           child: Text(
-                            '${medication.type == MedicineTypeEnum.note.name ? 'Update Recommendation' : 'Update Medicine'}${hasChanges() ? '' : ' (No Changes)'}',
+                            '${medication.type == MedicineTypeEnum.note.name ? context.tr(AppStrings.updateRecommendation) : context.tr(AppStrings.updateMedication)}${hasChanges() ? '' : ' (${context.tr(AppStrings.noChanges)})'}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
@@ -967,7 +971,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Create New Medicine',
+                              context.tr(AppStrings.createNewMedicine),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w600,
@@ -976,7 +980,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Add a new medicine',
+                              context.tr(AppStrings.addANewMedicine),
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 color: Colors.grey[600],
@@ -1017,7 +1021,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Medicine Name',
+                                    context.tr(AppStrings.medicineName),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -1041,7 +1045,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 textInputType: TextInputType.text,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter medicine name';
+                                    return context.tr(AppStrings.pleaseEnterMedicineName);
+
                                   }
                                   return null;
                                 },
@@ -1056,7 +1061,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               Row(
                                 children: [
                                   Text(
-                                    'Dose',
+                                    context.tr(AppStrings.dose),
                                     style: TextStyle(
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w500,
@@ -1081,7 +1086,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                 maxLines: 3,
                                 validator: (value) {
                                   if (value == null || value.trim().isEmpty) {
-                                    return 'Please enter dose';
+                                    return context.tr(AppStrings.pleaseEnterDose);
                                   }
                                   return null;
                                 },
@@ -1094,7 +1099,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Description',
+                                context.tr(AppStrings.description),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                   fontWeight: FontWeight.w500,
@@ -1127,7 +1132,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             // Store medicine info for later use
                             final medicineName = medicineNameController.text.trim();
                             final doseValue = doseController.text.trim();
-                            print('Stored dose value: "$doseValue"'); // Debug print
+                            debugPrint('Stored dose value: "$doseValue"'); // Debug print
                             
                             // Show loading dialog
                             showDialog(
@@ -1174,7 +1179,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                       const SizedBox(height: 20),
                                       // Loading text
                                       Text(
-                                        'Creating Medicine...',
+                                        context.tr(AppStrings.creatingMedicine),
                                         style: TextStyle(
                                           fontSize: 16.sp,
                                           fontWeight: FontWeight.w600,
@@ -1183,7 +1188,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        'Please wait while we save your medicine',
+                                        context.tr(AppStrings.pleaseWaitWhileWeSaveYourMedicine),
                                         style: TextStyle(
                                           fontSize: 12.sp,
                                           color: Colors.grey[600],
@@ -1203,7 +1208,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               doseValue,
                             );
                             
-                            print('Medicine creation success: $success'); // Debug print
+                            debugPrint('Medicine creation success: $success'); // Debug print
 
                             // Close loading dialog
                             Navigator.pop(context);
@@ -1216,7 +1221,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               // Wait a bit for the dialog to close completely
                               await Future.delayed(const Duration(milliseconds: 500));
                               if (mounted) {
-                                print('Calling _showAddMedicationDialog with doseValue: "$doseValue"'); // Debug print
+                                debugPrint('Calling _showAddMedicationDialog with doseValue: "$doseValue"'); // Debug print
                                 _showAddMedicationDialog(
                                   medicineName,
                                   doseValue: doseValue,
@@ -1241,7 +1246,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           ),
                         ),
                                                 child: Text(
-                          'Create Medicine',
+                          context.tr(AppStrings.createMedicine),
+
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 14.sp,
@@ -1282,7 +1288,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
             )) {
           return Container(
             padding: const EdgeInsets.all(16),
-            child: const Row(
+            child:  Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
@@ -1292,7 +1298,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  'Searching...',
+                  context.tr(AppStrings.searching),
+
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -1306,8 +1313,9 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
         return state.maybeWhen(
           orElse: () => Container(
             padding: const EdgeInsets.all(16),
-            child: const Text(
-              'Type at least 1 character to search...',
+            child:  Text(
+              context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
+
               style: TextStyle(
                 color: Colors.grey,
                 fontSize: 14,
@@ -1329,8 +1337,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
             if (!_hasSearched) {
               return Container(
                 padding: const EdgeInsets.all(16),
-                child: const Text(
-                  'Type at least 1 character to search...',
+                child:  Text(
+                  context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -1347,8 +1355,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
-                      'No medications found',
+                     Text(
+                      context.tr(AppStrings.noMedicationsFound),
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
@@ -1376,7 +1384,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Create New Dose',
+                            context.tr(AppStrings.createNewDose),
+
                             style: TextStyle(
                               color: AppColors.primary,
                               fontSize: 14,
@@ -1436,7 +1445,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                     onTap: () {
                       // Show add medication dialog
                       _showAddMedicationDialog(
-                        searchData.title ?? 'Unknown',
+                        searchData.title ?? context.tr(AppStrings.unknown),
                         doseValue: searchData.dose,
                       );
                     },
@@ -1455,7 +1464,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  searchData.title ?? 'Unknown',
+                                  searchData.title ?? context.tr(AppStrings.unknown),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 12.sp,
@@ -1478,7 +1487,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             onPressed: () {
                               // Show add medication dialog
                               _showAddMedicationDialog(
-                                searchData.title ?? 'Unknown',
+                                searchData.title ?? context.tr(AppStrings.unknown),
                                 doseValue: searchData.dose,
                               );
                             },
@@ -1505,7 +1514,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                 )) {
                   return Container(
                     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: const Row(
+                    child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
@@ -1515,7 +1524,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                         ),
                         SizedBox(width: 8),
                         Text(
-                          'Loading more...',
+                          context.tr(AppStrings.loadingMore),
+
                           style: TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
@@ -1582,7 +1592,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Load More',
+                              context.tr(AppStrings.loadMore),
+
                               style: TextStyle(
                                 color: AppColors.primary,
                                 fontSize: 11.sp,
@@ -1788,11 +1799,11 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                               _showSearchOverlay();
                             }
                           },
-                          title: 'Search with medication...',
+                          title: context.tr(AppStrings.searchWithMedication),
                           textInputType: TextInputType.text,
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Please enter a medication name';
+                              return context.tr(AppStrings.pleaseEnterAMedicationName);
                             }
                             return null;
                           },
@@ -1828,16 +1839,16 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                             isSeeMore,
                           ) {
                             if (response.data == null) {
-                              return const Center(
-                                  child: Text('No data available'));
+                              return Center(
+                                  child: Text(context.tr(AppStrings.noDataAvailable)));
                             }
 
                             // Show all medications without filtering
                             final medications = response.data!;
 
                             if (medications.isEmpty) {
-                              return const Center(
-                                  child: Text('No medications available.'));
+                              return  Center(
+                                  child: Text(context.tr(AppStrings.noMedicationsAvailable)));
                             }
 
                             return Column(
@@ -1870,13 +1881,13 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                       Expanded(
                                                         child: Tooltip(
                                                           message: medication.type == MedicineTypeEnum.note.name
-                                                              ? 'Recommendation'
-                                                              : (medication.doseName ?? 'Unknown'),
+                                                              ? context.tr(AppStrings.recommendation)
+                                                              : (medication.doseName ?? context.tr(AppStrings.unknown)),
                                                           child: Text(
                                                             // Show different header based on type
                                                             medication.type == MedicineTypeEnum.note.name
-                                                                ? 'Recommendation'
-                                                                : (medication.doseName ?? 'Unknown'),
+                                                                ? context.tr(AppStrings.recommendation)
+                                                                : (medication.doseName ?? context.tr(AppStrings.unknown)),
                                                             style: TextStyle(
                                                               fontSize: 14.sp,
                                                               fontWeight:
@@ -1971,17 +1982,17 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                     _buildInfoRow(
                                                         Icons
                                                             .medical_services_outlined,
-                                                        'Dose: ${medication.dose ?? 'N/A'}'),
+                                                        '${context.tr(AppStrings.dose)}: ${medication.dose ?? 'N/A'}'),
                                                     _buildInfoRow(
                                                         Icons.route_outlined,
-                                                        'Route: ${medication.route ?? 'N/A'}'),
+                                                        '${context.tr(AppStrings.route)}: ${medication.route ?? 'N/A'}'),
                                                     _buildInfoRow(
                                                         Icons.access_time,
-                                                        'Frequency: ${medication.frequency ?? 'N/A'}'),
+                                                        '${context.tr(AppStrings.frequency)}: ${medication.frequency ?? 'N/A'}'),
                                                     _buildInfoRow(
                                                         Icons
                                                             .calendar_today_outlined,
-                                                        'Duration: ${medication.duration ?? 'N/A'}'),
+                                                        '${context.tr(AppStrings.duration)}: ${medication.duration ?? 'N/A'}'),
                                                   ],
                                                 ],
                                               ),
@@ -1990,7 +2001,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                           // Debug: Check loading state
                                           Builder(
                                             builder: (context) {
-                                              print('Card ${medication.id}: isDeleteLoading=$isDeletePatientRecommendationLoading, deleteId=${cubit.deletePatientRecommendationId}'); // Debug
+                                              debugPrint('Card ${medication.id}: isDeleteLoading=$isDeletePatientRecommendationLoading, deleteId=${cubit.deletePatientRecommendationId}'); // Debug
                                               return const SizedBox.shrink();
                                             },
                                           ),
@@ -2004,7 +2015,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                   color: Colors.black.withOpacity(0.3),
                                                   borderRadius: BorderRadius.circular(16),
                                                 ),
-                                                child: const Center(
+                                                child:  Center(
                                                   child: Column(
                                                     mainAxisSize: MainAxisSize.min,
                                                     children: [
@@ -2014,7 +2025,8 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                                       ),
                                                       SizedBox(height: 8),
                                                       Text(
-                                                        'Deleting...',
+                                                        context.tr(AppStrings.deleting),
+
                                                         style: TextStyle(
                                                           color: Colors.white,
                                                           fontSize: 14,

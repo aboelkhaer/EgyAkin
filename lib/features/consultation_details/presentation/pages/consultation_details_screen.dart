@@ -1,9 +1,6 @@
-import 'dart:developer';
-
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_state.dart';
 import 'package:readmore/readmore.dart';
-import 'package:timeago/timeago.dart' as timeago;
-
+import '../widgets/consultation_lock_widget.dart';
 import '../../../../exports.dart';
 
 class ConsultationDetailsScreen extends StatefulWidget {
@@ -12,13 +9,17 @@ class ConsultationDetailsScreen extends StatefulWidget {
   final String patientName;
   final String consultationId;
   final bool isReceivedConsultation;
-  const ConsultationDetailsScreen(
-      {super.key,
-      required this.currentDoctorModel,
-      required this.homeDataModel,
-      required this.isReceivedConsultation,
-      required this.consultationId,
-      required this.patientName});
+  final bool isOpen;
+
+  const ConsultationDetailsScreen({
+    super.key,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
+    required this.isReceivedConsultation,
+    required this.consultationId,
+    required this.patientName,
+    required this.isOpen,
+  });
 
   @override
   State<ConsultationDetailsScreen> createState() =>
@@ -34,13 +35,104 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
         .getConsultationDetails(widget.consultationId.toString());
   }
 
+  void _toggleConsultationLock() async {
+    final cubit = context.read<ConsultationDetailsCubit>();
+    final currentState = cubit.state;
+
+    // Get current isOpen value from the consultation details
+    bool currentIsOpen = true; // Default value
+    if (currentState.maybeWhen(
+      loaded: (consultDetails, newCommentValue, isSendingConsultation,
+          isSendedConsultation, message, isLocking, isLocked) {
+        currentIsOpen = consultDetails.isOpen ?? true;
+        return true;
+      },
+      orElse: () => false,
+    )) {
+      // Toggle the isOpen value - if currently open, send false to close; if currently closed, send true to open
+      final newIsOpen = !currentIsOpen;
+
+      // Call the cubit method to lock/unlock consultation
+      await cubit.lockOrUnlockConsultation(widget.consultationId, newIsOpen);
+
+      // Show success message
+      // if (mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(
+      //         newIsOpen
+      //             ? context.tr(AppStrings.consultationUnlocked)
+      //             : context.tr(AppStrings.consultationLocked),
+      //       ),
+      //       backgroundColor: AppColors.primary,
+      //       duration: const Duration(seconds: 2),
+      //     ),
+      //   );
+      // }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     ConsultationDetailsCubit cubit = ConsultationDetailsCubit.get(context);
-    log(widget.isReceivedConsultation.toString());
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.patientName.toString()),
+        actions: [
+          BlocBuilder<ConsultationDetailsCubit, ConsultationDetailsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loaded: (
+                  consultDetails,
+                  newCommentValue,
+                  isSendingConsultation,
+                  isSendedConsultation,
+                  message,
+                  isLocking,
+                  isLocked,
+                ) {
+                  if (isLocked) {
+                    return const SizedBox.shrink();
+                  }
+                  return IconButton(
+                    onPressed: () {
+                      navigatorKey.currentState?.pushNamed(
+                        AppRoutes.sendConsultation,
+                        arguments: AppRoutesArgs.sendConsultationRouteArgs(
+                          homeDataModel: widget.homeDataModel,
+                          currentDoctorModel: widget.currentDoctorModel,
+                          patientId: consultDetails.patientModel!.id.toString(),
+                          isSendConsultation: true,
+                          groupId: '',
+                          isForAddNewDoctors: true,
+                          consultationId: widget.consultationId,
+                        ),
+                      );
+                    },
+                    icon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.person_add),
+                        const SizedBox(height: 2),
+                        Text(
+                          context.tr(AppStrings.addDoctor),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 7.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          )
+        ],
       ),
       body: BlocConsumer<ConsultationDetailsCubit, ConsultationDetailsState>(
         listener: (context, state) {
@@ -49,8 +141,15 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
             error: (message) {
               customSnackBar(context: context, message: message);
             },
-            loaded: (consultDetails, newCommentValue, isSendingConsultation,
-                isSendedConsultation, message) {
+            loaded: (
+              consultDetails,
+              newCommentValue,
+              isSendingConsultation,
+              isSendedConsultation,
+              message,
+              isLocking,
+              isLocked,
+            ) {
               if (message != '') {
                 customSnackBar(context: context, message: message);
               }
@@ -67,8 +166,15 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                 child: CircularProgressIndicator(),
               );
             },
-            loaded: (consultDetails, newConsultationValue,
-                isSendingConsultation, isSendedConsultation, message) {
+            loaded: (
+              consultDetails,
+              newConsultationValue,
+              isSendingConsultation,
+              isSendedConsultation,
+              message,
+              isLocking,
+              isLocked,
+            ) {
               return Stack(
                 fit: StackFit.expand,
                 children: [
@@ -76,6 +182,38 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Column(
                       children: [
+                        // Consultation Lock Widget
+                        widget.isReceivedConsultation &&
+                                consultDetails.doctorId.toString() !=
+                                    widget.currentDoctorModel.id.toString()
+                            ? const SizedBox.shrink()
+                            : BlocBuilder<ConsultationDetailsCubit,
+                                ConsultationDetailsState>(
+                                builder: (context, state) {
+                                  return state.maybeWhen(
+                                    loaded: (consultDetails,
+                                        newCommentValue,
+                                        isSendingConsultation,
+                                        isSendedConsultation,
+                                        message,
+                                        isLocking,
+                                        isLocked) {
+                                      return ConsultationLockWidget(
+                                        isLocked: !(consultDetails.isOpen ??
+                                            true), // isLocked is opposite of isOpen
+                                        isLoading: isLocking,
+                                        onToggle: _toggleConsultationLock,
+                                      );
+                                    },
+                                    orElse: () => ConsultationLockWidget(
+                                      isLocked: false,
+                                      isLoading: false,
+                                      onToggle: _toggleConsultationLock,
+                                    ),
+                                  );
+                                },
+                              ),
+
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(10),
@@ -90,8 +228,10 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                             trimMode: TrimMode.Line,
                             trimLines: 2,
                             colorClickableText: Colors.blue,
-                            trimCollapsedText: ' See more ',
-                            trimExpandedText: ' See less ',
+                            trimCollapsedText:
+                                ' ${context.tr(AppStrings.seeMore)} ',
+                            trimExpandedText:
+                                ' ${context.tr(AppStrings.seeLess)} ',
                             moreStyle: TextStyle(
                               fontWeight: FontWeight.w600,
                               color: Colors.blue,
@@ -228,7 +368,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                           child: Row(
                             children: [
                               Text(
-                                'Consultations:',
+                                '${context.tr(AppStrings.consultations)}:',
                                 style: TextStyle(
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.bold,
@@ -482,10 +622,12 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                                       .spaceBetween,
                                               children: [
                                                 Text(
-                                                  timeago.format(DateTime.parse(
-                                                      doctorConsultation
-                                                          .updatedAt
-                                                          .toString())),
+                                                  TimeAgoService.instance
+                                                      .formatTimeAgoFromString(
+                                                          doctorConsultation
+                                                              .updatedAt
+                                                              .toString(),
+                                                          context),
                                                   style: const TextStyle(
                                                     color:
                                                         AppColors.description,
@@ -507,297 +649,251 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                       ],
                     ),
                   ),
-                  widget.isReceivedConsultation
-                      ? Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 80.h,
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(16.0) +
-                                const EdgeInsets.only(left: 10, right: 10),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              border: Border(
-                                top: BorderSide(
-                                  color: Colors.black12,
-                                ),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                isSendingConsultation
-                                    ? const SizedBox(
-                                        width: 30,
-                                        height: 30,
-                                        child: CircularProgressIndicator(),
-                                      )
-                                    : Expanded(
-                                        child: CustomTextFormField(
-                                          title: 'Write consultation',
-                                          textInputType: TextInputType.text,
-                                          enableSuggestions: true,
-                                          onChanged: (val) {
-                                            cubit.newConsultation = val;
-                                            if (val.trim().isNotEmpty) {
-                                              cubit.newConsultationValueChanged(
-                                                  val);
-                                            }
-                                            if (val.trim().isEmpty) {
-                                              cubit.newConsultationValueChanged(
-                                                  val);
-                                            }
-                                          },
-                                          onFieldSubmitted: (val) {
-                                            // if (accountVerification &&
-                                            //     isSyndicateCardRequired != 'Required' &&
-                                            //     isSyndicateCardRequired != 'Pending') {
-                                            //   cubit.addPatientComments(patientId: patientId);
-                                            // } else {
-                                            //   if (isSyndicateCardRequired != 'Required' &&
-                                            //       isSyndicateCardRequired != 'Pending') {
-                                            //     showCustomDialog(
-                                            //       context: context,
-                                            //       title: AppStrings.emailVerification,
-                                            //       description: AppStrings
-                                            //           .toAddCommentYouMustVerifyYourEmailAddress,
-                                            //       noColoredButtonOnTap: () {
-                                            //         Navigator.of(context).pop();
-                                            //       },
-                                            //       coloredButtonText: AppStrings.verify,
-                                            //       noColoredButtonText: AppStrings.cancel,
-                                            //       coloredButtonOnTap: () {
-                                            //         Navigator.of(context).pop();
-                                            //         navigatorKey.currentState?.pushNamed(
-                                            //           AppRoutes.emailVerification,
-                                            //           arguments: AppRoutesArgs
-                                            //               .emailVerificationRouteArgs(
-                                            //                   currentDoctorModel:
-                                            //                       currentDoctorModel),
-                                            //         );
-                                            //       },
-                                            //     );
-                                            //   }
-                                            // }
-                                            // if (accountVerification &&
-                                            //     (isSyndicateCardRequired == 'Required' ||
-                                            //         isSyndicateCardRequired == 'Pending')) {
-                                            //   showCustomDialog(
-                                            //     context: context,
-                                            //     title: 'Syndicate card verification',
-                                            //     description:
-                                            //         'To add comment you must verify your syndicate card.',
-                                            //     noColoredButtonOnTap: () {
-                                            //       Navigator.of(context).pop();
-                                            //     },
-                                            //     coloredButtonText: AppStrings.ok,
-                                            //     noColoredButtonText: '',
-                                            //     isNoColorShow: true,
-                                            //     coloredButtonOnTap: () {
-                                            //       Navigator.of(context).pop();
-                                            //     },
-                                            //   );
-                                            // }
-                                          },
-                                          textInputAction: TextInputAction.done,
-                                          validator: (val) {
-                                            return null;
-                                          },
+                  BlocBuilder<ConsultationDetailsCubit,
+                      ConsultationDetailsState>(
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        loaded: (consultDetails,
+                            newCommentValue,
+                            isSendingConsultation,
+                            isSendedConsultation,
+                            message,
+                            isLocking,
+                            isLocked) {
+                          return (consultDetails.isOpen ?? true)
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    height: 80.h,
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.all(16.0) +
+                                        const EdgeInsets.only(
+                                            left: 10, right: 10),
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border(
+                                        top: BorderSide(
+                                          color: Colors.black12,
                                         ),
                                       ),
-                                isSendingConsultation
-                                    ? const SizedBox.shrink()
-                                    : BlocBuilder<ConsultationDetailsCubit,
-                                        ConsultationDetailsState>(
-                                        builder: (context, state) {
-                                          return state.maybeWhen(
-                                            orElse: () {
-                                              return const SizedBox.shrink();
-                                            },
-                                            loaded: (consultDetails,
-                                                newConsultationValue,
-                                                isSendingConsultation,
-                                                isSendedConsultation,
-                                                message) {
-                                              return newConsultationValue
-                                                          .trim() ==
-                                                      AppStrings.empty
-                                                  ? const SizedBox.shrink()
-                                                  : Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        IconButton(
-                                                          onPressed: () {
-                                                            if (!widget
-                                                                .homeDataModel
-                                                                .verified!) {
-                                                              showCustomDialog(
-                                                                context:
-                                                                    context,
-                                                                title: AppStrings
-                                                                    .emailVerification,
-                                                                description:
-                                                                    AppStrings
-                                                                        .toAddConsultationYouMustVerifyYourEmailAddress,
-                                                                noColoredButtonOnTap:
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                coloredButtonText:
-                                                                    AppStrings
-                                                                        .verify,
-                                                                noColoredButtonText:
-                                                                    AppStrings
-                                                                        .cancel,
-                                                                coloredButtonOnTap:
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                  navigatorKey
-                                                                      .currentState
-                                                                      ?.pushNamed(
-                                                                    AppRoutes
-                                                                        .emailVerification,
-                                                                    arguments: AppRoutesArgs.emailVerificationRouteArgs(
-                                                                        currentDoctorModel:
-                                                                            widget.currentDoctorModel),
-                                                                  );
-                                                                },
-                                                              );
-                                                            }
-                                                            if (widget
-                                                                    .homeDataModel
-                                                                    .verified! &&
-                                                                widget.homeDataModel
-                                                                        .isSyndicateCardRequired !=
-                                                                    'Required' &&
-                                                                widget.homeDataModel
-                                                                        .isSyndicateCardRequired !=
-                                                                    'Pending') {
-                                                              cubit
-                                                                  .addConsultationReply(
-                                                                consultationId:
-                                                                    consultDetails
-                                                                        .id
-                                                                        .toString(),
-                                                                reply:
-                                                                    newConsultationValue,
-                                                              );
-                                                            } else {
-                                                              if (widget.homeDataModel
-                                                                          .isSyndicateCardRequired !=
-                                                                      'Required' &&
-                                                                  widget.homeDataModel
-                                                                          .isSyndicateCardRequired !=
-                                                                      'Pending') {
-                                                                showCustomDialog(
-                                                                  context:
-                                                                      context,
-                                                                  title: AppStrings
-                                                                      .emailVerification,
-                                                                  description:
-                                                                      AppStrings
-                                                                          .toAddConsultationYouMustVerifyYourSyndicateCard,
-                                                                  noColoredButtonOnTap:
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        isSendingConsultation
+                                            ? const SizedBox(
+                                                width: 30,
+                                                height: 30,
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              )
+                                            : Expanded(
+                                                child: CustomTextFormField(
+                                                  title: context.tr(AppStrings
+                                                      .writeConsultation),
+                                                  textInputType:
+                                                      TextInputType.text,
+                                                  enableSuggestions: true,
+                                                  onChanged: (val) {
+                                                    cubit.newConsultation = val;
+                                                    if (val.trim().isNotEmpty) {
+                                                      cubit
+                                                          .newConsultationValueChanged(
+                                                              val);
+                                                    }
+                                                    if (val.trim().isEmpty) {
+                                                      cubit
+                                                          .newConsultationValueChanged(
+                                                              val);
+                                                    }
+                                                  },
+                                                  onFieldSubmitted: (val) {},
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  validator: (val) {
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                        isSendingConsultation
+                                            ? const SizedBox.shrink()
+                                            : BlocBuilder<
+                                                ConsultationDetailsCubit,
+                                                ConsultationDetailsState>(
+                                                builder: (context, state) {
+                                                  return state.maybeWhen(
+                                                    orElse: () {
+                                                      return const SizedBox
+                                                          .shrink();
+                                                    },
+                                                    loaded: (
+                                                      consultDetails,
+                                                      newConsultationValue,
+                                                      isSendingConsultation,
+                                                      isSendedConsultation,
+                                                      message,
+                                                      isLocking,
+                                                      isLocked,
+                                                    ) {
+                                                      return newConsultationValue
+                                                                  .trim() ==
+                                                              AppStrings.empty
+                                                          ? const SizedBox
+                                                              .shrink()
+                                                          : Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                IconButton(
+                                                                  onPressed:
                                                                       () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
+                                                                    if (!widget
+                                                                        .homeDataModel
+                                                                        .verified!) {
+                                                                      showCustomDialog(
+                                                                        context:
+                                                                            context,
+                                                                        title: context
+                                                                            .tr(AppStrings.emailVerification),
+                                                                        description:
+                                                                            context.tr(AppStrings.toAddConsultationYouMustVerifyYourEmailAddress),
+                                                                        noColoredButtonOnTap:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                        coloredButtonText:
+                                                                            context.tr(AppStrings.verify),
+                                                                        noColoredButtonText:
+                                                                            context.tr(AppStrings.cancel),
+                                                                        coloredButtonOnTap:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                          navigatorKey
+                                                                              .currentState
+                                                                              ?.pushNamed(
+                                                                            AppRoutes.emailVerification,
+                                                                            arguments:
+                                                                                AppRoutesArgs.emailVerificationRouteArgs(currentDoctorModel: widget.currentDoctorModel),
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    }
+                                                                    if (widget
+                                                                            .homeDataModel
+                                                                            .verified! &&
+                                                                        widget.homeDataModel.isSyndicateCardRequired !=
+                                                                            'Required' &&
+                                                                        widget.homeDataModel.isSyndicateCardRequired !=
+                                                                            'Pending') {
+                                                                      cubit
+                                                                          .addConsultationReply(
+                                                                        consultationId: consultDetails
+                                                                            .id
+                                                                            .toString(),
+                                                                        reply:
+                                                                            newConsultationValue,
+                                                                      );
+                                                                    } else {
+                                                                      if (widget.homeDataModel.isSyndicateCardRequired !=
+                                                                              'Required' &&
+                                                                          widget.homeDataModel.isSyndicateCardRequired !=
+                                                                              'Pending') {
+                                                                        showCustomDialog(
+                                                                          context:
+                                                                              context,
+                                                                          title:
+                                                                              context.tr(AppStrings.emailVerification),
+                                                                          description:
+                                                                              context.tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
+                                                                          noColoredButtonOnTap:
+                                                                              () {
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                          coloredButtonText:
+                                                                              context.tr(AppStrings.verify),
+                                                                          noColoredButtonText:
+                                                                              context.tr(AppStrings.cancel),
+                                                                          coloredButtonOnTap:
+                                                                              () {
+                                                                            Navigator.of(context).pop();
+                                                                            navigatorKey.currentState?.pushNamed(
+                                                                              AppRoutes.emailVerification,
+                                                                              arguments: AppRoutesArgs.emailVerificationRouteArgs(currentDoctorModel: widget.currentDoctorModel),
+                                                                            );
+                                                                          },
+                                                                        );
+                                                                      }
+                                                                    }
+                                                                    if (widget
+                                                                            .homeDataModel
+                                                                            .verified! &&
+                                                                        (widget.homeDataModel.isSyndicateCardRequired ==
+                                                                                'Required' ||
+                                                                            widget.homeDataModel.isSyndicateCardRequired ==
+                                                                                'Pending')) {
+                                                                      showCustomDialog(
+                                                                        context:
+                                                                            context,
+                                                                        title: context
+                                                                            .tr(AppStrings.syndicateCardVerification),
+                                                                        description:
+                                                                            context.tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
+                                                                        noColoredButtonOnTap:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                        coloredButtonText:
+                                                                            context.tr(AppStrings.ok),
+                                                                        noColoredButtonText:
+                                                                            '',
+                                                                        isNoColorShow:
+                                                                            true,
+                                                                        coloredButtonOnTap:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        },
+                                                                      );
+                                                                    }
                                                                   },
-                                                                  coloredButtonText:
-                                                                      AppStrings
-                                                                          .verify,
-                                                                  noColoredButtonText:
-                                                                      AppStrings
-                                                                          .cancel,
-                                                                  coloredButtonOnTap:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                    navigatorKey
-                                                                        .currentState
-                                                                        ?.pushNamed(
-                                                                      AppRoutes
-                                                                          .emailVerification,
-                                                                      arguments:
-                                                                          AppRoutesArgs.emailVerificationRouteArgs(
-                                                                              currentDoctorModel: widget.currentDoctorModel),
-                                                                    );
-                                                                  },
-                                                                );
-                                                              }
-                                                            }
-                                                            if (widget
-                                                                    .homeDataModel
-                                                                    .verified! &&
-                                                                (widget.homeDataModel
-                                                                            .isSyndicateCardRequired ==
-                                                                        'Required' ||
-                                                                    widget.homeDataModel
-                                                                            .isSyndicateCardRequired ==
-                                                                        'Pending')) {
-                                                              showCustomDialog(
-                                                                context:
-                                                                    context,
-                                                                title:
-                                                                    'Syndicate card verification',
-                                                                description:
-                                                                    AppStrings
-                                                                        .toAddConsultationYouMustVerifyYourSyndicateCard,
-                                                                noColoredButtonOnTap:
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                coloredButtonText:
-                                                                    AppStrings
-                                                                        .ok,
-                                                                noColoredButtonText:
-                                                                    '',
-                                                                isNoColorShow:
-                                                                    true,
-                                                                coloredButtonOnTap:
-                                                                    () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                              );
-                                                            }
-                                                          },
-                                                          icon: Icon(
-                                                            Icons.send_outlined,
-                                                            size: 30,
-                                                            color: AppColors
-                                                                .primary
-                                                                .withOpacity(
-                                                                    0.7),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 7.h,
-                                                        )
-                                                      ],
-                                                    );
-                                            },
-                                          );
-                                        },
-                                      ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                                                                  icon: Icon(
+                                                                    Icons
+                                                                        .send_outlined,
+                                                                    size: 30,
+                                                                    color: AppColors
+                                                                        .primary
+                                                                        .withOpacity(
+                                                                            0.7),
+                                                                  ),
+                                                                ),
+                                                                // SizedBox(
+                                                                //   height: 7.h,
+                                                                // )
+                                                              ],
+                                                            );
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                        },
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                    },
+                  ),
                 ],
               );
             },
