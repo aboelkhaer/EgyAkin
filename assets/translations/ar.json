@@ -419,5 +419,9 @@
   "I have read and agree to the": "لقد قرأت وأوافق على",
   "Password updated successfully.": "تم تحديث كلمة المرور بنجاح.",
   "Opened": "مفتوح",
-  "Closed": "مقفل"
+  "Closed": "مقفل",
+  "Analytics": "التحليلات",
+  "Doctors": "الأطباء",
+  "Invited Doctors": "الأطباء المدعوون",
+  "New password": "كلمة المرور الجديدة"
 }

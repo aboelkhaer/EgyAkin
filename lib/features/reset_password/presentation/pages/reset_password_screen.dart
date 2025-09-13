@@ -19,6 +19,7 @@ class ResetPasswordScreen extends StatelessWidget {
         child: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
           listener: (context, state) {
             state.maybeWhen(
+
               passwordChagedSuccessfully: () {
                 Navigator.of(context).pop();
                 customSnackBar(
@@ -26,6 +27,11 @@ class ResetPasswordScreen extends StatelessWidget {
                     context: context);
               },
               orElse: () {},
+              error: (message) {
+                customSnackBar(
+                    message: message,
+                    context: context);
+              },
             );
           },
           builder: (context, state) {

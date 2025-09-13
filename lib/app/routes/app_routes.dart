@@ -1,6 +1,7 @@
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../features/webview/presentation/pages/webview_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -44,6 +45,7 @@ class AppRoutes {
   static const String communitySearch = '/communitySearch';
   static const String savedPosts = '/savedPosts';
   static const String allDoctorPosts = '/allDoctorPosts';
+  static const String webview = '/webview';
 }
 
 class RouteGenerator {
@@ -650,6 +652,8 @@ class RouteGenerator {
                   groupId: args['groupId'] as String,
                   isForAddNewDoctors: args['isForAddNewDoctors'] as bool,
                   consultationId: args['consultationId'] as String,
+                  ownerOfConsultationId:
+                      args['ownerOfConsultationId'] as String,
                 ),
               ),
             );
@@ -1063,6 +1067,26 @@ class RouteGenerator {
                   doctorId: args['doctorId'] as String,
                   doctorName: args['doctorName'] as String,
                 ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
+      case AppRoutes.webview:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('url') && args.containsKey('title')) {
+            return MaterialPageRoute(
+              builder: (_) => WebViewScreen(
+                url: args['url'] as String,
+                title: args['title'] as String,
               ),
             );
           } else {

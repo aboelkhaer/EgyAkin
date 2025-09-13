@@ -18,7 +18,10 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
   bool isResendBottonShow = false;
   bool isOTPDone = false;
   // bool isVerifyOTP = false;
-  // FocusNode firstOTPFocusNode = FocusNode();
+  FocusNode firstOTPFocusNode = FocusNode();
+  FocusNode secondOTPFocusNode = FocusNode();
+  FocusNode thirdOTPFocusNode = FocusNode();
+  FocusNode fourthOTPFocusNode = FocusNode();
 
   String email = '';
   int currentStep = 0;
@@ -32,7 +35,7 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     if (_timer?.isActive == true) {
       _timer?.cancel();
     }
-    
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       countdown--;
       if (countdown <= 0) {
@@ -54,7 +57,10 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       _timer?.cancel();
     }
     newPasswordController.dispose();
-    // firstOTPFocusNode.dispose();
+    firstOTPFocusNode.dispose();
+    secondOTPFocusNode.dispose();
+    thirdOTPFocusNode.dispose();
+    fourthOTPFocusNode.dispose();
     return super.close();
   }
 
@@ -69,19 +75,20 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
       Step(
         state: currentStep > 0 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 0,
-        title:  Text(LocalizationService.instance.translate(AppStrings.email)),
+        title: Text(LocalizationService.instance.translate(AppStrings.email)),
         content: const FirstStep(),
       ),
       Step(
         state: currentStep > 1 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 1,
-        title:  Text(LocalizationService.instance.translate(AppStrings.verify)),
+        title: Text(LocalizationService.instance.translate(AppStrings.verify)),
         content: const SecondStep(),
       ),
       Step(
         state: StepState.complete,
         isActive: currentStep >= 2,
-        title:  Text(LocalizationService.instance.translate(AppStrings.password)),
+        title:
+            Text(LocalizationService.instance.translate(AppStrings.password)),
         content: const ThirdStep(),
       ),
     ];
@@ -123,9 +130,11 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
 
   verifyOTP() async {
     if (secondStepFormKey.currentState!.validate()) {
+      // Pause timer during verification to prevent it from overriding loading state
       if (_timer?.isActive == true) {
         _timer?.cancel();
       }
+
       emit(const ResetPasswordState.loading());
 
       final result = await _verifyOTPForResetPasswordUsecase.execute(
@@ -135,8 +144,16 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
         ),
       );
       result.fold(
-        (l) => emit(ResetPasswordState.error(l.message)),
+        (l) {
+          // If verification fails, restart the timer with current countdown
+          startCountdown();
+          emit(ResetPasswordState.error(l.message));
+        },
         (r) {
+          // Cancel timer only on successful verification
+          if (_timer?.isActive == true) {
+            _timer?.cancel();
+          }
           currentStep += 1;
           emit(const ResetPasswordState.loaded());
         },

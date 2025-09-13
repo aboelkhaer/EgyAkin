@@ -499,4 +499,8 @@ class AppStrings {
   static const String iHaveReadAndAgreeToThe = 'I have read and agree to the';
   static const String passwordUpdatedSuccessfully =
       'Password updated successfully.';
+  static const String analytics = 'Analytics';
+  static const String doctors = 'Doctors';
+  static const String invitedDoctors = 'Invited Doctors';
+  
 }

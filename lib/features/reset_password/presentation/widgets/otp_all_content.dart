@@ -6,6 +6,9 @@ class OTPAllContent extends StatelessWidget {
   final Key formKey;
   final Widget timerWidget;
   final FocusNode? firstOTPFocusNode;
+  final FocusNode? secondOTPFocusNode;
+  final FocusNode? thirdOTPFocusNode;
+  final FocusNode? fourthOTPFocusNode;
   final Function(String) firstOTPOnChanged;
   final Function(String) secondOTPOnChanged;
   final Function(String) thirdOTPOnChanged;
@@ -22,6 +25,9 @@ class OTPAllContent extends StatelessWidget {
     this.changeEmailFunction,
     required this.formKey,
     this.firstOTPFocusNode,
+    this.secondOTPFocusNode,
+    this.thirdOTPFocusNode,
+    this.fourthOTPFocusNode,
     required this.firstOTPOnChanged,
     required this.secondOTPOnChanged,
     required this.thirdOTPOnChanged,
@@ -36,19 +42,20 @@ class OTPAllContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-         Row(
+        Row(
           children: [
             Text(
               context.tr(AppStrings.verificationCode),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
-         Row(
+        Row(
           children: [
             Text(
               context.tr(AppStrings.weHaveSentTheCodeVerificationTo),
-              style: TextStyle(fontSize: 16, color: AppColors.description),
+              style:
+                  const TextStyle(fontSize: 16, color: AppColors.description),
             ),
           ],
         ),
@@ -71,7 +78,6 @@ class OTPAllContent extends StatelessWidget {
               ),
               child: Text(
                 context.tr(AppStrings.changeYourEmail),
-
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.blue.shade600,
@@ -87,6 +93,9 @@ class OTPAllContent extends StatelessWidget {
         OTPRow(
           formKey: formKey,
           firstOTPFocusNode: firstOTPFocusNode,
+          secondOTPFocusNode: secondOTPFocusNode,
+          thirdOTPFocusNode: thirdOTPFocusNode,
+          fourthOTPFocusNode: fourthOTPFocusNode,
           firstOTPOnChanged: firstOTPOnChanged,
           secondOTPOnChanged: secondOTPOnChanged,
           thirdOTPOnChanged: thirdOTPOnChanged,
@@ -99,9 +108,9 @@ class OTPAllContent extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             Text(
+            Text(
               context.tr(AppStrings.resendCodeAfter),
-              style: TextStyle(color: AppColors.description),
+              style: const TextStyle(color: AppColors.description),
             ),
             const SizedBox(width: 5),
             timerWidget,

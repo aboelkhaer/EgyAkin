@@ -226,7 +226,8 @@ class AppRoutesArgs {
       'currentDoctorModel': currentDoctorModel,
       'doctorFirstName': doctorFirstName,
       'currentDoctorRole': currentDoctorRole,
-      'currentDoctorPoints': currentDoctorPoints,
+
+                                  'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
     };
   }
@@ -247,6 +248,7 @@ class AppRoutesArgs {
     required String groupId,
     required bool isForAddNewDoctors,
     required String consultationId,
+    required String ownerOfConsultationId,
   }) {
     return {
       'homeDataModel': homeDataModel,
@@ -256,6 +258,7 @@ class AppRoutesArgs {
       'groupId': groupId,
       'isForAddNewDoctors': isForAddNewDoctors,
       'consultationId': consultationId,
+      'ownerOfConsultationId': ownerOfConsultationId,
     };
   }
 
@@ -278,7 +281,6 @@ class AppRoutesArgs {
     required String consultationId,
     required String patientName,
     required bool isOpen,
- 
   }) {
     return {
       'homeDataModel': homeDataModel,
@@ -287,7 +289,6 @@ class AppRoutesArgs {
       'patientName': patientName,
       'isReceivedConsultation': isReceivedConsultation,
       'isOpen': isOpen,
-
     };
   }
 
@@ -428,6 +429,16 @@ class AppRoutesArgs {
       'homeDataModel': homeDataModel,
       'doctorId': doctorId,
       'doctorName': doctorName,
+    };
+  }
+
+  static Map<String, dynamic> webViewRouteArgs({
+    required String url,
+    required String title,
+  }) {
+    return {
+      'url': url,
+      'title': title,
     };
   }
 }

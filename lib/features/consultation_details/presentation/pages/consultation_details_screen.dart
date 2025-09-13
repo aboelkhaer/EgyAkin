@@ -109,16 +109,18 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                           groupId: '',
                           isForAddNewDoctors: true,
                           consultationId: widget.consultationId,
+                          ownerOfConsultationId:
+                              consultDetails.doctorId.toString(),
                         ),
                       );
                     },
                     icon: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.person_add),
+                        const Icon(Icons.person),
                         const SizedBox(height: 2),
                         Text(
-                          context.tr(AppStrings.addDoctor),
+                          context.tr(AppStrings.doctors),
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 7.sp,

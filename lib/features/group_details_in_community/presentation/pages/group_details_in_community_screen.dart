@@ -924,6 +924,7 @@ class _GroupDetailsInCommunityScreenState
                                                   .toString(),
                                               isForAddNewDoctors: false,
                                               consultationId: '',
+                                              ownerOfConsultationId: '',
                                             ),
                                           );
                                         },

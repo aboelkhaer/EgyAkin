@@ -6,6 +6,7 @@ part 'reset_password_model_response.g.dart';
 class ResetPasswordModelResponse with _$ResetPasswordModelResponse {
   const factory ResetPasswordModelResponse({
     bool? success,
+    // String? message,
   }) = _ResetPasswordModelResponse;
   factory ResetPasswordModelResponse.fromJson(Map<String, dynamic> json) =>
       _$ResetPasswordModelResponseFromJson(json);

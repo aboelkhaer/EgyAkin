@@ -302,6 +302,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   groupId: '',
                                   isForAddNewDoctors: false,
                                   consultationId: '',
+                                  ownerOfConsultationId: '',
                                 ),
                               );
                             },
@@ -426,9 +427,10 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                 );
                               }
                               if (isDownloadingReport) {
-                                return const SizedBox(
+                                return Container(
                                   height: 90,
-                                  child: Center(
+                                  color: Colors.grey.shade100,
+                                  child: const Center(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,

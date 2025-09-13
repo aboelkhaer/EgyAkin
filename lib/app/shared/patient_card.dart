@@ -164,7 +164,8 @@ class PatientCard extends StatelessWidget {
                                       ),
                                       SizedBox(width: 5.w),
                                       Text(
-                                        TimeAgoService.instance.formatTimeAgoFromString(
+                                        TimeAgoService.instance
+                                            .formatTimeAgoFromString(
                                           updatedAt,
                                           context,
                                         ),
@@ -289,7 +290,8 @@ class PatientCard extends StatelessWidget {
           ),
         ),
         Positioned(
-          right: 4.w,
+          right: context.currentLocale?.languageCode != 'ar' ? 4.w : null,
+          left: context.currentLocale?.languageCode != 'ar' ? null : 4.w,
           top: 2.h,
           child: Icon(
             submitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,

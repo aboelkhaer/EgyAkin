@@ -68,6 +68,29 @@ class _MoreScreenState extends State<MoreScreen> {
                       );
                     },
                   ),
+                  ListTile(
+                    title: Text(
+                      context.tr(AppStrings.analytics),
+                      style: TextStyle(fontSize: 13.5.sp),
+                    ),
+                    leading: Icon(
+                      Icons.analytics,
+                      color: Colors.grey.shade600,
+                    ),
+                    trailing: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 15.r,
+                    ),
+                    onTap: () {
+                      navigatorKey.currentState?.pushNamed(
+                        AppRoutes.webview,
+                        arguments: AppRoutesArgs.webViewRouteArgs(
+                          url: 'https://test.egyakin.com/analytics',
+                          title: context.tr(AppStrings.analytics),
+                        ),
+                      );
+                    },
+                  ),
                   SizedBox(height: 15.h),
                   Text(
                     context.tr(AppStrings.privacySecurity),
@@ -91,7 +114,8 @@ class _MoreScreenState extends State<MoreScreen> {
                       size: 15.r,
                     ),
                     onTap: () {
-                      navigatorKey.currentState?.pushNamed(AppRoutes.changePassword);
+                      navigatorKey.currentState
+                          ?.pushNamed(AppRoutes.changePassword);
                     },
                   ),
                   BlocBuilder<MoreCubit, MoreState>(
@@ -125,7 +149,8 @@ class _MoreScreenState extends State<MoreScreen> {
                   ),
                   BlocBuilder<MoreCubit, MoreState>(
                     builder: (context, state) {
-                      if (isVerifiedUser(widget.homeDataModel.isSyndicateCardRequired)) {
+                      if (isVerifiedUser(
+                          widget.homeDataModel.isSyndicateCardRequired)) {
                         return const SizedBox.shrink();
                       }
                       if (widget.homeDataModel.verified == false) {
@@ -137,14 +162,16 @@ class _MoreScreenState extends State<MoreScreen> {
                           widget.homeDataModel.isSyndicateCardRequired ==
                                   VerificationBySyndicateCard.Pending.name
                               ? context.tr(AppStrings.waitingForApproval)
-                              : context.tr(AppStrings.syndicateCardVerification),
+                              : context
+                                  .tr(AppStrings.syndicateCardVerification),
                           style: TextStyle(fontSize: 13.5.sp),
                         ),
                         leading: Icon(
                           Icons.verified,
                           color: Colors.grey.shade600,
                         ),
-                        trailing: widget.homeDataModel.isSyndicateCardRequired ==
+                        trailing: widget
+                                    .homeDataModel.isSyndicateCardRequired ==
                                 VerificationBySyndicateCard.Pending.name
                             ? const SizedBox.shrink()
                             : BlocBuilder<HomeCubit, HomeState>(
@@ -156,10 +183,15 @@ class _MoreScreenState extends State<MoreScreen> {
                                         color: Colors.grey.shade600,
                                       );
                                     },
-                                    loaded: (homeData, currentDoctorModel, dotsPosition,
-                                        homeIndex, isUploadingSyndicateCard,
-                                        isUploadedSyndicateCard, message,
-                                        checkUpdateMessageCounter, isUserBlocked,
+                                    loaded: (homeData,
+                                        currentDoctorModel,
+                                        dotsPosition,
+                                        homeIndex,
+                                        isUploadingSyndicateCard,
+                                        isUploadedSyndicateCard,
+                                        message,
+                                        checkUpdateMessageCounter,
+                                        isUserBlocked,
                                         changesCounter) {
                                       if (isUploadingSyndicateCard) {
                                         return const SizedBox(
@@ -252,7 +284,7 @@ class _MoreScreenState extends State<MoreScreen> {
                     },
                   ),
                   // Language Selector
-                  LanguageSelector(),
+                  const LanguageSelector(),
                   BlocBuilder<MoreCubit, MoreState>(
                     builder: (context, state) {
                       return state.maybeWhen(

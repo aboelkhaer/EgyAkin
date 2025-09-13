@@ -14,10 +14,13 @@ class SecondStep extends StatelessWidget {
               emailAddress: cubit.email,
               changeEmailFunction: () => cubit.backToSetEmail(),
               formKey: cubit.secondStepFormKey,
-              // firstOTPFocusNode: cubit.firstOTPFocusNode,
+              firstOTPFocusNode: cubit.firstOTPFocusNode,
+              secondOTPFocusNode: cubit.secondOTPFocusNode,
+              thirdOTPFocusNode: cubit.thirdOTPFocusNode,
+              fourthOTPFocusNode: cubit.fourthOTPFocusNode,
               firstOTPOnChanged: (value) {
+                cubit.pin1 = value;
                 if (value.length == 1) {
-                  cubit.pin1 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
@@ -27,51 +30,62 @@ class SecondStep extends StatelessWidget {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, focus stays on current field
+                  cubit.isOTPDone = false;
                 }
               },
               secondOTPOnChanged: (value) {
+                cubit.pin2 = value;
                 if (value.length == 1) {
-                  cubit.pin2 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.firstOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               thirdOTPOnChanged: (value) {
+                cubit.pin3 = value;
                 if (value.length == 1) {
-                  cubit.pin3 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.secondOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               fourthOTPOnChanged: (value) {
+                cubit.pin4 = value;
                 if (value.length == 1) {
-                  cubit.pin4 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
-                    cubit.isOTPDone = true;
+                    cubit.isOTPDone = false;
                   }
-                  FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.thirdOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               firstOTPValidator: (value) {
@@ -99,10 +113,13 @@ class SecondStep extends StatelessWidget {
               emailAddress: cubit.email,
               changeEmailFunction: () => cubit.backToSetEmail(),
               formKey: cubit.secondStepFormKey,
-              // firstOTPFocusNode: cubit.firstOTPFocusNode,
+              firstOTPFocusNode: cubit.firstOTPFocusNode,
+              secondOTPFocusNode: cubit.secondOTPFocusNode,
+              thirdOTPFocusNode: cubit.thirdOTPFocusNode,
+              fourthOTPFocusNode: cubit.fourthOTPFocusNode,
               firstOTPOnChanged: (value) {
+                cubit.pin1 = value;
                 if (value.length == 1) {
-                  cubit.pin1 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
@@ -112,51 +129,62 @@ class SecondStep extends StatelessWidget {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, focus stays on current field
+                  cubit.isOTPDone = false;
                 }
               },
               secondOTPOnChanged: (value) {
+                cubit.pin2 = value;
                 if (value.length == 1) {
-                  cubit.pin2 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.firstOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               thirdOTPOnChanged: (value) {
+                cubit.pin3 = value;
                 if (value.length == 1) {
-                  cubit.pin3 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
                     cubit.isOTPDone = false;
                   }
                   FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.secondOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               fourthOTPOnChanged: (value) {
+                cubit.pin4 = value;
                 if (value.length == 1) {
-                  cubit.pin4 = value;
                   if ((cubit.pin1 != null && cubit.pin1!.isNotEmpty) &&
                       (cubit.pin2 != null && cubit.pin2!.isNotEmpty) &&
                       (cubit.pin3 != null && cubit.pin3!.isNotEmpty) &&
                       (cubit.pin4 != null && cubit.pin4!.isNotEmpty)) {
                     cubit.isOTPDone = true;
-                    // controller.verifyOTP();
                   } else {
-                    cubit.isOTPDone = true;
+                    cubit.isOTPDone = false;
                   }
-                  FocusScope.of(context).nextFocus();
+                } else if (value.isEmpty) {
+                  // If field is cleared, move focus to previous field
+                  cubit.thirdOTPFocusNode.requestFocus();
+                  cubit.isOTPDone = false;
                 }
               },
               firstOTPValidator: (value) {
@@ -172,7 +200,7 @@ class SecondStep extends StatelessWidget {
                 return AppValidators.fieldsIsEmptyValidation(value!);
               },
               timerWidget: Text(
-                cubit.getFormattedTime(0),
+                cubit.getFormattedTime(cubit.countdown),
                 style: TextStyle(
                   color: Colors.blue.shade600,
                 ),

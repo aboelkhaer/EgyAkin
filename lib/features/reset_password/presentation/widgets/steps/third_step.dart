@@ -11,7 +11,7 @@ class ThirdStep extends StatelessWidget {
       child: Column(
         children: [
           CustomTextFormField(
-            title: 'New password',
+            title: context.tr(AppStrings.newPassword),
             textInputType: TextInputType.visiblePassword,
             obscureText: true,
             textFormFieldController: cubit.newPasswordController,
@@ -20,16 +20,24 @@ class ThirdStep extends StatelessWidget {
             validator: (value) =>
                 AppValidators.passwordValidateForRegister(value!),
           ),
-          FlutterPwValidator(
-              controller: cubit.newPasswordController,
-              minLength: 6,
-              uppercaseCharCount: 1,
-              numericCharCount: 2,
-              specialCharCount: 1,
-              width: 400,
-              height: 150,
-              onSuccess: () {},
-              onFail: () {}),
+          SizedBox(height: 10.h),
+          Row(
+            children: [
+              Expanded(
+                child: TranslatablePasswordValidator(
+                    controller: cubit.newPasswordController,
+                    minLength: 6,
+                    uppercaseCharCount: 1,
+                    numericCharCount: 2,
+                    specialCharCount: 1,
+                    width: 200.w,
+                    onSuccess: () {},
+                    onFail: () {}),
+              ),
+              SizedBox(width: 10.w),
+              const Expanded(child: SizedBox.shrink()),
+            ],
+          ),
         ],
       ),
     );
