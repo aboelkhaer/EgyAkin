@@ -7,6 +7,7 @@ class ProfileCover extends StatelessWidget {
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
   final DoctorModel currentDoctorModel;
+  final bool isDarkMode;
   const ProfileCover({
     super.key,
     required this.cubit,
@@ -16,6 +17,7 @@ class ProfileCover extends StatelessWidget {
     required this.currentDoctorPoints,
     required this.homeDataModel,
     required this.currentDoctorModel,
+    required this.isDarkMode,
   });
 
   final ProfileCubit cubit;
@@ -26,7 +28,8 @@ class ProfileCover extends StatelessWidget {
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(30)),
+          color: isDarkMode ? AppColors.darkCardBG : Colors.white,
+          borderRadius: BorderRadius.circular(30)),
       width: double.infinity,
       child: Column(
         children: [
@@ -44,7 +47,9 @@ class ProfileCover extends StatelessWidget {
                     scale: 1.4,
                     child: Image.asset(
                       AppImages.whiteEgyAkin,
-                      color: Colors.black.withOpacity(0.04),
+                      color: isDarkMode
+                          ? Colors.white.withOpacity(0.04)
+                          : Colors.black.withOpacity(0.04),
                     ),
                   ),
                 ),
@@ -68,6 +73,7 @@ class ProfileCover extends StatelessWidget {
                       currentDoctorPoints: currentDoctorPoints,
                       homeDataModel: homeDataModel,
                       currentDoctorModel: currentDoctorModel,
+                      isDarkMode: isDarkMode,
                     ),
                     SizedBox(height: 5.h),
                     SizedBox(height: 10.h),

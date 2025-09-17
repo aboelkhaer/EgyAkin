@@ -94,9 +94,8 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
                 showCustomDialog(
                   context: context,
                   title: context.tr(AppStrings.syndicateCardVerification),
-                  description:
-                      context.tr(AppStrings.toAddOutcomeYouMustVerifyYourSyndicateCard),
-
+                  description: context.tr(
+                      AppStrings.toAddOutcomeYouMustVerifyYourSyndicateCard),
                   noColoredButtonOnTap: () {
                     Navigator.of(context).pop();
                   },
@@ -128,8 +127,8 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
               showCustomDialog(
                 context: context,
                 title: context.tr(AppStrings.emailVerification),
-                description:
-                    context.tr(AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress),
+                description: context
+                    .tr(AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress),
                 noColoredButtonOnTap: () {
                   Navigator.of(context).pop();
                 },

@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/exports.dart';
 
 void showCustomBottomSheet({
@@ -16,37 +17,44 @@ void showCustomBottomSheet({
           ? screenHeight * 0.8
           : screenHeight * 0.5; // Adjust the height as needed
 
-      return GestureDetector(
-        onTap: () {
-          Navigator.of(context).pop();
-        },
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Container(
-              color: Colors.transparent,
-              child: GestureDetector(
-                onTap:
-                    () {}, // Prevents the bottom sheet from closing when tapping inside it
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(20.0),
-                      topRight: Radius.circular(20.0),
-                    ),
-                    child: Container(
-                      width: double.infinity, // Full width
-                      height: desiredHeight,
-                      color: Colors.white,
-                      child: builder(context),
+      return BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+          return GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  color: Colors.transparent,
+                  child: GestureDetector(
+                    onTap:
+                        () {}, // Prevents the bottom sheet from closing when tapping inside it
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        ),
+                        child: Container(
+                          width: double.infinity, // Full width
+                          height: desiredHeight,
+                          color:
+                              isDarkMode ? AppColors.darkCardBG : Colors.white,
+                          child: builder(context),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       );
     },
   );

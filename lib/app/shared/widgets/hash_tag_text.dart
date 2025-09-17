@@ -1,6 +1,7 @@
 import 'package:egy_akin/app/shared/widgets/link_preview_widget.dart';
 import 'package:flutter/gestures.dart';
 import '../../../exports.dart';
+import '../../services/theme_bloc.dart';
 
 class HashtagText extends StatefulWidget {
   final String content;
@@ -39,63 +40,72 @@ class _HashtagTextState extends State<HashtagText> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final span = _buildHashtagTextSpan();
-        final shouldShowToggle = widget.disableTrimLines
-            ? false
-            : _checkTextOverflow(span, constraints.maxWidth);
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-        return GestureDetector(
-          onTap: shouldShowToggle
-              ? () => setState(() => isExpanded = !isExpanded)
-              : null,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              RichText(
-                maxLines: widget.disableTrimLines
-                    ? null
-                    : (isExpanded ? null : widget.trimLines),
-                overflow: widget.disableTrimLines
-                    ? TextOverflow.visible
-                    : (isExpanded
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final span = _buildHashtagTextSpan(isDarkMode);
+            final shouldShowToggle = widget.disableTrimLines
+                ? false
+                : _checkTextOverflow(span, constraints.maxWidth);
+
+            return GestureDetector(
+              onTap: shouldShowToggle
+                  ? () => setState(() => isExpanded = !isExpanded)
+                  : null,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    maxLines: widget.disableTrimLines
+                        ? null
+                        : (isExpanded ? null : widget.trimLines),
+                    overflow: widget.disableTrimLines
                         ? TextOverflow.visible
-                        : TextOverflow.ellipsis),
-                text: span,
-                textDirection: _getTextDirection(widget.content),
+                        : (isExpanded
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis),
+                    text: span,
+                    textDirection: _getTextDirection(widget.content),
+                  ),
+                  if (shouldShowToggle || isExpanded)
+                    Text(
+                      isExpanded
+                          ? widget.trimExpandedText
+                          : widget.trimCollapsedText,
+                      style: TextStyle(
+                        color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
+                      ),
+                    ),
+                  ..._buildLinkPreviews(widget.content),
+                ],
               ),
-              if (shouldShowToggle || isExpanded)
-                Text(
-                  isExpanded
-                      ? widget.trimExpandedText
-                      : widget.trimCollapsedText,
-                  style: const TextStyle(color: Colors.blue),
-                ),
-              ..._buildLinkPreviews(widget.content),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 
-  TextSpan _buildHashtagTextSpan() {
-    const defaultTextStyle = TextStyle(
+  TextSpan _buildHashtagTextSpan(bool isDarkMode) {
+    final defaultTextStyle = TextStyle(
       fontSize: 16,
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w500,
       height: 1.4,
-      color: Colors.black,
+      color: isDarkMode ? AppColors.darkTitle : Colors.black,
     );
 
     final highlightStyle = defaultTextStyle.copyWith(
-      backgroundColor: Colors.yellow.shade200,
-      color: Colors.blue,
+      backgroundColor:
+          isDarkMode ? Colors.yellow.shade800 : Colors.yellow.shade200,
+      color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
     );
 
     final hashtagStyle = defaultTextStyle.copyWith(
-      color: Colors.blue,
+      color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
     );
 
     final boldStyle = defaultTextStyle.copyWith(
@@ -114,8 +124,8 @@ class _HashtagTextState extends State<HashtagText> {
     for (final match in patternRegex.allMatches(text)) {
       // Add text before the match
       if (match.start > currentIndex) {
-        spans.add(
-            _buildNormalTextSpan(text.substring(currentIndex, match.start)));
+        spans.add(_buildNormalTextSpan(
+            text.substring(currentIndex, match.start), isDarkMode));
       }
 
       // Handle the matched content
@@ -145,20 +155,21 @@ class _HashtagTextState extends State<HashtagText> {
 
     // Add remaining text after last match
     if (currentIndex < text.length) {
-      spans.add(_buildNormalTextSpan(text.substring(currentIndex)));
+      spans.add(_buildNormalTextSpan(text.substring(currentIndex), isDarkMode));
     }
 
     return TextSpan(children: spans);
   }
 
-  TextSpan _buildNormalTextSpan(String text) {
+  TextSpan _buildNormalTextSpan(String text, bool isDarkMode) {
     final highlightStyle = TextStyle(
       fontSize: 16,
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w500,
       height: 1.4,
-      backgroundColor: Colors.yellow.shade200,
-      color: Colors.blue,
+      backgroundColor:
+          isDarkMode ? Colors.yellow.shade800 : Colors.yellow.shade200,
+      color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
     );
 
     if (widget.highlightWord != null &&
@@ -167,12 +178,12 @@ class _HashtagTextState extends State<HashtagText> {
     }
     return TextSpan(
       text: text,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontFamily: 'Tajawal',
         fontWeight: FontWeight.w500,
         height: 1.4,
-        color: Colors.black,
+        color: isDarkMode ? AppColors.darkTitle : Colors.black,
       ),
     );
   }

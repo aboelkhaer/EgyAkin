@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../app/constants/app_color.dart';
-import '../../../../app/constants/app_strings.dart';
 import '../../../../exports.dart';
 
 class ConsultationLockWidget extends StatefulWidget {

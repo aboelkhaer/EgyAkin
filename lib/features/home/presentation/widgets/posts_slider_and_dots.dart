@@ -2,9 +2,11 @@ import 'package:egy_akin/exports.dart';
 
 class PostsSliderAndDots extends StatelessWidget {
   final HomeCubit cubit;
+  final bool isDarkMode;
   const PostsSliderAndDots({
     super.key,
     required this.cubit,
+    required this.isDarkMode,
   });
 
   @override
@@ -51,6 +53,7 @@ class PostsSliderAndDots extends StatelessWidget {
                                 return checkPostType(
                                   cubit: cubit,
                                   postModel: homeData.data!.feeds![index],
+                                  isDarkMode: isDarkMode,
                                 );
                               },
                               options: CarouselOptions(
@@ -110,8 +113,12 @@ class PostsSliderAndDots extends StatelessWidget {
                         dotsCount: homeData.data!.feeds!.length,
                         position: cubit.dotsPosition,
                         decorator: DotsDecorator(
-                          activeColor: AppColors.primary.withOpacity(0.6),
-                          color: Colors.grey.shade300,
+                          activeColor: isDarkMode
+                              ? AppColors.darkPrimary.withOpacity(0.6)
+                              : AppColors.primary.withOpacity(0.6),
+                          color: isDarkMode
+                              ? Colors.grey.shade600
+                              : Colors.grey.shade300,
                           size: const Size(5, 5),
                         ),
                       );
@@ -125,9 +132,12 @@ class PostsSliderAndDots extends StatelessWidget {
 }
 
 Widget checkPostType(
-    {required HomeCubit cubit, required PostCommunityModel postModel}) {
+    {required HomeCubit cubit,
+    required PostCommunityModel postModel,
+    required bool isDarkMode}) {
   return PostType(
     cubit: cubit,
     postModel: postModel,
+    isDarkMode: isDarkMode,
   );
 }

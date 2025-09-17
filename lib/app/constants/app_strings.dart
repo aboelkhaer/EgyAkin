@@ -316,6 +316,9 @@ class AppStrings {
   static const String youAreDone = 'You are done?';
   static const String searchWithDoctorNameOrEmail =
       'Search with doctor name or email...';
+  static const String noDoctorsFound = 'No doctors found';
+  static const String tryDifferentSearchTerms =
+      'Try different search terms or check your spelling';
   static const String peopleJoinedCommunity = 'People joined community';
   static const String postLikes = 'Post Likes';
   static const String groupMembers = 'Group Members';
@@ -502,5 +505,10 @@ class AppStrings {
   static const String analytics = 'Analytics';
   static const String doctors = 'Doctors';
   static const String invitedDoctors = 'Invited Doctors';
-  
+  static const String thisContentIsNoLongerAvailable =
+      'This content is no longer available.';
+  static const String loading = 'Loading';
+  static const String addPost = 'Add Post';
+  static const String addGroup = 'Add Group';
+  static const String addANewOption = 'Add a new option';
 }

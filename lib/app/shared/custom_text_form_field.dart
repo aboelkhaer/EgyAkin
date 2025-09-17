@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import '../../exports.dart';
 import 'dart:ui' as ui;
 
@@ -84,6 +83,7 @@ class CustomTextFormField extends StatefulWidget {
 class _CustomTextFormFieldState extends State<CustomTextFormField> {
   late TextEditingController _controller;
   bool _isTextEmpty = true;
+  TextDirection _currentTextDirection = TextDirection.ltr;
 
   // @override
   // void initState() {
@@ -103,6 +103,14 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     super.initState();
     _controller = widget.textFormFieldController ??
         TextEditingController(text: widget.initialValue);
+
+    // Set initial text direction based on initial value
+    if (widget.initialValue != null && widget.initialValue!.isNotEmpty) {
+      _currentTextDirection =
+          RegExp(r'[\u0600-\u06FF]').hasMatch(widget.initialValue!)
+              ? TextDirection.rtl
+              : TextDirection.ltr;
+    }
   }
 
   @override
@@ -115,157 +123,205 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40.h,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          TextFormField(
-            controller: _controller,
-            keyboardType: widget.textInputType,
-            textDirection: widget.isCreatePostInCommunity
-                ? widget.textDirectionForCreatePostInCommunity
-                : widget.initialValue == null
-                    ? ui.TextDirection.ltr
-                    : RegExp(r'[\u0600-\u06FF]').hasMatch(widget.initialValue!)
-                        ? ui.TextDirection.rtl
-                        : ui.TextDirection.ltr,
-            inputFormatters: widget.inputFormatters ??
-                [
-                  LengthLimitingTextInputFormatter(widget.maxLength ?? 500),
-                ],
-            enableSuggestions: widget.enableSuggestions,
-            onTapOutside: (event) => FocusScope.of(context).unfocus(),
-            enabled: widget.enabled,
-            onTap: widget.onTextClick,
-            autofocus: widget.autoFocus,
-            onSaved: widget.onSave,
-            onFieldSubmitted: widget.onFieldSubmitted,
-            focusNode: widget.focusNode,
-            onChanged: (value) {
-              widget.onChanged?.call(value);
-              setState(() {
-                _isTextEmpty = value.isEmpty;
-              });
-            },
-            maxLength: widget.maxLength,
-            maxLines: widget.maxLines,
-            textAlign: widget.textAlign,
-            style: widget.style,
-            obscureText: widget.obscureText,
-            textInputAction: widget.textInputAction,
-            decoration: InputDecoration(
-              contentPadding: widget.contentPadding ??
-                  EdgeInsets.only(
-                    left:  11,
-                    right: 11,
-                    top: 14,
-                    bottom: 14,
-                  ),
-              counterText: '',
-              hintText: widget.title,
-              hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
-              errorStyle: widget.isOTP
-                  ? const TextStyle(height: 0, fontSize: 0)
-                  : const TextStyle(fontSize: 9, height: 0.3),
-              filled: true,
-              fillColor: widget.isCreatePostInCommunity
-                  ? Colors.transparent
-                  : AppColors.subBG,
-              enabledBorder: widget.isCreatePostInCommunity
-                  ? InputBorder.none
-                  : OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-              focusedBorder: widget.isCreatePostInCommunity
-                  ? InputBorder.none
-                  : widget.isCommunitySearch
-                      ? OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        )
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return SizedBox(
+          height: 40.h,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              TextFormField(
+                controller: _controller,
+                keyboardType: widget.textInputType,
+                textDirection: widget.isCreatePostInCommunity
+                    ? widget.textDirectionForCreatePostInCommunity
+                    : _currentTextDirection,
+                inputFormatters: widget.inputFormatters ??
+                    [
+                      LengthLimitingTextInputFormatter(widget.maxLength ?? 500),
+                    ],
+                enableSuggestions: widget.enableSuggestions,
+                onTapOutside: (event) => FocusScope.of(context).unfocus(),
+                enabled: widget.enabled,
+                onTap: widget.onTextClick,
+                autofocus: widget.autoFocus,
+                onSaved: widget.onSave,
+                onFieldSubmitted: widget.onFieldSubmitted,
+                focusNode: widget.focusNode,
+                onChanged: (value) {
+                  widget.onChanged?.call(value);
+                  setState(() {
+                    _isTextEmpty = value.isEmpty;
+
+                    // Update text direction based on first character
+                    if (value.isNotEmpty) {
+                      _currentTextDirection =
+                          RegExp(r'[\u0600-\u06FF]').hasMatch(value[0])
+                              ? TextDirection.rtl
+                              : TextDirection.ltr;
+                    } else {
+                      _currentTextDirection = TextDirection.ltr;
+                    }
+                  });
+                },
+                maxLength: widget.maxLength,
+                maxLines: widget.maxLines,
+                textAlign: widget.textAlign,
+                style: widget.style,
+                obscureText: widget.obscureText,
+                textInputAction: widget.textInputAction,
+                decoration: InputDecoration(
+                  contentPadding: widget.contentPadding ??
+                      const EdgeInsets.only(
+                        left: 11,
+                        right: 11,
+                        top: 14,
+                        bottom: 14,
+                      ),
+                  counterText: '',
+                  hintText: widget.title,
+                  hintStyle: TextStyle(
+                      color:
+                          isDarkMode ? AppColors.darkDescription : Colors.grey,
+                      fontSize: 12.sp),
+                  errorStyle: widget.isOTP
+                      ? const TextStyle(height: 0, fontSize: 0)
+                      : const TextStyle(fontSize: 9, height: 0.3),
+                  filled: true,
+                  fillColor: widget.isCreatePostInCommunity
+                      ? Colors.transparent
+                      : isDarkMode
+                          ? AppColors.darkCardBG
+                          : AppColors.subBG,
+                  enabledBorder: widget.isCreatePostInCommunity
+                      ? InputBorder.none
                       : OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              const BorderSide(color: AppColors.primary),
+                          borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? AppColors.darkBorder
+                                  : Colors.grey.shade300),
                         ),
-              disabledBorder: widget.isCreatePostInCommunity
-                  ? InputBorder.none
-                  : OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-              errorBorder: widget.isCreatePostInCommunity
-                  ? InputBorder.none
-                  : OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                          color:
-                              widget.isOTP ? Colors.red : Colors.grey.shade300),
-                    ),
-              focusedErrorBorder: widget.isCreatePostInCommunity
-                  ? InputBorder.none
-                  : OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: const BorderSide(color: AppColors.primary),
-                    ),
-              suffixIcon: widget.visiblePasswordIcon == true
-                  ? GestureDetector(
-                      onTap: widget.visiblePasswordIconFunction,
-                      child: const Icon(Icons.visibility_off),
-                    )
-                  : widget.visiblePasswordIcon == false
+                  focusedBorder: widget.isCreatePostInCommunity
+                      ? InputBorder.none
+                      : widget.isCommunitySearch
+                          ? OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: isDarkMode
+                                      ? AppColors.darkBorder
+                                      : Colors.grey.shade300),
+                            )
+                          : OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                  color: isDarkMode
+                                      ? AppColors.darkPrimary
+                                      : AppColors.primary),
+                            ),
+                  disabledBorder: widget.isCreatePostInCommunity
+                      ? InputBorder.none
+                      : OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? AppColors.darkBorder
+                                  : Colors.grey.shade300),
+                        ),
+                  errorBorder: widget.isCreatePostInCommunity
+                      ? InputBorder.none
+                      : OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: widget.isOTP
+                                  ? Colors.red
+                                  : isDarkMode
+                                      ? AppColors.darkBorder
+                                      : Colors.grey.shade300),
+                        ),
+                  focusedErrorBorder: widget.isCreatePostInCommunity
+                      ? InputBorder.none
+                      : OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                              color: isDarkMode
+                                  ? AppColors.darkPrimary
+                                  : AppColors.primary),
+                        ),
+                  suffixIcon: widget.visiblePasswordIcon == true
                       ? GestureDetector(
-                          onTap: widget.unVisiblePasswordIconFunction,
-                          child: const Icon(Icons.visibility),
+                          onTap: widget.visiblePasswordIconFunction,
+                          child: Icon(
+                            Icons.visibility_off,
+                            color: isDarkMode
+                                ? AppColors.darkDescription
+                                : Colors.grey,
+                          ),
                         )
-                      : widget.showClearButton && !_isTextEmpty
+                      : widget.visiblePasswordIcon == false
                           ? GestureDetector(
-                              onTap: () {
-                                _controller.clear();
-                                widget.onChanged?.call('');
-                                widget.onClear?.call();
-                                setState(() {
-                                  _isTextEmpty = true;
-                                });
-                              },
-                              child: const Icon(
-                                Icons.clear,
-                                color: Colors.grey,
-                                size: 20,
+                              onTap: widget.unVisiblePasswordIconFunction,
+                              child: Icon(
+                                Icons.visibility,
+                                color: isDarkMode
+                                    ? AppColors.darkDescription
+                                    : Colors.grey,
                               ),
                             )
-                          : null,
-              prefixIcon: widget.prefixIcon,
-              prefixIconConstraints: widget.prefixIconConstraints,
-            ),
-            readOnly: widget.readOnly,
-            validator: widget.validator,
-          ),
-
-          // Show search icon only if isSearchIconInCenter is true and text field is empty
-          if (widget.isSearchIconInCenter && _isTextEmpty)
-            Positioned(
-              left: 0,
-              right: 67,
-              top: 5,
-              bottom: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/search.png',
-                    color: Colors.grey,
-                    width: 20,
-                    height: 20,
-                  ),
-                  const SizedBox(height: 4),
-                ],
+                          : widget.showClearButton && !_isTextEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    _controller.clear();
+                                    widget.onChanged?.call('');
+                                    widget.onClear?.call();
+                                    setState(() {
+                                      _isTextEmpty = true;
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.clear,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey,
+                                    size: 20,
+                                  ),
+                                )
+                              : null,
+                  prefixIcon: widget.prefixIcon,
+                  prefixIconConstraints: widget.prefixIconConstraints,
+                ),
+                readOnly: widget.readOnly,
+                validator: widget.validator,
               ),
-            ),
-        ],
-      ),
+
+              // Show search icon only if isSearchIconInCenter is true and text field is empty
+              if (widget.isSearchIconInCenter && _isTextEmpty)
+                Positioned(
+                  left: 0,
+                  right: 67,
+                  top: 5,
+                  bottom: 0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/search.png',
+                        color: isDarkMode
+                            ? AppColors.darkDescription
+                            : Colors.grey,
+                        width: 20,
+                        height: 20,
+                      ),
+                      const SizedBox(height: 4),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

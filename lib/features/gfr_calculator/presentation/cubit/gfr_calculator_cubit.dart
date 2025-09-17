@@ -150,40 +150,27 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         );
 
         emit(GfrCalculatorState.initial(changesCounter += 1));
-
-        // Show result
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(context.tr(AppStrings.gfrResult)),
-            backgroundColor: Colors.grey.shade100,
-            content: Text(context.tr(AppStrings.yourEstimatedGfrIs) + ' ${gfr.toStringAsFixed(2)}'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child:  Text(context.tr(AppStrings.ok)
-                ),
-              ),
-            ],
-          ),
-        );
+        showCustomDialog(
+            context: context,
+            title: context.tr(AppStrings.gfrResult),
+            description:
+                '${context.tr(AppStrings.yourEstimatedGfrIs)} ${gfr.toStringAsFixed(2)}',
+            coloredButtonText: context.tr(AppStrings.ok),
+            coloredButtonOnTap: () {
+              Navigator.of(context).pop();
+            },
+            isNoColorShow: false);
       } catch (e) {
         debugPrint('Error parsing input: $e');
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(context.tr(AppStrings.inputError)),
-            backgroundColor: Colors.grey.shade100,
-            content: Text(context.tr(AppStrings.pleaseEnterValidInputValues)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child:  Text(context.tr(AppStrings.ok)
-                ),
-              ),
-            ],
-          ),
-        );
+        showCustomDialog(
+            context: context,
+            title: context.tr(AppStrings.inputError),
+            description: context.tr(AppStrings.pleaseEnterValidInputValues),
+            coloredButtonText: context.tr(AppStrings.ok),
+            coloredButtonOnTap: () {
+              Navigator.of(context).pop();
+            },
+            isNoColorShow: false);
       }
     }
   }

@@ -11,6 +11,7 @@ class CheckNotificationType extends StatelessWidget {
   final int currentDoctorPoints;
   final String isSyndicateCardRequired;
   final HomeModelResponse homeDataModel;
+  final bool isDarkMode;
 
   const CheckNotificationType(
       {super.key,
@@ -20,7 +21,8 @@ class CheckNotificationType extends StatelessWidget {
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
       required this.currentDoctorPoints,
-      required this.homeDataModel});
+      required this.homeDataModel,
+      required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +125,9 @@ class CheckNotificationType extends StatelessWidget {
                                       text:
                                           'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)}',
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp),
                                       children: <TextSpan>[
                                         const TextSpan(
@@ -152,12 +156,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -168,11 +175,11 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                 UnreadRedCircle(isRead: notificationModel.read!),
+                  UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -202,7 +209,6 @@ class CheckNotificationType extends StatelessWidget {
               ),
             );
           },
-          
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -282,7 +288,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -296,12 +304,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -313,11 +324,10 @@ class CheckNotificationType extends StatelessWidget {
                     ],
                   ),
                   UnreadRedCircle(isRead: notificationModel.read!),
-                  
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -454,12 +464,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -473,8 +486,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -580,7 +593,9 @@ class CheckNotificationType extends StatelessWidget {
                                           ? 'Someone commented on your patient'
                                           : 'Dr. ${capitalizeFirstText(notificationModel.typeDoctor!.firstName ?? '')}',
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp),
                                       children: notificationModel.typeDoctor ==
                                               null
@@ -613,12 +628,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -632,8 +650,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -670,8 +688,11 @@ class CheckNotificationType extends StatelessWidget {
                     child: RichText(
                       text: TextSpan(
                         text: 'On the linked patient, someone has made an ',
-                        style:
-                            TextStyle(color: AppColors.title, fontSize: 12.sp),
+                        style: TextStyle(
+                            color: isDarkMode
+                                ? AppColors.darkTitle
+                                : AppColors.title,
+                            fontSize: 12.sp),
                         children: const <TextSpan>[
                           TextSpan(
                             text: '${AppStrings.outcome}.',
@@ -806,7 +827,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[
@@ -836,12 +859,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -855,8 +881,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -961,7 +987,9 @@ class CheckNotificationType extends StatelessWidget {
                                       text:
                                           'Dr. ${capitalizeFirstText(notificationModel.typeDoctor!.firstName!)} has uploaded a new ',
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp),
                                       children: const <TextSpan>[
                                         TextSpan(
@@ -983,12 +1011,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                      TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -999,12 +1030,11 @@ class CheckNotificationType extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1105,7 +1135,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1119,12 +1151,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1138,8 +1173,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1240,7 +1275,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1254,12 +1291,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1273,8 +1313,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1375,7 +1415,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1389,12 +1431,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1406,12 +1451,10 @@ class CheckNotificationType extends StatelessWidget {
                     ],
                   ),
                   UnreadRedCircle(isRead: notificationModel.read!),
-
-                  
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1512,7 +1555,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1526,12 +1571,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1545,8 +1593,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1644,7 +1692,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1658,12 +1708,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1677,8 +1730,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1776,7 +1829,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1790,12 +1845,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                    TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1807,11 +1865,10 @@ class CheckNotificationType extends StatelessWidget {
                     ],
                   ),
                   UnreadRedCircle(isRead: notificationModel.read!),
-                  
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),
@@ -1909,7 +1966,9 @@ class CheckNotificationType extends StatelessWidget {
                                     text: TextSpan(
                                       text: notificationModel.content,
                                       style: TextStyle(
-                                          color: AppColors.title,
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
                                       children: const <TextSpan>[],
@@ -1923,12 +1982,15 @@ class CheckNotificationType extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  TimeAgoService.instance.formatTimeAgoFromString(
+                                  TimeAgoService.instance
+                                      .formatTimeAgoFromString(
                                     notificationModel.createdAt.toString(),
                                     context,
                                   ),
                                   style: TextStyle(
-                                    color: Colors.grey.shade500,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                     fontSize: 8.sp,
                                   ),
                                 ),
@@ -1942,8 +2004,8 @@ class CheckNotificationType extends StatelessWidget {
                   UnreadRedCircle(isRead: notificationModel.read!),
                 ],
               ),
-              const Divider(
-                color: Colors.grey,
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey,
                 thickness: 0.2,
               ),
               SizedBox(height: 10.h),

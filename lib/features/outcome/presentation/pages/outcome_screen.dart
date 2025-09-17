@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_not_submitted.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_submitted.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'dart:ui' as ui;
 
 import '../../../../exports.dart';
@@ -43,64 +44,71 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    OutcomeCubit cubit = OutcomeCubit.get(context);
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-       
-        title: Directionality(
-          textDirection:  TextDirection.ltr,
-          child: Row(
-            mainAxisAlignment: context.currentLocale?.languageCode == 'ar' ? MainAxisAlignment.end : MainAxisAlignment.start,
-            children: [
-              Flexible(
-                child: Tooltip(
-                  message: widget.patientName,
-                  child: Text(
-                    (widget.currentDoctorModel.id.toString() ==
-                                widget.doctorId.toString() ||
-                            widget.homeDataModel.role == AppStrings.roleAdmin)
-                        ? widget.patientName.toString()
-                        : convertTextToSymbols(widget.patientName),
-                    style: TextStyle(fontSize: 14.sp),
-                    overflow: TextOverflow.ellipsis,
-                    textDirection:
-                        RegExp(r'[\u0600-\u06FF]').hasMatch(widget.patientName)
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        OutcomeCubit cubit = OutcomeCubit.get(context);
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Directionality(
+              textDirection: TextDirection.ltr,
+              child: Row(
+                mainAxisAlignment: context.currentLocale?.languageCode == 'ar'
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Tooltip(
+                      message: widget.patientName,
+                      child: Text(
+                        (widget.currentDoctorModel.id.toString() ==
+                                    widget.doctorId.toString() ||
+                                widget.homeDataModel.role ==
+                                    AppStrings.roleAdmin)
+                            ? widget.patientName.toString()
+                            : convertTextToSymbols(widget.patientName),
+                        style: TextStyle(fontSize: 14.sp),
+                        overflow: TextOverflow.ellipsis,
+                        textDirection: RegExp(r'[\u0600-\u06FF]')
+                                .hasMatch(widget.patientName)
                             ? ui.TextDirection.rtl
                             : ui.TextDirection.ltr,
+                      ),
+                    ),
                   ),
-                ),
+                  Text(
+                    LocalizationService.instance.translate(AppStrings.sOutcome),
+                    style: TextStyle(fontSize: 14.sp),
+                  ),
+                ],
               ),
-              Text(
-                '${LocalizationService.instance.translate(AppStrings.sOutcome)}',
-                style: TextStyle(fontSize: 14.sp),
-              ),
-            ],
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: widget.outcomeStatus
-          ? IfOutcomeSubmitted(
-              cubit: cubit,
-              currentDoctorModel: widget.currentDoctorModel,
-              doctorId: widget.doctorId,
-              accountVerification: widget.accountVerification,
-              isSyndicateCardRequired: widget.isSyndicateCardRequired,
-              currentDoctorRole: widget.currentDoctorRole,
-              currentDoctorPoints: widget.currentDoctorPoints,
-              homeDataModel: widget.homeDataModel,
-            )
-          : IfOutcomeNotSubmitted(
-              cubit: cubit,
-              outcomeStatus: widget.outcomeStatus,
-              accountVerification: widget.accountVerification,
-              patientId: widget.patientId,
-              isSyndicateCardRequired: widget.isSyndicateCardRequired,
-              currentDoctorModel: widget.currentDoctorModel,
-              doctorId: widget.doctorId,
-              homeDataModel: widget.homeDataModel,
             ),
+            centerTitle: true,
+          ),
+          body: widget.outcomeStatus
+              ? IfOutcomeSubmitted(
+                  cubit: cubit,
+                  currentDoctorModel: widget.currentDoctorModel,
+                  doctorId: widget.doctorId,
+                  accountVerification: widget.accountVerification,
+                  isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                  currentDoctorRole: widget.currentDoctorRole,
+                  currentDoctorPoints: widget.currentDoctorPoints,
+                  homeDataModel: widget.homeDataModel,
+                )
+              : IfOutcomeNotSubmitted(
+                  cubit: cubit,
+                  outcomeStatus: widget.outcomeStatus,
+                  accountVerification: widget.accountVerification,
+                  patientId: widget.patientId,
+                  isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                  currentDoctorModel: widget.currentDoctorModel,
+                  doctorId: widget.doctorId,
+                  homeDataModel: widget.homeDataModel,
+                ),
+        );
+      },
     );
   }
 }

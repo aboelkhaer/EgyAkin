@@ -5,20 +5,26 @@ import '../../../../../exports.dart';
 class PostType extends StatelessWidget {
   final HomeCubit cubit;
   final PostCommunityModel postModel;
-  const PostType({super.key, required this.cubit, required this.postModel});
+  final bool isDarkMode;
+  const PostType(
+      {super.key,
+      required this.cubit,
+      required this.postModel,
+      required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Card(
-      color: Colors.white,
+      color: isDarkMode ? AppColors.darkCardBG : Colors.white,
       elevation: 0.8,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        splashColor: AppColors.subBG, // Splash color
+        splashColor:
+            isDarkMode ? AppColors.darkSubBG : AppColors.subBG, // Splash color
         onTap: () {
           navigatorKey.currentState?.pushNamed(
             AppRoutes.showSingleFeed,
@@ -62,10 +68,12 @@ class PostType extends StatelessWidget {
                                 errorWidget: (context, url, error) {
                                   return Container(
                                     color: Colors.transparent,
-                                    child: const Center(
+                                    child: Center(
                                       child: Icon(
                                         Icons.error_outline,
-                                        color: AppColors.primary,
+                                        color: isDarkMode
+                                            ? AppColors.darkPrimary
+                                            : AppColors.primary,
                                         size: 40.0,
                                       ),
                                     ),
@@ -109,7 +117,9 @@ class PostType extends StatelessWidget {
                                     ).documentElement!.text,
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.description,
+                                        color: isDarkMode
+                                            ? AppColors.darkDescription
+                                            : AppColors.description,
                                         fontSize: 10.sp),
                                     maxLines: 5,
                                     overflow: TextOverflow.ellipsis,
@@ -124,11 +134,13 @@ class PostType extends StatelessWidget {
                                 Text(
                                   TimeAgoService.instance
                                       .formatTimeAgoFromString(
-                                        postModel.updatedAt.toString(),
-                                        context,
-                                      ),
+                                    postModel.updatedAt.toString(),
+                                    context,
+                                  ),
                                   style: TextStyle(
-                                    color: AppColors.description,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : AppColors.description,
                                     fontSize: 9.sp,
                                   ),
                                 ),

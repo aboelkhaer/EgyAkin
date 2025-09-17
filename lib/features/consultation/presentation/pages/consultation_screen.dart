@@ -1,3 +1,4 @@
+import '../../../../app/services/theme_bloc.dart';
 import '../../../../exports.dart';
 
 class ConsultationScreen extends StatefulWidget {
@@ -15,60 +16,81 @@ class ConsultationScreen extends StatefulWidget {
 }
 
 class _ConsultationScreenState extends State<ConsultationScreen> {
-
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.tr(AppStrings.consultation)),
-      ),
-      body: DefaultTabController(
-        length: 2,
-        initialIndex: widget.initialTab,
-        child: Column(
-          children: [
-            ColoredBox(
-              color: AppColors.primary.withOpacity(0.2),
-              child: TabBar(
-                labelColor: AppColors.primary,
-                // indicatorColor: Colors.white,
-                indicator: const UnderlineTabIndicator(
-                  borderSide: BorderSide(
-                    color: AppColors.primary,
-                    width: 3,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Scaffold(
+          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+          appBar: AppBar(
+            backgroundColor:
+                isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+            iconTheme: IconThemeData(
+              color: isDarkMode ? AppColors.darkTitle : Colors.black,
+            ),
+            title: Text(
+              context.tr(AppStrings.consultation),
+              style: TextStyle(
+                color: isDarkMode ? AppColors.darkTitle : Colors.black,
+              ),
+            ),
+          ),
+          body: DefaultTabController(
+            length: 2,
+            initialIndex: widget.initialTab,
+            child: Column(
+              children: [
+                ColoredBox(
+                  color: isDarkMode
+                      ? AppColors.darkBorder
+                      : AppColors.primary.withOpacity(0.2),
+                  child: TabBar(
+                    labelColor:
+                        isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                    indicator: UnderlineTabIndicator(
+                      borderSide: BorderSide(
+                        color: isDarkMode
+                            ? AppColors.darkTitle
+                            : AppColors.primary,
+                        width: 3,
+                      ),
+                    ),
+                    isScrollable: false,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelColor: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey.shade500,
+                    tabs: [
+                      Tab(
+                        text: context.tr(AppStrings.myConsultations),
+                      ),
+                      Tab(
+                        text: context.tr(AppStrings.received),
+                      ),
+                    ],
                   ),
                 ),
-                isScrollable: false,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                unselectedLabelColor: Colors.grey.shade500,
-                tabs: [
-                  Tab(
-                    text: context.tr(AppStrings.myConsultations),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      MyConsultationsTab(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                      ReceivedTab(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                    ],
                   ),
-                  Tab(
-                    text: context.tr(AppStrings.received),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  MyConsultationsTab(
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                  ),
-                  ReceivedTab(
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

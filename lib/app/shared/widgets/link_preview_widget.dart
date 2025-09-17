@@ -1,4 +1,5 @@
 import 'package:metadata_fetch/metadata_fetch.dart';
+import '../../services/theme_bloc.dart';
 import '../../../exports.dart';
 
 /// Global cache to store fetched metadata and prevent reloading
@@ -77,15 +78,20 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
   bool _hasValidMetadata(Metadata metadata) {
     // Check if we have meaningful content - at least a title or description
     // Image alone is not enough for a meaningful preview
-    final hasTitle = metadata.title != null && metadata.title!.trim().isNotEmpty;
-    final hasDescription = metadata.description != null && metadata.description!.trim().isNotEmpty;
-    final hasImage = metadata.image != null && metadata.image!.trim().isNotEmpty;
-    
+    final hasTitle =
+        metadata.title != null && metadata.title!.trim().isNotEmpty;
+    final hasDescription =
+        metadata.description != null && metadata.description!.trim().isNotEmpty;
+    final hasImage =
+        metadata.image != null && metadata.image!.trim().isNotEmpty;
+
     // We need at least a title or description to show a meaningful preview
     // Also check that the values are not just "null" strings
-    final titleIsValid = hasTitle && metadata.title!.trim().toLowerCase() != "null";
-    final descriptionIsValid = hasDescription && metadata.description!.trim().toLowerCase() != "null";
-    
+    final titleIsValid =
+        hasTitle && metadata.title!.trim().toLowerCase() != 'null';
+    final descriptionIsValid =
+        hasDescription && metadata.description!.trim().toLowerCase() != 'null';
+
     return titleIsValid || descriptionIsValid;
   }
 
@@ -102,24 +108,24 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       final metadata = await MetadataFetch.extract(url);
 
       // TikTok thumbnail URL pattern
-      _imageUrl = "https://www.tiktok.com/api/img/?itemId=$videoId";
+      _imageUrl = 'https://www.tiktok.com/api/img/?itemId=$videoId';
 
       if (mounted) {
         setState(() {
           // Only set title if it's not null, not empty, and not "null" string
-          _title = (metadata?.title != null && 
-                   metadata!.title!.trim().isNotEmpty && 
-                   metadata.title!.trim().toLowerCase() != "null")
+          _title = (metadata?.title != null &&
+                  metadata!.title!.trim().isNotEmpty &&
+                  metadata.title!.trim().toLowerCase() != 'null')
               ? metadata.title!.trim()
-              : "TikTok Video";
-          
+              : 'TikTok Video';
+
           // Only set description if it's not null, not empty, and not "null" string
-          _description = (metadata?.description != null && 
-                         metadata!.description!.trim().isNotEmpty && 
-                         metadata.description!.trim().toLowerCase() != "null")
+          _description = (metadata?.description != null &&
+                  metadata!.description!.trim().isNotEmpty &&
+                  metadata.description!.trim().toLowerCase() != 'null')
               ? metadata.description!.trim()
-              : "Watch on TikTok";
-          
+              : 'Watch on TikTok';
+
           _isLoading = false;
         });
       }
@@ -135,11 +141,11 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
       return;
     }
 
-    _imageUrl = "https://drive.google.com/thumbnail?id=$fileId";
-    _title = "Google Drive File";
-    _description = "Click to view the file.";
+    _imageUrl = 'https://drive.google.com/thumbnail?id=$fileId';
+    _title = 'Google Drive File';
+    _description = 'Click to view the file.';
 
-    if (url.contains("export=download") || url.endsWith(".pdf")) {
+    if (url.contains('export=download') || url.endsWith('.pdf')) {
       _isPdf = true;
     }
 
@@ -154,26 +160,26 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     if (mounted) {
       setState(() {
         // Only set title if it's not null, not empty, and not "null" string
-        _title = (metadata.title != null && 
-                 metadata.title!.trim().isNotEmpty && 
-                 metadata.title!.trim().toLowerCase() != "null") 
-            ? metadata.title!.trim() 
+        _title = (metadata.title != null &&
+                metadata.title!.trim().isNotEmpty &&
+                metadata.title!.trim().toLowerCase() != 'null')
+            ? metadata.title!.trim()
             : null;
-        
+
         // Only set description if it's not null, not empty, and not "null" string
-        _description = (metadata.description != null && 
-                       metadata.description!.trim().isNotEmpty && 
-                       metadata.description!.trim().toLowerCase() != "null") 
-            ? metadata.description!.trim() 
+        _description = (metadata.description != null &&
+                metadata.description!.trim().isNotEmpty &&
+                metadata.description!.trim().toLowerCase() != 'null')
+            ? metadata.description!.trim()
             : null;
-        
+
         // Only set image URL if it's not null, not empty, and not "null" string
-        _imageUrl = (metadata.image != null && 
-                    metadata.image!.trim().isNotEmpty && 
-                    metadata.image!.trim().toLowerCase() != "null") 
-            ? metadata.image!.trim() 
+        _imageUrl = (metadata.image != null &&
+                metadata.image!.trim().isNotEmpty &&
+                metadata.image!.trim().toLowerCase() != 'null')
+            ? metadata.image!.trim()
             : null;
-        
+
         _isLoading = false;
       });
     }
@@ -193,51 +199,52 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     if (mounted) {
       setState(() {
         // Extract domain name for fallback title
-        String fallbackTitle = "Link";
-        
+        String fallbackTitle = 'Link';
+
         try {
           final uri = Uri.tryParse(widget.url);
-          
+
           if (uri != null && uri.host.isNotEmpty) {
             // Clean up domain name for better display
             String domain = uri.host.replaceAll('www.', '');
-            
+
             // Special handling for known domains
             if (domain.contains('mayoclinic')) {
-              fallbackTitle = "Mayo Clinic";
+              fallbackTitle = 'Mayo Clinic';
             } else if (domain.contains('webmd')) {
-              fallbackTitle = "WebMD";
+              fallbackTitle = 'WebMD';
             } else if (domain.contains('healthline')) {
-              fallbackTitle = "Healthline";
+              fallbackTitle = 'Healthline';
             } else if (domain.contains('medlineplus')) {
-              fallbackTitle = "MedlinePlus";
+              fallbackTitle = 'MedlinePlus';
             } else {
               // Capitalize first letter of domain
               fallbackTitle = domain.split('.').first;
               if (fallbackTitle.isNotEmpty) {
-                fallbackTitle = fallbackTitle[0].toUpperCase() + fallbackTitle.substring(1);
+                fallbackTitle =
+                    fallbackTitle[0].toUpperCase() + fallbackTitle.substring(1);
               }
             }
           } else if (widget.url.startsWith('file://')) {
             // Handle file URIs
-            fallbackTitle = "Local File";
+            fallbackTitle = 'Local File';
           } else if (widget.url.startsWith('data:')) {
             // Handle data URIs
-            fallbackTitle = "Data URL";
+            fallbackTitle = 'Data URL';
           } else if (widget.url.startsWith('mailto:')) {
             // Handle mailto URIs
-            fallbackTitle = "Email";
+            fallbackTitle = 'Email';
           } else if (widget.url.startsWith('tel:')) {
             // Handle tel URIs
-            fallbackTitle = "Phone";
+            fallbackTitle = 'Phone';
           }
         } catch (e) {
           // If URI parsing fails, use generic title
-          fallbackTitle = "Link";
+          fallbackTitle = 'Link';
         }
-        
+
         _title = fallbackTitle;
-        _description = "Click to view the full article";
+        _description = 'Click to view the full article';
         _imageUrl = null;
         _isLoading = false;
       });
@@ -251,34 +258,34 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
         await launchUrl(url, mode: LaunchMode.externalApplication);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Could not open link")),
+          const SnackBar(content: Text('Could not open link')),
         );
       }
     } catch (e) {
       // Handle invalid URI format
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid link format: ${widget.url}")),
+        SnackBar(content: Text('Invalid link format: ${widget.url}')),
       );
     }
   }
 
   bool _isGoogleDriveUrl(String url) {
-    return url.contains("drive.google.com");
+    return url.contains('drive.google.com');
   }
 
   bool _isTikTokUrl(String url) {
-    return url.contains("tiktok.com") &&
-        (url.contains("/video/") || url.contains("/v/"));
+    return url.contains('tiktok.com') &&
+        (url.contains('/video/') || url.contains('/v/'));
   }
 
   String? _extractGoogleDriveFileId(String url) {
-    RegExp regex = RegExp(r"/d/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)");
+    RegExp regex = RegExp(r'/d/([a-zA-Z0-9_-]+)|id=([a-zA-Z0-9_-]+)');
     final match = regex.firstMatch(url);
     return match?.group(1) ?? match?.group(2);
   }
 
   String? _extractTikTokVideoId(String url) {
-    RegExp regex = RegExp(r"/video/(\d+)");
+    RegExp regex = RegExp(r'/video/(\d+)');
     final match = regex.firstMatch(url);
     return match?.group(1);
   }
@@ -287,17 +294,27 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     try {
       final uri = Uri.tryParse(url);
       if (uri == null) return false;
-      
+
       // Check for valid schemes
-      final validSchemes = ['http', 'https', 'ftp', 'file', 'data', 'mailto', 'tel'];
+      final validSchemes = [
+        'http',
+        'https',
+        'ftp',
+        'file',
+        'data',
+        'mailto',
+        'tel'
+      ];
       if (!validSchemes.contains(uri.scheme)) return false;
-      
+
       // For file URIs, check if they have a proper path
-      if (uri.scheme == 'file' && (uri.path.isEmpty || uri.path == '/')) return false;
-      
+      if (uri.scheme == 'file' && (uri.path.isEmpty || uri.path == '/'))
+        return false;
+
       // For http/https, check if they have a host
-      if ((uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isEmpty) return false;
-      
+      if ((uri.scheme == 'http' || uri.scheme == 'https') && uri.host.isEmpty)
+        return false;
+
       return true;
     } catch (e) {
       return false;
@@ -306,39 +323,47 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: _openUrl,
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: _isLoading
-              ? _buildShimmer()
-              : _hasError
-                  ? _buildLinkOnly()
-                  : _buildPreview(),
-        ),
-      ),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return GestureDetector(
+          onTap: _openUrl,
+          child: Card(
+            elevation: 5,
+            color: isDarkMode ? AppColors.darkCardBG : Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: _isLoading
+                  ? _buildShimmer(isDarkMode)
+                  : _hasError
+                      ? _buildLinkOnly(isDarkMode)
+                      : _buildPreview(isDarkMode),
+            ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildShimmer() {
+  Widget _buildShimmer(bool isDarkMode) {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: isDarkMode ? AppColors.darkBorder : Colors.grey[300]!,
+      highlightColor: isDarkMode ? AppColors.darkCardBG : Colors.grey[100]!,
       child: Container(
         height: 180,
         width: double.infinity,
-        color: Colors.white,
+        color: isDarkMode ? AppColors.darkCardBG : Colors.white,
       ),
     );
   }
 
-  Widget _buildLinkOnly() {
+  Widget _buildLinkOnly(bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: Colors.grey[100],
+      color: isDarkMode ? AppColors.darkBorder : Colors.grey[100],
       child: Row(
         children: [
           const Icon(Icons.link, color: Colors.blue, size: 24),
@@ -348,9 +373,11 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Link",
+                  'Link',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey[600],
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -368,9 +395,11 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Tap to open",
+                  'Tap to open',
                   style: TextStyle(
-                    color: Colors.grey[500],
+                    color: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey[500],
                     fontSize: 12,
                   ),
                 ),
@@ -383,16 +412,17 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
     );
   }
 
-  Widget _buildPreview() {
+  Widget _buildPreview(bool isDarkMode) {
     // Check if we have enough content to show a meaningful preview
     final hasTitle = _title != null && _title!.trim().isNotEmpty;
-    final hasDescription = _description != null && _description!.trim().isNotEmpty;
+    final hasDescription =
+        _description != null && _description!.trim().isNotEmpty;
     final hasImage = _imageUrl != null && _imageUrl!.isNotEmpty;
 
     // If we don't have enough content, show link only
     // We need at least a title or description for a meaningful preview
     if (!hasTitle && !hasDescription) {
-      return _buildLinkOnly();
+      return _buildLinkOnly(isDarkMode);
     }
 
     return Column(
@@ -415,14 +445,14 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                     // Show app_icon.png when image is not available
                     return Container(
                       height: _isTikTok ? 300 : 150,
-                      color: Colors.grey[200],
+                      color:
+                          isDarkMode ? AppColors.darkBorder : Colors.grey[200],
                       alignment: Alignment.center,
                       child: Image.asset(
                         'assets/images/app_icon.png',
                         width: 80,
                         height: 80,
                         fit: BoxFit.contain,
-                        
                       ),
                     );
                   },
@@ -430,13 +460,17 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                     if (loadingProgress == null) return child;
                     return Container(
                       height: _isTikTok ? 300 : 150,
-                      color: Colors.grey[200],
+                      color:
+                          isDarkMode ? AppColors.darkBorder : Colors.grey[200],
                       child: Center(
                         child: CircularProgressIndicator(
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
                                   loadingProgress.expectedTotalBytes!
                               : null,
+                          color: isDarkMode
+                              ? AppColors.darkTitle
+                              : AppColors.primary,
                         ),
                       ),
                     );
@@ -459,16 +493,17 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(12),
-          color: Colors.grey.shade100,
+          color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade100,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (hasTitle)
                 Text(
                   _title!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
+                    color: isDarkMode ? AppColors.darkTitle : Colors.black,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -480,7 +515,9 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                   _description!,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[700],
+                    color: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey[700],
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -489,7 +526,7 @@ class _LinkPreviewWidgetState extends State<LinkPreviewWidget> {
                 const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Text(
-                    "Tap to watch on TikTok",
+                    'Tap to watch on TikTok',
                     style: TextStyle(
                       fontSize: 12,
                       color: Colors.blue,

@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/consultation/presentation/widgets/consultation_list.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 import '../../../../exports.dart';
 
@@ -25,36 +26,48 @@ class _ReceivedTabState extends State<ReceivedTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ConsultationCubit, ConsultationState>(
-      listener: (context, state) {
-        state.maybeWhen(
-          orElse: () {},
-          error: (message) {
-            customSnackBar(context: context, message: message);
-          },
-        );
-      },
-      builder: (context, state) {
-        return state.maybeWhen(
-          orElse: () {
-            return const SizedBox.shrink();
-          },
-          receivedConsultationsLoading: () {
-            return const Center(
-              child: CircularProgressIndicator(),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return BlocConsumer<ConsultationCubit, ConsultationState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              orElse: () {},
+              error: (message) {
+                customSnackBar(context: context, message: message);
+              },
             );
           },
-          receivedConsultationsLoaded: (consultations) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<ConsultationCubit>().getReceivedConsultations();
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () {
+                return const SizedBox.shrink();
               },
-              child: ConsultationList(
-                consultations: consultations,
-                currentDoctorModel: widget.currentDoctorModel,
-                homeDataModel: widget.homeDataModel,
-                isReceivedConsultation: true,
-              ),
+              receivedConsultationsLoading: () {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                  ),
+                );
+              },
+              receivedConsultationsLoaded: (consultations) {
+                return RefreshIndicator(
+                  color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                  onRefresh: () async {
+                    context
+                        .read<ConsultationCubit>()
+                        .getReceivedConsultations();
+                  },
+                  child: ConsultationList(
+                    consultations: consultations,
+                    currentDoctorModel: widget.currentDoctorModel,
+                    homeDataModel: widget.homeDataModel,
+                    isReceivedConsultation: true,
+                    isDarkMode: isDarkMode,
+                  ),
+                );
+              },
             );
           },
         );

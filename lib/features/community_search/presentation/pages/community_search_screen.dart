@@ -3,6 +3,7 @@ import 'package:egy_akin/features/community_search/presentation/cubit/community_
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class CommunitySearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -66,270 +67,307 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   @override
   Widget build(BuildContext context) {
     final CommunitySearchCubit cubit = CommunitySearchCubit.get(context);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          // Header with Search and Add Button
-          SizedBox(height: 40.h),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    navigatorKey.currentState?.pop();
-                  },
-                  icon: const Icon(
-                    Icons.arrow_back_ios,
-                  ),
-                ),
-                Expanded(
-                  child: CustomTextFormField(
-                    title: context.tr(AppStrings.search),
-                    textAlign: TextAlign.center,
-                    isSearchIconInCenter:
-                        cubit.isSearchContentEmpty ? true : false,
-                    initialValue: widget.initialValueInSearch,
-                    autoFocus:
-                        widget.initialValueInSearch == null ? true : false,
-                    textInputType: TextInputType.text,
-                    onChanged: (value) {
-                      if (value.isNotEmpty) {
-                        cubit.currentPage = 1;
-                        cubit.isSearchContentEmpty = false;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-                        cubit.searchValue = value;
-
-                        cubit.getResponseOfSearchInCommunity();
-                      } else {
-                        cubit.isSearchContentEmpty = true;
-                        cubit.searchValue = value;
-                        // Reset to empty state when search is cleared
-                        cubit.resetPostsList();
-                      }
-                    },
-                    validator: (value) {
-                      return null;
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                IconButton(
-                  onPressed: () {
-                    navigatorKey.currentState?.pushNamed(
-                      AppRoutes.createPostInCommunity,
-                      arguments: AppRoutesArgs.createPostInCommunityRouteArgs(
-                        currentDoctorModel: widget.currentDoctorModel,
-                        homeDataModel: widget.homeDataModel,
-                      ),
-                    );
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    size: 30,
-                  ),
-                ),
-              ],
+        return Scaffold(
+          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              systemOverlayStyle: isDarkMode
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
             ),
           ),
-          Divider(
-            color: Colors.grey.shade200,
-          ),
-          Expanded(
-            child: BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  orElse: () {
-                    // Show empty state for initial state
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(
-                            AppImages.notFound,
-                            width: 200,
-                            height: 200,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            context.tr(AppStrings.startTypingToSearchForPosts),
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
+          body: Column(
+            children: [
+              // Header with Search and Add Button
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        navigatorKey.currentState?.pop();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: isDarkMode ? AppColors.darkTitle : Colors.black,
                       ),
-                    );
-                  },
-                  loading: () {
-                    return const ShimmerLoadingFeeds(
-                      numberOfShimmer: 5,
-                    );
-                  },
-                  loaded: (
-                    snackBarMessage,
-                    dialogMessage,
-                    response,
-                    isSeeMore,
-                    changeCounter,
-                  ) {
-                    // Check if search is empty and show initial state
-                    if (cubit.isSearchContentEmpty || (cubit.searchValue?.isEmpty ?? true)) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AppImages.notFound,
-                              width: 150,
-                              height: 150,
-                            ),
-                            Text(
-                              context.tr(AppStrings.startTypingToSearchForPosts),
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                color: Colors.grey.shade500,
+                    ),
+                    Expanded(
+                      child: CustomTextFormField(
+                        title: context.tr(AppStrings.search),
+                        textAlign: TextAlign.center,
+                        isSearchIconInCenter:
+                            cubit.isSearchContentEmpty ? true : false,
+                        initialValue: widget.initialValueInSearch,
+                        autoFocus:
+                            widget.initialValueInSearch == null ? true : false,
+                        textInputType: TextInputType.text,
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            cubit.currentPage = 1;
+                            cubit.isSearchContentEmpty = false;
+
+                            cubit.searchValue = value;
+
+                            cubit.getResponseOfSearchInCommunity();
+                          } else {
+                            cubit.isSearchContentEmpty = true;
+                            cubit.searchValue = value;
+                            // Reset to empty state when search is cleared
+                            cubit.resetPostsList();
+                          }
+                        },
+                        validator: (value) {
+                          return null;
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    IconButton(
+                      onPressed: () {
+                        navigatorKey.currentState?.pushNamed(
+                          AppRoutes.createPostInCommunity,
+                          arguments:
+                              AppRoutesArgs.createPostInCommunityRouteArgs(
+                            currentDoctorModel: widget.currentDoctorModel,
+                            homeDataModel: widget.homeDataModel,
+                          ),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.add,
+                        size: 30,
+                        color: isDarkMode ? AppColors.darkTitle : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade200,
+              ),
+              Expanded(
+                child: BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      orElse: () {
+                        // Show empty state for initial state
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                AppImages.notFound,
+                                width: 200,
+                                height: 200,
                               ),
-                            ),
-                            SizedBox(height: 50.h),
-                          ],
-                        ),
-                      );
-                    }
-                    
-                    return response.data!.data!.isEmpty ||
-                            response.data!.data == null
-                        ? Center(
+                              const SizedBox(height: 16),
+                              Text(
+                                context
+                                    .tr(AppStrings.startTypingToSearchForPosts),
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: isDarkMode
+                                      ? AppColors.darkDescription
+                                      : Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                      loading: () {
+                        return const ShimmerLoadingFeeds(
+                          numberOfShimmer: 5,
+                        );
+                      },
+                      loaded: (
+                        snackBarMessage,
+                        dialogMessage,
+                        response,
+                        isSeeMore,
+                        changeCounter,
+                      ) {
+                        // Check if search is empty and show initial state
+                        if (cubit.isSearchContentEmpty ||
+                            (cubit.searchValue?.isEmpty ?? true)) {
+                          return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Image.asset(
                                   AppImages.notFound,
-                                  width: 200,
-                                  height: 200,
+                                  width: 150,
+                                  height: 150,
                                 ),
-                                const SizedBox(height: 16),
                                 Text(
-                                  'No posts found for "${cubit.searchValue}"',
+                                  context.tr(
+                                      AppStrings.startTypingToSearchForPosts),
                                   style: TextStyle(
-                                    fontSize: 16.sp,
-                                    color: Colors.grey[600],
+                                    fontSize: 14.sp,
+                                    color: isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade500,
                                   ),
                                 ),
+                                SizedBox(height: 50.h),
                               ],
                             ),
-                          )
-                        : ListView.builder(
-                            itemCount: response.data!.data!.length,
-                            controller: _scrollController,
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(20) +
-                                EdgeInsets.only(bottom: 60.h),
-                            itemBuilder: (context, index) {
-                              var feed = response.data!.data![index];
-                              return PostCard(
-                                feed: feed,
-                                homeDataModel: widget.homeDataModel,
-                                isCommunitySearch: true,
-                                showPostFrom: ShowPostFromEnum.searchTab.name,
-                                currentDoctorModel: widget.currentDoctorModel,
-                                highlightWord: _cubit.searchValue,
-                                viewPollWidget: ViewPollWidget(
-                                  poll: feed.poll,
-                                  currentDoctorModel: widget.currentDoctorModel,
-                                  homeDataModel: widget.homeDataModel,
-                                  selectedOptions:
-                                      _cubit.postSelectedOptions[feed.id] ?? {},
-                                  onAddOption: (pollId, option) async {
-                                    await _cubit.addOptionOnPoll(pollId,
-                                        option); // Call your function here
-                                  },
-                                  initiallyExpanded: false,
-                                  selectedOption:
-                                      _cubit.postSelectedOption[feed.id],
-                                  onOptionSelected: (optionId) {
-                                    _cubit.postSelectedOption[feed.id!] =
-                                        optionId;
-                                    _cubit.addVoteAndUnVote(
-                                      feed.poll!.id.toString(),
-                                      optionId!,
-                                    );
-                                    _cubit.refreshScreen();
-                                  },
-                                  onOptionToggled: (optionId, isSelected) {
-                                    _cubit.postSelectedOptions[feed.id!] ??= {};
-                                    _cubit.addVoteAndUnVote(
-                                      feed.poll!.id.toString(),
-                                      optionId,
-                                    );
-                                    if (isSelected) {
-                                      _cubit.postSelectedOptions[feed.id!]!
-                                          .add(optionId);
-                                    } else {
-                                      _cubit.postSelectedOptions[feed.id!]!
-                                          .remove(optionId);
-                                    }
-                                    _cubit.refreshScreen();
-                                  },
+                          );
+                        }
+
+                        return response.data!.data!.isEmpty ||
+                                response.data!.data == null
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      AppImages.notFound,
+                                      width: 200,
+                                      height: 200,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No posts found for "${cubit.searchValue}"',
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: isDarkMode
+                                            ? AppColors.darkDescription
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                onLikeAndUnlikeAdditional: () {
-                                  cubit.addLikeOrUnlikeOnPost(
-                                    feed.id.toString(),
-                                    likeOrUnlike:
-                                        feed.isLiked! ? 'unlike' : 'like',
+                              )
+                            : ListView.builder(
+                                itemCount: response.data!.data!.length,
+                                controller: _scrollController,
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                padding: const EdgeInsets.all(20) +
+                                    EdgeInsets.only(bottom: 60.h),
+                                itemBuilder: (context, index) {
+                                  var feed = response.data!.data![index];
+                                  return PostCard(
+                                    feed: feed,
+                                    homeDataModel: widget.homeDataModel,
+                                    isCommunitySearch: true,
+                                    showPostFrom:
+                                        ShowPostFromEnum.searchTab.name,
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    highlightWord: _cubit.searchValue,
+                                    viewPollWidget: ViewPollWidget(
+                                      poll: feed.poll,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      homeDataModel: widget.homeDataModel,
+                                      selectedOptions:
+                                          _cubit.postSelectedOptions[feed.id] ??
+                                              {},
+                                      onAddOption: (pollId, option) async {
+                                        await _cubit.addOptionOnPoll(pollId,
+                                            option); // Call your function here
+                                      },
+                                      initiallyExpanded: false,
+                                      selectedOption:
+                                          _cubit.postSelectedOption[feed.id],
+                                      onOptionSelected: (optionId) {
+                                        _cubit.postSelectedOption[feed.id!] =
+                                            optionId;
+                                        _cubit.addVoteAndUnVote(
+                                          feed.poll!.id.toString(),
+                                          optionId!,
+                                        );
+                                        _cubit.refreshScreen();
+                                      },
+                                      onOptionToggled: (optionId, isSelected) {
+                                        _cubit.postSelectedOptions[feed.id!] ??=
+                                            {};
+                                        _cubit.addVoteAndUnVote(
+                                          feed.poll!.id.toString(),
+                                          optionId,
+                                        );
+                                        if (isSelected) {
+                                          _cubit.postSelectedOptions[feed.id!]!
+                                              .add(optionId);
+                                        } else {
+                                          _cubit.postSelectedOptions[feed.id!]!
+                                              .remove(optionId);
+                                        }
+                                        _cubit.refreshScreen();
+                                      },
+                                    ),
+                                    onLikeAndUnlikeAdditional: () {
+                                      cubit.addLikeOrUnlikeOnPost(
+                                        feed.id.toString(),
+                                        likeOrUnlike:
+                                            feed.isLiked! ? 'unlike' : 'like',
+                                      );
+                                    },
+                                    onSaveAndUnSaveAdditional: () {
+                                      cubit.addSaveOrUnsaveOnPost(
+                                        feed.id.toString(),
+                                        saveOrUnsave:
+                                            feed.isSaved! ? 'unsave' : 'save',
+                                      );
+                                    },
+                                    onDeleteAdditional: () {
+                                      cubit.deletePost(feed.id.toString());
+                                    },
                                   );
-                                },
-                                onSaveAndUnSaveAdditional: () {
-                                  cubit.addSaveOrUnsaveOnPost(
-                                    feed.id.toString(),
-                                    saveOrUnsave:
-                                        feed.isSaved! ? 'unsave' : 'save',
-                                  );
-                                },
-                                onDeleteAdditional: () {
-                                  cubit.deletePost(feed.id.toString());
                                 },
                               );
-                            },
-                          );
+                      },
+                    );
                   },
-                );
-              },
-            ),
-          ),
-          BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
+                ),
+              ),
+              BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return const SizedBox.shrink();
+                    },
+                    loaded: (
+                      snackBarMessage,
+                      dialogMessage,
+                      response,
+                      isSeeMore,
+                      changeCounter,
+                    ) {
+                      return isSeeMore
+                          ? Column(
+                              children: [
+                                SizedBox(
+                                  height: 15,
+                                  width: 15,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: isDarkMode
+                                        ? AppColors.darkTitle
+                                        : AppColors.primary,
+                                  ),
+                                ),
+                                SizedBox(height: 20.h),
+                              ],
+                            )
+                          : const SizedBox.shrink();
+                    },
+                  );
                 },
-                loaded: (
-                  snackBarMessage,
-                  dialogMessage,
-                  response,
-                  isSeeMore,
-                  changeCounter,
-                ) {
-                  return isSeeMore
-                      ? Column(
-                          children: [
-                            const SizedBox(
-                              height: 15,
-                              width: 15,
-                              child: CircularProgressIndicator(strokeWidth: 3),
-                            ),
-                            SizedBox(height: 20.h),
-                          ],
-                        )
-                      : const SizedBox.shrink();
-                },
-              );
-            },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

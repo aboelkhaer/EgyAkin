@@ -5,6 +5,7 @@ import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/g
 import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/my_groups_tab.dart';
 
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class AllGroupsInCommunityScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -117,77 +118,139 @@ class _AllGroupsInCommunityScreenState
   Widget build(BuildContext context) {
     // AllGroupsInCommunityCubit cubit = AllGroupsInCommunityCubit.get(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title:  Text(
-          context.tr(AppStrings.groups),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              navigatorKey.currentState?.pushNamed(
-                AppRoutes.createGroupInCommunity,
-                arguments: AppRoutesArgs.createGroupInCommunityRouteArgs(
-                  currentDoctorModel: widget.currentDoctorModel,
-                  homeDataModel: widget.homeDataModel,
-                  isCreateNewGroup: true,
-                  groupModel: null,
-                ),
-              );
-            },
-            icon: const Icon(
-              Icons.add,
-              size: 33,
-            ),
-          ),
-        ],
-      ),
-      body: DefaultTabController(
-        length: 3, // Set tab count dynamically
-        child: Column(
-          children: [
-            ColoredBox(
-              color: AppColors.primary,
-              child: TabBar(
-                indicatorColor: Colors.white,
-                labelColor: Colors.white,
-                isScrollable: false,
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                unselectedLabelColor: Colors.white.withOpacity(0.7),
-                tabs:  [
-                  Tab(text: context.tr(AppStrings.myGroups),),
-                  Tab(
-                    child: Text(
-                      context.tr(AppStrings.groupInvitationsWithNewLine),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-                      textAlign: TextAlign.center,
+        return Scaffold(
+          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+          appBar: AppBar(
+            backgroundColor: isDarkMode ? AppColors.darkCardBG : null,
+            foregroundColor: isDarkMode ? AppColors.darkTitle : Colors.black,
+            title: Text(
+              context.tr(AppStrings.groups),
+              style: const TextStyle(
+                color: AppColors.darkTitle,
+              ),
+            ),
+            actions: [
+              // IconButton(
+              //   onPressed: () {
+              //     navigatorKey.currentState?.pushNamed(
+              //       AppRoutes.createGroupInCommunity,
+              //       arguments: AppRoutesArgs.createGroupInCommunityRouteArgs(
+              //         currentDoctorModel: widget.currentDoctorModel,
+              //         homeDataModel: widget.homeDataModel,
+              //         isCreateNewGroup: true,
+              //         groupModel: null,
+              //       ),
+              //     );
+              //   },
+              //   icon: const Icon(
+              //     Icons.add,
+              //     size: 33,
+              //     color: AppColors.darkTitle,
+              //   ),
+              // ),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      navigatorKey.currentState?.pushNamed(
+                        AppRoutes.createGroupInCommunity,
+                        arguments:
+                            AppRoutesArgs.createGroupInCommunityRouteArgs(
+                          currentDoctorModel: widget.currentDoctorModel,
+                          homeDataModel: widget.homeDataModel,
+                          isCreateNewGroup: true,
+                          groupModel: null,
+                        ),
+                      );
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Hero(
+                          tag: 'add_icon',
+                          child: Image.asset(
+                            'assets/images/app_icon.png',
+                            width: 30,
+                            height: 30,
+                            color: isDarkMode ? AppColors.darkTitle : null,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          context.tr(AppStrings.createGroup),
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isDarkMode
+                                ? AppColors.darkDescription
+                                : Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Tab(text: context.tr(AppStrings.allGroups),),
+                  const SizedBox(width: 10),
                 ],
               ),
+            ],
+          ),
+          body: DefaultTabController(
+            length: 3, // Set tab count dynamically
+            child: Column(
+              children: [
+                ColoredBox(
+                  color: isDarkMode ? AppColors.darkSubBG : AppColors.primary,
+                  child: TabBar(
+                    indicatorColor: Colors.white,
+                    labelColor: Colors.white,
+                    isScrollable: false,
+                    labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                    unselectedLabelColor: Colors.white.withOpacity(0.7),
+                    tabs: [
+                      Tab(
+                        text: context.tr(AppStrings.myGroups),
+                      ),
+                      Tab(
+                        child: Text(
+                          context.tr(AppStrings.groupInvitationsWithNewLine),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Tab(
+                        text: context.tr(AppStrings.allGroups),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: TabBarView(
+                    children: [
+                      MyGroupsTab(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                      GroupsInvitationScreen(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                      AllGroupsTab(
+                        currentDoctorModel: widget.currentDoctorModel,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  MyGroupsTab(
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                  ),
-                  GroupsInvitationScreen(
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                  ),
-                  AllGroupsTab(
-                    currentDoctorModel: widget.currentDoctorModel,
-                    homeDataModel: widget.homeDataModel,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

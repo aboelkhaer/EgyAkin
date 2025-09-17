@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import '../../../exports.dart';
 
 class TranslatablePasswordValidator extends StatefulWidget {
@@ -26,10 +26,12 @@ class TranslatablePasswordValidator extends StatefulWidget {
   });
 
   @override
-  State<TranslatablePasswordValidator> createState() => _TranslatablePasswordValidatorState();
+  State<TranslatablePasswordValidator> createState() =>
+      _TranslatablePasswordValidatorState();
 }
 
-class _TranslatablePasswordValidatorState extends State<TranslatablePasswordValidator> {
+class _TranslatablePasswordValidatorState
+    extends State<TranslatablePasswordValidator> {
   bool _hasMinLength = false;
   bool _hasUppercase = false;
   bool _hasNumeric = false;
@@ -49,12 +51,16 @@ class _TranslatablePasswordValidatorState extends State<TranslatablePasswordVali
 
   void _validatePassword() {
     final password = widget.controller.text;
-    
+
     setState(() {
       _hasMinLength = password.length >= widget.minLength;
-      _hasUppercase = RegExp(r'[A-Z]').allMatches(password).length >= widget.uppercaseCharCount;
-      _hasNumeric = RegExp(r'[0-9]').allMatches(password).length >= widget.numericCharCount;
-      _hasSpecial = RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').allMatches(password).length >= widget.specialCharCount;
+      _hasUppercase = RegExp(r'[A-Z]').allMatches(password).length >=
+          widget.uppercaseCharCount;
+      _hasNumeric = RegExp(r'[0-9]').allMatches(password).length >=
+          widget.numericCharCount;
+      _hasSpecial =
+          RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').allMatches(password).length >=
+              widget.specialCharCount;
     });
 
     if (_hasMinLength && _hasUppercase && _hasNumeric && _hasSpecial) {
@@ -66,40 +72,51 @@ class _TranslatablePasswordValidatorState extends State<TranslatablePasswordVali
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: widget.width,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(8.0),
-        border: Border.all(color: Colors.grey[300]!),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildValidationItem(
-            context.tr(AppStrings.passwordValidationMinLength),
-            _hasMinLength,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Container(
+          width: widget.width,
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+          decoration: BoxDecoration(
+            color: isDarkMode ? AppColors.darkCardBG : Colors.grey[100],
+            borderRadius: BorderRadius.circular(8.0),
+            border: Border.all(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey[300]!),
           ),
-          _buildValidationItem(
-            context.tr(AppStrings.passwordValidationUppercase),
-            _hasUppercase,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildValidationItem(
+                context.tr(AppStrings.passwordValidationMinLength),
+                _hasMinLength,
+                isDarkMode,
+              ),
+              _buildValidationItem(
+                context.tr(AppStrings.passwordValidationUppercase),
+                _hasUppercase,
+                isDarkMode,
+              ),
+              _buildValidationItem(
+                context.tr(AppStrings.passwordValidationNumeric),
+                _hasNumeric,
+                isDarkMode,
+              ),
+              _buildValidationItem(
+                context.tr(AppStrings.passwordValidationSpecial),
+                _hasSpecial,
+                isDarkMode,
+              ),
+            ],
           ),
-          _buildValidationItem(
-            context.tr(AppStrings.passwordValidationNumeric),
-            _hasNumeric,
-          ),
-          _buildValidationItem(
-            context.tr(AppStrings.passwordValidationSpecial),
-            _hasSpecial,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildValidationItem(String text, bool isValid) {
+  Widget _buildValidationItem(String text, bool isValid, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1.5),
       child: Row(
@@ -107,7 +124,11 @@ class _TranslatablePasswordValidatorState extends State<TranslatablePasswordVali
           Icon(
             isValid ? Icons.check_circle : Icons.circle_outlined,
             size: 14,
-            color: isValid ? Colors.green : Colors.grey,
+            color: isValid
+                ? Colors.green
+                : isDarkMode
+                    ? AppColors.darkDescription
+                    : Colors.grey,
           ),
           const SizedBox(width: 6),
           Expanded(
@@ -115,7 +136,11 @@ class _TranslatablePasswordValidatorState extends State<TranslatablePasswordVali
               text,
               style: TextStyle(
                 fontSize: 11,
-                color: isValid ? Colors.green : Colors.grey[600],
+                color: isValid
+                    ? Colors.green
+                    : isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey[600],
               ),
             ),
           ),
@@ -123,4 +148,4 @@ class _TranslatablePasswordValidatorState extends State<TranslatablePasswordVali
       ),
     );
   }
-} 
+}

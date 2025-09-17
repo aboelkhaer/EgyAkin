@@ -1,6 +1,8 @@
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 import 'package:egy_akin/app/shared/widgets/language_selector.dart';
 import 'package:egy_akin/app/services/localization_bloc.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../../../exports.dart';
 
@@ -285,6 +287,65 @@ class _MoreScreenState extends State<MoreScreen> {
                   ),
                   // Language Selector
                   const LanguageSelector(),
+
+                  // Dark Mode Toggle
+                  BlocBuilder<ThemeBloc, ThemeState>(
+                    builder: (context, themeState) {
+                      return ListTile(
+                        title: Text(
+                          themeState is ThemeLoaded && themeState.isDarkMode
+                              ? context.tr('Dark Mode')
+                              : context.tr('Light Mode'),
+                          style: TextStyle(fontSize: 13.5.sp),
+                        ),
+                        leading: Icon(
+                          themeState is ThemeLoaded && themeState.isDarkMode
+                              ? Icons.dark_mode
+                              : Icons.light_mode,
+                          color: Colors.grey.shade600,
+                        ),
+                        trailing: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          transitionBuilder: (child, animation) {
+                            return ScaleTransition(
+                              scale: animation,
+                              child: child,
+                            );
+                          },
+                          child: Transform.scale(
+                            scale: 0.8,
+                            child: CupertinoSwitch(
+                              key: ValueKey(themeState is ThemeLoaded
+                                  ? themeState.isDarkMode
+                                  : false),
+                              value: themeState is ThemeLoaded
+                                  ? themeState.isDarkMode
+                                  : false,
+                              onChanged: (value) {
+                                context.read<ThemeBloc>().add(ToggleTheme());
+                              },
+                              activeColor: themeState is ThemeLoaded &&
+                                      themeState.isDarkMode
+                                  ? AppColors.darkPrimary
+                                  : AppColors.primary,
+                              trackColor: themeState is ThemeLoaded &&
+                                      themeState.isDarkMode
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade300,
+                              thumbColor: themeState is ThemeLoaded &&
+                                      themeState.isDarkMode
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade400,
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          context.read<ThemeBloc>().add(ToggleTheme());
+                        },
+                      );
+                    },
+                  ),
+
                   BlocBuilder<MoreCubit, MoreState>(
                     builder: (context, state) {
                       return state.maybeWhen(

@@ -1,9 +1,9 @@
 import 'dart:developer';
-import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/submit_button.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 
 import '../../../../exports.dart';
 
@@ -47,204 +47,242 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    OutcomeCubit cubit = OutcomeCubit.get(context);
-    return Stack(
-      children: [
-        Form(
-          key: cubit.outcomeFormKey,
-          child: Column(
-            children: [
-              BlocConsumer<OutcomeCubit, OutcomeState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    orElse: () {},
-                    loaded: (
-                      response,
-                      isSubmitedOutcome,
-                      message,
-                      _,
-                      isSubmitedOutcomeLoading,
-                      submitterModel,
-                    ) {
-                      if (isSubmitedOutcome) {
-                        navigatorKey.currentState?.pushReplacementNamed(
-                            AppRoutes.home,
-                            arguments: 0);
-                      }
-                      if (message.isNotEmpty) {
-                        if (isSubmitedOutcome) {
-                          customSnackBar(context: context, message: message);
-                        } else {
-                          showHintDialog(
-                            context: context,
-                            message: message,
-                            dialogType: DialogType.error,
-                          );
-                        }
-                      }
-                    },
-                  );
-                },
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return const Expanded(
-                        child: SingleChildScrollView(
-                          child: ShimmerLoadingPatientsCards(
-                            ishorizontal: false,
-                          ),
-                        ),
-                      );
-                    },
-                    loaded: (
-                      response,
-                      isSubmitedOutcome,
-                      message,
-                      _,
-                      isSubmitedOutcomeLoading,
-                      submitterModel,
-                    ) {
-                      List<QuestionModel> questions = response;
-                      if (isSubmitedOutcomeLoading) {
-                        return const Expanded(
-                          child: SingleChildScrollView(
-                            child: ShimmerLoadingPatientsCards(
-                              ishorizontal: false,
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Expanded(
-                          child: ListView.builder(
-                            itemCount: questions.length,
-                            shrinkWrap: true,
-                            physics: const BouncingScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              var question = questions[index];
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        Size size = MediaQuery.of(context).size;
+        OutcomeCubit cubit = OutcomeCubit.get(context);
 
-                              return Container(
-                                margin: const EdgeInsets.all(16),
-                                padding: const EdgeInsets.all(16),
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: RichText(
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text:
-                                                      '${index + 1} - ${question.question!} ',
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors
-                                                        .black, // Make sure this color matches your theme
-                                                  ),
-                                                ),
-                                                if (question.mandatory!)
-                                                  const TextSpan(
-                                                    text:
-                                                        AppStrings.asteriskMark,
-                                                    style: TextStyle(
-                                                      color: Colors.red,
-                                                    ),
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    const SizedBox(height: 16),
-                                    buildQuestionWidget(
-                                      cubit.questionModelList,
-                                      index,
-                                      size,
-                                      cubit,
-                                    ),
-                                    // BuildQuestion(index: index, currentDoctorModel:widget.currentDoctorModel, doctorId: doctorId, homeDataModel: widget.homeDataModel, isAllDataOpen: isAllDataOpen, patientId: widget.patientId, sectionModel: widget.sectionModel)
-                                  ],
-                                ),
+        return Stack(
+          children: [
+            Form(
+              key: cubit.outcomeFormKey,
+              child: Column(
+                children: [
+                  BlocConsumer<OutcomeCubit, OutcomeState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        orElse: () {},
+                        loaded: (
+                          response,
+                          isSubmitedOutcome,
+                          message,
+                          _,
+                          isSubmitedOutcomeLoading,
+                          submitterModel,
+                        ) {
+                          if (isSubmitedOutcome) {
+                            navigatorKey.currentState?.pushReplacementNamed(
+                                AppRoutes.home,
+                                arguments: 0);
+                          }
+                          if (message.isNotEmpty) {
+                            if (isSubmitedOutcome) {
+                              customSnackBar(
+                                  context: context, message: message);
+                            } else {
+                              showHintDialog(
+                                context: context,
+                                message: message,
+                                dialogType: DialogType.error,
                               );
-                            },
-                          ),
-                        );
-                      }
-                    },
-                  );
-                },
-              ),
-              Container(height: 90),
-            ],
-          ),
-        ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Container(
-            height: 90,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade100,
-                  spreadRadius: 1,
-                  blurRadius: 7,
-                  offset: const Offset(3, 4),
-                ),
-              ],
-            ),
-            child: BlocConsumer<OutcomeCubit, OutcomeState>(
-              listener: (context, state) {
-                state.maybeWhen(
-                  orElse: () {},
-                  loaded: (
-                    response,
-                    isSubmitedOutcome,
-                    message,
-                    _,
-                    isSubmitedOutcomeLoading,
-                    submitterModel,
-                  ) {},
-                  error: (message) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      showCustomDialog(
-                        context: context,
-                        title: context.tr(AppStrings.attention),
-                        description: message,
-                        coloredButtonText: context.tr(AppStrings.cancel),
-                        
-                        isNoColorShow: false,
-                        coloredButtonOnTap: () {
-                          Navigator.of(context).pop();
+                            }
+                          }
                         },
                       );
-                    });
+                    },
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return const Expanded(
+                            child: SingleChildScrollView(
+                              child: ShimmerLoadingPatientsCards(
+                                ishorizontal: false,
+                              ),
+                            ),
+                          );
+                        },
+                        loaded: (
+                          response,
+                          isSubmitedOutcome,
+                          message,
+                          _,
+                          isSubmitedOutcomeLoading,
+                          submitterModel,
+                        ) {
+                          List<QuestionModel> questions = response;
+                          if (isSubmitedOutcomeLoading) {
+                            return const Expanded(
+                              child: SingleChildScrollView(
+                                child: ShimmerLoadingPatientsCards(
+                                  ishorizontal: false,
+                                ),
+                              ),
+                            );
+                          } else {
+                            return Expanded(
+                              child: ListView.builder(
+                                itemCount: questions.length,
+                                shrinkWrap: true,
+                                physics: const BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var question = questions[index];
+
+                                  return Container(
+                                    margin: const EdgeInsets.all(16),
+                                    padding: const EdgeInsets.all(16),
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Flexible(
+                                              child: RichText(
+                                                text: TextSpan(
+                                                  children: [
+                                                    TextSpan(
+                                                      text:
+                                                          '${index + 1} - ${question.question!} ',
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: isDarkMode
+                                                            ? AppColors
+                                                                .darkTitle
+                                                            : Colors.black,
+                                                      ),
+                                                    ),
+                                                    if (question.mandatory!)
+                                                      const TextSpan(
+                                                        text: AppStrings
+                                                            .asteriskMark,
+                                                        style: TextStyle(
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        const SizedBox(height: 16),
+                                        buildQuestionWidget(
+                                          cubit.questionModelList,
+                                          index,
+                                          size,
+                                          cubit,
+                                        ),
+                                        // BuildQuestion(index: index, currentDoctorModel:widget.currentDoctorModel, doctorId: doctorId, homeDataModel: widget.homeDataModel, isAllDataOpen: isAllDataOpen, patientId: widget.patientId, sectionModel: widget.sectionModel)
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
+                  Container(height: 90),
+                ],
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                height: 90,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isDarkMode ? AppColors.darkSubBG : null,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade100,
+                      spreadRadius: 1,
+                      blurRadius: 7,
+                      offset: const Offset(3, 4),
+                    ),
+                  ],
+                ),
+                child: BlocConsumer<OutcomeCubit, OutcomeState>(
+                  listener: (context, state) {
+                    state.maybeWhen(
+                      orElse: () {},
+                      loaded: (
+                        response,
+                        isSubmitedOutcome,
+                        message,
+                        _,
+                        isSubmitedOutcomeLoading,
+                        submitterModel,
+                      ) {},
+                      error: (message) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          showCustomDialog(
+                            context: context,
+                            title: context.tr(AppStrings.attention),
+                            description: message,
+                            coloredButtonText: context.tr(AppStrings.cancel),
+                            isNoColorShow: false,
+                            coloredButtonOnTap: () {
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        });
+                      },
+                    );
                   },
-                );
-              },
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loaded: (
-                    response,
-                    isSubmitedOutcome,
-                    message,
-                    snackbarErrorCounter,
-                    isSubmitedOutcomeLoading,
-                    submitterModel,
-                  ) {
-                    if (isSubmitedOutcomeLoading) {
-                      return const Row(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      loaded: (
+                        response,
+                        isSubmitedOutcome,
+                        message,
+                        snackbarErrorCounter,
+                        isSubmitedOutcomeLoading,
+                        submitterModel,
+                      ) {
+                        if (isSubmitedOutcomeLoading) {
+                          return const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator()),
+                            ],
+                          );
+                        } else {
+                          return SubmitButtonForOutcome(
+                            cubit: cubit,
+                            patientId: widget.patientId,
+                            accountVerification: widget.accountVerification,
+                            isSyndicateCardRequired:
+                                widget.isSyndicateCardRequired,
+                            currentDoctorModel: widget.currentDoctorModel,
+                          );
+                        }
+                      },
+                      orElse: () {
+                        return SubmitButtonForOutcome(
+                          cubit: cubit,
+                          patientId: widget.patientId,
+                          accountVerification: widget.accountVerification,
+                          isSyndicateCardRequired:
+                              widget.isSyndicateCardRequired,
+                          currentDoctorModel: widget.currentDoctorModel,
+                        );
+                      },
+                      loading: () => const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SizedBox(
@@ -252,41 +290,15 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                               width: 30,
                               child: CircularProgressIndicator()),
                         ],
-                      );
-                    } else {
-                      return SubmitButtonForOutcome(
-                        cubit: cubit,
-                        patientId: widget.patientId,
-                        accountVerification: widget.accountVerification,
-                        isSyndicateCardRequired: widget.isSyndicateCardRequired,
-                        currentDoctorModel: widget.currentDoctorModel,
-                      );
-                    }
-                  },
-                  orElse: () {
-                    return SubmitButtonForOutcome(
-                      cubit: cubit,
-                      patientId: widget.patientId,
-                      accountVerification: widget.accountVerification,
-                      isSyndicateCardRequired: widget.isSyndicateCardRequired,
-                      currentDoctorModel: widget.currentDoctorModel,
+                      ),
                     );
                   },
-                  loading: () => const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                          height: 30,
-                          width: 30,
-                          child: CircularProgressIndicator()),
-                    ],
-                  ),
-                );
-              },
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
@@ -679,7 +691,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               height: MediaQuery.of(context).copyWith().size.height / 4,
               child: CalendarDatePicker(
                 initialDate: () {
-                  if (questionAnswer == null || questionAnswer == "") {
+                  if (questionAnswer == null || questionAnswer == '') {
                     return DateTime.now();
                   }
                   try {

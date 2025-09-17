@@ -1,66 +1,73 @@
 import 'package:egy_akin/exports.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../services/localization_bloc.dart';
-import '../../utilities/translation_extension.dart';
-import '../../constants/app_color.dart';
+import '../../services/theme_bloc.dart';
 
 class LanguageSelector extends StatelessWidget {
-  const LanguageSelector({Key? key}) : super(key: key);
+  const LanguageSelector({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<LocalizationBloc, LocalizationState>(
-      builder: (context, state) {
-        String currentLanguage = 'en';
-        if (state is LocalizationLoaded) {
-          currentLanguage = state.locale.languageCode;
-        }
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-        return ListTile(
-          title: Text(
-            context.tr('language'),
-            style: TextStyle(fontSize: 13.5.sp),
-          ),
-          leading: Icon(
-            Icons.language,
-            color: Colors.grey.shade600,
-          ),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                currentLanguage == 'en' 
-                    ? context.tr('english')
-                    : context.tr('arabic'),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
+        return BlocBuilder<LocalizationBloc, LocalizationState>(
+          builder: (context, state) {
+            String currentLanguage = 'en';
+            if (state is LocalizationLoaded) {
+              currentLanguage = state.locale.languageCode;
+            }
+
+            return ListTile(
+              title: Text(
+                context.tr('language'),
+                style: TextStyle(fontSize: 13.5.sp),
               ),
-              SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 15.r,
+              leading: Icon(
+                Icons.language,
+                color: Colors.grey.shade600,
               ),
-            ],
-          ),
-          onTap: () {
-            _showLanguageDialog(context, currentLanguage);
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    currentLanguage == 'en'
+                        ? context.tr('english')
+                        : context.tr('arabic'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 15.r,
+                  ),
+                ],
+              ),
+              onTap: () {
+                _showLanguageDialog(context, currentLanguage, isDarkMode);
+              },
+            );
           },
         );
       },
     );
   }
 
-  void _showLanguageDialog(BuildContext context, String currentLanguage) {
+  void _showLanguageDialog(
+      BuildContext context, String currentLanguage, bool isDarkMode) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: isDarkMode ? AppColors.darkCardBG : Colors.white,
           title: Text(
             context.tr('language'),
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(
+              fontSize: 18,
+              color: isDarkMode ? AppColors.darkTitle : Colors.black,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -70,13 +77,15 @@ class LanguageSelector extends StatelessWidget {
                 'en',
                 context.tr('english'),
                 currentLanguage == 'en',
+                isDarkMode,
               ),
-              SizedBox(height: 12),
+              const SizedBox(height: 12),
               _buildLanguageOption(
                 context,
                 'ar',
                 context.tr('arabic'),
                 currentLanguage == 'ar',
+                isDarkMode,
               ),
             ],
           ),
@@ -90,6 +99,7 @@ class LanguageSelector extends StatelessWidget {
     String languageCode,
     String languageName,
     bool isSelected,
+    bool isDarkMode,
   ) {
     return InkWell(
       onTap: () {
@@ -97,12 +107,18 @@ class LanguageSelector extends StatelessWidget {
         context.read<LocalizationBloc>().add(ChangeLanguage(languageCode));
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withOpacity(0.1) : Colors.transparent,
+          color: isSelected
+              ? (isDarkMode
+                  ? AppColors.darkPrimary.withOpacity(0.1)
+                  : AppColors.primary.withOpacity(0.1))
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? AppColors.primary : Colors.grey.shade300,
+            color: isSelected
+                ? (isDarkMode ? AppColors.darkPrimary : AppColors.primary)
+                : (isDarkMode ? AppColors.darkBorder : Colors.grey.shade300),
             width: 1,
           ),
         ),
@@ -113,14 +129,16 @@ class LanguageSelector extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? AppColors.primary : Colors.black87,
+                color: isSelected
+                    ? (isDarkMode ? AppColors.darkPrimary : AppColors.primary)
+                    : (isDarkMode ? AppColors.darkTitle : Colors.black87),
               ),
             ),
-            Spacer(),
+            const Spacer(),
             if (isSelected)
               Icon(
                 Icons.check,
-                color: AppColors.primary,
+                color: isDarkMode ? AppColors.darkPrimary : AppColors.primary,
                 size: 20,
               ),
           ],
@@ -128,4 +146,4 @@ class LanguageSelector extends StatelessWidget {
       ),
     );
   }
-} 
+}

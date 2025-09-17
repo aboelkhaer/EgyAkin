@@ -1,10 +1,9 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/update_dialog.dart';
 import 'package:egy_akin/features/home/presentation/widgets/profile_tab_icon.dart';
 import 'package:egy_akin/features/more/presentation/pages/more_screen.dart';
 import 'package:egy_akin/app/services/deep_link_handler.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 
 import '../../../../exports.dart';
 
@@ -54,9 +53,10 @@ class _HomeScreenState extends State<HomeScreen> {
         final homeCubit = context.read<HomeCubit>();
         final hasHomeData = homeCubit.homeDataModel.data != null;
         final hasDoctorData = homeCubit.currentDoctorModel.id != null;
-        
-        debugPrint('Home screen checking deep links - Has home data: $hasHomeData, Has doctor data: $hasDoctorData');
-        
+
+        debugPrint(
+            'Home screen checking deep links - Has home data: $hasHomeData, Has doctor data: $hasDoctorData');
+
         if (hasHomeData && hasDoctorData) {
           debugPrint('Home screen is ready, processing deep links');
           final deepLinkHandler = DeepLinkHandler();
@@ -87,173 +87,218 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(0),
-        child: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          systemOverlayStyle: SystemUiOverlayStyle.dark,
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            final isDarkMode =
+                themeState is ThemeLoaded && themeState.isDarkMode;
+            return AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              systemOverlayStyle: isDarkMode
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
+            );
+          },
         ),
       ),
       body: Column(
         children: [
-          BlocConsumer<HomeCubit, HomeState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                orElse: () {},
-                loaded: (
-                  homeData,
-                  currentDoctorModel,
-                  dotsPosition,
-                  homeIndex,
-                  isUploadingSyndicateCard,
-                  isUploadedSyndicateCard,
-                  message,
-                  checkUpdateMessageCounter,
-                  isUserBlocked,
-                  changesCounter,
-                ) {
-                  if (cubit!.isUpdateMessageHidden4 == false) {
-                    showUpdateDialog(
-                      context: context,
-                      onDismissed: () {
-                        cubit!.setUpdateMessageStatusToLocal();
-                      },
-                    );
-                  }
+          BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              final isDarkMode =
+                  themeState is ThemeLoaded && themeState.isDarkMode;
 
-                  if (homeData.isUserBlocked == true) {
-                    showBlockedDialog(
-                      context: context,
-                      onDismissed: () {
-                        cubit!.signOut();
-                      },
-                    );
-                  }
+              return BlocConsumer<HomeCubit, HomeState>(
+                listener: (context, state) {
+                  state.maybeWhen(
+                    orElse: () {},
+                    loaded: (
+                      homeData,
+                      currentDoctorModel,
+                      dotsPosition,
+                      homeIndex,
+                      isUploadingSyndicateCard,
+                      isUploadedSyndicateCard,
+                      message,
+                      checkUpdateMessageCounter,
+                      isUserBlocked,
+                      changesCounter,
+                    ) {
+                      if (cubit!.isUpdateMessageHidden4 == false) {
+                        showUpdateDialog(
+                          context: context,
+                          onDismissed: () {
+                            cubit!.setUpdateMessageStatusToLocal();
+                          },
+                        );
+                      }
 
-                  if (isUserBlocked) {
-                    navigatorKey.currentState
-                        ?.pushReplacementNamed(AppRoutes.signIn);
-                  }
+                      if (homeData.isUserBlocked == true) {
+                        showBlockedDialog(
+                          context: context,
+                          onDismissed: () {
+                            cubit!.signOut();
+                          },
+                        );
+                      }
 
-                  // Check for pending deep links after home data is loaded
-                  // Add a longer delay to ensure the UI is fully ready
-                  Future.delayed(const Duration(seconds: 1), () {
-                    if (mounted) {
-                      _checkForPendingDeepLinks();
-                    }
-                  });
-                },
-              );
-            },
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      Container(
-                        padding: const EdgeInsets.all(20.0),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                        ),
-                        child: HomeHeader(cubit: cubit!),
-                      ),
-                    ],
+                      if (isUserBlocked) {
+                        navigatorKey.currentState
+                            ?.pushReplacementNamed(AppRoutes.signIn);
+                      }
+
+                      // Check for pending deep links after home data is loaded
+                      // Add a longer delay to ensure the UI is fully ready
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (mounted) {
+                          _checkForPendingDeepLinks();
+                        }
+                      });
+                    },
                   );
                 },
-                loading: (tabIndex) {
-                  if (tabIndex == 2) {
-                    return const SizedBox.shrink();
-                  }
-                  return Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      Container(
-                        padding: const EdgeInsets.all(20.0),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () {
+                      return Column(
+                        children: [
+                          SizedBox(height: 10.h),
+                          Container(
+                            padding: const EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? AppColors.darkScaffoldBG
+                                  : Colors.grey.shade100,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: isDarkMode
+                                      ? AppColors.darkBorder
+                                      : Colors.grey.shade300,
+                                ),
+                              ),
                             ),
+                            child: HomeHeader(cubit: cubit!),
                           ),
-                        ),
-                        child: HomeHeader(cubit: cubit!),
-                      ),
-                    ],
-                  );
-                },
-                loaded: (
-                  homeData,
-                  currentDoctorModel,
-                  dotsPosition,
-                  homeIndex,
-                  isUploadingSyndicateCard,
-                  isUploadedSyndicateCar,
-                  message,
-                  checkUpdateMessageCounter,
-                  isUserBlocked,
-                  changesCounter,
-                ) {
-                  if (homeIndex == 2) {
-                    return const SizedBox.shrink();
-                  }
-                  return Column(
-                    children: [
-                      SizedBox(height: 10.h),
-                      Container(
-                        padding: const EdgeInsets.all(20.0),
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.grey.shade300,
+                        ],
+                      );
+                    },
+                    loading: (tabIndex) {
+                      if (tabIndex == 2) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        children: [
+                          SizedBox(height: 10.h),
+                          Container(
+                            padding: const EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? AppColors.darkScaffoldBG
+                                  : Colors.grey.shade100,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: isDarkMode
+                                      ? AppColors.darkBorder
+                                      : Colors.grey.shade300,
+                                ),
+                              ),
                             ),
+                            child: HomeHeader(cubit: cubit!),
                           ),
-                        ),
-                        child: HomeHeader(cubit: cubit!),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
+                    loaded: (
+                      homeData,
+                      currentDoctorModel,
+                      dotsPosition,
+                      homeIndex,
+                      isUploadingSyndicateCard,
+                      isUploadedSyndicateCar,
+                      message,
+                      checkUpdateMessageCounter,
+                      isUserBlocked,
+                      changesCounter,
+                    ) {
+                      if (homeIndex == 2) {
+                        return const SizedBox.shrink();
+                      }
+                      return Column(
+                        children: [
+                          SizedBox(height: 10.h),
+                          Container(
+                            padding: const EdgeInsets.all(20.0),
+                            decoration: BoxDecoration(
+                              color: isDarkMode
+                                  ? AppColors.darkScaffoldBG
+                                  : Colors.grey.shade100,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: isDarkMode
+                                      ? AppColors.darkBorder
+                                      : Colors.grey.shade300,
+                                ),
+                              ),
+                            ),
+                            child: HomeHeader(cubit: cubit!),
+                          ),
+                        ],
+                      );
+                    },
                   );
                 },
               );
             },
           ),
           Expanded(
-            child: PersistentTabView(
-              context,
-              controller: cubit!.tabsController,
-              items: _navBarsItems(),
-              screens: _buildScreens(cubit!),
-              onItemSelected: (value) {
-                cubit!.hideHomeHeader(value);
+            child: BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, themeState) {
+                final isDarkMode =
+                    themeState is ThemeLoaded && themeState.isDarkMode;
+
+                return PersistentTabView(
+                  context,
+                  controller: cubit!.tabsController,
+                  items: _navBarsItems(isDarkMode),
+                  screens: _buildScreens(cubit!),
+                  onItemSelected: (value) {
+                    cubit!.hideHomeHeader(value);
+                  },
+                  confineInSafeArea: true,
+                  backgroundColor: isDarkMode
+                      ? AppColors.darkScaffoldBG
+                      : Colors.grey.shade100,
+                  popAllScreensOnTapAnyTabs: true,
+                  handleAndroidBackButtonPress: true,
+                  resizeToAvoidBottomInset: true,
+                  stateManagement: true,
+                  hideNavigationBarWhenKeyboardShows: true,
+                  decoration: NavBarDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    colorBehindNavBar: isDarkMode
+                        ? AppColors.darkScaffoldBG
+                        : Colors.grey.shade100,
+                    border: Border(
+                      top: BorderSide(
+                          color: isDarkMode
+                              ? AppColors.darkBorder
+                              : Colors.grey.shade300,
+                          width: 1.0),
+                    ),
+                  ),
+                  popAllScreensOnTapOfSelectedTab: true,
+                  itemAnimationProperties: const ItemAnimationProperties(
+                    duration: Duration(milliseconds: 200),
+                    curve: Curves.ease,
+                  ),
+                  screenTransitionAnimation: const ScreenTransitionAnimation(
+                    animateTabTransition: true,
+                    curve: Curves.ease,
+                    duration: Duration(milliseconds: 200),
+                  ),
+                  navBarStyle: NavBarStyle.style12,
+                );
               },
-              confineInSafeArea: true,
-              backgroundColor: Colors.white,
-              popAllScreensOnTapAnyTabs: true,
-              handleAndroidBackButtonPress: true,
-              resizeToAvoidBottomInset: true,
-              stateManagement: true,
-              hideNavigationBarWhenKeyboardShows: true,
-              decoration: NavBarDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                colorBehindNavBar: Colors.white,
-                border: Border(
-                  top: BorderSide(color: Colors.grey.shade200, width: 1.0),
-                ),
-              ),
-              popAllScreensOnTapOfSelectedTab: true,
-              itemAnimationProperties: const ItemAnimationProperties(
-                duration: Duration(milliseconds: 200),
-                curve: Curves.ease,
-              ),
-              screenTransitionAnimation: const ScreenTransitionAnimation(
-                animateTabTransition: true,
-                curve: Curves.ease,
-                duration: Duration(milliseconds: 200),
-              ),
-              navBarStyle: NavBarStyle.style12,
             ),
           ),
         ],
@@ -372,31 +417,34 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
-  List<PersistentBottomNavBarItem> _navBarsItems() {
+  List<PersistentBottomNavBarItem> _navBarsItems(bool isDarkMode) {
+    final activeColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+    final inactiveColor = isDarkMode ? AppColors.darkDescription : Colors.grey;
+
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.home),
         title: ('Home'),
-        activeColorPrimary: AppColors.primary,
-        inactiveColorPrimary: Colors.grey,
+        activeColorPrimary: activeColor,
+        inactiveColorPrimary: inactiveColor,
       ),
       PersistentBottomNavBarItem(
         icon: const NotificationTabIcon(),
         title: ('Notification'),
-        activeColorPrimary: AppColors.primary,
-        inactiveColorPrimary: Colors.grey,
+        activeColorPrimary: activeColor,
+        inactiveColorPrimary: inactiveColor,
       ),
       PersistentBottomNavBarItem(
         icon: const ProfileTabIcon(),
         title: ('Profile'),
-        activeColorPrimary: AppColors.primary,
-        inactiveColorPrimary: Colors.grey,
+        activeColorPrimary: activeColor,
+        inactiveColorPrimary: inactiveColor,
       ),
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.more_horiz),
         title: ('More'),
-        activeColorPrimary: AppColors.primary,
-        inactiveColorPrimary: Colors.grey,
+        activeColorPrimary: activeColor,
+        inactiveColorPrimary: inactiveColor,
       ),
     ];
   }

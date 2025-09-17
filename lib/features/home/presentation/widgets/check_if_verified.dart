@@ -4,12 +4,14 @@ class CheckIfVerified extends StatelessWidget {
   final bool verified;
   final String isSyndicateCardRequired;
   final bool isExitVerification;
+  final bool isDarkMode;
 
   const CheckIfVerified({
     super.key,
     required this.verified,
     required this.isSyndicateCardRequired,
     required this.isExitVerification,
+    required this.isDarkMode,
   });
 
   @override
@@ -32,10 +34,12 @@ class CheckIfVerified extends StatelessWidget {
               alignment: Alignment.center,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: isDarkMode ? AppColors.darkCardBG : Colors.grey.shade200,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 7,
                     offset: const Offset(0, 3), // changes position of shadow
@@ -47,22 +51,29 @@ class CheckIfVerified extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.error_outline,
-                    color: Colors.blue.shade600,
+                    color: isDarkMode
+                        ? AppColors.darkPrimary
+                        : Colors.blue.shade600,
                     size: 16,
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    context.tr(AppStrings.toAddPatientsYouMustVerifyYourEmailAddress),
+                    context.tr(
+                        AppStrings.toAddPatientsYouMustVerifyYourEmailAddress),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.blue.shade600,
+                      color: isDarkMode
+                          ? AppColors.darkPrimary
+                          : Colors.blue.shade600,
                     ),
                   ),
                   Icon(
                     Icons.arrow_forward,
                     size: 18,
-                    color: Colors.blue.shade600,
+                    color: isDarkMode
+                        ? AppColors.darkPrimary
+                        : Colors.blue.shade600,
                   ),
                 ],
               ),
@@ -101,10 +112,12 @@ class CheckIfVerified extends StatelessWidget {
               alignment: Alignment.center,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
+                color: isDarkMode ? AppColors.darkCardBG : Colors.grey.shade200,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
+                    color: isDarkMode
+                        ? Colors.black.withOpacity(0.3)
+                        : Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 7,
                     offset: const Offset(0, 3), // changes position of shadow
@@ -116,18 +129,24 @@ class CheckIfVerified extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.error_outline,
-                    color: Colors.blue.shade600,
+                    color: isDarkMode
+                        ? AppColors.darkPrimary
+                        : Colors.blue.shade600,
                     size: 16,
                   ),
                   const SizedBox(width: 2),
                   Text(
                     isSyndicateCardRequired == 'Required'
-                        ? context.tr(AppStrings.toAddPatientsYouMustVerifyYourSyndicateCard)
-                        : context.tr(AppStrings.theSyndicateCardIsBeingProcessedForVerification),
+                        ? context.tr(AppStrings
+                            .toAddPatientsYouMustVerifyYourSyndicateCard)
+                        : context.tr(AppStrings
+                            .theSyndicateCardIsBeingProcessedForVerification),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.blue.shade600,
+                      color: isDarkMode
+                          ? AppColors.darkPrimary
+                          : Colors.blue.shade600,
                     ),
                   ),
                   isSyndicateCardRequired == 'Required'

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_state.dart';
 
 import '../../../../../exports.dart';
+import '../../../../../app/services/theme_bloc.dart';
 
 class TrendingTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -68,161 +69,176 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
     // Dummy data for trending hashtags with counters
 
     TrendingCubit cubit = TrendingCubit.get(context);
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1.0,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Container(
+          decoration: BoxDecoration(
+            color: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade200,
+                width: 1.0,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: BlocBuilder<TrendingCubit, TrendingState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: LoadingForGroupRow(
-                    count: 20,
-                    isTrends: true,
-                  ),
-                ),
-              );
-            },
-            loaded: (
-              snackBarMessage,
-              dialogMessage,
-              response,
-              isSeeMore,
-            ) {
-              return response.data!.isEmpty
-                  ? RefreshIndicator(
-                      onRefresh: () {
-                        return cubit.getTrendingPostsInCommunity();
-                      },
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Center(
-                          child: Column(
-                            children: [
-                              SizedBox(height: 150.h),
-                              Image.asset(
-                                AppImages.notFound,
-                                width: 150.w,
-                                height: 150.h,
-                              ),
-                              SizedBox(height: 150.h),
-                            ],
-                          ),
-                        ),
+          child: BlocBuilder<TrendingCubit, TrendingState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SingleChildScrollView(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: LoadingForGroupRow(
+                        count: 20,
+                        isTrends: true,
                       ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () {
-                        return cubit.getTrendingPostsInCommunity();
-                      },
-                      child: Column(
-                        children: [
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: response.data!.length,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              controller: _scrollController,
-                              padding: EdgeInsets.only(bottom: 50.h),
-                              itemBuilder: (context, index) {
-                                TrendModel trendModel = response.data![index];
-                                return Column(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        navigatorKey.currentState?.pushNamed(
-                                          AppRoutes.communitySearch,
-                                          arguments: AppRoutesArgs
-                                              .communitySearchRouteArgs(
-                                            currentDoctorModel:
-                                                widget.currentDoctorModel,
-                                            homeDataModel: widget.homeDataModel,
-                                            initialValueInSearch:
-                                                '#${trendModel.tag}',
-                                          ),
-                                        );
-                                      },
-                                      child: Container(
-                                        alignment: context.currentLocale?.languageCode == 'ar' ? Alignment.topRight : Alignment.topLeft,
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '#${capitalizeFirstText(trendModel.tag.toString())}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${trendModel.usageCount} posts',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.grey.shade500,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${index + 1}. Trending in Egypt',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.grey.shade500,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Divider(
-                                      color: Colors.grey.shade100,
-                                    ),
-                                  ],
-                                );
-                              },
+                    ),
+                  );
+                },
+                loaded: (
+                  snackBarMessage,
+                  dialogMessage,
+                  response,
+                  isSeeMore,
+                ) {
+                  return response.data!.isEmpty
+                      ? RefreshIndicator(
+                          onRefresh: () {
+                            return cubit.getTrendingPostsInCommunity();
+                          },
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            child: Center(
+                              child: Column(
+                                children: [
+                                  SizedBox(height: 150.h),
+                                  Image.asset(
+                                    AppImages.notFound,
+                                    width: 150.w,
+                                    height: 150.h,
+                                  ),
+                                  SizedBox(height: 150.h),
+                                ],
+                              ),
                             ),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        )
+                      : RefreshIndicator(
+                          onRefresh: () {
+                            return cubit.getTrendingPostsInCommunity();
+                          },
+                          child: Column(
                             children: [
-                              isSeeMore
-                                  ? Column(
+                              Expanded(
+                                child: ListView.builder(
+                                  itemCount: response.data!.length,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  controller: _scrollController,
+                                  padding: EdgeInsets.only(bottom: 50.h),
+                                  itemBuilder: (context, index) {
+                                    TrendModel trendModel =
+                                        response.data![index];
+                                    return Column(
                                       children: [
-                                        const SizedBox(
-                                          height: 15,
-                                          width: 15,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 3,
+                                        InkWell(
+                                          onTap: () {
+                                            navigatorKey.currentState
+                                                ?.pushNamed(
+                                              AppRoutes.communitySearch,
+                                              arguments: AppRoutesArgs
+                                                  .communitySearchRouteArgs(
+                                                currentDoctorModel:
+                                                    widget.currentDoctorModel,
+                                                homeDataModel:
+                                                    widget.homeDataModel,
+                                                initialValueInSearch:
+                                                    '#${trendModel.tag}',
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            alignment: context.currentLocale
+                                                        ?.languageCode ==
+                                                    'ar'
+                                                ? Alignment.topRight
+                                                : Alignment.topLeft,
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 20, vertical: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  '#${capitalizeFirstText(trendModel.tag.toString())}',
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${trendModel.usageCount} posts',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w400,
+                                                    color: Colors.grey.shade500,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${index + 1}. Trending in Egypt',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey.shade500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                        SizedBox(height: 20.h),
+                                        Divider(
+                                          color: Colors.grey.shade100,
+                                        ),
                                       ],
-                                    )
-                                  : GestureDetector(
-                                      onTap: () {
-                                        // Add logic here if needed
-                                      },
-                                      child: const Text(
-                                        '',
-                                      ),
-                                    ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  isSeeMore
+                                      ? Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 15,
+                                              width: 15,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 3,
+                                              ),
+                                            ),
+                                            SizedBox(height: 20.h),
+                                          ],
+                                        )
+                                      : GestureDetector(
+                                          onTap: () {
+                                            // Add logic here if needed
+                                          },
+                                          child: const Text(
+                                            '',
+                                          ),
+                                        ),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
-                      ),
-                    );
+                        );
+                },
+              );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

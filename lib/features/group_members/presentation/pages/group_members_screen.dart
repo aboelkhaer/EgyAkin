@@ -2,6 +2,7 @@ import 'package:egy_akin/features/group_members/presentation/cubit/group_members
 import 'package:egy_akin/features/group_members/presentation/cubit/group_members_state.dart';
 
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class GroupMembersScreen extends StatefulWidget {
   final String groupId;
@@ -80,167 +81,183 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
   @override
   Widget build(BuildContext context) {
     final GroupMembersCubit cubit = GroupMembersCubit.get(context);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          SizedBox(height: 5.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Scaffold(
+          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+          body: Column(
             children: [
-              Container(
-                height: 5.h,
-                width: 60.w,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(40),
+              SizedBox(height: 5.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 5.h,
+                    width: 60.w,
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? AppColors.darkBorder
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 20, left: 20, right: 20, bottom: 10),
+                child: Row(
+                  children: [
+                    Text(
+                      widget.isPostLikes
+                          ? context.tr(AppStrings.postLikes)
+                          : context.tr(AppStrings.groupMembers),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.sp,
+                        color: isDarkMode
+                            ? AppColors.darkTitle
+                            : Colors.grey.shade800,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 20, left: 20, right: 20, bottom: 10),
-            child: Row(
-              children: [
-                Text(
-                  widget.isPostLikes ? context.tr(AppStrings.postLikes) : context.tr(AppStrings.groupMembers),
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
-                    color: Colors.grey.shade800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: BlocBuilder<GroupMembersCubit, GroupMembersState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  orElse: () =>
-                      const Center(child: CircularProgressIndicator()),
-                  loaded: (
-                    snackBarMessage,
-                    dialogMessage,
-                    response,
-                    isSeeMore,
-                    isRemoveMemberFromGroupLoading,
-                    isRemoveMemberFromGroupLoaded,
-                    isAcceptLoading,
-                    isDeclineLoading,
-                    postLikesResponse,
-                  ) {
-                    if (widget.isPostLikes) {
-                      // Handle post likes case
-                      if (postLikesResponse.data!.data!.isEmpty) {
-                        return Center(
-                          child: Image.asset(
-                            AppImages.notFound,
-                            width: 100.h,
-                            height: 150.h,
-                          ),
-                        );
-                      }
+              Expanded(
+                child: BlocBuilder<GroupMembersCubit, GroupMembersState>(
+                  builder: (context, state) {
+                    return state.maybeWhen(
+                      orElse: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      loaded: (
+                        snackBarMessage,
+                        dialogMessage,
+                        response,
+                        isSeeMore,
+                        isRemoveMemberFromGroupLoading,
+                        isRemoveMemberFromGroupLoaded,
+                        isAcceptLoading,
+                        isDeclineLoading,
+                        postLikesResponse,
+                      ) {
+                        if (widget.isPostLikes) {
+                          // Handle post likes case
+                          if (postLikesResponse.data!.data!.isEmpty) {
+                            return Center(
+                              child: Image.asset(
+                                AppImages.notFound,
+                                width: 100.h,
+                                height: 150.h,
+                              ),
+                            );
+                          }
 
-                      return ListView.builder(
-                        controller: cubit.scrollController,
-                        itemCount: postLikesResponse.data!.data!.length,
-                        itemBuilder: (context, index) {
-                          DoctorModel doctorModel =
-                              postLikesResponse.data!.data![index];
-                          return _buildPostLikeMemberCard(
-                            context,
-                            doctorModel,
-                            cubit,
+                          return ListView.builder(
+                            controller: cubit.scrollController,
+                            itemCount: postLikesResponse.data!.data!.length,
+                            itemBuilder: (context, index) {
+                              DoctorModel doctorModel =
+                                  postLikesResponse.data!.data![index];
+                              return _buildPostLikeMemberCard(
+                                context,
+                                doctorModel,
+                                cubit,
+                                isDarkMode,
+                              );
+                            },
                           );
-                        },
-                      );
-                    } else {
-                      // Handle group members case
-                      if (response.data!.pendingInvitations!.isEmpty &&
-                          response.data!.members!.data!.isEmpty) {
-                        return Center(
-                          child: Image.asset(
-                            AppImages.notFound,
-                            width: 100.h,
-                            height: 150.h,
-                          ),
-                        );
-                      }
+                        } else {
+                          // Handle group members case
+                          if (response.data!.pendingInvitations!.isEmpty &&
+                              response.data!.members!.data!.isEmpty) {
+                            return Center(
+                              child: Image.asset(
+                                AppImages.notFound,
+                                width: 100.h,
+                                height: 150.h,
+                              ),
+                            );
+                          }
 
-                      return ListView(
-                        controller: cubit.scrollController,
-                        children: [
-                          // Pending Invitations List
-                          if (response.data!.pendingInvitations!.isNotEmpty)
-                            ...response.data!.pendingInvitations!
-                                .map((doctorModel) {
-                              return Column(
-                                children: [
-                                  _buildMemberCard(
+                          return ListView(
+                            controller: cubit.scrollController,
+                            children: [
+                              // Pending Invitations List
+                              if (response.data!.pendingInvitations!.isNotEmpty)
+                                ...response.data!.pendingInvitations!
+                                    .map((doctorModel) {
+                                  return Column(
+                                    children: [
+                                      _buildMemberCard(
+                                        context,
+                                        doctorModel,
+                                        cubit,
+                                        isRemoveMemberFromGroupLoading:
+                                            isRemoveMemberFromGroupLoading,
+                                        isPending: true,
+                                        isAcceptLoading: isAcceptLoading,
+                                        isDeclineLoading: isDeclineLoading,
+                                        isDarkMode: isDarkMode,
+                                      ),
+                                    ],
+                                  );
+                                }),
+                              response.data!.pendingInvitations!.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : Column(
+                                      children: [
+                                        const Divider(
+                                          color: AppColors.primary,
+                                          thickness: 0.5,
+                                        ),
+                                        SizedBox(height: 10.h),
+                                      ],
+                                    ),
+
+                              // Members List
+                              if (response.data!.members!.data!.isNotEmpty)
+                                ...response.data!.members!.data!
+                                    .map((doctorModel) {
+                                  return _buildMemberCard(
                                     context,
                                     doctorModel,
                                     cubit,
                                     isRemoveMemberFromGroupLoading:
                                         isRemoveMemberFromGroupLoading,
-                                    isPending: true,
+                                    isPending: false,
                                     isAcceptLoading: isAcceptLoading,
                                     isDeclineLoading: isDeclineLoading,
-                                  ),
-                                ],
-                              );
-                            }),
-                          response.data!.pendingInvitations!.isEmpty
-                              ? const SizedBox.shrink()
-                              : Column(
-                                  children: [
-                                    const Divider(
-                                      color: AppColors.primary,
-                                      thickness: 0.5,
+                                    isDarkMode: isDarkMode,
+                                  );
+                                }),
+
+                              // Loading indicator for "See More"
+                              if (isSeeMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(
+                                    child: SizedBox(
+                                      height: 15,
+                                      width: 15,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 3),
                                     ),
-                                    SizedBox(height: 10.h),
-                                  ],
+                                  ),
                                 ),
-
-                          // Members List
-                          if (response.data!.members!.data!.isNotEmpty)
-                            ...response.data!.members!.data!.map((doctorModel) {
-                              return _buildMemberCard(
-                                context,
-                                doctorModel,
-                                cubit,
-                                isRemoveMemberFromGroupLoading:
-                                    isRemoveMemberFromGroupLoading,
-                                isPending: false,
-                                isAcceptLoading: isAcceptLoading,
-                                isDeclineLoading: isDeclineLoading,
-                              );
-                            }),
-
-                          // Loading indicator for "See More"
-                          if (isSeeMore)
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
-                              child: Center(
-                                child: SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child:
-                                      CircularProgressIndicator(strokeWidth: 3),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-                    }
+                            ],
+                          );
+                        }
+                      },
+                    );
                   },
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -248,15 +265,16 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     BuildContext context,
     DoctorModel doctorModel,
     GroupMembersCubit cubit,
+    bool isDarkMode,
   ) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 8),
       child: Card(
-        color: Colors.white,
+        color: isDarkMode ? AppColors.darkCardBG : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          splashColor: AppColors.subBG,
+          splashColor: isDarkMode ? AppColors.darkSubBG : AppColors.subBG,
           onTap: () {
             navigatorKey.currentState?.pushNamed(
               AppRoutes.doctorInfoView,
@@ -393,15 +411,16 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     required bool isPending,
     required bool isAcceptLoading,
     required bool isDeclineLoading,
+    required bool isDarkMode,
   }) {
     return Padding(
       padding: const EdgeInsets.only(left: 20, right: 20, bottom: 8),
       child: Card(
-        color: Colors.white,
+        color: isDarkMode ? AppColors.darkCardBG : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
-          splashColor: AppColors.subBG,
+          splashColor: isDarkMode ? AppColors.darkSubBG : AppColors.subBG,
           onTap: () {
             navigatorKey.currentState?.pushNamed(
               AppRoutes.doctorInfoView,

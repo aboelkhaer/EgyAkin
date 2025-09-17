@@ -106,11 +106,11 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
           ),
         ),
         actions: [
-            BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+          BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
             builder: (context, state) {
               return state.maybeWhen(
                 orElse: () {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 },
                 loaded: (
                   response,
@@ -120,25 +120,22 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   isApplyFilterLoaded,
                 ) {
                   return IconButton(
-                    onPressed: () {
-                   
-                    },
+                    onPressed: () {},
                     icon: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         cubit.totalPatientInFilter == 0
                             ? const SizedBox.shrink()
                             : FadeIn(
-                              child: Text(
-                               response.data!.data!.length.toString(),
+                                child: Text(
+                                  response.data!.data!.length.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 9.sp,
                                   ),
                                 ),
-                            ),
-                       
+                              ),
                       ],
                     ),
                   );
@@ -152,7 +149,21 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                 orElse: () {
                   return IconButton(
                     onPressed: () {},
-                    icon: const Icon(Icons.filter_list),
+                    icon: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.filter_list),
+                        const SizedBox(height: 2),
+                        Text(
+                          context.tr(AppStrings.filter),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 },
                 loaded: (

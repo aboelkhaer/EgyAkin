@@ -5,8 +5,12 @@ import '../../../../exports.dart';
 class ProfileFeatures extends StatelessWidget {
   final ProfileCubit cubit;
   final HomeModelResponse homeDataModel;
+  final bool isDarkMode;
   const ProfileFeatures(
-      {super.key, required this.cubit, required this.homeDataModel});
+      {super.key,
+      required this.cubit,
+      required this.homeDataModel,
+      required this.isDarkMode});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,8 @@ class ProfileFeatures extends StatelessWidget {
                           left: 20, right: 20, bottom: 16),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDarkMode ? AppColors.darkCardBG : Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: Row(
                         children: [
@@ -49,12 +54,16 @@ class ProfileFeatures extends StatelessWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: Colors.grey.shade200,
+                                color: isDarkMode
+                                    ? AppColors.darkBorder
+                                    : Colors.grey.shade200,
                               ),
                             ),
                             child: Icon(
                               _profileScreensData(context)[index].icon,
-                              color: Colors.grey.shade800,
+                              color: isDarkMode
+                                  ? AppColors.darkTitle
+                                  : Colors.grey.shade800,
                             ),
                           ),
                           SizedBox(width: 8.w),
@@ -70,6 +79,9 @@ class ProfileFeatures extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
+                                  color: isDarkMode
+                                      ? AppColors.darkTitle
+                                      : Colors.black,
                                 ),
                               ),
                               _profileScreensData(context)[index]
@@ -80,7 +92,9 @@ class ProfileFeatures extends StatelessWidget {
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 10.sp,
-                                          color: Colors.grey.shade700),
+                                          color: isDarkMode
+                                              ? AppColors.darkDescription
+                                              : Colors.grey.shade700),
                                     )
                                   : const SizedBox.shrink(),
                             ],
@@ -92,20 +106,23 @@ class ProfileFeatures extends StatelessWidget {
                 },
                 signOutLoading: () {
                   return GestureDetector(
-                    onTap:
-                        _profileScreensData(context)[index].title == LocalizationService.instance.translate(AppStrings.signOut)
-                            ? () {}
-                            : _profileScreensData(context)[index].onTap,
+                    onTap: _profileScreensData(context)[index].title ==
+                            LocalizationService.instance
+                                .translate(AppStrings.signOut)
+                        ? () {}
+                        : _profileScreensData(context)[index].onTap,
                     child: Container(
                       width: double.infinity,
                       margin: const EdgeInsets.only(
                           left: 20, right: 20, bottom: 16),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDarkMode ? AppColors.darkCardBG : Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: _profileScreensData(context)[index].title ==
-                              LocalizationService.instance.translate(AppStrings.signOut)
+                              LocalizationService.instance
+                                  .translate(AppStrings.signOut)
                           ? Container(
                               padding: const EdgeInsets.all(3),
                               child: const Row(
@@ -176,7 +193,8 @@ class ProfileFeatures extends StatelessWidget {
                           left: 20, right: 20, bottom: 16),
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                          color: Colors.white,
+                          color:
+                              isDarkMode ? AppColors.darkCardBG : Colors.white,
                           borderRadius: BorderRadius.circular(10)),
                       child: Row(
                         children: [
@@ -207,6 +225,9 @@ class ProfileFeatures extends StatelessWidget {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 12.sp,
+                                  color: isDarkMode
+                                      ? AppColors.darkTitle
+                                      : Colors.black,
                                 ),
                               ),
                               _profileScreensData(context)[index]
@@ -217,7 +238,9 @@ class ProfileFeatures extends StatelessWidget {
                                       style: TextStyle(
                                           fontWeight: FontWeight.w500,
                                           fontSize: 10.sp,
-                                          color: Colors.grey.shade700),
+                                          color: isDarkMode
+                                              ? AppColors.darkDescription
+                                              : Colors.grey.shade700),
                                     )
                                   : const SizedBox.shrink(),
                             ],
@@ -240,7 +263,8 @@ class ProfileFeatures extends StatelessWidget {
       ProfileScreens(
         icon: Icons.person_outline,
         title: LocalizationService.instance.translate(AppStrings.account),
-        description: LocalizationService.instance.translate(AppStrings.manageYourPersonalInfo),
+        description: LocalizationService.instance
+            .translate(AppStrings.manageYourPersonalInfo),
         onTap: () {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
@@ -248,7 +272,8 @@ class ProfileFeatures extends StatelessWidget {
       ProfileScreens(
         icon: Icons.chat_bubble_outline,
         title: LocalizationService.instance.translate(AppStrings.consultation),
-        description: LocalizationService.instance.translate(AppStrings.initateOrViewConsultations),
+        description: LocalizationService.instance
+            .translate(AppStrings.initateOrViewConsultations),
         onTap: () {
           navigatorKey.currentState?.pushNamed(
             AppRoutes.consultation,
@@ -263,7 +288,8 @@ class ProfileFeatures extends StatelessWidget {
       ProfileScreens(
         icon: Icons.emoji_events_outlined,
         title: LocalizationService.instance.translate(AppStrings.achievements),
-        description: LocalizationService.instance.translate(AppStrings.exploreYourAccomplishments),
+        description: LocalizationService.instance
+            .translate(AppStrings.exploreYourAccomplishments),
         onTap: () {
           showCustomBottomSheet(
             context: context,

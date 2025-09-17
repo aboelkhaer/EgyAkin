@@ -1,4 +1,5 @@
 import '../../../exports.dart';
+import '../../../app/services/theme_bloc.dart';
 
 enum DialogType { error, information, success }
 
@@ -16,53 +17,64 @@ Future<void> showHintDialog({
     context: context,
     barrierDismissible: true,
     builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                _getIcon(dialogType),
-                size: 48,
-                color: _getIconColor(dialogType),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                message,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: 100.w, // Takes all available width
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+      return BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+          return Dialog(
+            backgroundColor: isDarkMode ? AppColors.darkCardBG : Colors.white,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    _getIcon(dialogType),
+                    size: 48,
+                    color: _getIconColor(dialogType, isDarkMode),
                   ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    "OK",
+                  const SizedBox(height: 16),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
                     style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: isDarkMode ? AppColors.darkTitle : Colors.black87,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: 100.w, // Takes all available width
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDarkMode
+                            ? AppColors.darkPrimary
+                            : AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text(
+                        'OK',
+                        style: TextStyle(
+                          color:
+                              isDarkMode ? AppColors.darkTitle : Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       );
     },
   );
@@ -80,13 +92,13 @@ IconData _getIcon(DialogType dialogType) {
   }
 }
 
-Color _getIconColor(DialogType dialogType) {
+Color _getIconColor(DialogType dialogType, bool isDarkMode) {
   switch (dialogType) {
     case DialogType.error:
-      return Colors.red.shade700;
+      return isDarkMode ? Colors.red.shade300 : Colors.red.shade700;
     case DialogType.information:
-      return AppColors.primary;
+      return isDarkMode ? AppColors.darkPrimary : AppColors.primary;
     case DialogType.success:
-      return Colors.green;
+      return isDarkMode ? Colors.green.shade300 : Colors.green;
   }
 }

@@ -8,6 +8,7 @@ class ProfileNameAndJob extends StatelessWidget {
   final int currentDoctorPoints;
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
+  final bool isDarkMode;
 
   const ProfileNameAndJob({
     super.key,
@@ -18,6 +19,7 @@ class ProfileNameAndJob extends StatelessWidget {
     required this.currentDoctorPoints,
     required this.homeDataModel,
     required this.currentDoctorModel,
+    required this.isDarkMode,
   });
 
   @override
@@ -52,6 +54,7 @@ class ProfileNameAndJob extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
+                        color: isDarkMode ? AppColors.darkTitle : Colors.black,
                       ),
                     ),
                     isSyndicateCardRequired == 'Verified'
@@ -68,7 +71,9 @@ class ProfileNameAndJob extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
+                    color: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey.shade700,
                   ),
                 ),
                 SizedBox(height: 3.h),
@@ -149,6 +154,7 @@ class ProfileNameAndJob extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
+                        color: isDarkMode ? AppColors.darkTitle : Colors.black,
                       ),
                     ),
                     isSyndicateCardRequired == 'Verified'
@@ -165,7 +171,9 @@ class ProfileNameAndJob extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
+                    color: isDarkMode
+                        ? AppColors.darkDescription
+                        : Colors.grey.shade700,
                   ),
                 ),
                 SizedBox(height: 3.h),
@@ -332,14 +340,17 @@ class ProfileNameAndJob extends StatelessWidget {
           Icon(
             icon,
             size: 16.sp,
-            color: AppColors.primary.withOpacity(0.5),
+            color: isDarkMode
+                ? AppColors.darkPrimary.withOpacity(0.7)
+                : AppColors.primary.withOpacity(0.5),
           ),
           SizedBox(width: 4.w),
           Text(
             value,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
+              color:
+                  isDarkMode ? AppColors.darkDescription : Colors.grey.shade600,
               fontSize: 12.sp,
             ),
           ),
@@ -348,7 +359,8 @@ class ProfileNameAndJob extends StatelessWidget {
             label,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.grey.shade600,
+              color:
+                  isDarkMode ? AppColors.darkDescription : Colors.grey.shade600,
               fontSize: 12.sp,
             ),
           ),
@@ -362,7 +374,7 @@ class ProfileNameAndJob extends StatelessWidget {
     return Container(
       height: 20.h,
       width: 1.w,
-      color: Colors.grey.shade400,
+      color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade400,
       margin: context.currentLocale?.languageCode == 'ar'
           ? EdgeInsets.only(left: 5.w)
           : EdgeInsets.only(right: 5.w),

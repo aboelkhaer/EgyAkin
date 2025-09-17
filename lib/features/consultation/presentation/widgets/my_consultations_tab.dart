@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/consultation/presentation/widgets/consultation_list.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 import '../../../../exports.dart';
 
@@ -25,38 +26,48 @@ class _MyConsultationsTabState extends State<MyConsultationsTab> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ConsultationCubit, ConsultationState>(
-      listener: (context, state) {
-        state.maybeWhen(
-          orElse: () {},
-          error: (message) {
-            customSnackBar(context: context, message: message);
-          },
-        );
-      },
-      builder: (context, state) {
-        return state.maybeWhen(
-          orElse: () {
-            return const SizedBox.shrink();
-          },
-          myConsultationsLoading: () {
-            return const Center(
-              child: CircularProgressIndicator(),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return BlocConsumer<ConsultationCubit, ConsultationState>(
+          listener: (context, state) {
+            state.maybeWhen(
+              orElse: () {},
+              error: (message) {
+                customSnackBar(context: context, message: message);
+              },
             );
           },
-          myConsultationsLoaded: (consultations) {
-            return RefreshIndicator(
-              onRefresh: () async {
-                context
-                    .read<ConsultationCubit>()
-                    .getCurrentDoctorConsultations();
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () {
+                return const SizedBox.shrink();
               },
-              child: ConsultationList(
-                consultations: consultations,
-                currentDoctorModel: widget.currentDoctorModel,
-                homeDataModel: widget.homeDataModel,
-                isReceivedConsultation: false,
-              ),
+              myConsultationsLoading: () {
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                  ),
+                );
+              },
+              myConsultationsLoaded: (consultations) {
+                return RefreshIndicator(
+                  color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                  onRefresh: () async {
+                    context
+                        .read<ConsultationCubit>()
+                        .getCurrentDoctorConsultations();
+                  },
+                  child: ConsultationList(
+                    consultations: consultations,
+                    currentDoctorModel: widget.currentDoctorModel,
+                    homeDataModel: widget.homeDataModel,
+                    isReceivedConsultation: false,
+                    isDarkMode: isDarkMode,
+                  ),
+                );
+              },
             );
           },
         );

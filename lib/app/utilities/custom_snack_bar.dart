@@ -1,4 +1,5 @@
 import '../../exports.dart';
+import '../services/theme_bloc.dart';
 
 DateTime? _lastSnackBarTime; // Track the last time a SnackBar was shown
 
@@ -21,11 +22,23 @@ void customSnackBar({required BuildContext context, required String message}) {
 
   scaffoldMessenger.hideCurrentSnackBar();
 
+  // Get theme state from context
+  final themeBloc = context.read<ThemeBloc>();
+  final themeState = themeBloc.state;
+  final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
   final snackBar = SnackBar(
-    content: Text(message),
+    content: Text(
+      message,
+      style: TextStyle(
+        color: isDarkMode ? AppColors.darkTitle : Colors.white,
+      ),
+    ),
+    backgroundColor: isDarkMode ? AppColors.darkCardBG : AppColors.darkCardBG,
     duration: const Duration(seconds: AppStrings.snackBarDelay),
     action: SnackBarAction(
-      label: context.tr(AppStrings.ok), 
+      label: context.tr(AppStrings.ok),
+      textColor: isDarkMode ? AppColors.darkPrimary : Colors.white,
       onPressed: () {},
     ),
   );

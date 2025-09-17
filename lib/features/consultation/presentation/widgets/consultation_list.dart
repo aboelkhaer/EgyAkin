@@ -4,6 +4,7 @@ class ConsultationList extends StatelessWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   final bool isReceivedConsultation;
+  final bool isDarkMode;
 
   final List<GetCurrentDoctorConsultationModelResponse> consultations;
   const ConsultationList(
@@ -11,7 +12,8 @@ class ConsultationList extends StatelessWidget {
       required this.consultations,
       required this.currentDoctorModel,
       required this.homeDataModel,
-      required this.isReceivedConsultation});
+      required this.isReceivedConsultation,
+      this.isDarkMode = false});
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +35,14 @@ class ConsultationList extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                 child: Card(
-                  color: Colors.white,
+                  color: isDarkMode ? AppColors.darkCardBG : Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: InkWell(
                     borderRadius: BorderRadius.circular(10),
-                    splashColor: AppColors.subBG,
+                    splashColor:
+                        isDarkMode ? AppColors.darkBorder : AppColors.subBG,
                     onTap: () {
                       navigatorKey.currentState?.pushNamed(
                         AppRoutes.consultationDetails,
@@ -157,8 +160,11 @@ class ConsultationList extends StatelessWidget {
                                                                 consult.doctorId
                                                                     .toString()
                                                             ? Colors.green
-                                                            : Colors
-                                                                .grey.shade700,
+                                                            : isDarkMode
+                                                                ? AppColors
+                                                                    .darkTitle
+                                                                : Colors.grey
+                                                                    .shade700,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         fontSize: 12.sp,
@@ -183,7 +189,9 @@ class ConsultationList extends StatelessWidget {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 12.sp,
-                                                color: Colors.grey.shade500,
+                                                color: isDarkMode
+                                                    ? AppColors.darkDescription
+                                                    : Colors.grey.shade500,
                                               ),
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
@@ -194,15 +202,19 @@ class ConsultationList extends StatelessWidget {
                                             width: 200.w,
                                             padding: const EdgeInsets.all(8),
                                             decoration: BoxDecoration(
-                                              color: AppColors.primary
-                                                  .withOpacity(0.05),
+                                              color: isDarkMode
+                                                  ? AppColors.darkBorder
+                                                  : AppColors.primary
+                                                      .withOpacity(0.05),
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
                                             child: Text(
                                               '${context.tr(AppStrings.thePatient)}: ${consult.patientName}',
                                               style: TextStyle(
-                                                color: Colors.grey.shade700,
+                                                color: isDarkMode
+                                                    ? AppColors.darkDescription
+                                                    : Colors.grey.shade700,
                                                 fontSize: 10.sp,
                                               ),
                                               overflow: TextOverflow.ellipsis,
@@ -255,7 +267,9 @@ class ConsultationList extends StatelessWidget {
                                 TimeAgoService.instance.formatTimeAgoFromString(
                                     consult.createdAt.toString(), context),
                                 style: TextStyle(
-                                  color: AppColors.description,
+                                  color: isDarkMode
+                                      ? AppColors.darkDescription
+                                      : AppColors.description,
                                   fontSize: 9.sp,
                                 ),
                               ),

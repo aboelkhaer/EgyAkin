@@ -6,6 +6,7 @@ import 'package:pub_semver/pub_semver.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/deep_link_handler.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -189,9 +190,10 @@ class _SplashScreenState extends State<SplashScreen>
         // Check if there's a pending deep link
         final deepLinkHandler = DeepLinkHandler();
         final hasPendingDeepLink = deepLinkHandler.hasPendingDeepLink();
-        
+
         if (hasPendingDeepLink) {
-          debugPrint('Splash screen: Found pending deep link, navigating to home to process it');
+          debugPrint(
+              'Splash screen: Found pending deep link, navigating to home to process it');
         }
 
         if (isAuth && isWelcomed) {
@@ -225,35 +227,48 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     animationController.forward();
-    return Scaffold(
-      body: BlocListener<SplashCubit, SplashState>(
-        listener: (context, state) => _navigateToNextScreen(),
-        child: SizedBox(
-          width: double.infinity,
-          height: double.infinity,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              FadeTransition(
-                opacity: animation,
-                child: Image.asset(
-                  'assets/images/splash.png',
-                  width: double.infinity,
-                  height: 80.h,
-                  fit: BoxFit.contain,
-                ),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Scaffold(
+          body: BlocListener<SplashCubit, SplashState>(
+            listener: (context, state) => _navigateToNextScreen(),
+            child: SizedBox(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FadeTransition(
+                    opacity: animation,
+                    child: ColorFiltered(
+                      colorFilter: isDarkMode
+                          ? const ColorFilter.mode(
+                              Colors.white, BlendMode.srcIn)
+                          : const ColorFilter.mode(
+                              Colors.transparent, BlendMode.multiply),
+                      child: Image.asset(
+                        'assets/images/splash.png',
+                        width: double.infinity,
+                        height: 80.h,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  if (!_isConnected)
+                    const Text(
+                      'No internet connection',
+                      style: TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  SizedBox(height: 60.h),
+                ],
               ),
-              const SizedBox(height: 40),
-              if (!_isConnected)
-                const Text(
-                  'No internet connection',
-                  style: TextStyle(color: Colors.red, fontSize: 16),
-                ),
-              SizedBox(height: 60.h),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

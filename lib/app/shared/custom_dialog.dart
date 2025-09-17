@@ -1,4 +1,5 @@
 import '../../../exports.dart';
+import '../services/theme_bloc.dart';
 
 showCustomDialog(
     {required BuildContext context,
@@ -15,6 +16,12 @@ showCustomDialog(
     bool isColoredButtonDisable = false,
     required VoidCallback coloredButtonOnTap}) {
   Size size = MediaQuery.of(context).size;
+
+  // Get theme state from context
+  final themeBloc = context.read<ThemeBloc>();
+  final themeState = themeBloc.state;
+  final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
   return showGeneralDialog(
       barrierColor: Colors.black.withOpacity(0.5),
       transitionBuilder: (context, a1, a2, widget) {
@@ -25,11 +32,21 @@ showCustomDialog(
             child: AlertDialog(
               shape:
                   OutlineInputBorder(borderRadius: BorderRadius.circular(16.0)),
-              title: Text(title),
+              title: Text(
+                title,
+                style: TextStyle(
+                  color: isDarkMode ? AppColors.darkTitle : AppColors.title,
+                ),
+              ),
               scrollable: true,
-              backgroundColor: Colors.white,
-              content: descriptionWidget(description, isWithTextField,
-                  onChangedTextFormField, textFormFieldMaxLines, textInputType),
+              backgroundColor: isDarkMode ? AppColors.darkCardBG : Colors.white,
+              content: descriptionWidget(
+                  description,
+                  isWithTextField,
+                  onChangedTextFormField,
+                  textFormFieldMaxLines,
+                  textInputType,
+                  isDarkMode),
               actions: [
                 isNoColorShow
                     ? TextButton(
@@ -42,7 +59,9 @@ showCustomDialog(
                         child: Text(
                           noColoredButtonText!,
                           style: TextStyle(
-                            color: Colors.grey.shade600,
+                            color: isDarkMode
+                                ? AppColors.darkDescription
+                                : Colors.grey.shade600,
                           ),
                         ))
                     : const SizedBox.shrink(),
@@ -77,13 +96,17 @@ Widget descriptionWidget(
     bool isWithTextField,
     Function(String)? onChangedTextFormField,
     int? textFormFieldMaxLines,
-    TextInputType textInputType) {
+    TextInputType textInputType,
+    bool isDarkMode) {
   if (isWithTextField) {
     return Column(
       children: [
         Text(
           description,
           textAlign: TextAlign.center,
+          style: TextStyle(
+            color: isDarkMode ? AppColors.darkTitle : AppColors.title,
+          ),
         ),
         SizedBox(height: 10.h),
         SizedBox(
@@ -104,6 +127,9 @@ Widget descriptionWidget(
     return Text(
       description,
       textAlign: TextAlign.center,
+      style: TextStyle(
+        color: isDarkMode ? AppColors.darkTitle : AppColors.title,
+      ),
     );
   }
 
@@ -119,6 +145,9 @@ Widget descriptionWidget(
         itemBuilder: (context, index) {
           return Text(
             '  ${index + 1} - ${description[index]}',
+            style: TextStyle(
+              color: isDarkMode ? AppColors.darkTitle : AppColors.title,
+            ),
           );
         },
       ),

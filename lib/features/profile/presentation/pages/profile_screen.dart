@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/profile/presentation/widgets/profile_features.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import '../../../../exports.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -32,27 +33,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     ProfileCubit cubit = ProfileCubit.get(context);
-    return Container(
-      color: Colors.grey.shade100,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ProfileCover(
-            cubit: cubit,
-            isSyndicateCardRequired: widget.isSyndicateCardRequired,
-            accountVerification: widget.accountVerification,
-            currentDoctorRole: widget.currentDoctorRole,
-            currentDoctorPoints: widget.currentDoctorPoints,
-            homeDataModel: widget.homeDataModel,
-            currentDoctorModel: widget.currentDoctorModel,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Container(
+          color: isDarkMode ? AppColors.darkScaffoldBG : Colors.grey.shade100,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ProfileCover(
+                cubit: cubit,
+                isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                accountVerification: widget.accountVerification,
+                currentDoctorRole: widget.currentDoctorRole,
+                currentDoctorPoints: widget.currentDoctorPoints,
+                homeDataModel: widget.homeDataModel,
+                currentDoctorModel: widget.currentDoctorModel,
+                isDarkMode: isDarkMode,
+              ),
+              SizedBox(height: 20.h),
+              ProfileFeatures(
+                cubit: cubit,
+                homeDataModel: widget.homeDataModel,
+                isDarkMode: isDarkMode,
+              ),
+            ],
           ),
-          SizedBox(height: 20.h),
-          ProfileFeatures(
-            cubit: cubit,
-            homeDataModel: widget.homeDataModel,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

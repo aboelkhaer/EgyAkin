@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import '../../../../exports.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -56,205 +57,229 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     NotificationCubit cubit = NotificationCubit.get(context);
-    return Scaffold(
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          RefreshIndicator(
-            onRefresh: () async {
-              animateToTopOfScreen(cubit.scrollController!);
-              await _cubit.getAllNotifications();
-            },
-            color: AppColors.primary,
-            child: Container(
-              color: Colors.grey.shade100,
-              child: SingleChildScrollView(
-                controller: _cubit.scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      BlocConsumer<NotificationCubit, NotificationState>(
-                        listener: (context, state) {
-                          state.maybeWhen(
-                            orElse: () {},
-                            error: (message) {
-                              customSnackBar(
-                                  context: context, message: message);
-                            },
-                            loaded: (notificationData, isSeeMore) {
-                              context
-                                  .read<HomeCubit>()
-                                  .removeNotificationCount();
-                            },
-                          );
-                        },
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            orElse: () {
-                              return const ShimmerLoadingPatientsCards(
-                                ishorizontal: false,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Scaffold(
+          body: Stack(
+            fit: StackFit.expand,
+            children: [
+              RefreshIndicator(
+                onRefresh: () async {
+                  animateToTopOfScreen(cubit.scrollController!);
+                  await _cubit.getAllNotifications();
+                },
+                color: isDarkMode ? AppColors.darkPrimary : AppColors.primary,
+                child: Container(
+                  color: isDarkMode
+                      ? AppColors.darkScaffoldBG
+                      : Colors.grey.shade100,
+                  child: SingleChildScrollView(
+                    controller: _cubit.scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          BlocConsumer<NotificationCubit, NotificationState>(
+                            listener: (context, state) {
+                              state.maybeWhen(
+                                orElse: () {},
+                                error: (message) {
+                                  customSnackBar(
+                                      context: context, message: message);
+                                },
+                                loaded: (notificationData, isSeeMore) {
+                                  context
+                                      .read<HomeCubit>()
+                                      .removeNotificationCount();
+                                },
                               );
                             },
-                            loaded: (notificationData, isSeeMore) {
-                              return notificationData.todayRecords!.isEmpty
-                                  ? const SizedBox.shrink()
-                                  : Column(
-                                      children: [
-                                        Row(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const ShimmerLoadingPatientsCards(
+                                    ishorizontal: false,
+                                  );
+                                },
+                                loaded: (notificationData, isSeeMore) {
+                                  return notificationData.todayRecords!.isEmpty
+                                      ? const SizedBox.shrink()
+                                      : Column(
                                           children: [
-                                            Text(
-                                              'Today',
-                                              style: TextStyle(
-                                                fontSize: 18.sp,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Today',
+                                                  style: TextStyle(
+                                                    fontSize: 18.sp,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 10.h),
+                                            NotificationsView(
+                                              notificationsModel:
+                                                  notificationData
+                                                      .todayRecords!,
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              currentDoctorRole:
+                                                  widget.currentDoctorRole,
+                                              currentDoctorPoints:
+                                                  widget.currentDoctorPoints,
+                                              accountVerification:
+                                                  widget.accountVerification,
+                                              isSyndicateCardRequired: widget
+                                                  .isSyndicateCardRequired,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              isDarkMode: isDarkMode,
                                             ),
                                           ],
-                                        ),
-                                        SizedBox(height: 10.h),
-                                        NotificationsView(
-                                          notificationsModel:
-                                              notificationData.todayRecords!,
-                                          currentDoctorModel:
-                                              widget.currentDoctorModel,
-                                          currentDoctorRole:
-                                              widget.currentDoctorRole,
-                                          currentDoctorPoints:
-                                              widget.currentDoctorPoints,
-                                          accountVerification:
-                                              widget.accountVerification,
-                                          isSyndicateCardRequired:
-                                              widget.isSyndicateCardRequired,
-                                          homeDataModel: widget.homeDataModel,
-                                        ),
-                                      ],
-                                    );
-                            },
-                          );
-                        },
-                      ),
-                      SizedBox(height: 5.h),
-                      BlocBuilder<NotificationCubit, NotificationState>(
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            orElse: () {
-                              return const SizedBox.shrink();
-                            },
-                            loaded: (notificationData, isSeeMore) {
-                              return notificationData
-                                          .recentRecords!.data!.isEmpty &&
-                                      notificationData.todayRecords!.isEmpty
-                                  ? Column(
-                                      children: [
-                                        SizedBox(height: 100.h),
-                                        Image.asset(
-                                          AppImages.notFound,
-                                          width: 150.w,
-                                          height: 150.h,
-                                        ),
-                                      ],
-                                    )
-                                  : Column(
-                                      children: [
-                                        notificationData
-                                                .recentRecords!.data!.isEmpty
-                                            ? const SizedBox.shrink()
-                                            : Row(
-                                                children: [
-                                                  Text(
-                                                    'Recent',
-                                                    style: TextStyle(
-                                                      fontSize: 18.sp,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                        SizedBox(height: 10.h),
-                                        NotificationsView(
-                                          notificationsModel: notificationData
-                                              .recentRecords!.data!,
-                                          currentDoctorModel:
-                                              widget.currentDoctorModel,
-                                          currentDoctorRole:
-                                              widget.currentDoctorRole,
-                                          currentDoctorPoints:
-                                              widget.currentDoctorPoints,
-                                          accountVerification:
-                                              widget.accountVerification,
-                                          isSyndicateCardRequired:
-                                              widget.isSyndicateCardRequired,
-                                          homeDataModel: widget.homeDataModel,
-                                        ),
-                                      ],
-                                    );
-                            },
-                          );
-                        },
-                      ),
-                      BlocBuilder<NotificationCubit, NotificationState>(
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            orElse: () {
-                              return const SizedBox.shrink();
-                            },
-                            loaded: (notificationData, isSeeMore) {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  isSeeMore
-                                      ? const SizedBox(
-                                          height: 15,
-                                          width: 15,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 3,
-                                          ),
-                                        )
-                                      : GestureDetector(
-                                          onTap: () {
-                                            _cubit.loadMoreNotifications();
-                                          },
-                                          child: const Text(
-                                            '',
-                                          ),
-                                        ),
-                                ],
+                                        );
+                                },
                               );
                             },
-                          );
-                        },
+                          ),
+                          SizedBox(height: 5.h),
+                          BlocBuilder<NotificationCubit, NotificationState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox.shrink();
+                                },
+                                loaded: (notificationData, isSeeMore) {
+                                  return notificationData
+                                              .recentRecords!.data!.isEmpty &&
+                                          notificationData.todayRecords!.isEmpty
+                                      ? Column(
+                                          children: [
+                                            SizedBox(height: 100.h),
+                                            Image.asset(
+                                              AppImages.notFound,
+                                              width: 150.w,
+                                              height: 150.h,
+                                            ),
+                                          ],
+                                        )
+                                      : Column(
+                                          children: [
+                                            notificationData.recentRecords!
+                                                    .data!.isEmpty
+                                                ? const SizedBox.shrink()
+                                                : Row(
+                                                    children: [
+                                                      Text(
+                                                        'Recent',
+                                                        style: TextStyle(
+                                                          fontSize: 18.sp,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: isDarkMode
+                                                              ? AppColors
+                                                                  .darkTitle
+                                                              : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                            SizedBox(height: 10.h),
+                                            NotificationsView(
+                                              notificationsModel:
+                                                  notificationData
+                                                      .recentRecords!.data!,
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              currentDoctorRole:
+                                                  widget.currentDoctorRole,
+                                              currentDoctorPoints:
+                                                  widget.currentDoctorPoints,
+                                              accountVerification:
+                                                  widget.accountVerification,
+                                              isSyndicateCardRequired: widget
+                                                  .isSyndicateCardRequired,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              isDarkMode: isDarkMode,
+                                            ),
+                                          ],
+                                        );
+                                },
+                              );
+                            },
+                          ),
+                          BlocBuilder<NotificationCubit, NotificationState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox.shrink();
+                                },
+                                loaded: (notificationData, isSeeMore) {
+                                  return Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      isSeeMore
+                                          ? const SizedBox(
+                                              height: 15,
+                                              width: 15,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 3,
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                _cubit.loadMoreNotifications();
+                                              },
+                                              child: const Text(
+                                                '',
+                                              ),
+                                            ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
                       ),
-                      SizedBox(height: 20.h),
-                    ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 20.w,
-            bottom: 20.h,
-            child: Ink(
-              decoration: ShapeDecoration(
-                color: AppColors.primary.withOpacity(0.2),
-                shape: const CircleBorder(),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  animateToTopOfScreen(_cubit.scrollController!);
-                },
-                icon: const Icon(
-                  Icons.keyboard_arrow_up_outlined,
+              Positioned(
+                right: 20.w,
+                bottom: 20.h,
+                child: Ink(
+                  decoration: ShapeDecoration(
+                    color: isDarkMode
+                        ? AppColors.darkPrimary.withOpacity(0.2)
+                        : AppColors.primary.withOpacity(0.2),
+                    shape: const CircleBorder(),
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      animateToTopOfScreen(_cubit.scrollController!);
+                    },
+                    icon: Icon(
+                      Icons.keyboard_arrow_up_outlined,
+                      color: isDarkMode ? AppColors.darkTitle : Colors.black,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

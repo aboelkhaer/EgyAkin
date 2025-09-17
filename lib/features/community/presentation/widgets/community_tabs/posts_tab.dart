@@ -1,5 +1,6 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+import '../../../../../app/services/theme_bloc.dart';
 
 class PostsTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -48,17 +49,15 @@ class _PostsTabState extends State<PostsTab> {
   void _onScroll() {
     // Check if scroll controller is still valid
     if (!widget.feedsScrollController.hasClients) return;
-    
-    final cubit = CommunityCubit.get(context);
-    
 
-    
+    final cubit = CommunityCubit.get(context);
+
     // Don't load more if already loading, at last page, or not near bottom
-    if (!_isLoadingMore && 
+    if (!_isLoadingMore &&
         !cubit.isLoadingMoreForScroll &&
         !cubit.isLastPage &&
         widget.feedsScrollController.position.pixels >=
-        widget.feedsScrollController.position.maxScrollExtent - 300) {
+            widget.feedsScrollController.position.maxScrollExtent - 300) {
       debugPrint('Triggering loadMoreFeeds');
       _isLoadingMore = true;
       cubit.isLoadingMoreForScroll = true;
@@ -84,96 +83,109 @@ class _PostsTabState extends State<PostsTab> {
   Widget build(BuildContext context) {
     CommunityCubit cubit = CommunityCubit.get(context);
 
-    return Container(
-      // color: Colors.grey.shade200,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(
-            color: Colors.grey.shade200,
-            width: 1.0,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Container(
+          // color: Colors.grey.shade200,
+          decoration: BoxDecoration(
+            color: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
+            border: Border(
+              top: BorderSide(
+                color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade200,
+                width: 1.0,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: BlocBuilder<CommunityCubit, CommunityState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const ShimmerLoadingFeeds(
-                numberOfShimmer: 5,
-              );
-            },
-            loaded: (
-              feedsResponse,
-              isDeletePostLoading,
-              isDeletePostLoaded,
-              message,
-              isSeeMore,
-              changeCounter,
-            ) {
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async {
-                        await cubit.getAllFeeds();
-                      },
-                      child: feedsResponse.data!.data!.isEmpty
-                          ? SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              child: Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(height: 150.h),
-                                    Image.asset(
-                                      AppImages.notFound,
-                                      width: 150.w,
-                                      height: 150.h,
-                                    ),
-                                    SizedBox(height: 150.h),
-                                  ],
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: feedsResponse.data!.data!.length + (isSeeMore ? 1 : 0),
-                              controller: widget.feedsScrollController,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.all(20) +
-                                  EdgeInsets.only(bottom: 60.h),
-                              itemBuilder: (context, index) {
-                                if (index == feedsResponse.data!.data!.length) {
-                                  return Container(
-                                    padding: EdgeInsets.symmetric(vertical: 20.h),
-                                    child: Center(
-                                      child: SizedBox(
-                                        height: 20,
-                                        width: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
+          child: BlocBuilder<CommunityCubit, CommunityState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const ShimmerLoadingFeeds(
+                    numberOfShimmer: 5,
+                  );
+                },
+                loaded: (
+                  feedsResponse,
+                  isDeletePostLoading,
+                  isDeletePostLoaded,
+                  message,
+                  isSeeMore,
+                  changeCounter,
+                ) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            await cubit.getAllFeeds();
+                          },
+                          child: feedsResponse.data!.data!.isEmpty
+                              ? SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  child: Center(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: 150.h),
+                                        Image.asset(
+                                          AppImages.notFound,
+                                          width: 150.w,
+                                          height: 150.h,
                                         ),
-                                      ),
+                                        SizedBox(height: 150.h),
+                                      ],
                                     ),
-                                  );
-                                }
-                                var feed = feedsResponse.data!.data![index];
-                                return PostCard(
-                                  feed: feed,
-                                  homeDataModel: widget.homeDataModel,
-                                  currentDoctorModel: widget.currentDoctorModel,
-                                  showPostFrom: ShowPostFromEnum.feedsTab.name,
-                                );
-                              },
-                            ),
-                    ),
-                  ),
-                ],
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: feedsResponse.data!.data!.length +
+                                      (isSeeMore ? 1 : 0),
+                                  controller: widget.feedsScrollController,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: const EdgeInsets.all(20) +
+                                      EdgeInsets.only(bottom: 60.h),
+                                  itemBuilder: (context, index) {
+                                    if (index ==
+                                        feedsResponse.data!.data!.length) {
+                                      return Container(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 20.h),
+                                        child: const Center(
+                                          child: SizedBox(
+                                            height: 20,
+                                            width: 20,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    var feed = feedsResponse.data!.data![index];
+                                    return PostCard(
+                                      feed: feed,
+                                      homeDataModel: widget.homeDataModel,
+                                      currentDoctorModel:
+                                          widget.currentDoctorModel,
+                                      showPostFrom:
+                                          ShowPostFromEnum.feedsTab.name,
+                                    );
+                                  },
+                                ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

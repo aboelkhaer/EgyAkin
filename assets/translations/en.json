@@ -13,6 +13,8 @@
   "language": "Language",
   "english": "English",
   "arabic": "العربية",
+  "Dark Mode": "Dark Mode",
+  "Light Mode": "Light Mode",
   "success": "Success",
   "bad_request_error": "Bad request. try again later",
   "no_content_error": "Success with not content",
@@ -252,6 +254,8 @@
   "Write note for chosen doctors.": "Write note for chosen doctors.",
   "You are done?": "You are done?",
   "Search with doctor name or email...": "Search with doctor name or email...",
+  "No doctors found": "No doctors found",
+  "Try different search terms or check your spelling": "Try different search terms or check your spelling",
   "People joined community": "People joined community",
   "Post Likes": "Post Likes",
   "Group Members": "Group Members",
@@ -298,7 +302,6 @@
   "Create Post": "Create Post",
   "Edit Post": "Edit Post",
   "What's on your mind?": "What's on your mind?",
-  "Poll": "Poll",
   "Allow multiple choices": "Allow multiple choices",
   "Allow members to add options": "Allow members to add options",
   "Your poll has already been published.": "Your poll has already been published.",
@@ -418,12 +421,11 @@
   "Analytics": "Analytics",
   "Doctors": "Doctors",
   "Invited Doctors": "Invited Doctors",
-  "New password": "New password"
-
-
-
-
-
-  
-  
-} 
+  "New password": "New password",
+  "This content is no longer available.": "This content is no longer available.",
+  "Loading": "Loading",
+  "Add Post": "Add Post",
+  "Add Group": "Add Group",
+  "Poll": "Poll",
+  "Add a new option": "Add a new option"
+}
