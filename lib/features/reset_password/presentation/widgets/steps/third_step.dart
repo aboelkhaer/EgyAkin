@@ -18,7 +18,7 @@ class ThirdStep extends StatelessWidget {
             onChanged: (value) {},
             textInputAction: TextInputAction.done,
             validator: (value) =>
-                AppValidators.passwordValidateForRegister(value!),
+                AppValidators.passwordValidateForRegister(value!, context),
           ),
           SizedBox(height: 10.h),
           Row(

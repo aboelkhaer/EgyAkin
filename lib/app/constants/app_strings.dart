@@ -43,7 +43,6 @@ class AppStrings {
   static const String questionTypeFiles = 'files';
   static const String questionTypeDouble = 'double';
 
-  static const String pleaseEnterYourPassword = 'Please enter your password';
   static const String pleaseEnterYourEmail = 'Please enter your email';
   static const String pleaseEnterAVlidEmail = 'Please enter a valid email';
   static const String fullRegisterationNumber =
@@ -511,4 +510,9 @@ class AppStrings {
   static const String addPost = 'Add Post';
   static const String addGroup = 'Add Group';
   static const String addANewOption = 'Add a new option';
+  static const String pleaseEnterYourPassword = 'Please enter your password';
+  static const String pleaseEnterAVlidPassword = 'Please enter a valid password';
+  static const String provideAValidNamePlease = 'Provide a valid name, please';
+  static const String arabicCharactersOnly = 'Arabic characters only';
+  
 }

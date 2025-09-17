@@ -26,36 +26,36 @@ class AppValidators {
     return emailRegex.hasMatch(email);
   }
 
-  static String? passwordValidateForRegister(String value) {
+  static String? passwordValidateForRegister(String value,BuildContext context) {
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return 'Please enter a valid password';
+      return context.tr(AppStrings.pleaseEnterYourPassword);
     }
 
     // Password must contain at least one numeric number
     if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return 'Please enter a valid password';
+      return context.tr(AppStrings.pleaseEnterAVlidPassword);
     }
 
     // Password must contain at least one special character
     if (!RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').hasMatch(value)) {
-      return 'Please enter a valid password';
+      return context.tr(AppStrings.pleaseEnterAVlidPassword);
     }
 
     // Password must have a minimum length of 6 characters
     if (value.length < 6) {
       // return 'Password must have a minimum length of 6 characters';
-      return 'Please enter a valid password';
+      return context.tr(AppStrings.pleaseEnterAVlidPassword);
     }
 
     return null;
   }
 
-  static String? firstAndLastNameValidation(String value) {
+  static String? firstAndLastNameValidation(String value,BuildContext context) {
     if (value.isEmpty) {
-      return 'Provide a valid name, please';
+      return context.tr(AppStrings.provideAValidNamePlease);
     } else {
       RegExp(r'^[a-zA-Z0-9_\-=@,\.;]+$').hasMatch(value)
-          ? 'Arabic characters only'
+          ? context.tr(AppStrings.arabicCharactersOnly)
           : null;
     }
     return null;
@@ -63,7 +63,7 @@ class AppValidators {
 
   static String? confirmPassword(String value, String textController) {
     if (value.isEmpty) {
-      return 'Confirm your passowrd, please';
+      return 'Confirm your password, please';
     }
     if (value != textController) {
       return 'Password not match';

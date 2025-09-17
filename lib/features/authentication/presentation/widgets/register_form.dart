@@ -31,7 +31,7 @@ class RegisterForm extends StatelessWidget {
                   },
                   enableSuggestions: true,
                   validator: (value) =>
-                      AppValidators.firstAndLastNameValidation(value!),
+                      AppValidators.firstAndLastNameValidation(value!, context),
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -46,7 +46,7 @@ class RegisterForm extends StatelessWidget {
                   enableSuggestions: true,
                   textInputType: TextInputType.text,
                   validator: (value) =>
-                      AppValidators.firstAndLastNameValidation(value!),
+                      AppValidators.firstAndLastNameValidation(value!, context),
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -75,7 +75,8 @@ class RegisterForm extends StatelessWidget {
                   obscureText: true,
                   textInputType: TextInputType.visiblePassword,
                   validator: (value) =>
-                      AppValidators.passwordValidateForRegister(value!),
+                      AppValidators.passwordValidateForRegister(
+                          value!, context),
                   textInputAction: TextInputAction.next,
                 ),
               ),
@@ -102,16 +103,16 @@ class RegisterForm extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                        child: TranslatablePasswordValidator(
-                            controller: cubit.registerPasswordController,
-                            minLength: 6,
-                            uppercaseCharCount: 1,
-                            numericCharCount: 2,
-                            specialCharCount: 1,
-                            width: 200.w,
-                            onSuccess: () {},
-                            onFail: () {}),
-                      ),
+                child: TranslatablePasswordValidator(
+                    controller: cubit.registerPasswordController,
+                    minLength: 6,
+                    uppercaseCharCount: 1,
+                    numericCharCount: 2,
+                    specialCharCount: 1,
+                    width: 200.w,
+                    onSuccess: () {},
+                    onFail: () {}),
+              ),
               SizedBox(width: 10.w),
               const Expanded(child: SizedBox.shrink()),
             ],
@@ -239,7 +240,7 @@ class RegisterForm extends StatelessWidget {
                   ),
                   child: DropdownButtonFormField<String>(
                     hint: Text(
-                      context.tr(AppStrings.choose) ,
+                      context.tr(AppStrings.choose),
                       style: TextStyle(
                           fontSize: 12.sp, color: Colors.grey.shade600),
                     ),

@@ -427,5 +427,9 @@
   "Add Post": "Add Post",
   "Add Group": "Add Group",
   "Poll": "Poll",
-  "Add a new option": "Add a new option"
+  "Add a new option": "Add a new option",
+  "Please enter your password": "Please enter your password",
+  "Please enter a valid password": "Please enter a valid password",
+  "Provide a valid name, please": "Provide a valid name, please",
+  "Arabic characters only": "Arabic characters only"
 }
