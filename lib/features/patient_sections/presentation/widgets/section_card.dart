@@ -1,5 +1,6 @@
 import 'package:egy_akin/app/shared/section_status_text.dart';
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class SectionCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -19,131 +20,142 @@ class SectionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Stack(
-      children: [
-        Card(
-          color: Colors.white, // Backgrond color
-          elevation: 0.8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10),
-            splashColor: AppColors.subBG, // Splash color
-            onTap: onTap,
-            child: Container(
-              width: size.width * 0.85,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        return Stack(
+          children: [
+            Card(
+              color: isDarkMode
+                  ? AppColors.darkCardBG
+                  : Colors.white, // Background color
+              elevation: 0.8,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                splashColor: AppColors.subBG, // Splash color
+                onTap: onTap,
+                child: Container(
+                  width: size.width * 0.85,
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
                     children: [
-                      CircleAvatar(
-                        backgroundColor: AppColors.subBG,
-                        radius: 20,
-                        child: Text(
-                          '${index + 1}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.primary,
-                              fontSize: 14),
-                        ),
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Text(
-                                      //   isSubmitStatus
-                                      //       ? 'Completed'
-                                      //       : 'Binding...',
-                                      //   style: TextStyle(
-                                      //     color: isSubmitStatus
-                                      //         ? AppColors.primary
-                                      //             .withOpacity(0.7)
-                                      //         : Colors.amber,
-                                      //     fontSize: 13,
-                                      //   ),
-                                      //   maxLines: 1,
-                                      //   overflow: TextOverflow.ellipsis,
-                                      // ),
-                                      SectionStatusText(
-                                          isSubmitStatus: isSubmitStatus),
-                                      Text(
-                                        updatedAt == null || updatedAt!.isEmpty
-                                            ? ''
-                                            : TimeAgoService.instance
-                                                .formatTimeAgoFromString(
-                                                    updatedAt!,
-                                                    context),
-                                        style: const TextStyle(
-                                          color: AppColors.description,
-                                          fontSize: 10,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    '',
-                                    style: TextStyle(
-                                      color: AppColors.description,
-                                      fontSize: 13,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        sectionName,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.title,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: isDarkMode
+                                ? AppColors.darkBorder
+                                : AppColors.subBG,
+                            radius: 20,
+                            child: Text(
+                              '${index + 1}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                  fontSize: 14),
                             ),
-                          ],
-                        ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // Text(
+                                          //   isSubmitStatus
+                                          //       ? 'Completed'
+                                          //       : 'Binding...',
+                                          //   style: TextStyle(
+                                          //     color: isSubmitStatus
+                                          //         ? AppColors.primary
+                                          //             .withOpacity(0.7)
+                                          //         : Colors.amber,
+                                          //     fontSize: 13,
+                                          //   ),
+                                          //   maxLines: 1,
+                                          //   overflow: TextOverflow.ellipsis,
+                                          // ),
+                                          SectionStatusText(
+                                              isSubmitStatus: isSubmitStatus),
+                                          Text(
+                                            updatedAt == null ||
+                                                    updatedAt!.isEmpty
+                                                ? ''
+                                                : TimeAgoService.instance
+                                                    .formatTimeAgoFromString(
+                                                        updatedAt!, context),
+                                            style: const TextStyle(
+                                              color: AppColors.description,
+                                              fontSize: 10,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      const Text(
+                                        '',
+                                        style: TextStyle(
+                                          color: AppColors.description,
+                                          fontSize: 13,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            sectionName,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppColors.title,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-        // Positioned(
-        //   right: 0,
-        //   child: Icon(
-        //     isSubmitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,
-        //     color: isSubmitStatus
-        //         ? AppColors.primary.withOpacity(0.7)
-        //         : Colors.amber,
-        //   ),
-        // ),
-      ],
+            // Positioned(
+            //   right: 0,
+            //   child: Icon(
+            //     isSubmitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,
+            //     color: isSubmitStatus
+            //         ? AppColors.primary.withOpacity(0.7)
+            //         : Colors.amber,
+            //   ),
+            // ),
+          ],
+        );
+      },
     );
   }
 }

@@ -2,7 +2,9 @@ import 'package:egy_akin/exports.dart';
 import '../../services/theme_bloc.dart';
 
 class LanguageSelector extends StatelessWidget {
-  const LanguageSelector({super.key});
+  final MoreCubit? moreCubit;
+
+  const LanguageSelector({super.key, this.moreCubit});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,8 @@ class LanguageSelector extends StatelessWidget {
                 ],
               ),
               onTap: () {
-                _showLanguageDialog(context, currentLanguage, isDarkMode);
+                _showLanguageDialog(
+                    context, currentLanguage, isDarkMode, moreCubit);
               },
             );
           },
@@ -55,8 +58,8 @@ class LanguageSelector extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(
-      BuildContext context, String currentLanguage, bool isDarkMode) {
+  void _showLanguageDialog(BuildContext context, String currentLanguage,
+      bool isDarkMode, MoreCubit? moreCubit) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -78,6 +81,7 @@ class LanguageSelector extends StatelessWidget {
                 context.tr('english'),
                 currentLanguage == 'en',
                 isDarkMode,
+                moreCubit,
               ),
               const SizedBox(height: 12),
               _buildLanguageOption(
@@ -86,6 +90,7 @@ class LanguageSelector extends StatelessWidget {
                 context.tr('arabic'),
                 currentLanguage == 'ar',
                 isDarkMode,
+                moreCubit,
               ),
             ],
           ),
@@ -100,11 +105,17 @@ class LanguageSelector extends StatelessWidget {
     String languageName,
     bool isSelected,
     bool isDarkMode,
+    MoreCubit? moreCubit,
   ) {
     return InkWell(
       onTap: () {
         Navigator.of(context).pop();
+        // Change language in LocalizationBloc
         context.read<LocalizationBloc>().add(ChangeLanguage(languageCode));
+        // Also send language change to API via MoreCubit if available
+        if (moreCubit != null) {
+          moreCubit.changeLanguage(languageCode);
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

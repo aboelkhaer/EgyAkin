@@ -1,11 +1,13 @@
+import 'package:egy_akin/features/more/domain/usecases/change_language_usecase.dart';
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 
 import '../../../../exports.dart';
 
 class MoreCubit extends Cubit<MoreState> {
-  MoreCubit() : super(const MoreState.initial());
+  MoreCubit(this._changeLanguageUsecase) : super(const MoreState.initial());
   static MoreCubit get(context) => BlocProvider.of(context);
   NotificationServices notificationServices = NotificationServices();
+  final ChangeLanguageUsecase _changeLanguageUsecase;
   String fcmToken = '';
 
   getFcmTokenTest() async {
@@ -20,5 +22,13 @@ class MoreCubit extends Cubit<MoreState> {
     // log(fcmToken);
 
     emit(const MoreState.loaded());
+  }
+
+  changeLanguage(String locale) async {
+    final response = await _changeLanguageUsecase.execute(locale);
+    response.fold(
+      (l) => emit(MoreState.error(l.message)),
+      (r) => emit(const MoreState.loaded()),
+    );
   }
 }

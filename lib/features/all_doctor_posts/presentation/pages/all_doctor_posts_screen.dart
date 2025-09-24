@@ -361,8 +361,9 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Edit'),
+                                                              Text(context.tr(
+                                                                  AppStrings
+                                                                      .edit)),
                                                             ],
                                                           ),
                                                         ),
@@ -389,8 +390,9 @@ class _AllDoctorPostsScreenState extends State<AllDoctorPostsScreen> {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Delete'),
+                                                              Text(context.tr(
+                                                                  AppStrings
+                                                                      .delete)),
                                                             ],
                                                           ),
                                                         ),

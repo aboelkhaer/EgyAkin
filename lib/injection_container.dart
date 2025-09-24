@@ -1,6 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
+import 'package:egy_akin/features/more/data/datasource/more_datasource.dart';
+import 'package:egy_akin/features/more/data/repositories/more_repo_impl.dart';
+import 'package:egy_akin/features/more/domain/repositories/more_repo.dart';
+import 'package:egy_akin/features/more/domain/usecases/change_language_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/delete_patient_recommendation_usecase.dart';
@@ -53,7 +57,7 @@ Future<void> diInit() async {
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
-  sl.registerFactory(() => MoreCubit());
+  sl.registerFactory(() => MoreCubit(sl()));
   sl.registerFactory(
       () => DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
@@ -165,8 +169,10 @@ Future<void> diInit() async {
       () => CommunitySearchDatasourceImpl(sl()));
   sl.registerLazySingleton<SavedPostsDataSource>(
       () => SavedPostsDataSourceImpl(sl()));
-  sl.registerLazySingleton<AllDoctorPostsDatasource>(
-      () => AllDoctorPostsDatasourceImpl(sl()));
+    sl.registerLazySingleton<AllDoctorPostsDatasource>(
+        () => AllDoctorPostsDatasourceImpl(sl()));
+  sl.registerLazySingleton<MoreDataSource>(
+      () => MoreDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -239,6 +245,8 @@ Future<void> diInit() async {
       () => SavedPostsRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<AllDoctorPostsRepository>(
       () => AllDoctorPostsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<MoreRepository>(
+      () => MoreRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
@@ -640,5 +648,10 @@ Future<void> diInit() async {
           sl<RemoveMemberFromConsultationUsecase>(),
           sl<AddDoctorsForConsultationUsecase>(),
         ));
+  }
+
+  if (!GetIt.I.isRegistered<ChangeLanguageUsecase>()) {
+    sl.registerFactory<ChangeLanguageUsecase>(
+        () => ChangeLanguageUsecase(sl()));
   }
 }

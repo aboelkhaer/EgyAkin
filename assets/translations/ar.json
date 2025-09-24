@@ -83,7 +83,7 @@
   "to_add_outcome_you_must_verify_your_email": "لإضافة النتيجة يجب التحقق من بريدك الإلكتروني",
   "Submit": "إرسال",
   "submit_by": "تم الإرسال بواسطة",
-  "final_submit": "الإرسال النهائي",
+  "Final Submit": "الإرسال النهائي",
   "national_id": "الرقم القومي",
   "mobile": "الجوال",
   "add_date": "إضافة تاريخ",
@@ -436,5 +436,6 @@
   "Please enter your password": "يرجى إدخال كلمة المرور",
   "Please enter a valid password": "يرجى إدخال كلمة مرور صحيحة",
   "Provide a valid name, please": "يرجى إدخال اسم صحيح",
-  "Arabic characters only": "يجب أن يحتوي الاسم على أحرف عربية فقط"
+  "Arabic characters only": "يجب أن يحتوي الاسم على أحرف عربية فقط",
+  "Unsupported file type": "نوع الملف غير مدعوم"
 }

@@ -39,7 +39,6 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
     PatientSectionsCubit cubit = PatientSectionsCubit.get(context);
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
         title: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
           listener: (context, state) {
             state.maybeWhen(
@@ -83,8 +82,6 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
               orElse: () {
                 return const Text(
                   '',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
                 );
               },
               loaded: (response,
@@ -105,10 +102,6 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                           ? response.patientName.toString()
                           : convertTextToSymbols(
                               response.patientName.toString()),
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
                   textDirection: RegExp(r'[\u0600-\u06FF]')
                           .hasMatch(response.patientName.toString())
                       ? ui.TextDirection.rtl

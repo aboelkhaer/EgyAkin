@@ -359,8 +359,9 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                                                       .description),
                                                               SizedBox(
                                                                   width: 8.w),
-                                                              const Text(
-                                                                  'Edit'),
+                                                              Text(context.tr(
+                                                                  AppStrings
+                                                                      .edit)),
                                                             ],
                                                           ),
                                                         ),
@@ -388,8 +389,8 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                                               SizedBox(
                                                                   width: 8.w),
                                                               Text(
-                                                                context
-                                                                    .tr(AppStrings
+                                                                context.tr(
+                                                                    AppStrings
                                                                         .delete),
                                                               ),
                                                             ],

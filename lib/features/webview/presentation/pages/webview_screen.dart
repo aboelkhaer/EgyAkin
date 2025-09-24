@@ -86,9 +86,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             backgroundColor:
                 isDarkMode ? AppColors.darkCardBG : AppColors.primary,
             foregroundColor: isDarkMode ? AppColors.darkTitle : Colors.white,
-            systemOverlayStyle: isDarkMode
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
+            systemOverlayStyle: SystemUiOverlayStyle.light,
             elevation: 0,
             leading: IconButton(
               icon: Icon(

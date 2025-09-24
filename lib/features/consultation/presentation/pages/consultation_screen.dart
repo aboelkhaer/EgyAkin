@@ -25,16 +25,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
         return Scaffold(
           backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
           appBar: AppBar(
-            backgroundColor:
-                isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
-            iconTheme: IconThemeData(
-              color: isDarkMode ? AppColors.darkTitle : Colors.black,
-            ),
             title: Text(
               context.tr(AppStrings.consultation),
-              style: TextStyle(
-                color: isDarkMode ? AppColors.darkTitle : Colors.black,
-              ),
             ),
           ),
           body: DefaultTabController(
@@ -58,6 +50,8 @@ class _ConsultationScreenState extends State<ConsultationScreen> {
                       ),
                     ),
                     isScrollable: false,
+                    dividerColor:
+                        isDarkMode ? Colors.white54 : Colors.grey.shade400,
                     labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                     unselectedLabelColor: isDarkMode
                         ? AppColors.darkDescription

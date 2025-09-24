@@ -514,5 +514,6 @@ class AppStrings {
   static const String pleaseEnterAVlidPassword = 'Please enter a valid password';
   static const String provideAValidNamePlease = 'Provide a valid name, please';
   static const String arabicCharactersOnly = 'Arabic characters only';
+  static const String unsupportedFileType = 'Unsupported file type';
   
 }

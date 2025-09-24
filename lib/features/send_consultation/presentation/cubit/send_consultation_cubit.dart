@@ -275,19 +275,19 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
       },
       (r) {
         // Debug logging to see what we're getting
-        print('=== DEBUG: Members for consultation response ===');
-        print('Response: $r');
-        print('Data: ${r.data}');
-        print('Data length: ${r.data?.length}');
-        print('Response toJson: ${r.toJson()}');
-        print('Response runtimeType: ${r.runtimeType}');
-        print('Response toString: ${r.toString()}');
+        debugPrint('=== DEBUG: Members for consultation response ===');
+        debugPrint('Response: $r');
+        debugPrint('Data: ${r.data}');
+        debugPrint('Data length: ${r.data?.length}');
+        debugPrint('Response toJson: ${r.toJson()}');
+        debugPrint('Response runtimeType: ${r.runtimeType}');
+        debugPrint('Response toString: ${r.toString()}');
         if (r.data != null) {
           for (int i = 0; i < r.data!.length; i++) {
-            print('Member $i: ${r.data![i]}');
+            debugPrint('Member $i: ${r.data![i]}');
           }
         }
-        print('==============================================');
+        debugPrint('==============================================');
 
         emit(
           SendConsultationState.loaded(

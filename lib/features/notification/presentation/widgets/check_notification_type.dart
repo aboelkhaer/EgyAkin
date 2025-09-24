@@ -122,30 +122,13 @@ class CheckNotificationType extends StatelessWidget {
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
-                                      text:
-                                          'Dr. ${capitalizeFirstText(notificationModel.patient!.doctor!.firstName!)}',
+                                      text: notificationModel.content,
                                       style: TextStyle(
                                           color: isDarkMode
                                               ? AppColors.darkTitle
                                               : AppColors.title,
-                                          fontSize: 12.sp),
-                                      children: <TextSpan>[
-                                        const TextSpan(
-                                          text: ' creates ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        const TextSpan(text: 'a new patient'),
-                                        const TextSpan(
-                                            text: ' at ',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold)),
-                                        TextSpan(
-                                            text:
-                                                '${notificationModel.patient!.hospital}'),
-                                      ],
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ),
@@ -293,7 +276,6 @@ class CheckNotificationType extends StatelessWidget {
                                               : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
-                                      children: const <TextSpan>[],
                                     ),
                                   ),
                                 ),
@@ -445,18 +427,31 @@ class CheckNotificationType extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                AchievementCheck(
-                                  currentDoctorRole:
-                                      homeDataModel.role.toString(),
-                                  currentDoctorId:
-                                      currentDoctorModel.id.toString(),
-                                  notificationDoctorId: notificationModel
-                                      .typeDoctor!.id
-                                      .toString(),
-                                  notificationDoctorName: notificationModel
-                                      .typeDoctor!.firstName
-                                      .toString(),
-                                )
+                                // AchievementCheck(
+                                //   currentDoctorRole:
+                                //       homeDataModel.role.toString(),
+                                //   currentDoctorId:
+                                //       currentDoctorModel.id.toString(),
+                                //   notificationDoctorId: notificationModel
+                                //       .typeDoctor!.id
+                                //       .toString(),
+                                //   notificationDoctorName: notificationModel
+                                //       .typeDoctor!.firstName
+                                //       .toString(),
+                                // )
+                                Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: notificationModel.content,
+                                      style: TextStyle(
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : AppColors.title,
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                             SizedBox(height: 5.h),
@@ -589,35 +584,13 @@ class CheckNotificationType extends StatelessWidget {
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
-                                      text: notificationModel.typeDoctor == null
-                                          ? 'Someone commented on your patient'
-                                          : 'Dr. ${capitalizeFirstText(notificationModel.typeDoctor!.firstName ?? '')}',
+                                      text: notificationModel.content,
                                       style: TextStyle(
                                           color: isDarkMode
                                               ? AppColors.darkTitle
                                               : AppColors.title,
-                                          fontSize: 12.sp),
-                                      children: notificationModel.typeDoctor ==
-                                              null
-                                          ? []
-                                          : <TextSpan>[
-                                              const TextSpan(
-                                                text: ' commented ',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.green,
-                                                ),
-                                              ),
-                                              const TextSpan(
-                                                  text: 'on your patient: '),
-                                              TextSpan(
-                                                  text: notificationModel
-                                                      .patient!.name
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                            ],
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ),
@@ -687,21 +660,13 @@ class CheckNotificationType extends StatelessWidget {
                   Flexible(
                     child: RichText(
                       text: TextSpan(
-                        text: 'On the linked patient, someone has made an ',
+                        text: notificationModel.content,
                         style: TextStyle(
                             color: isDarkMode
                                 ? AppColors.darkTitle
                                 : AppColors.title,
-                            fontSize: 12.sp),
-                        children: const <TextSpan>[
-                          TextSpan(
-                            text: '${AppStrings.outcome}.',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ],
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600),
                       ),
                     ),
                   ),
@@ -832,23 +797,6 @@ class CheckNotificationType extends StatelessWidget {
                                               : AppColors.title,
                                           fontSize: 12.sp,
                                           fontWeight: FontWeight.w600),
-                                      children: const <TextSpan>[
-                                        // const TextSpan(
-                                        //   text: ' creates ',
-                                        //   style: TextStyle(
-                                        //     fontWeight: FontWeight.bold,
-                                        //     color: Colors.green,
-                                        //   ),
-                                        // ),
-                                        // const TextSpan(text: 'a new patient '),
-                                        // const TextSpan(
-                                        //     text: ' at ',
-                                        //     style: TextStyle(
-                                        //         fontWeight: FontWeight.bold)),
-                                        // TextSpan(
-                                        //     text:
-                                        //         '${notificationModel.patient!.hospital}'),
-                                      ],
                                     ),
                                   ),
                                 ),
@@ -984,23 +932,13 @@ class CheckNotificationType extends StatelessWidget {
                                 Flexible(
                                   child: RichText(
                                     text: TextSpan(
-                                      text:
-                                          'Dr. ${capitalizeFirstText(notificationModel.typeDoctor!.firstName!)} has uploaded a new ',
+                                      text: notificationModel.content,
                                       style: TextStyle(
                                           color: isDarkMode
                                               ? AppColors.darkTitle
                                               : AppColors.title,
-                                          fontSize: 12.sp),
-                                      children: const <TextSpan>[
-                                        TextSpan(
-                                          text: ' Syndicate Card ',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.green,
-                                          ),
-                                        ),
-                                        TextSpan(text: 'for approval.'),
-                                      ],
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
                                 ),

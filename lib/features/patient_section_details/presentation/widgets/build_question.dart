@@ -684,13 +684,13 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                 String filePath = file[
                                     'file_data']!; // Assuming this is the base64 string
 
-                                print('Tapped on file: $fileName');
+                                debugPrint('Tapped on file: $fileName');
 
                                 if (fileName.endsWith('.jpg') ||
                                     fileName.endsWith('.png') ||
                                     fileName.endsWith('.jpeg')) {
                                   // Handle image file
-                                  print('Opening image file.');
+                                  debugPrint('Opening image file.');
                                   showDialog(
                                     context: context,
                                     builder: (BuildContext context) {
@@ -717,12 +717,12 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                 } else if (fileName.endsWith('.pdf') ||
                                     fileName.endsWith('.doc') ||
                                     fileName.endsWith('.docx')) {
-                                  print('Opening document file: $fileName');
+                                  debugPrint('Opening document file: $fileName');
 
                                   // Check if it's base64 PDF
                                   if (filePath.startsWith(
                                       'data:application/pdf;base64,')) {
-                                    print('Detected base64 PDF.');
+                                    debugPrint('Detected base64 PDF.');
 
                                     // Extract the base64 data
                                     final base64Data = filePath.split(',').last;
@@ -734,7 +734,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                     final tempFile =
                                         File('${dir.path}/$fileName');
 
-                                    print(
+                                    debugPrint(
                                         'Writing to temporary file: ${tempFile.path}');
 
                                     // Write bytes to the temp file
@@ -742,28 +742,29 @@ class _BuildQuestionState extends State<BuildQuestion> {
 
                                     // Check if the file was written successfully
                                     if (await tempFile.exists()) {
-                                      print(
+                                      debugPrint(
                                           'Temporary PDF file exists. Attempting to open.');
                                       final result =
                                           await OpenFile.open(tempFile.path);
-                                      print(
+                                      debugPrint(
                                           'OpenFile result: ${result.message}');
                                     } else {
-                                      print(
+                                      debugPrint(
                                           'Error: Temporary PDF file does not exist after writing.');
                                     }
                                   } else {
                                     // Regular file path handling
-                                    print('Opening regular file: $filePath');
+                                    debugPrint('Opening regular file: $filePath');
                                     final result =
                                         await OpenFile.open(filePath);
-                                    print('OpenFile result: ${result.message}');
+                                    debugPrint('OpenFile result: ${result.message}');
                                   }
                                 } else {
-                                  print('Unsupported file type: $fileName');
+                                  debugPrint('Unsupported file type: $fileName');
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Unsupported file type')),
+                                     SnackBar(
+                                        content: Text(context.tr(AppStrings.unsupportedFileType)),
+                                      ),
                                   );
                                 }
                               },

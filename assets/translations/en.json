@@ -82,7 +82,7 @@
   "to_add_outcome_you_must_verify_your_email": "To add outcome you must verify your email address",
   "Submit": "Submit",
   "Submitted by": "Submitted by",
-  "final_submit": "Final Submit",
+  "Final Submit": "Final Submit",
   "national_id": "National ID",
   "mobile": "Mobile",
   "add_date": "Add date",
@@ -431,5 +431,6 @@
   "Please enter your password": "Please enter your password",
   "Please enter a valid password": "Please enter a valid password",
   "Provide a valid name, please": "Provide a valid name, please",
-  "Arabic characters only": "Arabic characters only"
+  "Arabic characters only": "Arabic characters only",
+  "Unsupported file type": "Unsupported file type"
 }

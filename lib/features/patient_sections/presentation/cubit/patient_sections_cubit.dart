@@ -95,14 +95,16 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
     } else {
       showCustomDialog(
           context: context,
-          title: context.tr(AppStrings.youLeftSomeSectionsInBinding),
+          title: LocalizationService.instance
+              .translate(AppStrings.youLeftSomeSectionsInBinding),
           // description:
           //     'You left sections not completed, you sure want to continue?',
           description: sectionsNotCompleted,
           noColoredButtonOnTap: () => Navigator.of(context).pop(),
-          coloredButtonText: context.tr(AppStrings.submit),
-          noColoredButtonText: context.tr(AppStrings.cancel),
-
+          coloredButtonText:
+              LocalizationService.instance.translate(AppStrings.submit),
+          noColoredButtonText:
+              LocalizationService.instance.translate(AppStrings.cancel),
           coloredButtonOnTap: () async {
             Navigator.of(context).pop();
             emit(const PatientSectionsState.loading());

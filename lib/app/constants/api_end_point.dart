@@ -13,7 +13,8 @@ class ApiEndPoint {
   static const register = '$baseUrl/api/$versioning/register';
   static const signOut = '$baseUrl/api/$versioning/logout';
   static const allPatients = '$baseUrl/api/$versioning/allPatientsNew';
-  static const currentPatientsHome = '$baseUrl/api/$versioning/currentPatientsNew';
+  static const currentPatientsHome =
+      '$baseUrl/api/$versioning/currentPatientsNew';
   static const search = '$baseUrl/api/$versioning/searchNew';
   static const updateProfile = '$baseUrl/api/$versioning/users';
   static const sections = '$baseUrl/api/$versioning/showSections';
@@ -31,19 +32,26 @@ class ApiEndPoint {
   static const postComments = '$baseUrl/api/$versioning/Postcomments';
   static const showNotification = '$baseUrl/api/$versioning/shownotification';
   static const notification = '$baseUrl/api/$versioning/notification';
-  static const getAllNotifications = '$baseUrl/api/$versioning/shownotification';
+  static const getAllNotifications =
+      '$baseUrl/api/$versioning/shownotification';
   static const forgetPassword = '$baseUrl/api/$versioning/forgotpassword';
   static const resetPasswordVerification =
       '$baseUrl/api/$versioning/resetpasswordverification';
   static const changePassword = '$baseUrl/api/$versioning/resetpassword';
-  static const sendEmailVerification = '$baseUrl/api/$versioning/sendverificationmail';
-  static const sendOTPForEmailVerification = '$baseUrl/api/$versioning/emailverification';
-  static const uploadProfileImage = '$baseUrl/api/$versioning/upload-profile-image';
-  static const getDoctorInfoView = '$baseUrl/api/$versioning/showAnotherProfile';
+  static const sendEmailVerification =
+      '$baseUrl/api/$versioning/sendverificationmail';
+  static const sendOTPForEmailVerification =
+      '$baseUrl/api/$versioning/emailverification';
+  static const uploadProfileImage =
+      '$baseUrl/api/$versioning/upload-profile-image';
+  static const getDoctorInfoView =
+      '$baseUrl/api/$versioning/showAnotherProfile';
   static const downloadPatientReport = '$baseUrl/api/$versioning/generatePDF';
   static const appSettings = '$baseUrl/api/$versioning/settings';
-  static const uploadSyndicateCard = '$baseUrl/api/$versioning/uploadSyndicateCard';
-  static const changePasswordFeature = '$baseUrl/api/$versioning/changePassword';
+  static const uploadSyndicateCard =
+      '$baseUrl/api/$versioning/uploadSyndicateCard';
+  static const changePasswordFeature =
+      '$baseUrl/api/$versioning/changePassword';
   static const getPatientForSpecificDoctor =
       '$baseUrl/api/$versioning/doctorProfileGetPatients';
   static const sendFCMToken = '$baseUrl/api/$versioning/storeFCM';
@@ -55,9 +63,12 @@ class ApiEndPoint {
   static const consultationDoctorSearch =
       '$baseUrl/api/$versioning/consultationDoctorSearch';
   static const createConsultation = '$baseUrl/api/$versioning/consultations';
-  static const getCurrentDoctorConsultation = '$baseUrl/api/$versioning/consultations/sent';
-  static const getReceivedConsultation = '$baseUrl/api/$versioning/consultations/received';
-  static const getConsultationDetails = '$baseUrl/api/$versioning/consultations';
+  static const getCurrentDoctorConsultation =
+      '$baseUrl/api/$versioning/consultations/sent';
+  static const getReceivedConsultation =
+      '$baseUrl/api/$versioning/consultations/received';
+  static const getConsultationDetails =
+      '$baseUrl/api/$versioning/consultations';
   static const addConsultationReply = '$baseUrl/api/$versioning/consultations';
   static String getAchievements(String doctorId) {
     return '$baseUrl/api/$versioning/users/$doctorId/achievements';
@@ -71,18 +82,25 @@ class ApiEndPoint {
   static const getAllFeeds = '$baseUrl/api/$versioning/feed/posts';
   static const addLikeOnPost = '$baseUrl/api/$versioning/feed/posts';
   static const saveOrUnsavePost = '$baseUrl/api/$versioning/feed/posts';
-  static const getAIConsultationHistory = '$baseUrl/api/$versioning/AIconsultation-history';
-  static const sendAIConsultationRequest = '$baseUrl/api/$versioning/AIconsultation';
+  static const getAIConsultationHistory =
+      '$baseUrl/api/$versioning/AIconsultation-history';
+  static const sendAIConsultationRequest =
+      '$baseUrl/api/$versioning/AIconsultation';
   static const deletePostInFeeds = '$baseUrl/api/$versioning/feed/posts';
   static const createPostInCommunity = '$baseUrl/api/$versioning/feed/posts';
   static const getCommentsInCommunity = '$baseUrl/api/$versioning/posts';
-  static const addLikeAndUnlikeOnCommentInCommunity = '$baseUrl/api/$versioning/comments';
-  static const createCommentOnPostInCommunity = '$baseUrl/api/$versioning/feed/posts';
-  static const deleteCommentOnPostInCommunity = '$baseUrl/api/$versioning/feed/comments';
+  static const addLikeAndUnlikeOnCommentInCommunity =
+      '$baseUrl/api/$versioning/comments';
+  static const createCommentOnPostInCommunity =
+      '$baseUrl/api/$versioning/feed/posts';
+  static const deleteCommentOnPostInCommunity =
+      '$baseUrl/api/$versioning/feed/comments';
   static const editPostInCommunity = '$baseUrl/api/$versioning/feed/posts';
-  static const createReplyOnCommentInCommunity = '$baseUrl/api/$versioning/feed/posts';
+  static const createReplyOnCommentInCommunity =
+      '$baseUrl/api/$versioning/feed/posts';
   static const getGroupDetailsInCommunity = '$baseUrl/api/$versioning/groups';
-  static const getGroupsTab = '$baseUrl/api/$versioning/latest-groups-with-random-posts';
+  static const getGroupsTab =
+      '$baseUrl/api/$versioning/latest-groups-with-random-posts';
   static const joinGroupInCommunity = '$baseUrl/api/$versioning/groups';
   static const leaveGroupInCommunity = '$baseUrl/api/$versioning/groups';
   static const getGroupMembers = '$baseUrl/api/$versioning/groups';
@@ -94,8 +112,10 @@ class ApiEndPoint {
   static const createGroupInCommunity = '$baseUrl/api/$versioning/groups';
   static const updateGroupInCommunity = '$baseUrl/api/$versioning/groups';
   static const deleteGroupInCommunity = '$baseUrl/api/$versioning/groups';
-  static const getTrendingPostsInCommunity = '$baseUrl/api/$versioning/feed/trendingPosts';
-  static const getCommunitySearchResponse = '$baseUrl/api/$versioning/feed/searchPosts';
+  static const getTrendingPostsInCommunity =
+      '$baseUrl/api/$versioning/feed/trendingPosts';
+  static const getCommunitySearchResponse =
+      '$baseUrl/api/$versioning/feed/searchPosts';
   static const getAllDoctorPosts = '$baseUrl/api/$versioning/doctorposts';
   static const getSavedPosts = '$baseUrl/api/$versioning/doctorsavedposts';
   static const addVoteForPollInPosts = '$baseUrl/api/$versioning/polls';
@@ -106,14 +126,22 @@ class ApiEndPoint {
   static const acceptOrDeclineMemberInGroup = '$baseUrl/api/$versioning/groups';
   static const getPostById = '$baseUrl/api/$versioning/feed/posts';
   static const getRecommendations = '$baseUrl/api/$versioning/recommendations';
-  static const createPatientRecommendation = '$baseUrl/api/$versioning/recommendations';
-  static const searchForDoseInMedicationSection = '$baseUrl/api/$versioning/dose/search';
-  static const deletePatientRecommendation = '$baseUrl/api/$versioning/recommendations';
-  static const updatePatientRecommendation = '$baseUrl/api/$versioning/recommendations';
+  static const createPatientRecommendation =
+      '$baseUrl/api/$versioning/recommendations';
+  static const searchForDoseInMedicationSection =
+      '$baseUrl/api/$versioning/dose/search';
+  static const deletePatientRecommendation =
+      '$baseUrl/api/$versioning/recommendations';
+  static const updatePatientRecommendation =
+      '$baseUrl/api/$versioning/recommendations';
   static const createNewMedicine = '$baseUrl/api/$versioning/dose';
-  static const getMembersForConsultation = '$baseUrl/api/$versioning/consultations';
-  static const lockOrUnlockConsultation = '$baseUrl/api/$versioning/consultations';
-  static const removeMemberFromConsultation = '$baseUrl/api/$versioning/consultations';
-  static const addDoctorsForConsultation = '$baseUrl/api/$versioning/consultations';
-  
+  static const getMembersForConsultation =
+      '$baseUrl/api/$versioning/consultations';
+  static const lockOrUnlockConsultation =
+      '$baseUrl/api/$versioning/consultations';
+  static const removeMemberFromConsultation =
+      '$baseUrl/api/$versioning/consultations';
+  static const addDoctorsForConsultation =
+      '$baseUrl/api/$versioning/consultations';
+  static const changeLanguage = '$baseUrl/api/$versioning/user/locale';
 }

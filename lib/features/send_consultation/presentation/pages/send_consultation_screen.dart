@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:egy_akin/app/shared/functions/animate_to_right_end_of_screen.dart';
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -45,7 +47,8 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
   @override
   Widget build(BuildContext context) {
     SendConsultationCubit cubit = SendConsultationCubit.get(context);
-
+    log('widget.isForAddNewDoctors: ${widget.isForAddNewDoctors}');
+    log('widget.isSendConsultation: ${widget.isSendConsultation}');
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
@@ -53,8 +56,8 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
         return Scaffold(
           backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
           appBar: AppBar(
-            iconTheme: IconThemeData(
-              color: isDarkMode ? AppColors.darkTitle : Colors.black,
+            iconTheme: const IconThemeData(
+              color: AppColors.darkTitle,
             ),
             title: Text(
               widget.isSendConsultation
@@ -65,12 +68,13 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                           : context.tr(AppStrings.addDoctorsToConsultation)
                       : context.tr(AppStrings.sendConsultation)
                   : context.tr(AppStrings.inviteMembers),
-              style: TextStyle(
-                color: isDarkMode ? AppColors.darkTitle : Colors.black,
+              style: const TextStyle(
+                color: AppColors.darkTitle,
               ),
             ),
             actions: [
               widget.isSendConsultation == true &&
+                      widget.isForAddNewDoctors == true &&
                       widget.ownerOfConsultationId !=
                           widget.currentDoctorModel.id.toString()
                   ? const SizedBox.shrink()
@@ -130,6 +134,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
             ],
           ),
           floatingActionButton: widget.isSendConsultation == true &&
+                  widget.isForAddNewDoctors == true &&
                   widget.ownerOfConsultationId !=
                       widget.currentDoctorModel.id.toString()
               ? const SizedBox.shrink()
@@ -163,6 +168,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                 child: Column(
                   children: [
                     widget.isSendConsultation == true &&
+                            widget.isForAddNewDoctors == true &&
                             widget.ownerOfConsultationId !=
                                 widget.currentDoctorModel.id.toString()
                         ? const SizedBox.shrink()
@@ -249,8 +255,10 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                               autofocus: true,
                             ),
                           ),
-                    widget.ownerOfConsultationId !=
-                            widget.currentDoctorModel.id.toString()
+                    widget.isSendConsultation == true &&
+                            widget.isForAddNewDoctors == true &&
+                            widget.ownerOfConsultationId !=
+                                widget.currentDoctorModel.id.toString()
                         ? const SizedBox.shrink()
                         : SizedBox(height: 16.h),
                     BlocBuilder<SendConsultationCubit, SendConsultationState>(
@@ -476,14 +484,22 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                                   ),
                                                   // Show remove button for both newly selected doctors and existing members
                                                   // But hide it for the current doctor
-                                                  if ((isNewlySelected ||
-                                                          isExistingMember) &&
-                                                      doctorModel.id
-                                                              .toString() !=
-                                                          widget
-                                                              .currentDoctorModel
-                                                              .id
-                                                              .toString())
+                                                  // Also show when isSendConsultation is true
+                                                  if ((((isNewlySelected ||
+                                                              isExistingMember) &&
+                                                          doctorModel.id
+                                                                  .toString() !=
+                                                              widget
+                                                                  .currentDoctorModel
+                                                                  .id
+                                                                  .toString())) ||
+                                                      (widget.isSendConsultation ==
+                                                              true &&
+                                                          widget.ownerOfConsultationId !=
+                                                              widget
+                                                                  .currentDoctorModel
+                                                                  .id
+                                                                  .toString()))
                                                     Positioned(
                                                       top: 0,
                                                       right: 5.w,
@@ -596,39 +612,44 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                              child:
-                                                                  CircleAvatar(
-                                                                radius: 20.r,
-                                                                backgroundColor:
-                                                                    AppColors
-                                                                        .primary
-                                                                        .withOpacity(
-                                                                            0.8),
-                                                                child: doctorModel
-                                                                            .image ==
-                                                                        null
-                                                                    ? Text(
-                                                                        doctorModel.firstName ==
-                                                                                null
-                                                                            ? ''
-                                                                            : doctorModel.firstName![0].toUpperCase(),
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          fontSize:
-                                                                              16.sp,
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            80.r),
+                                                                child:
+                                                                    CircleAvatar(
+                                                                  radius: 20.r,
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .primary
+                                                                          .withOpacity(
+                                                                              0.8),
+                                                                  child: doctorModel
+                                                                              .image ==
+                                                                          null
+                                                                      ? Text(
+                                                                          doctorModel.firstName == null
+                                                                              ? ''
+                                                                              : doctorModel.firstName![0].toUpperCase(),
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize:
+                                                                                16.sp,
+                                                                          ),
+                                                                        )
+                                                                      : CustomCachedNetworkImage(
+                                                                          imageUrl: doctorModel
+                                                                              .image
+                                                                              .toString(),
+                                                                          height:
+                                                                              100.h,
+                                                                          width:
+                                                                              100.w,
                                                                         ),
-                                                                      )
-                                                                    : CustomCachedNetworkImage(
-                                                                        imageUrl: doctorModel
-                                                                            .image
-                                                                            .toString(),
-                                                                        height:
-                                                                            100.h,
-                                                                        width:
-                                                                            100.w,
-                                                                      ),
+                                                                ),
                                                               ),
                                                             ),
                                                             title: Text(
@@ -658,7 +679,37 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                                                         .shade600,
                                                               ),
                                                             ),
-                                                            trailing: null,
+                                                            trailing: widget
+                                                                            .isSendConsultation ==
+                                                                        true &&
+                                                                    widget.isForAddNewDoctors ==
+                                                                        true &&
+                                                                    widget.ownerOfConsultationId ==
+                                                                        widget
+                                                                            .currentDoctorModel
+                                                                            .id
+                                                                            .toString()
+                                                                ? IconButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      // Remove doctor from selection
+                                                                      cubit.doctorsChecked.removeWhere((d) =>
+                                                                          d.id ==
+                                                                          doctorModel
+                                                                              .id);
+                                                                      cubit
+                                                                          .updateScreen();
+                                                                    },
+                                                                    icon: Icon(
+                                                                      Icons
+                                                                          .clear,
+                                                                      color: Colors
+                                                                          .red
+                                                                          .shade700,
+                                                                      size: 20,
+                                                                    ),
+                                                                  )
+                                                                : null,
                                                             onTap: () {
                                                               navigatorKey
                                                                   .currentState
@@ -825,9 +876,10 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                                                 ],
                                                               ),
                                                               // Remove button for non-owner
-                                                              if (widget
-                                                                      .isSendConsultation ==
-                                                                  false)
+                                                              if (widget.isSendConsultation ==
+                                                                      false ||
+                                                                  widget.isSendConsultation ==
+                                                                      true)
                                                                 Positioned(
                                                                   top: 0,
                                                                   right: 5.w,
@@ -953,45 +1005,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                       if (isSearched) {
                         return Expanded(
                           child: response!.data!.isEmpty
-                              ? // Show empty state when no doctors found
-                              Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: 80.h),
-                                      Icon(
-                                        Icons.search_off,
-                                        size: 64.r,
-                                        color: isDarkMode
-                                            ? AppColors.darkDescription
-                                            : Colors.grey.shade400,
-                                      ),
-                                      SizedBox(height: 16.h),
-                                      Text(
-                                        context.tr(AppStrings.noDoctorsFound),
-                                        style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: isDarkMode
-                                              ? AppColors.darkTitle
-                                              : Colors.grey.shade600,
-                                        ),
-                                      ),
-                                      SizedBox(height: 8.h),
-                                      Text(
-                                        context.tr(
-                                            AppStrings.tryDifferentSearchTerms),
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: isDarkMode
-                                              ? AppColors.darkDescription
-                                              : Colors.grey.shade500,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ],
-                                  ),
-                                )
+                              ? const SizedBox.shrink()
                               : // Show search results when doctors are found
                               ListView.builder(
                                   itemCount: response.data!.length,

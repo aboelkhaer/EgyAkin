@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
+import 'package:egy_akin/features/more/data/models/change_language_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_patient_recommendation_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/delete_patient_recommendation_model_response.dart';
@@ -641,5 +642,10 @@ abstract class ApiServices {
     @Path('consultationId') String consultationId,
     @Field('consult_message') String message,
     @Field('consult_doctor_ids') List<String> doctorsIDS,
+  );
+
+  @POST(ApiEndPoint.changeLanguage)
+  Future<ChangeLanguageModelResponse> changeLanguage(
+    @Field('locale') String locale,
   );
 }

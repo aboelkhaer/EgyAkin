@@ -1,4 +1,5 @@
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
 class CommentCard extends StatelessWidget {
   final CommentModel commentModel;
@@ -17,191 +18,200 @@ class CommentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.white,
-      margin: const EdgeInsets.only(bottom: 10),
-      elevation: 0.8,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        splashColor: AppColors.subBG, // Splash color
-        onLongPress: () {
-          if (commentModel.doctor!.id.toString() ==
-                  currentDoctorModel.id.toString() ||
-              currentDoctorRole == AppStrings.roleAdmin) {
-            showCustomDialog(
-                context: context,
-                title: context.tr(AppStrings.delete),
-                description: context.tr(AppStrings.areYouSureToDeleteComment),
-                noColoredButtonOnTap: () {
-                  Navigator.of(context).pop();
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        return Card(
+          color: isDarkMode ? AppColors.darkCardBG : Colors.white,
+          margin: const EdgeInsets.only(bottom: 10),
+          elevation: 0.8,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(10),
+            splashColor: AppColors.subBG, // Splash color
+            onLongPress: () {
+              if (commentModel.doctor!.id.toString() ==
+                      currentDoctorModel.id.toString() ||
+                  currentDoctorRole == AppStrings.roleAdmin) {
+                showCustomDialog(
+                    context: context,
+                    title: context.tr(AppStrings.delete),
+                    description:
+                        context.tr(AppStrings.areYouSureToDeleteComment),
+                    noColoredButtonOnTap: () {
+                      Navigator.of(context).pop();
 
-                  onDelete();
-                },
-                coloredButtonText: context.tr(AppStrings.cancel),
-                noColoredButtonText: context.tr(AppStrings.delete),
-                isNoColorShow: true,
-                coloredButtonOnTap: () => Navigator.of(context).pop());
-          }
-        },
-        onTap: () {},
-        child: Container(
-          width: 300.w,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      navigatorKey.currentState?.pushNamed(
-                        AppRoutes.doctorInfoView,
-                        arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-                          doctorId: commentModel.doctor!.id.toString(),
-                          currentDoctorModel: currentDoctorModel,
-                          isSyndicateCardRequired:
-                              homeDataModel.isSyndicateCardRequired.toString(),
-                          accountVerification: homeDataModel.verified!,
-                          currentDoctorRole: currentDoctorRole,
-                          currentDoctorPoints:
-                              int.parse(homeDataModel.scoreValue!),
-                          homeDataModel: homeDataModel,
-                          initialIndex: 0,
-                          isNavigateToTheButtonOfInformationTab: false,
-                        ),
-                      );
+                      onDelete();
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.4),
-                            spreadRadius: 2,
-                            blurRadius: 9,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(80.r),
-                        child: CircleAvatar(
-                          radius: 20.r,
-                          backgroundColor: AppColors.primary.withOpacity(0.8),
-                          child: commentModel.doctor!.id == null
-                              ? Text(
-                                  commentModel.doctor!.firstName![0]
-                                      .toUpperCase(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.sp),
-                                )
-                              : CustomCachedNetworkImage(
-                                  imageUrl:
-                                      commentModel.doctor!.image.toString(),
-                                  height: 100.h,
-                                  width: 100.w,
-                                ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    doctorName(
-                                      firstName:
-                                          commentModel.doctor!.firstName ?? '',
-                                      lastName:
-                                          commentModel.doctor!.lastName ?? '',
-                                      role: commentModel
-                                          .doctor!.isSyndicateCardRequired
-                                          .toString(),
-                                    ),
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.title,
-                                        fontSize: 14),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                    coloredButtonText: context.tr(AppStrings.cancel),
+                    noColoredButtonText: context.tr(AppStrings.delete),
+                    isNoColorShow: true,
+                    coloredButtonOnTap: () => Navigator.of(context).pop());
+              }
+            },
+            onTap: () {},
+            child: Container(
+              width: 300.w,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.doctorInfoView,
+                            arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+                              doctorId: commentModel.doctor!.id.toString(),
+                              currentDoctorModel: currentDoctorModel,
+                              isSyndicateCardRequired: homeDataModel
+                                  .isSyndicateCardRequired
+                                  .toString(),
+                              accountVerification: homeDataModel.verified!,
+                              currentDoctorRole: currentDoctorRole,
+                              currentDoctorPoints:
+                                  int.parse(homeDataModel.scoreValue!),
+                              homeDataModel: homeDataModel,
+                              initialIndex: 0,
+                              isNavigateToTheButtonOfInformationTab: false,
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 2,
+                                blurRadius: 9,
+                                offset: const Offset(0, 3),
                               ),
-                              const SizedBox(height: 4),
                             ],
                           ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(80.r),
+                            child: CircleAvatar(
+                              radius: 20.r,
+                              backgroundColor:
+                                  AppColors.primary.withOpacity(0.8),
+                              child: commentModel.doctor!.id == null
+                                  ? Text(
+                                      commentModel.doctor!.firstName![0]
+                                          .toUpperCase(),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.sp),
+                                    )
+                                  : CustomCachedNetworkImage(
+                                      imageUrl:
+                                          commentModel.doctor!.image.toString(),
+                                      height: 100.h,
+                                      width: 100.w,
+                                    ),
+                            ),
+                          ),
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      commentModel.content!,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        height: 1.6,
-                        wordSpacing: 2,
-                        letterSpacing: 1,
                       ),
-                    ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        doctorName(
+                                          firstName:
+                                              commentModel.doctor!.firstName ??
+                                                  '',
+                                          lastName:
+                                              commentModel.doctor!.lastName ??
+                                                  '',
+                                          role: commentModel
+                                              .doctor!.isSyndicateCardRequired
+                                              .toString(),
+                                        ),
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.title,
+                                            fontSize: 14),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          commentModel.content!,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                            height: 1.6,
+                            wordSpacing: 2,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        TimeAgoService.instance.formatTimeAgoFromString(
+                            commentModel.updatedAt.toString(), context),
+                        style: const TextStyle(
+                          color: AppColors.description,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      // IconButton(
+                      //   highlightColor:
+                      //       Colors.transparent,
+                      //   splashColor:
+                      //       Colors.transparent,
+                      //   onPressed: () {},
+                      //   icon: const Icon(
+                      //     Icons.favorite_border,
+                      //     size: 30,
+                      //     color: Colors.black45,
+                      //   ),
+                      // ),
+                    ],
                   ),
                 ],
               ),
-              SizedBox(height: 5.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    TimeAgoService.instance.formatTimeAgoFromString(
-                        commentModel.updatedAt.toString(),
-                        context),
-                    style: const TextStyle(
-                      color: AppColors.description,
-                      fontSize: 12,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  // IconButton(
-                  //   highlightColor:
-                  //       Colors.transparent,
-                  //   splashColor:
-                  //       Colors.transparent,
-                  //   onPressed: () {},
-                  //   icon: const Icon(
-                  //     Icons.favorite_border,
-                  //     size: 30,
-                  //     color: Colors.black45,
-                  //   ),
-                  // ),
-                ],
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
