@@ -361,27 +361,31 @@ class _GroupDetailsInCommunityScreenState
                       builder: (context, state) {
                         return state.maybeWhen(
                           orElse: () {
-                            return PopupMenuButton<String>(
-                              icon: const Icon(Icons.more_vert),
-                              onSelected: (String value) {
-                                if (value == 'report') {}
-                              },
-                              itemBuilder: (BuildContext context) {
-                                return <PopupMenuEntry<String>>[
-                                  // PopupMenuItem(
-                                  //   value: 'report',
-                                  //   child: Row(
-                                  //     children: [
-                                  //       const Icon(Icons.report,
-                                  //           color: AppColors.description),
-                                  //       SizedBox(width: 8.w),
-                                  //       const Text('Report'),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                ];
-                              },
-                            );
+                            final items = <PopupMenuEntry<String>>[
+                              // PopupMenuItem(
+                              //   value: 'report',
+                              //   child: Row(
+                              //     children: [
+                              //       const Icon(Icons.report,
+                              //           color: AppColors.description),
+                              //       SizedBox(width: 8.w),
+                              //       const Text('Report'),
+                              //     ],
+                              //   ),
+                              // ),
+                            ];
+
+                            return items.isEmpty
+                                ? const SizedBox.shrink()
+                                : PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert),
+                                    onSelected: (String value) {
+                                      if (value == 'report') {}
+                                    },
+                                    itemBuilder: (BuildContext context) {
+                                      return items;
+                                    },
+                                  );
                           },
                           loaded: (
                             groupDetails,
@@ -393,19 +397,83 @@ class _GroupDetailsInCommunityScreenState
                             isSeeMore,
                             isAcceptOrDeclineGroupInvitation,
                           ) {
-                            return isDeleteGroupLoading
-                                ? const IconButton(
-                                    splashColor: Colors.transparent,
-                                    highlightColor: Colors.transparent,
-                                    onPressed: null,
-                                    icon: SizedBox(
-                                      height: 15,
-                                      width: 15,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 3,
+                            if (isDeleteGroupLoading) {
+                              return const IconButton(
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                onPressed: null,
+                                icon: SizedBox(
+                                  height: 15,
+                                  width: 15,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final items = <PopupMenuEntry<String>>[
+                              // PopupMenuItem(
+                              //   value: 'report',
+                              //   child: Row(
+                              //     children: [
+                              //       const Icon(Icons.report,
+                              //           color: AppColors.description),
+                              //       SizedBox(width: 8.w),
+                              //       const Text('Report'),
+                              //     ],
+                              //   ),
+                              // ),
+                            ];
+
+                            if (groupDetails.data!.group!.userStatus ==
+                                    GroupInviteStatus.accepted.name ||
+                                groupDetails.data!.group!.userStatus ==
+                                    GroupInviteStatus.joined.name ||
+                                (groupDetails.data!.group!.userStatus ==
+                                        GroupInviteStatus.invited.name &&
+                                    groupDetails.data!.group!.privacy ==
+                                        GroupStatus.public.name)) {
+                              items.add(
+                                PopupMenuItem(
+                                  value: 'leave_group',
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.exit_to_app,
+                                          color: AppColors.description),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        context.tr(AppStrings.leaveGroup),
                                       ),
-                                    ),
-                                  )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+                            if ((widget.currentDoctorModel.id.toString() ==
+                                    groupDetails.data!.group!.owner!.id
+                                        .toString()) ||
+                                widget.homeDataModel.role ==
+                                    AppStrings.roleAdmin) {
+                              items.add(
+                                PopupMenuItem(
+                                  value: 'delete_group',
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.delete,
+                                          color: AppColors.description),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        context.tr(AppStrings.deleteGroup),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return items.isEmpty
+                                ? const SizedBox.shrink()
                                 : PopupMenuButton<String>(
                                     icon: const Icon(Icons.more_vert),
                                     onSelected: (String value) {
@@ -423,8 +491,8 @@ class _GroupDetailsInCommunityScreenState
                                         } else {
                                           customSnackBar(
                                               context: context,
-                                              message:
-                                                  'Sorry can\'t do that! You are admin.');
+                                              message: context.tr(AppStrings
+                                                  .sorryCanTDoThatYouAreAdmin));
                                         }
                                       }
                                       if (value == 'delete_group') {
@@ -434,77 +502,6 @@ class _GroupDetailsInCommunityScreenState
                                       }
                                     },
                                     itemBuilder: (BuildContext context) {
-                                      final items = <PopupMenuEntry<String>>[
-                                        // PopupMenuItem(
-                                        //   value: 'report',
-                                        //   child: Row(
-                                        //     children: [
-                                        //       const Icon(Icons.report,
-                                        //           color: AppColors.description),
-                                        //       SizedBox(width: 8.w),
-                                        //       const Text('Report'),
-                                        //     ],
-                                        //   ),
-                                        // ),
-                                      ];
-
-                                      if (groupDetails
-                                                  .data!.group!.userStatus ==
-                                              GroupInviteStatus.accepted.name ||
-                                          groupDetails
-                                                  .data!.group!.userStatus ==
-                                              GroupInviteStatus.joined.name ||
-                                          (groupDetails.data!.group!
-                                                      .userStatus ==
-                                                  GroupInviteStatus
-                                                      .invited.name &&
-                                              groupDetails
-                                                      .data!.group!.privacy ==
-                                                  GroupStatus.public.name)) {
-                                        items.add(
-                                          PopupMenuItem(
-                                            value: 'leave_group',
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.exit_to_app,
-                                                    color:
-                                                        AppColors.description),
-                                                SizedBox(width: 8.w),
-                                                Text(
-                                                  context.tr(
-                                                      AppStrings.leaveGroup),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                      if ((widget.currentDoctorModel.id
-                                                  .toString() ==
-                                              groupDetails
-                                                  .data!.group!.owner!.id
-                                                  .toString()) ||
-                                          widget.homeDataModel.role ==
-                                              AppStrings.roleAdmin) {
-                                        items.add(
-                                          PopupMenuItem(
-                                            value: 'delete_group',
-                                            child: Row(
-                                              children: [
-                                                const Icon(Icons.delete,
-                                                    color:
-                                                        AppColors.description),
-                                                SizedBox(width: 8.w),
-                                                Text(
-                                                  context.tr(
-                                                      AppStrings.deleteGroup),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }
-
                                       return items;
                                     },
                                   );
@@ -1177,6 +1174,9 @@ class _GroupDetailsInCommunityScreenState
                                                               groupDetails.data!.group!.userStatus == GroupInviteStatus.invited.name
                                                           ? context.tr(AppStrings.joined)
                                                           : context.tr(AppStrings.join),
+                                                  style: TextStyle(
+                                                    fontSize: 13.sp,
+                                                  ),
                                                 ),
                                               ),
                                         const SizedBox(height: 10),

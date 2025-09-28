@@ -22,6 +22,18 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
 
   int profileErrorValid = 0;
 
+  // Original values for comparison
+  String originalFirstName = '';
+  String originalLastName = '';
+  String originalEmail = '';
+  String originalPhone = '';
+  String originalAge = '';
+  String originalJob = '';
+  String originalWorkplace = '';
+  String originalRegistrationNumber = '';
+  String originalSpecialty = '';
+  String originalHighestDegree = '';
+
   getCurrentDoctorModelFromLocal() async {
     emit(const DoctorProfileViewState.loading());
     await Future.delayed(const Duration(
@@ -39,6 +51,19 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
     registrationNumber = currentDoctorModel.registrationNumber ?? '';
     specialty = currentDoctorModel.specialty ?? '';
     highestDegree = currentDoctorModel.highestdegree ?? '';
+
+    // Store original values for comparison
+    originalFirstName = firstName;
+    originalLastName = lastName;
+    originalEmail = email;
+    originalPhone = phone;
+    originalAge = age;
+    originalJob = job;
+    originalWorkplace = workplace;
+    originalRegistrationNumber = registrationNumber;
+    originalSpecialty = specialty;
+    originalHighestDegree = highestDegree;
+
     emit(DoctorProfileViewState.loaded(
         currentDoctorModel, false, '', false, false));
   }
@@ -57,6 +82,25 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
       loaded: (value) => DoctorProfileViewState.loaded(
           value.currentDoctorModel, false, '', false, false),
     ));
+  }
+
+  checkForChanges() {
+    bool hasChanges = firstName != originalFirstName ||
+        lastName != originalLastName ||
+        email != originalEmail ||
+        phone != originalPhone ||
+        age != originalAge ||
+        job != originalJob ||
+        workplace != originalWorkplace ||
+        registrationNumber != originalRegistrationNumber ||
+        specialty != originalSpecialty ||
+        highestDegree != originalHighestDegree;
+
+    if (hasChanges) {
+      profileChangedIsTrue();
+    } else {
+      profileChangedIsFalse();
+    }
   }
 
   updateDoctorProfile() async {
@@ -99,6 +143,19 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           specialty: specialty,
           highestDegree: highestDegree,
         );
+
+        // Update original values after successful update
+        originalFirstName = firstName;
+        originalLastName = lastName;
+        originalEmail = email;
+        originalPhone = phone;
+        originalAge = age;
+        originalJob = job;
+        originalWorkplace = workplace;
+        originalRegistrationNumber = registrationNumber;
+        originalSpecialty = specialty;
+        originalHighestDegree = highestDegree;
+
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => DoctorProfileViewState.loaded(

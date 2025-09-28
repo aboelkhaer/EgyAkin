@@ -89,7 +89,7 @@ class _MoreScreenState extends State<MoreScreen> {
                             AppRoutes.webview,
                             arguments: AppRoutesArgs.webViewRouteArgs(
                               url:
-                                  'https://test.egyakin.com/analytics?dark=${isDarkMode ? 'true' : 'false'}',
+                                  'https://test.egyakin.com/analytics?user_id=${widget.currentDoctorModel.id}&dark=${isDarkMode ? 'true' : 'false'}',
                               title: context.tr(AppStrings.analytics),
                             ),
                           );

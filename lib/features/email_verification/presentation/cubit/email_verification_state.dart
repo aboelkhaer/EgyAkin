@@ -10,6 +10,8 @@ abstract class EmailVerificationState with _$EmailVerificationState {
   const factory EmailVerificationState.countDowncompleted() =
       _CountDowncompleted;
   const factory EmailVerificationState.loaded() = _Loaded;
+  const factory EmailVerificationState.emailVerificationSuccess() =
+      _EmailVerificationSuccess;
   const factory EmailVerificationState.emailVerificationComplete() =
       _EmailVerificationComplete;
   const factory EmailVerificationState.error(String message) = _Error;

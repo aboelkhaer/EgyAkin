@@ -25,7 +25,7 @@ class AppStrings {
   static const int delayForAPIRequestInMilliseconds = 300;
 
   static const int apiTimeOut = 300;
-  static const int resendTimer = 180;
+  static const int resendTimer = 60;
   static const String applicationJson = 'application/json';
   static const String contentType = 'content-type';
   static const String accept = 'accept';
@@ -511,9 +511,27 @@ class AppStrings {
   static const String addGroup = 'Add Group';
   static const String addANewOption = 'Add a new option';
   static const String pleaseEnterYourPassword = 'Please enter your password';
-  static const String pleaseEnterAVlidPassword = 'Please enter a valid password';
+  static const String pleaseEnterAVlidPassword =
+      'Please enter a valid password';
   static const String provideAValidNamePlease = 'Provide a valid name, please';
   static const String arabicCharactersOnly = 'Arabic characters only';
   static const String unsupportedFileType = 'Unsupported file type';
-  
+  static const String noPostsFoundFor = 'No posts found for';
+  static const String searchInCommunity = 'Search in community';
+  static const String emailVerifiedSuccessfully =
+      'Email verified successfully!';
+  static const String of = 'of';
+  static const String youAreBlocked = 'You are blocked!';
+  static const String pleaseContactSupportIfYouThinkThisIsAMistake =
+      'Please contact support if you think this is a mistake.';
+  static const String couldNotOpenEmailClient = 'Could not open email client';
+  static const String chooseDegree = 'Choose Degree';
+  static const String passwordNotMatch = 'Password not match';
+  static const String provideThisFieldPlease = 'Provide this field, please';
+  static const String confirmYourPasswordPlease = 'Confirm your password, please';
+  static const String enterAVaildNumber = 'Enter a valid number';
+  static const String youMustAgreeToThePrivacyPolicy = 'You must agree to the Privacy Policy.';
+  static const String sorryCanTDoThatYouAreAdmin = 'Sorry can\'t do that! You are admin.';
+  static const String voters = 'Voters';
+
 }

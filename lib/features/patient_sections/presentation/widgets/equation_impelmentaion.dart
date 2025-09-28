@@ -6,12 +6,18 @@ class EquationImplementation extends StatelessWidget {
   final String? currentCreatinineValue;
   final String? basalCreatinineValue;
   final String? creatinineOnDischargeValue;
+  final String? currentCreatinineLocalization;
+  final String? basalCreatinineLocalization;
+  final String? creatinineOnDischargeLocalization;
   const EquationImplementation(
       {super.key,
       required this.equationName,
       this.currentCreatinineValue,
       this.basalCreatinineValue,
-      this.creatinineOnDischargeValue});
+      this.creatinineOnDischargeValue,
+      this.currentCreatinineLocalization,
+      this.basalCreatinineLocalization,
+      this.creatinineOnDischargeLocalization});
 
   @override
   Widget build(BuildContext context) {
@@ -32,24 +38,24 @@ class EquationImplementation extends StatelessWidget {
                       border: Border.all(color: AppColors.primary)),
                   child: Row(
                     children: [
-                      const Column(
+                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            '- Current Creatinine:',
+                            '- ${currentCreatinineLocalization}:',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
-                            '- Basal Creatinine:',
+                            '- ${basalCreatinineLocalization}:',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           Text(
-                            '- Creatinine: On Discharge',
+                            '- ${creatinineOnDischargeLocalization}:',
                             style: TextStyle(
                               fontWeight: FontWeight.w500,
                             ),
@@ -95,7 +101,7 @@ class EquationImplementation extends StatelessWidget {
                       Container(
                         width: 180.w,
                         color: isDarkMode
-                            ? AppColors.darkCardBG
+                            ? AppColors.darkScaffoldBG
                             : Colors.grey.shade100,
                         alignment: Alignment.center,
                         child: Text(

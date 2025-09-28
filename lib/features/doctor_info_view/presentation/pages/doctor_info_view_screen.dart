@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
 
@@ -337,17 +335,18 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                               message,
                               achievements,
                               changesCounter) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildStatCard(
-                                  icon: Icons.group,
-                                  title: context.tr(AppStrings.patients),
-                                  value: doctorInfo?.patientCount.toString() ??
-                                      '0',
-                                  onTap: isVerifiedUser(widget.homeDataModel
-                                          .isSyndicateCardRequired)
-                                      ? () {
+                            return isVerifiedUser(
+                                    doctorInfo!.data!.isSyndicateCardRequired)
+                                ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildStatCard(
+                                        icon: Icons.group,
+                                        title: context.tr(AppStrings.patients),
+                                        value:
+                                            doctorInfo.patientCount.toString(),
+                                        onTap: () {
                                           navigatorKey.currentState?.pushNamed(
                                             AppRoutes.profilePatients,
                                             arguments: AppRoutesArgs
@@ -361,7 +360,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                                   widget.currentDoctorPoints,
                                               isSyndicateCardRequired: widget
                                                   .isSyndicateCardRequired,
-                                              doctorFirstName: doctorInfo!
+                                              doctorFirstName: doctorInfo
                                                   .data!.firstName
                                                   .toString(),
                                               currentDoctorRole:
@@ -370,94 +369,155 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                                   widget.homeDataModel,
                                             ),
                                           );
-                                        }
-                                      : () {
-                                          customSnackBar(
-                                              context: context,
-                                              message: context.tr(AppStrings
-                                                  .youShouldVerifyYourSyndicateCardAtFirst));
                                         },
-                                  isDarkMode: isDarkMode,
-                                ),
-                                _buildStatCard(
-                                  icon: Icons.star,
-                                  title: context.tr(AppStrings.score),
-                                  value:
-                                      doctorInfo?.scoreValue.toString() ?? '0',
-                                  onTap: () {
-                                    showCustomBottomSheet(
-                                      context: context,
-                                      builder: (context) {
-                                        return BlocProvider(
-                                          create: (context) =>
-                                              ScoreHistoryCubit(sl()),
-                                          child: ScoreHistoryScreen(
-                                            doctorId: widget.doctorId,
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                  isDarkMode: isDarkMode,
-                                ),
-                                _buildStatCard(
-                                  icon: Icons.bookmark,
-                                  title: context.tr(AppStrings.savedPosts),
-                                  value:
-                                      doctorInfo?.savedPostsCount.toString() ??
-                                          '0',
-                                  onTap: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.savedPosts,
-                                      arguments:
-                                          AppRoutesArgs.savedPostsRouteArgs(
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                        homeDataModel: widget.homeDataModel,
-                                        doctorId: widget.doctorId,
-                                        doctorName: doctorName(
-                                            firstName: doctorInfo!
-                                                .data!.firstName
-                                                .toString(),
-                                            lastName: doctorInfo.data!.lastName
-                                                .toString(),
-                                            role: doctorInfo
-                                                .data!.isSyndicateCardRequired
-                                                .toString()),
+                                        isDarkMode: isDarkMode,
                                       ),
-                                    );
-                                  },
-                                  isDarkMode: isDarkMode,
-                                ),
-                                _buildStatCard(
-                                  icon: Icons.post_add,
-                                  title: context.tr(AppStrings.allPosts),
-                                  value:
-                                      doctorInfo?.postsCount.toString() ?? '0',
-                                  onTap: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.allDoctorPosts,
-                                      arguments:
-                                          AppRoutesArgs.allDoctorPostsRouteArgs(
-                                        currentDoctorModel:
-                                            widget.currentDoctorModel,
-                                        homeDataModel: widget.homeDataModel,
-                                        doctorId: widget.doctorId,
-                                        doctorName: doctorName(
-                                          firstName:
-                                              doctorInfo!.data!.firstName,
-                                          lastName: doctorInfo.data!.lastName,
-                                          role: doctorInfo
-                                              .data!.isSyndicateCardRequired
-                                              .toString(),
-                                        ),
+                                      _buildStatCard(
+                                        icon: Icons.star,
+                                        title: context.tr(AppStrings.score),
+                                        value: doctorInfo.scoreValue.toString(),
+                                        onTap: () {
+                                          showCustomBottomSheet(
+                                            context: context,
+                                            builder: (context) {
+                                              return BlocProvider(
+                                                create: (context) =>
+                                                    ScoreHistoryCubit(sl()),
+                                                child: ScoreHistoryScreen(
+                                                  doctorId: widget.doctorId,
+                                                ),
+                                              );
+                                            },
+                                          );
+                                        },
+                                        isDarkMode: isDarkMode,
                                       ),
-                                    );
-                                  },
-                                  isDarkMode: isDarkMode,
-                                ),
-                              ],
-                            );
+                                      _buildStatCard(
+                                        icon: Icons.bookmark,
+                                        title:
+                                            context.tr(AppStrings.savedPosts),
+                                        value: doctorInfo.savedPostsCount
+                                            .toString(),
+                                        onTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.savedPosts,
+                                            arguments: AppRoutesArgs
+                                                .savedPostsRouteArgs(
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              doctorId: widget.doctorId,
+                                              doctorName: doctorName(
+                                                  firstName: doctorInfo
+                                                      .data!.firstName
+                                                      .toString(),
+                                                  lastName: doctorInfo
+                                                      .data!.lastName
+                                                      .toString(),
+                                                  role: doctorInfo.data!
+                                                      .isSyndicateCardRequired
+                                                      .toString()),
+                                            ),
+                                          );
+                                        },
+                                        isDarkMode: isDarkMode,
+                                      ),
+                                      _buildStatCard(
+                                        icon: Icons.post_add,
+                                        title: context.tr(AppStrings.allPosts),
+                                        value: doctorInfo.postsCount.toString(),
+                                        onTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.allDoctorPosts,
+                                            arguments: AppRoutesArgs
+                                                .allDoctorPostsRouteArgs(
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              doctorId: widget.doctorId,
+                                              doctorName: doctorName(
+                                                firstName:
+                                                    doctorInfo.data!.firstName,
+                                                lastName:
+                                                    doctorInfo.data!.lastName,
+                                                role: doctorInfo.data!
+                                                    .isSyndicateCardRequired
+                                                    .toString(),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        isDarkMode: isDarkMode,
+                                      ),
+                                    ],
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      _buildStatCard(
+                                        icon: Icons.bookmark,
+                                        title:
+                                            context.tr(AppStrings.savedPosts),
+                                        value: doctorInfo.savedPostsCount
+                                            .toString(),
+                                        onTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.savedPosts,
+                                            arguments: AppRoutesArgs
+                                                .savedPostsRouteArgs(
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              doctorId: widget.doctorId,
+                                              doctorName: doctorName(
+                                                  firstName: doctorInfo
+                                                      .data!.firstName
+                                                      .toString(),
+                                                  lastName: doctorInfo
+                                                      .data!.lastName
+                                                      .toString(),
+                                                  role: doctorInfo.data!
+                                                      .isSyndicateCardRequired
+                                                      .toString()),
+                                            ),
+                                          );
+                                        },
+                                        isDarkMode: isDarkMode,
+                                      ),
+                                      SizedBox(width: 20.w),
+                                      _buildStatCard(
+                                        icon: Icons.post_add,
+                                        title: context.tr(AppStrings.allPosts),
+                                        value: doctorInfo.postsCount.toString(),
+                                        onTap: () {
+                                          navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.allDoctorPosts,
+                                            arguments: AppRoutesArgs
+                                                .allDoctorPostsRouteArgs(
+                                              currentDoctorModel:
+                                                  widget.currentDoctorModel,
+                                              homeDataModel:
+                                                  widget.homeDataModel,
+                                              doctorId: widget.doctorId,
+                                              doctorName: doctorName(
+                                                firstName:
+                                                    doctorInfo.data!.firstName,
+                                                lastName:
+                                                    doctorInfo.data!.lastName,
+                                                role: doctorInfo.data!
+                                                    .isSyndicateCardRequired
+                                                    .toString(),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        isDarkMode: isDarkMode,
+                                      ),
+                                    ],
+                                  );
                           },
                         );
                       },

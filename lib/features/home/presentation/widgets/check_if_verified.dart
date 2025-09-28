@@ -209,7 +209,9 @@ class CheckIfVerified extends StatelessWidget {
                                 return Icon(
                                   Icons.arrow_forward,
                                   size: 18,
-                                  color: Colors.blue.shade600,
+                                  color: isDarkMode
+                                      ? AppColors.darkPrimary
+                                      : Colors.blue.shade600,
                                 );
                               },
                             );

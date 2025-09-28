@@ -27,7 +27,8 @@ class ChangePasswordScreen extends StatelessWidget {
                     obscureText: true,
                     enableSuggestions: false,
                     validator: (value) =>
-                        AppValidators.passwordValidateForRegister(value!,context),
+                        AppValidators.passwordValidateForRegister(
+                            value!, context),
                     onChanged: (value) {
                       cubit.oldPassword = value;
                     },
@@ -40,7 +41,8 @@ class ChangePasswordScreen extends StatelessWidget {
                     enableSuggestions: false,
                     obscureText: true,
                     validator: (value) =>
-                        AppValidators.passwordValidateForRegister(value!,context),
+                        AppValidators.passwordValidateForRegister(
+                            value!, context),
                   ),
                   SizedBox(height: 5.h),
                   Row(
@@ -52,14 +54,14 @@ class ChangePasswordScreen extends StatelessWidget {
                             uppercaseCharCount: 1,
                             numericCharCount: 2,
                             specialCharCount: 1,
-                            width: 200.w,
+                            width: double.infinity,
                             onSuccess: () {},
                             onFail: () {}),
                       ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      const Expanded(child: SizedBox.shrink())
+                      // SizedBox(
+                      //   width: 10.w,
+                      // ),
+                      // const Expanded(child: SizedBox.shrink())
                     ],
                   ),
                 ],

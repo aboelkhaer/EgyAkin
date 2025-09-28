@@ -127,13 +127,24 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                         cubit.totalPatientInFilter == 0
                             ? const SizedBox.shrink()
                             : FadeIn(
-                                child: Text(
-                                  response.data!.data!.length.toString(),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 9.sp,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Directionality(
+                                      textDirection:
+                                          context.currentLocale?.languageCode ==
+                                                  'ar'
+                                              ? TextDirection.rtl
+                                              : TextDirection.ltr,
+                                      child: Text(
+                                        '${response.data!.data!.length} ${context.tr(AppStrings.of)} ${cubit.totalPatientInFilter}',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 9.sp,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                       ],
@@ -189,16 +200,6 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     icon: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        cubit.totalPatientInFilter == 0
-                            ? const SizedBox.shrink()
-                            : Text(
-                                cubit.totalPatientInFilter.toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 9.sp,
-                                ),
-                              ),
                         const Icon(Icons.filter_list),
                         const SizedBox(height: 2),
                         Text(
@@ -409,6 +410,35 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
             },
           ),
         ],
+      ),
+      floatingActionButton:
+          BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            orElse: () => const SizedBox.shrink(),
+            loaded: (response, isSeeMore, message, isApplyFilterLoading,
+                isApplyFilterLoaded) {
+              // Show FAB only when filters are applied
+              if (cubit.isApplyFilterDone) {
+                return FloatingActionButton(
+                  onPressed: () {
+                    // Clear filters and reload all patients
+                    cubit.resetFormData();
+                    cubit.isApplyFilterDone = false;
+                    cubit.totalPatientInFilter = 0;
+                    cubit.getCurrentDoctorPatients();
+                  },
+                  backgroundColor: AppColors.primary.withOpacity(0.8),
+                  child: const Icon(
+                    Icons.clear,
+                    color: Colors.white,
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          );
+        },
       ),
     );
   }

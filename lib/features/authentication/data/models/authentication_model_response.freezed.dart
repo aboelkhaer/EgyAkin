@@ -278,6 +278,8 @@ mixin _$DoctorModel {
   String? get phoneVerifiedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'invitation_id')
   int? get invitationId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'deviceId')
+  String? get deviceId => throw _privateConstructorUsedError;
   bool? get blocked => throw _privateConstructorUsedError;
   bool? get limited => throw _privateConstructorUsedError;
   List<PatientHomeDataModel>? get patients =>
@@ -327,6 +329,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       @JsonKey(name: 'invitation_id') int? invitationId,
+      @JsonKey(name: 'deviceId') String? deviceId,
       bool? blocked,
       bool? limited,
       List<PatientHomeDataModel>? patients,
@@ -372,6 +375,7 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? emailVerifiedAt = freezed,
     Object? phoneVerifiedAt = freezed,
     Object? invitationId = freezed,
+    Object? deviceId = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? patients = freezed,
@@ -471,6 +475,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
           ? _value.invitationId
           : invitationId // ignore: cast_nullable_to_non_nullable
               as int?,
+      deviceId: freezed == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       blocked: freezed == blocked
           ? _value.blocked
           : blocked // ignore: cast_nullable_to_non_nullable
@@ -527,6 +535,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
       @JsonKey(name: 'invitation_id') int? invitationId,
+      @JsonKey(name: 'deviceId') String? deviceId,
       bool? blocked,
       bool? limited,
       List<PatientHomeDataModel>? patients,
@@ -570,6 +579,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? emailVerifiedAt = freezed,
     Object? phoneVerifiedAt = freezed,
     Object? invitationId = freezed,
+    Object? deviceId = freezed,
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? patients = freezed,
@@ -669,6 +679,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
           ? _value.invitationId
           : invitationId // ignore: cast_nullable_to_non_nullable
               as int?,
+      deviceId: freezed == deviceId
+          ? _value.deviceId
+          : deviceId // ignore: cast_nullable_to_non_nullable
+              as String?,
       blocked: freezed == blocked
           ? _value.blocked
           : blocked // ignore: cast_nullable_to_non_nullable
@@ -720,6 +734,7 @@ class _$DoctorModelImpl implements _DoctorModel {
       @JsonKey(name: 'email_verified_at') this.emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') this.phoneVerifiedAt,
       @JsonKey(name: 'invitation_id') this.invitationId,
+      @JsonKey(name: 'deviceId') this.deviceId,
       this.blocked,
       this.limited,
       final List<PatientHomeDataModel>? patients,
@@ -786,6 +801,9 @@ class _$DoctorModelImpl implements _DoctorModel {
   @JsonKey(name: 'invitation_id')
   final int? invitationId;
   @override
+  @JsonKey(name: 'deviceId')
+  final String? deviceId;
+  @override
   final bool? blocked;
   @override
   final bool? limited;
@@ -808,7 +826,7 @@ class _$DoctorModelImpl implements _DoctorModel {
 
   @override
   String toString() {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, invitationId: $invitationId, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, invitationId: $invitationId, deviceId: $deviceId, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -855,6 +873,8 @@ class _$DoctorModelImpl implements _DoctorModel {
                 other.phoneVerifiedAt == phoneVerifiedAt) &&
             (identical(other.invitationId, invitationId) ||
                 other.invitationId == invitationId) &&
+            (identical(other.deviceId, deviceId) ||
+                other.deviceId == deviceId) &&
             (identical(other.blocked, blocked) || other.blocked == blocked) &&
             (identical(other.limited, limited) || other.limited == limited) &&
             const DeepCollectionEquality().equals(other._patients, _patients) &&
@@ -891,6 +911,7 @@ class _$DoctorModelImpl implements _DoctorModel {
         emailVerifiedAt,
         phoneVerifiedAt,
         invitationId,
+        deviceId,
         blocked,
         limited,
         const DeepCollectionEquality().hash(_patients),
@@ -940,6 +961,7 @@ abstract class _DoctorModel implements DoctorModel {
       @JsonKey(name: 'email_verified_at') final String? emailVerifiedAt,
       @JsonKey(name: 'phone_verified_at') final String? phoneVerifiedAt,
       @JsonKey(name: 'invitation_id') final int? invitationId,
+      @JsonKey(name: 'deviceId') final String? deviceId,
       final bool? blocked,
       final bool? limited,
       final List<PatientHomeDataModel>? patients,
@@ -1005,6 +1027,9 @@ abstract class _DoctorModel implements DoctorModel {
   @override
   @JsonKey(name: 'invitation_id')
   int? get invitationId;
+  @override
+  @JsonKey(name: 'deviceId')
+  String? get deviceId;
   @override
   bool? get blocked;
   @override

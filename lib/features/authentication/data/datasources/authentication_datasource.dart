@@ -9,7 +9,6 @@ abstract class AuthenticationDataSource {
   });
   Future<AuthenticationModelResponse> register({
     required DoctorModel doctorModel,
-    required String deviceId,
   });
   Future<SendFCMTokenModelResponse> sendFCMToken({
     required String? fcmToken,
@@ -34,11 +33,10 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   @override
   Future<AuthenticationModelResponse> register({
     required DoctorModel doctorModel,
-    required String deviceId,
   }) async {
     return await _apiServices.register(
       doctorModel.toJson(),
-      deviceId,
+     
     );
   }
 

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
 
 import '../../../../exports.dart';
@@ -171,6 +170,18 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     );
   }
 
+  void clearSearchResults() {
+    searchValue = null;
+    isSearchContentEmpty = true;
+    currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
+    postSelectedOptions.clear();
+    postSelectedOption.clear();
+    _debounce?.cancel();
+    emit(const CommunitySearchState.initial());
+  }
+
   bool _isUpdatingPostLikeStatus = false;
 
   Future<void> addLikeOrUnlikeOnPost(
@@ -307,7 +318,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         loaded: (value) {
           final response = value.response;
           if (response.data == null || response.data!.data == null) {
-            debugPrint("[Save] ❌ No data found in response");
+            debugPrint('[Save] ❌ No data found in response');
             return value;
           }
 
@@ -321,7 +332,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
               // Determine new state based on explicit action
               final newSavedStatus = saveOrUnsave == 'save';
               debugPrint(
-                  "[Save] 🔄 Changing save status from $isCurrentlySaved to $newSavedStatus");
+                  '[Save] 🔄 Changing save status from $isCurrentlySaved to $newSavedStatus');
 
               return post.copyWith(
                 isSaved: newSavedStatus,
@@ -335,7 +346,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
             data: response.data!.copyWith(data: [...updatedPosts]),
           );
 
-          debugPrint("[Save] ✅ UI Updated Optimistically");
+          debugPrint('[Save] ✅ UI Updated Optimistically');
           return CommunitySearchState.loaded(
             '',
             '',
@@ -349,7 +360,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     );
 
     /// **2️⃣ Send API Request**
-    debugPrint("[Save] 📡 Sending $saveOrUnsave request for post $postId");
+    debugPrint('[Save] 📡 Sending $saveOrUnsave request for post $postId');
     final result = await _saveOrUnsavePostUsecase.execute(
       SaveOrUnsavePostUsecaseInput(
         postId: postId,
@@ -359,7 +370,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        debugPrint("[Save] ❌ API Failed: ${failure.message}");
+        debugPrint('[Save] ❌ API Failed: ${failure.message}');
 
         /// **3️⃣ Rollback UI on Failure**
         emit(
@@ -376,7 +387,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
               final revertedPosts = postList.map((post) {
                 if (post.id == int.tryParse(postId)) {
                   debugPrint(
-                      "[Save] ↩️ Reverting to original save status: $isCurrentlySaved");
+                      '[Save] ↩️ Reverting to original save status: $isCurrentlySaved');
                   return post.copyWith(
                     isSaved: isCurrentlySaved,
                   );
@@ -389,7 +400,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
                 data: response.data!.copyWith(data: [...revertedPosts]),
               );
 
-              debugPrint("[Save] 🔄 Rollback UI Due to API Failure");
+              debugPrint('[Save] 🔄 Rollback UI Due to API Failure');
               return CommunitySearchState.loaded(
                 '',
                 '',
@@ -403,12 +414,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         );
       },
       (success) {
-        debugPrint("[Save] ✅ API Success: $saveOrUnsave applied successfully");
+        debugPrint('[Save] ✅ API Success: $saveOrUnsave applied successfully');
       },
     );
 
     _isUpdatingPostSaveStatus = false; // Reset the flag
-    debugPrint("[Save] 🏁 Operation completed for post $postId");
+    debugPrint('[Save] 🏁 Operation completed for post $postId');
   }
 
   Future<void> deletePost(String postId) async {

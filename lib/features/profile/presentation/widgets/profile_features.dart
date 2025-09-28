@@ -259,7 +259,7 @@ class ProfileFeatures extends StatelessWidget {
   }
 
   List<ProfileScreens> _profileScreensData(context) {
-    return <ProfileScreens>[
+    final List<ProfileScreens?> screens = [
       ProfileScreens(
         icon: Icons.person_outline,
         title: LocalizationService.instance.translate(AppStrings.account),
@@ -269,22 +269,25 @@ class ProfileFeatures extends StatelessWidget {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
       ),
-      ProfileScreens(
-        icon: Icons.chat_bubble_outline,
-        title: LocalizationService.instance.translate(AppStrings.consultation),
-        description: LocalizationService.instance
-            .translate(AppStrings.initateOrViewConsultations),
-        onTap: () {
-          navigatorKey.currentState?.pushNamed(
-            AppRoutes.consultation,
-            arguments: AppRoutesArgs.consultationRouteArgs(
-              homeDataModel: homeDataModel,
-              currentDoctorModel: cubit.currentDoctor,
-              initialTab: 0,
-            ),
-          );
-        },
-      ),
+      isVerifiedUser(homeDataModel.isSyndicateCardRequired)
+          ? ProfileScreens(
+              icon: Icons.chat_bubble_outline,
+              title: LocalizationService.instance
+                  .translate(AppStrings.consultation),
+              description: LocalizationService.instance
+                  .translate(AppStrings.initateOrViewConsultations),
+              onTap: () {
+                navigatorKey.currentState?.pushNamed(
+                  AppRoutes.consultation,
+                  arguments: AppRoutesArgs.consultationRouteArgs(
+                    homeDataModel: homeDataModel,
+                    currentDoctorModel: cubit.currentDoctor,
+                    initialTab: 0,
+                  ),
+                );
+              },
+            )
+          : null,
       ProfileScreens(
         icon: Icons.emoji_events_outlined,
         title: LocalizationService.instance.translate(AppStrings.achievements),
@@ -315,5 +318,11 @@ class ProfileFeatures extends StatelessWidget {
             cubit.signOut();
           }),
     ];
+
+    // Filter out null values to hide consultation for non-verified users
+    return screens
+        .where((screen) => screen != null)
+        .cast<ProfileScreens>()
+        .toList();
   }
 }

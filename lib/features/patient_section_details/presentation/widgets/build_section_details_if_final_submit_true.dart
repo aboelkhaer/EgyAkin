@@ -4,6 +4,7 @@ import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart'
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 import 'dart:ui' as ui;
 
 class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
@@ -21,74 +22,79 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: questionList.length,
-      physics: const BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: 70.h),
-      itemBuilder: (context, index) {
-        var question = questionList[index];
-        String answerText = getAnswerText(question.answer);
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-        return Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(16),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: AppColors.primary,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${index + 1} - ${question.question!}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+        return ListView.builder(
+          itemCount: questionList.length,
+          physics: const BouncingScrollPhysics(),
+          padding: EdgeInsets.only(bottom: 70.h),
+          itemBuilder: (context, index) {
+            var question = questionList[index];
+            String answerText = getAnswerText(question.answer);
+
+            return Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: isDarkMode ? AppColors.darkCardBG : Colors.white,
+                border: Border.all(
+                  color: AppColors.primary,
                 ),
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
-                margin: const EdgeInsets.only(top: 10, bottom: 10),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.06),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: question.type == 'files'
-                    ? FileListWhenSubmit(
-                        files: convertDynamicListToStringList(question.answer))
-                    : Text(
-                        question.type == AppStrings.questionTypeMultiple
-                            ? convertDynamicToString(question)
-                            : question.type == AppStrings.questionTypeSelect
-                                ? showAnswerWithSelectType(question.answer)
-                                : question.type == AppStrings.questionTypeDate
-                                    ? formatDateTime(question.answer)
-                                    : question.question == AppStrings.nationalID
-                                        ? currentDoctorId == doctorId
-                                            ? question.answer ?? '...'
-                                            : hideNationalId(
-                                                question.answer ?? '...')
-                                        : question.question == 'Name'
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${index + 1} - ${question.question!}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: isDarkMode ? AppColors.darkTitle : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 16),
+                    margin: const EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: isDarkMode
+                          ? AppColors.primary.withOpacity(0.1)
+                          : AppColors.primary.withOpacity(0.06),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: question.type == 'files'
+                        ? FileListWhenSubmit(
+                            files:
+                                convertDynamicListToStringList(question.answer))
+                        : Text(
+                            question.type == AppStrings.questionTypeMultiple
+                                ? convertDynamicToString(question)
+                                : question.type == AppStrings.questionTypeSelect
+                                    ? showAnswerWithSelectType(question.answer)
+                                    : question.type ==
+                                            AppStrings.questionTypeDate
+                                        ? formatDateTime(question.answer)
+                                        : question.question ==
+                                                AppStrings.nationalID
                                             ? currentDoctorId == doctorId
                                                 ? question.answer ?? '...'
-                                                : isAllDataOpen
-                                                    ? question.answer ?? '...'
-                                                    : convertTextToSymbols(
-                                                        question.answer)
-                                            : question.question == 'Phone'
+                                                : hideNationalId(
+                                                    question.answer ?? '...')
+                                            : question.question == 'Name'
                                                 ? currentDoctorId == doctorId
                                                     ? question.answer ?? '...'
                                                     : isAllDataOpen
                                                         ? question.answer ??
                                                             '...'
-                                                        : hideNationalId(
+                                                        : convertTextToSymbols(
                                                             question.answer)
-                                                : question.question == 'Email'
+                                                : question.question == 'Phone'
                                                     ? currentDoctorId ==
                                                             doctorId
                                                         ? question.answer ??
@@ -96,22 +102,40 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                                                         : isAllDataOpen
                                                             ? question.answer ??
                                                                 '...'
-                                                            : hideEmail(
+                                                            : hideNationalId(
                                                                 question.answer)
-                                                    : question.answer ?? '...',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade900,
-                          fontSize: 15,
-                        ),
-                        textDirection:
-                            RegExp(r'[\u0600-\u06FF]').hasMatch(answerText)
-                                ? ui.TextDirection.rtl
-                                : ui.TextDirection.ltr,
-                      ),
+                                                    : question.question ==
+                                                            'Email'
+                                                        ? currentDoctorId ==
+                                                                doctorId
+                                                            ? question.answer ??
+                                                                '...'
+                                                            : isAllDataOpen
+                                                                ? question
+                                                                        .answer ??
+                                                                    '...'
+                                                                : hideEmail(
+                                                                    question
+                                                                        .answer)
+                                                        : question.answer ??
+                                                            '...',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : Colors.grey.shade900,
+                              fontSize: 15,
+                            ),
+                            textDirection:
+                                RegExp(r'[\u0600-\u06FF]').hasMatch(answerText)
+                                    ? ui.TextDirection.rtl
+                                    : ui.TextDirection.ltr,
+                          ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:ui' as ui;
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
 import '../../../../exports.dart';
@@ -24,6 +23,17 @@ class CommentWidgetInCommunity extends StatelessWidget {
     required this.updatedFeed,
     this.parentCommentId,
   });
+
+  // Helper function to detect if text is Arabic
+  bool _isArabic(String text) {
+    if (text.isEmpty) return false;
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text.trim());
+  }
+
+  // Helper function to get text direction
+  TextDirection _getTextDirection(String text) {
+    return _isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,9 +218,10 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    TimeAgoService.instance.formatTimeAgoFromString(
-                                        commentModel.createdAt.toString(),
-                                        context),
+                                    TimeAgoService.instance
+                                        .formatTimeAgoFromString(
+                                            commentModel.createdAt.toString(),
+                                            context),
                                     style: TextStyle(
                                       color: AppColors.description,
                                       fontSize: 9.sp,
@@ -221,25 +232,28 @@ class CommentWidgetInCommunity extends StatelessWidget {
                               const SizedBox(height: 4),
                               Row(
                                 mainAxisAlignment:
-                                    isArabic(commentModel.comment ?? '')
+                                    _isArabic(commentModel.comment ?? '')
                                         ? MainAxisAlignment.end
                                         : MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    commentModel.comment ?? '',
-                                    style: const TextStyle(
-                                      color:
-                                          ui.Color.fromRGBO(117, 117, 117, 1),
-                                      // fontWeight: FontWeight.w400,
-                                      fontFamily: 'Tajawal',
-                                      fontWeight: FontWeight.w500,
-                                      height: 1.6,
+                                  Expanded(
+                                    child: Text(
+                                      commentModel.comment ?? '',
+                                      style: const TextStyle(
+                                        color:
+                                            ui.Color.fromRGBO(117, 117, 117, 1),
+                                        // fontWeight: FontWeight.w400,
+                                        fontFamily: 'Tajawal',
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.6,
+                                      ),
+                                      textDirection: _getTextDirection(
+                                          commentModel.comment ?? ''),
+                                      textAlign:
+                                          _isArabic(commentModel.comment ?? '')
+                                              ? TextAlign.right
+                                              : TextAlign.left,
                                     ),
-                                    textDirection: RegExp(r'[\u0600-\u06FF]')
-                                            .hasMatch(
-                                                commentModel.comment.toString())
-                                        ? ui.TextDirection.rtl
-                                        : ui.TextDirection.ltr,
                                   ),
                                 ],
                               ),
@@ -436,12 +450,16 @@ class CommentWidgetInCommunity extends StatelessWidget {
 
                                                             showCustomDialog(
                                                               context: context,
-                                                              title:
-                                                                  context.tr(AppStrings.attention),
-                                                              description:
-                                                                  context.tr(AppStrings.areYouSureToDeleteComment),
+                                                              title: context.tr(
+                                                                  AppStrings
+                                                                      .attention),
+                                                              description: context
+                                                                  .tr(AppStrings
+                                                                      .areYouSureToDeleteComment),
                                                               coloredButtonText:
-                                                                  context.tr(AppStrings.cancel),
+                                                                  context.tr(
+                                                                      AppStrings
+                                                                          .cancel),
                                                               coloredButtonOnTap:
                                                                   () {
                                                                 Navigator.pop(
@@ -468,8 +486,9 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                 }
                                                               },
                                                               noColoredButtonText:
-                                                                  context.tr(AppStrings.delete),
-
+                                                                  context.tr(
+                                                                      AppStrings
+                                                                          .delete),
                                                             );
                                                             break;
                                                         }
@@ -520,8 +539,11 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                   SizedBox(
                                                                       width:
                                                                           8.w),
-                                                                   Text(
-                                                                      context.tr(AppStrings.delete),),
+                                                                  Text(
+                                                                    context.tr(
+                                                                        AppStrings
+                                                                            .delete),
+                                                                  ),
                                                                 ],
                                                               ),
                                                             ),

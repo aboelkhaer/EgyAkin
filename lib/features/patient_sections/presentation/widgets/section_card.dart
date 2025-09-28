@@ -35,7 +35,9 @@ class SectionCard extends StatelessWidget {
               ),
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                splashColor: AppColors.subBG, // Splash color
+                splashColor: isDarkMode
+                    ? AppColors.darkSubBG
+                    : AppColors.subBG, // Splash color
                 onTap: onTap,
                 child: Container(
                   width: size.width * 0.85,
@@ -122,9 +124,11 @@ class SectionCard extends StatelessWidget {
                                         children: [
                                           Text(
                                             sectionName,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: AppColors.title,
+                                              color: isDarkMode
+                                                  ? AppColors.darkTitle
+                                                  : AppColors.title,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,

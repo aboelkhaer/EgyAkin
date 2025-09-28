@@ -232,6 +232,16 @@ class _SplashScreenState extends State<SplashScreen>
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
         return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              systemOverlayStyle: isDarkMode
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark,
+            ),
+          ),
           body: BlocListener<SplashCubit, SplashState>(
             listener: (context, state) => _navigateToNextScreen(),
             child: SizedBox(

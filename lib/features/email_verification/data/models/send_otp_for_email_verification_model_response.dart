@@ -7,6 +7,7 @@ class SendOTPForEmailVerificationModelResponse
     with _$SendOTPForEmailVerificationModelResponse {
   const factory SendOTPForEmailVerificationModelResponse({
     bool? success,
+    String? message,
   }) = _SendOTPForEmailVerificationModelResponse;
   factory SendOTPForEmailVerificationModelResponse.fromJson(
           Map<String, dynamic> json) =>

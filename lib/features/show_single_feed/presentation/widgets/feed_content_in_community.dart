@@ -202,7 +202,11 @@ class FeedContentInCommunity extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 5),
                                 Padding(
-                                  padding: const EdgeInsets.only(right: 10),
+                                  padding:
+                                      context.currentLocale?.languageCode ==
+                                              'ar'
+                                          ? const EdgeInsets.only(left: 10)
+                                          : const EdgeInsets.only(right: 10),
                                   child: Text(
                                     feed.likesCount.toString(),
                                     style: TextStyle(
@@ -278,8 +282,11 @@ class FeedContentInCommunity extends StatelessWidget {
                                           20, // This increases the ripple effect area
                                       containedInkWell: true,
                                       child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 10),
+                                        padding: context.currentLocale
+                                                    ?.languageCode ==
+                                                'ar'
+                                            ? const EdgeInsets.only(left: 10)
+                                            : const EdgeInsets.only(right: 10),
                                         child: Text(
                                           feedResponse.likesCount.toString(),
                                           style: const TextStyle(
@@ -363,10 +370,9 @@ class FeedContentInCommunity extends StatelessWidget {
                   ),
                 ],
               ),
-             
               Row(
                 children: [
-                    ShareButton(feed: feed),
+                  ShareButton(feed: feed),
                   BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
                     builder: (context, state) {
                       return state.maybeWhen(

@@ -679,6 +679,8 @@ class PostCard extends StatelessWidget {
                                     currentDoctorModel: currentDoctorModel,
                                     homeDataModel: homeDataModel,
                                     highlightWord: highlightWord,
+                                    trimCollapsedText:
+                                        context.tr(AppStrings.seeMore),
                                   ),
                                 ),
                               ],

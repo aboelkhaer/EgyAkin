@@ -10,7 +10,7 @@ class GfrCalculatorScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title:  Text(context.tr(AppStrings.gfrCalculator)),
+        title: Text(context.tr(AppStrings.gfrCalculator)),
       ),
       body: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -99,7 +99,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child:  Text(context.tr(AppStrings.close)),
+                                            child: Text(
+                                                context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -173,7 +174,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child:  Text(context.tr(AppStrings.close)),
+                                            child: Text(
+                                                context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -247,7 +249,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
-                                            child:  Text(context.tr(AppStrings.close)),
+                                            child: Text(
+                                                context.tr(AppStrings.close)),
                                           ),
                                         ],
                                       );
@@ -297,7 +300,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return context.tr(AppStrings.pleaseEnterHeight);
+                                          return context
+                                              .tr(AppStrings.pleaseEnterHeight);
                                         }
                                         return null;
                                       },
@@ -327,10 +331,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                                       textInputType: TextInputType.number,
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return context.tr(AppStrings.pleaseEnterWeight);
-
-
-
+                                          return context
+                                              .tr(AppStrings.pleaseEnterWeight);
                                         }
                                         return null;
                                       },
@@ -471,7 +473,8 @@ class GfrCalculatorScreen extends StatelessWidget {
                             textInputType: TextInputType.text,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return context.tr(AppStrings.pleaseEnterCreatinineLevel);
+                                return context
+                                    .tr(AppStrings.pleaseEnterCreatinineLevel);
                               }
                               return null;
                             },
@@ -487,7 +490,6 @@ class GfrCalculatorScreen extends StatelessWidget {
                 SizedBox(height: 20.h),
                 Row(
                   children: [
-                   
                     Text(
                       context.tr(AppStrings.gender),
                       style: TextStyle(

@@ -367,6 +367,7 @@ class _CreatePostInCommunityScreenState
                                         ),
                                         keyboardType: TextInputType.multiline,
                                         maxLines: null,
+                                        maxLength: 3000,
                                         textDirection: textDirection,
                                         onChanged: (value) {
                                           if (cubit.editableFeed == null) {
@@ -405,40 +406,40 @@ class _CreatePostInCommunityScreenState
                                       );
                                     },
                                   ),
-                                  BlocBuilder<CreatePostInCommunityCubit,
-                                      CreatePostInCommunityState>(
-                                    builder: (context, state) {
-                                      return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Text(
-                                            cubit.editableFeed == null
-                                                ? cubit.postContent.length
-                                                    .toString()
-                                                : cubit.editableFeed!.content!
-                                                    .length
-                                                    .toString(),
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: cubit.postContent.length ==
-                                                      3000
-                                                  ? Colors.red
-                                                  : Colors.grey.shade600,
-                                            ),
-                                          ),
-                                          Text(
-                                            '/3000',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.grey.shade700,
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
+                                  // BlocBuilder<CreatePostInCommunityCubit,
+                                  //     CreatePostInCommunityState>(
+                                  //   builder: (context, state) {
+                                  //     return Row(
+                                  //       mainAxisAlignment:
+                                  //           MainAxisAlignment.end,
+                                  //       children: [
+                                  //         Text(
+                                  //           cubit.editableFeed == null
+                                  //               ? cubit.postContent.length
+                                  //                   .toString()
+                                  //               : cubit.editableFeed!.content!
+                                  //                   .length
+                                  //                   .toString(),
+                                  //           style: TextStyle(
+                                  //             fontSize: 12,
+                                  //             color: cubit.postContent.length ==
+                                  //                     3000
+                                  //                 ? Colors.red
+                                  //                 : Colors.grey.shade600,
+                                  //           ),
+                                  //         ),
+                                  //         Text(
+                                  //           '/3000',
+                                  //           style: TextStyle(
+                                  //             fontSize: 12,
+                                  //             fontWeight: FontWeight.bold,
+                                  //             color: Colors.grey.shade700,
+                                  //           ),
+                                  //         ),
+                                  //       ],
+                                  //     );
+                                  //   },
+                                  // ),
                                 ],
                               ),
                             ),
@@ -845,7 +846,9 @@ class _CreatePostInCommunityScreenState
 
                                 if (isImagePick) {
                                   return Container(
-                                    color: Colors.grey.shade300,
+                                    color: isDarkMode
+                                        ? AppColors.darkBorder
+                                        : Colors.grey.shade300,
                                     padding:
                                         const EdgeInsets.symmetric(vertical: 5),
                                     child: Padding(

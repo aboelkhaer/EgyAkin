@@ -42,6 +42,7 @@ class DoctorModel with _$DoctorModel {
     @JsonKey(name: 'email_verified_at') String? emailVerifiedAt,
     @JsonKey(name: 'phone_verified_at') String? phoneVerifiedAt,
     @JsonKey(name: 'invitation_id') int? invitationId,
+    @JsonKey(name: 'deviceId') String? deviceId,
     bool? blocked,
     bool? limited,
     List<PatientHomeDataModel>? patients,
@@ -51,3 +52,5 @@ class DoctorModel with _$DoctorModel {
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
 }
+
+

@@ -1,7 +1,6 @@
-import 'package:egy_akin/app/constants/app_color.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart'; // Assuming you're using screenutil for responsive sizing
-import 'package:url_launcher/url_launcher.dart'; // To launch the email client
+import 'package:egy_akin/app/services/theme_bloc.dart';
+
+import '../../../exports.dart';
 
 bool _isDialogOpen = false; // Flag to check if the dialog is open
 
@@ -17,66 +16,83 @@ void showBlockedDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              SizedBox(height: 10.h),
-              Text(
-                'You are blocked!',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,
-                  color: AppColors.title,
-                ),
+      return BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+          return AlertDialog(
+            backgroundColor: isDarkMode ? AppColors.darkCardBG : Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  SizedBox(height: 10.h),
+                  Text(
+                    LocalizationService.instance
+                        .translate(AppStrings.youAreBlocked),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                      color: isDarkMode ? AppColors.darkTitle : AppColors.title,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  Text(
+                    LocalizationService.instance.translate(AppStrings
+                        .pleaseContactSupportIfYouThinkThisIsAMistake),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color:
+                          isDarkMode ? Colors.grey.shade300 : AppColors.title,
+                    ),
+                  ),
+                  SizedBox(height: 10.h),
+                  GestureDetector(
+                    onTap: () async {
+                      const email = 'mailto:support@egyakin.com';
+                      if (await canLaunch(email)) {
+                        await launch(email);
+                      } else {
+                        // Handle error when email client can't be launched
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(LocalizationService.instance
+                                  .translate(
+                                      AppStrings.couldNotOpenEmailClient))),
+                        );
+                      }
+                    },
+                    child: Text(
+                      'support@egyakin.com', // Use your support email
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors
+                            .primary, // Keep primary color for email link
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 5.h),
+                ],
               ),
-              SizedBox(height: 10.h),
-              Text(
-                'Please contact support if you think this is a mistake.',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColors.title, // Assuming you have a subtitle color
-                ),
-              ),
-              SizedBox(height: 10.h),
-              GestureDetector(
-                onTap: () async {
-                  const email = 'mailto:support@egyakin.com';
-                  if (await canLaunch(email)) {
-                    await launch(email);
-                  } else {
-                    // Handle error when email client can't be launched
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Could not open email client')),
-                    );
-                  }
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
                 },
                 child: Text(
-                  'support@egyakin.com', // Use your support email
+                  LocalizationService.instance.translate(AppStrings.close),
                   style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors
-                        .primary, // Highlight the email in primary color
-                    decoration: TextDecoration.underline,
+                    color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
                   ),
                 ),
               ),
-              SizedBox(height: 5.h),
             ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text('Close'),
-          ),
-        ],
+          );
+        },
       );
     },
   ).then((_) {

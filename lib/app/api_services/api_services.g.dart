@@ -103,9 +103,7 @@ class _ApiServices implements ApiServices {
 
   @override
   Future<AuthenticationModelResponse> register(
-    Map<String, dynamic> doctorModel,
-    String deviceId,
-  ) async {
+      Map<String, dynamic> doctorModel) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};

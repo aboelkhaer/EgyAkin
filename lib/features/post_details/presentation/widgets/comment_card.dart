@@ -16,6 +16,17 @@ class CommentCard extends StatelessWidget {
     required this.homeDataModel,
   });
 
+  // Helper function to detect if text is Arabic
+  bool _isArabic(String text) {
+    if (text.isEmpty) return false;
+    return RegExp(r'[\u0600-\u06FF]').hasMatch(text.trim());
+  }
+
+  // Helper function to get text direction
+  TextDirection _getTextDirection(String text) {
+    return _isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -163,8 +174,11 @@ class CommentCard extends StatelessWidget {
                     height: 20,
                   ),
                   Row(
+                    mainAxisAlignment: _isArabic(commentModel.content ?? '')
+                        ? MainAxisAlignment.end
+                        : MainAxisAlignment.start,
                     children: [
-                      Flexible(
+                      Expanded(
                         child: Text(
                           commentModel.content!,
                           style: const TextStyle(
@@ -174,6 +188,11 @@ class CommentCard extends StatelessWidget {
                             wordSpacing: 2,
                             letterSpacing: 1,
                           ),
+                          textDirection:
+                              _getTextDirection(commentModel.content ?? ''),
+                          textAlign: _isArabic(commentModel.content ?? '')
+                              ? TextAlign.right
+                              : TextAlign.left,
                         ),
                       ),
                     ],

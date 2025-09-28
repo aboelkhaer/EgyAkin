@@ -326,7 +326,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                 widget.currentDoctorModel.id.toString();
 
                             return Directionality(
-                              textDirection: TextDirection.rtl,
+                              textDirection: TextDirection.ltr,
                               child: FadeIn(
                                 child: Column(
                                   children: [

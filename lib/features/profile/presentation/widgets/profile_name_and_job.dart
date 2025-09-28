@@ -57,7 +57,7 @@ class ProfileNameAndJob extends StatelessWidget {
                         color: isDarkMode ? AppColors.darkTitle : Colors.black,
                       ),
                     ),
-                    isSyndicateCardRequired == 'Verified'
+                    isVerifiedUser(isSyndicateCardRequired)
                         ? const VerificationIcon(
                             duration: 300,
                           )
@@ -76,62 +76,102 @@ class ProfileNameAndJob extends StatelessWidget {
                         : Colors.grey.shade700,
                   ),
                 ),
-                SizedBox(height: 3.h),
+                SizedBox(
+                    height:
+                        isVerifiedUser(homeDataModel.isSyndicateCardRequired)
+                            ? 3.h
+                            : 0),
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, state) {
                     return Column(
                       children: [
-                        // First Row with three items
+                        // First Row with conditional items
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.people,
-                              value: context
-                                  .read<HomeCubit>()
-                                  .doctorPatientCount
-                                  .toString(),
-                              label: context.tr(AppStrings.patient),
-                              onTap: () {},
-                            ),
-                            _buildDivider(context),
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.star,
-                              value: context
-                                  .read<HomeCubit>()
-                                  .doctorScore
-                                  .toString(),
-                              label: context.tr(AppStrings.score),
-                              onTap: () {},
-                            ),
-                            _buildDivider(context),
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.bookmark,
-                              value: homeDataModel.savedPosts.toString(),
-                              label: context.tr(AppStrings.savedPosts),
-                              onTap: () {},
-                            ),
+                            // Show patient count only if verified
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired)) ...[
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.people,
+                                value: context
+                                    .read<HomeCubit>()
+                                    .doctorPatientCount
+                                    .toString(),
+                                label: context.tr(AppStrings.patient),
+                                onTap: () {},
+                              ),
+                              _buildDivider(context),
+                            ],
+                            // Show score only if verified
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired)) ...[
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.star,
+                                value: context
+                                    .read<HomeCubit>()
+                                    .doctorScore
+                                    .toString(),
+                                label: context.tr(AppStrings.score),
+                                onTap: () {},
+                              ),
+                              _buildDivider(context),
+                            ],
+                            // Show saved posts in first row only for verified users
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired))
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.bookmark,
+                                value: homeDataModel.savedPosts.toString(),
+                                label: context.tr(AppStrings.savedPosts),
+                                onTap: () {},
+                              ),
                           ],
                         ),
 
                         SizedBox(height: 5.h), // Space between rows
 
-                        // Second Row with "All Posts"
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.post_add,
-                              value: homeDataModel.postsCount.toString(),
-                              label: context.tr(AppStrings.allPosts),
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
+                        // Second Row - conditional layout based on verification
+                        if (isVerifiedUser(
+                            homeDataModel.isSyndicateCardRequired))
+                          // Verified users: All Posts in separate row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.post_add,
+                                value: homeDataModel.postsCount.toString(),
+                                label: context.tr(AppStrings.allPosts),
+                                onTap: () {},
+                              ),
+                            ],
+                          )
+                        else
+                          // Non-verified users: Saved Posts and All Posts in same row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.bookmark,
+                                value: homeDataModel.savedPosts.toString(),
+                                label: context.tr(AppStrings.savedPosts),
+                                onTap: () {},
+                              ),
+                              _buildDivider(context),
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.post_add,
+                                value: homeDataModel.postsCount.toString(),
+                                label: context.tr(AppStrings.allPosts),
+                                onTap: () {},
+                              ),
+                            ],
+                          ),
                       ],
                     );
                   },
@@ -157,7 +197,7 @@ class ProfileNameAndJob extends StatelessWidget {
                         color: isDarkMode ? AppColors.darkTitle : Colors.black,
                       ),
                     ),
-                    isSyndicateCardRequired == 'Verified'
+                    isVerifiedUser(isSyndicateCardRequired)
                         ? const VerificationIcon(
                             duration: 300,
                           )
@@ -176,141 +216,211 @@ class ProfileNameAndJob extends StatelessWidget {
                         : Colors.grey.shade700,
                   ),
                 ),
-                SizedBox(height: 3.h),
+                SizedBox(
+                    height:
+                        isVerifiedUser(homeDataModel.isSyndicateCardRequired)
+                            ? 3.h
+                            : 0),
                 BlocBuilder<ProfileCubit, ProfileState>(
                   builder: (context, state) {
                     return Column(
                       children: [
-                        // First Row with three items
+                        // First Row with conditional items
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.people,
-                              value: context
-                                  .read<HomeCubit>()
-                                  .doctorPatientCount
-                                  .toString(),
-                              label: context.tr(AppStrings.patient),
-                              onTap: isVerifiedUser(
-                                      homeDataModel.isSyndicateCardRequired)
-                                  ? () {
-                                      navigatorKey.currentState?.pushNamed(
-                                        AppRoutes.profilePatients,
-                                        arguments: AppRoutesArgs
-                                            .profilePatientsRouteArgs(
+                            // Show patient count only if verified
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired)) ...[
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.people,
+                                value: context
+                                    .read<HomeCubit>()
+                                    .doctorPatientCount
+                                    .toString(),
+                                label: context.tr(AppStrings.patient),
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.profilePatients,
+                                    arguments:
+                                        AppRoutesArgs.profilePatientsRouteArgs(
+                                      doctorId:
+                                          cubit.currentDoctor.id.toString(),
+                                      currentDoctorModel: cubit.currentDoctor,
+                                      accountVerification: accountVerification,
+                                      currentDoctorPoints: currentDoctorPoints,
+                                      isSyndicateCardRequired:
+                                          isSyndicateCardRequired,
+                                      doctorFirstName: cubit
+                                          .currentDoctor.firstName
+                                          .toString(),
+                                      currentDoctorRole: currentDoctorRole,
+                                      homeDataModel: homeDataModel,
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildDivider(context),
+                            ],
+                            // Show score only if verified
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired)) ...[
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.star,
+                                value: context
+                                    .read<HomeCubit>()
+                                    .doctorScore
+                                    .toString(),
+                                label: context.tr(AppStrings.score),
+                                onTap: () {
+                                  showCustomBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return BlocProvider(
+                                        create: (context) =>
+                                            ScoreHistoryCubit(sl()),
+                                        child: ScoreHistoryScreen(
                                           doctorId:
                                               cubit.currentDoctor.id.toString(),
-                                          currentDoctorModel:
-                                              cubit.currentDoctor,
-                                          accountVerification:
-                                              accountVerification,
-                                          currentDoctorPoints:
-                                              currentDoctorPoints,
-                                          isSyndicateCardRequired:
-                                              isSyndicateCardRequired,
-                                          doctorFirstName: cubit
-                                              .currentDoctor.firstName
-                                              .toString(),
-                                          currentDoctorRole: currentDoctorRole,
-                                          homeDataModel: homeDataModel,
                                         ),
                                       );
-                                    }
-                                  : () {
-                                      customSnackBar(
-                                          context: context,
-                                          message:
-                                              'You should verify your syndicate card at first.');
                                     },
-                            ),
-                            _buildDivider(context),
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.star,
-                              value: context
-                                  .read<HomeCubit>()
-                                  .doctorScore
-                                  .toString(),
-                              label: context.tr(AppStrings.score),
-                              onTap: () {
-                                showCustomBottomSheet(
-                                  context: context,
-                                  builder: (context) {
-                                    return BlocProvider(
-                                      create: (context) =>
-                                          ScoreHistoryCubit(sl()),
-                                      child: ScoreHistoryScreen(
-                                        doctorId:
-                                            cubit.currentDoctor.id.toString(),
+                                  );
+                                },
+                              ),
+                              _buildDivider(context),
+                            ],
+                            // Show saved posts in first row only for verified users
+                            if (isVerifiedUser(
+                                homeDataModel.isSyndicateCardRequired))
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.bookmark,
+                                value: homeDataModel.savedPosts.toString(),
+                                label: context.tr(AppStrings.savedPosts),
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.savedPosts,
+                                    arguments:
+                                        AppRoutesArgs.savedPostsRouteArgs(
+                                      currentDoctorModel: currentDoctorModel,
+                                      homeDataModel: homeDataModel,
+                                      doctorId:
+                                          currentDoctorModel.id.toString(),
+                                      doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName
+                                            .toString(),
+                                        lastName: currentDoctorModel.lastName
+                                            .toString(),
+                                        role: homeDataModel
+                                            .isSyndicateCardRequired
+                                            .toString(),
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                            _buildDivider(context),
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.bookmark,
-                              value: homeDataModel.savedPosts.toString(),
-                              label: context.tr(AppStrings.savedPosts),
-                              onTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.savedPosts,
-                                  arguments: AppRoutesArgs.savedPostsRouteArgs(
-                                    currentDoctorModel: currentDoctorModel,
-                                    homeDataModel: homeDataModel,
-                                    doctorId: currentDoctorModel.id.toString(),
-                                    doctorName: doctorName(
-                                      firstName: currentDoctorModel.firstName
-                                          .toString(),
-                                      lastName: currentDoctorModel.lastName
-                                          .toString(),
-                                      role: homeDataModel
-                                          .isSyndicateCardRequired
-                                          .toString(),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
+                                  );
+                                },
+                              ),
                           ],
                         ),
 
                         SizedBox(height: 5.h), // Space between rows
 
-                        // Second Row with "All Posts"
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _buildStatItem(
-                              context: context,
-                              icon: Icons.post_add,
-                              value: homeDataModel.postsCount.toString(),
-                              label: context.tr(AppStrings.allPosts),
-                              onTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.allDoctorPosts,
-                                  arguments:
-                                      AppRoutesArgs.allDoctorPostsRouteArgs(
-                                    currentDoctorModel: currentDoctorModel,
-                                    homeDataModel: homeDataModel,
-                                    doctorId: currentDoctorModel.id.toString(),
-                                    doctorName: doctorName(
-                                      firstName: currentDoctorModel.firstName,
-                                      lastName: currentDoctorModel.lastName,
-                                      role: homeDataModel
-                                          .isSyndicateCardRequired
-                                          .toString(),
+                        // Second Row - conditional layout based on verification
+                        if (isVerifiedUser(
+                            homeDataModel.isSyndicateCardRequired))
+                          // Verified users: All Posts in separate row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.post_add,
+                                value: homeDataModel.postsCount.toString(),
+                                label: context.tr(AppStrings.allPosts),
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.allDoctorPosts,
+                                    arguments:
+                                        AppRoutesArgs.allDoctorPostsRouteArgs(
+                                      currentDoctorModel: currentDoctorModel,
+                                      homeDataModel: homeDataModel,
+                                      doctorId:
+                                          currentDoctorModel.id.toString(),
+                                      doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName,
+                                        lastName: currentDoctorModel.lastName,
+                                        role: homeDataModel
+                                            .isSyndicateCardRequired
+                                            .toString(),
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                                  );
+                                },
+                              ),
+                            ],
+                          )
+                        else
+                          // Non-verified users: Saved Posts and All Posts in same row
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.bookmark,
+                                value: homeDataModel.savedPosts.toString(),
+                                label: context.tr(AppStrings.savedPosts),
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.savedPosts,
+                                    arguments:
+                                        AppRoutesArgs.savedPostsRouteArgs(
+                                      currentDoctorModel: currentDoctorModel,
+                                      homeDataModel: homeDataModel,
+                                      doctorId:
+                                          currentDoctorModel.id.toString(),
+                                      doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName
+                                            .toString(),
+                                        lastName: currentDoctorModel.lastName
+                                            .toString(),
+                                        role: homeDataModel
+                                            .isSyndicateCardRequired
+                                            .toString(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildDivider(context),
+                              _buildStatItem(
+                                context: context,
+                                icon: Icons.post_add,
+                                value: homeDataModel.postsCount.toString(),
+                                label: context.tr(AppStrings.allPosts),
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.allDoctorPosts,
+                                    arguments:
+                                        AppRoutesArgs.allDoctorPostsRouteArgs(
+                                      currentDoctorModel: currentDoctorModel,
+                                      homeDataModel: homeDataModel,
+                                      doctorId:
+                                          currentDoctorModel.id.toString(),
+                                      doctorName: doctorName(
+                                        firstName: currentDoctorModel.firstName,
+                                        lastName: currentDoctorModel.lastName,
+                                        role: homeDataModel
+                                            .isSyndicateCardRequired
+                                            .toString(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
                       ],
                     );
                   },

@@ -25,7 +25,8 @@ class SearchCubit extends Cubit<SearchState> {
       }
 
       final result = await _getSearchHomeUsecase.execute(
-        GetSearchHomeUsecaseInput(patient: isVerifiedUser ? patientValue : '', dose: doseValue),
+        GetSearchHomeUsecaseInput(
+            patient: isVerifiedUser ? patientValue : '', dose: doseValue),
       );
       result.fold(
         (l) => emit(SearchState.error(l.message)),
@@ -34,6 +35,13 @@ class SearchCubit extends Cubit<SearchState> {
         },
       );
     }
+  }
+
+  void clearSearchResults() {
+    searchController.clear();
+    patientOrDoctorOrHospital = false;
+    dose = true;
+    emit(const SearchState.initial());
   }
 
   // void loadMorePatients() async {

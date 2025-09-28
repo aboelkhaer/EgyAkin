@@ -35,7 +35,6 @@ abstract class ApiServices {
   @POST(ApiEndPoint.register)
   Future<AuthenticationModelResponse> register(
     @Body() Map<String, dynamic> doctorModel,
-    @Field('deviceId') String deviceId,
   );
 
   @GET(ApiEndPoint.allPatients)

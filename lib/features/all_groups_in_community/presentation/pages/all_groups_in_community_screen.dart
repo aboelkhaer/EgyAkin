@@ -205,7 +205,7 @@ class _AllGroupsInCommunityScreenState
             child: Column(
               children: [
                 ColoredBox(
-                  color: isDarkMode ? AppColors.darkSubBG : AppColors.primary,
+                  color: isDarkMode ? AppColors.darkCardBG : AppColors.primary,
                   child: TabBar(
                     indicatorColor: Colors.white,
                     labelColor: Colors.white,

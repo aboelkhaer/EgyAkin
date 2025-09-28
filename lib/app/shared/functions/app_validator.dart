@@ -3,20 +3,24 @@ import '../../../exports.dart';
 class AppValidators {
   static String? emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return AppStrings.pleaseEnterYourEmail;
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterYourEmail);
     }
     if (!_isValidEmail(value)) {
-      return AppStrings.pleaseEnterAVlidEmail;
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterAVlidEmail);
     }
     return null;
   }
 
   static String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return AppStrings.pleaseEnterYourPassword;
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterYourPassword);
     }
     if (value.length <= 6) {
-      return 'Please enter a valid password';
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterAVlidPassword);
     }
     return null;
   }
@@ -26,36 +30,44 @@ class AppValidators {
     return emailRegex.hasMatch(email);
   }
 
-  static String? passwordValidateForRegister(String value,BuildContext context) {
+  static String? passwordValidateForRegister(
+      String value, BuildContext context) {
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-      return context.tr(AppStrings.pleaseEnterYourPassword);
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterYourPassword);
     }
 
     // Password must contain at least one numeric number
     if (!RegExp(r'[0-9]').hasMatch(value)) {
-      return context.tr(AppStrings.pleaseEnterAVlidPassword);
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterAVlidPassword);
     }
 
     // Password must contain at least one special character
     if (!RegExp(r'[!@#$%^&*()\-_=+{}|:;<>,.?~]').hasMatch(value)) {
-      return context.tr(AppStrings.pleaseEnterAVlidPassword);
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterAVlidPassword);
     }
 
     // Password must have a minimum length of 6 characters
     if (value.length < 6) {
       // return 'Password must have a minimum length of 6 characters';
-      return context.tr(AppStrings.pleaseEnterAVlidPassword);
+      return LocalizationService.instance
+          .translate(AppStrings.pleaseEnterAVlidPassword);
     }
 
     return null;
   }
 
-  static String? firstAndLastNameValidation(String value,BuildContext context) {
+  static String? firstAndLastNameValidation(
+      String value, BuildContext context) {
     if (value.isEmpty) {
-      return context.tr(AppStrings.provideAValidNamePlease);
+      return LocalizationService.instance
+          .translate(AppStrings.provideAValidNamePlease);
     } else {
       RegExp(r'^[a-zA-Z0-9_\-=@,\.;]+$').hasMatch(value)
-          ? context.tr(AppStrings.arabicCharactersOnly)
+          ? LocalizationService.instance
+              .translate(AppStrings.arabicCharactersOnly)
           : null;
     }
     return null;
@@ -63,17 +75,20 @@ class AppValidators {
 
   static String? confirmPassword(String value, String textController) {
     if (value.isEmpty) {
-      return 'Confirm your password, please';
+      return LocalizationService.instance
+          .translate(AppStrings.confirmYourPasswordPlease);
     }
     if (value != textController) {
-      return 'Password not match';
+      return LocalizationService.instance
+          .translate(AppStrings.passwordNotMatch);
     }
     return null;
   }
 
   static String? fieldsIsEmptyValidation(String value) {
     if (value.trim().isEmpty) {
-      return 'Provide this field, please';
+      return LocalizationService.instance
+          .translate(AppStrings.provideThisFieldPlease);
     }
     return null;
   }
@@ -81,7 +96,8 @@ class AppValidators {
   static String? validateAge(String value) {
     // Check if the entered value is a number
     if (int.tryParse(value) == null) {
-      return 'Enter a valid number';
+      return LocalizationService.instance
+          .translate(AppStrings.enterAVaildNumber);
     }
 
     int age = int.parse(value);
@@ -97,7 +113,8 @@ class AppValidators {
   static String? validatePhoneNumber(String value) {
     // Check if the entered value is a number
     if (int.tryParse(value) == null) {
-      return 'Enter a valid phone';
+      return LocalizationService.instance
+          .translate(AppStrings.enterAVaildNumber);
     }
 
     // Check if the length is exactly 11 digits

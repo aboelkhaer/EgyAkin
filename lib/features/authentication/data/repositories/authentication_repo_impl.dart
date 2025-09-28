@@ -38,13 +38,11 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   @override
   Future<Either<Failure, AuthenticationModelResponse>> register({
     required DoctorModel doctorModel,
-    required String deviceId,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final response = await authenticationRemoteDataSource.register(
           doctorModel: doctorModel,
-          deviceId: deviceId,
         );
         await sl<AppPreferences>()
             .setData(AppLocalStrings.keyToken, response.token ?? '');

@@ -44,10 +44,21 @@ class GFRModel with _$GFRModel {
 @freezed
 class EquationModel with _$EquationModel {
   const factory EquationModel({
-    @JsonKey(name: 'current_GFR') dynamic currentGFR,
-    @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
-    @JsonKey(name: 'creatinine_on_discharge_GFR') dynamic creatinineOnDischarge,
+    @JsonKey(name: 'current_GFR') EquationDataModel? currentGFR,
+    @JsonKey(name: 'basal_creatinine_GFR') EquationDataModel? basalCreatinine,
+    @JsonKey(name: 'creatinine_on_discharge_GFR')
+    EquationDataModel? creatinineOnDischarge,
   }) = _EquationModel;
   factory EquationModel.fromJson(Map<String, dynamic> json) =>
       _$EquationModelFromJson(json);
+}
+
+@freezed
+class EquationDataModel with _$EquationDataModel {
+  const factory EquationDataModel({
+    String? localization,
+    String? value,
+  }) = _EquationDataModel;
+  factory EquationDataModel.fromJson(Map<String, dynamic> json) =>
+      _$EquationDataModelFromJson(json);
 }

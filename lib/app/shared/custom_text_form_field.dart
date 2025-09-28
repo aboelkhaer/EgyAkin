@@ -1,6 +1,5 @@
 import 'package:egy_akin/app/services/theme_bloc.dart';
 import '../../exports.dart';
-import 'dart:ui' as ui;
 
 class CustomTextFormField extends StatefulWidget {
   final String title;
@@ -37,6 +36,7 @@ class CustomTextFormField extends StatefulWidget {
   final EdgeInsetsGeometry? contentPadding;
   final bool showClearButton;
   final VoidCallback? onClear;
+  final bool showCounter;
 
   const CustomTextFormField({
     super.key,
@@ -74,6 +74,7 @@ class CustomTextFormField extends StatefulWidget {
     this.contentPadding,
     this.showClearButton = false,
     this.onClear,
+    this.showCounter = false,
   });
 
   @override
@@ -180,7 +181,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                         top: 14,
                         bottom: 14,
                       ),
-                  counterText: '',
+                  counterText: widget.showCounter ? null : '',
                   hintText: widget.title,
                   hintStyle: TextStyle(
                       color:
@@ -300,7 +301,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               if (widget.isSearchIconInCenter && _isTextEmpty)
                 Positioned(
                   left: 0,
-                  right: 67,
+                  right: context.currentLocale?.languageCode == 'ar' ? 110 : 80,
                   top: 5,
                   bottom: 0,
                   child: Column(

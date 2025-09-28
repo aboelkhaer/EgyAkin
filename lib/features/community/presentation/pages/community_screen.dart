@@ -141,7 +141,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                     ),
                     Expanded(
                       child: CustomTextFormField(
-                        title: context.tr(AppStrings.search),
+                        title: context.tr(AppStrings.searchInCommunity),
                         textAlign: TextAlign.center,
                         onTextClick: () {
                           navigatorKey.currentState?.pushNamed(
@@ -235,8 +235,9 @@ class _CommunityScreenState extends State<CommunityScreen>
                           Icon(
                             Icons.article_outlined,
                             size: 16,
-                            color:
-                                isDarkMode ? AppColors.darkTitle : Colors.black,
+                            color: isDarkMode
+                                ? AppColors.darkTitle
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(width: 5),
                           Text(
@@ -245,7 +246,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               fontSize: 14,
                               color: isDarkMode
                                   ? AppColors.darkTitle
-                                  : Colors.black,
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -258,8 +259,9 @@ class _CommunityScreenState extends State<CommunityScreen>
                           Icon(
                             Icons.trending_up,
                             size: 16,
-                            color:
-                                isDarkMode ? AppColors.darkTitle : Colors.black,
+                            color: isDarkMode
+                                ? AppColors.darkTitle
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(width: 5),
                           Text(
@@ -268,7 +270,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               fontSize: 14,
                               color: isDarkMode
                                   ? AppColors.darkTitle
-                                  : Colors.black,
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ],
@@ -281,8 +283,9 @@ class _CommunityScreenState extends State<CommunityScreen>
                           Icon(
                             Icons.group,
                             size: 16,
-                            color:
-                                isDarkMode ? AppColors.darkTitle : Colors.black,
+                            color: isDarkMode
+                                ? AppColors.darkTitle
+                                : Colors.grey.shade600,
                           ),
                           const SizedBox(width: 5),
                           Text(
@@ -291,7 +294,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                               fontSize: 14,
                               color: isDarkMode
                                   ? AppColors.darkTitle
-                                  : Colors.black,
+                                  : Colors.grey.shade600,
                             ),
                           ),
                         ],

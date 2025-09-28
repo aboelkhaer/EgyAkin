@@ -267,10 +267,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
-                                Icons.search_off_outlined,
-                                size: 40,
-                                color: AppColors.primary,
+                               Image.asset(
+                                AppImages.notFound,
+                                height: 150,
+                                width: 150,
                               ),
                               SizedBox(
                                 height: size.height * 0.2,
@@ -290,10 +290,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(
-                                      Icons.search_off_outlined,
-                                      size: 40,
-                                      color: AppColors.primary,
+                                    Image.asset(
+                                      AppImages.notFound,
+                                      height: 150,
+                                      width: 150,
                                     ),
                                     SizedBox(
                                       height: size.height * 0.2,

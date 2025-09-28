@@ -230,84 +230,149 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                       EquationImplementation(
                                         equationName: 'CKD-EPI',
                                         currentCreatinineValue: response
-                                            .gfr!.ckd!.currentGFR
+                                            .gfr!.ckd!.currentGFR!.value
                                             .toString(),
                                         basalCreatinineValue: response
-                                            .gfr!.ckd!.basalCreatinine
+                                            .gfr!.ckd!.basalCreatinine!.value
                                             .toString(),
                                         creatinineOnDischargeValue: response
-                                            .gfr!.ckd!.creatinineOnDischarge
+                                            .gfr!
+                                            .ckd!
+                                            .creatinineOnDischarge!
+                                            .value
                                             .toString(),
+                                        currentCreatinineLocalization: response
+                                            .gfr!.ckd!.currentGFR!.localization,
+                                        basalCreatinineLocalization: response
+                                            .gfr!
+                                            .ckd!
+                                            .basalCreatinine!
+                                            .localization,
+                                        creatinineOnDischargeLocalization:
+                                            response
+                                                .gfr!
+                                                .ckd!
+                                                .creatinineOnDischarge!
+                                                .localization,
                                       ),
                                       EquationImplementation(
                                         equationName: 'Sobh Equation',
                                         currentCreatinineValue: response
-                                            .gfr!.sobh!.currentGFR
+                                            .gfr!.sobh!.currentGFR!.value
                                             .toString(),
                                         basalCreatinineValue: response
-                                            .gfr!.sobh!.basalCreatinine
+                                            .gfr!.sobh!.basalCreatinine!.value
                                             .toString(),
                                         creatinineOnDischargeValue: response
-                                            .gfr!.sobh!.creatinineOnDischarge
+                                            .gfr!
+                                            .sobh!
+                                            .creatinineOnDischarge!
+                                            .value
                                             .toString(),
+                                        currentCreatinineLocalization: response
+                                            .gfr!
+                                            .sobh!
+                                            .currentGFR!
+                                            .localization,
+                                        basalCreatinineLocalization: response
+                                            .gfr!
+                                            .sobh!
+                                            .basalCreatinine!
+                                            .localization,
+                                        creatinineOnDischargeLocalization:
+                                            response
+                                                .gfr!
+                                                .sobh!
+                                                .creatinineOnDischarge!
+                                                .localization,
                                       ),
                                       EquationImplementation(
                                         equationName: 'MDRD',
                                         currentCreatinineValue: response
-                                            .gfr!.mdrd!.currentGFR
+                                            .gfr!.mdrd!.currentGFR!.value
                                             .toString(),
                                         basalCreatinineValue: response
-                                            .gfr!.mdrd!.basalCreatinine
+                                            .gfr!.mdrd!.basalCreatinine!.value
                                             .toString(),
                                         creatinineOnDischargeValue: response
-                                            .gfr!.mdrd!.creatinineOnDischarge
+                                            .gfr!
+                                            .mdrd!
+                                            .creatinineOnDischarge!
+                                            .value
                                             .toString(),
+                                        currentCreatinineLocalization: response
+                                            .gfr!
+                                            .mdrd!
+                                            .currentGFR!
+                                            .localization,
+                                        basalCreatinineLocalization: response
+                                            .gfr!
+                                            .mdrd!
+                                            .basalCreatinine!
+                                            .localization,
+                                        creatinineOnDischargeLocalization:
+                                            response
+                                                .gfr!
+                                                .mdrd!
+                                                .creatinineOnDischarge!
+                                                .localization,
                                       ),
                                     ],
                                   ),
                                 ),
-                          SizedBox(height: 25.h),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '${LocalizationService.instance.translate(AppStrings.requestConsultation)}:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.sp,
-                                      color: Colors.grey.shade600),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          ConsultationButtonsRow(
-                            onDoctorConsultationTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                AppRoutes.sendConsultation,
-                                arguments:
-                                    AppRoutesArgs.sendConsultationRouteArgs(
-                                  homeDataModel: widget.homeDataModel,
-                                  currentDoctorModel: widget.currentDoctorModel,
-                                  patientId: widget.patientId,
-                                  isSendConsultation: true,
-                                  groupId: '',
-                                  isForAddNewDoctors: false,
-                                  consultationId: '',
-                                  ownerOfConsultationId: '',
-                                ),
-                              );
-                            },
-                            onAiConsultationTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.consultationFromAi,
-                                  arguments:
-                                      AppRoutesArgs.consultationFromAiRouteArgs(
-                                    patientId: widget.patientId,
-                                  ));
-                            },
-                          ),
+                          widget.currentDoctorModel.id.toString() ==
+                                      response.doctorId.toString() ||
+                                  widget.homeDataModel.role ==
+                                      AppStrings.roleAdmin
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: 25.h),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 20),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            '${LocalizationService.instance.translate(AppStrings.requestConsultation)}:',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 13.sp,
+                                                color: Colors.grey.shade600),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    ConsultationButtonsRow(
+                                      onDoctorConsultationTap: () {
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.sendConsultation,
+                                          arguments: AppRoutesArgs
+                                              .sendConsultationRouteArgs(
+                                            homeDataModel: widget.homeDataModel,
+                                            currentDoctorModel:
+                                                widget.currentDoctorModel,
+                                            patientId: widget.patientId,
+                                            isSendConsultation: true,
+                                            groupId: '',
+                                            isForAddNewDoctors: false,
+                                            consultationId: '',
+                                            ownerOfConsultationId: '',
+                                          ),
+                                        );
+                                      },
+                                      onAiConsultationTap: () {
+                                        navigatorKey.currentState?.pushNamed(
+                                            AppRoutes.consultationFromAi,
+                                            arguments: AppRoutesArgs
+                                                .consultationFromAiRouteArgs(
+                                              patientId: widget.patientId,
+                                            ));
+                                      },
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                           SizedBox(height: 25.h),
                           Padding(
                             padding: const EdgeInsets.only(left: 20, right: 20),

@@ -409,6 +409,8 @@ class _CreateGroupInCommunityScreenState
                     return null;
                   },
                   maxLines: 4,
+                  maxLength: 500,
+                  showCounter: true,
                   onChanged: (value) {
                     cubit.groupDescriptionText = value;
                   },
@@ -420,9 +422,9 @@ class _CreateGroupInCommunityScreenState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Privacy Radio Buttons
-                     Text(
+                    Text(
                       context.tr(AppStrings.privacy),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         color: AppColors.primary, // Use AppColors.primary
@@ -452,7 +454,7 @@ class _CreateGroupInCommunityScreenState
                         ),
                         Text(
                           context.tr(AppStrings.public),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.primary, // Use AppColors.primary
                             fontWeight: FontWeight.bold,
                           ),
@@ -478,7 +480,7 @@ class _CreateGroupInCommunityScreenState
                         ),
                         Text(
                           context.tr(AppStrings.private),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.primary, // Use AppColors.primary
                             fontWeight: FontWeight.bold,
                           ),

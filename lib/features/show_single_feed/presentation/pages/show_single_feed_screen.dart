@@ -120,48 +120,86 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                         );
                       },
                       error: (message) {
-                        if (message ==
-                            'An error occurred while retrieving post comments') {
-                          return Expanded(
-                            child: Column(
-                              children: [
-                                SizedBox(height: 20.h),
-                                Row(
-                                  children: [
-                                    SizedBox(width: 10.h),
-                                    IconButton(
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      icon: const Icon(
-                                        Icons.arrow_back_ios,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Expanded(
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          context.tr(AppStrings
-                                              .thisContentIsNoLongerAvailable),
-                                          style: TextStyle(
-                                              color: Colors.grey.shade700),
-                                        ),
-                                        SizedBox(height: 50.h),
-                                      ],
+                        // if (message ==
+                        //         'An error occurred while retrieving post comments' ||
+                        //     message ==
+                        //         'حدث خطأ أثناء استرداد تعليقات المنشور') {
+                        //   return Expanded(
+                        //     child: Column(
+                        //       children: [
+                        //         SizedBox(height: 20.h),
+                        //         Row(
+                        //           children: [
+                        //             SizedBox(width: 10.h),
+                        //             IconButton(
+                        //               onPressed: () {
+                        //                 Navigator.pop(context);
+                        //               },
+                        //               icon: const Icon(
+                        //                 Icons.arrow_back_ios,
+                        //               ),
+                        //             )
+                        //           ],
+                        //         ),
+                        //         Expanded(
+                        //           child: Center(
+                        //             child: Column(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.center,
+                        //               children: [
+                        //                 Text(
+                        //                   context.tr(AppStrings
+                        //                       .thisContentIsNoLongerAvailable),
+                        //                   style: TextStyle(
+                        //                       color: Colors.grey.shade700),
+                        //                 ),
+                        //                 SizedBox(height: 50.h),
+                        //               ],
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   );
+                        // }
+                        // return const Center(
+                        //   child: CircularProgressIndicator(),
+                        // );
+                        return Expanded(
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20.h),
+                              Row(
+                                children: [
+                                  SizedBox(width: 10.h),
+                                  IconButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: const Icon(
+                                      Icons.arrow_back_ios,
                                     ),
+                                  )
+                                ],
+                              ),
+                              Expanded(
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        context.tr(AppStrings
+                                            .thisContentIsNoLongerAvailable),
+                                        style: TextStyle(
+                                            color: Colors.grey.shade700),
+                                      ),
+                                      SizedBox(height: 50.h),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        }
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                              ),
+                            ],
+                          ),
                         );
                       },
                       loaded: (commentsResponse,

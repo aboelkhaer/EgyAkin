@@ -23,24 +23,29 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-         context.tr(AppStrings.emailVerification),
-
+          context.tr(AppStrings.emailVerification),
         ),
       ),
       body: BlocConsumer<EmailVerificationCubit, EmailVerificationState>(
         listener: (context, state) {
           state.maybeWhen(
             orElse: () {},
+            emailVerificationSuccess: () {
+              customSnackBar(
+                message: context.tr(AppStrings.emailVerifiedSuccessfully),
+                context: context,
+              );
+            },
             emailVerificationComplete: () {
               navigatorKey.currentState
                   ?.pushReplacementNamed(AppRoutes.home, arguments: 0);
+              customSnackBar(
+                message: context.tr(AppStrings.emailVerifiedSuccessfully),
+                context: context,
+              );
             },
             error: (message) {
               customSnackBar(message: message, context: context);
-              Future.delayed(const Duration(milliseconds: 0), () {
-                navigatorKey.currentState
-                    ?.pop();
-              });
             },
           );
         },
@@ -207,7 +212,6 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                                 cubit.sendOTPForEmailVerification();
                               },
                               title: context.tr(AppStrings.confirm),
-
                             ),
                           ),
                           BlocBuilder<EmailVerificationCubit,
@@ -222,7 +226,6 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                                         cubit.resendOtp();
                                       },
                                       title: context.tr(AppStrings.resend),
-
                                       isFlatBotton: true,
                                     ),
                                   );

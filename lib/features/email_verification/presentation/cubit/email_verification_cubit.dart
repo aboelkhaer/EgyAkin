@@ -1,6 +1,7 @@
 import '../../../../exports.dart';
 
-class EmailVerificationCubit extends Cubit<EmailVerificationState> with WidgetsBindingObserver {
+class EmailVerificationCubit extends Cubit<EmailVerificationState>
+    with WidgetsBindingObserver {
   EmailVerificationCubit(
     this._sendEmailForVerificationUsecase,
     this._sendOTPForEmailVerificationUsecase,
@@ -36,8 +37,9 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> with WidgetsB
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       // App went to background
       if (_isTimerActive && _timer != null && _timer!.isActive) {
         _backgroundTime = DateTime.now();
@@ -46,9 +48,11 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> with WidgetsB
     } else if (state == AppLifecycleState.resumed) {
       // App came back to foreground
       if (_isTimerActive && _backgroundTime != null) {
-        final timeInBackground = DateTime.now().difference(_backgroundTime!).inSeconds;
-        countdown = (countdown - timeInBackground).clamp(0, AppStrings.resendTimer);
-        
+        final timeInBackground =
+            DateTime.now().difference(_backgroundTime!).inSeconds;
+        countdown =
+            (countdown - timeInBackground).clamp(0, AppStrings.resendTimer);
+
         if (countdown <= 0) {
           emit(const EmailVerificationState.countDowncompleted());
           _isTimerActive = false;
@@ -112,9 +116,24 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState> with WidgetsB
     final result = await _sendOTPForEmailVerificationUsecase
         .execute('$pin1$pin2$pin3$pin4');
     result.fold(
-      (l) => emit(EmailVerificationState.error(l.message)),
+      (l) {
+        // Show error snackbar and return to previous state
+        emit(EmailVerificationState.error(l.message));
+        // Restore the previous countdown state
+        if (_isTimerActive) {
+          emit(EmailVerificationState.countDownInProgress(countdown));
+        } else {
+          emit(const EmailVerificationState.loaded());
+        }
+      },
       (r) {
+        // Success - show success message and navigate
+        // emit(const EmailVerificationState.emailVerificationSuccess());
+        // Navigate after a short delay to show success message
         emit(const EmailVerificationState.emailVerificationComplete());
+        // Future.delayed(const Duration(milliseconds: 0), () {
+        //   emit(const EmailVerificationState.emailVerificationComplete());
+        // });
       },
     );
   }

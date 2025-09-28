@@ -793,11 +793,12 @@ EquationModel _$EquationModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$EquationModel {
   @JsonKey(name: 'current_GFR')
-  dynamic get currentGFR => throw _privateConstructorUsedError;
+  EquationDataModel? get currentGFR => throw _privateConstructorUsedError;
   @JsonKey(name: 'basal_creatinine_GFR')
-  dynamic get basalCreatinine => throw _privateConstructorUsedError;
+  EquationDataModel? get basalCreatinine => throw _privateConstructorUsedError;
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  dynamic get creatinineOnDischarge => throw _privateConstructorUsedError;
+  EquationDataModel? get creatinineOnDischarge =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this EquationModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -816,10 +817,14 @@ abstract class $EquationModelCopyWith<$Res> {
       _$EquationModelCopyWithImpl<$Res, EquationModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_GFR') dynamic currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
+      {@JsonKey(name: 'current_GFR') EquationDataModel? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') EquationDataModel? basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      dynamic creatinineOnDischarge});
+      EquationDataModel? creatinineOnDischarge});
+
+  $EquationDataModelCopyWith<$Res>? get currentGFR;
+  $EquationDataModelCopyWith<$Res>? get basalCreatinine;
+  $EquationDataModelCopyWith<$Res>? get creatinineOnDischarge;
 }
 
 /// @nodoc
@@ -845,16 +850,59 @@ class _$EquationModelCopyWithImpl<$Res, $Val extends EquationModel>
       currentGFR: freezed == currentGFR
           ? _value.currentGFR
           : currentGFR // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
       basalCreatinine: freezed == basalCreatinine
           ? _value.basalCreatinine
           : basalCreatinine // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
       creatinineOnDischarge: freezed == creatinineOnDischarge
           ? _value.creatinineOnDischarge
           : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
     ) as $Val);
+  }
+
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationDataModelCopyWith<$Res>? get currentGFR {
+    if (_value.currentGFR == null) {
+      return null;
+    }
+
+    return $EquationDataModelCopyWith<$Res>(_value.currentGFR!, (value) {
+      return _then(_value.copyWith(currentGFR: value) as $Val);
+    });
+  }
+
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationDataModelCopyWith<$Res>? get basalCreatinine {
+    if (_value.basalCreatinine == null) {
+      return null;
+    }
+
+    return $EquationDataModelCopyWith<$Res>(_value.basalCreatinine!, (value) {
+      return _then(_value.copyWith(basalCreatinine: value) as $Val);
+    });
+  }
+
+  /// Create a copy of EquationModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $EquationDataModelCopyWith<$Res>? get creatinineOnDischarge {
+    if (_value.creatinineOnDischarge == null) {
+      return null;
+    }
+
+    return $EquationDataModelCopyWith<$Res>(_value.creatinineOnDischarge!,
+        (value) {
+      return _then(_value.copyWith(creatinineOnDischarge: value) as $Val);
+    });
   }
 }
 
@@ -867,10 +915,17 @@ abstract class _$$EquationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'current_GFR') dynamic currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') dynamic basalCreatinine,
+      {@JsonKey(name: 'current_GFR') EquationDataModel? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR') EquationDataModel? basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      dynamic creatinineOnDischarge});
+      EquationDataModel? creatinineOnDischarge});
+
+  @override
+  $EquationDataModelCopyWith<$Res>? get currentGFR;
+  @override
+  $EquationDataModelCopyWith<$Res>? get basalCreatinine;
+  @override
+  $EquationDataModelCopyWith<$Res>? get creatinineOnDischarge;
 }
 
 /// @nodoc
@@ -894,15 +949,15 @@ class __$$EquationModelImplCopyWithImpl<$Res>
       currentGFR: freezed == currentGFR
           ? _value.currentGFR
           : currentGFR // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
       basalCreatinine: freezed == basalCreatinine
           ? _value.basalCreatinine
           : basalCreatinine // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
       creatinineOnDischarge: freezed == creatinineOnDischarge
           ? _value.creatinineOnDischarge
           : creatinineOnDischarge // ignore: cast_nullable_to_non_nullable
-              as dynamic,
+              as EquationDataModel?,
     ));
   }
 }
@@ -921,13 +976,13 @@ class _$EquationModelImpl implements _EquationModel {
 
   @override
   @JsonKey(name: 'current_GFR')
-  final dynamic currentGFR;
+  final EquationDataModel? currentGFR;
   @override
   @JsonKey(name: 'basal_creatinine_GFR')
-  final dynamic basalCreatinine;
+  final EquationDataModel? basalCreatinine;
   @override
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  final dynamic creatinineOnDischarge;
+  final EquationDataModel? creatinineOnDischarge;
 
   @override
   String toString() {
@@ -939,21 +994,18 @@ class _$EquationModelImpl implements _EquationModel {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$EquationModelImpl &&
-            const DeepCollectionEquality()
-                .equals(other.currentGFR, currentGFR) &&
-            const DeepCollectionEquality()
-                .equals(other.basalCreatinine, basalCreatinine) &&
-            const DeepCollectionEquality()
-                .equals(other.creatinineOnDischarge, creatinineOnDischarge));
+            (identical(other.currentGFR, currentGFR) ||
+                other.currentGFR == currentGFR) &&
+            (identical(other.basalCreatinine, basalCreatinine) ||
+                other.basalCreatinine == basalCreatinine) &&
+            (identical(other.creatinineOnDischarge, creatinineOnDischarge) ||
+                other.creatinineOnDischarge == creatinineOnDischarge));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      const DeepCollectionEquality().hash(currentGFR),
-      const DeepCollectionEquality().hash(basalCreatinine),
-      const DeepCollectionEquality().hash(creatinineOnDischarge));
+      runtimeType, currentGFR, basalCreatinine, creatinineOnDischarge);
 
   /// Create a copy of EquationModel
   /// with the given fields replaced by the non-null parameter values.
@@ -973,28 +1025,198 @@ class _$EquationModelImpl implements _EquationModel {
 
 abstract class _EquationModel implements EquationModel {
   const factory _EquationModel(
-      {@JsonKey(name: 'current_GFR') final dynamic currentGFR,
-      @JsonKey(name: 'basal_creatinine_GFR') final dynamic basalCreatinine,
+      {@JsonKey(name: 'current_GFR') final EquationDataModel? currentGFR,
+      @JsonKey(name: 'basal_creatinine_GFR')
+      final EquationDataModel? basalCreatinine,
       @JsonKey(name: 'creatinine_on_discharge_GFR')
-      final dynamic creatinineOnDischarge}) = _$EquationModelImpl;
+      final EquationDataModel? creatinineOnDischarge}) = _$EquationModelImpl;
 
   factory _EquationModel.fromJson(Map<String, dynamic> json) =
       _$EquationModelImpl.fromJson;
 
   @override
   @JsonKey(name: 'current_GFR')
-  dynamic get currentGFR;
+  EquationDataModel? get currentGFR;
   @override
   @JsonKey(name: 'basal_creatinine_GFR')
-  dynamic get basalCreatinine;
+  EquationDataModel? get basalCreatinine;
   @override
   @JsonKey(name: 'creatinine_on_discharge_GFR')
-  dynamic get creatinineOnDischarge;
+  EquationDataModel? get creatinineOnDischarge;
 
   /// Create a copy of EquationModel
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$EquationModelImplCopyWith<_$EquationModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+EquationDataModel _$EquationDataModelFromJson(Map<String, dynamic> json) {
+  return _EquationDataModel.fromJson(json);
+}
+
+/// @nodoc
+mixin _$EquationDataModel {
+  String? get localization => throw _privateConstructorUsedError;
+  String? get value => throw _privateConstructorUsedError;
+
+  /// Serializes this EquationDataModel to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of EquationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $EquationDataModelCopyWith<EquationDataModel> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $EquationDataModelCopyWith<$Res> {
+  factory $EquationDataModelCopyWith(
+          EquationDataModel value, $Res Function(EquationDataModel) then) =
+      _$EquationDataModelCopyWithImpl<$Res, EquationDataModel>;
+  @useResult
+  $Res call({String? localization, String? value});
+}
+
+/// @nodoc
+class _$EquationDataModelCopyWithImpl<$Res, $Val extends EquationDataModel>
+    implements $EquationDataModelCopyWith<$Res> {
+  _$EquationDataModelCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of EquationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? localization = freezed,
+    Object? value = freezed,
+  }) {
+    return _then(_value.copyWith(
+      localization: freezed == localization
+          ? _value.localization
+          : localization // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$EquationDataModelImplCopyWith<$Res>
+    implements $EquationDataModelCopyWith<$Res> {
+  factory _$$EquationDataModelImplCopyWith(_$EquationDataModelImpl value,
+          $Res Function(_$EquationDataModelImpl) then) =
+      __$$EquationDataModelImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String? localization, String? value});
+}
+
+/// @nodoc
+class __$$EquationDataModelImplCopyWithImpl<$Res>
+    extends _$EquationDataModelCopyWithImpl<$Res, _$EquationDataModelImpl>
+    implements _$$EquationDataModelImplCopyWith<$Res> {
+  __$$EquationDataModelImplCopyWithImpl(_$EquationDataModelImpl _value,
+      $Res Function(_$EquationDataModelImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of EquationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? localization = freezed,
+    Object? value = freezed,
+  }) {
+    return _then(_$EquationDataModelImpl(
+      localization: freezed == localization
+          ? _value.localization
+          : localization // ignore: cast_nullable_to_non_nullable
+              as String?,
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$EquationDataModelImpl implements _EquationDataModel {
+  const _$EquationDataModelImpl({this.localization, this.value});
+
+  factory _$EquationDataModelImpl.fromJson(Map<String, dynamic> json) =>
+      _$$EquationDataModelImplFromJson(json);
+
+  @override
+  final String? localization;
+  @override
+  final String? value;
+
+  @override
+  String toString() {
+    return 'EquationDataModel(localization: $localization, value: $value)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$EquationDataModelImpl &&
+            (identical(other.localization, localization) ||
+                other.localization == localization) &&
+            (identical(other.value, value) || other.value == value));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, localization, value);
+
+  /// Create a copy of EquationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$EquationDataModelImplCopyWith<_$EquationDataModelImpl> get copyWith =>
+      __$$EquationDataModelImplCopyWithImpl<_$EquationDataModelImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$EquationDataModelImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _EquationDataModel implements EquationDataModel {
+  const factory _EquationDataModel(
+      {final String? localization,
+      final String? value}) = _$EquationDataModelImpl;
+
+  factory _EquationDataModel.fromJson(Map<String, dynamic> json) =
+      _$EquationDataModelImpl.fromJson;
+
+  @override
+  String? get localization;
+  @override
+  String? get value;
+
+  /// Create a copy of EquationDataModel
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$EquationDataModelImplCopyWith<_$EquationDataModelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

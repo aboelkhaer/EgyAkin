@@ -198,6 +198,7 @@ class _TrendingTabState extends State<TrendingTab> with WidgetsBindingObserver {
                                         ),
                                         Divider(
                                           color: Colors.grey.shade100,
+                                          thickness: isDarkMode ? 0.1 : 2,
                                         ),
                                       ],
                                     );

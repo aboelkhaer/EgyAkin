@@ -11,10 +11,12 @@ _$SendOTPForEmailVerificationModelResponseImpl
             Map<String, dynamic> json) =>
         _$SendOTPForEmailVerificationModelResponseImpl(
           success: json['success'] as bool?,
+          message: json['message'] as String?,
         );
 
 Map<String, dynamic> _$$SendOTPForEmailVerificationModelResponseImplToJson(
         _$SendOTPForEmailVerificationModelResponseImpl instance) =>
     <String, dynamic>{
       'success': instance.success,
+      'message': instance.message,
     };

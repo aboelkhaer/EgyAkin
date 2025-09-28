@@ -54,7 +54,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         SignInUseCaseInput(
           email: signInEmail,
           password: signInPassword,
-          fcmToken: fcmToken == 'No fcmToken'?null:fcmToken,
+          fcmToken: fcmToken == 'No fcmToken' ? null : fcmToken,
           deviceId: deviceId,
         ),
       );
@@ -92,10 +92,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       if (registerFormKey.currentState!.validate()) {
         emit(const AuthenticationState.loading());
         final String deviceId = await DeviceIdService.getPersistentDeviceId();
-
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
-
+        debugPrint(deviceId);
         final result = await _registerUsecase.execute(
           RegisterUsecaseInput(
             doctorModel: DoctorModel(
@@ -111,9 +110,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
               registrationNumber: registerRegistrationNumber,
               specialty: registerSpecialty,
               highestdegree: registerHighestDegree,
-              fcmToken: fcmToken,
+              fcmToken: fcmToken == 'No fcmToken' ? null : fcmToken,
+              deviceId: deviceId,
             ),
-            deviceId: deviceId,
           ),
         );
         result.fold(
@@ -127,7 +126,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
     } else {
       customSnackBar(
-          context: context, message: 'You must agree to the Privacy Policy.');
+          context: context,
+          message: LocalizationService.instance
+              .translate(AppStrings.youMustAgreeToThePrivacyPolicy));
     }
   }
   //! ---------------

@@ -1,4 +1,5 @@
 import '../../../../exports.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 
 class HomeSearchBotton extends StatelessWidget {
   final DoctorModel currentDoctorModel;
@@ -19,69 +20,93 @@ class HomeSearchBotton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // if (isVerifiedUser(isSyndicateCardRequired)) {
-          navigatorKey.currentState?.pushNamed(
-            AppRoutes.search,
-            arguments: AppRoutesArgs.searchRouteArgs(
-              currentDoctorModel: currentDoctorModel,
-              verified: verified,
-              isSyndicateCardRequired: isSyndicateCardRequired,
-              currentDoctorRole: currentDoctorRole,
-              currentDoctorPoints: currentDoctorPoints,
-              homeDataModel: homeDataModel,
-            ),
-          );
-        // } else {
-        //   navigatorKey.currentState?.pushNamed(
-        //     AppRoutes.communitySearch,
-        //     arguments: AppRoutesArgs.communitySearchRouteArgs(
-        //       currentDoctorModel: currentDoctorModel,
-        //       homeDataModel: homeDataModel,
-        //       initialValueInSearch: null,
-        //     ),
-        //   );
-        // }
-      },
-      child: SizedBox(
-        height: 55,
-        child: TextField(
-          cursorColor: AppColors.primary,
-          onTapOutside: (event) =>
-              FocusManager.instance.primaryFocus?.unfocus(),
-          decoration: InputDecoration(
-            hintText: '${context.tr(AppStrings.search)}...',
-            
-            // Add a clear button to the search bar
-            suffixIcon: IconButton(
-              icon: const Icon(Icons.clear),
-              onPressed: () {},
-            ),
-            // Add a search icon or button to the search bar
-            prefixIcon: const Icon(
-              Icons.search,
-              // color: AppColors.primary,
-            ),
-            prefixIconColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.focused)
-                    ? AppColors.primary
-                    : Colors.grey),
-            suffixIconColor: MaterialStateColor.resolveWith((states) =>
-                states.contains(MaterialState.focused)
-                    ? AppColors.primary
-                    : Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(20),
-              borderSide: const BorderSide(color: AppColors.primary),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return GestureDetector(
+          onTap: () {
+            // if (isVerifiedUser(isSyndicateCardRequired)) {
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.search,
+              arguments: AppRoutesArgs.searchRouteArgs(
+                currentDoctorModel: currentDoctorModel,
+                verified: verified,
+                isSyndicateCardRequired: isSyndicateCardRequired,
+                currentDoctorRole: currentDoctorRole,
+                currentDoctorPoints: currentDoctorPoints,
+                homeDataModel: homeDataModel,
+              ),
+            );
+            // } else {
+            //   navigatorKey.currentState?.pushNamed(
+            //     AppRoutes.communitySearch,
+            //     arguments: AppRoutesArgs.communitySearchRouteArgs(
+            //       currentDoctorModel: currentDoctorModel,
+            //       homeDataModel: homeDataModel,
+            //       initialValueInSearch: null,
+            //     ),
+            //   );
+            // }
+          },
+          child: SizedBox(
+            height: 55,
+            child: TextField(
+              cursorColor: AppColors.primary,
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
+              decoration: InputDecoration(
+                hintText: '${context.tr(AppStrings.search)}...',
+
+                // Add a clear button to the search bar
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {},
+                ),
+                // Add a search icon or button to the search bar
+                prefixIcon: const Icon(
+                  Icons.search,
+                  // color: AppColors.primary,
+                ),
+                prefixIconColor: MaterialStateColor.resolveWith((states) =>
+                    states.contains(MaterialState.focused)
+                        ? AppColors.primary
+                        : Colors.grey),
+                suffixIconColor: MaterialStateColor.resolveWith((states) =>
+                    states.contains(MaterialState.focused)
+                        ? AppColors.primary
+                        : Colors.grey),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                      color: isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade200),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: const BorderSide(color: AppColors.primary),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                      color: isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade200),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(
+                      color: isDarkMode
+                          ? Colors.grey.shade800
+                          : Colors.grey.shade300),
+                ),
+              ),
+              enabled: false,
             ),
           ),
-          enabled: false,
-        ),
-      ),
+        );
+      },
     );
   }
 }

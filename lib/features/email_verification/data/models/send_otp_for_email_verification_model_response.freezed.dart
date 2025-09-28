@@ -23,6 +23,7 @@ SendOTPForEmailVerificationModelResponse
 /// @nodoc
 mixin _$SendOTPForEmailVerificationModelResponse {
   bool? get success => throw _privateConstructorUsedError;
+  String? get message => throw _privateConstructorUsedError;
 
   /// Serializes this SendOTPForEmailVerificationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -43,7 +44,7 @@ abstract class $SendOTPForEmailVerificationModelResponseCopyWith<$Res> {
       _$SendOTPForEmailVerificationModelResponseCopyWithImpl<$Res,
           SendOTPForEmailVerificationModelResponse>;
   @useResult
-  $Res call({bool? success});
+  $Res call({bool? success, String? message});
 }
 
 /// @nodoc
@@ -64,12 +65,17 @@ class _$SendOTPForEmailVerificationModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? success = freezed,
+    Object? message = freezed,
   }) {
     return _then(_value.copyWith(
       success: freezed == success
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -83,7 +89,7 @@ abstract class _$$SendOTPForEmailVerificationModelResponseImplCopyWith<$Res>
       __$$SendOTPForEmailVerificationModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? success});
+  $Res call({bool? success, String? message});
 }
 
 /// @nodoc
@@ -102,12 +108,17 @@ class __$$SendOTPForEmailVerificationModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? success = freezed,
+    Object? message = freezed,
   }) {
     return _then(_$SendOTPForEmailVerificationModelResponseImpl(
       success: freezed == success
           ? _value.success
           : success // ignore: cast_nullable_to_non_nullable
               as bool?,
+      message: freezed == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -116,7 +127,8 @@ class __$$SendOTPForEmailVerificationModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SendOTPForEmailVerificationModelResponseImpl
     implements _SendOTPForEmailVerificationModelResponse {
-  const _$SendOTPForEmailVerificationModelResponseImpl({this.success});
+  const _$SendOTPForEmailVerificationModelResponseImpl(
+      {this.success, this.message});
 
   factory _$SendOTPForEmailVerificationModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -124,10 +136,12 @@ class _$SendOTPForEmailVerificationModelResponseImpl
 
   @override
   final bool? success;
+  @override
+  final String? message;
 
   @override
   String toString() {
-    return 'SendOTPForEmailVerificationModelResponse(success: $success)';
+    return 'SendOTPForEmailVerificationModelResponse(success: $success, message: $message)';
   }
 
   @override
@@ -135,12 +149,13 @@ class _$SendOTPForEmailVerificationModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SendOTPForEmailVerificationModelResponseImpl &&
-            (identical(other.success, success) || other.success == success));
+            (identical(other.success, success) || other.success == success) &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, success);
+  int get hashCode => Object.hash(runtimeType, success, message);
 
   /// Create a copy of SendOTPForEmailVerificationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -164,7 +179,8 @@ class _$SendOTPForEmailVerificationModelResponseImpl
 abstract class _SendOTPForEmailVerificationModelResponse
     implements SendOTPForEmailVerificationModelResponse {
   const factory _SendOTPForEmailVerificationModelResponse(
-      {final bool? success}) = _$SendOTPForEmailVerificationModelResponseImpl;
+      {final bool? success,
+      final String? message}) = _$SendOTPForEmailVerificationModelResponseImpl;
 
   factory _SendOTPForEmailVerificationModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -172,6 +188,8 @@ abstract class _SendOTPForEmailVerificationModelResponse
 
   @override
   bool? get success;
+  @override
+  String? get message;
 
   /// Create a copy of SendOTPForEmailVerificationModelResponse
   /// with the given fields replaced by the non-null parameter values.

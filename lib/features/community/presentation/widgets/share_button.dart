@@ -16,8 +16,10 @@ class ShareButton extends StatelessWidget {
             try {
               // Generate the deep link URLs using the handler
               final deepLinkHandler = DeepLinkHandler();
-              final universalLink = deepLinkHandler.generatePostDeepLink(feed.id.toString());
-              final customSchemeLink = deepLinkHandler.generateCustomSchemeLink(feed.id.toString());
+              final universalLink =
+                  deepLinkHandler.generatePostDeepLink(feed.id.toString());
+              final customSchemeLink =
+                  deepLinkHandler.generateCustomSchemeLink(feed.id.toString());
 
               // App store links as fallback
               const appStoreUrl =
@@ -38,11 +40,12 @@ Android: $playStoreUrl
               await Share.share(
                 shareText,
                 subject: context.tr(AppStrings.egyAkinFeed),
-                
               );
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${context.tr(AppStrings.failedToShare)}: ${e.toString()}')),
+                SnackBar(
+                    content: Text(
+                        '${context.tr(AppStrings.failedToShare)}: ${e.toString()}')),
               );
             }
           },

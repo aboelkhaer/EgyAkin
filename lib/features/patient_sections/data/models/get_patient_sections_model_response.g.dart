@@ -70,9 +70,18 @@ Map<String, dynamic> _$$GFRModelImplToJson(_$GFRModelImpl instance) =>
 
 _$EquationModelImpl _$$EquationModelImplFromJson(Map<String, dynamic> json) =>
     _$EquationModelImpl(
-      currentGFR: json['current_GFR'],
-      basalCreatinine: json['basal_creatinine_GFR'],
-      creatinineOnDischarge: json['creatinine_on_discharge_GFR'],
+      currentGFR: json['current_GFR'] == null
+          ? null
+          : EquationDataModel.fromJson(
+              json['current_GFR'] as Map<String, dynamic>),
+      basalCreatinine: json['basal_creatinine_GFR'] == null
+          ? null
+          : EquationDataModel.fromJson(
+              json['basal_creatinine_GFR'] as Map<String, dynamic>),
+      creatinineOnDischarge: json['creatinine_on_discharge_GFR'] == null
+          ? null
+          : EquationDataModel.fromJson(
+              json['creatinine_on_discharge_GFR'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$EquationModelImplToJson(_$EquationModelImpl instance) =>
@@ -80,4 +89,18 @@ Map<String, dynamic> _$$EquationModelImplToJson(_$EquationModelImpl instance) =>
       'current_GFR': instance.currentGFR,
       'basal_creatinine_GFR': instance.basalCreatinine,
       'creatinine_on_discharge_GFR': instance.creatinineOnDischarge,
+    };
+
+_$EquationDataModelImpl _$$EquationDataModelImplFromJson(
+        Map<String, dynamic> json) =>
+    _$EquationDataModelImpl(
+      localization: json['localization'] as String?,
+      value: json['value'] as String?,
+    );
+
+Map<String, dynamic> _$$EquationDataModelImplToJson(
+        _$EquationDataModelImpl instance) =>
+    <String, dynamic>{
+      'localization': instance.localization,
+      'value': instance.value,
     };
