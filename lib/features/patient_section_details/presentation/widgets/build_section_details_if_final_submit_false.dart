@@ -37,6 +37,8 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
         return Stack(
           children: [
             Form(
@@ -77,9 +79,11 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                                                 TextSpan(
                                                   text:
                                                       '${index + 1} - ${questionModel.question!} ',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: Colors.black,
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black,
                                                   ),
                                                 ),
                                                 if (questionModel.mandatory! ||

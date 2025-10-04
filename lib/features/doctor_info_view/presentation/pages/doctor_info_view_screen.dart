@@ -232,7 +232,8 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                                 doctorInfo.data!.isSyndicateCardRequired ==
                                         'Verified'
                                     ? Tooltip(
-                                        message: 'Verified',
+                                        message:
+                                            context.tr(AppStrings.verified),
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 3),
@@ -539,6 +540,9 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                         child: TabBar(
                           labelColor: AppColors.primary,
                           // indicatorColor: Colors.white,
+                          dividerColor: isDarkMode
+                              ? AppColors.darkBorder
+                              : Colors.grey.shade400,
                           indicator: const UnderlineTabIndicator(
                             borderSide: BorderSide(
                               color: AppColors.primary,

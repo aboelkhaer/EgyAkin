@@ -1,33 +1,52 @@
 import 'package:egy_akin/exports.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:egy_akin/app/services/deep_link_handler.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 
-class ShareButton extends StatelessWidget {
+class ShareButton extends StatefulWidget {
   final PostCommunityModel feed;
 
   const ShareButton({super.key, required this.feed});
 
   @override
+  State<ShareButton> createState() => _ShareButtonState();
+}
+
+class _ShareButtonState extends State<ShareButton> {
+  bool _isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        InkWell(
-          onTap: () async {
-            try {
-              // Generate the deep link URLs using the handler
-              final deepLinkHandler = DeepLinkHandler();
-              final universalLink =
-                  deepLinkHandler.generatePostDeepLink(feed.id.toString());
-              final customSchemeLink =
-                  deepLinkHandler.generateCustomSchemeLink(feed.id.toString());
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-              // App store links as fallback
-              const appStoreUrl =
-                  'https://apps.apple.com/eg/app/egyakin/id6738606085';
-              const playStoreUrl =
-                  'https://play.google.com/store/apps/details?id=com.incode.EgyAkin&hl=en';
+        return Row(
+          children: [
+            InkWell(
+              onTap: _isLoading
+                  ? null
+                  : () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
 
-              final shareText = '''
+                      try {
+                        // Generate the deep link URLs using the handler
+                        final deepLinkHandler = DeepLinkHandler();
+                        final universalLink = deepLinkHandler
+                            .generatePostDeepLink(widget.feed.id.toString());
+                        final customSchemeLink =
+                            deepLinkHandler.generateCustomSchemeLink(
+                                widget.feed.id.toString());
+
+                        // App store links as fallback
+                        const appStoreUrl =
+                            'https://apps.apple.com/eg/app/egyakin/id6738606085';
+                        const playStoreUrl =
+                            'https://play.google.com/store/apps/details?id=com.incode.EgyAkin&hl=en';
+
+                        final shareText = '''
 ${context.tr(AppStrings.checkOutThisPostOnEgyAkin)}
 
 ${context.tr(AppStrings.openInApp)}: $universalLink
@@ -37,32 +56,54 @@ iOS: $appStoreUrl
 Android: $playStoreUrl
 ''';
 
-              await Share.share(
-                shareText,
-                subject: context.tr(AppStrings.egyAkinFeed),
-              );
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        '${context.tr(AppStrings.failedToShare)}: ${e.toString()}')),
-              );
-            }
-          },
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          child: Row(
-            children: [
-              Icon(
-                Icons.share,
-                size: 22,
-                color: Colors.grey.shade400,
+                        await Share.share(
+                          shareText,
+                          subject: context.tr(AppStrings.egyAkinFeed),
+                        );
+                      } catch (e) {
+                        customSnackBar(
+                            context: context,
+                            message:
+                                '${context.tr(AppStrings.failedToShare)}: ${e.toString()}');
+                      } finally {
+                        if (mounted) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
+                      }
+                    },
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              child: Row(
+                children: [
+                  _isLoading
+                      ? SizedBox(
+                          width: 15,
+                          height: 15,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              isDarkMode
+                                  ? AppColors.darkTitle
+                                  : Colors.grey.shade400,
+                            ),
+                          ),
+                        )
+                      : Icon(
+                          Icons.share,
+                          size: 22,
+                          color: isDarkMode
+                              ? AppColors.darkTitle
+                              : Colors.grey.shade400,
+                        ),
+                ],
               ),
-            ],
-          ),
-        ),
-        SizedBox(width: 20.w),
-      ],
+            ),
+            SizedBox(width: 20.w),
+          ],
+        );
+      },
     );
   }
 }

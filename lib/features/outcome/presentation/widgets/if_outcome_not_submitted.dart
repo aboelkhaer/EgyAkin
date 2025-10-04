@@ -191,7 +191,10 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                       );
                     },
                   ),
-                  Container(height: 90),
+                  Container(
+                    height: 90,
+                    color: isDarkMode ? AppColors.darkScaffoldBG : null,
+                  ),
                 ],
               ),
             ),
@@ -203,7 +206,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 height: 90,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.darkSubBG : null,
+                  color: isDarkMode ? AppColors.darkCardBG : null,
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.shade100,
@@ -359,59 +362,6 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
         );
 
       //! Select
-      // case AppStrings.questionTypeSelect:
-      //   var questionAnswer = cubit.questionModelList[index].answer;
-      //   Map<String, dynamic> answerMap = questionAnswer ??= {
-      //     AppStrings.answers: '',
-      //     AppStrings.otherField: AppStrings.empty
-      //   };
-      //   dynamic selectedValue;
-      //   return BuildSelectValueQuestion(
-      //     questionList: cubit.questionModelList,
-      //     index: index,
-      //     selected: initialValueInSelectQuestion(
-      //         questionAnswer: questionAnswer,
-      //         selectedValue: selectedValue,
-      //         values: cubit.questionModelList[index].values!),
-      //     validator: (val) {
-      //       if (cubit.questionModelList[index].mandatory == true &&
-      //           (cubit.questionModelList[index].answer == null ||
-      //               cubit.questionModelList[index].answer ==
-      //                   AppStrings.empty)) {
-      //         return AppStrings.thisFieldIsRequired;
-      //       }
-
-      //       return null;
-      //     },
-      //     onChanged: (val) {
-      //       selectedValue = val;
-      //       if (questionAnswer != val) {
-      //         // questionAnswer = val;
-      //         cubit.updateQuestionAnswer(
-      //             cubit.questionModelList[index].id.toString(), val);
-
-      //         cubit.formData[cubit.questionModelList[index].id.toString()] =
-      //             val;
-      //       } else {
-      //         // questionAnswer = null;
-      //         cubit.updateQuestionAnswer(
-      //             cubit.questionModelList[index].id.toString(), null);
-      //         cubit.formData
-      //             .remove(cubit.questionModelList[index].id.toString());
-      //       }
-
-      //       setState(() {});
-      //     },
-      //     onChangedForOtherField: (value) {
-      //       setState(() {
-      //         answerMap[AppStrings.otherField] = value;
-      //         cubit.formData[cubit.questionModelList[index].id.toString()] = {
-      //           AppStrings.answers: selectedValue,
-      //           AppStrings.otherField: value,
-      //         };
-      //       });
-      //     },
-      //   );
       case AppStrings.questionTypeSelect:
         var questionAnswer = cubit.questionModelList[index].answer;
         Map<String, dynamic> answerMap = questionAnswer ??= {
@@ -516,6 +466,11 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               return null;
             },
             children: cubit.questionModelList[index].values!.map((value) {
+              final currentTheme = BlocProvider.of<ThemeBloc>(context).state;
+              final isDarkModeLocal =
+                  currentTheme is ThemeLoaded && currentTheme.isDarkMode;
+              final isSelected = answers.contains(value);
+
               return Tooltip(
                 message: value.toString(),
                 child: Theme(
@@ -535,12 +490,20 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                   child: ChoiceChip(
                     label: Text(
                       value.toString(),
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : isDarkModeLocal
+                                ? AppColors.title
+                                : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 2,
                     ),
-                    backgroundColor: Colors.grey.shade400,
-                    selected: answers.contains(value),
+                    backgroundColor: isDarkModeLocal
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade400,
+                    selected: isSelected,
                     selectedColor: AppColors.primary.withOpacity(0.7),
                     onSelected: (selected) {
                       setState(() {
@@ -618,6 +581,11 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               return null;
             },
             children: cubit.questionModelList[index].values!.map((value) {
+              final currentTheme = BlocProvider.of<ThemeBloc>(context).state;
+              final isDarkModeLocal =
+                  currentTheme is ThemeLoaded && currentTheme.isDarkMode;
+              final isSelected = answers.contains(value);
+
               return Tooltip(
                 message: value.toString(),
                 child: Theme(
@@ -637,12 +605,20 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                   child: ChoiceChip(
                     label: Text(
                       value.toString(),
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.white
+                            : isDarkModeLocal
+                                ? AppColors.darkTitle
+                                : Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
                       maxLines: 2,
                     ),
-                    backgroundColor: Colors.grey.shade400,
-                    selected: answers.contains(value),
+                    backgroundColor: isDarkModeLocal
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade400,
+                    selected: isSelected,
                     selectedColor: AppColors.primary.withOpacity(0.7),
                     onSelected: (selected) {
                       setState(() {
@@ -730,276 +706,6 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                   ),
           ],
         );
-
-      //! File
-      // case AppStrings.questionTypeFiles:
-      //   // List<String> filesList =
-      //   //     List.from(cubit.questionModelList[widget.index].answer);
-      //   return Column(
-      //     children: [
-      //       Row(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           Expanded(
-      //             child: InkWell(
-      //               onTap: () async {
-      //                 cubit.questionIndexWhichDoctorClicked =
-      //                     widget.index.toString();
-      //                 cubit.pickFilesForQuestions(
-      //                     widget.index,
-      //                     widget.patientId,
-      //                     widget.sectionModel.sectionId.toString(),
-      //                     context);
-      //               },
-      //               splashColor: Colors.transparent,
-      //               highlightColor: Colors.transparent,
-      //               child: BlocBuilder<PatientSectionDetailsCubit,
-      //                   PatientSectionDetailsState>(
-      //                 builder: (context, state) {
-      //                   return state.maybeWhen(
-      //                     orElse: () {
-      //                       return const SizedBox(
-      //                         height: 50,
-      //                         child: Icon(
-      //                           Icons.cloud_upload_outlined,
-      //                           color: AppColors.primary,
-      //                         ),
-      //                       );
-      //                     },
-      //                     loaded: (
-      //                       questions,
-      //                       isSubmitLoading,
-      //                       isSubmitted,
-      //                       message,
-      //                       snackbarErrorCounter,
-      //                       isChooseFilesLoading,
-      //                       isChooseFilesLoaded,
-      //                       uploadFilesProgress,
-      //                     ) {
-      //                       if (cubit.questionIndexWhichDoctorClicked ==
-      //                           widget.index.toString()) {
-      //                         if (isChooseFilesLoading) {
-      //                           return const SizedBox(
-      //                             height: 50,
-      //                             child: Column(
-      //                               mainAxisAlignment: MainAxisAlignment.center,
-      //                               children: [
-      //                                 SizedBox(
-      //                                   height: 25,
-      //                                   width: 25,
-      //                                   child: CircularProgressIndicator(
-      //                                     strokeWidth: 3,
-      //                                   ),
-      //                                 ),
-      //                               ],
-      //                             ),
-      //                           );
-      //                         }
-      //                       }
-
-      //                       return const SizedBox(
-      //                         height: 50,
-      //                         child: Icon(
-      //                           Icons.cloud_upload_outlined,
-      //                           color: AppColors.primary,
-      //                         ),
-      //                       );
-      //                     },
-      //                   );
-      //                 },
-      //               ),
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-
-      //       // Display the picked files
-      //       BlocConsumer<PatientSectionDetailsCubit,
-      //           PatientSectionDetailsState>(
-      //         listener: (context, state) {
-      //           state.maybeWhen(
-      //             orElse: () {},
-      //             error: (message) {
-      //               customSnackBar(context: context, message: message);
-      //             },
-      //             loaded: (questions,
-      //                 isSubmitLoading,
-      //                 isSubmitted,
-      //                 message,
-      //                 snackbarErrorCounter,
-      //                 isChooseFilesLoading,
-      //                 isChooseFilesLoaded,
-      //                 uploadFilesProgress) {
-      //               if (message != '') {
-      //                 customSnackBar(context: context, message: message);
-      //               }
-      //             },
-      //           );
-      //         },
-      //         builder: (context, state) {
-      //           return state.maybeWhen(
-      //             orElse: () {
-      //               return const SizedBox.shrink();
-      //             },
-      //             loaded: (questions,
-      //                 isSubmitLoading,
-      //                 isSubmitted,
-      //                 message,
-      //                 snackbarErrorCounter,
-      //                 isChooseFilesLoading,
-      //                 isChooseFilesLoaded,
-      //                 uploadFilesProgress) {
-      //               if (cubit.formData.containsKey(cubit
-      //                       .questionModelList[widget.index].id
-      //                       .toString()) &&
-      //                   cubit.formData[cubit.questionModelList[widget.index].id
-      //                           .toString()] !=
-      //                       []) {
-      //                 return Column(
-      //                   children: (cubit.formData[cubit
-      //                           .questionModelList[widget.index].id
-      //                           .toString()] as List<Map<String, String>>)
-      //                       .map(
-      //                     (file) {
-      //                       String fileName = file['file_name']!;
-      //                       String filePath = file[
-      //                           'file_data']!; // Assuming this holds the file path or base64 data
-
-      //                       return ListTile(
-      //                         title: Text(fileName),
-      //                         onTap: () async {
-      //                           String fileName = file['file_name']!;
-      //                           String filePath = file[
-      //                               'file_data']!; // Assuming this is the base64 string
-
-      //                           print('Tapped on file: $fileName');
-
-      //                           if (fileName.endsWith('.jpg') ||
-      //                               fileName.endsWith('.png') ||
-      //                               fileName.endsWith('.jpeg')) {
-      //                             // Handle image file
-      //                             print('Opening image file.');
-      //                             showDialog(
-      //                               context: context,
-      //                               builder: (BuildContext context) {
-      //                                 return AlertDialog(
-      //                                   content: SizedBox(
-      //                                     width: double.maxFinite,
-      //                                     height: 300,
-      //                                     child: Image.memory(
-      //                                       base64Decode(filePath),
-      //                                       fit: BoxFit.cover,
-      //                                     ),
-      //                                   ),
-      //                                   actions: <Widget>[
-      //                                     TextButton(
-      //                                       child: const Text("Close"),
-      //                                       onPressed: () {
-      //                                         Navigator.of(context).pop();
-      //                                       },
-      //                                     ),
-      //                                   ],
-      //                                 );
-      //                               },
-      //                             );
-      //                           } else if (fileName.endsWith('.pdf') ||
-      //                               fileName.endsWith('.doc') ||
-      //                               fileName.endsWith('.docx')) {
-      //                             print('Opening document file: $fileName');
-
-      //                             // Check if it's base64 PDF
-      //                             if (filePath.startsWith(
-      //                                 'data:application/pdf;base64,')) {
-      //                               print('Detected base64 PDF.');
-
-      //                               // Extract the base64 data
-      //                               final base64Data = filePath.split(',').last;
-      //                               final bytes = base64Decode(
-      //                                   base64Data); // Decode the base64 string
-
-      //                               // Get the temporary directory
-      //                               final dir = await getTemporaryDirectory();
-      //                               final tempFile =
-      //                                   File('${dir.path}/$fileName');
-
-      //                               print(
-      //                                   'Writing to temporary file: ${tempFile.path}');
-
-      //                               // Write bytes to the temp file
-      //                               await tempFile.writeAsBytes(bytes);
-
-      //                               // Check if the file was written successfully
-      //                               if (await tempFile.exists()) {
-      //                                 print(
-      //                                     'Temporary PDF file exists. Attempting to open.');
-      //                                 final result =
-      //                                     await OpenFile.open(tempFile.path);
-      //                                 print(
-      //                                     'OpenFile result: ${result.message}');
-      //                               } else {
-      //                                 print(
-      //                                     'Error: Temporary PDF file does not exist after writing.');
-      //                               }
-      //                             } else {
-      //                               // Regular file path handling
-      //                               print('Opening regular file: $filePath');
-      //                               final result =
-      //                                   await OpenFile.open(filePath);
-      //                               print('OpenFile result: ${result.message}');
-      //                             }
-      //                           } else {
-      //                             print('Unsupported file type: $fileName');
-      //                             ScaffoldMessenger.of(context).showSnackBar(
-      //                               const SnackBar(
-      //                                   content: Text('Unsupported file type')),
-      //                             );
-      //                           }
-      //                         },
-      //                       );
-      //                     },
-      //                   ).toList(),
-      //                 );
-      //               }
-      //               return const SizedBox.shrink();
-      //             },
-      //           );
-      //         },
-      //       ),
-
-      //       BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
-      //         builder: (context, state) {
-      //           return state.maybeWhen(
-      //             orElse: () {
-      //               return const SizedBox.shrink();
-      //             },
-      //             loaded: (questions,
-      //                 isSubmitLoading,
-      //                 isSubmitted,
-      //                 message,
-      //                 snackbarErrorCounter,
-      //                 isChooseFilesLoading,
-      //                 isChooseFilesLoaded,
-      //                 uploadFilesProgress) {
-      //               if (cubit.formData[cubit.questionModelList[widget.index].id
-      //                           .toString()] ==
-      //                       null ||
-      //                   (cubit.formData[cubit.questionModelList[widget.index].id
-      //                           .toString()]) as List ==
-      //                       [] ||
-      //                   cubit.formData[cubit.questionModelList[widget.index].id
-      //                           .toString()] ==
-      //                       {}) {
-      //                 return FileListWhenSubmit(
-      //                     files: cubit.questionModelList[widget.index].answer
-      //                         .cast<String>());
-      //               }
-      //               return const SizedBox.shrink();
-      //             },
-      //           );
-      //         },
-      //       ),
-      //     ],
-      //   );
 
       default:
         return Container();

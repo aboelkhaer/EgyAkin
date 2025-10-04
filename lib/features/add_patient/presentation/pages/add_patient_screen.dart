@@ -340,49 +340,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             return null;
           },
         );
-      // case AppStrings.selectType:
-      //   var questionAnswer = questionList[index].answer['answers'];
-      //   dynamic selectedValue;
-      //   return BuildSelectValueQuestion(
-      //     questionList: questionList,
-      //     index: index,
-      //     selected: cubit.formData[questionList[index].id.toString()]
-      //             ['answers'] ??
-      //         selectedValue,
-      //     validator: (val) {
-      //       if (questionList[index].mandatory == true &&
-      //           (val == null || val == AppStrings.empty)) {
-      //         return AppStrings.thisFieldIsRequired;
-      //       }
 
-      //       return null;
-      //     },
-      //     onChanged: (val) {
-      //       selectedValue = val;
-      //       if (questionAnswer != val) {
-      //         questionAnswer = val;
-
-      //         cubit.formData[questionList[index].id.toString()]['answers'] =
-      //             val;
-      //       } else {
-      //         questionAnswer = null;
-      //         cubit.formData.remove(questionList[index].id.toString());
-      //       }
-
-      //       log(cubit.formData.toString());
-
-      //       setState(() {});
-      //     },
-      //     onChangedForOtherField: (value) {
-      //       setState(() {
-      //         answerMap[AppStrings.otherField] = value;
-      //         cubit.formData[cubit.questionModelList![index].id.toString()] = {
-      //           AppStrings.answers: selectedValue,
-      //           AppStrings.otherField: value,
-      //         };
-      //       });
-      //     },
-      //   );
       //! Select
       case AppStrings.questionTypeSelect:
         var questionAnswer = questionList[index].answer;
@@ -448,6 +406,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
         );
 
+      //! Multiple
       case AppStrings.multipleType:
         // Retrieve or initialize the answer map from cubit.formData
         Map<String, dynamic> answerMap =
@@ -483,6 +442,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           },
           listContainOther: List.from(answerMap[AppStrings.answers]),
           children: questionList[index].values!.map((value) {
+            final isSelected = (answerMap[AppStrings.answers] as List<dynamic>)
+                .contains(value);
+            final currentTheme = BlocProvider.of<ThemeBloc>(context).state;
+            final isDarkModeLocal =
+                currentTheme is ThemeLoaded && currentTheme.isDarkMode;
+
             return Theme(
               data: ThemeData(
                 chipTheme: ChipThemeData(
@@ -498,12 +463,19 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               child: ChoiceChip(
                 label: Text(
                   value.toString(),
-                  style: const TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : isDarkModeLocal
+                            ? AppColors.darkTitle
+                            : Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                backgroundColor: Colors.grey.shade400,
-                selected: (answerMap[AppStrings.answers] as List<dynamic>)
-                    .contains(value),
+                backgroundColor: isDarkModeLocal
+                    ? Colors.grey.shade700
+                    : Colors.grey.shade400,
+                selected: isSelected,
                 selectedColor: AppColors.primary.withOpacity(0.7),
                 onSelected: (selected) {
                   setState(() {
@@ -525,6 +497,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
           }).toList(),
         );
 
+      //! Date
       case AppStrings.date:
         String? questionAnswer = questionList[index].answer;
 

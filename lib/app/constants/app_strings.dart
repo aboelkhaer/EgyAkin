@@ -528,10 +528,25 @@ class AppStrings {
   static const String chooseDegree = 'Choose Degree';
   static const String passwordNotMatch = 'Password not match';
   static const String provideThisFieldPlease = 'Provide this field, please';
-  static const String confirmYourPasswordPlease = 'Confirm your password, please';
+  static const String confirmYourPasswordPlease =
+      'Confirm your password, please';
   static const String enterAVaildNumber = 'Enter a valid number';
-  static const String youMustAgreeToThePrivacyPolicy = 'You must agree to the Privacy Policy.';
-  static const String sorryCanTDoThatYouAreAdmin = 'Sorry can\'t do that! You are admin.';
+  static const String youMustAgreeToThePrivacyPolicy =
+      'You must agree to the Privacy Policy.';
+  static const String sorryCanTDoThatYouAreAdmin =
+      'Sorry can\'t do that! You are admin.';
   static const String voters = 'Voters';
 
+  // Update Dialog strings
+  static const String whatsNew = 'What\'s New';
+  static const String updateDialogContent = 'update_dialog_content';
+  static const String clearUpdateMessageToShowItAgain =
+      'Clear Update Message to show it again';
+  static const String adminOnlyClearUpdateMessageFlag =
+      'Admin Only - Clear Update Message Flag';
+  static const String updateMessageFlagClearedSuccessfully =
+      'Update message flag cleared successfully!';
+  static const String failedToClearUpdateMessageFlag =
+      'Failed to clear update message flag';
+  static const String verified = 'Verified';
 }

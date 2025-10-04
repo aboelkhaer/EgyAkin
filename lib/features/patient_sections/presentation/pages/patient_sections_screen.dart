@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
+import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/consultation_button.dart';
+import 'package:egy_akin/app/services/theme_bloc.dart';
 
 import '../../../../exports.dart';
 
@@ -37,520 +39,505 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         statusBarColor: Colors.transparent,
         statusBarBrightness: Brightness.dark));
     PatientSectionsCubit cubit = PatientSectionsCubit.get(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
-          listener: (context, state) {
-            state.maybeWhen(
-              orElse: () {},
-              error: (message) {
-                customSnackBar(context: context, message: message);
-              },
-              loaded: (response,
-                  isDelete,
-                  isFinalSubmit,
-                  message,
-                  isLoading,
-                  reportProgress,
-                  filePath,
-                  isDownloadingReport,
-                  isDownloadedReport) {
-                if (message != '') {
-                  customSnackBar(context: context, message: message);
-                }
-                if (isDelete) {
-                  Navigator.pushReplacementNamed(context, AppRoutes.home,
-                      arguments: 0);
-                }
-                if (isFinalSubmit) {
-                  Navigator.pushReplacementNamed(context, AppRoutes.home,
-                      arguments: 0);
-                }
-                if (isDownloadedReport) {
-                  launchURL(
-                    url: cubit.reportPdfUrl,
-                    onError: (error) {
-                      showErrorDialog(context, error);
-                    },
-                  );
-                }
-              },
-            );
-          },
-          builder: (context, state) {
-            return state.maybeWhen(
-              orElse: () {
-                return const Text(
-                  '',
+
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                  orElse: () {},
+                  error: (message) {
+                    customSnackBar(context: context, message: message);
+                  },
+                  loaded: (response,
+                      isDelete,
+                      isFinalSubmit,
+                      message,
+                      isLoading,
+                      reportProgress,
+                      filePath,
+                      isDownloadingReport,
+                      isDownloadedReport) {
+                    if (message != '') {
+                      customSnackBar(context: context, message: message);
+                    }
+                    if (isDelete) {
+                      Navigator.pushReplacementNamed(context, AppRoutes.home,
+                          arguments: 0);
+                    }
+                    if (isFinalSubmit) {
+                      Navigator.pushReplacementNamed(context, AppRoutes.home,
+                          arguments: 0);
+                    }
+                    if (isDownloadedReport) {
+                      launchURL(
+                        url: cubit.reportPdfUrl,
+                        onError: (error) {
+                          showErrorDialog(context, error);
+                        },
+                      );
+                    }
+                  },
                 );
               },
-              loaded: (response,
-                  isDelete,
-                  isFinalSubmit,
-                  message,
-                  isLoading,
-                  reportProgress,
-                  filePath,
-                  isDownloadingReport,
-                  isDownloadedReport) {
-                return Text(
-                  (widget.currentDoctorModel.id.toString() ==
-                              response.doctorId.toString() ||
-                          widget.homeDataModel.role == AppStrings.roleAdmin)
-                      ? response.patientName.toString()
-                      : widget.isAllDataOpen
-                          ? response.patientName.toString()
-                          : convertTextToSymbols(
-                              response.patientName.toString()),
-                  textDirection: RegExp(r'[\u0600-\u06FF]')
-                          .hasMatch(response.patientName.toString())
-                      ? ui.TextDirection.rtl
-                      : ui.TextDirection.ltr,
+              builder: (context, state) {
+                return state.maybeWhen(
+                  orElse: () {
+                    return const Text(
+                      '',
+                    );
+                  },
+                  loaded: (response,
+                      isDelete,
+                      isFinalSubmit,
+                      message,
+                      isLoading,
+                      reportProgress,
+                      filePath,
+                      isDownloadingReport,
+                      isDownloadedReport) {
+                    return Text(
+                      (widget.currentDoctorModel.id.toString() ==
+                                  response.doctorId.toString() ||
+                              widget.homeDataModel.role == AppStrings.roleAdmin)
+                          ? response.patientName == null
+                              ? ''
+                              : response.patientName.toString()
+                          : widget.isAllDataOpen
+                              ? response.patientName == null
+                                  ? ''
+                                  : response.patientName.toString()
+                              : convertTextToSymbols(
+                                  response.patientName.toString()),
+                      textDirection: RegExp(r'[\u0600-\u06FF]')
+                              .hasMatch(response.patientName.toString())
+                          ? ui.TextDirection.rtl
+                          : ui.TextDirection.ltr,
+                    );
+                  },
                 );
               },
-            );
-          },
-        ),
-        centerTitle: true,
-        // actions: [
-        //   BlocBuilder<PatientSectionsCubit, PatientSectionsState>(
-        //     builder: (context, state) {
-        //       return state.maybeWhen(
-        //         orElse: () {
-        //           return const SizedBox.shrink();
-        //         },
-        //         loaded: (response,
-        //             isDelete,
-        //             isFinalSubmit,
-        //             message,
-        //             isLoading,
-        //             reportProgress,
-        //             filePath,
-        //             isDownloadingReport,
-        //             isDownloadedReport) {
-        //           if ((response.doctorId.toString() ==
-        //                   widget.currentDoctorModel.id.toString()) ||
-        //               widget.currentDoctorRole == AppStrings.roleAdmin) {
-        //             return Tooltip(
-        //               message: 'Send consultation',
-        //               child: Padding(
-        //                 padding: EdgeInsets.only(right: 5.w),
-        //                 child: InkWell(
-        //                   onTap: () {
-        //                     navigatorKey.currentState?.pushNamed(
-        //                       AppRoutes.sendConsultation,
-        //                       arguments:
-        //                           AppRoutesArgs.sendConsultationRouteArgs(
-        //                         homeDataModel: widget.homeDataModel,
-        //                         currentDoctorModel: widget.currentDoctorModel,
-        //                         patientId: widget.patientId,
-        //                       ),
-        //                     );
-        //                   },
-        //                   borderRadius: BorderRadius.circular(20.r),
-        //                   child: Container(
-        //                     height: 40.r,
-        //                     width: 40.r,
-        //                     decoration: const BoxDecoration(
-        //                       shape: BoxShape.circle,
-        //                       color: Colors.transparent,
-        //                     ),
-        //                     child: Center(
-        //                       child: Image.asset(
-        //                         AppImages.consultation,
-        //                         height: 20.r,
-        //                         color: Colors.white,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //             );
-        //           }
-        //           return const SizedBox.shrink();
-        //         },
-        //       );
-        //     },
-        //   )
-        // ],
-      ),
-      body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            orElse: () {},
-            loaded: (response,
-                isDelete,
-                isFinalSubmit,
-                message,
-                isLoading,
-                reportProgress,
-                filePath,
-                isDownloadingReport,
-                isDownloadedReport) {
-              if (message.isNotEmpty) {
-                customSnackBar(context: context, message: message);
-              }
+            ),
+            centerTitle: true,
+          ),
+          body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                orElse: () {},
+                loaded: (response,
+                    isDelete,
+                    isFinalSubmit,
+                    message,
+                    isLoading,
+                    reportProgress,
+                    filePath,
+                    isDownloadingReport,
+                    isDownloadedReport) {
+                  if (message.isNotEmpty) {
+                    customSnackBar(context: context, message: message);
+                  }
+                },
+              );
             },
-          );
-        },
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const ShimmerLoadingPatientsCards(ishorizontal: false);
-            },
-            loaded: (response,
-                isDelete,
-                isFinalSubmit,
-                message,
-                isLoading,
-                reportProgress,
-                filePath,
-                isDownloadingReport,
-                isDownloadedReport) {
-              if (isLoading) {
-                return const ShimmerLoadingPatientsCards(ishorizontal: false);
-              } else {
-                return Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    SingleChildScrollView(
-                      physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        children: [
-                          response.gfr == null
-                              ? const SizedBox.shrink()
-                              : SizedBox(
-                                  height: 120.h,
-                                  child: ListView(
-                                    scrollDirection: Axis.horizontal,
-                                    padding: const EdgeInsets.only(
-                                        left: 10, right: 20),
-                                    shrinkWrap: true,
-                                    children: [
-                                      EquationImplementation(
-                                        equationName: 'CKD-EPI',
-                                        currentCreatinineValue: response
-                                            .gfr!.ckd!.currentGFR!.value
-                                            .toString(),
-                                        basalCreatinineValue: response
-                                            .gfr!.ckd!.basalCreatinine!.value
-                                            .toString(),
-                                        creatinineOnDischargeValue: response
-                                            .gfr!
-                                            .ckd!
-                                            .creatinineOnDischarge!
-                                            .value
-                                            .toString(),
-                                        currentCreatinineLocalization: response
-                                            .gfr!.ckd!.currentGFR!.localization,
-                                        basalCreatinineLocalization: response
-                                            .gfr!
-                                            .ckd!
-                                            .basalCreatinine!
-                                            .localization,
-                                        creatinineOnDischargeLocalization:
-                                            response
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const ShimmerLoadingPatientsCards(ishorizontal: false);
+                },
+                loaded: (response,
+                    isDelete,
+                    isFinalSubmit,
+                    message,
+                    isLoading,
+                    reportProgress,
+                    filePath,
+                    isDownloadingReport,
+                    isDownloadedReport) {
+                  if (isLoading) {
+                    return const ShimmerLoadingPatientsCards(
+                        ishorizontal: false);
+                  } else {
+                    return Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              response.gfr == null
+                                  ? const SizedBox.shrink()
+                                  : SizedBox(
+                                      height: 120.h,
+                                      child: ListView(
+                                        scrollDirection: Axis.horizontal,
+                                        padding: const EdgeInsets.only(
+                                            left: 10, right: 20),
+                                        shrinkWrap: true,
+                                        children: [
+                                          EquationImplementation(
+                                            equationName: 'CKD-EPI',
+                                            currentCreatinineValue: response
+                                                .gfr!.ckd!.currentGFR!.value
+                                                .toString(),
+                                            basalCreatinineValue: response.gfr!
+                                                .ckd!.basalCreatinine!.value
+                                                .toString(),
+                                            creatinineOnDischargeValue: response
                                                 .gfr!
                                                 .ckd!
                                                 .creatinineOnDischarge!
-                                                .localization,
-                                      ),
-                                      EquationImplementation(
-                                        equationName: 'Sobh Equation',
-                                        currentCreatinineValue: response
-                                            .gfr!.sobh!.currentGFR!.value
-                                            .toString(),
-                                        basalCreatinineValue: response
-                                            .gfr!.sobh!.basalCreatinine!.value
-                                            .toString(),
-                                        creatinineOnDischargeValue: response
-                                            .gfr!
-                                            .sobh!
-                                            .creatinineOnDischarge!
-                                            .value
-                                            .toString(),
-                                        currentCreatinineLocalization: response
-                                            .gfr!
-                                            .sobh!
-                                            .currentGFR!
-                                            .localization,
-                                        basalCreatinineLocalization: response
-                                            .gfr!
-                                            .sobh!
-                                            .basalCreatinine!
-                                            .localization,
-                                        creatinineOnDischargeLocalization:
-                                            response
+                                                .value
+                                                .toString(),
+                                            currentCreatinineLocalization:
+                                                response.gfr!.ckd!.currentGFR!
+                                                    .localization,
+                                            basalCreatinineLocalization:
+                                                response
+                                                    .gfr!
+                                                    .ckd!
+                                                    .basalCreatinine!
+                                                    .localization,
+                                            creatinineOnDischargeLocalization:
+                                                response
+                                                    .gfr!
+                                                    .ckd!
+                                                    .creatinineOnDischarge!
+                                                    .localization,
+                                          ),
+                                          EquationImplementation(
+                                            equationName: 'Sobh Equation',
+                                            currentCreatinineValue: response
+                                                .gfr!.sobh!.currentGFR!.value
+                                                .toString(),
+                                            basalCreatinineValue: response.gfr!
+                                                .sobh!.basalCreatinine!.value
+                                                .toString(),
+                                            creatinineOnDischargeValue: response
                                                 .gfr!
                                                 .sobh!
                                                 .creatinineOnDischarge!
-                                                .localization,
-                                      ),
-                                      EquationImplementation(
-                                        equationName: 'MDRD',
-                                        currentCreatinineValue: response
-                                            .gfr!.mdrd!.currentGFR!.value
-                                            .toString(),
-                                        basalCreatinineValue: response
-                                            .gfr!.mdrd!.basalCreatinine!.value
-                                            .toString(),
-                                        creatinineOnDischargeValue: response
-                                            .gfr!
-                                            .mdrd!
-                                            .creatinineOnDischarge!
-                                            .value
-                                            .toString(),
-                                        currentCreatinineLocalization: response
-                                            .gfr!
-                                            .mdrd!
-                                            .currentGFR!
-                                            .localization,
-                                        basalCreatinineLocalization: response
-                                            .gfr!
-                                            .mdrd!
-                                            .basalCreatinine!
-                                            .localization,
-                                        creatinineOnDischargeLocalization:
-                                            response
+                                                .value
+                                                .toString(),
+                                            currentCreatinineLocalization:
+                                                response.gfr!.sobh!.currentGFR!
+                                                    .localization,
+                                            basalCreatinineLocalization:
+                                                response
+                                                    .gfr!
+                                                    .sobh!
+                                                    .basalCreatinine!
+                                                    .localization,
+                                            creatinineOnDischargeLocalization:
+                                                response
+                                                    .gfr!
+                                                    .sobh!
+                                                    .creatinineOnDischarge!
+                                                    .localization,
+                                          ),
+                                          EquationImplementation(
+                                            equationName: 'MDRD',
+                                            currentCreatinineValue: response
+                                                .gfr!.mdrd!.currentGFR!.value
+                                                .toString(),
+                                            basalCreatinineValue: response.gfr!
+                                                .mdrd!.basalCreatinine!.value
+                                                .toString(),
+                                            creatinineOnDischargeValue: response
                                                 .gfr!
                                                 .mdrd!
                                                 .creatinineOnDischarge!
-                                                .localization,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                          widget.currentDoctorModel.id.toString() ==
-                                      response.doctorId.toString() ||
-                                  widget.homeDataModel.role ==
-                                      AppStrings.roleAdmin
-                              ? Column(
-                                  children: [
-                                    SizedBox(height: 25.h),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 20),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            '${LocalizationService.instance.translate(AppStrings.requestConsultation)}:',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 13.sp,
-                                                color: Colors.grey.shade600),
+                                                .value
+                                                .toString(),
+                                            currentCreatinineLocalization:
+                                                response.gfr!.mdrd!.currentGFR!
+                                                    .localization,
+                                            basalCreatinineLocalization:
+                                                response
+                                                    .gfr!
+                                                    .mdrd!
+                                                    .basalCreatinine!
+                                                    .localization,
+                                            creatinineOnDischargeLocalization:
+                                                response
+                                                    .gfr!
+                                                    .mdrd!
+                                                    .creatinineOnDischarge!
+                                                    .localization,
                                           ),
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
-                                    ConsultationButtonsRow(
-                                      onDoctorConsultationTap: () {
-                                        navigatorKey.currentState?.pushNamed(
-                                          AppRoutes.sendConsultation,
-                                          arguments: AppRoutesArgs
-                                              .sendConsultationRouteArgs(
-                                            homeDataModel: widget.homeDataModel,
-                                            currentDoctorModel:
-                                                widget.currentDoctorModel,
-                                            patientId: widget.patientId,
-                                            isSendConsultation: true,
-                                            groupId: '',
-                                            isForAddNewDoctors: false,
-                                            consultationId: '',
-                                            ownerOfConsultationId: '',
+                              widget.currentDoctorModel.id.toString() ==
+                                          response.doctorId.toString() ||
+                                      widget.homeDataModel.role ==
+                                          AppStrings.roleAdmin
+                                  ? AdminOnlyBadge(
+                                      style: BadgeStyle.premium,
+                                      glowEffect: true,
+                                      pulseAnimation: true,
+                                      badgeText: 'A',
+                                      showIcon: false,
+                                      fontSize: 8.sp,
+                                      badgePadding: EdgeInsets.symmetric(
+                                          horizontal: 5.w, vertical: 1.h),
+                                      showBadge: widget.homeDataModel.role ==
+                                              AppStrings.roleAdmin &&
+                                          widget.currentDoctorModel.id
+                                                  .toString() !=
+                                              response.doctorId.toString(),
+                                      top: 15,
+                                      right: 10,
+                                      child: Column(
+                                        children: [
+                                          SizedBox(height: 25.h),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 20, right: 20),
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  '${LocalizationService.instance.translate(AppStrings.requestConsultation)}:',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 13.sp,
+                                                      color:
+                                                          Colors.grey.shade600),
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                        );
-                                      },
-                                      onAiConsultationTap: () {
-                                        navigatorKey.currentState?.pushNamed(
-                                            AppRoutes.consultationFromAi,
-                                            arguments: AppRoutesArgs
-                                                .consultationFromAiRouteArgs(
-                                              patientId: widget.patientId,
-                                            ));
-                                      },
+                                          const SizedBox(height: 20),
+                                          ConsultationButtonsRow(
+                                            onDoctorConsultationTap: () {
+                                              navigatorKey.currentState
+                                                  ?.pushNamed(
+                                                AppRoutes.sendConsultation,
+                                                arguments: AppRoutesArgs
+                                                    .sendConsultationRouteArgs(
+                                                  homeDataModel:
+                                                      widget.homeDataModel,
+                                                  currentDoctorModel:
+                                                      widget.currentDoctorModel,
+                                                  patientId: widget.patientId,
+                                                  isSendConsultation: true,
+                                                  groupId: '',
+                                                  isForAddNewDoctors: false,
+                                                  consultationId: '',
+                                                  ownerOfConsultationId: '',
+                                                ),
+                                              );
+                                            },
+                                            onAiConsultationTap: () {
+                                              navigatorKey.currentState?.pushNamed(
+                                                  AppRoutes.consultationFromAi,
+                                                  arguments: AppRoutesArgs
+                                                      .consultationFromAiRouteArgs(
+                                                    patientId: widget.patientId,
+                                                  ));
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              SizedBox(height: 25.h),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '${LocalizationService.instance.translate(AppStrings.sections)}:',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 13.sp,
+                                          color: Colors.grey.shade600),
                                     ),
                                   ],
-                                )
-                              : const SizedBox.shrink(),
-                          SizedBox(height: 25.h),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 20, right: 20),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '${LocalizationService.instance.translate(AppStrings.sections)}:',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13.sp,
-                                      color: Colors.grey.shade600),
                                 ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                top: 20, left: 30, right: 30),
-                            child: response.data == null ||
-                                    response.data!.isEmpty
-                                ? const SizedBox.shrink()
-                                : ListView.builder(
-                                    itemCount: response.data!.length,
-                                    shrinkWrap: true,
-                                    padding: const EdgeInsets.only(bottom: 20),
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemBuilder: (context, index) {
-                                      var section = response.data![index];
-                                      return Padding(
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 20, left: 30, right: 30),
+                                child: response.data == null ||
+                                        response.data!.isEmpty
+                                    ? const SizedBox.shrink()
+                                    : ListView.builder(
+                                        itemCount: response.data!.length,
+                                        shrinkWrap: true,
                                         padding:
-                                            const EdgeInsets.only(bottom: 8),
-                                        child: SectionCard(
-                                          onTap: () {
-                                            navigatorKey.currentState
-                                                ?.pushNamed(
-                                              AppRoutes.patientSectionDetails,
-                                              arguments: AppRoutesArgs
-                                                  .patientSectionDetailsRouteArgs(
-                                                sectionModel: section,
-                                                currentDoctorModel:
-                                                    widget.currentDoctorModel,
-                                                finalSubmitStatus:
-                                                    response.submitStatus!,
-                                                patientId: widget.patientId,
-                                                currentDoctorRole:
-                                                    widget.currentDoctorRole,
-                                                currentDoctorPoints:
-                                                    widget.currentDoctorPoints,
-                                                homeDataModel:
-                                                    widget.homeDataModel,
-                                                doctorId: response.doctorId
-                                                    .toString(),
-                                                isAllDataOpen:
-                                                    widget.isAllDataOpen,
-                                              ),
-                                            );
-                                          },
-                                          updatedAt: section.updatedAt ?? '',
-                                          isSubmitStatus:
-                                              section.sectionStatus ?? false,
-                                          index: index,
-                                          sectionName:
-                                              section.sectionName ?? '',
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                            const EdgeInsets.only(bottom: 20),
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemBuilder: (context, index) {
+                                          var section = response.data![index];
+                                          return Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 8),
+                                            child: SectionCard(
+                                              onTap: () {
+                                                navigatorKey.currentState
+                                                    ?.pushNamed(
+                                                  AppRoutes
+                                                      .patientSectionDetails,
+                                                  arguments: AppRoutesArgs
+                                                      .patientSectionDetailsRouteArgs(
+                                                    sectionModel: section,
+                                                    currentDoctorModel: widget
+                                                        .currentDoctorModel,
+                                                    finalSubmitStatus:
+                                                        response.submitStatus!,
+                                                    patientId: widget.patientId,
+                                                    currentDoctorRole: widget
+                                                        .currentDoctorRole,
+                                                    currentDoctorPoints: widget
+                                                        .currentDoctorPoints,
+                                                    homeDataModel:
+                                                        widget.homeDataModel,
+                                                    doctorId: response.doctorId
+                                                        .toString(),
+                                                    isAllDataOpen:
+                                                        widget.isAllDataOpen,
+                                                  ),
+                                                );
+                                              },
+                                              updatedAt:
+                                                  section.updatedAt ?? '',
+                                              isSubmitStatus:
+                                                  section.sectionStatus ??
+                                                      false,
+                                              index: index,
+                                              sectionName:
+                                                  section.sectionName ?? '',
+                                            ),
+                                          );
+                                        },
+                                      ),
+                              ),
+                              const SizedBox(height: 90),
+                            ],
                           ),
-                          const SizedBox(height: 90),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: BlocBuilder<PatientSectionsCubit,
-                          PatientSectionsState>(
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            orElse: () {
-                              return const SizedBox.shrink();
-                            },
-                            loaded: (response,
-                                isDelete,
-                                isFinalSubmit,
-                                message,
-                                isLoading,
-                                reportProgress,
-                                filePath,
-                                isDownloadingReport,
-                                isDownloadedReport) {
-                              if ((response.doctorId.toString() ==
-                                      widget.currentDoctorModel.id
-                                          .toString()) &&
-                                  (response.submitStatus != null &&
-                                      !response.submitStatus!)) {
-                                return FooterButtons(
-                                  currentDoctorId:
-                                      widget.currentDoctorModel.id.toString(),
-                                  doctorId: response.doctorId!,
-                                  patientName: response.patientName!,
-                                  currentDoctorPoints:
-                                      widget.currentDoctorPoints,
-                                  cubit: cubit,
-                                  patientId: widget.patientId,
-                                  finalSubmit: response.submitStatus!,
-                                  currentDoctorRole: widget.currentDoctorRole,
-                                );
-                              }
-                              if (isDownloadingReport) {
-                                return Container(
-                                  height: 90,
-                                  color: Colors.grey.shade100,
-                                  child: const Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        SizedBox(
-                                          height: 25,
-                                          width: 25,
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-
-                              if (((response.doctorId.toString() ==
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: BlocBuilder<PatientSectionsCubit,
+                              PatientSectionsState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox.shrink();
+                                },
+                                loaded: (response,
+                                    isDelete,
+                                    isFinalSubmit,
+                                    message,
+                                    isLoading,
+                                    reportProgress,
+                                    filePath,
+                                    isDownloadingReport,
+                                    isDownloadedReport) {
+                                  if ((response.doctorId.toString() ==
                                           widget.currentDoctorModel.id
                                               .toString()) &&
-                                      (response.submitStatus == true) ||
-                                  widget.currentDoctorRole ==
-                                      AppStrings.roleAdmin)) {
-                                return FooterButtons(
-                                  currentDoctorId:
-                                      widget.currentDoctorModel.id.toString(),
-                                  doctorId: response.doctorId ?? '',
-                                  patientName: response.patientName ?? '',
-                                  currentDoctorPoints:
-                                      widget.currentDoctorPoints,
-                                  cubit: cubit,
-                                  patientId: widget.patientId,
-                                  finalSubmit: response.submitStatus ?? false,
-                                  currentDoctorRole: widget.currentDoctorRole,
-                                );
-                              }
-                              // if (widget.currentDoctorRole == 'Admin') {
-                              //   return FooterButtons(
-                              //     currentDoctorId:
-                              //         widget.currentDoctorModel.id.toString(),
-                              //     doctorId: response.doctorId ?? '',
-                              //     patientName: response.patientName ?? '',
-                              //     currentDoctorPoints:
-                              //         widget.currentDoctorPoints,
-                              //     cubit: cubit,
-                              //     patientId: widget.patientId,
-                              //     finalSubmit: response.submitStatus ?? false,
-                              //     currentDoctorRole: widget.currentDoctorRole,
-                              //   );
-                              // }
+                                      (response.submitStatus != null &&
+                                          !response.submitStatus!)) {
+                                    return FooterButtons(
+                                      currentDoctorId: widget
+                                          .currentDoctorModel.id
+                                          .toString(),
+                                      doctorId: response.doctorId!,
+                                      patientName: response.patientName!,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      cubit: cubit,
+                                      patientId: widget.patientId,
+                                      finalSubmit: response.submitStatus!,
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
+                                    );
+                                  }
+                                  if (isDownloadingReport) {
+                                    return Container(
+                                      height: 90,
+                                      color: isDarkMode
+                                          ? AppColors.darkScaffoldBG
+                                          : Colors.grey.shade100,
+                                      child: const Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 25,
+                                              width: 25,
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }
 
-                              return const SizedBox.shrink();
+                                  if (((response.doctorId.toString() ==
+                                              widget.currentDoctorModel.id
+                                                  .toString()) &&
+                                          (response.submitStatus == true) ||
+                                      widget.currentDoctorRole ==
+                                          AppStrings.roleAdmin)) {
+                                    return FooterButtons(
+                                      currentDoctorId: widget
+                                          .currentDoctorModel.id
+                                          .toString(),
+                                      doctorId: response.doctorId ?? '',
+                                      patientName: response.patientName ?? '',
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      cubit: cubit,
+                                      patientId: widget.patientId,
+                                      finalSubmit:
+                                          response.submitStatus ?? false,
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
+                                    );
+                                  }
+                                  // if (widget.currentDoctorRole == 'Admin') {
+                                  //   return FooterButtons(
+                                  //     currentDoctorId:
+                                  //         widget.currentDoctorModel.id.toString(),
+                                  //     doctorId: response.doctorId ?? '',
+                                  //     patientName: response.patientName ?? '',
+                                  //     currentDoctorPoints:
+                                  //         widget.currentDoctorPoints,
+                                  //     cubit: cubit,
+                                  //     patientId: widget.patientId,
+                                  //     finalSubmit: response.submitStatus ?? false,
+                                  //     currentDoctorRole: widget.currentDoctorRole,
+                                  //   );
+                                  // }
+
+                                  return const SizedBox.shrink();
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              }
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              );
             },
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

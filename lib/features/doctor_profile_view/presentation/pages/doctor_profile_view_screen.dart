@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/functions/hightest_degree_list.dart';
+import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_profile_view_state.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -514,16 +515,25 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                         if (currentDoctorModel.email
                                                 .toString() ==
                                             'moatz2163@gmail.com') {
-                                          return SizedBox(
-                                            width: double.infinity,
-                                            child: CustomElevatedButton(
-                                              onPressed: () {
-                                                customSnackBar(
-                                                    context: context,
-                                                    message:
-                                                        '30 days to delete your account.');
-                                              },
-                                              title: 'Delete Account',
+                                          return AdminOnlyBadge(
+                                            badgeText: 'For Moatz only',
+                                            style: BadgeStyle.premium,
+                                            glowEffect: true,
+                                            pulseAnimation: true,
+                                            fontSize: 8.sp,
+                                            badgePadding: EdgeInsets.symmetric(
+                                                horizontal: 5.w, vertical: 1.h),
+                                            child: SizedBox(
+                                              width: double.infinity,
+                                              child: CustomElevatedButton(
+                                                onPressed: () {
+                                                  customSnackBar(
+                                                      context: context,
+                                                      message:
+                                                          '30 days to delete your account.');
+                                                },
+                                                title: 'Delete Account',
+                                              ),
                                             ),
                                           );
                                         }

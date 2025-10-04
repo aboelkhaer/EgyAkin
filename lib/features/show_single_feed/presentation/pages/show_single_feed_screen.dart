@@ -120,51 +120,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                         );
                       },
                       error: (message) {
-                        // if (message ==
-                        //         'An error occurred while retrieving post comments' ||
-                        //     message ==
-                        //         'حدث خطأ أثناء استرداد تعليقات المنشور') {
-                        //   return Expanded(
-                        //     child: Column(
-                        //       children: [
-                        //         SizedBox(height: 20.h),
-                        //         Row(
-                        //           children: [
-                        //             SizedBox(width: 10.h),
-                        //             IconButton(
-                        //               onPressed: () {
-                        //                 Navigator.pop(context);
-                        //               },
-                        //               icon: const Icon(
-                        //                 Icons.arrow_back_ios,
-                        //               ),
-                        //             )
-                        //           ],
-                        //         ),
-                        //         Expanded(
-                        //           child: Center(
-                        //             child: Column(
-                        //               mainAxisAlignment:
-                        //                   MainAxisAlignment.center,
-                        //               children: [
-                        //                 Text(
-                        //                   context.tr(AppStrings
-                        //                       .thisContentIsNoLongerAvailable),
-                        //                   style: TextStyle(
-                        //                       color: Colors.grey.shade700),
-                        //                 ),
-                        //                 SizedBox(height: 50.h),
-                        //               ],
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   );
-                        // }
-                        // return const Center(
-                        //   child: CircularProgressIndicator(),
-                        // );
                         return Expanded(
                           child: Column(
                             children: [
@@ -191,7 +146,9 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                         context.tr(AppStrings
                                             .thisContentIsNoLongerAvailable),
                                         style: TextStyle(
-                                            color: Colors.grey.shade700),
+                                            color: isDarkMode
+                                                ? Colors.grey.shade400
+                                                : Colors.grey.shade700),
                                       ),
                                       SizedBox(height: 50.h),
                                     ],
@@ -352,8 +309,11 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color:
-                                                                AppColors.title,
+                                                            color: isDarkMode
+                                                                ? AppColors
+                                                                    .darkTitle
+                                                                : AppColors
+                                                                    .title,
                                                             fontSize: 12.sp,
                                                           ),
                                                           maxLines: 1,
@@ -381,8 +341,11 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                 .toString(),
                                                             context),
                                                     style: TextStyle(
-                                                      color:
-                                                          AppColors.description,
+                                                      color: isDarkMode
+                                                          ? AppColors
+                                                              .darkDescription
+                                                          : AppColors
+                                                              .description,
                                                       fontSize: 11.sp,
                                                     ),
                                                     maxLines: 1,
@@ -761,7 +724,9 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                   ),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
-                                                    color: AppColors.title,
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : AppColors.title,
                                                     fontSize: 12.sp,
                                                   ),
                                                   maxLines: 1,

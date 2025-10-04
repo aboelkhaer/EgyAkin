@@ -1,6 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/routes/app_routes.dart';
@@ -39,6 +42,7 @@ class HomeCubit extends Cubit<HomeState> {
   final SignOutUsecase _signOutUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
+  int _cacheClearCounter = 0;
   bool? accountVerification;
   String? doctorPatientCount;
   String? doctorScore;
@@ -134,7 +138,7 @@ class HomeCubit extends Cubit<HomeState> {
   getUpdateMessageStatusFromLocal() async {
     if (checkUpdateMessageCounter == 0) {
       isUpdateMessageHidden4 = (await sl<AppPreferences>()
-              .getBool(AppLocalStrings.isUpdateMessageHidden4)) ??
+              .getBool(AppLocalStrings.isUpdateMessageHidden5)) ??
           false;
       checkUpdateMessageCounter++;
     }
@@ -143,7 +147,7 @@ class HomeCubit extends Cubit<HomeState> {
   setUpdateMessageStatusToLocal() async {
     isUpdateMessageHidden4 = true;
     (await sl<AppPreferences>()
-        .setBool(AppLocalStrings.isUpdateMessageHidden4, true));
+        .setBool(AppLocalStrings.isUpdateMessageHidden5, true));
   }
 
   getDoctorDataFromLocal() async {
@@ -152,8 +156,6 @@ class HomeCubit extends Cubit<HomeState> {
       currentUserVersion = (await sl<AppPreferences>()
           .getString(AppLocalStrings.userAppVersion))!;
       getCurrentUserVersion = true;
-
-      log('$currentUserVersion moatz123');
     }
 
     // Safely emit state only if the Cubit is not closed
@@ -242,8 +244,26 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
+  clearCacheForNetworkImages() async {
+    try {
+      await CachedNetworkImage.evictFromCache('');
+      await DefaultCacheManager().emptyCache();
+      debugPrint('Cache cleared successfully');
+    } catch (e) {
+      debugPrint('Error clearing cache: $e');
+    }
+  }
+
   Future<void> getHome() async {
     if (isClosed) return; // Prevents further execution
+
+    // Clear cached network images every 5 calls
+    _cacheClearCounter++;
+    if (_cacheClearCounter >= 5) {
+      clearCacheForNetworkImages();
+      _cacheClearCounter = 0; // Reset counter
+      debugPrint('Cache cleared after 5 calls');
+    }
 
     dotsPosition = 0;
     emit(HomeState.loading(tabsController.index));

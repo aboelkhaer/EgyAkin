@@ -33,6 +33,9 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     final updatedDoctorModel = updatedDoctor.data!.copyWith(
       emailVerifiedAt:
           doctorVerifiedEmail ? DateTime.now().toIso8601String() : null,
+      isSyndicateCardRequired: isSyndicateCardVerified
+          ? 'Verified'
+          : 'Required', // Use current boolean state
     );
     final updatedDoctorInfo = updatedDoctor.copyWith(
       data: updatedDoctorModel,
@@ -51,6 +54,9 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
         ),
       ),
     );
+
+    // Update the reference to maintain consistent state
+    updatedDoctor = updatedDoctorInfo;
 
     final result = await _verifyUserEmailUsecase.execute(
         VerifyUserEmailUsecaseInput(
@@ -72,6 +78,12 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     // Update doctorInfo using the copyWith method
     final updatedDoctorModel = updatedDoctor.data!.copyWith(
       blocked: doctorBlocked,
+      isSyndicateCardRequired: isSyndicateCardVerified
+          ? 'Verified'
+          : 'Required', // Use current boolean state
+      emailVerifiedAt: doctorVerifiedEmail
+          ? DateTime.now().toIso8601String()
+          : null, // Use current boolean state
     );
     final updatedDoctorInfo = updatedDoctor.copyWith(
       data: updatedDoctorModel,
@@ -91,6 +103,9 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
       ),
     );
 
+    // Update the reference to maintain consistent state
+    updatedDoctor = updatedDoctorInfo;
+
     final result = await _blockUserUsecase.execute(
         BlockUserUsecaseInput(status: doctorBlocked, doctorId: doctorId));
     // .execute(syndicateCardChangedValue);
@@ -103,11 +118,16 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
 
   Future<void> rejectSyndicateCard(String doctorId) async {
     changesCounter++;
+    isSyndicateCardVerified = false; // Set to false since we're rejecting
 
     // Update doctorInfo and emit the state in DoctorInfoViewCubit
     final updatedDoctorModel = updatedDoctor.data!.copyWith(
       isSyndicateCardRequired: 'Required',
       syndicateCard: null,
+      emailVerifiedAt: doctorVerifiedEmail
+          ? DateTime.now().toIso8601String()
+          : null, // Use current boolean state
+      blocked: doctorBlocked, // Use current boolean state
     );
     final updatedDoctorInfo = updatedDoctor.copyWith(data: updatedDoctorModel);
 
@@ -122,6 +142,9 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
         changesCounter,
       ),
     ));
+
+    // Update the reference to maintain consistent state
+    updatedDoctor = updatedDoctorInfo;
 
     // Execute your use case to change syndicate card status
     final result = await _changeSyndicateCardStatusUsecase.execute(
@@ -147,6 +170,10 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     final updatedDoctorModel = updatedDoctor.data!.copyWith(
       isSyndicateCardRequired:
           isSyndicateCardVerified ? 'Verified' : 'Required',
+      emailVerifiedAt: doctorVerifiedEmail
+          ? DateTime.now().toIso8601String()
+          : null, // Use current boolean state
+      blocked: doctorBlocked, // Use current boolean state
     );
     final updatedDoctorInfo = updatedDoctor.copyWith(
       data: updatedDoctorModel,
@@ -165,6 +192,9 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
         ),
       ),
     );
+
+    // Update the reference to maintain consistent state
+    updatedDoctor = updatedDoctorInfo;
 
     String syndicateCardChangedValue =
         isSyndicateCardVerified ? 'Verified' : 'Required';

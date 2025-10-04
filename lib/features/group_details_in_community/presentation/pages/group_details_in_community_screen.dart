@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/functions/date_formate_for_group.dart';
+import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
@@ -458,15 +459,33 @@ class _GroupDetailsInCommunityScreenState
                               items.add(
                                 PopupMenuItem(
                                   value: 'delete_group',
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.delete,
-                                          color: AppColors.description),
-                                      SizedBox(width: 8.w),
-                                      Text(
-                                        context.tr(AppStrings.deleteGroup),
-                                      ),
-                                    ],
+                                  child: AdminOnlyBadge(
+                                    showBadge: widget.homeDataModel.role ==
+                                            AppStrings.roleAdmin &&
+                                        widget.currentDoctorModel.id
+                                                .toString() !=
+                                            groupDetails.data!.group!.owner!.id
+                                                .toString(),
+                                    style: BadgeStyle.premium,
+                                    fontSize: 6.sp,
+                                    badgePadding: EdgeInsets.symmetric(
+                                        horizontal: 3.w, vertical: 0.5.h),
+                                    showIcon: false,
+                                    glowEffect: true,
+                                    pulseAnimation: true,
+                                    badgeText: 'A',
+                                    top: -5,
+                                    right: -5,
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.delete,
+                                            color: AppColors.description),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          context.tr(AppStrings.deleteGroup),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -682,40 +701,68 @@ class _GroupDetailsInCommunityScreenState
                                                       widget.homeDataModel
                                                               .role ==
                                                           AppStrings.roleAdmin
-                                                  ? InkWell(
-                                                      onTap: () {
-                                                        navigatorKey
-                                                            .currentState
-                                                            ?.pushNamed(
-                                                          AppRoutes
-                                                              .createGroupInCommunity,
-                                                          arguments: AppRoutesArgs
-                                                              .createGroupInCommunityRouteArgs(
-                                                            currentDoctorModel:
-                                                                widget
-                                                                    .currentDoctorModel,
-                                                            homeDataModel: widget
-                                                                .homeDataModel,
-                                                            isCreateNewGroup:
-                                                                false,
-                                                            groupModel:
-                                                                groupDetails
-                                                                    .data!
-                                                                    .group,
-                                                          ),
-                                                        );
-                                                      },
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      hoverColor:
-                                                          Colors.transparent,
-                                                      child: Icon(
-                                                        Icons.edit,
-                                                        color: AppColors
-                                                            .description,
-                                                        size: 18.r,
+                                                  ? AdminOnlyBadge(
+                                                      showBadge: widget
+                                                                  .homeDataModel
+                                                                  .role ==
+                                                              AppStrings
+                                                                  .roleAdmin &&
+                                                          widget.currentDoctorModel
+                                                                  .id
+                                                                  .toString() !=
+                                                              groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .owner!
+                                                                  .id
+                                                                  .toString(),
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
+                                                      badgePadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 3.w,
+                                                              vertical: 0.5.h),
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
+                                                      top: -10,
+                                                      right: -13,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          navigatorKey
+                                                              .currentState
+                                                              ?.pushNamed(
+                                                            AppRoutes
+                                                                .createGroupInCommunity,
+                                                            arguments: AppRoutesArgs
+                                                                .createGroupInCommunityRouteArgs(
+                                                              currentDoctorModel:
+                                                                  widget
+                                                                      .currentDoctorModel,
+                                                              homeDataModel: widget
+                                                                  .homeDataModel,
+                                                              isCreateNewGroup:
+                                                                  false,
+                                                              groupModel:
+                                                                  groupDetails
+                                                                      .data!
+                                                                      .group,
+                                                            ),
+                                                          );
+                                                        },
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        hoverColor:
+                                                            Colors.transparent,
+                                                        child: Icon(
+                                                          Icons.edit,
+                                                          color: AppColors
+                                                              .description,
+                                                          size: 18.r,
+                                                        ),
                                                       ),
                                                     )
                                                   : const SizedBox.shrink(),
@@ -753,53 +800,77 @@ class _GroupDetailsInCommunityScreenState
                                                       widget.homeDataModel
                                                               .role ==
                                                           AppStrings.roleAdmin
-                                                  ? InkWell(
-                                                      onTap: () {
-                                                        showCustomBottomSheet(
-                                                          context: context,
-                                                          builder: (context) {
-                                                            return BlocProvider(
-                                                              create: (context) =>
-                                                                  GroupMembersCubit(
-                                                                sl(),
-                                                                sl(),
-                                                                sl(),
-                                                                sl(),
-                                                              ),
-                                                              child:
-                                                                  GroupMembersScreen(
-                                                                groupId: widget
-                                                                    .groupId,
-                                                                currentDoctorModel:
-                                                                    widget
-                                                                        .currentDoctorModel,
-                                                                homeDataModel:
-                                                                    widget
-                                                                        .homeDataModel,
-                                                                postId: '',
-                                                                ownerId:
-                                                                    groupDetails
-                                                                        .data!
-                                                                        .group!
-                                                                        .owner!
-                                                                        .id
-                                                                        .toString(),
-                                                              ),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                      splashColor:
-                                                          Colors.transparent,
-                                                      highlightColor:
-                                                          Colors.transparent,
-                                                      hoverColor:
-                                                          Colors.transparent,
-                                                      child: Text(
-                                                        '${groupDetails.data!.group!.memberCount} ${context.tr(AppStrings.fromMembers)}',
-                                                        style: const TextStyle(
-                                                            color: AppColors
-                                                                .primary),
+                                                  ? AdminOnlyBadge(
+                                                      showBadge: widget
+                                                                  .homeDataModel
+                                                                  .role ==
+                                                              AppStrings
+                                                                  .roleAdmin &&
+                                                          groupDetails
+                                                                  .data!
+                                                                  .group!
+                                                                  .userStatus !=
+                                                              GroupInviteStatus
+                                                                  .joined.name,
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
+                                                      badgePadding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 3.w,
+                                                              vertical: 0.5.h),
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
+                                                      top: -5,
+                                                      right: -18,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          showCustomBottomSheet(
+                                                            context: context,
+                                                            builder: (context) {
+                                                              return BlocProvider(
+                                                                create: (context) =>
+                                                                    GroupMembersCubit(
+                                                                  sl(),
+                                                                  sl(),
+                                                                  sl(),
+                                                                  sl(),
+                                                                ),
+                                                                child:
+                                                                    GroupMembersScreen(
+                                                                  groupId: widget
+                                                                      .groupId,
+                                                                  currentDoctorModel:
+                                                                      widget
+                                                                          .currentDoctorModel,
+                                                                  homeDataModel:
+                                                                      widget
+                                                                          .homeDataModel,
+                                                                  postId: '',
+                                                                  ownerId: groupDetails
+                                                                      .data!
+                                                                      .group!
+                                                                      .owner!
+                                                                      .id
+                                                                      .toString(),
+                                                                ),
+                                                              );
+                                                            },
+                                                          );
+                                                        },
+                                                        splashColor:
+                                                            Colors.transparent,
+                                                        highlightColor:
+                                                            Colors.transparent,
+                                                        hoverColor:
+                                                            Colors.transparent,
+                                                        child: Text(
+                                                          '${groupDetails.data!.group!.memberCount} ${context.tr(AppStrings.fromMembers)}',
+                                                          style: const TextStyle(
+                                                              color: AppColors
+                                                                  .primary),
+                                                        ),
                                                       ),
                                                     )
                                                   : Text(

@@ -182,7 +182,8 @@ class TopDoctors extends StatelessWidget {
                                               fontWeight: FontWeight.bold,
                                               color: isDarkMode
                                                   ? AppColors.darkDescription
-                                                  : AppColors.description),
+                                                  : AppColors.title
+                                                      .withOpacity(0.8)),
                                         ),
                                         doctor.isSyndicateCardRequired ==
                                                 'Verified'

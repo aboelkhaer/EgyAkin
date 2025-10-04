@@ -1,8 +1,10 @@
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../exports.dart';
+import '../../../../app/shared/widgets/admin_only_badge.dart';
 
 class MoreScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -89,7 +91,7 @@ class _MoreScreenState extends State<MoreScreen> {
                             AppRoutes.webview,
                             arguments: AppRoutesArgs.webViewRouteArgs(
                               url:
-                                  'https://test.egyakin.com/analytics?user_id=${widget.currentDoctorModel.id}&dark=${isDarkMode ? 'true' : 'false'}',
+                                  '${ApiEndPoint.baseUrl}/analytics?user_id=${widget.currentDoctorModel.id}&dark=${isDarkMode ? 'true' : 'false'}',
                               title: context.tr(AppStrings.analytics),
                             ),
                           );
@@ -403,6 +405,68 @@ class _MoreScreenState extends State<MoreScreen> {
                           );
                         },
                       ),
+
+                      // Button to clear update message hidden flag
+                      widget.homeDataModel.role == 'Admin'
+                          ? Column(
+                              children: [
+                                Center(
+                                  child: AdminOnlyBadge(
+                                    style: BadgeStyle.premium,
+                                    glowEffect: true,
+                                    pulseAnimation: true,
+                                    fontSize: 8.sp,
+                                    badgePadding: EdgeInsets.symmetric(
+                                        horizontal: 5.w, vertical: 1.h),
+                                    tooltipMessage: context.tr(AppStrings
+                                        .adminOnlyClearUpdateMessageFlag),
+                                    child: ElevatedButton(
+                                      onPressed: () async {
+                                        try {
+                                          final prefs = await SharedPreferences
+                                              .getInstance();
+                                          await prefs.remove(AppLocalStrings
+                                              .isUpdateMessageHidden5);
+
+                                          if (context.mounted) {
+                                            customSnackBar(
+                                              context: context,
+                                              message: context.tr(AppStrings
+                                                  .updateMessageFlagClearedSuccessfully),
+                                            );
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) {
+                                            customSnackBar(
+                                              context: context,
+                                              message: context.tr(
+                                                  '${AppStrings.failedToClearUpdateMessageFlag}: ${e.toString()}'),
+                                            );
+                                          }
+                                        }
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        foregroundColor: Colors.white,
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        context.tr(AppStrings
+                                            .clearUpdateMessageToShowItAgain),
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 30.h),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
                     ],
                   ),
                 ),

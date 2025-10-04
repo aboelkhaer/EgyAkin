@@ -447,5 +447,12 @@
   "Enter a valid number": "Enter a valid number",
   "You must agree to the Privacy Policy.": "You must agree to the Privacy Policy.",
   "Sorry can't do that! You are admin.": "Sorry can't do that! You are admin.",
-  "Voters": "Voters"
+  "Voters": "Voters",
+  "What's New": "What's New",
+  "update_dialog_content": "<ul><li><strong>🌙 Dark Mode Support</strong>: Experience the app in a beautiful dark theme that's easier on your eyes and perfect for low-light environments. Toggle between light and dark modes in settings.</li><li><strong>🌍 Multi-Language Support</strong>: Full localization support with seamless language switching. The app now adapts to your preferred language for a more personalized experience.</li><li><strong>📋 Discharge Recommendations</strong>: New comprehensive section providing detailed discharge planning and recommendations for better patient care transitions and follow-up care.</li><li><strong>📊 Statistics Dashboard</strong>: New statistics section in the More tab providing detailed insights, analytics, and data visualization for better decision-making and tracking.</li><li><strong>🚀 Enhanced User Experience</strong>: Major improvements across the entire app including better navigation, smoother animations, improved loading states, and more intuitive user interfaces.</li><li><strong>🔗 Enhanced Community Features</strong>: Improved URL handling in community posts with better link previews, clickable content, and enhanced sharing capabilities.</li><li><strong>📱 Share Post Feature</strong>: Easily share interesting community posts with others through various platforms and messaging apps with improved loading indicators.</li><li><strong>🛠️ Bug Fixes & Performance</strong>: Enjoy a significantly smoother and more reliable app experience with numerous fixes, optimizations, and performance enhancements.</li></ul>",
+  "Clear Update Message to show it again": "Clear Update Message to show it again",
+  "Admin Only - Clear Update Message Flag": "Admin Only - Clear Update Message Flag",
+  "Update message flag cleared successfully!": "Update message flag cleared successfully!",
+  "Failed to clear update message flag": "Failed to clear update message flag",
+  "Verified": "Verified"
 }

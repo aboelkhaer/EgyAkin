@@ -172,7 +172,9 @@ class HomeHeader extends StatelessWidget {
                                       ),
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.grey.shade700,
+                                  color: isDarkMode
+                                      ? AppColors.darkTitle
+                                      : Colors.grey.shade700,
                                   fontSize: 14.sp,
                                 ),
                               );
