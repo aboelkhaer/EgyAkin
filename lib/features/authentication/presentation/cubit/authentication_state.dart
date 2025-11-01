@@ -15,5 +15,9 @@ abstract class AuthenticationState with _$AuthenticationState {
       AuthenticationModelResponse doctorData,
       bool isSignInSuccess,
       bool isRegisterSuccess) = _Loaded;
+
+  const factory AuthenticationState.loadingWithSocialLogin() = _LoadingWithSocialLogin;
+  const factory AuthenticationState.loadedWithSocialLogin() = _LoadedWithSocialLogin;
+
   const factory AuthenticationState.error(String message) = _Error;
 }

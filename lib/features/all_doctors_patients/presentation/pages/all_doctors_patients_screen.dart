@@ -1,6 +1,8 @@
 import 'package:egy_akin/app/shared/functions/hospital_text.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../exports.dart';
 
@@ -118,6 +120,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   message,
                   isApplyFilterLoading,
                   isApplyFilterLoaded,
+                  isExportLoading,
+                  isExportLoaded,
+                  fileUrl,
                 ) {
                   return IconButton(
                     onPressed: () {},
@@ -183,6 +188,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   message,
                   isApplyFilterLoading,
                   isApplyFilterLoaded,
+                  isExportLoading,
+                  isExportLoaded,
+                  fileUrl,
                 ) {
                   return IconButton(
                     onPressed: () {
@@ -193,6 +201,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           return BuildFilterWidget(
                             filters: response.filters,
                             cubit: cubit,
+                            isCurrentDoctor: false,
                           );
                         },
                       );
@@ -236,6 +245,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     message,
                     isApplyFilterLoading,
                     isApplyFilterLoaded,
+                    isExportLoading,
+                    isExportLoaded,
+                    fileUrl,
                   ) {
                     return response.data!.data!.isEmpty
                         ? Center(
@@ -374,6 +386,9 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   message,
                   isApplyFilterLoading,
                   isApplyFilterLoaded,
+                  isExportLoading,
+                  isExportLoaded,
+                  fileUrl,
                 ) {
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -411,34 +426,158 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
           ),
         ],
       ),
-      floatingActionButton:
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
           BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () => const SizedBox.shrink(),
-            loaded: (response, isSeeMore, message, isApplyFilterLoading,
-                isApplyFilterLoaded) {
-              // Show FAB only when filters are applied
-              if (cubit.isApplyFilterDone) {
-                return FloatingActionButton(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () => FloatingActionButton(
                   onPressed: () {
-                    // Clear filters and reload all patients
-                    cubit.resetFormData();
-                    cubit.isApplyFilterDone = false;
-                    cubit.totalPatientInFilter = 0;
-                    cubit.getCurrentDoctorPatients();
+                    // Export patients (filtered or all)
+                    cubit.exportFilteredPatients();
                   },
                   backgroundColor: AppColors.primary.withOpacity(0.8),
+                  heroTag: 'export',
                   child: const Icon(
-                    Icons.clear,
+                    Icons.download,
                     color: Colors.white,
                   ),
-                );
-              }
-              return const SizedBox.shrink();
+                ),
+                loaded: (
+                  response,
+                  isSeeMore,
+                  message,
+                  isApplyFilterLoading,
+                  isApplyFilterLoaded,
+                  isExportLoading,
+                  isExportLoaded,
+                  fileUrl,
+                ) {
+                  // Handle export loaded state - open file URL
+                  if (isExportLoaded && fileUrl != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) async {
+                      try {
+                        // Open file URL in external browser
+                        final Uri url = Uri.parse(fileUrl);
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(
+                            url,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        } else {
+                          // Fallback: show a snackbar or dialog with the URL
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Cannot open URL: $fileUrl'),
+                                action: SnackBarAction(
+                                  label: 'Copy',
+                                  onPressed: () {
+                                    // Copy URL to clipboard
+                                    Clipboard.setData(
+                                        ClipboardData(text: fileUrl));
+                                  },
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      } catch (e) {
+                        // Handle any errors
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error opening file: $e'),
+                              action: SnackBarAction(
+                                label: 'Copy URL',
+                                onPressed: () {
+                                  // Copy URL to clipboard
+                                  Clipboard.setData(
+                                      ClipboardData(text: fileUrl));
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                      } finally {
+                        // Reset export loaded state
+                        cubit.resetExportState();
+                      }
+                    });
+                  }
+
+                  return FloatingActionButton(
+                    onPressed: isExportLoading
+                        ? null
+                        : () {
+                            // Export patients (filtered or all)
+                            cubit.exportFilteredPatients();
+                          },
+                    backgroundColor: AppColors.primary.withOpacity(0.8),
+                    heroTag: 'export',
+                    child: isExportLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Icon(
+                            Icons.download,
+                            color: Colors.white,
+                          ),
+                  );
+                },
+              );
             },
-          );
-        },
+          ),
+          // Show clear button only when filters are applied
+          BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () => const SizedBox.shrink(),
+                loaded: (
+                  response,
+                  isSeeMore,
+                  message,
+                  isApplyFilterLoading,
+                  isApplyFilterLoaded,
+                  isExportLoading,
+                  isExportLoaded,
+                  fileUrl,
+                ) {
+                  if (cubit.isApplyFilterDone) {
+                    return Column(
+                      children: [
+                        const SizedBox(height: 16),
+                        FloatingActionButton(
+                          onPressed: () {
+                            // Clear filters and reload all patients
+                            cubit.resetFormData();
+                            cubit.isApplyFilterDone = false;
+                            cubit.totalPatientInFilter = 0;
+                            cubit.getCurrentDoctorPatients();
+                          },
+                          backgroundColor: AppColors.primary.withOpacity(0.8),
+                          heroTag: 'clear',
+                          child: const Icon(
+                            Icons.clear,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              );
+            },
+          ),
+        ],
       ),
     );
   }

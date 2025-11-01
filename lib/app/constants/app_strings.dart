@@ -549,4 +549,20 @@ class AppStrings {
   static const String failedToClearUpdateMessageFlag =
       'Failed to clear update message flag';
   static const String verified = 'Verified';
+
+  // Social Login strings
+  static const String or = 'or';
+  static const String continueWithGoogle = 'Continue with Google';
+  static const String continueWithApple = 'Continue with Apple';
+  static const String comingSoon = 'Coming Soon';
+  static const String socialLoginComingSoon =
+      'Social login features are coming soon!';
+
+
+
+  static const String from =
+      'from';
+  static const String selectDate = 'Select Date';
+  static const String to = 'to';
+
 }

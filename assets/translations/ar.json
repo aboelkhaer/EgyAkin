@@ -460,5 +460,13 @@
   "Admin Only - Clear Update Message Flag": "مدير فقط -  امسح رسالة التحديث",
   "Update message flag cleared successfully!": "تم إزالة معلمة التحديث بنجاح!",
   "Failed to clear update message flag": "فشل في إزالة معلمة التحديث",
-  "Verified": "موثوق"
+  "Verified": "موثوق",
+  "or": "أو",
+  "Continue with Google": "المتابعة مع جوجل",
+  "Continue with Apple": "المتابعة مع آبل",
+  "Coming Soon": "قريباً",
+  "Social login features are coming soon!": "ميزات تسجيل الدخول الاجتماعية قادمة قريباً!",
+  "from": "من",
+  "Select Date": "اختر التاريخ",
+  "to": "إلى"
 }

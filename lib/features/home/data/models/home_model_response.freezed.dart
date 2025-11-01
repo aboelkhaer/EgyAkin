@@ -499,6 +499,8 @@ mixin _$HomeDataModelResponse {
   List<TrendModel>? get trendsHashtags => throw _privateConstructorUsedError;
   @JsonKey(name: 'latest_groups')
   List<GroupModel>? get latestGroups => throw _privateConstructorUsedError;
+  @JsonKey(name: 'roles')
+  List<RoleModel>? get roles => throw _privateConstructorUsedError;
 
   /// Serializes this HomeDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -525,7 +527,8 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       List<PostModel>? posts,
       @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups});
+      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
+      @JsonKey(name: 'roles') List<RoleModel>? roles});
 }
 
 /// @nodoc
@@ -552,6 +555,7 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? feeds = freezed,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
+    Object? roles = freezed,
   }) {
     return _then(_value.copyWith(
       allPatients: freezed == allPatients
@@ -586,6 +590,10 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
           ? _value.latestGroups
           : latestGroups // ignore: cast_nullable_to_non_nullable
               as List<GroupModel>?,
+      roles: freezed == roles
+          ? _value.roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as List<RoleModel>?,
     ) as $Val);
   }
 }
@@ -608,7 +616,8 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       List<PostModel>? posts,
       @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups});
+      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
+      @JsonKey(name: 'roles') List<RoleModel>? roles});
 }
 
 /// @nodoc
@@ -633,6 +642,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? feeds = freezed,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
+    Object? roles = freezed,
   }) {
     return _then(_$HomeDataModelResponseImpl(
       allPatients: freezed == allPatients
@@ -667,6 +677,10 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
           ? _value._latestGroups
           : latestGroups // ignore: cast_nullable_to_non_nullable
               as List<GroupModel>?,
+      roles: freezed == roles
+          ? _value._roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as List<RoleModel>?,
     ));
   }
 }
@@ -685,7 +699,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags')
       final List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups})
+      @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
+      @JsonKey(name: 'roles') final List<RoleModel>? roles})
       : _allPatients = allPatients,
         _currentPatients = currentPatients,
         _topDoctors = topDoctors,
@@ -693,7 +708,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
         _posts = posts,
         _feeds = feeds,
         _trendsHashtags = trendsHashtags,
-        _latestGroups = latestGroups;
+        _latestGroups = latestGroups,
+        _roles = roles;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$HomeDataModelResponseImplFromJson(json);
@@ -784,9 +800,20 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<RoleModel>? _roles;
+  @override
+  @JsonKey(name: 'roles')
+  List<RoleModel>? get roles {
+    final value = _roles;
+    if (value == null) return null;
+    if (_roles is EqualUnmodifiableListView) return _roles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, roles: $roles)';
   }
 
   @override
@@ -807,7 +834,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
             const DeepCollectionEquality()
                 .equals(other._trendsHashtags, _trendsHashtags) &&
             const DeepCollectionEquality()
-                .equals(other._latestGroups, _latestGroups));
+                .equals(other._latestGroups, _latestGroups) &&
+            const DeepCollectionEquality().equals(other._roles, _roles));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -821,7 +849,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_posts),
       const DeepCollectionEquality().hash(_feeds),
       const DeepCollectionEquality().hash(_trendsHashtags),
-      const DeepCollectionEquality().hash(_latestGroups));
+      const DeepCollectionEquality().hash(_latestGroups),
+      const DeepCollectionEquality().hash(_roles));
 
   /// Create a copy of HomeDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -842,18 +871,19 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
 abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   const factory _HomeDataModelResponse(
-      {@JsonKey(name: 'all_patients')
-      final List<PatientHomeDataModel>? allPatients,
-      @JsonKey(name: 'current_patient')
-      final List<PatientHomeDataModel>? currentPatients,
-      final List<DoctorModel>? topDoctors,
-      final List<DoctorModel>? pendingSyndicateCard,
-      final List<PostModel>? posts,
-      @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
-      @JsonKey(name: 'trending_hashtags')
-      final List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups')
-      final List<GroupModel>? latestGroups}) = _$HomeDataModelResponseImpl;
+          {@JsonKey(name: 'all_patients')
+          final List<PatientHomeDataModel>? allPatients,
+          @JsonKey(name: 'current_patient')
+          final List<PatientHomeDataModel>? currentPatients,
+          final List<DoctorModel>? topDoctors,
+          final List<DoctorModel>? pendingSyndicateCard,
+          final List<PostModel>? posts,
+          @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
+          @JsonKey(name: 'trending_hashtags')
+          final List<TrendModel>? trendsHashtags,
+          @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
+          @JsonKey(name: 'roles') final List<RoleModel>? roles}) =
+      _$HomeDataModelResponseImpl;
 
   factory _HomeDataModelResponse.fromJson(Map<String, dynamic> json) =
       _$HomeDataModelResponseImpl.fromJson;
@@ -879,6 +909,9 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   @override
   @JsonKey(name: 'latest_groups')
   List<GroupModel>? get latestGroups;
+  @override
+  @JsonKey(name: 'roles')
+  List<RoleModel>? get roles;
 
   /// Create a copy of HomeDataModelResponse
   /// with the given fields replaced by the non-null parameter values.

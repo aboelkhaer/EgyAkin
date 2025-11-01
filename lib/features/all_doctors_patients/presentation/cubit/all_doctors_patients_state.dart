@@ -13,6 +13,9 @@ abstract class AllDoctorsPatientsState with _$AllDoctorsPatientsState {
     String message,
     bool isApplyFilterLoading,
     bool isApplyFilterLoaded,
+    bool isExportLoading,
+    bool isExportLoaded,
+    String? fileUrl,
   ) = _Loaded;
   const factory AllDoctorsPatientsState.error(String message) = _Error;
 }

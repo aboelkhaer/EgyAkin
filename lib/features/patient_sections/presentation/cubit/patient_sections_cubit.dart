@@ -1,22 +1,44 @@
-import 'package:dio/dio.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_patient_usecase.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
 
 import '../../../../exports.dart';
 
 class PatientSectionsCubit extends Cubit<PatientSectionsState> {
   PatientSectionsCubit(
-      this._getPatientSectionsUsecase,
-      this._deletePatientUsecase,
-      this._finalSubmitUsecase,
-      this._downloadPatientReportUsecase,
-      this._dio)
-      : super(const PatientSectionsState.initial());
+    this._getPatientSectionsUsecase,
+    this._deletePatientUsecase,
+    this._finalSubmitUsecase,
+    this._downloadPatientReportUsecase,
+    this._makeMarkPatientUsecase,
+    this._makeUnMarkPatientUsecase,
+  ) : super(const PatientSectionsState.initial());
   static PatientSectionsCubit get(context) => BlocProvider.of(context);
   final GetPatientSectionsUsecase _getPatientSectionsUsecase;
   final DeletePatientUsecase _deletePatientUsecase;
   final FinalSubmitUsecase _finalSubmitUsecase;
   final DownloadPatientReportUsecase _downloadPatientReportUsecase;
+  final MakeMarkPatientUsecase _makeMarkPatientUsecase;
+  final MakeUnMarkPatientUsecase _makeUnMarkPatientUsecase;
   List<SectionModel>? sectionsDataList;
-  final Dio _dio;
+
+  int counterChanges = 0;
+  refreshScreen() {
+    counterChanges += 1;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionsState.loaded(
+          value.response,
+          value.isDelete,
+          value.isFinalSubmit,
+          value.message,
+          value.isLoading,
+          value.reportProgress,
+          value.filePath,
+          value.isDownloadingReport,
+          value.isDownloadedReport,
+          counterChanges),
+    ));
+  }
 
   getPatientSections(String patientId) async {
     emit(const PatientSectionsState.loading());
@@ -28,8 +50,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
       },
       (result) async {
         sectionsDataList = result.data;
-        emit(PatientSectionsState.loaded(
-            result, false, false, '', false, 0.0, '', false, false));
+        emit(PatientSectionsState.loaded(result, false, false, '', false, 0.0,
+            '', false, false, counterChanges));
       },
     );
   }
@@ -37,8 +59,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
   deletePatient(String patientId) async {
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => PatientSectionsState.loaded(
-          value.response, false, false, '', true, 0.0, '', false, false),
+      loaded: (value) => PatientSectionsState.loaded(value.response, false,
+          false, '', true, 0.0, '', false, false, counterChanges),
     ));
     final result = await _deletePatientUsecase.execute(patientId);
 
@@ -47,14 +69,14 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => PatientSectionsState.loaded(value.response, false,
-              false, l.message, false, 0.0, '', false, false),
+              false, l.message, false, 0.0, '', false, false, counterChanges),
         ));
       },
       (result) async {
         emit(state.maybeMap(
           orElse: () => state,
-          loaded: (value) => PatientSectionsState.loaded(
-              value.response, true, false, '', false, 0.0, '', false, false),
+          loaded: (value) => PatientSectionsState.loaded(value.response, true,
+              false, '', false, 0.0, '', false, false, counterChanges),
         ));
       },
     );
@@ -71,8 +93,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
     if (sectionsNotCompleted.isEmpty) {
       emit(state.maybeMap(
         orElse: () => state,
-        loaded: (value) => PatientSectionsState.loaded(
-            value.response, false, false, '', true, 0.0, '', false, false),
+        loaded: (value) => PatientSectionsState.loaded(value.response, false,
+            false, '', true, 0.0, '', false, false, counterChanges),
       ));
       final result = await _finalSubmitUsecase.execute(patientId);
 
@@ -80,15 +102,24 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         (l) {
           emit(state.maybeMap(
             orElse: () => state,
-            loaded: (value) => PatientSectionsState.loaded(value.response,
-                false, false, l.message, false, 0.0, '', false, false),
+            loaded: (value) => PatientSectionsState.loaded(
+                value.response,
+                false,
+                false,
+                l.message,
+                false,
+                0.0,
+                '',
+                false,
+                false,
+                counterChanges),
           ));
         },
         (result) async {
           emit(state.maybeMap(
             orElse: () => state,
-            loaded: (value) => PatientSectionsState.loaded(
-                value.response, false, true, '', false, 0.0, '', false, false),
+            loaded: (value) => PatientSectionsState.loaded(value.response,
+                false, true, '', false, 0.0, '', false, false, counterChanges),
           ));
         },
       );
@@ -115,8 +146,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
                 emit(PatientSectionsState.error(l.message));
               },
               (result) async {
-                emit(const PatientSectionsState.loaded(
-                    GetPatientSectionsModelResponse(),
+                emit(PatientSectionsState.loaded(
+                    const GetPatientSectionsModelResponse(),
                     false,
                     true,
                     '',
@@ -124,7 +155,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
                     0.0,
                     '',
                     false,
-                    false));
+                    false,
+                    counterChanges));
               },
             );
           });
@@ -137,8 +169,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
   downloadPatientReport(String patientId) async {
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => PatientSectionsState.loaded(
-          value.response, false, false, '', false, 0.0, '', true, false),
+      loaded: (value) => PatientSectionsState.loaded(value.response, false,
+          false, '', false, 0.0, '', true, false, counterChanges),
     ));
     final result = await _downloadPatientReportUsecase.execute(patientId);
 
@@ -147,7 +179,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => PatientSectionsState.loaded(value.response, false,
-              false, l.message, false, 0.0, '', false, false),
+              false, l.message, false, 0.0, '', false, false, counterChanges),
         ));
       },
       (result) async {
@@ -155,8 +187,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
 
         emit(state.maybeMap(
           orElse: () => state,
-          loaded: (value) => PatientSectionsState.loaded(
-              value.response, false, false, '', false, 1.0, '', false, true),
+          loaded: (value) => PatientSectionsState.loaded(value.response, false,
+              false, '', false, 1.0, '', false, true, counterChanges),
         ));
 
         // try {
@@ -208,6 +240,64 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         //     ),
         //   ));
         // }
+      },
+    );
+  }
+
+  // Mark patient as bookmarked
+  void markPatient(String patientId) async {
+    final result = await _makeMarkPatientUsecase.execute(patientId);
+    result.fold(
+      (l) {
+        // Handle error - could show snackbar or update state
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+            value.response,
+            value.isDelete,
+            value.isFinalSubmit,
+            l.message,
+            value.isLoading,
+            value.reportProgress,
+            value.filePath,
+            value.isDownloadingReport,
+            value.isDownloadedReport,
+            counterChanges,
+          ),
+        ));
+      },
+      (r) async {
+        // Success - refresh the screen to update bookmark status
+        refreshScreen();
+      },
+    );
+  }
+
+  // Unmark patient (remove bookmark)
+  void unmarkPatient(String patientId) async {
+    final result = await _makeUnMarkPatientUsecase.execute(patientId);
+    result.fold(
+      (l) {
+        // Handle error - could show snackbar or update state
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionsState.loaded(
+            value.response,
+            value.isDelete,
+            value.isFinalSubmit,
+            l.message,
+            value.isLoading,
+            value.reportProgress,
+            value.filePath,
+            value.isDownloadingReport,
+            value.isDownloadedReport,
+            counterChanges,
+          ),
+        ));
+      },
+      (r) async {
+        // Success - refresh the screen to update bookmark status
+        refreshScreen();
       },
     );
   }

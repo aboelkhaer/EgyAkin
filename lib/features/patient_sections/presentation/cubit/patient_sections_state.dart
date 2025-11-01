@@ -15,7 +15,8 @@ abstract class PatientSectionsState with _$PatientSectionsState {
       double reportProgress,
       String filePath,
       bool isDownloadingReport,
-      bool isDownloadedReport) = _Loaded;
+      bool isDownloadedReport,
+      int counterChanges) = _Loaded;
 
   const factory PatientSectionsState.error(String message) = _Error;
 }

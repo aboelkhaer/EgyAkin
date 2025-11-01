@@ -72,6 +72,9 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       latestGroups: (json['latest_groups'] as List<dynamic>?)
           ?.map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      roles: (json['roles'] as List<dynamic>?)
+          ?.map((e) => RoleModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
@@ -85,6 +88,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'feed_posts': instance.feeds,
       'trending_hashtags': instance.trendsHashtags,
       'latest_groups': instance.latestGroups,
+      'roles': instance.roles,
     };
 
 _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(

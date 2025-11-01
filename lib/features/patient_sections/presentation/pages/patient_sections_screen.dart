@@ -61,7 +61,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                       reportProgress,
                       filePath,
                       isDownloadingReport,
-                      isDownloadedReport) {
+                      isDownloadedReport,
+                      counterChanges) {
                     if (message != '') {
                       customSnackBar(context: context, message: message);
                     }
@@ -99,7 +100,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                       reportProgress,
                       filePath,
                       isDownloadingReport,
-                      isDownloadedReport) {
+                      isDownloadedReport,
+                      counterChanges) {
                     return Text(
                       (widget.currentDoctorModel.id.toString() ==
                                   response.doctorId.toString() ||
@@ -123,6 +125,40 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
               },
             ),
             centerTitle: true,
+            actions: [
+              BlocBuilder<PatientSectionsCubit, PatientSectionsState>(
+                builder: (context, state) {
+                  return state.maybeWhen(
+                    orElse: () => const SizedBox.shrink(),
+                    loaded: (response,
+                        isDelete,
+                        isFinalSubmit,
+                        message,
+                        isLoading,
+                        reportProgress,
+                        filePath,
+                        isDownloadingReport,
+                        isDownloadedReport,
+                        counterChanges) {
+                      final isBookmarked = response.value ?? false;
+                      return IconButton(
+                        onPressed: () {
+                          if (isBookmarked) {
+                            cubit.unmarkPatient(widget.patientId);
+                          } else {
+                            cubit.markPatient(widget.patientId);
+                          }
+                        },
+                        icon: Icon(
+                          isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                          color: isBookmarked ? AppColors.primary : null,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
           ),
           body: BlocConsumer<PatientSectionsCubit, PatientSectionsState>(
             listener: (context, state) {
@@ -136,7 +172,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                     reportProgress,
                     filePath,
                     isDownloadingReport,
-                    isDownloadedReport) {
+                    isDownloadedReport,
+                    counterChanges) {
                   if (message.isNotEmpty) {
                     customSnackBar(context: context, message: message);
                   }
@@ -156,7 +193,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                     reportProgress,
                     filePath,
                     isDownloadingReport,
-                    isDownloadedReport) {
+                    isDownloadedReport,
+                    counterChanges) {
                   if (isLoading) {
                     return const ShimmerLoadingPatientsCards(
                         ishorizontal: false);
@@ -442,7 +480,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                     reportProgress,
                                     filePath,
                                     isDownloadingReport,
-                                    isDownloadedReport) {
+                                    isDownloadedReport,
+                                    counterChanges) {
                                   if ((response.doctorId.toString() ==
                                           widget.currentDoctorModel.id
                                               .toString()) &&

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:egy_akin/app/constants/local_storage_key.dart';
@@ -50,6 +51,7 @@ class HomeCubit extends Cubit<HomeState> {
   String isSyndicateCardRequired = '';
   String currentDoctorRole = '';
   String currentUserVersion = '';
+  String currentUserBuildNumber = '';
   bool getCurrentUserVersion = false;
   bool isGoneToCommunityForFirstTime = false;
 
@@ -155,6 +157,16 @@ class HomeCubit extends Cubit<HomeState> {
     if (getCurrentUserVersion == false) {
       currentUserVersion = (await sl<AppPreferences>()
           .getString(AppLocalStrings.userAppVersion))!;
+
+      // Get build number from package info
+      try {
+        final packageInfo = await PackageInfo.fromPlatform();
+        currentUserBuildNumber = packageInfo.buildNumber;
+      } catch (e) {
+        debugPrint('Failed to get build number: $e');
+        currentUserBuildNumber = '';
+      }
+
       getCurrentUserVersion = true;
     }
 

@@ -1,5 +1,6 @@
 // ignore_for_file: invalid_annotation_target
 import 'package:egy_akin/exports.dart';
+import 'package:egy_akin/features/home/data/models/role_model_response.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'home_model_response.freezed.dart';
 part 'home_model_response.g.dart';
@@ -37,6 +38,7 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
     @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
+    @JsonKey(name: 'roles') List<RoleModel>? roles,
   }) = _HomeDataModelResponse;
   factory HomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$HomeDataModelResponseFromJson(json);

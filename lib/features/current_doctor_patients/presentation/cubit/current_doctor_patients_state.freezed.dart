@@ -21,7 +21,16 @@ mixin _$CurrentDoctorPatientsState {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetDoctorPatientsModelResponse response, bool isSeeMore)
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -30,7 +39,17 @@ mixin _$CurrentDoctorPatientsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult? Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -39,7 +58,17 @@ mixin _$CurrentDoctorPatientsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -139,7 +168,16 @@ class _$InitialImpl implements _Initial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetDoctorPatientsModelResponse response, bool isSeeMore)
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -151,7 +189,17 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult? Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -163,7 +211,17 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -260,7 +318,16 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetDoctorPatientsModelResponse response, bool isSeeMore)
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -272,7 +339,17 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult? Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -284,7 +361,17 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -343,7 +430,17 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({GetDoctorPatientsModelResponse response, bool isSeeMore});
+  $Res call(
+      {GetDoctorPatientsModelResponse response,
+      bool isSeeMore,
+      String message,
+      bool isApplyFilterLoading,
+      bool isApplyFilterLoaded,
+      bool isExportLoading,
+      bool isExportLoaded,
+      String? fileUrl,
+      List<GetFiltersOptionsDataModelResponse>? filters,
+      int totalPatientInFilter});
 
   $GetDoctorPatientsModelResponseCopyWith<$Res> get response;
 }
@@ -363,6 +460,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? response = null,
     Object? isSeeMore = null,
+    Object? message = null,
+    Object? isApplyFilterLoading = null,
+    Object? isApplyFilterLoaded = null,
+    Object? isExportLoading = null,
+    Object? isExportLoaded = null,
+    Object? fileUrl = freezed,
+    Object? filters = freezed,
+    Object? totalPatientInFilter = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -373,6 +478,38 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSeeMore
           : isSeeMore // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == isApplyFilterLoading
+          ? _value.isApplyFilterLoading
+          : isApplyFilterLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isApplyFilterLoaded
+          ? _value.isApplyFilterLoaded
+          : isApplyFilterLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isExportLoading
+          ? _value.isExportLoading
+          : isExportLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isExportLoaded
+          ? _value.isExportLoaded
+          : isExportLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      freezed == fileUrl
+          ? _value.fileUrl
+          : fileUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      freezed == filters
+          ? _value._filters
+          : filters // ignore: cast_nullable_to_non_nullable
+              as List<GetFiltersOptionsDataModelResponse>?,
+      null == totalPatientInFilter
+          ? _value.totalPatientInFilter
+          : totalPatientInFilter // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -391,16 +528,51 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.response, this.isSeeMore);
+  const _$LoadedImpl(
+      this.response,
+      this.isSeeMore,
+      this.message,
+      this.isApplyFilterLoading,
+      this.isApplyFilterLoaded,
+      this.isExportLoading,
+      this.isExportLoaded,
+      this.fileUrl,
+      final List<GetFiltersOptionsDataModelResponse>? filters,
+      this.totalPatientInFilter)
+      : _filters = filters;
 
   @override
   final GetDoctorPatientsModelResponse response;
   @override
   final bool isSeeMore;
+  @override
+  final String message;
+  @override
+  final bool isApplyFilterLoading;
+  @override
+  final bool isApplyFilterLoaded;
+  @override
+  final bool isExportLoading;
+  @override
+  final bool isExportLoaded;
+  @override
+  final String? fileUrl;
+  final List<GetFiltersOptionsDataModelResponse>? _filters;
+  @override
+  List<GetFiltersOptionsDataModelResponse>? get filters {
+    final value = _filters;
+    if (value == null) return null;
+    if (_filters is EqualUnmodifiableListView) return _filters;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  final int totalPatientInFilter;
 
   @override
   String toString() {
-    return 'CurrentDoctorPatientsState.loaded(response: $response, isSeeMore: $isSeeMore)';
+    return 'CurrentDoctorPatientsState.loaded(response: $response, isSeeMore: $isSeeMore, message: $message, isApplyFilterLoading: $isApplyFilterLoading, isApplyFilterLoaded: $isApplyFilterLoaded, isExportLoading: $isExportLoading, isExportLoaded: $isExportLoaded, fileUrl: $fileUrl, filters: $filters, totalPatientInFilter: $totalPatientInFilter)';
   }
 
   @override
@@ -411,11 +583,35 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.response, response) ||
                 other.response == response) &&
             (identical(other.isSeeMore, isSeeMore) ||
-                other.isSeeMore == isSeeMore));
+                other.isSeeMore == isSeeMore) &&
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.isApplyFilterLoading, isApplyFilterLoading) ||
+                other.isApplyFilterLoading == isApplyFilterLoading) &&
+            (identical(other.isApplyFilterLoaded, isApplyFilterLoaded) ||
+                other.isApplyFilterLoaded == isApplyFilterLoaded) &&
+            (identical(other.isExportLoading, isExportLoading) ||
+                other.isExportLoading == isExportLoading) &&
+            (identical(other.isExportLoaded, isExportLoaded) ||
+                other.isExportLoaded == isExportLoaded) &&
+            (identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl) &&
+            const DeepCollectionEquality().equals(other._filters, _filters) &&
+            (identical(other.totalPatientInFilter, totalPatientInFilter) ||
+                other.totalPatientInFilter == totalPatientInFilter));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, response, isSeeMore);
+  int get hashCode => Object.hash(
+      runtimeType,
+      response,
+      isSeeMore,
+      message,
+      isApplyFilterLoading,
+      isApplyFilterLoaded,
+      isExportLoading,
+      isExportLoaded,
+      fileUrl,
+      const DeepCollectionEquality().hash(_filters),
+      totalPatientInFilter);
 
   /// Create a copy of CurrentDoctorPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -431,11 +627,30 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetDoctorPatientsModelResponse response, bool isSeeMore)
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isSeeMore);
+    return loaded(
+        response,
+        isSeeMore,
+        message,
+        isApplyFilterLoading,
+        isApplyFilterLoaded,
+        isExportLoading,
+        isExportLoaded,
+        fileUrl,
+        filters,
+        totalPatientInFilter);
   }
 
   @override
@@ -443,11 +658,31 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult? Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isSeeMore);
+    return loaded?.call(
+        response,
+        isSeeMore,
+        message,
+        isApplyFilterLoading,
+        isApplyFilterLoaded,
+        isExportLoading,
+        isExportLoaded,
+        fileUrl,
+        filters,
+        totalPatientInFilter);
   }
 
   @override
@@ -455,13 +690,33 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isSeeMore);
+      return loaded(
+          response,
+          isSeeMore,
+          message,
+          isApplyFilterLoading,
+          isApplyFilterLoaded,
+          isExportLoading,
+          isExportLoaded,
+          fileUrl,
+          filters,
+          totalPatientInFilter);
     }
     return orElse();
   }
@@ -506,11 +761,27 @@ class _$LoadedImpl implements _Loaded {
 
 abstract class _Loaded implements CurrentDoctorPatientsState {
   const factory _Loaded(
-          final GetDoctorPatientsModelResponse response, final bool isSeeMore) =
-      _$LoadedImpl;
+      final GetDoctorPatientsModelResponse response,
+      final bool isSeeMore,
+      final String message,
+      final bool isApplyFilterLoading,
+      final bool isApplyFilterLoaded,
+      final bool isExportLoading,
+      final bool isExportLoaded,
+      final String? fileUrl,
+      final List<GetFiltersOptionsDataModelResponse>? filters,
+      final int totalPatientInFilter) = _$LoadedImpl;
 
   GetDoctorPatientsModelResponse get response;
   bool get isSeeMore;
+  String get message;
+  bool get isApplyFilterLoading;
+  bool get isApplyFilterLoaded;
+  bool get isExportLoading;
+  bool get isExportLoaded;
+  String? get fileUrl;
+  List<GetFiltersOptionsDataModelResponse>? get filters;
+  int get totalPatientInFilter;
 
   /// Create a copy of CurrentDoctorPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -590,7 +861,16 @@ class _$ErrorImpl implements _Error {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            GetDoctorPatientsModelResponse response, bool isSeeMore)
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -602,7 +882,17 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult? Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -614,7 +904,17 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(GetDoctorPatientsModelResponse response, bool isSeeMore)?
+    TResult Function(
+            GetDoctorPatientsModelResponse response,
+            bool isSeeMore,
+            String message,
+            bool isApplyFilterLoading,
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl,
+            List<GetFiltersOptionsDataModelResponse>? filters,
+            int totalPatientInFilter)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

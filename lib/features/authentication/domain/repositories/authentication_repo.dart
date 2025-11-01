@@ -14,4 +14,8 @@ abstract class AuthenticationRepository {
   Future<Either<Failure, SendFCMTokenModelResponse>> sendFCMToken({
     required String? fcmToken,
   });
+  Future<Either<Failure, AuthenticationModelResponse>> signInWithGoogle({
+    required String? accessToken,
+    required String deviceId,
+  });
 }

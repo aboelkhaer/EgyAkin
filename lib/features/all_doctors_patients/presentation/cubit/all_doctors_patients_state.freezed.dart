@@ -25,7 +25,10 @@ mixin _$AllDoctorsPatientsState {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -39,7 +42,10 @@ mixin _$AllDoctorsPatientsState {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -53,7 +59,10 @@ mixin _$AllDoctorsPatientsState {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -156,7 +165,10 @@ class _$InitialImpl implements _Initial {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -173,7 +185,10 @@ class _$InitialImpl implements _Initial {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -190,7 +205,10 @@ class _$InitialImpl implements _Initial {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -291,7 +309,10 @@ class _$LoadingImpl implements _Loading {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -308,7 +329,10 @@ class _$LoadingImpl implements _Loading {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -325,7 +349,10 @@ class _$LoadingImpl implements _Loading {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -389,7 +416,10 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isSeeMore,
       String message,
       bool isApplyFilterLoading,
-      bool isApplyFilterLoaded});
+      bool isApplyFilterLoaded,
+      bool isExportLoading,
+      bool isExportLoaded,
+      String? fileUrl});
 
   $GetAllDoctorsPatientsModelResponseCopyWith<$Res> get response;
 }
@@ -412,6 +442,9 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? message = null,
     Object? isApplyFilterLoading = null,
     Object? isApplyFilterLoaded = null,
+    Object? isExportLoading = null,
+    Object? isExportLoaded = null,
+    Object? fileUrl = freezed,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -434,6 +467,18 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isApplyFilterLoaded
           : isApplyFilterLoaded // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isExportLoading
+          ? _value.isExportLoading
+          : isExportLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      null == isExportLoaded
+          ? _value.isExportLoaded
+          : isExportLoaded // ignore: cast_nullable_to_non_nullable
+              as bool,
+      freezed == fileUrl
+          ? _value.fileUrl
+          : fileUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 
@@ -452,8 +497,15 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl(this.response, this.isSeeMore, this.message,
-      this.isApplyFilterLoading, this.isApplyFilterLoaded);
+  const _$LoadedImpl(
+      this.response,
+      this.isSeeMore,
+      this.message,
+      this.isApplyFilterLoading,
+      this.isApplyFilterLoaded,
+      this.isExportLoading,
+      this.isExportLoaded,
+      this.fileUrl);
 
   @override
   final GetAllDoctorsPatientsModelResponse response;
@@ -465,10 +517,16 @@ class _$LoadedImpl implements _Loaded {
   final bool isApplyFilterLoading;
   @override
   final bool isApplyFilterLoaded;
+  @override
+  final bool isExportLoading;
+  @override
+  final bool isExportLoaded;
+  @override
+  final String? fileUrl;
 
   @override
   String toString() {
-    return 'AllDoctorsPatientsState.loaded(response: $response, isSeeMore: $isSeeMore, message: $message, isApplyFilterLoading: $isApplyFilterLoading, isApplyFilterLoaded: $isApplyFilterLoaded)';
+    return 'AllDoctorsPatientsState.loaded(response: $response, isSeeMore: $isSeeMore, message: $message, isApplyFilterLoading: $isApplyFilterLoading, isApplyFilterLoaded: $isApplyFilterLoaded, isExportLoading: $isExportLoading, isExportLoaded: $isExportLoaded, fileUrl: $fileUrl)';
   }
 
   @override
@@ -484,12 +542,25 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isApplyFilterLoading, isApplyFilterLoading) ||
                 other.isApplyFilterLoading == isApplyFilterLoading) &&
             (identical(other.isApplyFilterLoaded, isApplyFilterLoaded) ||
-                other.isApplyFilterLoaded == isApplyFilterLoaded));
+                other.isApplyFilterLoaded == isApplyFilterLoaded) &&
+            (identical(other.isExportLoading, isExportLoading) ||
+                other.isExportLoading == isExportLoading) &&
+            (identical(other.isExportLoaded, isExportLoaded) ||
+                other.isExportLoaded == isExportLoaded) &&
+            (identical(other.fileUrl, fileUrl) || other.fileUrl == fileUrl));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, response, isSeeMore, message,
-      isApplyFilterLoading, isApplyFilterLoaded);
+  int get hashCode => Object.hash(
+      runtimeType,
+      response,
+      isSeeMore,
+      message,
+      isApplyFilterLoading,
+      isApplyFilterLoaded,
+      isExportLoading,
+      isExportLoaded,
+      fileUrl);
 
   /// Create a copy of AllDoctorsPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -509,12 +580,15 @@ class _$LoadedImpl implements _Loaded {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(response, isSeeMore, message, isApplyFilterLoading,
-        isApplyFilterLoaded);
+        isApplyFilterLoaded, isExportLoading, isExportLoaded, fileUrl);
   }
 
   @override
@@ -527,12 +601,15 @@ class _$LoadedImpl implements _Loaded {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(response, isSeeMore, message, isApplyFilterLoading,
-        isApplyFilterLoaded);
+        isApplyFilterLoaded, isExportLoading, isExportLoaded, fileUrl);
   }
 
   @override
@@ -545,14 +622,17 @@ class _$LoadedImpl implements _Loaded {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(response, isSeeMore, message, isApplyFilterLoading,
-          isApplyFilterLoaded);
+          isApplyFilterLoaded, isExportLoading, isExportLoaded, fileUrl);
     }
     return orElse();
   }
@@ -601,13 +681,19 @@ abstract class _Loaded implements AllDoctorsPatientsState {
       final bool isSeeMore,
       final String message,
       final bool isApplyFilterLoading,
-      final bool isApplyFilterLoaded) = _$LoadedImpl;
+      final bool isApplyFilterLoaded,
+      final bool isExportLoading,
+      final bool isExportLoaded,
+      final String? fileUrl) = _$LoadedImpl;
 
   GetAllDoctorsPatientsModelResponse get response;
   bool get isSeeMore;
   String get message;
   bool get isApplyFilterLoading;
   bool get isApplyFilterLoaded;
+  bool get isExportLoading;
+  bool get isExportLoaded;
+  String? get fileUrl;
 
   /// Create a copy of AllDoctorsPatientsState
   /// with the given fields replaced by the non-null parameter values.
@@ -691,7 +777,10 @@ class _$ErrorImpl implements _Error {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -708,7 +797,10 @@ class _$ErrorImpl implements _Error {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -725,7 +817,10 @@ class _$ErrorImpl implements _Error {
             bool isSeeMore,
             String message,
             bool isApplyFilterLoading,
-            bool isApplyFilterLoaded)?
+            bool isApplyFilterLoaded,
+            bool isExportLoading,
+            bool isExportLoaded,
+            String? fileUrl)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

@@ -27,6 +27,8 @@ mixin _$AuthenticationState {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -40,6 +42,8 @@ mixin _$AuthenticationState {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -53,6 +57,8 @@ mixin _$AuthenticationState {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -65,6 +71,10 @@ mixin _$AuthenticationState {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -76,6 +86,8 @@ mixin _$AuthenticationState {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -86,6 +98,8 @@ mixin _$AuthenticationState {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) =>
@@ -163,6 +177,8 @@ class _$InitialImpl implements _Initial {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -179,6 +195,8 @@ class _$InitialImpl implements _Initial {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -195,6 +213,8 @@ class _$InitialImpl implements _Initial {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -213,6 +233,10 @@ class _$InitialImpl implements _Initial {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return initial(this);
@@ -227,6 +251,8 @@ class _$InitialImpl implements _Initial {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return initial?.call(this);
@@ -240,6 +266,8 @@ class _$InitialImpl implements _Initial {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -304,6 +332,8 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -320,6 +350,8 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -336,6 +368,8 @@ class _$LoadingImpl implements _Loading {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -354,6 +388,10 @@ class _$LoadingImpl implements _Loading {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return loading(this);
@@ -368,6 +406,8 @@ class _$LoadingImpl implements _Loading {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return loading?.call(this);
@@ -381,6 +421,8 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -489,6 +531,8 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return changePasswordVisibility(
@@ -506,6 +550,8 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return changePasswordVisibility?.call(
@@ -523,6 +569,8 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -542,6 +590,10 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return changePasswordVisibility(this);
@@ -556,6 +608,8 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return changePasswordVisibility?.call(this);
@@ -569,6 +623,8 @@ class _$ChangePasswordVisibilityImpl implements _ChangePasswordVisibility {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -673,6 +729,8 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return checkConfirmation(changedCounter);
@@ -689,6 +747,8 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return checkConfirmation?.call(changedCounter);
@@ -705,6 +765,8 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -723,6 +785,10 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return checkConfirmation(this);
@@ -737,6 +803,8 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return checkConfirmation?.call(this);
@@ -750,6 +818,8 @@ class _$CheckConfirmationImpl implements _CheckConfirmation {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -887,6 +957,8 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return loaded(doctorData, isSignInSuccess, isRegisterSuccess);
@@ -903,6 +975,8 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(doctorData, isSignInSuccess, isRegisterSuccess);
@@ -919,6 +993,8 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -937,6 +1013,10 @@ class _$LoadedImpl implements _Loaded {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return loaded(this);
@@ -951,6 +1031,8 @@ class _$LoadedImpl implements _Loaded {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return loaded?.call(this);
@@ -964,6 +1046,8 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {
@@ -987,6 +1071,322 @@ abstract class _Loaded implements AuthenticationState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$LoadingWithSocialLoginImplCopyWith<$Res> {
+  factory _$$LoadingWithSocialLoginImplCopyWith(
+          _$LoadingWithSocialLoginImpl value,
+          $Res Function(_$LoadingWithSocialLoginImpl) then) =
+      __$$LoadingWithSocialLoginImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LoadingWithSocialLoginImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res,
+        _$LoadingWithSocialLoginImpl>
+    implements _$$LoadingWithSocialLoginImplCopyWith<$Res> {
+  __$$LoadingWithSocialLoginImplCopyWithImpl(
+      _$LoadingWithSocialLoginImpl _value,
+      $Res Function(_$LoadingWithSocialLoginImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$LoadingWithSocialLoginImpl implements _LoadingWithSocialLogin {
+  const _$LoadingWithSocialLoginImpl();
+
+  @override
+  String toString() {
+    return 'AuthenticationState.loadingWithSocialLogin()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoadingWithSocialLoginImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            bool signInObscureText, bool signInVisiblePasswordIcon)
+        changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
+    required TResult Function(String message) error,
+  }) {
+    return loadingWithSocialLogin();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
+    TResult? Function(String message)? error,
+  }) {
+    return loadingWithSocialLogin?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (loadingWithSocialLogin != null) {
+      return loadingWithSocialLogin();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_ChangePasswordVisibility value)
+        changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
+    required TResult Function(_Error value) error,
+  }) {
+    return loadingWithSocialLogin(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_ChangePasswordVisibility value)?
+        changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loadingWithSocialLogin?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loadingWithSocialLogin != null) {
+      return loadingWithSocialLogin(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadingWithSocialLogin implements AuthenticationState {
+  const factory _LoadingWithSocialLogin() = _$LoadingWithSocialLoginImpl;
+}
+
+/// @nodoc
+abstract class _$$LoadedWithSocialLoginImplCopyWith<$Res> {
+  factory _$$LoadedWithSocialLoginImplCopyWith(
+          _$LoadedWithSocialLoginImpl value,
+          $Res Function(_$LoadedWithSocialLoginImpl) then) =
+      __$$LoadedWithSocialLoginImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$LoadedWithSocialLoginImplCopyWithImpl<$Res>
+    extends _$AuthenticationStateCopyWithImpl<$Res, _$LoadedWithSocialLoginImpl>
+    implements _$$LoadedWithSocialLoginImplCopyWith<$Res> {
+  __$$LoadedWithSocialLoginImplCopyWithImpl(_$LoadedWithSocialLoginImpl _value,
+      $Res Function(_$LoadedWithSocialLoginImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthenticationState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$LoadedWithSocialLoginImpl implements _LoadedWithSocialLogin {
+  const _$LoadedWithSocialLoginImpl();
+
+  @override
+  String toString() {
+    return 'AuthenticationState.loadedWithSocialLogin()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$LoadedWithSocialLoginImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            bool signInObscureText, bool signInVisiblePasswordIcon)
+        changePasswordVisibility,
+    required TResult Function(int changedCounter) checkConfirmation,
+    required TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)
+        loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
+    required TResult Function(String message) error,
+  }) {
+    return loadedWithSocialLogin();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult? Function(int changedCounter)? checkConfirmation,
+    TResult? Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
+    TResult? Function(String message)? error,
+  }) {
+    return loadedWithSocialLogin?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(bool signInObscureText, bool signInVisiblePasswordIcon)?
+        changePasswordVisibility,
+    TResult Function(int changedCounter)? checkConfirmation,
+    TResult Function(AuthenticationModelResponse doctorData,
+            bool isSignInSuccess, bool isRegisterSuccess)?
+        loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (loadedWithSocialLogin != null) {
+      return loadedWithSocialLogin();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_ChangePasswordVisibility value)
+        changePasswordVisibility,
+    required TResult Function(_CheckConfirmation value) checkConfirmation,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
+    required TResult Function(_Error value) error,
+  }) {
+    return loadedWithSocialLogin(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_ChangePasswordVisibility value)?
+        changePasswordVisibility,
+    TResult? Function(_CheckConfirmation value)? checkConfirmation,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
+    TResult? Function(_Error value)? error,
+  }) {
+    return loadedWithSocialLogin?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
+    TResult Function(_CheckConfirmation value)? checkConfirmation,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
+    TResult Function(_Error value)? error,
+    required TResult orElse(),
+  }) {
+    if (loadedWithSocialLogin != null) {
+      return loadedWithSocialLogin(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _LoadedWithSocialLogin implements AuthenticationState {
+  const factory _LoadedWithSocialLogin() = _$LoadedWithSocialLoginImpl;
 }
 
 /// @nodoc
@@ -1066,6 +1466,8 @@ class _$ErrorImpl implements _Error {
     required TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)
         loaded,
+    required TResult Function() loadingWithSocialLogin,
+    required TResult Function() loadedWithSocialLogin,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -1082,6 +1484,8 @@ class _$ErrorImpl implements _Error {
     TResult? Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult? Function()? loadingWithSocialLogin,
+    TResult? Function()? loadedWithSocialLogin,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -1098,6 +1502,8 @@ class _$ErrorImpl implements _Error {
     TResult Function(AuthenticationModelResponse doctorData,
             bool isSignInSuccess, bool isRegisterSuccess)?
         loaded,
+    TResult Function()? loadingWithSocialLogin,
+    TResult Function()? loadedWithSocialLogin,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1116,6 +1522,10 @@ class _$ErrorImpl implements _Error {
         changePasswordVisibility,
     required TResult Function(_CheckConfirmation value) checkConfirmation,
     required TResult Function(_Loaded value) loaded,
+    required TResult Function(_LoadingWithSocialLogin value)
+        loadingWithSocialLogin,
+    required TResult Function(_LoadedWithSocialLogin value)
+        loadedWithSocialLogin,
     required TResult Function(_Error value) error,
   }) {
     return error(this);
@@ -1130,6 +1540,8 @@ class _$ErrorImpl implements _Error {
         changePasswordVisibility,
     TResult? Function(_CheckConfirmation value)? checkConfirmation,
     TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult? Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult? Function(_Error value)? error,
   }) {
     return error?.call(this);
@@ -1143,6 +1555,8 @@ class _$ErrorImpl implements _Error {
     TResult Function(_ChangePasswordVisibility value)? changePasswordVisibility,
     TResult Function(_CheckConfirmation value)? checkConfirmation,
     TResult Function(_Loaded value)? loaded,
+    TResult Function(_LoadingWithSocialLogin value)? loadingWithSocialLogin,
+    TResult Function(_LoadedWithSocialLogin value)? loadedWithSocialLogin,
     TResult Function(_Error value)? error,
     required TResult orElse(),
   }) {

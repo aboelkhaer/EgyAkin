@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_mark_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_unmark_patient_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -79,4 +81,47 @@ class PatientSectionsRepositoryImpl extends PatientSectionsRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+  @override
+  Future<Either<Failure, MakeMarkPatientModelResponse>>
+      makeMarkPatient({required String patientId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await patientSectionsDataSource.makeMarkPatient(patientId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+  @override
+  Future<Either<Failure, MakeUnMarkPatientModelResponse>>
+      makeUnMarkPatient({required String patientId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await patientSectionsDataSource.makeUnMarkPatient(patientId);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
+  
+
+
+
+
+
+
+
+
 }

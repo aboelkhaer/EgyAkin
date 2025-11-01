@@ -13,6 +13,10 @@ abstract class AuthenticationDataSource {
   Future<SendFCMTokenModelResponse> sendFCMToken({
     required String? fcmToken,
   });
+  Future<AuthenticationModelResponse> signInWithGoogle({
+    required String? accessToken,
+    required String deviceId,
+  });
 }
 
 class AuthenticationDataSourceImpl implements AuthenticationDataSource {
@@ -36,7 +40,6 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   }) async {
     return await _apiServices.register(
       doctorModel.toJson(),
-     
     );
   }
 
@@ -44,5 +47,13 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   Future<SendFCMTokenModelResponse> sendFCMToken(
       {required String? fcmToken}) async {
     return await _apiServices.sendFCMToken(fcmToken);
+  }
+
+  @override
+  Future<AuthenticationModelResponse> signInWithGoogle({
+    required String? accessToken,
+    required String deviceId,
+  }) async {
+    return await _apiServices.signInWithGoogle(accessToken, deviceId);
   }
 }

@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_mark_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_unmark_patient_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -16,4 +18,13 @@ abstract class PatientSectionsRepository {
       downloadPatientReport({
     required String patientId,
   });
+  Future<Either<Failure, MakeMarkPatientModelResponse>> makeMarkPatient({
+    required String patientId,
+  });
+  Future<Either<Failure, MakeUnMarkPatientModelResponse>> makeUnMarkPatient({
+    required String patientId,
+  });
+
+
+
 }

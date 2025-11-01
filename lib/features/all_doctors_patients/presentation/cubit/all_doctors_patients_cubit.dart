@@ -1,14 +1,16 @@
 import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 
 import '../../../../exports.dart';
 
 class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
-  AllDoctorsPatientsCubit(
-      this._getAllDoctorsPatientsUsecase, this._applyPatientsFiltersUsecase)
+  AllDoctorsPatientsCubit(this._getAllDoctorsPatientsUsecase,
+      this._applyPatientsFiltersUsecase, this._exportPatientsUsecase)
       : super(const AllDoctorsPatientsState.initial());
   final GetAllDoctorsPatientsUsecase _getAllDoctorsPatientsUsecase;
   final ApplyPatientsFiltersUsecase _applyPatientsFiltersUsecase;
+  final ExportPatientsUsecase _exportPatientsUsecase;
   static AllDoctorsPatientsCubit get(context) => BlocProvider.of(context);
   Map<String, String> formData = {};
   ScrollController? scrollController;
@@ -43,12 +45,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       },
       (r) async {
         emit(AllDoctorsPatientsState.loaded(
-          r,
-          false,
-          '',
-          false,
-          false,
-        ));
+            r, false, '', false, false, false, false, null));
         // getPatientFilters();
       },
     );
@@ -61,13 +58,8 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     _currentPage++;
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => AllDoctorsPatientsState.loaded(
-        value.response,
-        true,
-        '',
-        false,
-        false,
-      ),
+      loaded: (value) => AllDoctorsPatientsState.loaded(value.response, true,
+          '', false, false, value.isExportLoading, value.isExportLoaded, null),
     ));
     final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
     result.fold(
@@ -86,6 +78,9 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             message,
             isApplyFilterLoading,
             isApplyFilterLoaded,
+            isExportLoading,
+            isExportLoaded,
+            fileUrl,
           ) {
             final updatedData = responseData.copyWith(
               data: responseData.data!.copyWith(
@@ -102,12 +97,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             }
             isLoadingMoreForScroll = false;
             emit(AllDoctorsPatientsState.loaded(
-              updatedData,
-              false,
-              '',
-              false,
-              false,
-            ));
+                updatedData, false, '', false, false, false, false, null));
           },
           error: (error) {},
         );
@@ -117,7 +107,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
 
   int totalPatientInFilter = 0;
 
-  applyPatientFilters() async {
+  applyPatientFilters(String isOnlyMyPatients) async {
     currentPageInFilter = 1;
     isLastPageFilter = false;
 
@@ -125,14 +115,17 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       state.maybeMap(
         orElse: () => state,
         loaded: (value) => AllDoctorsPatientsState.loaded(
-          value.response,
-          value.isSeeMore,
-          '',
-          true,
-          false,
-        ),
+            value.response,
+            value.isSeeMore,
+            '',
+            true,
+            false,
+            value.isExportLoading,
+            value.isExportLoaded,
+            null),
       ),
     );
+    formData['only_my_patients'] = isOnlyMyPatients;
 
     final result = await _applyPatientsFiltersUsecase.execute(
         ApplyPatientsFiltersUsecaseInput(
@@ -144,12 +137,14 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
           state.maybeMap(
             orElse: () => state,
             loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response,
-              value.isSeeMore,
-              l.message,
-              false,
-              false,
-            ),
+                value.response,
+                value.isSeeMore,
+                l.message,
+                false,
+                false,
+                value.isExportLoading,
+                value.isExportLoaded,
+                null),
           ),
         );
       },
@@ -166,12 +161,14 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
                 ),
               );
               return AllDoctorsPatientsState.loaded(
-                updatedData,
-                value.isSeeMore,
-                '',
-                false,
-                true,
-              );
+                  updatedData,
+                  value.isSeeMore,
+                  '',
+                  false,
+                  true,
+                  value.isExportLoading,
+                  value.isExportLoaded,
+                  null);
             },
           ),
         );
@@ -189,12 +186,14 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       state.maybeMap(
         orElse: () => state,
         loaded: (value) => AllDoctorsPatientsState.loaded(
-          value.response,
-          true,
-          '',
-          false,
-          false,
-        ),
+            value.response,
+            true,
+            '',
+            false,
+            false,
+            value.isExportLoading,
+            value.isExportLoaded,
+            null),
       ),
     );
 
@@ -209,37 +208,21 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
           state.maybeMap(
             orElse: () => state,
             loaded: (value) => AllDoctorsPatientsState.loaded(
-              value.response,
-              false,
-              l.message,
-              false,
-              false,
-            ),
+                value.response,
+                false,
+                l.message,
+                false,
+                false,
+                value.isExportLoading,
+                value.isExportLoaded,
+                null),
           ),
         );
       },
       (r) async {
         final currentState = state;
         totalPatientInFilter = r.pagination!.total!;
-        // emit(
-        //   state.maybeMap(
-        //     orElse: () => state,
-        //     loaded: (value) {
-        //       var updatedData = value.response.copyWith(
-        //         data: value.response.data!.copyWith(
-        //           data: r.data,
-        //         ),
-        //       );
-        //       return AllDoctorsPatientsState.loaded(
-        //         updatedData,
-        //         value.isSeeMore,
-        //         '',
-        //         false,
-        //         true,
-        //       );
-        //     },
-        //   ),
-        // );
+
         currentState.when(
           initial: () {},
           loading: () {},
@@ -249,6 +232,9 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             message,
             isApplyFilterLoading,
             isApplyFilterLoaded,
+            isExportLoading,
+            isExportLoaded,
+            fileUrl,
           ) {
             final updatedData = responseData.copyWith(
               data: responseData.data!.copyWith(
@@ -264,29 +250,20 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
               isLastPageFilter = false;
             }
             isLoadingMoreForScrollForFilter = false;
-            // emit(AllDoctorsPatientsState.loaded(
-            //   updatedData,
-            //   false,
-            //   '',
-            //   false,
-            //   false,
-            // ));
+
             emit(
               state.maybeMap(
                 orElse: () => state,
                 loaded: (value) {
-                  // var updatedData = value.response.copyWith(
-                  //   data: value.response.data!.copyWith(
-                  //     data: r.data,
-                  //   ),
-                  // );
                   return AllDoctorsPatientsState.loaded(
-                    updatedData,
-                    false,
-                    '',
-                    false,
-                    false,
-                  );
+                      updatedData,
+                      false,
+                      '',
+                      false,
+                      false,
+                      value.isExportLoading,
+                      value.isExportLoaded,
+                      null);
                 },
               ),
             );
@@ -295,5 +272,58 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         );
       },
     );
+  }
+
+  exportFilteredPatients() async {
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) {
+          return AllDoctorsPatientsState.loaded(
+              value.response, false, '', false, false, true, false, null);
+        },
+      ),
+    );
+    final result = await _exportPatientsUsecase.execute(NoParams());
+    result.fold(
+      (l) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              return AllDoctorsPatientsState.loaded(value.response, false,
+                  l.message, false, false, false, false, null);
+            },
+          ),
+        );
+      },
+      (r) {
+        emit(
+          state.maybeMap(
+            orElse: () => state,
+            loaded: (value) {
+              return AllDoctorsPatientsState.loaded(
+                value.response,
+                false,
+                '',
+                false,
+                false,
+                false,
+                true,
+                r.fileUrl,
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  resetExportState() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => AllDoctorsPatientsState.loaded(
+          value.response, false, '', false, false, false, false, null),
+    ));
   }
 }

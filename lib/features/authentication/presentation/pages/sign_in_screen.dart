@@ -1,4 +1,5 @@
 import '../../../../exports.dart';
+import '../widgets/social_login_buttons.dart';
 
 class SignInScreen extends StatelessWidget {
   const SignInScreen({super.key});
@@ -16,8 +17,10 @@ class SignInScreen extends StatelessWidget {
               children: [
                 const AuthImage(image: AppImages.signIn),
                 SignInForm(cubit: cubit),
-                SizedBox(height: 50.h),
+                SizedBox(height: 30.h),
                 SignInBotton(cubit: cubit),
+                SizedBox(height: 20.h),
+                const SocialLoginButtons(),
                 SizedBox(height: 20.h),
                 const DontHaveAnAccountLine(),
                 SizedBox(height: 50.h),

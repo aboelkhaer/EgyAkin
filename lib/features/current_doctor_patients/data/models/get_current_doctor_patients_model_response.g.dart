@@ -13,6 +13,10 @@ _$GetDoctorPatientsModelResponseImpl
           verified: json['verified'] as bool?,
           scoreValue: json['score_value'] as String?,
           patientCount: json['patient_count'] as String?,
+          filters: (json['filter'] as List<dynamic>?)
+              ?.map((e) => GetFiltersOptionsDataModelResponse.fromJson(
+                  e as Map<String, dynamic>))
+              .toList(),
           data: json['data'] == null
               ? null
               : GetDoctorPatientsDataModelResponse.fromJson(
@@ -26,6 +30,7 @@ Map<String, dynamic> _$$GetDoctorPatientsModelResponseImplToJson(
       'verified': instance.verified,
       'score_value': instance.scoreValue,
       'patient_count': instance.patientCount,
+      'filter': instance.filters,
       'data': instance.data,
     };
 

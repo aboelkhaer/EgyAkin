@@ -1,15 +1,19 @@
 import 'dart:developer';
 
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:egy_akin/app/shared/functions/device_info_helper.dart';
+import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_google_usecase.dart';
 
 import '../../../../exports.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
-  AuthenticationCubit(this._signInUsecase, this._registerUsecase)
+  AuthenticationCubit(
+      this._signInUsecase, this._registerUsecase, this._signInWithGoogleUsecase)
       : super(const AuthenticationState.initial());
 
   final SignInUsecase _signInUsecase;
   final RegisterUsecase _registerUsecase;
+  final SignInWithGoogleUsecase _signInWithGoogleUsecase;
   // final SendFCMTokenUsecase _sendFCMTokenUsecase;
   static AuthenticationCubit get(context) => BlocProvider.of(context);
   bool isConfirmationChecked = false;
@@ -132,4 +136,51 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
   //! ---------------
+
+  //! Sign in with Google
+  signInWithGoogle() async {
+    emit(const AuthenticationState.loading());
+
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) {
+        // User cancelled the sign-in
+        emit(const AuthenticationState.initial());
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final String? accessToken = googleAuth.accessToken;
+
+      if (accessToken == null) {
+        emit(const AuthenticationState.error('Failed to get access token'));
+        return;
+      }
+
+      final String deviceId = await DeviceIdService.getPersistentDeviceId();
+      await Future.delayed(const Duration(
+          milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+      debugPrint(deviceId);
+
+      final result = await _signInWithGoogleUsecase.execute(
+        SignInWithGoogleUseCaseInput(
+          accessToken: accessToken,
+          deviceId: deviceId,
+        ),
+      );
+      result.fold(
+        (l) {
+          emit(AuthenticationState.error(l.message));
+        },
+        (doctorModel) async {
+          emit(AuthenticationState.loaded(doctorModel, true, false));
+        },
+      );
+    } catch (e) {
+      emit(AuthenticationState.error(e.toString()));
+    }
+  }
 }

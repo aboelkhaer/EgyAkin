@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/all_doctors_patients/data/models/apply_patient_filters_model_response.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/export_patients_model_response.dart';
 
 import '../../../../exports.dart';
 
@@ -9,6 +10,7 @@ abstract class AllDoctorsPatientsDataSource {
     Map<String, dynamic> map,
     int page,
   );
+  Future<ExportPatientsModelResponse> exportFilteredPatients();
 }
 
 class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
@@ -26,5 +28,10 @@ class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
   Future<ApplyPatientFiltersModelResponse> applyPatientsFilters(
       Map<String, dynamic> map, int page) async {
     return await _apiServices.applyPatientFilters(map, page);
+  }
+
+  @override
+  Future<ExportPatientsModelResponse> exportFilteredPatients() async {
+    return await _apiServices.exportFilteredPatients();
   }
 }

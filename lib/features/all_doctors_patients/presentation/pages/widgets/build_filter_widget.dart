@@ -6,11 +6,13 @@ import 'package:egy_akin/app/services/theme_bloc.dart';
 
 class BuildFilterWidget extends StatefulWidget {
   final List<GetFiltersOptionsDataModelResponse>? filters;
-  final AllDoctorsPatientsCubit cubit;
+  final dynamic cubit;
+  final bool isCurrentDoctor;
   const BuildFilterWidget({
     super.key,
     required this.filters,
     required this.cubit,
+    required this.isCurrentDoctor,
   });
 
   @override
@@ -21,7 +23,53 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
   @override
   void initState() {
     super.initState();
-    widget.cubit.textFormFieldControllersInit(widget.filters!);
+    // Call textFormFieldControllersInit if the method exists
+    if (widget.cubit != null && widget.filters != null) {
+      try {
+        widget.cubit.textFormFieldControllersInit(widget.filters!);
+      } catch (e) {
+        // Handle case where method doesn't exist
+        log('textFormFieldControllersInit not available: $e');
+      }
+    }
+  }
+
+  String? _extractDateFromString(String? dateString, String key) {
+    if (dateString == null || dateString.isEmpty) return null;
+
+    try {
+      // Handle format like {from:2025-10-05,to:2025-10-05} or {from:2025-10-05} or {to:2025-10-05}
+      if (dateString.contains('$key:')) {
+        final parts = dateString.split('$key:');
+        if (parts.length > 1) {
+          // Get the part after the key, then split by comma or closing brace
+          final datePart = parts[1].split(',')[0].split('}')[0];
+          return datePart;
+        }
+      }
+    } catch (e) {
+      log('Error extracting date: $e');
+    }
+    return null;
+  }
+
+  String? _extractNumberFromString(String? numberString, String key) {
+    if (numberString == null || numberString.isEmpty) return null;
+
+    try {
+      // Handle format like {from:100,to:500} or {from:100} or {to:500}
+      if (numberString.contains('$key:')) {
+        final parts = numberString.split('$key:');
+        if (parts.length > 1) {
+          // Get the part after the key, then split by comma or closing brace
+          final numberPart = parts[1].split(',')[0].split('}')[0];
+          return numberPart;
+        }
+      }
+    } catch (e) {
+      log('Error extracting number: $e');
+    }
+    return null;
   }
 
   @override
@@ -128,8 +176,12 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                       Expanded(
                         child: CustomElevatedButton(
                           onPressed: () {
-                            widget.cubit.resetFormData();
-                            setState(() {});
+                            try {
+                              widget.cubit.resetFormData();
+                              setState(() {});
+                            } catch (e) {
+                              log('resetFormData not available: $e');
+                            }
                           },
                           title: context.tr(AppStrings.reset),
                         ),
@@ -139,43 +191,15 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         child: CustomElevatedButton(
                           onPressed: () {
                             navigatorKey.currentState?.pop();
-                            widget.cubit.applyPatientFilters();
+                            try {
+                              widget.cubit.applyPatientFilters(widget.isCurrentDoctor ? 'true' : 'false');
+                            } catch (e) {
+                              log('applyPatientFilters not available: $e');
+                            }
                           },
                           title: context.tr(AppStrings.apply),
                         ),
                       ),
-                      // BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
-                      //   builder: (context, state) {
-                      //     return state.maybeWhen(
-                      //       orElse: () {
-                      //         return const SizedBox.shrink();
-                      //       },
-                      //       loaded: (
-                      //         response,
-                      //         isSeeMore,
-                      //         isFilterLoading,
-                      //         isFilterLoaded,
-                      //         message,
-                      //         filters,
-                      //         isApplyFilterLoading,
-                      //         isApplyFilterLoaded,
-                      //       ) {
-                      //         return Expanded(
-                      //           child: isApplyFilterLoading
-                      //               ? const Row(
-                      //                   children: [
-                      //                     CircularProgressIndicator(),
-                      //                   ],
-                      //                 )
-                      //               : CustomElevatedButton(
-                      //                   onPressed: () {},
-                      //                   title: 'Apply',
-                      //                 ),
-                      //         );
-                      //       },
-                      //     );
-                      //   },
-                      // ),
                     ],
                   ),
                 ),
@@ -190,7 +214,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
   Widget buildFilters(
     GetFiltersOptionsDataModelResponse filter,
     int index,
-    AllDoctorsPatientsCubit cubit,
+    dynamic cubit,
   ) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
@@ -199,7 +223,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
           case 'string':
             return CustomTextFormField(
               title: filter.condition.toString(),
-              textFormFieldController: cubit.controllers[filter.id.toString()],
+              textFormFieldController:
+                  widget.cubit.controllers[filter.id.toString()],
               textInputType: filter.keyboardType == 'number'
                   ? TextInputType.phone
                   : filter.keyboardType == 'email'
@@ -208,10 +233,10 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                           ? TextInputType.datetime
                           : TextInputType.text,
               textInputAction: TextInputAction.next,
-              // initialValue: cubit.formData[filter.id.toString()] == null ||
-              //         cubit.formData[filter.id.toString()] == ''
+              // initialValue: widget.cubit.formData[filter.id.toString()] == null ||
+              //         widget.cubit.formData[filter.id.toString()] == ''
               //     ? null
-              //     : cubit.formData[filter.id.toString()],
+              //     : widget.cubit.formData[filter.id.toString()],
               inputFormatters: [
                 LengthLimitingTextInputFormatter(255),
               ],
@@ -220,9 +245,10 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
               },
               onChanged: (value) {
                 setState(() {
-                  cubit.formData[filter.id.toString()] = value.toString();
+                  widget.cubit.formData[filter.id.toString()] =
+                      value.toString();
                 });
-                log(cubit.formData.toString());
+                log(widget.cubit.formData.toString());
               },
             );
           case 'select':
@@ -246,10 +272,10 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                 validator: (value) {
                   return null;
                 },
-                value: cubit.formData[filter.id.toString()] == null ||
-                        cubit.formData[filter.id.toString()] == ''
+                value: widget.cubit.formData[filter.id.toString()] == null ||
+                        widget.cubit.formData[filter.id.toString()] == ''
                     ? selectedValue
-                    : cubit.formData[filter.id.toString()],
+                    : widget.cubit.formData[filter.id.toString()],
 
                 items: filter.values!.map((value) {
                   return DropdownMenuItem<dynamic>(
@@ -265,9 +291,10 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
 
                 onChanged: (value) {
                   setState(() {
-                    cubit.formData[filter.id.toString()] = value.toString();
+                    widget.cubit.formData[filter.id.toString()] =
+                        value.toString();
                   });
-                  log(cubit.formData.toString());
+                  log(widget.cubit.formData.toString());
                 },
                 isExpanded: true,
                 menuMaxHeight: 200, // Limit dropdown list height
@@ -286,13 +313,14 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                     children: [
                       Radio<String>(
                         value: answer,
-                        groupValue: cubit.formData[
+                        groupValue: widget.cubit.formData[
                             filter.id.toString()], // current selected value
                         onChanged: (value) {
                           setState(() {
-                            cubit.formData[filter.id.toString()] = value!;
+                            widget.cubit.formData[filter.id.toString()] =
+                                value!;
                           });
-                          log(cubit.formData.toString());
+                          log(widget.cubit.formData.toString());
                         },
                       ),
                       Text(
@@ -305,6 +333,337 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                   ),
                 );
               }).toList(),
+            );
+          case 'date_range':
+            return Row(
+              children: [
+                // From Date
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${context.tr(AppStrings.from)}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: isDarkMode
+                                      ? const ColorScheme.dark(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.grey,
+                                          onSurface: Colors.white,
+                                        )
+                                      : const ColorScheme.light(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.white,
+                                          onSurface: Colors.black,
+                                        ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              // Get existing to date if it exists
+                              final existingTo = _extractDateFromString(
+                                  widget.cubit.formData['${filter.id}'], 'to');
+                              final fromDate =
+                                  '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+
+                              // Build the complete string with both from and to dates
+                              String newValue = '{from:$fromDate';
+                              if (existingTo != null) {
+                                newValue += ',to:$existingTo';
+                              }
+                              newValue += '}';
+
+                              widget.cubit.formData['${filter.id}'] = newValue;
+                            });
+                            log(widget.cubit.formData.toString());
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isDarkMode
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade300,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            color: isDarkMode
+                                ? Colors.grey.shade800
+                                : Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _extractDateFromString(
+                                          widget.cubit.formData['${filter.id}'],
+                                          'from') ??
+                                      context.tr(AppStrings.selectDate),
+                                  style: TextStyle(
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // To Date
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${context.tr(AppStrings.to)}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  colorScheme: isDarkMode
+                                      ? const ColorScheme.dark(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.grey,
+                                          onSurface: Colors.white,
+                                        )
+                                      : const ColorScheme.light(
+                                          primary: AppColors.primary,
+                                          onPrimary: Colors.white,
+                                          surface: Colors.white,
+                                          onSurface: Colors.black,
+                                        ),
+                                ),
+                                child: child!,
+                              );
+                            },
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              // Get existing from date if it exists
+                              final existingFrom = _extractDateFromString(
+                                  widget.cubit.formData['${filter.id}'],
+                                  'from');
+                              final toDate =
+                                  '${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}';
+
+                              // Build the complete string with both from and to dates
+                              String newValue = '';
+                              if (existingFrom != null) {
+                                newValue += '{from:$existingFrom,to:$toDate}';
+                              } else {
+                                newValue = '{to:$toDate}';
+                              }
+
+                              widget.cubit.formData['${filter.id}'] = newValue;
+                            });
+                            log(widget.cubit.formData.toString());
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: isDarkMode
+                                  ? Colors.grey.shade600
+                                  : Colors.grey.shade300,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            color: isDarkMode
+                                ? Colors.grey.shade800
+                                : Colors.white,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.calendar_today,
+                                color: isDarkMode ? Colors.white : Colors.black,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _extractDateFromString(
+                                          widget.cubit.formData['${filter.id}'],
+                                          'to') ??
+                                      context.tr(AppStrings.selectDate),
+                                  style: TextStyle(
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : Colors.black,
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          case 'number_range':
+            return Row(
+              children: [
+                // From Number
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${context.tr(AppStrings.from)}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CustomTextFormField(
+                        title: '',
+                        textFormFieldController: TextEditingController(
+                          text: _extractNumberFromString(
+                                  widget.cubit.formData['${filter.id}'],
+                                  'from') ??
+                              '',
+                        ),
+                        textInputType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        validator: (value) {
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            // Get existing to number if it exists
+                            final existingTo = _extractNumberFromString(
+                                widget.cubit.formData['${filter.id}'], 'to');
+
+                            // Build the complete string with both from and to numbers
+                            String newValue = '{from:$value';
+                            if (existingTo != null) {
+                              newValue += ',to:$existingTo';
+                            }
+                            newValue += '}';
+
+                            widget.cubit.formData['${filter.id}'] = newValue;
+                          });
+                          log(widget.cubit.formData.toString());
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 16),
+                // To Number
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${context.tr(AppStrings.to)}:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.sp,
+                          color: isDarkMode ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CustomTextFormField(
+                        title: '',
+                        textFormFieldController: TextEditingController(
+                          text: _extractNumberFromString(
+                                  widget.cubit.formData['${filter.id}'],
+                                  'to') ??
+                              '',
+                        ),
+                        textInputType: TextInputType.number,
+                        textInputAction: TextInputAction.done,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        validator: (value) {
+                          return null;
+                        },
+                        onChanged: (value) {
+                          setState(() {
+                            // Get existing from number if it exists
+                            final existingFrom = _extractNumberFromString(
+                                widget.cubit.formData['${filter.id}'], 'from');
+
+                            // Build the complete string with both from and to numbers
+                            String newValue = '';
+                            if (existingFrom != null) {
+                              newValue += '{from:$existingFrom,to:$value}';
+                            } else {
+                              newValue = '{to:$value}';
+                            }
+
+                            widget.cubit.formData['${filter.id}'] = newValue;
+                          });
+                          log(widget.cubit.formData.toString());
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             );
 
           default:

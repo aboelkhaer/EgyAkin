@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/export_patients_model_response.dart';
 import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import 'package:egy_akin/features/more/data/models/change_language_model_response.dart';
@@ -10,6 +11,8 @@ import 'package:egy_akin/features/patient_section_details/data/models/delete_pat
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/search_for_dose_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/update_patient_recommendation_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_mark_patient_model_response.dart';
+import 'package:egy_akin/features/patient_sections/data/models/make_unmark_patient_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
@@ -646,5 +649,24 @@ abstract class ApiServices {
   @POST(ApiEndPoint.changeLanguage)
   Future<ChangeLanguageModelResponse> changeLanguage(
     @Field('locale') String locale,
+  );
+
+  @POST(ApiEndPoint.exportFilteredPatients)
+  Future<ExportPatientsModelResponse> exportFilteredPatients();
+
+  @POST('${ApiEndPoint.makeMarkPatient}/{patientId}')
+  Future<MakeMarkPatientModelResponse> makeMarkPatient(
+    @Path('patient_id') String patientId,
+  );
+
+  @POST('${ApiEndPoint.makeUnMarkPatient}/{patientId}')
+  Future<MakeUnMarkPatientModelResponse> makeUnMarkPatient(
+    @Path('patient_id') String patientId,
+  );
+  
+  @POST(ApiEndPoint.signInWithGoogle)
+  Future<AuthenticationModelResponse> signInWithGoogle(
+    @Field('access_token') String? accessToken,
+    @Field('device_id') String deviceId,
   );
 }

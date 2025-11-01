@@ -14,6 +14,7 @@ class ShareButton extends StatefulWidget {
 
 class _ShareButtonState extends State<ShareButton> {
   bool _isLoading = false;
+  final GlobalKey _shareButtonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class _ShareButtonState extends State<ShareButton> {
         return Row(
           children: [
             InkWell(
+              key: _shareButtonKey,
               onTap: _isLoading
                   ? null
                   : () async {
@@ -36,9 +38,6 @@ class _ShareButtonState extends State<ShareButton> {
                         final deepLinkHandler = DeepLinkHandler();
                         final universalLink = deepLinkHandler
                             .generatePostDeepLink(widget.feed.id.toString());
-                        final customSchemeLink =
-                            deepLinkHandler.generateCustomSchemeLink(
-                                widget.feed.id.toString());
 
                         // App store links as fallback
                         const appStoreUrl =
@@ -56,9 +55,24 @@ iOS: $appStoreUrl
 Android: $playStoreUrl
 ''';
 
+                        // Get the position of the share button
+                        final RenderBox? renderBox =
+                            _shareButtonKey.currentContext?.findRenderObject()
+                                as RenderBox?;
+
+                        final Rect? sharePositionOrigin = renderBox != null
+                            ? Rect.fromLTWH(
+                                renderBox.localToGlobal(Offset.zero).dx,
+                                renderBox.localToGlobal(Offset.zero).dy,
+                                renderBox.size.width,
+                                renderBox.size.height,
+                              )
+                            : null;
+
                         await Share.share(
                           shareText,
                           subject: context.tr(AppStrings.egyAkinFeed),
+                          sharePositionOrigin: sharePositionOrigin,
                         );
                       } catch (e) {
                         customSnackBar(

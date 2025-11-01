@@ -15,6 +15,7 @@ export 'package:egy_akin/app/services/local_storage.dart';
 export 'package:egy_akin/app/services/time_ago_service.dart';
 export 'package:egy_akin/app/services/localization_service.dart';
 export 'package:egy_akin/app/services/localization_bloc.dart';
+export 'package:egy_akin/app/services/theme_bloc.dart';
 export 'package:egy_akin/app/utilities/translation_extension.dart';
 export 'package:egy_akin/app/shared/custom_dialog.dart';
 export 'package:egy_akin/app/shared/custom_elevated_botton.dart';

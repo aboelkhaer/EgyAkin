@@ -29,7 +29,8 @@ mixin _$PatientSectionsState {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)
+            bool isDownloadedReport,
+            int counterChanges)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -47,7 +48,8 @@ mixin _$PatientSectionsState {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -65,7 +67,8 @@ mixin _$PatientSectionsState {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -172,7 +175,8 @@ class _$InitialImpl implements _Initial {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)
+            bool isDownloadedReport,
+            int counterChanges)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -193,7 +197,8 @@ class _$InitialImpl implements _Initial {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -214,7 +219,8 @@ class _$InitialImpl implements _Initial {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -319,7 +325,8 @@ class _$LoadingImpl implements _Loading {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)
+            bool isDownloadedReport,
+            int counterChanges)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -340,7 +347,8 @@ class _$LoadingImpl implements _Loading {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -361,7 +369,8 @@ class _$LoadingImpl implements _Loading {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -429,7 +438,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       double reportProgress,
       String filePath,
       bool isDownloadingReport,
-      bool isDownloadedReport});
+      bool isDownloadedReport,
+      int counterChanges});
 
   $GetPatientSectionsModelResponseCopyWith<$Res> get response;
 }
@@ -456,6 +466,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? filePath = null,
     Object? isDownloadingReport = null,
     Object? isDownloadedReport = null,
+    Object? counterChanges = null,
   }) {
     return _then(_$LoadedImpl(
       null == response
@@ -494,6 +505,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isDownloadedReport
           : isDownloadedReport // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == counterChanges
+          ? _value.counterChanges
+          : counterChanges // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 
@@ -521,7 +536,8 @@ class _$LoadedImpl implements _Loaded {
       this.reportProgress,
       this.filePath,
       this.isDownloadingReport,
-      this.isDownloadedReport);
+      this.isDownloadedReport,
+      this.counterChanges);
 
   @override
   final GetPatientSectionsModelResponse response;
@@ -541,10 +557,12 @@ class _$LoadedImpl implements _Loaded {
   final bool isDownloadingReport;
   @override
   final bool isDownloadedReport;
+  @override
+  final int counterChanges;
 
   @override
   String toString() {
-    return 'PatientSectionsState.loaded(response: $response, isDelete: $isDelete, isFinalSubmit: $isFinalSubmit, message: $message, isLoading: $isLoading, reportProgress: $reportProgress, filePath: $filePath, isDownloadingReport: $isDownloadingReport, isDownloadedReport: $isDownloadedReport)';
+    return 'PatientSectionsState.loaded(response: $response, isDelete: $isDelete, isFinalSubmit: $isFinalSubmit, message: $message, isLoading: $isLoading, reportProgress: $reportProgress, filePath: $filePath, isDownloadingReport: $isDownloadingReport, isDownloadedReport: $isDownloadedReport, counterChanges: $counterChanges)';
   }
 
   @override
@@ -568,7 +586,9 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isDownloadingReport, isDownloadingReport) ||
                 other.isDownloadingReport == isDownloadingReport) &&
             (identical(other.isDownloadedReport, isDownloadedReport) ||
-                other.isDownloadedReport == isDownloadedReport));
+                other.isDownloadedReport == isDownloadedReport) &&
+            (identical(other.counterChanges, counterChanges) ||
+                other.counterChanges == counterChanges));
   }
 
   @override
@@ -582,7 +602,8 @@ class _$LoadedImpl implements _Loaded {
       reportProgress,
       filePath,
       isDownloadingReport,
-      isDownloadedReport);
+      isDownloadedReport,
+      counterChanges);
 
   /// Create a copy of PatientSectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -606,12 +627,22 @@ class _$LoadedImpl implements _Loaded {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)
+            bool isDownloadedReport,
+            int counterChanges)
         loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(response, isDelete, isFinalSubmit, message, isLoading,
-        reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+    return loaded(
+        response,
+        isDelete,
+        isFinalSubmit,
+        message,
+        isLoading,
+        reportProgress,
+        filePath,
+        isDownloadingReport,
+        isDownloadedReport,
+        counterChanges);
   }
 
   @override
@@ -628,12 +659,22 @@ class _$LoadedImpl implements _Loaded {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(response, isDelete, isFinalSubmit, message, isLoading,
-        reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+    return loaded?.call(
+        response,
+        isDelete,
+        isFinalSubmit,
+        message,
+        isLoading,
+        reportProgress,
+        filePath,
+        isDownloadingReport,
+        isDownloadedReport,
+        counterChanges);
   }
 
   @override
@@ -650,14 +691,24 @@ class _$LoadedImpl implements _Loaded {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(response, isDelete, isFinalSubmit, message, isLoading,
-          reportProgress, filePath, isDownloadingReport, isDownloadedReport);
+      return loaded(
+          response,
+          isDelete,
+          isFinalSubmit,
+          message,
+          isLoading,
+          reportProgress,
+          filePath,
+          isDownloadingReport,
+          isDownloadedReport,
+          counterChanges);
     }
     return orElse();
   }
@@ -710,7 +761,8 @@ abstract class _Loaded implements PatientSectionsState {
       final double reportProgress,
       final String filePath,
       final bool isDownloadingReport,
-      final bool isDownloadedReport) = _$LoadedImpl;
+      final bool isDownloadedReport,
+      final int counterChanges) = _$LoadedImpl;
 
   GetPatientSectionsModelResponse get response;
   bool get isDelete;
@@ -721,6 +773,7 @@ abstract class _Loaded implements PatientSectionsState {
   String get filePath;
   bool get isDownloadingReport;
   bool get isDownloadedReport;
+  int get counterChanges;
 
   /// Create a copy of PatientSectionsState
   /// with the given fields replaced by the non-null parameter values.
@@ -808,7 +861,8 @@ class _$ErrorImpl implements _Error {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)
+            bool isDownloadedReport,
+            int counterChanges)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -829,7 +883,8 @@ class _$ErrorImpl implements _Error {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -850,7 +905,8 @@ class _$ErrorImpl implements _Error {
             double reportProgress,
             String filePath,
             bool isDownloadingReport,
-            bool isDownloadedReport)?
+            bool isDownloadedReport,
+            int counterChanges)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

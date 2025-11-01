@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
+import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/more/data/datasource/more_datasource.dart';
@@ -11,6 +13,8 @@ import 'package:egy_akin/features/patient_section_details/domain/usecases/delete
 import 'package:egy_akin/features/patient_section_details/domain/usecases/get_recommendations_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/search_for_dose_in_medication_section_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_recommendation_usecase.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_patient_usecase.dart';
+import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/add_doctors_for_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/get_members_for_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/remove_member_from_consultation_usecase.dart';
@@ -35,7 +39,7 @@ Future<void> diInit() async {
   sl.registerLazySingleton<NotificationServices>(() => NotificationServices());
 
   //! Cubit
-  sl.registerFactory(() => AuthenticationCubit(sl(), sl()));
+  sl.registerFactory(() => AuthenticationCubit(sl(), sl(), sl()));
   sl.registerFactory(() => SplashCubit(sl()));
   sl.registerFactory(() => WelcomeCubit());
   sl.registerFactory(() => OnboardingCubit());
@@ -48,14 +52,15 @@ Future<void> diInit() async {
   sl.registerFactory(() => ProfileCubit(sl(), sl()));
   sl.registerFactory(() => PostDetailsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => AddPatientCubit(sl(), sl()));
-  sl.registerFactory(() => PatientSectionsCubit(sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(
+      () => PatientSectionsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => PatientCommentsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => SearchCubit(sl()));
   sl.registerFactory(() => OutcomeCubit(sl(), sl()));
-  sl.registerFactory(() => CurrentDoctorPatientsCubit(sl()));
+  sl.registerFactory(() => CurrentDoctorPatientsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => PatientSectionDetailsCubit(
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl()));
+  sl.registerFactory(() => AllDoctorsPatientsCubit(sl(), sl(), sl()));
   sl.registerFactory(() => DoctorProfileViewCubit(sl()));
   sl.registerFactory(() => MoreCubit(sl()));
   sl.registerFactory(
@@ -169,10 +174,9 @@ Future<void> diInit() async {
       () => CommunitySearchDatasourceImpl(sl()));
   sl.registerLazySingleton<SavedPostsDataSource>(
       () => SavedPostsDataSourceImpl(sl()));
-    sl.registerLazySingleton<AllDoctorPostsDatasource>(
-        () => AllDoctorPostsDatasourceImpl(sl()));
-  sl.registerLazySingleton<MoreDataSource>(
-      () => MoreDataSourceImpl(sl()));
+  sl.registerLazySingleton<AllDoctorPostsDatasource>(
+      () => AllDoctorPostsDatasourceImpl(sl()));
+  sl.registerLazySingleton<MoreDataSource>(() => MoreDataSourceImpl(sl()));
 
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
@@ -653,5 +657,21 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<ChangeLanguageUsecase>()) {
     sl.registerFactory<ChangeLanguageUsecase>(
         () => ChangeLanguageUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<ExportPatientsUsecase>()) {
+    sl.registerFactory<ExportPatientsUsecase>(
+        () => ExportPatientsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<MakeMarkPatientUsecase>()) {
+    sl.registerFactory<MakeMarkPatientUsecase>(
+        () => MakeMarkPatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<MakeUnMarkPatientUsecase>()) {
+    sl.registerFactory<MakeUnMarkPatientUsecase>(
+        () => MakeUnMarkPatientUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SignInWithGoogleUsecase>()) {
+    sl.registerFactory<SignInWithGoogleUsecase>(
+        () => SignInWithGoogleUsecase(sl()));
   }
 }

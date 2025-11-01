@@ -72,4 +72,25 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+
+  @override
+  Future<Either<Failure, AuthenticationModelResponse>> signInWithGoogle({
+    required String? accessToken,
+    required String deviceId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final response = await authenticationRemoteDataSource.signInWithGoogle(
+            accessToken: accessToken, deviceId: deviceId);
+        await sl<AppPreferences>()
+            .setData(AppLocalStrings.keyToken, response.token ?? '');
+        await sl<AppPreferences>().setDoctorData(response.doctorModel!);
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

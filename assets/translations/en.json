@@ -454,5 +454,13 @@
   "Admin Only - Clear Update Message Flag": "Admin Only - Clear Update Message Flag",
   "Update message flag cleared successfully!": "Update message flag cleared successfully!",
   "Failed to clear update message flag": "Failed to clear update message flag",
-  "Verified": "Verified"
+  "Verified": "Verified",
+  "or": "or",
+  "Continue with Google": "Continue with Google",
+  "Continue with Apple": "Continue with Apple",
+  "Coming Soon": "Coming Soon",
+  "Social login features are coming soon!": "Social login features are coming soon!",
+  "from": "from",
+  "Select Date": "Select Date",
+  "to": "to"
 }

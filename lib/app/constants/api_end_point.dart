@@ -6,7 +6,7 @@ class ApiEndPoint {
   // static const baseUrl = 'https://api.egyakin.com';
 
   // versioning
-  static const versioning = 'v1';
+  static const versioning = 'v2';
 
   static const home = '$baseUrl/api/$versioning/homeNew';
   static const signIn = '$baseUrl/api/$versioning/login';
@@ -144,4 +144,9 @@ class ApiEndPoint {
   static const addDoctorsForConsultation =
       '$baseUrl/api/$versioning/consultations';
   static const changeLanguage = '$baseUrl/api/$versioning/user/locale';
+  static const exportFilteredPatients =
+      '$baseUrl/api/$versioning/exportFilteredPatients';
+  static const makeMarkPatient = '$baseUrl/api/$versioning/markedPatients';
+  static const makeUnMarkPatient = '$baseUrl/api/$versioning/markedPatients';
+  static const signInWithGoogle = '$baseUrl/api/$versioning/auth/social/google';
 }
