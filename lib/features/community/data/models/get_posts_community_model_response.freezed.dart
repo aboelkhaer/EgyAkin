@@ -207,22 +207,26 @@ GetPostsCommunityDataModelResponse _$GetPostsCommunityDataModelResponseFromJson(
 /// @nodoc
 mixin _$GetPostsCommunityDataModelResponse {
   List<PostCommunityModel>? get data => throw _privateConstructorUsedError;
-  @JsonKey(name: 'current_page')
+  @JsonKey(name: 'current_page', fromJson: _parseInt)
   int? get currentPage => throw _privateConstructorUsedError;
   @JsonKey(name: 'first_page_url')
   String? get firstPageUrl => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseInt)
   int? get from => throw _privateConstructorUsedError;
-  @JsonKey(name: 'last_page')
+  @JsonKey(name: 'last_page', fromJson: _parseInt)
   int? get lastPage => throw _privateConstructorUsedError;
   @JsonKey(name: 'last_page_url')
   String? get lastPageUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'next_page_url')
   String? get nextPageUrl => throw _privateConstructorUsedError;
   String? get path => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseInt)
   int? get perPage => throw _privateConstructorUsedError;
   @JsonKey(name: 'prev_page_url')
   String? get prevPageUrl => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseInt)
   int? get to => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _parseInt)
   int? get total => throw _privateConstructorUsedError;
 
   /// Serializes this GetPostsCommunityDataModelResponse to a JSON map.
@@ -246,17 +250,17 @@ abstract class $GetPostsCommunityDataModelResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {List<PostCommunityModel>? data,
-      @JsonKey(name: 'current_page') int? currentPage,
+      @JsonKey(name: 'current_page', fromJson: _parseInt) int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
-      int? from,
-      @JsonKey(name: 'last_page') int? lastPage,
+      @JsonKey(fromJson: _parseInt) int? from,
+      @JsonKey(name: 'last_page', fromJson: _parseInt) int? lastPage,
       @JsonKey(name: 'last_page_url') String? lastPageUrl,
       @JsonKey(name: 'next_page_url') String? nextPageUrl,
       String? path,
-      int? perPage,
+      @JsonKey(fromJson: _parseInt) int? perPage,
       @JsonKey(name: 'prev_page_url') String? prevPageUrl,
-      int? to,
-      int? total});
+      @JsonKey(fromJson: _parseInt) int? to,
+      @JsonKey(fromJson: _parseInt) int? total});
 }
 
 /// @nodoc
@@ -352,17 +356,17 @@ abstract class _$$GetPostsCommunityDataModelResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {List<PostCommunityModel>? data,
-      @JsonKey(name: 'current_page') int? currentPage,
+      @JsonKey(name: 'current_page', fromJson: _parseInt) int? currentPage,
       @JsonKey(name: 'first_page_url') String? firstPageUrl,
-      int? from,
-      @JsonKey(name: 'last_page') int? lastPage,
+      @JsonKey(fromJson: _parseInt) int? from,
+      @JsonKey(name: 'last_page', fromJson: _parseInt) int? lastPage,
       @JsonKey(name: 'last_page_url') String? lastPageUrl,
       @JsonKey(name: 'next_page_url') String? nextPageUrl,
       String? path,
-      int? perPage,
+      @JsonKey(fromJson: _parseInt) int? perPage,
       @JsonKey(name: 'prev_page_url') String? prevPageUrl,
-      int? to,
-      int? total});
+      @JsonKey(fromJson: _parseInt) int? to,
+      @JsonKey(fromJson: _parseInt) int? total});
 }
 
 /// @nodoc
@@ -452,17 +456,17 @@ class _$GetPostsCommunityDataModelResponseImpl
     implements _GetPostsCommunityDataModelResponse {
   const _$GetPostsCommunityDataModelResponseImpl(
       {final List<PostCommunityModel>? data,
-      @JsonKey(name: 'current_page') this.currentPage,
+      @JsonKey(name: 'current_page', fromJson: _parseInt) this.currentPage,
       @JsonKey(name: 'first_page_url') this.firstPageUrl,
-      this.from,
-      @JsonKey(name: 'last_page') this.lastPage,
+      @JsonKey(fromJson: _parseInt) this.from,
+      @JsonKey(name: 'last_page', fromJson: _parseInt) this.lastPage,
       @JsonKey(name: 'last_page_url') this.lastPageUrl,
       @JsonKey(name: 'next_page_url') this.nextPageUrl,
       this.path,
-      this.perPage,
+      @JsonKey(fromJson: _parseInt) this.perPage,
       @JsonKey(name: 'prev_page_url') this.prevPageUrl,
-      this.to,
-      this.total})
+      @JsonKey(fromJson: _parseInt) this.to,
+      @JsonKey(fromJson: _parseInt) this.total})
       : _data = data;
 
   factory _$GetPostsCommunityDataModelResponseImpl.fromJson(
@@ -480,15 +484,16 @@ class _$GetPostsCommunityDataModelResponseImpl
   }
 
   @override
-  @JsonKey(name: 'current_page')
+  @JsonKey(name: 'current_page', fromJson: _parseInt)
   final int? currentPage;
   @override
   @JsonKey(name: 'first_page_url')
   final String? firstPageUrl;
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? from;
   @override
-  @JsonKey(name: 'last_page')
+  @JsonKey(name: 'last_page', fromJson: _parseInt)
   final int? lastPage;
   @override
   @JsonKey(name: 'last_page_url')
@@ -499,13 +504,16 @@ class _$GetPostsCommunityDataModelResponseImpl
   @override
   final String? path;
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? perPage;
   @override
   @JsonKey(name: 'prev_page_url')
   final String? prevPageUrl;
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? to;
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? total;
 
   @override
@@ -576,18 +584,20 @@ class _$GetPostsCommunityDataModelResponseImpl
 abstract class _GetPostsCommunityDataModelResponse
     implements GetPostsCommunityDataModelResponse {
   const factory _GetPostsCommunityDataModelResponse(
-      {final List<PostCommunityModel>? data,
-      @JsonKey(name: 'current_page') final int? currentPage,
-      @JsonKey(name: 'first_page_url') final String? firstPageUrl,
-      final int? from,
-      @JsonKey(name: 'last_page') final int? lastPage,
-      @JsonKey(name: 'last_page_url') final String? lastPageUrl,
-      @JsonKey(name: 'next_page_url') final String? nextPageUrl,
-      final String? path,
-      final int? perPage,
-      @JsonKey(name: 'prev_page_url') final String? prevPageUrl,
-      final int? to,
-      final int? total}) = _$GetPostsCommunityDataModelResponseImpl;
+          {final List<PostCommunityModel>? data,
+          @JsonKey(name: 'current_page', fromJson: _parseInt)
+          final int? currentPage,
+          @JsonKey(name: 'first_page_url') final String? firstPageUrl,
+          @JsonKey(fromJson: _parseInt) final int? from,
+          @JsonKey(name: 'last_page', fromJson: _parseInt) final int? lastPage,
+          @JsonKey(name: 'last_page_url') final String? lastPageUrl,
+          @JsonKey(name: 'next_page_url') final String? nextPageUrl,
+          final String? path,
+          @JsonKey(fromJson: _parseInt) final int? perPage,
+          @JsonKey(name: 'prev_page_url') final String? prevPageUrl,
+          @JsonKey(fromJson: _parseInt) final int? to,
+          @JsonKey(fromJson: _parseInt) final int? total}) =
+      _$GetPostsCommunityDataModelResponseImpl;
 
   factory _GetPostsCommunityDataModelResponse.fromJson(
           Map<String, dynamic> json) =
@@ -596,15 +606,16 @@ abstract class _GetPostsCommunityDataModelResponse
   @override
   List<PostCommunityModel>? get data;
   @override
-  @JsonKey(name: 'current_page')
+  @JsonKey(name: 'current_page', fromJson: _parseInt)
   int? get currentPage;
   @override
   @JsonKey(name: 'first_page_url')
   String? get firstPageUrl;
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get from;
   @override
-  @JsonKey(name: 'last_page')
+  @JsonKey(name: 'last_page', fromJson: _parseInt)
   int? get lastPage;
   @override
   @JsonKey(name: 'last_page_url')
@@ -615,13 +626,16 @@ abstract class _GetPostsCommunityDataModelResponse
   @override
   String? get path;
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get perPage;
   @override
   @JsonKey(name: 'prev_page_url')
   String? get prevPageUrl;
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get to;
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get total;
 
   /// Create a copy of GetPostsCommunityDataModelResponse
@@ -639,6 +653,7 @@ PostCommunityModel _$PostCommunityModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PostCommunityModel {
+  @JsonKey(fromJson: _parseInt)
   int? get id => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
   @JsonKey(name: 'media_type')
@@ -650,9 +665,9 @@ mixin _$PostCommunityModel {
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'likes_count')
+  @JsonKey(name: 'likes_count', fromJson: _parseInt)
   int? get likesCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'comments_count')
+  @JsonKey(name: 'comments_count', fromJson: _parseInt)
   int? get commentsCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'isSaved')
   bool? get isSaved => throw _privateConstructorUsedError;
@@ -681,15 +696,15 @@ abstract class $PostCommunityModelCopyWith<$Res> {
       _$PostCommunityModelCopyWithImpl<$Res, PostCommunityModel>;
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseInt) int? id,
       String? content,
       @JsonKey(name: 'media_type') String? mediaType,
       @JsonKey(name: 'media_path') List<String>? mediaPath,
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'likes_count') int? likesCount,
-      @JsonKey(name: 'comments_count') int? commentsCount,
+      @JsonKey(name: 'likes_count', fromJson: _parseInt) int? likesCount,
+      @JsonKey(name: 'comments_count', fromJson: _parseInt) int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       @JsonKey(name: 'existing_media_path') List<String>? existingMediaPath,
@@ -849,15 +864,15 @@ abstract class _$$PostCommunityModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseInt) int? id,
       String? content,
       @JsonKey(name: 'media_type') String? mediaType,
       @JsonKey(name: 'media_path') List<String>? mediaPath,
       String? visibility,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'likes_count') int? likesCount,
-      @JsonKey(name: 'comments_count') int? commentsCount,
+      @JsonKey(name: 'likes_count', fromJson: _parseInt) int? likesCount,
+      @JsonKey(name: 'comments_count', fromJson: _parseInt) int? commentsCount,
       @JsonKey(name: 'isSaved') bool? isSaved,
       @JsonKey(name: 'isLiked') bool? isLiked,
       @JsonKey(name: 'existing_media_path') List<String>? existingMediaPath,
@@ -971,15 +986,15 @@ class __$$PostCommunityModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PostCommunityModelImpl implements _PostCommunityModel {
   const _$PostCommunityModelImpl(
-      {this.id,
+      {@JsonKey(fromJson: _parseInt) this.id,
       this.content,
       @JsonKey(name: 'media_type') this.mediaType,
       @JsonKey(name: 'media_path') final List<String>? mediaPath,
       this.visibility,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'likes_count') this.likesCount,
-      @JsonKey(name: 'comments_count') this.commentsCount,
+      @JsonKey(name: 'likes_count', fromJson: _parseInt) this.likesCount,
+      @JsonKey(name: 'comments_count', fromJson: _parseInt) this.commentsCount,
       @JsonKey(name: 'isSaved') this.isSaved,
       @JsonKey(name: 'isLiked') this.isLiked,
       @JsonKey(name: 'existing_media_path')
@@ -994,6 +1009,7 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
       _$$PostCommunityModelImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? id;
   @override
   final String? content;
@@ -1020,10 +1036,10 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
-  @JsonKey(name: 'likes_count')
+  @JsonKey(name: 'likes_count', fromJson: _parseInt)
   final int? likesCount;
   @override
-  @JsonKey(name: 'comments_count')
+  @JsonKey(name: 'comments_count', fromJson: _parseInt)
   final int? commentsCount;
   @override
   @JsonKey(name: 'isSaved')
@@ -1124,15 +1140,16 @@ class _$PostCommunityModelImpl implements _PostCommunityModel {
 
 abstract class _PostCommunityModel implements PostCommunityModel {
   const factory _PostCommunityModel(
-      {final int? id,
+      {@JsonKey(fromJson: _parseInt) final int? id,
       final String? content,
       @JsonKey(name: 'media_type') final String? mediaType,
       @JsonKey(name: 'media_path') final List<String>? mediaPath,
       final String? visibility,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at') final String? updatedAt,
-      @JsonKey(name: 'likes_count') final int? likesCount,
-      @JsonKey(name: 'comments_count') final int? commentsCount,
+      @JsonKey(name: 'likes_count', fromJson: _parseInt) final int? likesCount,
+      @JsonKey(name: 'comments_count', fromJson: _parseInt)
+      final int? commentsCount,
       @JsonKey(name: 'isSaved') final bool? isSaved,
       @JsonKey(name: 'isLiked') final bool? isLiked,
       @JsonKey(name: 'existing_media_path')
@@ -1145,6 +1162,7 @@ abstract class _PostCommunityModel implements PostCommunityModel {
       _$PostCommunityModelImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get id;
   @override
   String? get content;
@@ -1163,10 +1181,10 @@ abstract class _PostCommunityModel implements PostCommunityModel {
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
   @override
-  @JsonKey(name: 'likes_count')
+  @JsonKey(name: 'likes_count', fromJson: _parseInt)
   int? get likesCount;
   @override
-  @JsonKey(name: 'comments_count')
+  @JsonKey(name: 'comments_count', fromJson: _parseInt)
   int? get commentsCount;
   @override
   @JsonKey(name: 'isSaved')
@@ -1198,9 +1216,10 @@ PollModelResponse _$PollModelResponseFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PollModelResponse {
+  @JsonKey(fromJson: _parseInt)
   int? get id => throw _privateConstructorUsedError;
   String? get content => throw _privateConstructorUsedError;
-  @JsonKey(name: 'feed_post_id')
+  @JsonKey(name: 'feed_post_id', fromJson: _parseInt)
   int? get feedPostId => throw _privateConstructorUsedError;
   String? get question => throw _privateConstructorUsedError;
   @JsonKey(name: 'allow_add_options')
@@ -1231,9 +1250,9 @@ abstract class $PollModelResponseCopyWith<$Res> {
       _$PollModelResponseCopyWithImpl<$Res, PollModelResponse>;
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseInt) int? id,
       String? content,
-      @JsonKey(name: 'feed_post_id') int? feedPostId,
+      @JsonKey(name: 'feed_post_id', fromJson: _parseInt) int? feedPostId,
       String? question,
       @JsonKey(name: 'allow_add_options') bool? allowAddOptions,
       @JsonKey(name: 'allow_multiple_choice') bool? allowMultipleChoice,
@@ -1317,9 +1336,9 @@ abstract class _$$PollModelResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
+      {@JsonKey(fromJson: _parseInt) int? id,
       String? content,
-      @JsonKey(name: 'feed_post_id') int? feedPostId,
+      @JsonKey(name: 'feed_post_id', fromJson: _parseInt) int? feedPostId,
       String? question,
       @JsonKey(name: 'allow_add_options') bool? allowAddOptions,
       @JsonKey(name: 'allow_multiple_choice') bool? allowMultipleChoice,
@@ -1396,9 +1415,9 @@ class __$$PollModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PollModelResponseImpl implements _PollModelResponse {
   const _$PollModelResponseImpl(
-      {this.id,
+      {@JsonKey(fromJson: _parseInt) this.id,
       this.content,
-      @JsonKey(name: 'feed_post_id') this.feedPostId,
+      @JsonKey(name: 'feed_post_id', fromJson: _parseInt) this.feedPostId,
       this.question,
       @JsonKey(name: 'allow_add_options') this.allowAddOptions,
       @JsonKey(name: 'allow_multiple_choice') this.allowMultipleChoice,
@@ -1411,11 +1430,12 @@ class _$PollModelResponseImpl implements _PollModelResponse {
       _$$PollModelResponseImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? id;
   @override
   final String? content;
   @override
-  @JsonKey(name: 'feed_post_id')
+  @JsonKey(name: 'feed_post_id', fromJson: _parseInt)
   final int? feedPostId;
   @override
   final String? question;
@@ -1501,9 +1521,9 @@ class _$PollModelResponseImpl implements _PollModelResponse {
 
 abstract class _PollModelResponse implements PollModelResponse {
   const factory _PollModelResponse(
-      {final int? id,
+      {@JsonKey(fromJson: _parseInt) final int? id,
       final String? content,
-      @JsonKey(name: 'feed_post_id') final int? feedPostId,
+      @JsonKey(name: 'feed_post_id', fromJson: _parseInt) final int? feedPostId,
       final String? question,
       @JsonKey(name: 'allow_add_options') final bool? allowAddOptions,
       @JsonKey(name: 'allow_multiple_choice') final bool? allowMultipleChoice,
@@ -1515,11 +1535,12 @@ abstract class _PollModelResponse implements PollModelResponse {
       _$PollModelResponseImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get id;
   @override
   String? get content;
   @override
-  @JsonKey(name: 'feed_post_id')
+  @JsonKey(name: 'feed_post_id', fromJson: _parseInt)
   int? get feedPostId;
   @override
   String? get question;
@@ -1553,8 +1574,9 @@ PollOptionsModelResponse _$PollOptionsModelResponseFromJson(
 
 /// @nodoc
 mixin _$PollOptionsModelResponse {
+  @JsonKey(fromJson: _parseInt)
   int? get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'poll_id')
+  @JsonKey(name: 'poll_id', fromJson: _parseInt)
   int? get pollId => throw _privateConstructorUsedError;
   @JsonKey(name: 'option_text')
   String? get optionText => throw _privateConstructorUsedError;
@@ -1562,7 +1584,7 @@ mixin _$PollOptionsModelResponse {
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
-  @JsonKey(name: 'votes_count')
+  @JsonKey(name: 'votes_count', fromJson: _parseInt)
   int? get votesCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_voted')
   bool? get isVoted => throw _privateConstructorUsedError;
@@ -1584,12 +1606,12 @@ abstract class $PollOptionsModelResponseCopyWith<$Res> {
       _$PollOptionsModelResponseCopyWithImpl<$Res, PollOptionsModelResponse>;
   @useResult
   $Res call(
-      {int? id,
-      @JsonKey(name: 'poll_id') int? pollId,
+      {@JsonKey(fromJson: _parseInt) int? id,
+      @JsonKey(name: 'poll_id', fromJson: _parseInt) int? pollId,
       @JsonKey(name: 'option_text') String? optionText,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'votes_count') int? votesCount,
+      @JsonKey(name: 'votes_count', fromJson: _parseInt) int? votesCount,
       @JsonKey(name: 'is_voted') bool? isVoted});
 }
 
@@ -1660,12 +1682,12 @@ abstract class _$$PollOptionsModelResponseImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {int? id,
-      @JsonKey(name: 'poll_id') int? pollId,
+      {@JsonKey(fromJson: _parseInt) int? id,
+      @JsonKey(name: 'poll_id', fromJson: _parseInt) int? pollId,
       @JsonKey(name: 'option_text') String? optionText,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt,
-      @JsonKey(name: 'votes_count') int? votesCount,
+      @JsonKey(name: 'votes_count', fromJson: _parseInt) int? votesCount,
       @JsonKey(name: 'is_voted') bool? isVoted});
 }
 
@@ -1729,21 +1751,22 @@ class __$$PollOptionsModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PollOptionsModelResponseImpl implements _PollOptionsModelResponse {
   const _$PollOptionsModelResponseImpl(
-      {this.id,
-      @JsonKey(name: 'poll_id') this.pollId,
+      {@JsonKey(fromJson: _parseInt) this.id,
+      @JsonKey(name: 'poll_id', fromJson: _parseInt) this.pollId,
       @JsonKey(name: 'option_text') this.optionText,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'votes_count') this.votesCount,
+      @JsonKey(name: 'votes_count', fromJson: _parseInt) this.votesCount,
       @JsonKey(name: 'is_voted') this.isVoted});
 
   factory _$PollOptionsModelResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$PollOptionsModelResponseImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? id;
   @override
-  @JsonKey(name: 'poll_id')
+  @JsonKey(name: 'poll_id', fromJson: _parseInt)
   final int? pollId;
   @override
   @JsonKey(name: 'option_text')
@@ -1755,7 +1778,7 @@ class _$PollOptionsModelResponseImpl implements _PollOptionsModelResponse {
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
-  @JsonKey(name: 'votes_count')
+  @JsonKey(name: 'votes_count', fromJson: _parseInt)
   final int? votesCount;
   @override
   @JsonKey(name: 'is_voted')
@@ -1808,22 +1831,23 @@ class _$PollOptionsModelResponseImpl implements _PollOptionsModelResponse {
 
 abstract class _PollOptionsModelResponse implements PollOptionsModelResponse {
   const factory _PollOptionsModelResponse(
-          {final int? id,
-          @JsonKey(name: 'poll_id') final int? pollId,
-          @JsonKey(name: 'option_text') final String? optionText,
-          @JsonKey(name: 'created_at') final String? createdAt,
-          @JsonKey(name: 'updated_at') final String? updatedAt,
-          @JsonKey(name: 'votes_count') final int? votesCount,
-          @JsonKey(name: 'is_voted') final bool? isVoted}) =
-      _$PollOptionsModelResponseImpl;
+      {@JsonKey(fromJson: _parseInt) final int? id,
+      @JsonKey(name: 'poll_id', fromJson: _parseInt) final int? pollId,
+      @JsonKey(name: 'option_text') final String? optionText,
+      @JsonKey(name: 'created_at') final String? createdAt,
+      @JsonKey(name: 'updated_at') final String? updatedAt,
+      @JsonKey(name: 'votes_count', fromJson: _parseInt) final int? votesCount,
+      @JsonKey(name: 'is_voted')
+      final bool? isVoted}) = _$PollOptionsModelResponseImpl;
 
   factory _PollOptionsModelResponse.fromJson(Map<String, dynamic> json) =
       _$PollOptionsModelResponseImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get id;
   @override
-  @JsonKey(name: 'poll_id')
+  @JsonKey(name: 'poll_id', fromJson: _parseInt)
   int? get pollId;
   @override
   @JsonKey(name: 'option_text')
@@ -1835,7 +1859,7 @@ abstract class _PollOptionsModelResponse implements PollOptionsModelResponse {
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
   @override
-  @JsonKey(name: 'votes_count')
+  @JsonKey(name: 'votes_count', fromJson: _parseInt)
   int? get votesCount;
   @override
   @JsonKey(name: 'is_voted')
@@ -1855,6 +1879,7 @@ GroupDetails _$GroupDetailsFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$GroupDetails {
+  @JsonKey(fromJson: _parseInt)
   int? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
 
@@ -1874,7 +1899,7 @@ abstract class $GroupDetailsCopyWith<$Res> {
           GroupDetails value, $Res Function(GroupDetails) then) =
       _$GroupDetailsCopyWithImpl<$Res, GroupDetails>;
   @useResult
-  $Res call({int? id, String? name});
+  $Res call({@JsonKey(fromJson: _parseInt) int? id, String? name});
 }
 
 /// @nodoc
@@ -1916,7 +1941,7 @@ abstract class _$$GroupDetailsImplCopyWith<$Res>
       __$$GroupDetailsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({int? id, String? name});
+  $Res call({@JsonKey(fromJson: _parseInt) int? id, String? name});
 }
 
 /// @nodoc
@@ -1951,12 +1976,13 @@ class __$$GroupDetailsImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$GroupDetailsImpl implements _GroupDetails {
-  const _$GroupDetailsImpl({this.id, this.name});
+  const _$GroupDetailsImpl({@JsonKey(fromJson: _parseInt) this.id, this.name});
 
   factory _$GroupDetailsImpl.fromJson(Map<String, dynamic> json) =>
       _$$GroupDetailsImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _parseInt)
   final int? id;
   @override
   final String? name;
@@ -1996,13 +2022,15 @@ class _$GroupDetailsImpl implements _GroupDetails {
 }
 
 abstract class _GroupDetails implements GroupDetails {
-  const factory _GroupDetails({final int? id, final String? name}) =
-      _$GroupDetailsImpl;
+  const factory _GroupDetails(
+      {@JsonKey(fromJson: _parseInt) final int? id,
+      final String? name}) = _$GroupDetailsImpl;
 
   factory _GroupDetails.fromJson(Map<String, dynamic> json) =
       _$GroupDetailsImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _parseInt)
   int? get id;
   @override
   String? get name;

@@ -34,12 +34,18 @@ mixin _$HomeModelResponse {
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'role')
   String? get role => throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_type')
+  String? get userType => throw _privateConstructorUsedError;
+  @JsonKey(name: 'permissions_changed')
+  bool? get permissionsChanged => throw _privateConstructorUsedError;
   @JsonKey(name: 'isUserBlocked')
   bool? get isUserBlocked => throw _privateConstructorUsedError;
   @JsonKey(name: 'posts_count')
   String? get postsCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'saved_posts_count')
   String? get savedPosts => throw _privateConstructorUsedError;
+  @JsonKey(name: 'marked_patient_count')
+  String? get markedPatientsCount => throw _privateConstructorUsedError;
   HomeDataModelResponse? get data => throw _privateConstructorUsedError;
 
   /// Serializes this HomeModelResponse to a JSON map.
@@ -68,9 +74,12 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
+      @JsonKey(name: 'user_type') String? userType,
+      @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
       @JsonKey(name: 'posts_count') String? postsCount,
       @JsonKey(name: 'saved_posts_count') String? savedPosts,
+      @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
       HomeDataModelResponse? data});
 
   $HomeDataModelResponseCopyWith<$Res>? get data;
@@ -100,9 +109,12 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
+    Object? userType = freezed,
+    Object? permissionsChanged = freezed,
     Object? isUserBlocked = freezed,
     Object? postsCount = freezed,
     Object? savedPosts = freezed,
+    Object? markedPatientsCount = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -142,6 +154,14 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String?,
+      userType: freezed == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissionsChanged: freezed == permissionsChanged
+          ? _value.permissionsChanged
+          : permissionsChanged // ignore: cast_nullable_to_non_nullable
+              as bool?,
       isUserBlocked: freezed == isUserBlocked
           ? _value.isUserBlocked
           : isUserBlocked // ignore: cast_nullable_to_non_nullable
@@ -153,6 +173,10 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
       savedPosts: freezed == savedPosts
           ? _value.savedPosts
           : savedPosts // ignore: cast_nullable_to_non_nullable
+              as String?,
+      markedPatientsCount: freezed == markedPatientsCount
+          ? _value.markedPatientsCount
+          : markedPatientsCount // ignore: cast_nullable_to_non_nullable
               as String?,
       data: freezed == data
           ? _value.data
@@ -194,9 +218,12 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'all_patient_count') String? allPatientCount,
       @JsonKey(name: 'score_value') String? scoreValue,
       @JsonKey(name: 'role') String? role,
+      @JsonKey(name: 'user_type') String? userType,
+      @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
       @JsonKey(name: 'posts_count') String? postsCount,
       @JsonKey(name: 'saved_posts_count') String? savedPosts,
+      @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
       HomeDataModelResponse? data});
 
   @override
@@ -225,9 +252,12 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? allPatientCount = freezed,
     Object? scoreValue = freezed,
     Object? role = freezed,
+    Object? userType = freezed,
+    Object? permissionsChanged = freezed,
     Object? isUserBlocked = freezed,
     Object? postsCount = freezed,
     Object? savedPosts = freezed,
+    Object? markedPatientsCount = freezed,
     Object? data = freezed,
   }) {
     return _then(_$HomeModelResponseImpl(
@@ -267,6 +297,14 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
           ? _value.role
           : role // ignore: cast_nullable_to_non_nullable
               as String?,
+      userType: freezed == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissionsChanged: freezed == permissionsChanged
+          ? _value.permissionsChanged
+          : permissionsChanged // ignore: cast_nullable_to_non_nullable
+              as bool?,
       isUserBlocked: freezed == isUserBlocked
           ? _value.isUserBlocked
           : isUserBlocked // ignore: cast_nullable_to_non_nullable
@@ -278,6 +316,10 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
       savedPosts: freezed == savedPosts
           ? _value.savedPosts
           : savedPosts // ignore: cast_nullable_to_non_nullable
+              as String?,
+      markedPatientsCount: freezed == markedPatientsCount
+          ? _value.markedPatientsCount
+          : markedPatientsCount // ignore: cast_nullable_to_non_nullable
               as String?,
       data: freezed == data
           ? _value.data
@@ -300,9 +342,12 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
       @JsonKey(name: 'all_patient_count') this.allPatientCount,
       @JsonKey(name: 'score_value') this.scoreValue,
       @JsonKey(name: 'role') this.role,
+      @JsonKey(name: 'user_type') this.userType,
+      @JsonKey(name: 'permissions_changed') this.permissionsChanged,
       @JsonKey(name: 'isUserBlocked') this.isUserBlocked,
       @JsonKey(name: 'posts_count') this.postsCount,
       @JsonKey(name: 'saved_posts_count') this.savedPosts,
+      @JsonKey(name: 'marked_patient_count') this.markedPatientsCount,
       this.data});
 
   factory _$HomeModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -332,6 +377,12 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   @JsonKey(name: 'role')
   final String? role;
   @override
+  @JsonKey(name: 'user_type')
+  final String? userType;
+  @override
+  @JsonKey(name: 'permissions_changed')
+  final bool? permissionsChanged;
+  @override
   @JsonKey(name: 'isUserBlocked')
   final bool? isUserBlocked;
   @override
@@ -341,11 +392,14 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   @JsonKey(name: 'saved_posts_count')
   final String? savedPosts;
   @override
+  @JsonKey(name: 'marked_patient_count')
+  final String? markedPatientsCount;
+  @override
   final HomeDataModelResponse? data;
 
   @override
   String toString() {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, isUserBlocked: $isUserBlocked, postsCount: $postsCount, savedPosts: $savedPosts, data: $data)';
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, userType: $userType, permissionsChanged: $permissionsChanged, isUserBlocked: $isUserBlocked, postsCount: $postsCount, savedPosts: $savedPosts, markedPatientsCount: $markedPatientsCount, data: $data)';
   }
 
   @override
@@ -370,12 +424,18 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
             (identical(other.scoreValue, scoreValue) ||
                 other.scoreValue == scoreValue) &&
             (identical(other.role, role) || other.role == role) &&
+            (identical(other.userType, userType) ||
+                other.userType == userType) &&
+            (identical(other.permissionsChanged, permissionsChanged) ||
+                other.permissionsChanged == permissionsChanged) &&
             (identical(other.isUserBlocked, isUserBlocked) ||
                 other.isUserBlocked == isUserBlocked) &&
             (identical(other.postsCount, postsCount) ||
                 other.postsCount == postsCount) &&
             (identical(other.savedPosts, savedPosts) ||
                 other.savedPosts == savedPosts) &&
+            (identical(other.markedPatientsCount, markedPatientsCount) ||
+                other.markedPatientsCount == markedPatientsCount) &&
             (identical(other.data, data) || other.data == data));
   }
 
@@ -392,9 +452,12 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
       allPatientCount,
       scoreValue,
       role,
+      userType,
+      permissionsChanged,
       isUserBlocked,
       postsCount,
       savedPosts,
+      markedPatientsCount,
       data);
 
   /// Create a copy of HomeModelResponse
@@ -425,9 +488,12 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       @JsonKey(name: 'all_patient_count') final String? allPatientCount,
       @JsonKey(name: 'score_value') final String? scoreValue,
       @JsonKey(name: 'role') final String? role,
+      @JsonKey(name: 'user_type') final String? userType,
+      @JsonKey(name: 'permissions_changed') final bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') final bool? isUserBlocked,
       @JsonKey(name: 'posts_count') final String? postsCount,
       @JsonKey(name: 'saved_posts_count') final String? savedPosts,
+      @JsonKey(name: 'marked_patient_count') final String? markedPatientsCount,
       final HomeDataModelResponse? data}) = _$HomeModelResponseImpl;
 
   factory _HomeModelResponse.fromJson(Map<String, dynamic> json) =
@@ -457,6 +523,12 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @JsonKey(name: 'role')
   String? get role;
   @override
+  @JsonKey(name: 'user_type')
+  String? get userType;
+  @override
+  @JsonKey(name: 'permissions_changed')
+  bool? get permissionsChanged;
+  @override
   @JsonKey(name: 'isUserBlocked')
   bool? get isUserBlocked;
   @override
@@ -465,6 +537,9 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @override
   @JsonKey(name: 'saved_posts_count')
   String? get savedPosts;
+  @override
+  @JsonKey(name: 'marked_patient_count')
+  String? get markedPatientsCount;
   @override
   HomeDataModelResponse? get data;
 
@@ -499,8 +574,6 @@ mixin _$HomeDataModelResponse {
   List<TrendModel>? get trendsHashtags => throw _privateConstructorUsedError;
   @JsonKey(name: 'latest_groups')
   List<GroupModel>? get latestGroups => throw _privateConstructorUsedError;
-  @JsonKey(name: 'roles')
-  List<RoleModel>? get roles => throw _privateConstructorUsedError;
 
   /// Serializes this HomeDataModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -527,8 +600,7 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       List<PostModel>? posts,
       @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
-      @JsonKey(name: 'roles') List<RoleModel>? roles});
+      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups});
 }
 
 /// @nodoc
@@ -555,7 +627,6 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? feeds = freezed,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
-    Object? roles = freezed,
   }) {
     return _then(_value.copyWith(
       allPatients: freezed == allPatients
@@ -590,10 +661,6 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
           ? _value.latestGroups
           : latestGroups // ignore: cast_nullable_to_non_nullable
               as List<GroupModel>?,
-      roles: freezed == roles
-          ? _value.roles
-          : roles // ignore: cast_nullable_to_non_nullable
-              as List<RoleModel>?,
     ) as $Val);
   }
 }
@@ -616,8 +683,7 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       List<PostModel>? posts,
       @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
-      @JsonKey(name: 'roles') List<RoleModel>? roles});
+      @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups});
 }
 
 /// @nodoc
@@ -642,7 +708,6 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? feeds = freezed,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
-    Object? roles = freezed,
   }) {
     return _then(_$HomeDataModelResponseImpl(
       allPatients: freezed == allPatients
@@ -677,10 +742,6 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
           ? _value._latestGroups
           : latestGroups // ignore: cast_nullable_to_non_nullable
               as List<GroupModel>?,
-      roles: freezed == roles
-          ? _value._roles
-          : roles // ignore: cast_nullable_to_non_nullable
-              as List<RoleModel>?,
     ));
   }
 }
@@ -699,8 +760,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
       @JsonKey(name: 'trending_hashtags')
       final List<TrendModel>? trendsHashtags,
-      @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
-      @JsonKey(name: 'roles') final List<RoleModel>? roles})
+      @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups})
       : _allPatients = allPatients,
         _currentPatients = currentPatients,
         _topDoctors = topDoctors,
@@ -708,8 +768,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
         _posts = posts,
         _feeds = feeds,
         _trendsHashtags = trendsHashtags,
-        _latestGroups = latestGroups,
-        _roles = roles;
+        _latestGroups = latestGroups;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$HomeDataModelResponseImplFromJson(json);
@@ -800,20 +859,9 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
-  final List<RoleModel>? _roles;
-  @override
-  @JsonKey(name: 'roles')
-  List<RoleModel>? get roles {
-    final value = _roles;
-    if (value == null) return null;
-    if (_roles is EqualUnmodifiableListView) return _roles;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, roles: $roles)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups)';
   }
 
   @override
@@ -834,8 +882,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
             const DeepCollectionEquality()
                 .equals(other._trendsHashtags, _trendsHashtags) &&
             const DeepCollectionEquality()
-                .equals(other._latestGroups, _latestGroups) &&
-            const DeepCollectionEquality().equals(other._roles, _roles));
+                .equals(other._latestGroups, _latestGroups));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -849,8 +896,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_posts),
       const DeepCollectionEquality().hash(_feeds),
       const DeepCollectionEquality().hash(_trendsHashtags),
-      const DeepCollectionEquality().hash(_latestGroups),
-      const DeepCollectionEquality().hash(_roles));
+      const DeepCollectionEquality().hash(_latestGroups));
 
   /// Create a copy of HomeDataModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -871,19 +917,18 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
 abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   const factory _HomeDataModelResponse(
-          {@JsonKey(name: 'all_patients')
-          final List<PatientHomeDataModel>? allPatients,
-          @JsonKey(name: 'current_patient')
-          final List<PatientHomeDataModel>? currentPatients,
-          final List<DoctorModel>? topDoctors,
-          final List<DoctorModel>? pendingSyndicateCard,
-          final List<PostModel>? posts,
-          @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
-          @JsonKey(name: 'trending_hashtags')
-          final List<TrendModel>? trendsHashtags,
-          @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
-          @JsonKey(name: 'roles') final List<RoleModel>? roles}) =
-      _$HomeDataModelResponseImpl;
+      {@JsonKey(name: 'all_patients')
+      final List<PatientHomeDataModel>? allPatients,
+      @JsonKey(name: 'current_patient')
+      final List<PatientHomeDataModel>? currentPatients,
+      final List<DoctorModel>? topDoctors,
+      final List<DoctorModel>? pendingSyndicateCard,
+      final List<PostModel>? posts,
+      @JsonKey(name: 'feed_posts') final List<PostCommunityModel>? feeds,
+      @JsonKey(name: 'trending_hashtags')
+      final List<TrendModel>? trendsHashtags,
+      @JsonKey(name: 'latest_groups')
+      final List<GroupModel>? latestGroups}) = _$HomeDataModelResponseImpl;
 
   factory _HomeDataModelResponse.fromJson(Map<String, dynamic> json) =
       _$HomeDataModelResponseImpl.fromJson;
@@ -909,9 +954,6 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   @override
   @JsonKey(name: 'latest_groups')
   List<GroupModel>? get latestGroups;
-  @override
-  @JsonKey(name: 'roles')
-  List<RoleModel>? get roles;
 
   /// Create a copy of HomeDataModelResponse
   /// with the given fields replaced by the non-null parameter values.

@@ -10,6 +10,7 @@ _$UpdateDoctorProfileModelResponseImpl
     _$$UpdateDoctorProfileModelResponseImplFromJson(
             Map<String, dynamic> json) =>
         _$UpdateDoctorProfileModelResponseImpl(
+          value: json['value'] as bool?,
           data: json['data'] == null
               ? null
               : DoctorModel.fromJson(json['data'] as Map<String, dynamic>),
@@ -19,6 +20,7 @@ _$UpdateDoctorProfileModelResponseImpl
 Map<String, dynamic> _$$UpdateDoctorProfileModelResponseImplToJson(
         _$UpdateDoctorProfileModelResponseImpl instance) =>
     <String, dynamic>{
+      'value': instance.value,
       'data': instance.data,
       'message': instance.message,
     };

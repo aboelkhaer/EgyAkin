@@ -1,4 +1,6 @@
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -20,180 +22,66 @@ class HomeHeader extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
-              onTap: () async {
-                if (cubit.tabsController.index != 2) {
-                  cubit.tabsController.jumpToTab(2);
-                  cubit.hideHomeHeader(2);
-                }
-              },
-              child: Row(
-                children: [
-                  Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(top: 3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.4),
-                              spreadRadius: 5,
-                              blurRadius: 9,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: BlocBuilder<HomeCubit, HomeState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(80.r),
-                                  child: CircleAvatar(
-                                    radius: 20.r,
-                                    backgroundColor:
-                                        AppColors.primary.withOpacity(0.8),
-                                    child:
-                                        cubit.currentDoctorModel.image == null
-                                            ? Text(
-                                                cubit.currentDoctorModel
-                                                            .firstName ==
-                                                        null
-                                                    ? ''
-                                                    : cubit.currentDoctorModel
-                                                        .firstName![0]
-                                                        .toUpperCase(),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16.sp,
-                                                  color: Colors.white,
-                                                ),
-                                              )
-                                            : CustomCachedNetworkImage(
-                                                imageUrl: cubit
-                                                    .currentDoctorModel.image
-                                                    .toString(),
-                                                height: 100.h,
-                                                width: 100.w,
-                                              ),
-                                  ),
-                                );
-                              },
-                              loaded: (
-                                homeData,
-                                currentDoctorModel,
-                                dotsPosition,
-                                homeIndex,
-                                isUploadingSyndicateCard,
-                                isUploadedSyndicateCard,
-                                message,
-                                checkUpdateMessageCounter,
-                                isUserBlocked,
-                                changesCounter,
-                              ) {
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(80.r),
-                                  child: CircleAvatar(
-                                    radius: 20.r,
-                                    backgroundColor:
-                                        AppColors.primary.withOpacity(0.8),
-                                    child: currentDoctorModel.image == null
-                                        ? Text(
-                                            currentDoctorModel.firstName == null
-                                                ? ''
-                                                : cubit.currentDoctorModel
-                                                    .firstName![0]
-                                                    .toUpperCase(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16.sp,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : CustomCachedNetworkImage(
-                                            imageUrl: currentDoctorModel.image
-                                                .toString(),
-                                            height: 100.h,
-                                            width: 100.w,
-                                          ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 8.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          BlocConsumer<HomeCubit, HomeState>(
-                            listener: (context, state) {
-                              state.maybeWhen(
-                                orElse: () {},
-                                loaded: (
-                                  homeData,
-                                  currentDoctorModel,
-                                  dotsPosition,
-                                  homeIndex,
-                                  isUploadingSyndicateCard,
-                                  isUploadedSyndicateCard,
-                                  message,
-                                  checkUpdateMessageCounter,
-                                  isUserBlocked,
-                                  changesCounter,
-                                ) {
-                                  // context
-                                  //     .read<ProfileCubit>()
-                                  //     .getDoctorDataFromHomeCubit(
-                                  //         currentDoctorModel);
-                                },
-                              );
-                            },
-                            builder: (context, state) {
-                              return Text(
-                                cubit.currentDoctorModel.firstName == null
-                                    ? ''
-                                    : doctorName(
-                                        firstName: cubit
-                                                .currentDoctorModel.firstName ??
-                                            '',
-                                        lastName:
-                                            cubit.currentDoctorModel.lastName ??
-                                                '',
-                                        role: cubit.homeDataModel
-                                            .isSyndicateCardRequired
-                                            .toString(),
-                                      ),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isDarkMode
-                                      ? AppColors.darkTitle
-                                      : Colors.grey.shade700,
-                                  fontSize: 14.sp,
-                                ),
-                              );
-                            },
+            Expanded(
+              child: GestureDetector(
+                onTap: () async {
+                  if (cubit.tabsController.index != 2) {
+                    cubit.tabsController.jumpToTab(2);
+                    cubit.hideHomeHeader(2);
+                  }
+                },
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 5,
+                                blurRadius: 9,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                          BlocBuilder<HomeCubit, HomeState>(
+                          child: BlocBuilder<HomeCubit, HomeState>(
                             builder: (context, state) {
                               return state.maybeWhen(
                                 orElse: () {
-                                  return const SizedBox.shrink();
-                                },
-                                loading: (tabIndex) {
-                                  if (cubit.isSyndicateCardRequired ==
-                                      'Verified') {
-                                    return const VerificationIcon(
-                                      duration: 300,
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(80.r),
+                                    child: CircleAvatar(
+                                      radius: 20.r,
+                                      backgroundColor:
+                                          AppColors.primary.withOpacity(0.8),
+                                      child:
+                                          cubit.currentDoctorModel.image == null
+                                              ? Text(
+                                                  cubit.currentDoctorModel
+                                                              .firstName ==
+                                                          null
+                                                      ? ''
+                                                      : cubit.currentDoctorModel
+                                                          .firstName![0]
+                                                          .toUpperCase(),
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 16.sp,
+                                                    color: Colors.white,
+                                                  ),
+                                                )
+                                              : CustomCachedNetworkImage(
+                                                  imageUrl: cubit
+                                                      .currentDoctorModel.image
+                                                      .toString(),
+                                                  height: 100.h,
+                                                  width: 100.w,
+                                                ),
+                                    ),
+                                  );
                                 },
                                 loaded: (
                                   homeData,
@@ -207,40 +95,156 @@ class HomeHeader extends StatelessWidget {
                                   isUserBlocked,
                                   changesCounter,
                                 ) {
-                                  if (homeData.isSyndicateCardRequired ==
-                                      'Verified') {
-                                    return const VerificationIcon(
-                                      duration: 300,
-                                    );
-                                  }
-                                  return const SizedBox.shrink();
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(80.r),
+                                    child: CircleAvatar(
+                                      radius: 20.r,
+                                      backgroundColor:
+                                          AppColors.primary.withOpacity(0.8),
+                                      child: currentDoctorModel.image == null
+                                          ? Text(
+                                              currentDoctorModel.firstName ==
+                                                      null
+                                                  ? ''
+                                                  : cubit.currentDoctorModel
+                                                      .firstName![0]
+                                                      .toUpperCase(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16.sp,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : CustomCachedNetworkImage(
+                                              imageUrl: currentDoctorModel.image
+                                                  .toString(),
+                                              height: 100.h,
+                                              width: 100.w,
+                                            ),
+                                    ),
+                                  );
                                 },
                               );
                             },
-                          )
-                        ],
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          BlocBuilder<HomeCubit, HomeState>(
-                            builder: (context, state) {
-                              return Text(
-                                capitalizeFirstText(
-                                    cubit.currentDoctorModel.specialty ??
-                                        AppStrings.empty)!,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 10.sp,
-                                    color: Colors.grey.shade600),
-                              );
-                            },
                           ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Flexible(
+                                child: BlocConsumer<HomeCubit, HomeState>(
+                                  listener: (context, state) {
+                                    state.maybeWhen(
+                                      orElse: () {},
+                                      loaded: (
+                                        homeData,
+                                        currentDoctorModel,
+                                        dotsPosition,
+                                        homeIndex,
+                                        isUploadingSyndicateCard,
+                                        isUploadedSyndicateCard,
+                                        message,
+                                        checkUpdateMessageCounter,
+                                        isUserBlocked,
+                                        changesCounter,
+                                      ) {
+                                        // context
+                                        //     .read<ProfileCubit>()
+                                        //     .getDoctorDataFromHomeCubit(
+                                        //         currentDoctorModel);
+                                      },
+                                    );
+                                  },
+                                  builder: (context, state) {
+                                    return Text(
+                                      cubit.currentDoctorModel.firstName == null
+                                          ? ''
+                                          : doctorName(
+                                              firstName: cubit
+                                                      .currentDoctorModel
+                                                      .firstName ??
+                                                  '',
+                                              lastName: cubit.currentDoctorModel
+                                                      .lastName ??
+                                                  '',
+                                              role: cubit.homeDataModel
+                                                  .isSyndicateCardRequired
+                                                  .toString(),
+                                            ),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isDarkMode
+                                            ? AppColors.darkTitle
+                                            : Colors.grey.shade700,
+                                        fontSize: 14.sp,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              BlocBuilder<HomeCubit, HomeState>(
+                                builder: (context, state) {
+                                  final isVerified = state.maybeWhen(
+                                    loaded: (homeData,
+                                            _,
+                                            __,
+                                            ___,
+                                            ____,
+                                            _____,
+                                            ______,
+                                            _______,
+                                            ________,
+                                            __________) =>
+                                        homeData.isSyndicateCardRequired ==
+                                        'Verified',
+                                    orElse: () =>
+                                        cubit.isSyndicateCardRequired ==
+                                        'Verified',
+                                  );
+                                  return isVerified
+                                      ? const VerificationIcon(duration: 300)
+                                      : const SizedBox.shrink();
+                                },
+                              )
+                            ],
+                          ),
+                          cubit.currentDoctorModel.specialty == null
+                              ? const SizedBox.shrink()
+                              : Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    BlocBuilder<HomeCubit, HomeState>(
+                                      builder: (context, state) {
+                                        return Text(
+                                          capitalizeFirstText(cubit
+                                                  .currentDoctorModel
+                                                  .specialty ??
+                                              AppStrings.empty)!,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 10.sp,
+                                              color: Colors.grey.shade600),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             BlocBuilder<HomeCubit, HomeState>(
@@ -286,26 +290,11 @@ class HomeHeader extends StatelessWidget {
                     isUserBlocked,
                     changesCounter,
                   ) {
-                    if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                    // Check if user has addPostInHome permission
+                    if (PermissionHelper.canPermission(
+                        AppPermissions.addPostInHome)) {
                       return Tooltip(
                         message: context.tr(AppStrings.addPost),
-                        // child: IconButton(
-                        //   onPressed: () {
-                        //     navigatorKey.currentState?.pushNamed(
-                        //       AppRoutes.createPostInCommunity,
-                        //       arguments:
-                        //           AppRoutesArgs.createPostInCommunityRouteArgs(
-                        //         currentDoctorModel: currentDoctorModel,
-                        //         homeDataModel: homeData,
-                        //       ),
-                        //     );
-                        //   },
-                        //   icon: Icon(
-                        //     Icons.add,
-                        //     color: AppColors.description,
-                        //     size: 30.r,
-                        //   ),
-                        // ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -344,86 +333,13 @@ class HomeHeader extends StatelessWidget {
                         ),
                       );
                     }
+                    // Check if user has addPatientInHome permission
+                    if (!PermissionHelper.canPermission(
+                        AppPermissions.addPatientInHome)) {
+                      return const SizedBox.shrink();
+                    }
                     return Tooltip(
                       message: context.tr(AppStrings.addPatient),
-                      // child: IconButton(
-                      //   onPressed: () {
-                      //     if (homeData.verified! &&
-                      //         (homeData.isSyndicateCardRequired != 'Required' &&
-                      //             homeData.isSyndicateCardRequired !=
-                      //                 'Pending')) {
-                      //       if (homeData.isUserBlocked != true) {
-                      //         navigatorKey.currentState?.pushNamed(
-                      //           AppRoutes.addPatient,
-                      //           arguments: AppRoutesArgs.addPatientRouteArgs(
-                      //             currentDoctorModel: cubit.currentDoctorModel,
-                      //             currentDoctorRole: homeData.role.toString(),
-                      //             currentDoctorPoints:
-                      //                 int.parse(homeData.scoreValue!),
-                      //             homeDataModel: homeData,
-                      //           ),
-                      //         );
-                      //       } else {
-                      //         showBlockedDialog(
-                      //           context: context,
-                      //           onDismissed: () {
-                      //             cubit.signOut();
-                      //             navigatorKey.currentState
-                      //                 ?.pushReplacementNamed(AppRoutes.signIn);
-                      //           },
-                      //         );
-                      //       }
-                      //     }
-                      //     if (!homeData.verified!) {
-                      //       showCustomDialog(
-                      //         context: context,
-                      //         title: context.tr(AppStrings.emailVerification),
-                      //         description: context.tr(AppStrings
-                      //             .toAddPatientsYouMustVerifyYourEmailAddress),
-                      //         noColoredButtonOnTap: () {
-                      //           Navigator.of(context).pop();
-                      //         },
-                      //         coloredButtonText: context.tr(AppStrings.verify),
-                      //         noColoredButtonText:
-                      //             context.tr(AppStrings.cancel),
-                      //         coloredButtonOnTap: () {
-                      //           Navigator.of(context).pop();
-                      //           navigatorKey.currentState?.pushNamed(
-                      //               AppRoutes.emailVerification,
-                      //               arguments: AppRoutesArgs
-                      //                   .emailVerificationRouteArgs(
-                      //                       currentDoctorModel:
-                      //                           currentDoctorModel));
-                      //         },
-                      //       );
-                      //       return;
-                      //     }
-                      //     if (homeData.isSyndicateCardRequired == 'Required' ||
-                      //         homeData.isSyndicateCardRequired == 'Pending') {
-                      //       showCustomDialog(
-                      //         context: context,
-                      //         title: context
-                      //             .tr(AppStrings.syndicateCardVerification),
-                      //         description: context.tr(AppStrings
-                      //             .toAddPatientsYouMustVerifyYourSyndicateCard),
-                      //         noColoredButtonOnTap: () {
-                      //           Navigator.of(context).pop();
-                      //         },
-                      //         coloredButtonText: context.tr(AppStrings.ok),
-                      //         noColoredButtonText: '',
-                      //         isNoColorShow: true,
-                      //         coloredButtonOnTap: () {
-                      //           Navigator.of(context).pop();
-                      //         },
-                      //       );
-                      //     }
-                      //   },
-                      //   icon: Icon(
-                      //     Icons.add,
-                      //     color: AppColors.description,
-                      //     size: 30.r,
-                      //   ),
-                      // ),
                       child: InkWell(
                         onTap: () {
                           if (homeData.verified! &&
@@ -457,7 +373,7 @@ class HomeHeader extends StatelessWidget {
                               context: context,
                               title: context.tr(AppStrings.emailVerification),
                               description: context.tr(AppStrings
-                                  .toAddPatientsYouMustVerifyYourEmailAddress),
+                                  .youMustVerifyYourEmailAddressToEnjoyAllFeatures),
                               noColoredButtonOnTap: () {
                                 Navigator.of(context).pop();
                               },

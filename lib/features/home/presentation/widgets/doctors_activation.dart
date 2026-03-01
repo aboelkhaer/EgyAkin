@@ -1,11 +1,31 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+
 import '../../../../exports.dart';
 
-class DoctorsActivation extends StatelessWidget {
+class DoctorsActivation extends StatefulWidget {
   const DoctorsActivation({super.key});
+
+  @override
+  State<DoctorsActivation> createState() => _DoctorsActivationState();
+}
+
+class _DoctorsActivationState extends State<DoctorsActivation> {
+  @override
+  void initState() {
+    super.initState();
+    PermissionHelper.refreshPermissions().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     HomeCubit cubit = HomeCubit.get(context);
+
+    if (!PermissionHelper.canPermission(
+        AppPermissions.viewDoctorActivationForAdmin)) {
+      return const SizedBox.shrink();
+    }
 
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
@@ -25,14 +45,15 @@ class DoctorsActivation extends StatelessWidget {
             isUserBlocked,
             changesCounter,
           ) {
-            if (!isAdmin(homeData.role)) {
-              return const SizedBox.shrink();
-            }
+            // if (!isAdmin(homeData.role)) {
+            //   return const SizedBox.shrink();
+            // }
             if (cubit.homeDataModel.data!.pendingSyndicateCard!.isEmpty) {
               return const SizedBox.shrink();
             }
             return Column(
               children: [
+                SizedBox(height: 10.h),
                 HomePatientTitleHeader(
                     title: 'Doctors activation',
                     patientCount: '',
@@ -61,9 +82,9 @@ class DoctorsActivation extends StatelessWidget {
                           isUserBlocked,
                           changesCounter,
                         ) {
-                          if (!isAdmin(homeData.role)) {
-                            return const SizedBox.shrink();
-                          }
+                          // if (!isAdmin(homeData.role)) {
+                          //   return const SizedBox.shrink();
+                          // }
                           return FadeIn(
                             duration: const Duration(seconds: 2),
                             child: ListView.builder(

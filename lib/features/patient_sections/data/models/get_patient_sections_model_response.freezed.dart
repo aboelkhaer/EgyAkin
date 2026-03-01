@@ -28,6 +28,8 @@ mixin _$GetPatientSectionsModelResponse {
   String? get patientName => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_Id')
   String? get doctorId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'is_marked')
+  bool? get isMarked => throw _privateConstructorUsedError;
   GFRModel? get gfr => throw _privateConstructorUsedError;
   List<SectionModel>? get data => throw _privateConstructorUsedError;
 
@@ -54,6 +56,7 @@ abstract class $GetPatientSectionsModelResponseCopyWith<$Res> {
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
+      @JsonKey(name: 'is_marked') bool? isMarked,
       GFRModel? gfr,
       List<SectionModel>? data});
 
@@ -80,6 +83,7 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
     Object? submitStatus = freezed,
     Object? patientName = freezed,
     Object? doctorId = freezed,
+    Object? isMarked = freezed,
     Object? gfr = freezed,
     Object? data = freezed,
   }) {
@@ -100,6 +104,10 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      isMarked: freezed == isMarked
+          ? _value.isMarked
+          : isMarked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       gfr: freezed == gfr
           ? _value.gfr
           : gfr // ignore: cast_nullable_to_non_nullable
@@ -140,6 +148,7 @@ abstract class _$$GetPatientSectionsModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'submit_status') bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
       @JsonKey(name: 'doctor_Id') String? doctorId,
+      @JsonKey(name: 'is_marked') bool? isMarked,
       GFRModel? gfr,
       List<SectionModel>? data});
 
@@ -166,6 +175,7 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
     Object? submitStatus = freezed,
     Object? patientName = freezed,
     Object? doctorId = freezed,
+    Object? isMarked = freezed,
     Object? gfr = freezed,
     Object? data = freezed,
   }) {
@@ -186,6 +196,10 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
           ? _value.doctorId
           : doctorId // ignore: cast_nullable_to_non_nullable
               as String?,
+      isMarked: freezed == isMarked
+          ? _value.isMarked
+          : isMarked // ignore: cast_nullable_to_non_nullable
+              as bool?,
       gfr: freezed == gfr
           ? _value.gfr
           : gfr // ignore: cast_nullable_to_non_nullable
@@ -207,6 +221,7 @@ class _$GetPatientSectionsModelResponseImpl
       @JsonKey(name: 'submit_status') this.submitStatus,
       @JsonKey(name: 'patient_name') this.patientName,
       @JsonKey(name: 'doctor_Id') this.doctorId,
+      @JsonKey(name: 'is_marked') this.isMarked,
       this.gfr,
       final List<SectionModel>? data})
       : _data = data;
@@ -227,6 +242,9 @@ class _$GetPatientSectionsModelResponseImpl
   @JsonKey(name: 'doctor_Id')
   final String? doctorId;
   @override
+  @JsonKey(name: 'is_marked')
+  final bool? isMarked;
+  @override
   final GFRModel? gfr;
   final List<SectionModel>? _data;
   @override
@@ -240,7 +258,7 @@ class _$GetPatientSectionsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, gfr: $gfr, data: $data)';
+    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, isMarked: $isMarked, gfr: $gfr, data: $data)';
   }
 
   @override
@@ -255,6 +273,8 @@ class _$GetPatientSectionsModelResponseImpl
                 other.patientName == patientName) &&
             (identical(other.doctorId, doctorId) ||
                 other.doctorId == doctorId) &&
+            (identical(other.isMarked, isMarked) ||
+                other.isMarked == isMarked) &&
             (identical(other.gfr, gfr) || other.gfr == gfr) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
@@ -262,7 +282,7 @@ class _$GetPatientSectionsModelResponseImpl
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, submitStatus, patientName,
-      doctorId, gfr, const DeepCollectionEquality().hash(_data));
+      doctorId, isMarked, gfr, const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of GetPatientSectionsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -289,6 +309,7 @@ abstract class _GetPatientSectionsModelResponse
       @JsonKey(name: 'submit_status') final bool? submitStatus,
       @JsonKey(name: 'patient_name') final String? patientName,
       @JsonKey(name: 'doctor_Id') final String? doctorId,
+      @JsonKey(name: 'is_marked') final bool? isMarked,
       final GFRModel? gfr,
       final List<SectionModel>? data}) = _$GetPatientSectionsModelResponseImpl;
 
@@ -306,6 +327,9 @@ abstract class _GetPatientSectionsModelResponse
   @override
   @JsonKey(name: 'doctor_Id')
   String? get doctorId;
+  @override
+  @JsonKey(name: 'is_marked')
+  bool? get isMarked;
   @override
   GFRModel? get gfr;
   @override

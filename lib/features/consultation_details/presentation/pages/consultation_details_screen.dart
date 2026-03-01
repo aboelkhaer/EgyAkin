@@ -84,13 +84,13 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
         return Scaffold(
           backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
           appBar: AppBar(
-            iconTheme: IconThemeData(
-              color: isDarkMode ? AppColors.darkTitle : Colors.black,
+            iconTheme: const IconThemeData(
+              color: AppColors.darkTitle,
             ),
             title: Text(
               widget.patientName.toString(),
-              style: TextStyle(
-                color: isDarkMode ? AppColors.darkTitle : Colors.black,
+              style: const TextStyle(
+                color: AppColors.darkTitle,
               ),
             ),
             actions: [
@@ -282,6 +282,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
                                     .patientModel!.doctor!.firstName
                                     .toString(),
                                 isAllDataOpen: true,
+                                width: 300.w,
                                 drLastName: consultDetails
                                     .patientModel!.doctor!.lastName
                                     .toString(),

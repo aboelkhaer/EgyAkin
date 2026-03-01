@@ -251,10 +251,10 @@ class _CurrentDoctorPatientsScreenState
                                 shrinkWrap: true,
                                 controller: cubit.scrollController,
                                 scrollDirection: Axis.vertical,
-                                padding: EdgeInsets.only(
+                                padding: const EdgeInsets.only(
                                   left: 20,
                                   top: 20,
-                                  right: size.width * 0.09,
+                                  right: 20,
                                   bottom: 50,
                                 ),
                                 itemCount: data.data!.data!.length,
@@ -266,6 +266,7 @@ class _CurrentDoctorPatientsScreenState
                                     drFirstName: patient.doctor!.firstName ??
                                         AppStrings.empty,
                                     isAllDataOpen: false,
+                                    width: 400.w,
                                     doctorId: patient.doctor!.id.toString(),
                                     homeDataModel: widget.homeDataModel,
                                     updatedAt:
@@ -444,6 +445,9 @@ class _CurrentDoctorPatientsScreenState
                   filters,
                   totalPatientInFilter,
                 ) {
+                  if (response.data!.data!.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
                   // Handle export loaded state - open file URL
                   if (isExportLoaded && fileUrl != null) {
                     WidgetsBinding.instance.addPostFrameCallback((_) async {

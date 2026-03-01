@@ -226,8 +226,7 @@ class AppRoutesArgs {
       'currentDoctorModel': currentDoctorModel,
       'doctorFirstName': doctorFirstName,
       'currentDoctorRole': currentDoctorRole,
-
-                                  'currentDoctorPoints': currentDoctorPoints,
+      'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
     };
   }
@@ -439,6 +438,16 @@ class AppRoutesArgs {
     return {
       'url': url,
       'title': title,
+    };
+  }
+
+  static Map<String, dynamic> markedPatientsRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
     };
   }
 }

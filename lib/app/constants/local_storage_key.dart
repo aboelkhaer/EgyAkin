@@ -22,4 +22,5 @@ class AppLocalStrings {
   static const String isUpdateMessageHidden5 = 'isUpdateMessageHidden5';
   static const String userAppVersion = 'userAppVersion';
   static const String isExistVerificationBanner = 'isExistVerificationBanner';
+  static const String permissions = 'permissions';
 }

@@ -1,17 +1,18 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+
 import '../../../../exports.dart';
 
 class CheckIfVerified extends StatelessWidget {
-  final bool verified;
   final String isSyndicateCardRequired;
   final bool isExitVerification;
   final bool isDarkMode;
-
+  final HomeModelResponse homeData;
   const CheckIfVerified({
     super.key,
-    required this.verified,
     required this.isSyndicateCardRequired,
     required this.isExitVerification,
     required this.isDarkMode,
+    required this.homeData,
   });
 
   @override
@@ -20,7 +21,7 @@ class CheckIfVerified extends StatelessWidget {
         context.read<HomeCubit>().isExistVerificationBanner == true) {
       return const SizedBox.shrink();
     }
-    if (!verified) {
+    if (!homeData.verified! ) {
       return GestureDetector(
         onTap: () {
           navigatorKey.currentState?.pushNamed(AppRoutes.emailVerification,
@@ -58,8 +59,8 @@ class CheckIfVerified extends StatelessWidget {
                   ),
                   const SizedBox(width: 2),
                   Text(
-                    context.tr(
-                        AppStrings.toAddPatientsYouMustVerifyYourEmailAddress),
+                    context.tr(AppStrings
+                        .youMustVerifyYourEmailAddressToEnjoyAllFeatures),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -96,8 +97,9 @@ class CheckIfVerified extends StatelessWidget {
         ),
       );
     }
-    if (isSyndicateCardRequired == 'Required' ||
-        isSyndicateCardRequired == 'Pending') {
+    if ((isSyndicateCardRequired == 'Required' ||
+        isSyndicateCardRequired == 'Pending') &&
+        homeData.userType == 'medical_statistics') {
       return GestureDetector(
         onTap: () {
           if (isSyndicateCardRequired == 'Required') {

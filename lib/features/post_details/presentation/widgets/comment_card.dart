@@ -1,5 +1,7 @@
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
+import '../../../../app/shared/functions/permissions_helper.dart';
+import '../../../../app/shared/permissions/app_permissions.dart';
 
 class CommentCard extends StatelessWidget {
   final CommentModel commentModel;
@@ -42,24 +44,41 @@ class CommentCard extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(10),
             splashColor: AppColors.subBG, // Splash color
-            onLongPress: () {
+            onLongPress: () async {
               if (commentModel.doctor!.id.toString() ==
                       currentDoctorModel.id.toString() ||
                   currentDoctorRole == AppStrings.roleAdmin) {
-                showCustomDialog(
-                    context: context,
-                    title: context.tr(AppStrings.delete),
-                    description:
-                        context.tr(AppStrings.areYouSureToDeleteComment),
-                    noColoredButtonOnTap: () {
-                      Navigator.of(context).pop();
+                // Check permission before showing delete dialog
+                final hasPermission = await PermissionHelper.hasPermission(
+                  AppPermissions.deletePatientComment,
+                );
 
-                      onDelete();
-                    },
-                    coloredButtonText: context.tr(AppStrings.cancel),
-                    noColoredButtonText: context.tr(AppStrings.delete),
-                    isNoColorShow: true,
-                    coloredButtonOnTap: () => Navigator.of(context).pop());
+                if (hasPermission) {
+                  // User has permission - show delete confirmation dialog
+                  showCustomDialog(
+                      context: context,
+                      title: context.tr(AppStrings.delete),
+                      description:
+                          context.tr(AppStrings.areYouSureToDeleteComment),
+                      noColoredButtonOnTap: () {
+                        Navigator.of(context).pop();
+                        onDelete();
+                      },
+                      coloredButtonText: context.tr(AppStrings.cancel),
+                      noColoredButtonText: context.tr(AppStrings.delete),
+                      isNoColorShow: true,
+                      coloredButtonOnTap: () => Navigator.of(context).pop());
+                } else {
+                  // User doesn't have permission - show permission denied dialog
+                  showCustomDialog(
+                      context: context,
+                      title: context.tr(AppStrings.attention),
+                      description: context.tr(AppStrings
+                          .youDontHavePermissionToDeletePatientComments),
+                      coloredButtonText: context.tr(AppStrings.ok),
+                      coloredButtonOnTap: () => Navigator.of(context).pop(),
+                      isNoColorShow: false);
+                }
               }
             },
             onTap: () {},
@@ -152,9 +171,11 @@ class CommentCard extends StatelessWidget {
                                               .doctor!.isSyndicateCardRequired
                                               .toString(),
                                         ),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: AppColors.title,
+                                            color: isDarkMode
+                                                ? AppColors.title
+                                                : Colors.black,
                                             fontSize: 14),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,

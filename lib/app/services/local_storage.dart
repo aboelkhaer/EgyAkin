@@ -27,6 +27,7 @@ abstract class LocalStorageProcess {
     required String registerationNumber,
     required String specialty,
     required String highestDegree,
+    required String userType,
   });
 }
 
@@ -122,17 +123,19 @@ class AppPreferences implements LocalStorageProcess {
   }
 
   @override
-  Future<void> updateDoctorProfile(
-      {required String firstName,
-      required String lastName,
-      required String email,
-      required String phone,
-      required String age,
-      required String job,
-      required String workplace,
-      required String registerationNumber,
-      required String specialty,
-      required String highestDegree}) async {
+  Future<void> updateDoctorProfile({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String age,
+    required String job,
+    required String workplace,
+    required String registerationNumber,
+    required String specialty,
+    required String highestDegree,
+    required String userType,
+  }) async {
     // Retrieve the doctor model from shared preferences
     final doctorModelString =
         _sharedPreferences.getString(AppLocalStrings.doctorData);
@@ -152,6 +155,7 @@ class AppPreferences implements LocalStorageProcess {
         registrationNumber: registerationNumber,
         specialty: specialty,
         highestdegree: highestDegree,
+        userType: userType,
       );
 
       // Save the updated doctor model back to shared preferences

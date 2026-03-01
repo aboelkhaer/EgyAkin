@@ -100,7 +100,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   ),
                 ),
 
-                // Decimal point
+                //! Decimal point
                 Container(
                   width: 4,
                   height: 4,
@@ -111,7 +111,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   ),
                 ),
 
-                // Decimal part
+                //! Decimal part
                 SizedBox(
                   width: 50,
                   child: CustomTextFormField(
@@ -556,322 +556,335 @@ class _BuildQuestionState extends State<BuildQuestion> {
           case AppStrings.questionTypeFiles:
             // List<String> filesList =
             //     List.from(cubit.questionModelList[widget.index].answer);
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: InkWell(
-                        onTap: () async {
-                          cubit.questionIndexWhichDoctorClicked =
-                              widget.index.toString();
-                          cubit.pickFilesForQuestions(
-                              widget.index,
-                              widget.patientId,
-                              widget.sectionModel.sectionId.toString(),
-                              context);
-                        },
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                        child: BlocBuilder<PatientSectionDetailsCubit,
-                            PatientSectionDetailsState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return const SizedBox(
-                                  height: 50,
-                                  child: Icon(
-                                    Icons.cloud_upload_outlined,
-                                    color: AppColors.primary,
-                                  ),
-                                );
-                              },
-                              loaded: (
-                                questions,
-                                isSubmitLoading,
-                                isSubmitted,
-                                message,
-                                snackbarErrorCounter,
-                                isChooseFilesLoading,
-                                isChooseFilesLoaded,
-                                uploadFilesProgress,
-                                isGetMedicationsLoading,
-                                isGetMedicationsLoaded,
-                                isSearchMedicationLoading,
-                                counterChanges,
-                                isCreateMedicationLoading,
-                                isCreateMedicationLoaded,
-                                dialogMessage,
-                              ) {
-                                if (cubit.questionIndexWhichDoctorClicked ==
-                                    widget.index.toString()) {
-                                  if (isChooseFilesLoading) {
-                                    return const SizedBox(
-                                      height: 50,
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            height: 25,
-                                            width: 25,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 3,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                }
-
-                                return const SizedBox(
-                                  height: 50,
-                                  child: Icon(
-                                    Icons.cloud_upload_outlined,
-                                    color: AppColors.primary,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+            return PermissionGuard(
+              permission: AppPermissions.uploadPatientFiles,
+              fallback: Container(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  context
+                      .tr(AppStrings.youDontHavePermissionToUploadPatientFiles),
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                    fontSize: 14,
+                  ),
                 ),
-
-                // Display the picked files
-                BlocConsumer<PatientSectionDetailsCubit,
-                    PatientSectionDetailsState>(
-                  listener: (context, state) {
-                    state.maybeWhen(
-                      orElse: () {},
-                      error: (message) {
-                        customSnackBar(context: context, message: message);
-                      },
-                      loaded: (
-                        questions,
-                        isSubmitLoading,
-                        isSubmitted,
-                        message,
-                        snackbarErrorCounter,
-                        isChooseFilesLoading,
-                        isChooseFilesLoaded,
-                        uploadFilesProgress,
-                        isGetMedicationsLoading,
-                        isGetMedicationsLoaded,
-                        isSearchMedicationLoading,
-                        counterChanges,
-                        isCreateMedicationLoading,
-                        isCreateMedicationLoaded,
-                        dialogMessage,
-                      ) {
-                        if (message != '') {
-                          customSnackBar(context: context, message: message);
-                        }
-                      },
-                    );
-                  },
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return const SizedBox.shrink();
-                      },
-                      loaded: (
-                        questions,
-                        isSubmitLoading,
-                        isSubmitted,
-                        message,
-                        snackbarErrorCounter,
-                        isChooseFilesLoading,
-                        isChooseFilesLoaded,
-                        uploadFilesProgress,
-                        isGetMedicationsLoading,
-                        isGetMedicationsLoaded,
-                        isSearchMedicationLoading,
-                        counterChanges,
-                        isCreateMedicationLoading,
-                        isCreateMedicationLoaded,
-                        dialogMessage,
-                      ) {
-                        if (cubit.formData.containsKey(cubit
-                                .questionModelList[widget.index].id
-                                .toString()) &&
-                            cubit.formData[cubit
-                                    .questionModelList[widget.index].id
-                                    .toString()] !=
-                                []) {
-                          return Column(
-                            children: (cubit.formData[cubit
-                                    .questionModelList[widget.index].id
-                                    .toString()] as List<Map<String, String>>)
-                                .map(
-                              (file) {
-                                String fileName = file['file_name']!;
-                                String filePath = file[
-                                    'file_data']!; // Assuming this holds the file path or base64 data
-
-                                return ListTile(
-                                  title: Text(fileName),
-                                  onTap: () async {
-                                    String fileName = file['file_name']!;
-                                    String filePath = file[
-                                        'file_data']!; // Assuming this is the base64 string
-
-                                    debugPrint('Tapped on file: $fileName');
-
-                                    if (fileName.endsWith('.jpg') ||
-                                        fileName.endsWith('.png') ||
-                                        fileName.endsWith('.jpeg')) {
-                                      // Handle image file
-                                      debugPrint('Opening image file.');
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            content: SizedBox(
-                                              width: double.maxFinite,
-                                              height: 300,
-                                              child: Image.memory(
-                                                base64Decode(filePath),
-                                                fit: BoxFit.cover,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: InkWell(
+                          onTap: () async {
+                            cubit.questionIndexWhichDoctorClicked =
+                                widget.index.toString();
+                            cubit.pickFilesForQuestions(
+                                widget.index,
+                                widget.patientId,
+                                widget.sectionModel.sectionId.toString(),
+                                context);
+                          },
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          child: BlocBuilder<PatientSectionDetailsCubit,
+                              PatientSectionDetailsState>(
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                orElse: () {
+                                  return const SizedBox(
+                                    height: 50,
+                                    child: Icon(
+                                      Icons.cloud_upload_outlined,
+                                      color: AppColors.primary,
+                                    ),
+                                  );
+                                },
+                                loaded: (
+                                  questions,
+                                  isSubmitLoading,
+                                  isSubmitted,
+                                  message,
+                                  snackbarErrorCounter,
+                                  isChooseFilesLoading,
+                                  isChooseFilesLoaded,
+                                  uploadFilesProgress,
+                                  isGetMedicationsLoading,
+                                  isGetMedicationsLoaded,
+                                  isSearchMedicationLoading,
+                                  counterChanges,
+                                  isCreateMedicationLoading,
+                                  isCreateMedicationLoaded,
+                                  dialogMessage,
+                                ) {
+                                  if (cubit.questionIndexWhichDoctorClicked ==
+                                      widget.index.toString()) {
+                                    if (isChooseFilesLoading) {
+                                      return const SizedBox(
+                                        height: 50,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SizedBox(
+                                              height: 25,
+                                              width: 25,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 3,
                                               ),
                                             ),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                child: const Text('Close'),
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    } else if (fileName.endsWith('.pdf') ||
-                                        fileName.endsWith('.doc') ||
-                                        fileName.endsWith('.docx')) {
-                                      debugPrint(
-                                          'Opening document file: $fileName');
-
-                                      // Check if it's base64 PDF
-                                      if (filePath.startsWith(
-                                          'data:application/pdf;base64,')) {
-                                        debugPrint('Detected base64 PDF.');
-
-                                        // Extract the base64 data
-                                        final base64Data =
-                                            filePath.split(',').last;
-                                        final bytes = base64Decode(
-                                            base64Data); // Decode the base64 string
-
-                                        // Get the temporary directory
-                                        final dir =
-                                            await getTemporaryDirectory();
-                                        final tempFile =
-                                            File('${dir.path}/$fileName');
-
-                                        debugPrint(
-                                            'Writing to temporary file: ${tempFile.path}');
-
-                                        // Write bytes to the temp file
-                                        await tempFile.writeAsBytes(bytes);
-
-                                        // Check if the file was written successfully
-                                        if (await tempFile.exists()) {
-                                          debugPrint(
-                                              'Temporary PDF file exists. Attempting to open.');
-                                          final result = await OpenFile.open(
-                                              tempFile.path);
-                                          debugPrint(
-                                              'OpenFile result: ${result.message}');
-                                        } else {
-                                          debugPrint(
-                                              'Error: Temporary PDF file does not exist after writing.');
-                                        }
-                                      } else {
-                                        // Regular file path handling
-                                        debugPrint(
-                                            'Opening regular file: $filePath');
-                                        final result =
-                                            await OpenFile.open(filePath);
-                                        debugPrint(
-                                            'OpenFile result: ${result.message}');
-                                      }
-                                    } else {
-                                      debugPrint(
-                                          'Unsupported file type: $fileName');
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(context.tr(
-                                              AppStrings.unsupportedFileType)),
+                                          ],
                                         ),
                                       );
                                     }
-                                  },
-                                );
-                              },
-                            ).toList(),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    );
-                  },
-                ),
+                                  }
 
-                BlocBuilder<PatientSectionDetailsCubit,
-                    PatientSectionDetailsState>(
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return const SizedBox.shrink();
-                      },
-                      loaded: (
-                        questions,
-                        isSubmitLoading,
-                        isSubmitted,
-                        message,
-                        snackbarErrorCounter,
-                        isChooseFilesLoading,
-                        isChooseFilesLoaded,
-                        uploadFilesProgress,
-                        isGetMedicationsLoading,
-                        isGetMedicationsLoaded,
-                        isSearchMedicationLoading,
-                        counterChanges,
-                        isCreateMedicationLoading,
-                        isCreateMedicationLoaded,
-                        dialogMessage,
-                      ) {
-                        if (cubit.formData[cubit
-                                    .questionModelList[widget.index].id
-                                    .toString()] ==
-                                null ||
-                            (cubit.formData[cubit
-                                    .questionModelList[widget.index].id
-                                    .toString()]) as List ==
-                                [] ||
-                            cubit.formData[cubit
-                                    .questionModelList[widget.index].id
-                                    .toString()] ==
-                                {}) {
-                          return FileListWhenSubmit(
-                              files: cubit
-                                  .questionModelList[widget.index].answer
-                                  .cast<String>());
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    );
-                  },
-                ),
-              ],
+                                  return const SizedBox(
+                                    height: 50,
+                                    child: Icon(
+                                      Icons.cloud_upload_outlined,
+                                      color: AppColors.primary,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Display the picked files
+                  BlocConsumer<PatientSectionDetailsCubit,
+                      PatientSectionDetailsState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        orElse: () {},
+                        error: (message) {
+                          customSnackBar(context: context, message: message);
+                        },
+                        loaded: (
+                          questions,
+                          isSubmitLoading,
+                          isSubmitted,
+                          message,
+                          snackbarErrorCounter,
+                          isChooseFilesLoading,
+                          isChooseFilesLoaded,
+                          uploadFilesProgress,
+                          isGetMedicationsLoading,
+                          isGetMedicationsLoaded,
+                          isSearchMedicationLoading,
+                          counterChanges,
+                          isCreateMedicationLoading,
+                          isCreateMedicationLoaded,
+                          dialogMessage,
+                        ) {
+                          if (message != '') {
+                            customSnackBar(context: context, message: message);
+                          }
+                        },
+                      );
+                    },
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return const SizedBox.shrink();
+                        },
+                        loaded: (
+                          questions,
+                          isSubmitLoading,
+                          isSubmitted,
+                          message,
+                          snackbarErrorCounter,
+                          isChooseFilesLoading,
+                          isChooseFilesLoaded,
+                          uploadFilesProgress,
+                          isGetMedicationsLoading,
+                          isGetMedicationsLoaded,
+                          isSearchMedicationLoading,
+                          counterChanges,
+                          isCreateMedicationLoading,
+                          isCreateMedicationLoaded,
+                          dialogMessage,
+                        ) {
+                          if (cubit.formData.containsKey(cubit
+                                  .questionModelList[widget.index].id
+                                  .toString()) &&
+                              cubit.formData[cubit
+                                      .questionModelList[widget.index].id
+                                      .toString()] !=
+                                  []) {
+                            return Column(
+                              children: (cubit.formData[cubit
+                                      .questionModelList[widget.index].id
+                                      .toString()] as List<Map<String, String>>)
+                                  .map(
+                                (file) {
+                                  String fileName = file['file_name']!;
+                                  String filePath = file[
+                                      'file_data']!; // Assuming this holds the file path or base64 data
+
+                                  return ListTile(
+                                    title: Text(fileName),
+                                    onTap: () async {
+                                      String fileName = file['file_name']!;
+                                      String filePath = file[
+                                          'file_data']!; // Assuming this is the base64 string
+
+                                      debugPrint('Tapped on file: $fileName');
+
+                                      if (fileName.endsWith('.jpg') ||
+                                          fileName.endsWith('.png') ||
+                                          fileName.endsWith('.jpeg')) {
+                                        // Handle image file
+                                        debugPrint('Opening image file.');
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              content: SizedBox(
+                                                width: double.maxFinite,
+                                                height: 300,
+                                                child: Image.memory(
+                                                  base64Decode(filePath),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  child: const Text('Close'),
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else if (fileName.endsWith('.pdf') ||
+                                          fileName.endsWith('.doc') ||
+                                          fileName.endsWith('.docx')) {
+                                        debugPrint(
+                                            'Opening document file: $fileName');
+
+                                        // Check if it's base64 PDF
+                                        if (filePath.startsWith(
+                                            'data:application/pdf;base64,')) {
+                                          debugPrint('Detected base64 PDF.');
+
+                                          // Extract the base64 data
+                                          final base64Data =
+                                              filePath.split(',').last;
+                                          final bytes = base64Decode(
+                                              base64Data); // Decode the base64 string
+
+                                          // Get the temporary directory
+                                          final dir =
+                                              await getTemporaryDirectory();
+                                          final tempFile =
+                                              File('${dir.path}/$fileName');
+
+                                          debugPrint(
+                                              'Writing to temporary file: ${tempFile.path}');
+
+                                          // Write bytes to the temp file
+                                          await tempFile.writeAsBytes(bytes);
+
+                                          // Check if the file was written successfully
+                                          if (await tempFile.exists()) {
+                                            debugPrint(
+                                                'Temporary PDF file exists. Attempting to open.');
+                                            final result = await OpenFile.open(
+                                                tempFile.path);
+                                            debugPrint(
+                                                'OpenFile result: ${result.message}');
+                                          } else {
+                                            debugPrint(
+                                                'Error: Temporary PDF file does not exist after writing.');
+                                          }
+                                        } else {
+                                          // Regular file path handling
+                                          debugPrint(
+                                              'Opening regular file: $filePath');
+                                          final result =
+                                              await OpenFile.open(filePath);
+                                          debugPrint(
+                                              'OpenFile result: ${result.message}');
+                                        }
+                                      } else {
+                                        debugPrint(
+                                            'Unsupported file type: $fileName');
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(context.tr(AppStrings
+                                                .unsupportedFileType)),
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                                },
+                              ).toList(),
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      );
+                    },
+                  ),
+
+                  BlocBuilder<PatientSectionDetailsCubit,
+                      PatientSectionDetailsState>(
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return const SizedBox.shrink();
+                        },
+                        loaded: (
+                          questions,
+                          isSubmitLoading,
+                          isSubmitted,
+                          message,
+                          snackbarErrorCounter,
+                          isChooseFilesLoading,
+                          isChooseFilesLoaded,
+                          uploadFilesProgress,
+                          isGetMedicationsLoading,
+                          isGetMedicationsLoaded,
+                          isSearchMedicationLoading,
+                          counterChanges,
+                          isCreateMedicationLoading,
+                          isCreateMedicationLoaded,
+                          dialogMessage,
+                        ) {
+                          if (cubit.formData[cubit
+                                      .questionModelList[widget.index].id
+                                      .toString()] ==
+                                  null ||
+                              (cubit.formData[cubit
+                                      .questionModelList[widget.index].id
+                                      .toString()]) as List ==
+                                  [] ||
+                              cubit.formData[cubit
+                                      .questionModelList[widget.index].id
+                                      .toString()] ==
+                                  {}) {
+                            return FileListWhenSubmit(
+                                files: cubit
+                                    .questionModelList[widget.index].answer
+                                    .cast<String>());
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
             );
-
           default:
             return Container();
         }

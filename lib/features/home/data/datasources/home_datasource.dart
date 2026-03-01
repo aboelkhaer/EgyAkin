@@ -6,6 +6,7 @@ abstract class HomeDataSource {
   Future<HomeModelResponse> getHome();
   Future<UploadSyndicateCardModelResponse> uploadSyndicateCard(
       {required File image});
+  Future<GetPermissionsModelResponse> getRolePermissions();
 }
 
 class HomeDataSourceImpl implements HomeDataSource {
@@ -22,5 +23,10 @@ class HomeDataSourceImpl implements HomeDataSource {
   Future<UploadSyndicateCardModelResponse> uploadSyndicateCard(
       {required File image}) async {
     return await _apiServices.uploadSyndicateCard(image);
+  }
+
+  @override
+  Future<GetPermissionsModelResponse> getRolePermissions() async {
+    return await _apiServices.getRolePermissions();
   }
 }

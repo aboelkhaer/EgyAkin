@@ -1,6 +1,8 @@
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/get_recommendations_model_response.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/permissions/permission_guard.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
 
@@ -1407,149 +1409,321 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
   }
 
   Widget _buildOverlayContent() {
-    return BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
-      bloc: cubit,
-      builder: (context, state) {
-        // Show loading state only for initial search, not for load more
-        if (_isSearching ||
-            state.maybeWhen(
-              medicationSectionLoaded: (
-                response,
-                changesCounter,
-                snackBarMessage,
-                dialogMessage,
-                isSubmitLoading,
-                isSubmitLoaded,
-                isSearchMedicationLoading,
-                searchForDoseInMedicationSectionResponse,
-                isDeletePatientRecommendationLoading,
-                isSeeMore,
-              ) =>
-                  isSearchMedicationLoading &&
-                  !isSeeMore, // Only show full loading for initial search
-              orElse: () => false,
-            )) {
-          return Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  context.tr(AppStrings.searching),
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
-                    fontSize: 14,
+    return PermissionGuard(
+      permission: AppPermissions.searchDoses,
+      fallback: Container(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          context.tr(AppStrings.youDontHavePermissionToSearchDoses),
+          style: TextStyle(
+            color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
+            fontSize: 14,
+          ),
+        ),
+      ),
+      child:
+          BlocBuilder<PatientSectionDetailsCubit, PatientSectionDetailsState>(
+        bloc: cubit,
+        builder: (context, state) {
+          // Show loading state only for initial search, not for load more
+          if (_isSearching ||
+              state.maybeWhen(
+                medicationSectionLoaded: (
+                  response,
+                  changesCounter,
+                  snackBarMessage,
+                  dialogMessage,
+                  isSubmitLoading,
+                  isSubmitLoaded,
+                  isSearchMedicationLoading,
+                  searchForDoseInMedicationSectionResponse,
+                  isDeletePatientRecommendationLoading,
+                  isSeeMore,
+                ) =>
+                    isSearchMedicationLoading &&
+                    !isSeeMore, // Only show full loading for initial search
+                orElse: () => false,
+              )) {
+            return Container(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                ),
-              ],
-            ),
-          );
-        }
+                  const SizedBox(width: 8),
+                  Text(
+                    context.tr(AppStrings.searching),
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
 
-        return state.maybeWhen(
-          orElse: () => Container(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
-              style: TextStyle(
-                color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
-                fontSize: 14,
+          return state.maybeWhen(
+            orElse: () => Container(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                  fontSize: 14,
+                ),
               ),
             ),
-          ),
-          medicationSectionLoaded: (
-            response,
-            changesCounter,
-            snackBarMessage,
-            dialogMessage,
-            isSubmitLoading,
-            isSubmitLoaded,
-            isSearchMedicationLoading,
-            searchForDoseInMedicationSectionResponse,
-            isDeletePatientRecommendationLoading,
-            isSeeMore,
-          ) {
-            // If no search has been performed yet, show instruction
-            if (!_hasSearched) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: Text(
-                  context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
-                  style: TextStyle(
-                    color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
-                    fontSize: 14,
-                  ),
-                ),
-              );
-            }
-
-            // Use search results if available, otherwise show empty state
-            if (searchForDoseInMedicationSectionResponse?.data == null ||
-                searchForDoseInMedicationSectionResponse!.data!.data!.isEmpty) {
-              return Container(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      context.tr(AppStrings.noMedicationsFound),
-                      style: TextStyle(
-                        color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
-                        fontSize: 14,
-                      ),
+            medicationSectionLoaded: (
+              response,
+              changesCounter,
+              snackBarMessage,
+              dialogMessage,
+              isSubmitLoading,
+              isSubmitLoaded,
+              isSearchMedicationLoading,
+              searchForDoseInMedicationSectionResponse,
+              isDeletePatientRecommendationLoading,
+              isSeeMore,
+            ) {
+              // If no search has been performed yet, show instruction
+              if (!_hasSearched) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    context.tr(AppStrings.typeAtLeastOneCharacterToSearch),
+                    style: TextStyle(
+                      color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                      fontSize: 14,
                     ),
-                    const SizedBox(height: 12),
-                    GestureDetector(
+                  ),
+                );
+              }
+
+              // Use search results if available, otherwise show empty state
+              if (searchForDoseInMedicationSectionResponse?.data == null ||
+                  searchForDoseInMedicationSectionResponse!
+                      .data!.data!.isEmpty) {
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        context.tr(AppStrings.noMedicationsFound),
+                        style: TextStyle(
+                          color:
+                              isDarkMode ? Colors.grey.shade400 : Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      PermissionGuard(
+                        permission: AppPermissions.createDose,
+                        fallback: const SizedBox.shrink(),
+                        child: GestureDetector(
+                          onTap: () {
+                            // Show dialog with current search text
+                            _showCreateNewMedicineDialog(searchText);
+                            // Clear after showing dialog
+                            _removeOverlay();
+                            searchContentController.clear();
+                            setState(() {
+                              searchText = '';
+                            });
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.add,
+                                size: 18,
+                                color: AppColors.primary,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                context.tr(AppStrings.createNewDose),
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              final searchDataList =
+                  searchForDoseInMedicationSectionResponse.data!;
+
+              return ListView.builder(
+                controller: _searchScrollController,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(8),
+                itemCount: (searchDataList.data!.length +
+                        (state.maybeWhen(
+                          medicationSectionLoaded: (
+                            response,
+                            changesCounter,
+                            snackBarMessage,
+                            dialogMessage,
+                            isSubmitLoading,
+                            isSubmitLoaded,
+                            isSearchMedicationLoading,
+                            searchForDoseInMedicationSectionResponse,
+                            isDeletePatientRecommendationLoading,
+                            isSeeMore,
+                          ) =>
+                              isSeeMore ? 1 : 0, // Add 1 for loading indicator
+                          orElse: () => 0,
+                        )) +
+                        (searchDataList.data!.length >= 5 &&
+                                !cubit.isLastPageInSearch &&
+                                searchDataList.data!.isNotEmpty &&
+                                !state.maybeWhen(
+                                  medicationSectionLoaded: (
+                                    response,
+                                    changesCounter,
+                                    snackBarMessage,
+                                    dialogMessage,
+                                    isSubmitLoading,
+                                    isSubmitLoaded,
+                                    isSearchMedicationLoading,
+                                    searchForDoseInMedicationSectionResponse,
+                                    isDeletePatientRecommendationLoading,
+                                    isSeeMore,
+                                  ) =>
+                                      isSeeMore,
+                                  orElse: () => false,
+                                )
+                            ? 1
+                            : 0))
+                    .toInt(), // Add 1 for load more button
+                itemBuilder: (context, index) {
+                  // Show search results
+                  if (index < searchDataList.data!.length) {
+                    final searchData = searchDataList.data![index];
+                    return InkWell(
                       onTap: () {
-                        // Show dialog with current search text
-                        _showCreateNewMedicineDialog(searchText);
-                        // Clear after showing dialog
-                        _removeOverlay();
-                        searchContentController.clear();
-                        setState(() {
-                          searchText = '';
-                        });
+                        // Show add medication dialog
+                        _showAddMedicationDialog(
+                          searchData.title ?? context.tr(AppStrings.unknown),
+                          doseValue: searchData.dose,
+                        );
                       },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 2),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: isDarkMode
+                              ? Colors.grey.shade800
+                              : Colors.grey.shade50,
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    searchData.title ??
+                                        context.tr(AppStrings.unknown),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12.sp,
+                                      color: isDarkMode
+                                          ? AppColors.darkTitle
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  if (searchData.dose != null)
+                                    HtmlWidget(
+                                      '${searchData.dose}'.toString(),
+                                      textStyle: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: isDarkMode
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade600,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.add, size: 20.r),
+                              color: AppColors.primary,
+                              onPressed: () {
+                                // Show add medication dialog
+                                _showAddMedicationDialog(
+                                  searchData.title ??
+                                      context.tr(AppStrings.unknown),
+                                  doseValue: searchData.dose,
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  // Show loading indicator
+                  if (state.maybeWhen(
+                    medicationSectionLoaded: (
+                      response,
+                      changesCounter,
+                      snackBarMessage,
+                      dialogMessage,
+                      isSubmitLoading,
+                      isSubmitLoaded,
+                      isSearchMedicationLoading,
+                      searchForDoseInMedicationSectionResponse,
+                      isDeletePatientRecommendationLoading,
+                      isSeeMore,
+                    ) =>
+                        isSeeMore && index == searchDataList.data!.length,
+                    orElse: () => false,
+                  )) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
-                            Icons.add,
-                            size: 18,
-                            color: AppColors.primary,
+                          const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
                           ),
-                          const SizedBox(width: 6),
+                          const SizedBox(width: 8),
                           Text(
-                            context.tr(AppStrings.createNewDose),
+                            context.tr(AppStrings.loadingMore),
                             style: const TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                              fontSize: 12,
                             ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }
+                    );
+                  }
 
-            final searchDataList =
-                searchForDoseInMedicationSectionResponse.data!;
-
-            return ListView.builder(
-              controller: _searchScrollController,
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(8),
-              itemCount: (searchDataList.data!.length +
-                      (state.maybeWhen(
+                  // Show load more button
+                  if (searchDataList.data!.length >= 5 &&
+                      !cubit.isLastPageInSearch &&
+                      searchDataList.data!.isNotEmpty &&
+                      !state.maybeWhen(
                         medicationSectionLoaded: (
                           response,
                           changesCounter,
@@ -1562,13 +1736,12 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                           isDeletePatientRecommendationLoading,
                           isSeeMore,
                         ) =>
-                            isSeeMore ? 1 : 0, // Add 1 for loading indicator
-                        orElse: () => 0,
-                      )) +
-                      (searchDataList.data!.length >= 5 &&
-                              !cubit.isLastPageInSearch &&
-                              searchDataList.data!.isNotEmpty &&
-                              !state.maybeWhen(
+                            isSeeMore,
+                        orElse: () => false,
+                      ) &&
+                      index ==
+                          searchDataList.data!.length +
+                              (state.maybeWhen(
                                 medicationSectionLoaded: (
                                   response,
                                   changesCounter,
@@ -1581,210 +1754,59 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
                                   isDeletePatientRecommendationLoading,
                                   isSeeMore,
                                 ) =>
-                                    isSeeMore,
-                                orElse: () => false,
-                              )
-                          ? 1
-                          : 0))
-                  .toInt(), // Add 1 for load more button
-              itemBuilder: (context, index) {
-                // Show search results
-                if (index < searchDataList.data!.length) {
-                  final searchData = searchDataList.data![index];
-                  return InkWell(
-                    onTap: () {
-                      // Show add medication dialog
-                      _showAddMedicationDialog(
-                        searchData.title ?? context.tr(AppStrings.unknown),
-                        doseValue: searchData.dose,
-                      );
-                    },
-                    child: Container(
+                                    isSeeMore ? 1 : 0,
+                                orElse: () => 0,
+                              ))) {
+                    return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 8),
-                      margin: const EdgeInsets.symmetric(vertical: 2),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: isDarkMode
-                            ? Colors.grey.shade800
-                            : Colors.grey.shade50,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  searchData.title ??
-                                      context.tr(AppStrings.unknown),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.sp,
-                                    color: isDarkMode
-                                        ? AppColors.darkTitle
-                                        : Colors.black,
-                                  ),
-                                ),
-                                if (searchData.dose != null)
-                                  HtmlWidget(
-                                    '${searchData.dose}'.toString(),
-                                    textStyle: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: isDarkMode
-                                          ? Colors.grey.shade400
-                                          : Colors.grey.shade600,
-                                    ),
-                                  ),
-                              ],
-                            ),
+                          horizontal: 8, vertical: 4),
+                      child: GestureDetector(
+                        onTap: () {
+                          if (!cubit.isLoadingMoreForScrollInSearch) {
+                            cubit.loadMoreSearchForDoseInMedicationSection(
+                                searchText);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 6, horizontal: 12),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: AppColors.primary.withOpacity(0.3)),
                           ),
-                          IconButton(
-                            icon: Icon(Icons.add, size: 20.r),
-                            color: AppColors.primary,
-                            onPressed: () {
-                              // Show add medication dialog
-                              _showAddMedicationDialog(
-                                searchData.title ??
-                                    context.tr(AppStrings.unknown),
-                                doseValue: searchData.dose,
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                }
-
-                // Show loading indicator
-                if (state.maybeWhen(
-                  medicationSectionLoaded: (
-                    response,
-                    changesCounter,
-                    snackBarMessage,
-                    dialogMessage,
-                    isSubmitLoading,
-                    isSubmitLoaded,
-                    isSearchMedicationLoading,
-                    searchForDoseInMedicationSectionResponse,
-                    isDeletePatientRecommendationLoading,
-                    isSeeMore,
-                  ) =>
-                      isSeeMore && index == searchDataList.data!.length,
-                  orElse: () => false,
-                )) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          context.tr(AppStrings.loadingMore),
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-
-                // Show load more button
-                if (searchDataList.data!.length >= 5 &&
-                    !cubit.isLastPageInSearch &&
-                    searchDataList.data!.isNotEmpty &&
-                    !state.maybeWhen(
-                      medicationSectionLoaded: (
-                        response,
-                        changesCounter,
-                        snackBarMessage,
-                        dialogMessage,
-                        isSubmitLoading,
-                        isSubmitLoaded,
-                        isSearchMedicationLoading,
-                        searchForDoseInMedicationSectionResponse,
-                        isDeletePatientRecommendationLoading,
-                        isSeeMore,
-                      ) =>
-                          isSeeMore,
-                      orElse: () => false,
-                    ) &&
-                    index ==
-                        searchDataList.data!.length +
-                            (state.maybeWhen(
-                              medicationSectionLoaded: (
-                                response,
-                                changesCounter,
-                                snackBarMessage,
-                                dialogMessage,
-                                isSubmitLoading,
-                                isSubmitLoaded,
-                                isSearchMedicationLoading,
-                                searchForDoseInMedicationSectionResponse,
-                                isDeletePatientRecommendationLoading,
-                                isSeeMore,
-                              ) =>
-                                  isSeeMore ? 1 : 0,
-                              orElse: () => 0,
-                            ))) {
-                  return Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (!cubit.isLoadingMoreForScrollInSearch) {
-                          cubit.loadMoreSearchForDoseInMedicationSection(
-                              searchText);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 6, horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: AppColors.primary.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                              color: AppColors.primary.withOpacity(0.3)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 14,
-                              color: AppColors.primary,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              context.tr(AppStrings.loadMore),
-                              style: TextStyle(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 14,
                                 color: AppColors.primary,
-                                fontSize: 11.sp,
-                                fontWeight: FontWeight.w500,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              Text(
+                                context.tr(AppStrings.loadMore),
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }
+                    );
+                  }
 
-                return const SizedBox.shrink(); // Fallback empty widget
-              },
-            );
-          },
-        );
-      },
+                  return const SizedBox.shrink(); // Fallback empty widget
+                },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 

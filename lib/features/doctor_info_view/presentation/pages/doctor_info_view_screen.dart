@@ -1,5 +1,6 @@
 import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 
 import '../../../../exports.dart';
 
@@ -221,35 +222,46 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen> {
                           ) {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  'Dr.${capitalizeFirstText(doctorInfo!.data!.firstName!)} ${capitalizeFirstText(doctorInfo.data!.lastName!)}',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                Flexible(
+                                  child: Text(
+                                    doctorName(
+                                      firstName: doctorInfo!.data!.firstName!,
+                                      lastName: doctorInfo.data!.lastName!,
+                                      role: doctorInfo
+                                          .data!.isSyndicateCardRequired!,
+                                    ),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
-                                doctorInfo.data!.isSyndicateCardRequired ==
-                                        'Verified'
-                                    ? Tooltip(
-                                        message:
-                                            context.tr(AppStrings.verified),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 3),
-                                          child: FadeIn(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            child: Image.asset(
-                                              AppImages.verified,
-                                              height: 20,
-                                              width: 20,
-                                              color: Colors.green.shade600,
-                                            ),
-                                          ),
+                                if (doctorInfo.data!.isSyndicateCardRequired ==
+                                    'Verified') ...[
+                                  const SizedBox(width: 4),
+                                  Tooltip(
+                                    message:
+                                        context.tr(AppStrings.verified),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 3),
+                                      child: FadeIn(
+                                        duration: const Duration(
+                                            milliseconds: 300),
+                                        child: Image.asset(
+                                          AppImages.verified,
+                                          height: 20,
+                                          width: 20,
+                                          color: Colors.green.shade600,
                                         ),
-                                      )
-                                    : const SizedBox.shrink(),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ],
                             );
                           },

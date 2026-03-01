@@ -291,6 +291,7 @@ class _ApiServices implements ApiServices {
     String job,
     String highestDegree,
     String registrationNumber,
+    String userType,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -306,6 +307,7 @@ class _ApiServices implements ApiServices {
       'job': job,
       'highestdegree': highestDegree,
       'registration_number': registrationNumber,
+      'user_type': userType,
     };
     final _options = _setStreamType<UpdateDoctorProfileModelResponse>(Options(
       method: 'PUT',
@@ -4034,7 +4036,7 @@ class _ApiServices implements ApiServices {
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/v2/markedPatients/{patientId}',
+          'https://test.egyakin.com/api/v2/markedPatients/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -4062,13 +4064,13 @@ class _ApiServices implements ApiServices {
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<MakeUnMarkPatientModelResponse>(Options(
-      method: 'POST',
+      method: 'DELETE',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/v2/markedPatients/{patientId}',
+          'https://test.egyakin.com/api/v2/markedPatients/${patientId}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -4089,9 +4091,10 @@ class _ApiServices implements ApiServices {
   }
 
   @override
-  Future<AuthenticationModelResponse> signInWithGoogle(
+  Future<AuthenticationWithGoogleModelResponse> signInWithGoogle(
     String? accessToken,
     String deviceId,
+    String? fcmToken,
   ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -4100,16 +4103,98 @@ class _ApiServices implements ApiServices {
     final _data = {
       'access_token': accessToken,
       'device_id': deviceId,
+      'fcmToken': fcmToken,
     };
     _data.removeWhere((k, v) => v == null);
-    final _options = _setStreamType<AuthenticationModelResponse>(Options(
+    final _options =
+        _setStreamType<AuthenticationWithGoogleModelResponse>(Options(
       method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://test.egyakin.com/api/v2/auth/social/google',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthenticationWithGoogleModelResponse _value;
+    try {
+      _value = AuthenticationWithGoogleModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<AuthenticationWithGoogleModelResponse> signInWithApple(
+    String? identityToken,
+    String? authorizationCode,
+    String deviceId,
+    String? fcmToken,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'identity_token': identityToken,
+      'authorization_code': authorizationCode,
+      'device_id': deviceId,
+      'fcmToken': fcmToken,
+    };
+    _data.removeWhere((k, v) => v == null);
+    final _options =
+        _setStreamType<AuthenticationWithGoogleModelResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'https://test.egyakin.com/api/v2/auth/social/apple',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AuthenticationWithGoogleModelResponse _value;
+    try {
+      _value = AuthenticationWithGoogleModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetMarkedPatientsModelResponse> getMarkedPatients(
+      int pageNumber) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'page': pageNumber};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetMarkedPatientsModelResponse>(Options(
+      method: 'GET',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          'https://test.egyakin.com/api/v2/auth/social/google',
+          'https://test.egyakin.com/api/v2/markedPatients?per_page=10&page=/{page}',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -4119,9 +4204,42 @@ class _ApiServices implements ApiServices {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late AuthenticationModelResponse _value;
+    late GetMarkedPatientsModelResponse _value;
     try {
-      _value = AuthenticationModelResponse.fromJson(_result.data!);
+      _value = GetMarkedPatientsModelResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
+  Future<GetPermissionsModelResponse> getRolePermissions() async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<GetPermissionsModelResponse>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+        .compose(
+          _dio.options,
+          'https://test.egyakin.com/api/v2/user/role-permissions',
+          queryParameters: queryParameters,
+          data: _data,
+        )
+        .copyWith(
+            baseUrl: _combineBaseUrls(
+          _dio.options.baseUrl,
+          baseUrl,
+        )));
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late GetPermissionsModelResponse _value;
+    try {
+      _value = GetPermissionsModelResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

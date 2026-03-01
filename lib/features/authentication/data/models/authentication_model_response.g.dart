@@ -14,6 +14,10 @@ _$AuthenticationModelResponseImpl _$$AuthenticationModelResponseImplFromJson(
       doctorModel: json['data'] == null
           ? null
           : DoctorModel.fromJson(json['data'] as Map<String, dynamic>),
+      provider: json['provider'] as String?,
+      permissions: (json['permissions'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$$AuthenticationModelResponseImplToJson(
@@ -22,6 +26,8 @@ Map<String, dynamic> _$$AuthenticationModelResponseImplToJson(
       'value': instance.value,
       'token': instance.token,
       'data': instance.doctorModel,
+      'provider': instance.provider,
+      'permissions': instance.permissions,
     };
 
 _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
@@ -55,6 +61,7 @@ _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>
       patients: (json['patients'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      userType: json['user_type'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -88,6 +95,7 @@ Map<String, dynamic> _$$DoctorModelImplToJson(_$DoctorModelImpl instance) =>
       'blocked': instance.blocked,
       'limited': instance.limited,
       'patients': instance.patients,
+      'user_type': instance.userType,
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
     };

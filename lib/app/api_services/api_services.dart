@@ -2,8 +2,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/data/models/export_patients_model_response.dart';
+import 'package:egy_akin/features/authentication/data/models/authentication_with_google_model_response.dart';
 import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
+import 'package:egy_akin/features/home/data/models/get_permissions_model_response.dart';
+import 'package:egy_akin/features/marked_patients/data/models/get_marked_patients_model_response.dart';
 import 'package:egy_akin/features/more/data/models/change_language_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_patient_recommendation_model_response.dart';
@@ -73,6 +76,7 @@ abstract class ApiServices {
     @Field('job') String job,
     @Field('highestdegree') String highestDegree,
     @Field('registration_number') String registrationNumber,
+    @Field('user_type') String userType,
   );
 
   @GET('${ApiEndPoint.sections}/{patientId}')
@@ -656,17 +660,33 @@ abstract class ApiServices {
 
   @POST('${ApiEndPoint.makeMarkPatient}/{patientId}')
   Future<MakeMarkPatientModelResponse> makeMarkPatient(
-    @Path('patient_id') String patientId,
+    @Path('patientId') String patientId,
   );
 
-  @POST('${ApiEndPoint.makeUnMarkPatient}/{patientId}')
+  @DELETE('${ApiEndPoint.makeUnMarkPatient}/{patientId}')
   Future<MakeUnMarkPatientModelResponse> makeUnMarkPatient(
-    @Path('patient_id') String patientId,
+    @Path('patientId') String patientId,
   );
-  
+
   @POST(ApiEndPoint.signInWithGoogle)
-  Future<AuthenticationModelResponse> signInWithGoogle(
+  Future<AuthenticationWithGoogleModelResponse> signInWithGoogle(
     @Field('access_token') String? accessToken,
     @Field('device_id') String deviceId,
+    @Field('fcmToken') String? fcmToken,
   );
+
+  @POST(ApiEndPoint.signInWithApple)
+  Future<AuthenticationWithGoogleModelResponse> signInWithApple(
+    @Field('identity_token') String? identityToken,
+    @Field('authorization_code') String? authorizationCode,
+    @Field('device_id') String deviceId,
+    @Field('fcmToken') String? fcmToken,
+  );
+
+  @GET('${ApiEndPoint.getMarkedPatients}?per_page=10&page=/{page}')
+  Future<GetMarkedPatientsModelResponse> getMarkedPatients(
+    @Query('page') int pageNumber,
+  );
+  @GET(ApiEndPoint.getRolePermissions)
+  Future<GetPermissionsModelResponse> getRolePermissions();
 }

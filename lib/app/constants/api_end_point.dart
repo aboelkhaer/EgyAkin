@@ -149,4 +149,8 @@ class ApiEndPoint {
   static const makeMarkPatient = '$baseUrl/api/$versioning/markedPatients';
   static const makeUnMarkPatient = '$baseUrl/api/$versioning/markedPatients';
   static const signInWithGoogle = '$baseUrl/api/$versioning/auth/social/google';
+  static const signInWithApple = '$baseUrl/api/$versioning/auth/social/apple';
+  static const getMarkedPatients = '$baseUrl/api/$versioning/markedPatients';
+  static const getRolePermissions =
+      '$baseUrl/api/$versioning/user/role-permissions';
 }

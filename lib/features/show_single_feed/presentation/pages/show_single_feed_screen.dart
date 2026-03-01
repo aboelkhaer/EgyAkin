@@ -1,5 +1,9 @@
 import 'dart:developer';
 
+import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 
@@ -355,8 +359,9 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                 ],
                                               ),
                                             ),
-                                            (widget.homeDataModel.role !=
-                                                        AppStrings.roleAdmin &&
+                                            (!PermissionHelper.canPermission(
+                                                        AppPermissions
+                                                            .viewEditAndDeletePostForAdmin) &&
                                                     widget.currentDoctorModel.id
                                                             .toString() !=
                                                         feed.doctor!.id
@@ -368,8 +373,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                     onSelected: (String value) {
                                                       switch (value) {
                                                         case 'Report':
-                                                          // Handle report action
-                                                          print(
+                                                          debugPrint(
                                                               'Report clicked');
                                                           break;
                                                         case 'Edit':
@@ -391,8 +395,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                           );
                                                           break;
                                                         case 'Delete':
-                                                          // Handle delete action
-
                                                           showDialog(
                                                             context: context,
                                                             builder: (context) {
@@ -401,18 +403,30 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                   context.tr(
                                                                       AppStrings
                                                                           .deletePost),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: isDarkMode
+                                                                        ? AppColors.darkTitle
+                                                                        : AppColors.title,
+                                                                  ),
                                                                 ),
                                                                 content: Text(
                                                                   context.tr(
                                                                       AppStrings
                                                                           .areYouSureYouWantToDeleteThisPost),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: isDarkMode
+                                                                        ? AppColors.darkDescription
+                                                                        : AppColors.description,
+                                                                  ),
                                                                 ),
                                                                 actions: [
                                                                   TextButton(
                                                                     onPressed:
                                                                         () {
                                                                       Navigator.pop(
-                                                                          context); // Close the dialog
+                                                                          context);
                                                                     },
                                                                     child: Text(
                                                                       context.tr(
@@ -420,17 +434,15 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                               .cancel),
                                                                       style:
                                                                           TextStyle(
-                                                                        color: Colors
-                                                                            .grey
-                                                                            .shade600,
+                                                                        color: isDarkMode
+                                                                            ? AppColors.darkDescription
+                                                                            : Colors.grey.shade600,
                                                                       ),
                                                                     ),
                                                                   ),
                                                                   TextButton(
                                                                     onPressed:
                                                                         () {
-                                                                      // Perform the deletion logic here
-                                                                      // For example, update the state or call a callback
                                                                       sl<CommunityCubit>()
                                                                           .deletePost(
                                                                         feedToUse
@@ -438,7 +450,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                             .toString(),
                                                                       );
                                                                       Navigator.pop(
-                                                                          context); // Close the dialog
+                                                                          context);
                                                                       navigatorKey
                                                                           .currentState
                                                                           ?.pop();
@@ -456,7 +468,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               );
                                                             },
                                                           );
-
                                                           break;
                                                       }
                                                     },
@@ -471,79 +482,128 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                   .currentDoctorModel
                                                                   .id
                                                                   .toString() ||
-                                                          widget.homeDataModel
-                                                                  .role ==
-                                                              AppStrings
-                                                                  .roleAdmin) {
+                                                          PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .viewEditAndDeletePostForAdmin)) {
                                                         items.add(
                                                           PopupMenuItem(
                                                             value: 'Edit',
-                                                            child: Row(
-                                                              children: [
-                                                                const Icon(
-                                                                    Icons.edit,
-                                                                    color: AppColors
-                                                                        .description),
-                                                                SizedBox(
-                                                                    width: 8.w),
-                                                                Text(
-                                                                  context.tr(
-                                                                      AppStrings
-                                                                          .edit),
-                                                                ),
-                                                              ],
+                                                            child:
+                                                                AdminOnlyBadge(
+                                                              showBadge: PermissionHelper.canPermission(
+                                                                      AppPermissions
+                                                                          .viewEditAndDeletePostForAdmin) &&
+                                                                  widget
+                                                                      .currentDoctorModel
+                                                                      .id
+                                                                      .toString() !=
+                                                                      feedToUse
+                                                                          .doctor!
+                                                                          .id
+                                                                          .toString(),
+                                                              style: BadgeStyle
+                                                                  .premium,
+                                                              fontSize: 6.sp,
+                                                              badgePadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              3.w,
+                                                                          vertical:
+                                                                              0.5.h),
+                                                              showIcon: false,
+                                                              glowEffect: true,
+                                                              pulseAnimation:
+                                                                  true,
+                                                              badgeText: 'A',
+                                                              top: -5,
+                                                              right: -5,
+                                                              child: Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                      Icons
+                                                                          .edit,
+                                                                      color: AppColors
+                                                                          .description),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          8.w),
+                                                                  Text(
+                                                                    context.tr(
+                                                                        AppStrings
+                                                                            .edit),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         );
                                                       }
-
                                                       if (feedToUse.doctor!.id
                                                                   .toString() ==
                                                               widget
                                                                   .currentDoctorModel
                                                                   .id
                                                                   .toString() ||
-                                                          widget.homeDataModel
-                                                                  .role ==
-                                                              AppStrings
-                                                                  .roleAdmin) {
+                                                          PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .viewEditAndDeletePostForAdmin)) {
                                                         items.add(
                                                           PopupMenuItem(
                                                             value: 'Delete',
-                                                            child: Row(
-                                                              children: [
-                                                                const Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    color: AppColors
-                                                                        .description),
-                                                                SizedBox(
-                                                                    width: 8.w),
-                                                                Text(
-                                                                  context.tr(
-                                                                      AppStrings
-                                                                          .delete),
-                                                                ),
-                                                              ],
+                                                            child:
+                                                                AdminOnlyBadge(
+                                                              showBadge: PermissionHelper.canPermission(
+                                                                      AppPermissions
+                                                                          .viewEditAndDeletePostForAdmin) &&
+                                                                  widget
+                                                                      .currentDoctorModel
+                                                                      .id
+                                                                      .toString() !=
+                                                                      feedToUse
+                                                                          .doctor!
+                                                                          .id
+                                                                          .toString(),
+                                                              style: BadgeStyle
+                                                                  .premium,
+                                                              fontSize: 6.sp,
+                                                              badgePadding:
+                                                                  EdgeInsets
+                                                                      .symmetric(
+                                                                          horizontal:
+                                                                              3.w,
+                                                                          vertical:
+                                                                              0.5.h),
+                                                              showIcon: false,
+                                                              glowEffect: true,
+                                                              pulseAnimation:
+                                                                  true,
+                                                              badgeText: 'A',
+                                                              top: -5,
+                                                              right: -5,
+                                                              child: Row(
+                                                                children: [
+                                                                  const Icon(
+                                                                      Icons
+                                                                          .delete,
+                                                                      color: AppColors
+                                                                          .description),
+                                                                  SizedBox(
+                                                                      width:
+                                                                          8.w),
+                                                                  Text(
+                                                                    context.tr(
+                                                                        AppStrings
+                                                                            .delete),
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         );
                                                       }
-                                                      // items.add(
-                                                      //   PopupMenuItem(
-                                                      //     value: 'Report',
-                                                      //     child: Row(
-                                                      //       children: [
-                                                      //         const Icon(Icons.report,
-                                                      //             color: AppColors
-                                                      //                 .description),
-                                                      //         SizedBox(width: 8.w),
-                                                      //         const Text('Report'),
-                                                      //       ],
-                                                      //     ),
-                                                      //   ),
-                                                      // );
-
                                                       return items;
                                                     },
                                                   ),
@@ -760,8 +820,13 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                         ],
                                       ),
                                     ),
-                                    !isVerifiedUser(widget.homeDataModel
-                                            .isSyndicateCardRequired)
+                                    (!PermissionHelper.canPermission(
+                                                AppPermissions
+                                                    .viewEditAndDeletePostForAdmin) &&
+                                            widget.currentDoctorModel.id
+                                                    .toString() !=
+                                                feedToUse.doctor!.id
+                                                    .toString())
                                         ? const SizedBox.shrink()
                                         : PopupMenuButton<String>(
                                             icon: const Icon(Icons.more_vert),
@@ -795,39 +860,50 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                         title: Text(
                                                           context.tr(AppStrings
                                                               .deletePost),
+                                                          style: TextStyle(
+                                                            color: isDarkMode
+                                                                ? AppColors.darkTitle
+                                                                : AppColors.title,
+                                                          ),
                                                         ),
                                                         content: Text(
-                                                          context.tr(AppStrings
-                                                              .areYouSureYouWantToDeleteThisPost),
+                                                          context.tr(
+                                                              AppStrings
+                                                                  .areYouSureYouWantToDeleteThisPost),
+                                                          style: TextStyle(
+                                                            color: isDarkMode
+                                                                ? AppColors.darkDescription
+                                                                : AppColors.description,
+                                                          ),
                                                         ),
                                                         actions: [
                                                           TextButton(
                                                             onPressed: () {
                                                               Navigator.pop(
-                                                                  context); // Close the dialog
+                                                                  context);
                                                             },
                                                             child: Text(
                                                               context.tr(
                                                                   AppStrings
                                                                       .cancel),
                                                               style: TextStyle(
-                                                                color: Colors
-                                                                    .grey
-                                                                    .shade600,
+                                                                color: isDarkMode
+                                                                    ? AppColors.darkDescription
+                                                                    : Colors
+                                                                        .grey
+                                                                        .shade600,
                                                               ),
                                                             ),
                                                           ),
                                                           TextButton(
                                                             onPressed: () {
-                                                              // Perform the deletion logic here
-                                                              // For example, update the state or call a callback
                                                               sl<CommunityCubit>()
                                                                   .deletePost(
                                                                 feedToUse.id
                                                                     .toString(),
                                                               );
                                                               Navigator.pop(
-                                                                  context); // Close the dialog
+                                                                  context);
                                                               navigatorKey
                                                                   .currentState
                                                                   ?.pop();
@@ -845,7 +921,6 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                       );
                                                     },
                                                   );
-
                                                   break;
                                               }
                                             },
@@ -858,48 +933,103 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                       widget
                                                           .currentDoctorModel.id
                                                           .toString() ||
-                                                  widget.homeDataModel.role ==
-                                                      AppStrings.roleAdmin) {
+                                                  PermissionHelper
+                                                      .canPermission(
+                                                          AppPermissions
+                                                              .viewEditAndDeletePostForAdmin)) {
                                                 items.add(
                                                   PopupMenuItem(
                                                     value: 'Edit',
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.edit,
-                                                            color: AppColors
-                                                                .description),
-                                                        SizedBox(width: 8.w),
-                                                        Text(
-                                                          context.tr(
-                                                              AppStrings.edit),
-                                                        ),
-                                                      ],
+                                                    child: AdminOnlyBadge(
+                                                      showBadge: PermissionHelper.canPermission(
+                                                              AppPermissions
+                                                                  .viewEditAndDeletePostForAdmin) &&
+                                                          widget
+                                                              .currentDoctorModel
+                                                              .id
+                                                              .toString() !=
+                                                              feedToUse
+                                                                  .doctor!
+                                                                  .id
+                                                                  .toString(),
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
+                                                      badgePadding: EdgeInsets
+                                                          .symmetric(
+                                                              horizontal: 3.w,
+                                                              vertical: 0.5.h),
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
+                                                      top: -5,
+                                                      right: -5,
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(Icons.edit,
+                                                              color: AppColors
+                                                                  .description),
+                                                          SizedBox(width: 8.w),
+                                                          Text(
+                                                            context.tr(
+                                                                AppStrings.edit),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 );
                                               }
-
                                               if (feedToUse.doctor!.id
                                                           .toString() ==
                                                       widget
                                                           .currentDoctorModel.id
                                                           .toString() ||
-                                                  widget.homeDataModel.role ==
-                                                      AppStrings.roleAdmin) {
+                                                  PermissionHelper
+                                                      .canPermission(
+                                                          AppPermissions
+                                                              .viewEditAndDeletePostForAdmin)) {
                                                 items.add(
                                                   PopupMenuItem(
                                                     value: 'Delete',
-                                                    child: Row(
-                                                      children: [
-                                                        const Icon(Icons.delete,
-                                                            color: AppColors
-                                                                .description),
-                                                        SizedBox(width: 8.w),
-                                                        Text(
-                                                          context.tr(AppStrings
-                                                              .delete),
-                                                        ),
-                                                      ],
+                                                    child: AdminOnlyBadge(
+                                                      showBadge: PermissionHelper.canPermission(
+                                                              AppPermissions
+                                                                  .viewEditAndDeletePostForAdmin) &&
+                                                          widget
+                                                              .currentDoctorModel
+                                                              .id
+                                                              .toString() !=
+                                                              feedToUse
+                                                                  .doctor!
+                                                                  .id
+                                                                  .toString(),
+                                                      style: BadgeStyle.premium,
+                                                      fontSize: 6.sp,
+                                                      badgePadding: EdgeInsets
+                                                          .symmetric(
+                                                              horizontal: 3.w,
+                                                              vertical: 0.5.h),
+                                                      showIcon: false,
+                                                      glowEffect: true,
+                                                      pulseAnimation: true,
+                                                      badgeText: 'A',
+                                                      top: -5,
+                                                      right: -5,
+                                                      child: Row(
+                                                        children: [
+                                                          const Icon(
+                                                              Icons.delete,
+                                                              color: AppColors
+                                                                  .description),
+                                                          SizedBox(width: 8.w),
+                                                          Text(
+                                                            context.tr(
+                                                                AppStrings
+                                                                    .delete),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 );
@@ -945,7 +1075,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                   currentDoctorModel: widget.currentDoctorModel,
                                   feed: feedToUse,
                                 ),
-                                SizedBox(height: 220.h),
+                                SizedBox(height: 100.h),
                               ],
                             ),
                           ),

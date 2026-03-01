@@ -1,5 +1,3 @@
-import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
-
 import '../../../../exports.dart';
 
 class YourPatientSection extends StatelessWidget {
@@ -27,34 +25,38 @@ class YourPatientSection extends StatelessWidget {
                 isUserBlocked,
                 changesCounter,
               ) {
-                if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
-                  return const SizedBox.shrink();
-                }
-                return Column(
-                  children: [
-                    HomePatientTitleHeader(
-                      title: context.tr(AppStrings.yourPatients),
-                      patientCount: homeData.doctorPatientCount.toString(),
-                      leftArrow: ' ( ',
-                      rightArrow: ' ) ',
-                      onTap: () {
-                        navigatorKey.currentState?.pushNamed(
-                            AppRoutes.currentPatients,
-                            arguments:
-                                AppRoutesArgs.currentDoctorPatientsRouteArgs(
-                              accountVerification: homeData.verified!,
-                              currentDoctorModel: currentDoctorModel,
-                              isSyndicateCardRequired:
-                                  homeData.isSyndicateCardRequired!,
-                              currentDoctorPoints:
-                                  int.parse(homeData.scoreValue!),
-                              currentDoctorRole: homeData.role.toString(),
-                              homeDataModel: homeData,
-                            ));
-                      },
-                    ),
-                    SizedBox(height: 10.h),
-                  ],
+                // if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                //   return const SizedBox.shrink();
+                // }
+                return PermissionGuard(
+                  permission: AppPermissions.viewCurrentPatients,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 10.h),
+                      HomePatientTitleHeader(
+                        title: context.tr(AppStrings.yourPatients),
+                        patientCount: homeData.doctorPatientCount.toString(),
+                        leftArrow: ' ( ',
+                        rightArrow: ' ) ',
+                        onTap: () {
+                          navigatorKey.currentState?.pushNamed(
+                              AppRoutes.currentPatients,
+                              arguments:
+                                  AppRoutesArgs.currentDoctorPatientsRouteArgs(
+                                accountVerification: homeData.verified!,
+                                currentDoctorModel: currentDoctorModel,
+                                isSyndicateCardRequired:
+                                    homeData.isSyndicateCardRequired!,
+                                currentDoctorPoints:
+                                    int.parse(homeData.scoreValue!),
+                                currentDoctorRole: homeData.role.toString(),
+                                homeDataModel: homeData,
+                              ));
+                        },
+                      ),
+                      SizedBox(height: 10.h),
+                    ],
+                  ),
                 );
               },
             );
@@ -77,111 +79,120 @@ class YourPatientSection extends StatelessWidget {
               isUserBlocked,
               changesCounter,
             ) {
-              if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
-                return const SizedBox.shrink();
-              }
-              return FadeIn(
-                duration: const Duration(seconds: 2),
-                child: SizedBox(
-                  height:
-                      homeData.data!.currentPatients!.isEmpty ? 100.h : 160.h,
-                  child: homeData.data!.currentPatients!.isEmpty
-                      // ? Lottie.asset(AppImages.imageLoader, width: 150.w)
-                      ? Image.asset(
-                          AppImages.notFound,
-                          width: 90.w,
-                        )
-                      : ListView.builder(
-                          physics: const BouncingScrollPhysics(),
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          padding: EdgeInsets.zero,
-                          itemCount: homeData.data!.currentPatients!.length < 5
-                              ? homeData.data!.currentPatients!.length
-                              : 5,
-                          itemBuilder: (BuildContext context, int index) {
-                            var patient =
-                                homeData.data!.currentPatients![index];
+              // if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+              //   return const SizedBox.shrink();
+              // }
+              return PermissionGuard(
+                permission: AppPermissions.viewCurrentPatients,
+                child: FadeIn(
+                  duration: const Duration(seconds: 2),
+                  child: SizedBox(
+                    height:
+                        homeData.data!.currentPatients!.isEmpty ? 100.h : 160.h,
+                    child: homeData.data!.currentPatients!.isEmpty
+                        // ? Lottie.asset(AppImages.imageLoader, width: 150.w)
+                        ? Image.asset(
+                            AppImages.notFound,
+                            width: 90.w,
+                          )
+                        : ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.horizontal,
+                            padding: EdgeInsets.zero,
+                            itemCount:
+                                homeData.data!.currentPatients!.length < 5
+                                    ? homeData.data!.currentPatients!.length
+                                    : 5,
+                            itemBuilder: (BuildContext context, int index) {
+                              var patient =
+                                  homeData.data!.currentPatients![index];
 
-                            return PatientCard(
-                              patientName: patient.name ?? AppStrings.empty,
-                              drFirstName:
-                                  patient.doctor!.firstName ?? AppStrings.empty,
-                              isAllDataOpen: false,
-                              homeDataModel: homeData,
-                              drLastName:
-                                  patient.doctor!.lastName ?? AppStrings.empty,
-                              accountVerification: homeData.verified!,
-                              updatedAt: patient.updatedAt ?? AppStrings.empty,
-                              hospital: patient.hospital ?? AppStrings.empty,
-                              currentDoctorModel: currentDoctorModel,
-                              isSyndicateCardRequired:
-                                  patient.doctor!.isSyndicateCardRequired!,
-                              currentDoctorPoints:
-                                  int.parse(homeData.scoreValue!),
-                              currentDoctorRole: homeData.role.toString(),
-                              doctorId: patient.doctor!.id.toString(),
-                              doctorImage: patient.doctor!.image,
-                              submitStatus: patient.sections == null
-                                  ? false
-                                  : patient.sections!.submitStatus ?? false,
-                              isOutcomeStatus: patient.sections!.outcomeStatus!,
-                              onOutcomeTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.outcome,
-                                  arguments: AppRoutesArgs.outcomeRouteArgs(
-                                      verified: homeData.verified!,
-                                      outcomeStatus:
-                                          patient.sections!.outcomeStatus!,
-                                      patientName: patient.name.toString(),
+                              return PatientCard(
+                                patientName: patient.name ?? AppStrings.empty,
+                                drFirstName: patient.doctor!.firstName ??
+                                    AppStrings.empty,
+                                isAllDataOpen: false,
+                                homeDataModel: homeData,
+                                 width: 300.w,
+                                drLastName: patient.doctor!.lastName ??
+                                    AppStrings.empty,
+                                accountVerification: homeData.verified!,
+                                updatedAt:
+                                    patient.updatedAt ?? AppStrings.empty,
+                                hospital: patient.hospital ?? AppStrings.empty,
+                                currentDoctorModel: currentDoctorModel,
+                                isSyndicateCardRequired:
+                                    patient.doctor!.isSyndicateCardRequired!,
+                                currentDoctorPoints:
+                                    int.parse(homeData.scoreValue!),
+                                currentDoctorRole: homeData.role.toString(),
+                                doctorId: patient.doctor!.id.toString(),
+                                doctorImage: patient.doctor!.image,
+                                submitStatus: patient.sections == null
+                                    ? false
+                                    : patient.sections!.submitStatus ?? false,
+                                isOutcomeStatus:
+                                    patient.sections!.outcomeStatus!,
+                                onOutcomeTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.outcome,
+                                    arguments: AppRoutesArgs.outcomeRouteArgs(
+                                        verified: homeData.verified!,
+                                        outcomeStatus:
+                                            patient.sections!.outcomeStatus!,
+                                        patientName: patient.name.toString(),
+                                        patientId: patient.id.toString(),
+                                        currentDoctorModel: currentDoctorModel,
+                                        doctorId: patient.doctor!.id.toString(),
+                                        isSyndicateCardRequired:
+                                            homeData.isSyndicateCardRequired!,
+                                        homeDataModel: homeData,
+                                        currentDoctorPoints:
+                                            int.parse(homeData.scoreValue!),
+                                        currentDoctorRole:
+                                            homeData.role.toString()),
+                                  );
+                                },
+                                onAddCommentTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.comments,
+                                    arguments:
+                                        AppRoutesArgs.patientCommentsRouteArgs(
                                       patientId: patient.id.toString(),
                                       currentDoctorModel: currentDoctorModel,
-                                      doctorId: patient.doctor!.id.toString(),
-                                      isSyndicateCardRequired:
-                                          homeData.isSyndicateCardRequired!,
-                                      homeDataModel: homeData,
+                                      verified: homeData.verified!,
+                                      patientName: patient.name.toString(),
                                       currentDoctorPoints:
                                           int.parse(homeData.scoreValue!),
+                                      homeDataModel: homeData,
+                                      isSyndicateCardRequired:
+                                          homeData.isSyndicateCardRequired!,
                                       currentDoctorRole:
-                                          homeData.role.toString()),
-                                );
-                              },
-                              onAddCommentTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.comments,
-                                  arguments:
-                                      AppRoutesArgs.patientCommentsRouteArgs(
-                                    patientId: patient.id.toString(),
-                                    currentDoctorModel: currentDoctorModel,
-                                    verified: homeData.verified!,
-                                    patientName: patient.name.toString(),
-                                    currentDoctorPoints:
-                                        int.parse(homeData.scoreValue!),
-                                    homeDataModel: homeData,
-                                    isSyndicateCardRequired:
-                                        homeData.isSyndicateCardRequired!,
-                                    currentDoctorRole: homeData.role.toString(),
-                                  ),
-                                );
-                              },
-                              onTap: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.patientSections,
-                                  arguments: AppRoutesArgs
-                                      .patientSectionsRouteArguments(
-                                    patientId: patient.id.toString(),
-                                    currentDoctorPoints:
-                                        int.parse(homeData.scoreValue!),
-                                    currentDoctorModel: currentDoctorModel,
-                                    currentDoctorRole: homeData.role.toString(),
-                                    homeDataModel: homeData,
-                                    isAllDataOpen: false,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
+                                          homeData.role.toString(),
+                                    ),
+                                  );
+                                },
+                                onTap: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.patientSections,
+                                    arguments: AppRoutesArgs
+                                        .patientSectionsRouteArguments(
+                                      patientId: patient.id.toString(),
+                                      currentDoctorPoints:
+                                          int.parse(homeData.scoreValue!),
+                                      currentDoctorModel: currentDoctorModel,
+                                      currentDoctorRole:
+                                          homeData.role.toString(),
+                                      homeDataModel: homeData,
+                                      isAllDataOpen: false,
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                  ),
                 ),
               );
             },

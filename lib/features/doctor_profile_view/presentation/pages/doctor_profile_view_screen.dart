@@ -4,6 +4,26 @@ import 'package:egy_akin/features/doctor_profile_view/presentation/cubit/doctor_
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 
+/// Builds a label with required asterisk (*) in red.
+Widget _buildRequiredLabel(String label, bool isDarkMode) {
+  return Text.rich(
+    TextSpan(
+      children: [
+        TextSpan(
+          text: label,
+          style: TextStyle(
+            color: isDarkMode ? AppColors.darkTitle : Colors.black87,
+          ),
+        ),
+        const TextSpan(
+          text: ' *',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500),
+        ),
+      ],
+    ),
+  );
+}
+
 class DoctorProfileViewScreen extends StatelessWidget {
   const DoctorProfileViewScreen({super.key});
 
@@ -34,7 +54,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
               state.maybeWhen(
                 orElse: () {},
                 loaded: (currentDoctorModel, isProfileHasChanged, message,
-                    isUpdating, isSubmit) {
+                    isUpdating, isSubmit, isMedicalStatistics) {
                   if (message.isNotEmpty) {
                     customSnackBar(context: context, message: message);
                   }
@@ -56,7 +76,7 @@ class DoctorProfileViewScreen extends StatelessWidget {
               return state.maybeWhen(
                 orElse: () => const Center(child: CircularProgressIndicator()),
                 loaded: (currentDoctorModel, isProfileHasChanged, message,
-                    isUpdating, isSubmit) {
+                    isUpdating, isSubmit, isMedicalStatistics) {
                   if (isUpdating) {
                     return const Center(child: CircularProgressIndicator());
                   }
@@ -72,27 +92,55 @@ class DoctorProfileViewScreen extends StatelessWidget {
                             key: cubit.formKey,
                             child: Column(
                               children: [
+                                // User Type Toggle
+                                Container(
+                                  padding: EdgeInsets.all(6.w),
+                                  decoration: BoxDecoration(
+                                    color: isDarkMode
+                                        ? AppColors.darkCardBG
+                                        : AppColors.subBG.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: isDarkMode
+                                          ? AppColors.darkBorder
+                                          : Colors.grey.shade300,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      _OptionChip(
+                                        label: context.tr(AppStrings.member),
+                                        icon: Icons.person_outline,
+                                        selected: !isMedicalStatistics,
+                                        isDarkMode: isDarkMode,
+                                        onTap: () => cubit
+                                            .toggleMedicalStatistics(false),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      _OptionChip(
+                                        label: context
+                                            .tr(AppStrings.researchMember),
+                                        icon: Icons.analytics_outlined,
+                                        selected: isMedicalStatistics,
+                                        isDarkMode: isDarkMode,
+                                        onTap: () =>
+                                            cubit.toggleMedicalStatistics(true),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
                                 Row(
                                   children: [
                                     Expanded(
-                                        child: Text(
-                                      '${context.tr(AppStrings.firstName)} *',
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
+                                        child: _buildRequiredLabel(
+                                            context.tr(AppStrings.firstName),
+                                            isDarkMode)),
                                     const SizedBox(width: 10),
                                     Expanded(
-                                        child: Text(
-                                      '${context.tr(AppStrings.lastName)} *',
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
+                                        child: _buildRequiredLabel(
+                                            context.tr(AppStrings.lastName),
+                                            isDarkMode)),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -140,14 +188,9 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                 SizedBox(height: size.height * 0.01),
                                 Row(
                                   children: [
-                                    Text(
-                                      '${context.tr(AppStrings.email)} *',
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    ),
+                                    _buildRequiredLabel(
+                                        context.tr(AppStrings.email),
+                                        isDarkMode),
                                   ],
                                 ),
                                 const SizedBox(height: 10),
@@ -164,326 +207,413 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                   },
                                   textInputAction: TextInputAction.next,
                                 ),
-                                SizedBox(height: size.height * 0.01),
-                                SizedBox(height: size.height * 0.01),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.phone),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.age),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title: context.tr(AppStrings.phone),
-                                        initialValue:
-                                            currentDoctorModel.phone ?? '',
-                                        onChanged: (value) {
-                                          cubit.phone = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        textInputType: TextInputType.phone,
-                                        validator: (value) =>
-                                            AppValidators.validatePhoneNumber(
-                                                value ?? ''),
-                                        textInputAction: TextInputAction.next,
-                                        inputFormatters: [
-                                          LengthLimitingTextInputFormatter(11)
-                                        ],
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title: context.tr(AppStrings.age),
-                                        initialValue:
-                                            currentDoctorModel.age ?? '',
-                                        onChanged: (value) {
-                                          cubit.age = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        textInputType: TextInputType.number,
-                                        validator: (value) =>
-                                            AppValidators.validateAge(
-                                                value ?? ''),
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: size.height * 0.01),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.job),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.workplace),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title: context.tr(AppStrings.job),
-                                        initialValue:
-                                            currentDoctorModel.job ?? '',
-                                        textInputType: TextInputType.text,
-                                        onChanged: (value) {
-                                          cubit.job = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        validator: (value) => AppValidators
-                                            .fieldsIsEmptyValidation(
-                                                value ?? ''),
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title: context.tr(AppStrings.workplace),
-                                        initialValue:
-                                            currentDoctorModel.workingplace ??
-                                                '',
-                                        textInputType: TextInputType.text,
-                                        validator: (value) => AppValidators
-                                            .fieldsIsEmptyValidation(
-                                                value ?? ''),
-                                        onChanged: (value) {
-                                          cubit.workplace = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: size.height * 0.01),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      'Registration Number (رقم القيد الخاص بالنقابة)',
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title:
-                                            'Registration Number (رقم القيد الخاص بالنقابة)',
-                                        enabled: true,
-                                        onChanged: (value) {
-                                          cubit.registrationNumber = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        initialValue: currentDoctorModel
-                                                .registrationNumber ??
-                                            '',
-                                        textInputType: TextInputType.number,
-                                        validator: (value) => AppValidators
-                                            .fieldsIsEmptyValidation(
-                                                value ?? ''),
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: size.height * 0.01),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.specialty),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                        child: Text(
-                                      context.tr(AppStrings.highestDegree),
-                                      style: TextStyle(
-                                        color: isDarkMode
-                                            ? AppColors.darkTitle
-                                            : Colors.black87,
-                                      ),
-                                    )),
-                                  ],
-                                ),
-                                const SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: CustomTextFormField(
-                                        title: context.tr(AppStrings.specialty),
-                                        initialValue:
-                                            currentDoctorModel.specialty ?? '',
-                                        textInputType: TextInputType.text,
-                                        validator: (value) => AppValidators
-                                            .fieldsIsEmptyValidation(
-                                                value ?? ''),
-                                        onChanged: (value) {
-                                          cubit.specialty = value;
-                                          cubit.checkForChanges();
-                                        },
-                                        textInputAction: TextInputAction.next,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Container(
-                                        decoration: BoxDecoration(
+                                // Show medical statistics fields only if isMedicalStatistics is true
+                                if (isMedicalStatistics) ...[
+                                  SizedBox(height: size.height * 0.01),
+                                  SizedBox(height: size.height * 0.01),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: Text(
+                                        context.tr(AppStrings.phone),
+                                        style: TextStyle(
                                           color: isDarkMode
-                                              ? AppColors.darkCardBG
-                                              : AppColors.subBG,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+                                              ? AppColors.darkTitle
+                                              : Colors.black87,
                                         ),
-                                        child: DropdownButtonFormField<String>(
-                                          value: currentDoctorModel
-                                                          .highestdegree !=
-                                                      null &&
-                                                  currentDoctorModel
-                                                      .highestdegree!
-                                                      .isNotEmpty &&
-                                                  highestDegreeList.contains(
-                                                      currentDoctorModel
-                                                          .highestdegree)
-                                              ? currentDoctorModel.highestdegree
-                                              : null,
-                                          hint: Text(
-                                            context.tr(AppStrings.choose),
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
+                                      )),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                          child: Text(
+                                        context.tr(AppStrings.age),
+                                        style: TextStyle(
+                                          color: isDarkMode
+                                              ? AppColors.darkTitle
+                                              : Colors.black87,
+                                        ),
+                                      )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: context.tr(AppStrings.phone),
+                                          initialValue:
+                                              currentDoctorModel.phone ?? '',
+                                          onChanged: (value) {
+                                            cubit.phone = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          textInputType: TextInputType.phone,
+                                          validator: (value) => null,
+                                          textInputAction: TextInputAction.next,
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(11)
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: context.tr(AppStrings.age),
+                                          initialValue:
+                                              currentDoctorModel.age ?? '',
+                                          onChanged: (value) {
+                                            cubit.age = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          textInputType: TextInputType.number,
+                                          validator: (value) => null,
+                                          textInputAction: TextInputAction.next,
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(2)
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: size.height * 0.01),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: isMedicalStatistics
+                                              ? _buildRequiredLabel(
+                                                  context.tr(AppStrings.job),
+                                                  isDarkMode)
+                                              : Text(
+                                                  context.tr(AppStrings.job),
+                                                  style: TextStyle(
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black87,
+                                                  ),
+                                                )),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                          child: isMedicalStatistics
+                                              ? _buildRequiredLabel(
+                                                  context
+                                                      .tr(AppStrings.workplace),
+                                                  isDarkMode)
+                                              : Text(
+                                                  context
+                                                      .tr(AppStrings.workplace),
+                                                  style: TextStyle(
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black87,
+                                                  ),
+                                                )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: isMedicalStatistics
+                                              ? '${context.tr(AppStrings.job)} *'
+                                              : context.tr(AppStrings.job),
+                                          initialValue:
+                                              currentDoctorModel.job ?? '',
+                                          textInputType: TextInputType.text,
+                                          onChanged: (value) {
+                                            cubit.job = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          validator: (value) =>
+                                              isMedicalStatistics
+                                                  ? AppValidators
+                                                      .fieldsIsEmptyValidation(
+                                                          value ?? '')
+                                                  : null,
+                                          textInputAction: TextInputAction.next,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: isMedicalStatistics
+                                              ? '${context.tr(AppStrings.workplace)} *'
+                                              : context
+                                                  .tr(AppStrings.workplace),
+                                          initialValue:
+                                              currentDoctorModel.workingplace ??
+                                                  '',
+                                          textInputType: TextInputType.text,
+                                          validator: (value) =>
+                                              isMedicalStatistics
+                                                  ? AppValidators
+                                                      .fieldsIsEmptyValidation(
+                                                          value ?? '')
+                                                  : null,
+                                          onChanged: (value) {
+                                            cubit.workplace = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          textInputAction: TextInputAction.next,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: size.height * 0.01),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: isMedicalStatistics
+                                              ? _buildRequiredLabel(
+                                                  'Registration Number (رقم القيد الخاص بالنقابة)',
+                                                  isDarkMode)
+                                              : Text(
+                                                  'Registration Number (رقم القيد الخاص بالنقابة)',
+                                                  style: TextStyle(
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black87,
+                                                  ),
+                                                )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: isMedicalStatistics
+                                              ? 'Registration Number (رقم القيد الخاص بالنقابة) *'
+                                              : 'Registration Number (رقم القيد الخاص بالنقابة)',
+                                          enabled: true,
+                                          onChanged: (value) {
+                                            cubit.registrationNumber = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          initialValue: currentDoctorModel
+                                                  .registrationNumber ??
+                                              '',
+                                          textInputType: TextInputType.number,
+                                          validator: (value) =>
+                                              isMedicalStatistics
+                                                  ? AppValidators
+                                                      .fieldsIsEmptyValidation(
+                                                          value ?? '')
+                                                  : null,
+                                          textInputAction: TextInputAction.next,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: size.height * 0.01),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          child: isMedicalStatistics
+                                              ? _buildRequiredLabel(
+                                                  context
+                                                      .tr(AppStrings.specialty),
+                                                  isDarkMode)
+                                              : Text(
+                                                  context
+                                                      .tr(AppStrings.specialty),
+                                                  style: TextStyle(
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black87,
+                                                  ),
+                                                )),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                          child: isMedicalStatistics
+                                              ? _buildRequiredLabel(
+                                                  context.tr(
+                                                      AppStrings.highestDegree),
+                                                  isDarkMode)
+                                              : Text(
+                                                  context.tr(
+                                                      AppStrings.highestDegree),
+                                                  style: TextStyle(
+                                                    color: isDarkMode
+                                                        ? AppColors.darkTitle
+                                                        : Colors.black87,
+                                                  ),
+                                                )),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomTextFormField(
+                                          title: isMedicalStatistics
+                                              ? '${context.tr(AppStrings.specialty)} *'
+                                              : context
+                                                  .tr(AppStrings.specialty),
+                                          initialValue:
+                                              currentDoctorModel.specialty ??
+                                                  '',
+                                          textInputType: TextInputType.text,
+                                          validator: (value) =>
+                                              isMedicalStatistics
+                                                  ? AppValidators
+                                                      .fieldsIsEmptyValidation(
+                                                          value ?? '')
+                                                  : null,
+                                          onChanged: (value) {
+                                            cubit.specialty = value;
+                                            cubit.checkForChanges();
+                                          },
+                                          textInputAction: TextInputAction.next,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: isDarkMode
+                                                ? AppColors.darkCardBG
+                                                : AppColors.subBG,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child:
+                                              DropdownButtonFormField<String>(
+                                            value: currentDoctorModel
+                                                            .highestdegree !=
+                                                        null &&
+                                                    currentDoctorModel
+                                                        .highestdegree!
+                                                        .isNotEmpty &&
+                                                    highestDegreeList.contains(
+                                                        currentDoctorModel
+                                                            .highestdegree)
+                                                ? currentDoctorModel
+                                                    .highestdegree
+                                                : null,
+                                            hint: isMedicalStatistics
+                                                ? Text.rich(
+                                                    TextSpan(
+                                                      children: [
+                                                        TextSpan(
+                                                          text: context.tr(
+                                                              AppStrings
+                                                                  .choose),
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: isDarkMode
+                                                                ? Colors.grey
+                                                                    .shade300
+                                                                : Colors.grey
+                                                                    .shade600,
+                                                          ),
+                                                        ),
+                                                        TextSpan(
+                                                          text: ' *',
+                                                          style: TextStyle(
+                                                            fontSize: 12.sp,
+                                                            color: Colors.red,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  )
+                                                : Text(
+                                                    context
+                                                        .tr(AppStrings.choose),
+                                                    style: TextStyle(
+                                                      fontSize: 12.sp,
+                                                      color: isDarkMode
+                                                          ? Colors.grey.shade300
+                                                          : Colors
+                                                              .grey.shade600,
+                                                    ),
+                                                  ),
+                                            items:
+                                                highestDegreeList.map((value) {
+                                              return DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(
+                                                  value,
+                                                  style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: isDarkMode
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (val) {
+                                              cubit.highestDegree = val ?? '';
+                                              cubit.checkForChanges();
+                                            },
+                                            validator: (value) =>
+                                                isMedicalStatistics
+                                                    ? AppValidators
+                                                        .fieldsIsEmptyValidation(
+                                                            value ?? '')
+                                                    : null,
+                                            decoration: InputDecoration(
+                                              filled: true,
+                                              fillColor: isDarkMode
+                                                  ? AppColors.darkCardBG
+                                                  : AppColors.subBG,
+                                              border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: isDarkMode
+                                                      ? AppColors.darkBorder
+                                                      : Colors.grey.shade300,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: isDarkMode
+                                                      ? AppColors.darkBorder
+                                                      : Colors.grey.shade300,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                  color: isDarkMode
+                                                      ? AppColors.darkPrimary
+                                                      : AppColors.primary,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8.0,
+                                                      vertical: 8.0),
+                                            ),
+                                            icon: Icon(
+                                              Icons.arrow_drop_down,
                                               color: isDarkMode
                                                   ? Colors.grey.shade300
                                                   : Colors.grey.shade600,
                                             ),
-                                          ),
-                                          items: highestDegreeList.map((value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(
-                                                value,
-                                                style: TextStyle(
-                                                  fontSize: 12.sp,
-                                                  color: isDarkMode
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                          onChanged: (val) {
-                                            cubit.highestDegree = val ?? '';
-                                            cubit.checkForChanges();
-                                          },
-                                          validator: (value) => AppValidators
-                                              .fieldsIsEmptyValidation(
-                                                  value ?? ''),
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: isDarkMode
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              color: isDarkMode
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                            dropdownColor: isDarkMode
                                                 ? AppColors.darkCardBG
-                                                : AppColors.subBG,
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: isDarkMode
-                                                    ? AppColors.darkBorder
-                                                    : Colors.grey.shade300,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: isDarkMode
-                                                    ? AppColors.darkBorder
-                                                    : Colors.grey.shade300,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: isDarkMode
-                                                    ? AppColors.darkPrimary
-                                                    : AppColors.primary,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 8.0,
-                                                    vertical: 8.0),
+                                                : Colors.white,
+                                            menuMaxHeight: 200,
                                           ),
-                                          icon: Icon(
-                                            Icons.arrow_drop_down,
-                                            color: isDarkMode
-                                                ? Colors.grey.shade300
-                                                : Colors.grey.shade600,
-                                          ),
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: isDarkMode
-                                                ? Colors.white
-                                                : Colors.black,
-                                          ),
-                                          dropdownColor: isDarkMode
-                                              ? AppColors.darkCardBG
-                                              : Colors.white,
-                                          menuMaxHeight: 200,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
+                                ],
                                 SizedBox(height: size.height * 0.05),
                                 SizedBox(
                                   width: double.infinity,
@@ -511,7 +641,8 @@ class DoctorProfileViewScreen extends StatelessWidget {
                                           isProfileHasChanged,
                                           message,
                                           isUpdateing,
-                                          isSubmit) {
+                                          isSubmit,
+                                          isMedicalStatistics) {
                                         if (currentDoctorModel.email
                                                 .toString() ==
                                             'moatz2163@gmail.com') {
@@ -556,6 +687,79 @@ class DoctorProfileViewScreen extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _OptionChip extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool selected;
+  final bool isDarkMode;
+  final VoidCallback onTap;
+
+  const _OptionChip({
+    required this.label,
+    required this.icon,
+    required this.selected,
+    required this.isDarkMode,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final Color borderColor = selected
+        ? AppColors.primary
+        : (isDarkMode ? AppColors.darkBorder : Colors.grey.shade300);
+    final Color bgColor = selected
+        ? (isDarkMode
+            ? AppColors.darkPrimary.withOpacity(0.15)
+            : AppColors.primary.withOpacity(0.12))
+        : Colors.transparent;
+    final Color textColor = selected
+        ? (isDarkMode ? Colors.white : AppColors.primary)
+        : (isDarkMode ? Colors.white70 : Colors.black87);
+
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor, width: 1),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.12),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    )
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 16.sp, color: textColor),
+              SizedBox(width: 6.w),
+              Flexible(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: textColor),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

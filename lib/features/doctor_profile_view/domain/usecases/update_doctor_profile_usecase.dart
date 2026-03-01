@@ -23,6 +23,7 @@ class UpdateDoctorProfileUsecase
       registrationNumber: input.registrationNumber,
       specialty: input.specialty,
       highestDegree: input.highestDegree,
+      userType: input.userType,
     );
   }
 }
@@ -38,7 +39,7 @@ class UpdateDoctorProfileUsecaseInput {
   final String registrationNumber;
   final String specialty;
   final String highestDegree;
-
+  final String userType;
   UpdateDoctorProfileUsecaseInput(
       {required this.firstName,
       required this.lastName,
@@ -49,5 +50,6 @@ class UpdateDoctorProfileUsecaseInput {
       required this.workplace,
       required this.registrationNumber,
       required this.specialty,
-      required this.highestDegree});
+      required this.highestDegree,
+      required this.userType});
 }

@@ -1,3 +1,6 @@
+import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
+import 'package:egy_akin/features/marked_patients/presentation/pages/marked_patients_screen.dart';
+
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -46,6 +49,7 @@ class AppRoutes {
   static const String savedPosts = '/savedPosts';
   static const String allDoctorPosts = '/allDoctorPosts';
   static const String webview = '/webview';
+  static const String markedPatients = '/markedPatients';
 }
 
 class RouteGenerator {
@@ -1087,6 +1091,33 @@ class RouteGenerator {
               builder: (_) => WebViewScreen(
                 url: args['url'] as String,
                 title: args['title'] as String,
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+      case AppRoutes.markedPatients:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider.value(value: di.sl<HomeCubit>()),
+                  BlocProvider<MarkedPatientsCubit>(
+                    create: (context) => di.sl<MarkedPatientsCubit>(),
+                  ),
+                ],
+                child: MarkedPatientsScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
               ),
             );
           } else {

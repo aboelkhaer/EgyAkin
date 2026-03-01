@@ -1,5 +1,7 @@
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
+import '../../../../app/shared/functions/permissions_helper.dart';
+import '../../../../app/shared/permissions/app_permissions.dart';
 
 class SearchScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -69,7 +71,32 @@ class _SearchScreenState extends State<SearchScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50.0),
               ),
-              onPressed: () {
+              onPressed: () async {
+                // Check if searching for doses and search text is not empty
+                if (cubit.dose &&
+                    cubit.searchController.text.trim().isNotEmpty) {
+                  final hasPermission = await PermissionHelper.hasPermission(
+                    AppPermissions.searchDoses,
+                  );
+
+                  if (!mounted) return;
+
+                  if (!hasPermission) {
+                    // User doesn't have permission - show permission denied dialog
+                    showCustomDialog(
+                      context: context,
+                      title: context.tr(AppStrings.attention),
+                      description: context
+                          .tr(AppStrings.youDontHavePermissionToSearchDoses),
+                      coloredButtonText: context.tr(AppStrings.ok),
+                      coloredButtonOnTap: () => Navigator.of(context).pop(),
+                      isNoColorShow: false,
+                    );
+                    return;
+                  }
+                }
+
+                // Proceed with search
                 cubit.getSearchHome(
                     isVerifiedUser(widget.isSyndicateCardRequired));
               },
@@ -94,7 +121,34 @@ class _SearchScreenState extends State<SearchScreen> {
                         cursorColor: AppColors.primary,
                         onTapOutside: (event) =>
                             FocusManager.instance.primaryFocus?.unfocus(),
-                        onFieldSubmitted: (value) {
+                        onFieldSubmitted: (value) async {
+                          // Check if searching for doses and search text is not empty
+                          if (cubit.dose &&
+                              cubit.searchController.text.trim().isNotEmpty) {
+                            final hasPermission =
+                                await PermissionHelper.hasPermission(
+                              AppPermissions.searchDoses,
+                            );
+
+                            if (!mounted) return;
+
+                            if (!hasPermission) {
+                              // User doesn't have permission - show permission denied dialog
+                              showCustomDialog(
+                                context: context,
+                                title: context.tr(AppStrings.attention),
+                                description: context.tr(AppStrings
+                                    .youDontHavePermissionToSearchDoses),
+                                coloredButtonText: context.tr(AppStrings.ok),
+                                coloredButtonOnTap: () =>
+                                    Navigator.of(context).pop(),
+                                isNoColorShow: false,
+                              );
+                              return;
+                            }
+                          }
+
+                          // Proceed with search
                           cubit.getSearchHome(
                               isVerifiedUser(widget.isSyndicateCardRequired));
                         },
@@ -131,7 +185,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   ],
                 ),
               ),
-              !isVerifiedUser(widget.isSyndicateCardRequired)
+              (!PermissionHelper.canPermission(
+                          AppPermissions.viewPatientOptionInHomeSearch) ||
+                      !isVerifiedUser(widget.isSyndicateCardRequired))
                   ? const SizedBox.shrink()
                   : Column(
                       children: [
@@ -267,7 +323,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                               Image.asset(
+                              Image.asset(
                                 AppImages.notFound,
                                 height: 150,
                                 width: 150,
@@ -334,6 +390,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 patient.doctor!.id.toString(),
                                             homeDataModel: widget.homeDataModel,
                                             isAllDataOpen: false,
+                                            width: 300.w,
                                             drFirstName:
                                                 patient.doctor!.firstName ??
                                                     AppStrings.empty,

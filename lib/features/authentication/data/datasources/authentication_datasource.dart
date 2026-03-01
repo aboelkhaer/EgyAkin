@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/authentication/data/models/authentication_with_google_model_response.dart';
+
 import '../../../../exports.dart';
 
 abstract class AuthenticationDataSource {
@@ -13,9 +15,16 @@ abstract class AuthenticationDataSource {
   Future<SendFCMTokenModelResponse> sendFCMToken({
     required String? fcmToken,
   });
-  Future<AuthenticationModelResponse> signInWithGoogle({
+  Future<AuthenticationWithGoogleModelResponse> signInWithGoogle({
     required String? accessToken,
     required String deviceId,
+    required String? fcmToken,
+  });
+  Future<AuthenticationWithGoogleModelResponse> signInWithApple({
+    required String? identityToken,
+    required String? authorizationCode,
+    required String deviceId,
+    required String? fcmToken,
   });
 }
 
@@ -50,10 +59,21 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   }
 
   @override
-  Future<AuthenticationModelResponse> signInWithGoogle({
+  Future<AuthenticationWithGoogleModelResponse> signInWithGoogle({
     required String? accessToken,
     required String deviceId,
+    required String? fcmToken,
   }) async {
-    return await _apiServices.signInWithGoogle(accessToken, deviceId);
+    return await _apiServices.signInWithGoogle(accessToken, deviceId, fcmToken);
+  }
+
+  @override
+  Future<AuthenticationWithGoogleModelResponse> signInWithApple({
+    required String? identityToken,
+    required String? authorizationCode,
+    required String deviceId,
+    required String? fcmToken,
+  }) async {
+    return await _apiServices.signInWithApple(identityToken, authorizationCode, deviceId, fcmToken);
   }
 }

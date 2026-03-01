@@ -12,6 +12,7 @@ abstract class DoctorProfileViewState with _$DoctorProfileViewState {
       bool isProfileHasChanged,
       String message,
       bool isUpdateing,
-      bool isSubmit) = _Loaded;
+      bool isSubmit,
+      bool isMedicalStatistics) = _Loaded;
   const factory DoctorProfileViewState.error(String message) = _Error;
 }

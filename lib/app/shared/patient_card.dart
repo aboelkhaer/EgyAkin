@@ -1,5 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import '../../exports.dart';
 
 class PatientCard extends StatelessWidget {
@@ -17,6 +19,7 @@ class PatientCard extends StatelessWidget {
   final bool isOutcomeStatus;
   final String doctorId;
   final bool submitStatus;
+  final double width;
   final DoctorModel currentDoctorModel;
   final bool accountVerification;
   final int currentDoctorPoints;
@@ -43,6 +46,7 @@ class PatientCard extends StatelessWidget {
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
     required this.homeDataModel,
+    required this.width,
   });
 
   @override
@@ -64,7 +68,7 @@ class PatientCard extends StatelessWidget {
                 splashColor: isDarkMode ? AppColors.darkSubBG : AppColors.subBG,
                 onTap: onTap,
                 child: Container(
-                  width: 300.w,
+                  width: width,
                   height: 130.h,
                   color: isDarkMode ? AppColors.darkCardBG : Colors.white,
                   padding: EdgeInsets.symmetric(
@@ -92,24 +96,50 @@ class PatientCard extends StatelessWidget {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(80.r),
                               child: GestureDetector(
-                                onTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.doctorInfoView,
-                                    arguments:
-                                        AppRoutesArgs.doctorInfoViewRouteArgs(
-                                      doctorId: doctorId,
-                                      currentDoctorModel: currentDoctorModel,
-                                      isSyndicateCardRequired:
-                                          isSyndicateCardRequired,
-                                      accountVerification: accountVerification,
-                                      currentDoctorRole: currentDoctorRole,
-                                      currentDoctorPoints: currentDoctorPoints,
-                                      homeDataModel: homeDataModel,
-                                      initialIndex: 0,
-                                      isNavigateToTheButtonOfInformationTab:
-                                          false,
-                                    ),
+                                onTap: () async {
+                                  // Check permission before navigating to doctor info view
+                                  final hasPermission =
+                                      await PermissionHelper.hasPermission(
+                                    AppPermissions.viewDoctorProfile,
                                   );
+
+                                  if (!hasPermission &&
+                                      currentDoctorModel.id.toString() !=
+                                          doctorId) {
+                                    // User doesn't have permission - show permission denied dialog
+                                    showCustomDialog(
+                                      context: context,
+                                      title: context.tr(AppStrings.attention),
+                                      description: context.tr(AppStrings
+                                          .youDontHavePermissionToViewDoctorProfiles),
+                                      coloredButtonText:
+                                          context.tr(AppStrings.ok),
+                                      coloredButtonOnTap: () =>
+                                          navigatorKey.currentState?.pop(),
+                                      isNoColorShow: false,
+                                    );
+                                  } else {
+                                    // User has permission - navigate to doctor info view
+                                    navigatorKey.currentState?.pushNamed(
+                                      AppRoutes.doctorInfoView,
+                                      arguments:
+                                          AppRoutesArgs.doctorInfoViewRouteArgs(
+                                        doctorId: doctorId,
+                                        currentDoctorModel: currentDoctorModel,
+                                        isSyndicateCardRequired:
+                                            isSyndicateCardRequired,
+                                        accountVerification:
+                                            accountVerification,
+                                        currentDoctorRole: currentDoctorRole,
+                                        currentDoctorPoints:
+                                            currentDoctorPoints,
+                                        homeDataModel: homeDataModel,
+                                        initialIndex: 0,
+                                        isNavigateToTheButtonOfInformationTab:
+                                            false,
+                                      ),
+                                    );
+                                  }
                                 },
                                 child: CircleAvatar(
                                   radius: 20.r,
@@ -152,8 +182,10 @@ class PatientCard extends StatelessWidget {
                                               (currentDoctorModel.id
                                                               .toString() ==
                                                           doctorId ||
-                                                      homeDataModel.role ==
-                                                          AppStrings.roleAdmin)
+                                                      PermissionHelper
+                                                          .canPermission(
+                                                              AppPermissions
+                                                                  .viewPatientsName))
                                                   ? patientName
                                                   : isAllDataOpen
                                                       ? patientName
@@ -198,33 +230,42 @@ class PatientCard extends StatelessWidget {
                                       drFirstName == ''
                                           ? const SizedBox.shrink()
                                           : Row(
+                                              mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Text(
-                                                  doctorName(
-                                                    firstName:
-                                                        drFirstName.toString(),
-                                                    lastName:
-                                                        drLastName.toString(),
-                                                    role:
-                                                        isSyndicateCardRequired,
+                                                Flexible(
+                                                  child: ConstrainedBox(
+                                                    constraints: const BoxConstraints(
+                                                        minWidth: 0),
+                                                    child: Text(
+                                                      doctorName(
+                                                        firstName:
+                                                            drFirstName.toString(),
+                                                        lastName:
+                                                            drLastName.toString(),
+                                                        role:
+                                                            isSyndicateCardRequired,
+                                                      ),
+                                                      style: TextStyle(
+                                                        color: isDarkMode
+                                                            ? AppColors
+                                                                .darkDescription
+                                                            : AppColors.description,
+                                                        fontSize: 13,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
                                                   ),
-                                                  style: TextStyle(
-                                                    color: isDarkMode
-                                                        ? AppColors
-                                                            .darkDescription
-                                                        : AppColors.description,
-                                                    fontSize: 13,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
                                                 ),
-                                                isSyndicateCardRequired ==
-                                                        'Verified'
-                                                    ? const VerificationIcon(
-                                                        isPatientCard: true,
-                                                      )
-                                                    : const SizedBox.shrink(),
+                                                if (isSyndicateCardRequired ==
+                                                    'Verified')
+                                                  const SizedBox(width: 4),
+                                                if (isSyndicateCardRequired ==
+                                                    'Verified')
+                                                  const VerificationIcon(
+                                                    isPatientCard: true,
+                                                  ),
                                               ],
                                             ),
                                       drFirstName == ''

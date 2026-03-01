@@ -2,6 +2,8 @@ import 'package:egy_akin/features/poll_voters/presentation/cubit/poll_voters_cub
 import 'package:egy_akin/features/poll_voters/presentation/pages/poll_voters_screen.dart';
 import '../../../../app/services/theme_bloc.dart';
 import '../../../../exports.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 class ViewPollWidget extends StatefulWidget {
   final PollModelResponse? poll;
@@ -44,6 +46,22 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
 
   void _addNewOption() async {
     if (_newOptionController.text.isEmpty) return;
+
+    // Permission check for adding poll option
+    final hasPermission =
+        await PermissionHelper.hasPermission(AppPermissions.addPollOption);
+    if (!hasPermission) {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.attention),
+        description:
+            context.tr(AppStrings.youDontHavePermissionToAddPollOptions),
+        coloredButtonText: context.tr(AppStrings.ok),
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+        isNoColorShow: false,
+      );
+      return;
+    }
 
     setState(() {
       _isAddingOption = true;
@@ -142,7 +160,26 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                                   Checkbox(
                                     value: widget.selectedOptions
                                         .contains(option.id),
-                                    onChanged: (bool? value) {
+                                    onChanged: (bool? value) async {
+                                      // Permission check for voting
+                                      final hasPermission =
+                                          await PermissionHelper.hasPermission(
+                                              AppPermissions.votePoll);
+                                      if (!hasPermission) {
+                                        showCustomDialog(
+                                          context: context,
+                                          title:
+                                              context.tr(AppStrings.attention),
+                                          description: context.tr(AppStrings
+                                              .youDontHavePermissionToVoteInPolls),
+                                          coloredButtonText:
+                                              context.tr(AppStrings.ok),
+                                          coloredButtonOnTap: () =>
+                                              Navigator.of(context).pop(),
+                                          isNoColorShow: false,
+                                        );
+                                        return;
+                                      }
                                       widget.onOptionToggled(
                                           option.id!, value ?? false);
                                     },
@@ -152,7 +189,27 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                                   Radio<int>(
                                     value: option.id!,
                                     groupValue: widget.selectedOption,
-                                    onChanged: widget.onOptionSelected,
+                                    onChanged: (int? val) async {
+                                      final hasPermission =
+                                          await PermissionHelper.hasPermission(
+                                              AppPermissions.votePoll);
+                                      if (!hasPermission) {
+                                        showCustomDialog(
+                                          context: context,
+                                          title:
+                                              context.tr(AppStrings.attention),
+                                          description: context.tr(AppStrings
+                                              .youDontHavePermissionToVoteInPolls),
+                                          coloredButtonText:
+                                              context.tr(AppStrings.ok),
+                                          coloredButtonOnTap: () =>
+                                              Navigator.of(context).pop(),
+                                          isNoColorShow: false,
+                                        );
+                                        return;
+                                      }
+                                      widget.onOptionSelected(val);
+                                    },
                                     activeColor: AppColors.primary,
                                   ),
                                 const SizedBox(width: 8),
@@ -173,7 +230,28 @@ class _ViewPollWidgetState extends State<ViewPollWidget> {
                                 // Clickable Vote Count
                                 GestureDetector(
                                   onTap: option.votesCount! > 0
-                                      ? () {
+                                      ? () async {
+                                          // Permission check for viewing poll voters
+                                          final hasPermission =
+                                              await PermissionHelper
+                                                  .hasPermission(AppPermissions
+                                                      .viewPollVoters);
+                                          if (!hasPermission) {
+                                            showCustomDialog(
+                                              context: context,
+                                              title: context
+                                                  .tr(AppStrings.attention),
+                                              description: context.tr(AppStrings
+                                                  .youDontHavePermissionToViewPollVoters),
+                                              coloredButtonText:
+                                                  context.tr(AppStrings.ok),
+                                              coloredButtonOnTap: () =>
+                                                  Navigator.of(context).pop(),
+                                              isNoColorShow: false,
+                                            );
+                                            return;
+                                          }
+
                                           showCustomBottomSheet(
                                             context: context,
                                             builder: (context) {

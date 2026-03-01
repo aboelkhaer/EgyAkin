@@ -19,7 +19,8 @@ class DoctorProfileViewRepositoryImpl extends DoctorProfileViewRepository {
       required String workplace,
       required String registrationNumber,
       required String specialty,
-      required String highestDegree}) async {
+      required String highestDegree,
+      required String userType}) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
@@ -34,7 +35,8 @@ class DoctorProfileViewRepositoryImpl extends DoctorProfileViewRepository {
             workplace: workplace,
             registrationNumber: registrationNumber,
             specialty: specialty,
-            highestDegree: highestDegree);
+            highestDegree: highestDegree,
+            userType: userType);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

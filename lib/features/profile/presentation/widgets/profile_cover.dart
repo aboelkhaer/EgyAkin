@@ -36,10 +36,10 @@ class ProfileCover extends StatelessWidget {
           Stack(
             children: [
               Positioned(
-                top: 10.h,
+                top: 0.h,
                 left: 0,
                 right: 0,
-                bottom: 0,
+                bottom: 50.h,
                 child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,

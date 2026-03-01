@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/consultation_button.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
 
@@ -140,18 +142,63 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                         isDownloadingReport,
                         isDownloadedReport,
                         counterChanges) {
-                      final isBookmarked = response.value ?? false;
+                      final isBookmarked = response.isMarked ?? false;
                       return IconButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (isBookmarked) {
-                            cubit.unmarkPatient(widget.patientId);
+                            // Check unmark permission
+                            final hasUnmarkPermission =
+                                await PermissionHelper.hasPermission(
+                              AppPermissions.unmarkPatient,
+                            );
+
+                            if (!mounted) return;
+
+                            if (hasUnmarkPermission) {
+                              cubit.unmarkPatient(widget.patientId);
+                            } else {
+                              // Show permission denied dialog
+                              showCustomDialog(
+                                context: context,
+                                title: context.tr(AppStrings.attention),
+                                description: context.tr(AppStrings
+                                    .youDontHavePermissionToUnmarkPatients),
+                                coloredButtonText: context.tr(AppStrings.ok),
+                                coloredButtonOnTap: () =>
+                                    Navigator.of(context).pop(),
+                                isNoColorShow: false,
+                              );
+                            }
                           } else {
-                            cubit.markPatient(widget.patientId);
+                            // Check mark permission
+                            final hasMarkPermission =
+                                await PermissionHelper.hasPermission(
+                              AppPermissions.markPatient,
+                            );
+
+                            if (!mounted) return;
+
+                            if (hasMarkPermission) {
+                              cubit.markPatient(widget.patientId);
+                            } else {
+                              // Show permission denied dialog
+                              showCustomDialog(
+                                context: context,
+                                title: context.tr(AppStrings.attention),
+                                description: context.tr(AppStrings
+                                    .youDontHavePermissionToMarkPatients),
+                                coloredButtonText: context.tr(AppStrings.ok),
+                                coloredButtonOnTap: () =>
+                                    Navigator.of(context).pop(),
+                                isNoColorShow: false,
+                              );
+                            }
                           }
                         },
                         icon: Icon(
                           isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                          color: isBookmarked ? AppColors.primary : null,
+                          color:
+                              isBookmarked ? AppColors.white : AppColors.white,
                         ),
                       );
                     },

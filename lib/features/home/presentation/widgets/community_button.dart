@@ -1,14 +1,47 @@
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import '../../../../exports.dart';
 
-class CommunityButton extends StatelessWidget {
+class CommunityButton extends StatefulWidget {
   const CommunityButton({super.key});
+
+  @override
+  State<CommunityButton> createState() => _CommunityButtonState();
+}
+
+class _CommunityButtonState extends State<CommunityButton> {
+  bool _hasPermission = false;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializePermission();
+  }
+
+  Future<void> _initializePermission() async {
+    // Initialize permissions to ensure they're loaded
+    await PermissionHelper.refreshPermissions();
+    final hasPermission = await PermissionHelper.hasPermission(
+        AppPermissions.viewExploreCommunityButton);
+    if (mounted) {
+      setState(() {
+        _hasPermission = hasPermission;
+        _isInitialized = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        // Wait for permissions to initialize, then check
+        if (!_isInitialized || !_hasPermission) {
+          return const SizedBox.shrink();
+        }
 
         return BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {

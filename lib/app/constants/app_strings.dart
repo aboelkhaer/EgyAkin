@@ -471,8 +471,8 @@ class AppStrings {
   static const String thePatient = 'The Patient';
   static const String consultations = 'Consultations';
   static const String writeConsultation = 'Write consultation';
-  static const String toAddPatientsYouMustVerifyYourEmailAddress =
-      'To add patients, you must verify your email address';
+  static const String youMustVerifyYourEmailAddressToEnjoyAllFeatures =
+      'You must verify your email address to enjoy all features';
   static const String toAddPatientsYouMustVerifyYourSyndicateCard =
       'To add patients, you must verify your syndicate card';
   static const String theSyndicateCardIsBeingProcessedForVerification =
@@ -558,11 +558,44 @@ class AppStrings {
   static const String socialLoginComingSoon =
       'Social login features are coming soon!';
 
-
-
-  static const String from =
-      'from';
+  static const String from = 'from';
   static const String selectDate = 'Select Date';
   static const String to = 'to';
-
+  static const String youDontHavePermissionToDeletePatients =
+      'You don\'t have permission to delete patients.';
+  static const String youDontHavePermissionToUnmarkPatients =
+      'You don\'t have permission to unmark patients.';
+  static const String youDontHavePermissionToMarkPatients =
+      'You don\'t have permission to mark patients.';
+  static const String youDontHavePermissionToViewPatientComments =
+      'You don\'t have permission to view patient comments.';
+  static const String youDontHavePermissionToDeletePatientComments =
+      'You don\'t have permission to delete patient comments.';
+  static const String youDontHavePermissionToFinalSubmitPatients =
+      'You don\'t have permission to final submit patients.';
+  static const String youDontHavePermissionToSearchDoses =
+      'You don\'t have permission to search doses.';
+  static const String youDontHavePermissionToUploadPatientFiles =
+      'You don\'t have permission to upload patient files.';
+  static const String youDontHavePermissionToViewDoctorProfiles =
+      'You don\'t have permission to view doctor profiles.';
+  static const String youDontHavePermissionToVoteInPolls =
+      'You don\'t have permission to vote in polls.';
+  static const String youDontHavePermissionToAddPollOptions =
+      'You don\'t have permission to add poll options.';
+  static const String youDontHavePermissionToViewPollVoters =
+      'You don\'t have permission to view poll voters.';
+  static const String youDontHavePermissionToViewFeedComments =
+      'You don\'t have permission to view feed comments.';
+  static const String youDontHavePermissionToDeleteFeedComments =
+      'You don\'t have permission to delete feed comments.';
+  static const String youDontHavePermissionToLikeFeedComments =
+      'You don\'t have permission to like feed comments.';
+  static const String youDontHavePermissionToReplyOnFeeds =
+      'You don\'t have permission to reply on feeds.';
+  static const String reply = 'Reply';
+  static const String failedToStartAppleSignInPleaseTryAgain =
+      'Failed to start Apple Sign-In. Please try again.';
+  static const String member = 'Member';
+  static const String researchMember = 'Research Member';
 }

@@ -26,7 +26,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
     // Call textFormFieldControllersInit if the method exists
     if (widget.cubit != null && widget.filters != null) {
       try {
-        widget.cubit.textFormFieldControllersInit(widget.filters!);
+    widget.cubit.textFormFieldControllersInit(widget.filters!);
       } catch (e) {
         // Handle case where method doesn't exist
         log('textFormFieldControllersInit not available: $e');
@@ -177,8 +177,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         child: CustomElevatedButton(
                           onPressed: () {
                             try {
-                              widget.cubit.resetFormData();
-                              setState(() {});
+                            widget.cubit.resetFormData();
+                            setState(() {});
                             } catch (e) {
                               log('resetFormData not available: $e');
                             }
@@ -334,7 +334,7 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                 );
               }).toList(),
             );
-          case 'date_range':
+            case 'date_range':
             return Row(
               children: [
                 // From Date

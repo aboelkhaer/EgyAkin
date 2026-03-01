@@ -18,9 +18,12 @@ _$HomeModelResponseImpl _$$HomeModelResponseImplFromJson(
       allPatientCount: json['all_patient_count'] as String?,
       scoreValue: json['score_value'] as String?,
       role: json['role'] as String?,
+      userType: json['user_type'] as String?,
+      permissionsChanged: json['permissions_changed'] as bool?,
       isUserBlocked: json['isUserBlocked'] as bool?,
       postsCount: json['posts_count'] as String?,
       savedPosts: json['saved_posts_count'] as String?,
+      markedPatientsCount: json['marked_patient_count'] as String?,
       data: json['data'] == null
           ? null
           : HomeDataModelResponse.fromJson(
@@ -39,9 +42,12 @@ Map<String, dynamic> _$$HomeModelResponseImplToJson(
       'all_patient_count': instance.allPatientCount,
       'score_value': instance.scoreValue,
       'role': instance.role,
+      'user_type': instance.userType,
+      'permissions_changed': instance.permissionsChanged,
       'isUserBlocked': instance.isUserBlocked,
       'posts_count': instance.postsCount,
       'saved_posts_count': instance.savedPosts,
+      'marked_patient_count': instance.markedPatientsCount,
       'data': instance.data,
     };
 
@@ -72,9 +78,6 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       latestGroups: (json['latest_groups'] as List<dynamic>?)
           ?.map((e) => GroupModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      roles: (json['roles'] as List<dynamic>?)
-          ?.map((e) => RoleModel.fromJson(e as Map<String, dynamic>))
-          .toList(),
     );
 
 Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
@@ -88,7 +91,6 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'feed_posts': instance.feeds,
       'trending_hashtags': instance.trendsHashtags,
       'latest_groups': instance.latestGroups,
-      'roles': instance.roles,
     };
 
 _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(

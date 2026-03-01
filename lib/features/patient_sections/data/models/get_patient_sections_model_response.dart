@@ -11,6 +11,7 @@ class GetPatientSectionsModelResponse with _$GetPatientSectionsModelResponse {
     @JsonKey(name: 'submit_status') bool? submitStatus,
     @JsonKey(name: 'patient_name') String? patientName,
     @JsonKey(name: 'doctor_Id') String? doctorId,
+    @JsonKey(name: 'is_marked') bool? isMarked,
     GFRModel? gfr,
     List<SectionModel>? data,
   }) = _GetPatientSectionsModelResponse;

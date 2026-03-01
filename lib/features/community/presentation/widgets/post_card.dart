@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -373,9 +375,11 @@ class PostCard extends StatelessWidget {
                                                 );
                                               }
 
-                                              return (homeDataModel.role !=
-                                                          AppStrings
-                                                              .roleAdmin &&
+                                              // Check if user has viewEditAndDeletePostForAdmin permission or is the post owner
+                                              return (!PermissionHelper
+                                                          .canPermission(
+                                                              AppPermissions
+                                                                  .viewEditAndDeletePostForAdmin) &&
                                                       currentDoctorModel.id
                                                               .toString() !=
                                                           feed.doctor!.id
@@ -575,19 +579,18 @@ class PostCard extends StatelessWidget {
                                                                 currentDoctorModel
                                                                     .id
                                                                     .toString() ||
-                                                            homeDataModel
-                                                                    .role ==
-                                                                AppStrings
-                                                                    .roleAdmin) {
+                                                            PermissionHelper
+                                                                .canPermission(
+                                                                    AppPermissions
+                                                                        .viewEditAndDeletePostForAdmin)) {
                                                           items.add(
                                                             PopupMenuItem(
                                                               value: 'Edit',
                                                               child:
                                                                   AdminOnlyBadge(
-                                                                showBadge: homeDataModel
-                                                                            .role ==
-                                                                        AppStrings
-                                                                            .roleAdmin &&
+                                                                showBadge: PermissionHelper.canPermission(
+                                                                        AppPermissions
+                                                                            .viewEditAndDeletePostForAdmin) &&
                                                                     currentDoctorModel
                                                                             .id
                                                                             .toString() !=
@@ -637,19 +640,18 @@ class PostCard extends StatelessWidget {
                                                                 currentDoctorModel
                                                                     .id
                                                                     .toString() ||
-                                                            homeDataModel
-                                                                    .role ==
-                                                                AppStrings
-                                                                    .roleAdmin)) {
+                                                            PermissionHelper
+                                                                .canPermission(
+                                                                    AppPermissions
+                                                                        .viewEditAndDeletePostForAdmin))) {
                                                           items.add(
                                                             PopupMenuItem(
                                                               value: 'Delete',
                                                               child:
                                                                   AdminOnlyBadge(
-                                                                showBadge: homeDataModel
-                                                                            .role ==
-                                                                        AppStrings
-                                                                            .roleAdmin &&
+                                                                showBadge: PermissionHelper.canPermission(
+                                                                        AppPermissions
+                                                                            .viewEditAndDeletePostForAdmin) &&
                                                                     currentDoctorModel
                                                                             .id
                                                                             .toString() !=

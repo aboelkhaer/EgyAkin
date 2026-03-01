@@ -168,7 +168,15 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                 ),
                 Expanded(
                   child:
-                      BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
+                      BlocConsumer<CommunitySearchCubit, CommunitySearchState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                        orElse: () {},
+                        error: (message) {
+                          customSnackBar(context: context, message: message);
+                        },
+                      );
+                    },
                     builder: (context, state) {
                       return state.maybeWhen(
                         orElse: () {

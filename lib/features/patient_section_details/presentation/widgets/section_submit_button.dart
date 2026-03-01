@@ -1,5 +1,7 @@
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
+import '../../../../app/shared/functions/permissions_helper.dart';
+import '../../../../app/shared/permissions/app_permissions.dart';
 
 class SectionSubmitButton extends StatelessWidget {
   final String doctorId;
@@ -24,7 +26,9 @@ class SectionSubmitButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
-    if (currentDoctorRole == AppStrings.roleAdmin ||
+    // Check if user has viewSubmitButtonForAdminInPatientSectionDetails permission or is the owner
+    if (PermissionHelper.canPermission(
+            AppPermissions.viewSubmitButtonForAdminInPatientSectionDetails) ||
         (doctorId.toString() == currentDoctorModel.id.toString() &&
             !finalSubmitStatus)) {
       if (sectionModel.sectionId.toString() == '9') {

@@ -12,6 +12,21 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Set up global error handlers to prevent app crashes
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint('FlutterError: ${details.exception}');
+    debugPrint('Stack trace: ${details.stack}');
+  };
+
+  // Handle errors outside of Flutter framework
+  PlatformDispatcher.instance.onError = (error, stack) {
+    debugPrint('PlatformDispatcher error: $error');
+    debugPrint('Stack trace: $stack');
+    return true; // Return true to prevent app from crashing
+  };
+
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform, name: 'EgyAkin');
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);

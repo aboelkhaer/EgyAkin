@@ -98,12 +98,6 @@ class _HashtagTextState extends State<HashtagText> {
       color: isDarkMode ? AppColors.darkTitle : Colors.black,
     );
 
-    final highlightStyle = defaultTextStyle.copyWith(
-      backgroundColor:
-          isDarkMode ? Colors.yellow.shade800 : Colors.yellow.shade200,
-      color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
-    );
-
     final hashtagStyle = defaultTextStyle.copyWith(
       color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
     );
@@ -162,30 +156,53 @@ class _HashtagTextState extends State<HashtagText> {
   }
 
   TextSpan _buildNormalTextSpan(String text, bool isDarkMode) {
-    final highlightStyle = TextStyle(
+    final defaultStyle = TextStyle(
       fontSize: 16,
       fontFamily: 'Tajawal',
       fontWeight: FontWeight.w500,
       height: 1.4,
+      color: isDarkMode ? AppColors.darkTitle : Colors.black,
+    );
+
+    final highlightStyle = defaultStyle.copyWith(
       backgroundColor:
-          isDarkMode ? Colors.yellow.shade800 : Colors.yellow.shade200,
+          isDarkMode ? Colors.yellow.shade400 : Colors.yellow.shade200,
       color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
     );
 
-    if (widget.highlightWord != null &&
-        text.toLowerCase().contains(widget.highlightWord!.toLowerCase())) {
-      return TextSpan(text: text, style: highlightStyle);
+    if (widget.highlightWord == null ||
+        widget.highlightWord!.isEmpty ||
+        !text.toLowerCase().contains(widget.highlightWord!.toLowerCase())) {
+      return TextSpan(text: text, style: defaultStyle);
     }
-    return TextSpan(
-      text: text,
-      style: TextStyle(
-        fontSize: 16,
-        fontFamily: 'Tajawal',
-        fontWeight: FontWeight.w500,
-        height: 1.4,
-        color: isDarkMode ? AppColors.darkTitle : Colors.black,
-      ),
-    );
+
+    // Only highlight the matching word(s), not the whole segment
+    final spans = <TextSpan>[];
+    final searchLower = widget.highlightWord!.toLowerCase();
+    int start = 0;
+    int index;
+    int fromIndex = 0;
+    while ((index = text.toLowerCase().indexOf(searchLower, fromIndex)) != -1) {
+      if (index > start) {
+        spans.add(TextSpan(
+          text: text.substring(start, index),
+          style: defaultStyle,
+        ));
+      }
+      spans.add(TextSpan(
+        text: text.substring(index, index + searchLower.length),
+        style: highlightStyle,
+      ));
+      start = fromIndex = index + searchLower.length;
+    }
+    if (start < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(start),
+        style: defaultStyle,
+      ));
+    }
+
+    return TextSpan(children: spans);
   }
 
   void _onHashtagTap(String hashtag) {

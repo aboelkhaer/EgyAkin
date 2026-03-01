@@ -99,12 +99,13 @@ class _HomeTabState extends State<HomeTab> {
                         changesCounter,
                       ) {
                         return CheckIfVerified(
-                          verified: homeData.verified!,
+                        
                           isSyndicateCardRequired:
                               homeData.isSyndicateCardRequired!,
                           isExitVerification:
                               homeCubit.isExistVerificationBanner ?? false,
                           isDarkMode: isDarkMode,
+                          homeData: homeData,
                         );
                       },
                       orElse: () => const SizedBox.shrink(),

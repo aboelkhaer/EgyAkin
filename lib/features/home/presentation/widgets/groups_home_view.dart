@@ -1,17 +1,53 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import '../../../../exports.dart';
+import '../../../../app/services/theme_bloc.dart';
 
-class GroupsHomeView extends StatelessWidget {
+class GroupsHomeView extends StatefulWidget {
   const GroupsHomeView({super.key});
 
   @override
+  State<GroupsHomeView> createState() => _GroupsHomeViewState();
+}
+
+class _GroupsHomeViewState extends State<GroupsHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    PermissionHelper.refreshPermissions().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  Future<void> _recheckPermission() async {
+    await PermissionHelper.refreshPermissions();
+    if (mounted) setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          orElse: () {
-            return const SizedBox.shrink();
+    return BlocListener<HomeCubit, HomeState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (_, __, ___, ____, _____, ______, _______, ________,
+              _________, __________) {
+            _recheckPermission();
           },
-          loaded: (
+          orElse: () {},
+        );
+      },
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          if (!PermissionHelper.canPermission(
+              AppPermissions.viewGroupsInHome)) {
+            return const SizedBox.shrink();
+          }
+          return BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loaded: (
             homeData,
             currentDoctorModel,
             dotsPosition,
@@ -106,7 +142,6 @@ class GroupsHomeView extends StatelessWidget {
                           ),
                           child: Text(
                             context.tr(AppStrings.joinOurGroups),
-
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w800,
@@ -126,11 +161,15 @@ class GroupsHomeView extends StatelessWidget {
                     ),
                   ),
                 ),
+                SizedBox(height: 40.h),
               ],
             );
           },
         );
-      },
+            },
+          );
+        },
+      ),
     );
   }
 }

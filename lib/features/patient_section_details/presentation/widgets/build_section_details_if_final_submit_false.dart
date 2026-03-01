@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_question.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_submit_button.dart';
 
@@ -254,7 +255,8 @@ class _BuildSectionDetailsIfFinalSubmitFalseState
                   ),
                   widget.sectionModel.sectionId.toString() == '9'
                       ? const SizedBox.shrink()
-                      : widget.homeDataModel.role == AppStrings.roleAdmin
+                      : PermissionHelper.canPermission(AppPermissions
+                              .viewSubmitButtonForAdminInPatientSectionDetails)
                           ? Container(height: 90)
                           : widget.doctorId.toString() !=
                                   widget.currentDoctorModel.id.toString()

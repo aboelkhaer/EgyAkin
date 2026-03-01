@@ -1,5 +1,7 @@
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
+import '../../../../app/shared/functions/permissions_helper.dart';
+import '../../../../app/shared/permissions/app_permissions.dart';
 
 class FooterButtons extends StatelessWidget {
   final String doctorId;
@@ -44,22 +46,43 @@ class FooterButtons extends StatelessWidget {
                           child: SizedBox(
                             height: 50,
                             child: CustomElevatedButton(
-                              onPressed: () {
-                                showCustomDialog(
-                                    context: context,
-                                    title: context.tr(AppStrings.attention),
-                                    description:
-                                        '${context.tr(AppStrings.areYouSureYouWantToDelete)}\n$patientName?',
-                                    coloredButtonText:
-                                        context.tr(AppStrings.cancel),
-                                    noColoredButtonText:
-                                        context.tr(AppStrings.delete),
-                                    coloredButtonOnTap: () =>
-                                        Navigator.of(context).pop(),
-                                    noColoredButtonOnTap: () {
-                                      Navigator.of(context).pop();
-                                      cubit.deletePatient(patientId);
-                                    });
+                              onPressed: () async {
+                                // Check permission before showing delete dialog
+                                final hasPermission =
+                                    await PermissionHelper.hasPermission(
+                                  AppPermissions.deletePatient,
+                                );
+
+                                if (hasPermission) {
+                                  // User has permission - show delete confirmation dialog
+                                  showCustomDialog(
+                                      context: context,
+                                      title: context.tr(AppStrings.attention),
+                                      description:
+                                          '${context.tr(AppStrings.areYouSureYouWantToDelete)}\n$patientName?',
+                                      coloredButtonText:
+                                          context.tr(AppStrings.cancel),
+                                      noColoredButtonText:
+                                          context.tr(AppStrings.delete),
+                                      coloredButtonOnTap: () =>
+                                          Navigator.of(context).pop(),
+                                      noColoredButtonOnTap: () {
+                                        Navigator.of(context).pop();
+                                        cubit.deletePatient(patientId);
+                                      });
+                                } else {
+                                  // User doesn't have permission - show permission denied dialog
+                                  showCustomDialog(
+                                      context: context,
+                                      title: context.tr(AppStrings.attention),
+                                      description: context.tr(AppStrings
+                                          .youDontHavePermissionToDeletePatients),
+                                      coloredButtonText:
+                                          context.tr(AppStrings.ok),
+                                      coloredButtonOnTap: () =>
+                                          Navigator.of(context).pop(),
+                                      isNoColorShow: false);
+                                }
                               },
                               title: context.tr(AppStrings.delete),
                               isDelete: true,
@@ -90,8 +113,30 @@ class FooterButtons extends StatelessWidget {
                               // isDisable: doctorId == currentDoctorId ? false : true,
                             )
                           : CustomElevatedButton(
-                              onPressed: () {
-                                cubit.finalSubmit(patientId, context);
+                              onPressed: () async {
+                                // Check permission before final submit
+                                final hasPermission =
+                                    await PermissionHelper.hasPermission(
+                                  AppPermissions.finalSubmitPatient,
+                                );
+
+                                if (hasPermission) {
+                                  // User has permission - proceed with final submit
+                                  cubit.finalSubmit(patientId, context);
+                                } else {
+                                  // User doesn't have permission - show permission denied dialog
+                                  showCustomDialog(
+                                    context: context,
+                                    title: context.tr(AppStrings.attention),
+                                    description: context.tr(AppStrings
+                                        .youDontHavePermissionToFinalSubmitPatients),
+                                    coloredButtonText:
+                                        context.tr(AppStrings.ok),
+                                    coloredButtonOnTap: () =>
+                                        Navigator.of(context).pop(),
+                                    isNoColorShow: false,
+                                  );
+                                }
                               },
                               title: context.tr(AppStrings.finalSubmit),
                               isDisable:

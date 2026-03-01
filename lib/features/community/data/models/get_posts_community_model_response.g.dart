@@ -29,17 +29,17 @@ _$GetPostsCommunityDataModelResponseImpl
               ?.map(
                   (e) => PostCommunityModel.fromJson(e as Map<String, dynamic>))
               .toList(),
-          currentPage: (json['current_page'] as num?)?.toInt(),
+          currentPage: _parseInt(json['current_page']),
           firstPageUrl: json['first_page_url'] as String?,
-          from: (json['from'] as num?)?.toInt(),
-          lastPage: (json['last_page'] as num?)?.toInt(),
+          from: _parseInt(json['from']),
+          lastPage: _parseInt(json['last_page']),
           lastPageUrl: json['last_page_url'] as String?,
           nextPageUrl: json['next_page_url'] as String?,
           path: json['path'] as String?,
-          perPage: (json['perPage'] as num?)?.toInt(),
+          perPage: _parseInt(json['perPage']),
           prevPageUrl: json['prev_page_url'] as String?,
-          to: (json['to'] as num?)?.toInt(),
-          total: (json['total'] as num?)?.toInt(),
+          to: _parseInt(json['to']),
+          total: _parseInt(json['total']),
         );
 
 Map<String, dynamic> _$$GetPostsCommunityDataModelResponseImplToJson(
@@ -62,7 +62,7 @@ Map<String, dynamic> _$$GetPostsCommunityDataModelResponseImplToJson(
 _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
         Map<String, dynamic> json) =>
     _$PostCommunityModelImpl(
-      id: (json['id'] as num?)?.toInt(),
+      id: _parseInt(json['id']),
       content: json['content'] as String?,
       mediaType: json['media_type'] as String?,
       mediaPath: (json['media_path'] as List<dynamic>?)
@@ -71,8 +71,8 @@ _$PostCommunityModelImpl _$$PostCommunityModelImplFromJson(
       visibility: json['visibility'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-      likesCount: (json['likes_count'] as num?)?.toInt(),
-      commentsCount: (json['comments_count'] as num?)?.toInt(),
+      likesCount: _parseInt(json['likes_count']),
+      commentsCount: _parseInt(json['comments_count']),
       isSaved: json['isSaved'] as bool?,
       isLiked: json['isLiked'] as bool?,
       existingMediaPath: (json['existing_media_path'] as List<dynamic>?)
@@ -112,9 +112,9 @@ Map<String, dynamic> _$$PostCommunityModelImplToJson(
 _$PollModelResponseImpl _$$PollModelResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$PollModelResponseImpl(
-      id: (json['id'] as num?)?.toInt(),
+      id: _parseInt(json['id']),
       content: json['content'] as String?,
-      feedPostId: (json['feed_post_id'] as num?)?.toInt(),
+      feedPostId: _parseInt(json['feed_post_id']),
       question: json['question'] as String?,
       allowAddOptions: json['allow_add_options'] as bool?,
       allowMultipleChoice: json['allow_multiple_choice'] as bool?,
@@ -143,12 +143,12 @@ Map<String, dynamic> _$$PollModelResponseImplToJson(
 _$PollOptionsModelResponseImpl _$$PollOptionsModelResponseImplFromJson(
         Map<String, dynamic> json) =>
     _$PollOptionsModelResponseImpl(
-      id: (json['id'] as num?)?.toInt(),
-      pollId: (json['poll_id'] as num?)?.toInt(),
+      id: _parseInt(json['id']),
+      pollId: _parseInt(json['poll_id']),
       optionText: json['option_text'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
-      votesCount: (json['votes_count'] as num?)?.toInt(),
+      votesCount: _parseInt(json['votes_count']),
       isVoted: json['is_voted'] as bool?,
     );
 
@@ -166,7 +166,7 @@ Map<String, dynamic> _$$PollOptionsModelResponseImplToJson(
 
 _$GroupDetailsImpl _$$GroupDetailsImplFromJson(Map<String, dynamic> json) =>
     _$GroupDetailsImpl(
-      id: (json['id'] as num?)?.toInt(),
+      id: _parseInt(json['id']),
       name: json['name'] as String?,
     );
 

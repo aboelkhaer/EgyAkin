@@ -37,9 +37,11 @@ class SignInBotton extends StatelessWidget {
               //       .setData(AppLocalStrings.fcmTokenKey, value);
               // });
             }
+            
 
             Navigator.of(context)
                 .pushReplacementNamed(AppRoutes.home, arguments: 0);
+
           },
           error: (message) =>
               customSnackBar(message: message, context: context),

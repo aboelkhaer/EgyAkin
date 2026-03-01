@@ -80,8 +80,6 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
   @override
   Widget build(BuildContext context) {
     ProfilePatientsCubit cubit = ProfilePatientsCubit.get(context);
-    Size size = MediaQuery.of(context).size;
-    // log(sl<HomeCubit>().isSyndicateCardRequired);
     return Scaffold(
       appBar: AppBar(
         title: GestureDetector(
@@ -89,7 +87,9 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
             animateToTopOfScreen(cubit.scrollController!);
           },
           child: Directionality(
-            textDirection: context.currentLocale?.languageCode == 'ar' ? TextDirection.ltr : TextDirection.rtl,
+            textDirection: context.currentLocale?.languageCode == 'ar'
+                ? TextDirection.ltr
+                : TextDirection.rtl,
             child: Text(
               'Dr.${capitalizeFirstText(widget.doctorFirstName)}\'s ${LocalizationService.instance.translate(AppStrings.patients)}',
               style: const TextStyle(),
@@ -121,10 +121,10 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                             shrinkWrap: true,
                             controller: cubit.scrollController,
                             scrollDirection: Axis.vertical,
-                            padding: EdgeInsets.only(
+                            padding: const EdgeInsets.only(
                               left: 20,
                               top: 20,
-                              right: size.width * 0.09,
+                              right: 20,
                               bottom: 50,
                             ),
                             itemCount: data.data!.data!.length,
@@ -135,6 +135,7 @@ class _ProfilePatientsScreenState extends State<ProfilePatientsScreen> {
                                 patientName: patient.name ?? AppStrings.empty,
                                 drFirstName: patient.doctor!.firstName ??
                                     AppStrings.empty,
+                                width: 400.w,
                                 isAllDataOpen: false,
                                 homeDataModel: widget.homeDataModel,
                                 doctorId: patient.doctor!.id.toString(),

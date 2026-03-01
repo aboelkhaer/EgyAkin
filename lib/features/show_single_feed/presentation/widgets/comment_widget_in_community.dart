@@ -2,6 +2,8 @@ import 'dart:ui' as ui;
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
 import '../../../../exports.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 class CommentWidgetInCommunity extends StatelessWidget {
   final HomeModelResponse homeDataModel;
@@ -300,7 +302,31 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                               isSeeMore,
                                             ) {
                                               return GestureDetector(
-                                                onTap: () {
+                                                onTap: () async {
+                                                  // Permission check for liking feed comments
+                                                  final hasPermission =
+                                                      await PermissionHelper
+                                                          .hasPermission(
+                                                              AppPermissions
+                                                                  .likeFeedComment);
+                                                  if (!hasPermission) {
+                                                    showCustomDialog(
+                                                      context: context,
+                                                      title: context.tr(
+                                                          AppStrings.attention),
+                                                      description: context.tr(
+                                                          AppStrings
+                                                              .youDontHavePermissionToLikeFeedComments),
+                                                      coloredButtonText: context
+                                                          .tr(AppStrings.ok),
+                                                      coloredButtonOnTap: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                      isNoColorShow: false,
+                                                    );
+                                                    return;
+                                                  }
+
                                                   if (isMainComment) {
                                                     cubit.addLikeOrUnlikeOnCommentInCommunity(
                                                         commentId: commentModel
@@ -311,11 +337,6 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                         commentId: commentModel
                                                             .id
                                                             .toString());
-                                                    // cubit
-                                                    //     .addLikeOrUnlikeOnReplyInCommunity(
-                                                    //         commentId: commentModel
-                                                    //             .id
-                                                    //             .toString());
                                                   }
                                                 },
                                                 child: Icon(
@@ -341,12 +362,37 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                       const SizedBox(width: 5),
                                       isMainComment
                                           ? TextButton(
-                                              onPressed: () {
+                                              onPressed: () async {
+                                                // Permission check for replying to feed comments
+                                                final hasPermission =
+                                                    await PermissionHelper
+                                                        .hasPermission(
+                                                            AppPermissions
+                                                                .replyFeedComment);
+                                                if (!hasPermission) {
+                                                  showCustomDialog(
+                                                    context: context,
+                                                    title: context.tr(
+                                                        AppStrings.attention),
+                                                    description: context.tr(
+                                                        AppStrings
+                                                            .youDontHavePermissionToReplyOnFeeds),
+                                                    coloredButtonText: context
+                                                        .tr(AppStrings.ok),
+                                                    coloredButtonOnTap: () =>
+                                                        Navigator.of(context)
+                                                            .pop(),
+                                                    isNoColorShow: false,
+                                                  );
+                                                  return;
+                                                }
+
                                                 cubit.commentToReply =
                                                     commentModel;
                                                 cubit.refreshScreen();
                                               },
-                                              child: const Text('Reply'),
+                                              child: Text(
+                                                  context.tr(AppStrings.reply)),
                                             )
                                           : TextButton(
                                               onPressed: () {},
@@ -461,8 +507,8 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                             color: Colors
                                                                 .grey.shade500,
                                                           ),
-                                                          onSelected:
-                                                              (String value) {
+                                                          onSelected: (String
+                                                              value) async {
                                                             switch (value) {
                                                               case 'Report':
                                                                 // Handle report action
@@ -470,6 +516,31 @@ class CommentWidgetInCommunity extends StatelessWidget {
                                                                     'Report clicked');
                                                                 break;
                                                               case 'Delete':
+                                                                final hasPermission =
+                                                                    await PermissionHelper.hasPermission(
+                                                                        AppPermissions
+                                                                            .deleteFeedComment);
+                                                                if (!hasPermission) {
+                                                                  showCustomDialog(
+                                                                    context:
+                                                                        context,
+                                                                    title: context.tr(
+                                                                        AppStrings
+                                                                            .attention),
+                                                                    description:
+                                                                        context.tr(
+                                                                            AppStrings.youDontHavePermissionToDeleteFeedComments),
+                                                                    coloredButtonText:
+                                                                        context.tr(
+                                                                            AppStrings.ok),
+                                                                    coloredButtonOnTap: () =>
+                                                                        Navigator.of(context)
+                                                                            .pop(),
+                                                                    isNoColorShow:
+                                                                        false,
+                                                                  );
+                                                                  break;
+                                                                }
                                                                 // Handle delete action
 
                                                                 showCustomDialog(

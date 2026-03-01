@@ -17,9 +17,12 @@ class HomeModelResponse with _$HomeModelResponse {
     @JsonKey(name: 'all_patient_count') String? allPatientCount,
     @JsonKey(name: 'score_value') String? scoreValue,
     @JsonKey(name: 'role') String? role,
+    @JsonKey(name: 'user_type') String? userType,
+    @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
     @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
     @JsonKey(name: 'posts_count') String? postsCount,
     @JsonKey(name: 'saved_posts_count') String? savedPosts,
+    @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
     HomeDataModelResponse? data,
   }) = _HomeModelResponse;
   factory HomeModelResponse.fromJson(Map<String, dynamic> json) =>
@@ -38,7 +41,6 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'feed_posts') List<PostCommunityModel>? feeds,
     @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
-    @JsonKey(name: 'roles') List<RoleModel>? roles,
   }) = _HomeDataModelResponse;
   factory HomeDataModelResponse.fromJson(Map<String, dynamic> json) =>
       _$HomeDataModelResponseFromJson(json);

@@ -1,8 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_google_usecase.dart';
+import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_apple_usecase.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
+import 'package:egy_akin/features/marked_patients/data/datasources/marked_patients_datasource.dart';
+import 'package:egy_akin/features/marked_patients/data/repositories/marked_patients_repo_impl.dart';
+import 'package:egy_akin/features/marked_patients/domain/repositories/marked_patients_repo.dart';
+import 'package:egy_akin/features/marked_patients/domain/usecases/get_marked_patients_usecase.dart';
+import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
 import 'package:egy_akin/features/more/data/datasource/more_datasource.dart';
 import 'package:egy_akin/features/more/data/repositories/more_repo_impl.dart';
 import 'package:egy_akin/features/more/domain/repositories/more_repo.dart';
@@ -19,6 +25,7 @@ import 'package:egy_akin/features/send_consultation/domain/usecases/add_doctors_
 import 'package:egy_akin/features/send_consultation/domain/usecases/get_members_for_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/remove_member_from_consultation_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
+import 'package:egy_akin/features/home/domain/usecases/get_role_permissions_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -39,13 +46,13 @@ Future<void> diInit() async {
   sl.registerLazySingleton<NotificationServices>(() => NotificationServices());
 
   //! Cubit
-  sl.registerFactory(() => AuthenticationCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => AuthenticationCubit(sl(), sl(), sl(), sl()));
   sl.registerFactory(() => SplashCubit(sl()));
   sl.registerFactory(() => WelcomeCubit());
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
   // sl.registerFactory(() => HomeCubit(sl(), sl(), sl()));
-  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl()));
+  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
 
   sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
@@ -106,6 +113,7 @@ Future<void> diInit() async {
   sl.registerLazySingleton(
       () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupsInvitationsCubit(sl(), sl(), sl()));
+  sl.registerFactory(() => MarkedPatientsCubit(sl(),));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -177,7 +185,8 @@ Future<void> diInit() async {
   sl.registerLazySingleton<AllDoctorPostsDatasource>(
       () => AllDoctorPostsDatasourceImpl(sl()));
   sl.registerLazySingleton<MoreDataSource>(() => MoreDataSourceImpl(sl()));
-
+  sl.registerLazySingleton<MarkedPatientsDataSource>(
+      () => MarkedPatientsDataSourceImpl(sl()));
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl(), sl()));
@@ -251,7 +260,10 @@ Future<void> diInit() async {
       () => AllDoctorPostsRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<MoreRepository>(
       () => MoreRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<MarkedPatientsRepository>(
+      () => MarkedPatientsRepositoryImpl(sl(), sl()));
 
+      
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
     sl.registerFactory<SignInUsecase>(() => SignInUsecase(sl()));
@@ -273,6 +285,9 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<GetHomeUsecase>()) {
     sl.registerFactory<GetHomeUsecase>(() => GetHomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetRolePermissionsUsecase>()) {
+    sl.registerFactory<GetRolePermissionsUsecase>(() => GetRolePermissionsUsecase(sl()));
   }
 
   if (!GetIt.I.isRegistered<UpdateNotificationUsecase>()) {
@@ -673,5 +688,13 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<SignInWithGoogleUsecase>()) {
     sl.registerFactory<SignInWithGoogleUsecase>(
         () => SignInWithGoogleUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<SignInWithAppleUsecase>()) {
+    sl.registerFactory<SignInWithAppleUsecase>(
+        () => SignInWithAppleUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetMarkedPatientsUsecase>()) {
+    sl.registerFactory<GetMarkedPatientsUsecase>(
+        () => GetMarkedPatientsUsecase(sl()));
   }
 }

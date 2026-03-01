@@ -9,4 +9,5 @@ abstract class HomeRepository {
       uploadSyndicateCard({
     required File image,
   });
+  Future<Either<Failure, GetPermissionsModelResponse>> getRolePermissions();
 }

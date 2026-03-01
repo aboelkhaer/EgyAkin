@@ -25,7 +25,8 @@ mixin _$DoctorProfileViewState {
             bool isProfileHasChanged,
             String message,
             bool isUpdateing,
-            bool isSubmit)
+            bool isSubmit,
+            bool isMedicalStatistics)
         loaded,
     required TResult Function(String message) error,
   }) =>
@@ -34,8 +35,13 @@ mixin _$DoctorProfileViewState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult? Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult? Function(String message)? error,
   }) =>
@@ -44,8 +50,13 @@ mixin _$DoctorProfileViewState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -148,7 +159,8 @@ class _$InitialImpl implements _Initial {
             bool isProfileHasChanged,
             String message,
             bool isUpdateing,
-            bool isSubmit)
+            bool isSubmit,
+            bool isMedicalStatistics)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -160,8 +172,13 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult? Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -173,8 +190,13 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -275,7 +297,8 @@ class _$LoadingImpl implements _Loading {
             bool isProfileHasChanged,
             String message,
             bool isUpdateing,
-            bool isSubmit)
+            bool isSubmit,
+            bool isMedicalStatistics)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -287,8 +310,13 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult? Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -300,8 +328,13 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
@@ -365,7 +398,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       bool isProfileHasChanged,
       String message,
       bool isUpdateing,
-      bool isSubmit});
+      bool isSubmit,
+      bool isMedicalStatistics});
 
   $DoctorModelCopyWith<$Res> get currentDoctorModel;
 }
@@ -388,6 +422,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
     Object? message = null,
     Object? isUpdateing = null,
     Object? isSubmit = null,
+    Object? isMedicalStatistics = null,
   }) {
     return _then(_$LoadedImpl(
       null == currentDoctorModel
@@ -410,6 +445,10 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.isSubmit
           : isSubmit // ignore: cast_nullable_to_non_nullable
               as bool,
+      null == isMedicalStatistics
+          ? _value.isMedicalStatistics
+          : isMedicalStatistics // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 
@@ -428,7 +467,7 @@ class __$$LoadedImplCopyWithImpl<$Res>
 
 class _$LoadedImpl implements _Loaded {
   const _$LoadedImpl(this.currentDoctorModel, this.isProfileHasChanged,
-      this.message, this.isUpdateing, this.isSubmit);
+      this.message, this.isUpdateing, this.isSubmit, this.isMedicalStatistics);
 
   @override
   final DoctorModel currentDoctorModel;
@@ -440,10 +479,12 @@ class _$LoadedImpl implements _Loaded {
   final bool isUpdateing;
   @override
   final bool isSubmit;
+  @override
+  final bool isMedicalStatistics;
 
   @override
   String toString() {
-    return 'DoctorProfileViewState.loaded(currentDoctorModel: $currentDoctorModel, isProfileHasChanged: $isProfileHasChanged, message: $message, isUpdateing: $isUpdateing, isSubmit: $isSubmit)';
+    return 'DoctorProfileViewState.loaded(currentDoctorModel: $currentDoctorModel, isProfileHasChanged: $isProfileHasChanged, message: $message, isUpdateing: $isUpdateing, isSubmit: $isSubmit, isMedicalStatistics: $isMedicalStatistics)';
   }
 
   @override
@@ -459,12 +500,14 @@ class _$LoadedImpl implements _Loaded {
             (identical(other.isUpdateing, isUpdateing) ||
                 other.isUpdateing == isUpdateing) &&
             (identical(other.isSubmit, isSubmit) ||
-                other.isSubmit == isSubmit));
+                other.isSubmit == isSubmit) &&
+            (identical(other.isMedicalStatistics, isMedicalStatistics) ||
+                other.isMedicalStatistics == isMedicalStatistics));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, currentDoctorModel,
-      isProfileHasChanged, message, isUpdateing, isSubmit);
+      isProfileHasChanged, message, isUpdateing, isSubmit, isMedicalStatistics);
 
   /// Create a copy of DoctorProfileViewState
   /// with the given fields replaced by the non-null parameter values.
@@ -484,12 +527,13 @@ class _$LoadedImpl implements _Loaded {
             bool isProfileHasChanged,
             String message,
             bool isUpdateing,
-            bool isSubmit)
+            bool isSubmit,
+            bool isMedicalStatistics)
         loaded,
     required TResult Function(String message) error,
   }) {
     return loaded(currentDoctorModel, isProfileHasChanged, message, isUpdateing,
-        isSubmit);
+        isSubmit, isMedicalStatistics);
   }
 
   @override
@@ -497,13 +541,18 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult? Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(currentDoctorModel, isProfileHasChanged, message,
-        isUpdateing, isSubmit);
+        isUpdateing, isSubmit, isMedicalStatistics);
   }
 
   @override
@@ -511,15 +560,20 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
       return loaded(currentDoctorModel, isProfileHasChanged, message,
-          isUpdateing, isSubmit);
+          isUpdateing, isSubmit, isMedicalStatistics);
     }
     return orElse();
   }
@@ -568,13 +622,15 @@ abstract class _Loaded implements DoctorProfileViewState {
       final bool isProfileHasChanged,
       final String message,
       final bool isUpdateing,
-      final bool isSubmit) = _$LoadedImpl;
+      final bool isSubmit,
+      final bool isMedicalStatistics) = _$LoadedImpl;
 
   DoctorModel get currentDoctorModel;
   bool get isProfileHasChanged;
   String get message;
   bool get isUpdateing;
   bool get isSubmit;
+  bool get isMedicalStatistics;
 
   /// Create a copy of DoctorProfileViewState
   /// with the given fields replaced by the non-null parameter values.
@@ -658,7 +714,8 @@ class _$ErrorImpl implements _Error {
             bool isProfileHasChanged,
             String message,
             bool isUpdateing,
-            bool isSubmit)
+            bool isSubmit,
+            bool isMedicalStatistics)
         loaded,
     required TResult Function(String message) error,
   }) {
@@ -670,8 +727,13 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult? Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult? Function(String message)? error,
   }) {
@@ -683,8 +745,13 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(DoctorModel currentDoctorModel, bool isProfileHasChanged,
-            String message, bool isUpdateing, bool isSubmit)?
+    TResult Function(
+            DoctorModel currentDoctorModel,
+            bool isProfileHasChanged,
+            String message,
+            bool isUpdateing,
+            bool isSubmit,
+            bool isMedicalStatistics)?
         loaded,
     TResult Function(String message)? error,
     required TResult orElse(),

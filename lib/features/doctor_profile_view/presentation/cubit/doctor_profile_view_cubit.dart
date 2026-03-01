@@ -19,6 +19,8 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
   String registrationNumber = '';
   String specialty = '';
   String highestDegree = '';
+  bool isMedicalStatistics = false;
+  bool originalIsMedicalStatistics = false;
 
   int profileErrorValid = 0;
 
@@ -51,6 +53,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
     registrationNumber = currentDoctorModel.registrationNumber ?? '';
     specialty = currentDoctorModel.specialty ?? '';
     highestDegree = currentDoctorModel.highestdegree ?? '';
+    isMedicalStatistics = currentDoctorModel.userType == 'medical_statistics';
 
     // Store original values for comparison
     originalFirstName = firstName;
@@ -63,16 +66,17 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
     originalRegistrationNumber = registrationNumber;
     originalSpecialty = specialty;
     originalHighestDegree = highestDegree;
+    originalIsMedicalStatistics = isMedicalStatistics;
 
     emit(DoctorProfileViewState.loaded(
-        currentDoctorModel, false, '', false, false));
+        currentDoctorModel, false, '', false, false, isMedicalStatistics));
   }
 
   profileChangedIsTrue() {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => DoctorProfileViewState.loaded(
-          value.currentDoctorModel, true, '', false, false),
+          value.currentDoctorModel, true, '', false, false, isMedicalStatistics),
     ));
   }
 
@@ -80,8 +84,38 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => DoctorProfileViewState.loaded(
-          value.currentDoctorModel, false, '', false, false),
+          value.currentDoctorModel, false, '', false, false, isMedicalStatistics),
     ));
+  }
+
+  void toggleMedicalStatistics(bool value) {
+    isMedicalStatistics = value;
+    // Emit immediately so the UI updates (e.g. when specialty is empty and
+    // switching to Member); form validation no longer blocks the toggle.
+    state.maybeMap(
+      orElse: () {},
+      loaded: (loadedState) {
+        final hasChanges = firstName != originalFirstName ||
+            lastName != originalLastName ||
+            email != originalEmail ||
+            phone != originalPhone ||
+            age != originalAge ||
+            job != originalJob ||
+            workplace != originalWorkplace ||
+            registrationNumber != originalRegistrationNumber ||
+            specialty != originalSpecialty ||
+            highestDegree != originalHighestDegree ||
+            isMedicalStatistics != originalIsMedicalStatistics;
+        emit(DoctorProfileViewState.loaded(
+          loadedState.currentDoctorModel,
+          hasChanges,
+          '',
+          false,
+          false,
+          isMedicalStatistics,
+        ));
+      },
+    );
   }
 
   checkForChanges() {
@@ -94,7 +128,8 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
         workplace != originalWorkplace ||
         registrationNumber != originalRegistrationNumber ||
         specialty != originalSpecialty ||
-        highestDegree != originalHighestDegree;
+        highestDegree != originalHighestDegree ||
+        isMedicalStatistics != originalIsMedicalStatistics;
 
     if (hasChanges) {
       profileChangedIsTrue();
@@ -108,7 +143,7 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => DoctorProfileViewState.loaded(
-            value.currentDoctorModel, false, '', true, false),
+            value.currentDoctorModel, false, '', true, false, isMedicalStatistics),
       ));
       final result = await _updateDoctorProfileUsecase.execute(
         UpdateDoctorProfileUsecaseInput(
@@ -122,39 +157,44 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           registrationNumber: registrationNumber,
           specialty: specialty,
           highestDegree: highestDegree,
+          userType: isMedicalStatistics ? 'medical_statistics' : 'normal',
         ),
       );
       result.fold((l) {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => DoctorProfileViewState.loaded(
-              value.currentDoctorModel, false, l.message, false, false),
+              value.currentDoctorModel, false, l.message, false, false, isMedicalStatistics),
         ));
       }, (r) async {
-        await sl<AppPreferences>().updateDoctorProfile(
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          phone: phone,
-          age: age,
-          job: job,
-          workplace: workplace,
-          registerationNumber: registrationNumber,
-          specialty: specialty,
-          highestDegree: highestDegree,
-        );
+        if (r.value == true) {
+          await sl<AppPreferences>().updateDoctorProfile(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            age: age,
+            job: job,
+            workplace: workplace,
+            registerationNumber: registrationNumber,
+            specialty: specialty,
+            highestDegree: highestDegree,
+            userType: isMedicalStatistics ? 'medical_statistics' : 'normal',
+          );
 
-        // Update original values after successful update
-        originalFirstName = firstName;
-        originalLastName = lastName;
-        originalEmail = email;
-        originalPhone = phone;
-        originalAge = age;
-        originalJob = job;
-        originalWorkplace = workplace;
-        originalRegistrationNumber = registrationNumber;
-        originalSpecialty = specialty;
-        originalHighestDegree = highestDegree;
+          // Update original values after successful update
+          originalFirstName = firstName;
+          originalLastName = lastName;
+          originalEmail = email;
+          originalPhone = phone;
+          originalAge = age;
+          originalJob = job;
+          originalWorkplace = workplace;
+          originalRegistrationNumber = registrationNumber;
+          originalSpecialty = specialty;
+          originalHighestDegree = highestDegree;
+          originalIsMedicalStatistics = isMedicalStatistics;
+        }
 
         emit(state.maybeMap(
           orElse: () => state,
@@ -163,7 +203,8 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
               false,
               r.message.toString(),
               false,
-              true),
+              true,
+              isMedicalStatistics),
         ));
       });
     }

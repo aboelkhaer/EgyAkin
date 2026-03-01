@@ -14,5 +14,6 @@ abstract class DoctorProfileViewRepository {
     required String registrationNumber,
     required String specialty,
     required String highestDegree,
+    required String userType,
   });
 }

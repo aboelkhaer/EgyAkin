@@ -41,4 +41,20 @@ class HomeRepositoryImpl extends HomeRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+
+  @override
+  Future<Either<Failure, GetPermissionsModelResponse>> getRolePermissions() async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response = await homeDataSource.getRolePermissions();
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

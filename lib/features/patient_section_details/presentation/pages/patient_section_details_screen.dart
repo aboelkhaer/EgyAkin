@@ -2,6 +2,8 @@ import 'package:egy_akin/features/patient_section_details/presentation/widgets/b
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -336,9 +338,29 @@ class _PatientSectionDetailsScreenState
               if (widget.sectionModel.sectionId == 12 &&
                   !widget.finalSubmitStatus)
                 IconButton(
-                  onPressed: () {
-                    // Show add recommendation bottom sheet
-                    _showAddRecommendationBottomSheet(context);
+                  onPressed: () async {
+                    // Check permission before showing add recommendation bottom sheet
+                    final hasPermission = await PermissionHelper.hasPermission(
+                      AppPermissions.createRecommendation,
+                    );
+
+                    if (!mounted) return;
+
+                    if (hasPermission) {
+                      // User has permission - show add recommendation bottom sheet
+                      _showAddRecommendationBottomSheet(context);
+                    } else {
+                      // User doesn't have permission - show permission denied dialog
+                      showCustomDialog(
+                        context: context,
+                        title: context.tr(AppStrings.attention),
+                        description:
+                            'You don\'t have permission to create recommendations.',
+                        coloredButtonText: context.tr(AppStrings.ok),
+                        coloredButtonOnTap: () => Navigator.of(context).pop(),
+                        isNoColorShow: false,
+                      );
+                    }
                   },
                   icon: const Icon(
                     Icons.add,

@@ -1,4 +1,5 @@
 import 'package:egy_akin/app/shared/functions/date_formate_for_group.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_state.dart';
@@ -454,14 +455,15 @@ class _GroupDetailsInCommunityScreenState
                             if ((widget.currentDoctorModel.id.toString() ==
                                     groupDetails.data!.group!.owner!.id
                                         .toString()) ||
-                                widget.homeDataModel.role ==
-                                    AppStrings.roleAdmin) {
+                                PermissionHelper.canPermission(
+                                    AppPermissions.deleteGroupForAdmin)) {
                               items.add(
                                 PopupMenuItem(
                                   value: 'delete_group',
                                   child: AdminOnlyBadge(
-                                    showBadge: widget.homeDataModel.role ==
-                                            AppStrings.roleAdmin &&
+                                    showBadge: PermissionHelper.canPermission(
+                                            AppPermissions
+                                                .deleteGroupForAdmin) &&
                                         widget.currentDoctorModel.id
                                                 .toString() !=
                                             groupDetails.data!.group!.owner!.id
@@ -698,15 +700,15 @@ class _GroupDetailsInCommunityScreenState
                                                           groupDetails.data!
                                                               .group!.owner!.id
                                                               .toString()) ||
-                                                      widget.homeDataModel
-                                                              .role ==
-                                                          AppStrings.roleAdmin
+                                                      PermissionHelper
+                                                          .canPermission(
+                                                              AppPermissions
+                                                                  .updateGroupForAdmin)
                                                   ? AdminOnlyBadge(
-                                                      showBadge: widget
-                                                                  .homeDataModel
-                                                                  .role ==
-                                                              AppStrings
-                                                                  .roleAdmin &&
+                                                      showBadge: PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .updateGroupForAdmin) &&
                                                           widget.currentDoctorModel
                                                                   .id
                                                                   .toString() !=
@@ -771,10 +773,10 @@ class _GroupDetailsInCommunityScreenState
                                           const SizedBox(height: 4),
                                           Row(
                                             children: [
-                                              (groupDetails.data!.group!
-                                                                  .userStatus ==
+                                              (groupDetails.data!.group!.userStatus ==
                                                               GroupInviteStatus
-                                                                  .accepted.name ||
+                                                                  .accepted
+                                                                  .name ||
                                                           groupDetails
                                                                   .data!
                                                                   .group!
@@ -797,15 +799,13 @@ class _GroupDetailsInCommunityScreenState
                                                                   GroupStatus
                                                                       .public
                                                                       .name)) ||
-                                                      widget.homeDataModel
-                                                              .role ==
-                                                          AppStrings.roleAdmin
+                                                      (PermissionHelper.canPermission(AppPermissions.viewGroupMembersForAdmin) ||
+                                                          PermissionHelper.canPermission(AppPermissions.hasPendingInvitationsForAdmin))
                                                   ? AdminOnlyBadge(
-                                                      showBadge: widget
-                                                                  .homeDataModel
-                                                                  .role ==
-                                                              AppStrings
-                                                                  .roleAdmin &&
+                                                      showBadge: PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .viewGroupMembersForAdmin) ||
                                                           groupDetails
                                                                   .data!
                                                                   .group!
@@ -888,10 +888,10 @@ class _GroupDetailsInCommunityScreenState
                                                                   .owner!
                                                                   .id
                                                                   .toString()) ||
-                                                          widget.homeDataModel
-                                                                  .role ==
-                                                              AppStrings
-                                                                  .roleAdmin) &&
+                                                          PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .hasPendingInvitationsForAdmin)) &&
                                                       groupDetails.data!.group!
                                                           .isHasPendingInvitations!
                                                   ? Column(

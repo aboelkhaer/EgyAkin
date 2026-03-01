@@ -21,6 +21,7 @@ UpdateDoctorProfileModelResponse _$UpdateDoctorProfileModelResponseFromJson(
 
 /// @nodoc
 mixin _$UpdateDoctorProfileModelResponse {
+  bool? get value => throw _privateConstructorUsedError;
   DoctorModel? get data => throw _privateConstructorUsedError;
   String? get message => throw _privateConstructorUsedError;
 
@@ -42,7 +43,7 @@ abstract class $UpdateDoctorProfileModelResponseCopyWith<$Res> {
       _$UpdateDoctorProfileModelResponseCopyWithImpl<$Res,
           UpdateDoctorProfileModelResponse>;
   @useResult
-  $Res call({DoctorModel? data, String? message});
+  $Res call({bool? value, DoctorModel? data, String? message});
 
   $DoctorModelCopyWith<$Res>? get data;
 }
@@ -63,10 +64,15 @@ class _$UpdateDoctorProfileModelResponseCopyWithImpl<$Res,
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? value = freezed,
     Object? data = freezed,
     Object? message = freezed,
   }) {
     return _then(_value.copyWith(
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -102,7 +108,7 @@ abstract class _$$UpdateDoctorProfileModelResponseImplCopyWith<$Res>
       __$$UpdateDoctorProfileModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({DoctorModel? data, String? message});
+  $Res call({bool? value, DoctorModel? data, String? message});
 
   @override
   $DoctorModelCopyWith<$Res>? get data;
@@ -123,10 +129,15 @@ class __$$UpdateDoctorProfileModelResponseImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? value = freezed,
     Object? data = freezed,
     Object? message = freezed,
   }) {
     return _then(_$UpdateDoctorProfileModelResponseImpl(
+      value: freezed == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as bool?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -143,12 +154,15 @@ class __$$UpdateDoctorProfileModelResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UpdateDoctorProfileModelResponseImpl
     implements _UpdateDoctorProfileModelResponse {
-  const _$UpdateDoctorProfileModelResponseImpl({this.data, this.message});
+  const _$UpdateDoctorProfileModelResponseImpl(
+      {this.value, this.data, this.message});
 
   factory _$UpdateDoctorProfileModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$UpdateDoctorProfileModelResponseImplFromJson(json);
 
+  @override
+  final bool? value;
   @override
   final DoctorModel? data;
   @override
@@ -156,7 +170,7 @@ class _$UpdateDoctorProfileModelResponseImpl
 
   @override
   String toString() {
-    return 'UpdateDoctorProfileModelResponse(data: $data, message: $message)';
+    return 'UpdateDoctorProfileModelResponse(value: $value, data: $data, message: $message)';
   }
 
   @override
@@ -164,13 +178,14 @@ class _$UpdateDoctorProfileModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$UpdateDoctorProfileModelResponseImpl &&
+            (identical(other.value, value) || other.value == value) &&
             (identical(other.data, data) || other.data == data) &&
             (identical(other.message, message) || other.message == message));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, data, message);
+  int get hashCode => Object.hash(runtimeType, value, data, message);
 
   /// Create a copy of UpdateDoctorProfileModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -193,13 +208,16 @@ class _$UpdateDoctorProfileModelResponseImpl
 abstract class _UpdateDoctorProfileModelResponse
     implements UpdateDoctorProfileModelResponse {
   const factory _UpdateDoctorProfileModelResponse(
-      {final DoctorModel? data,
+      {final bool? value,
+      final DoctorModel? data,
       final String? message}) = _$UpdateDoctorProfileModelResponseImpl;
 
   factory _UpdateDoctorProfileModelResponse.fromJson(
           Map<String, dynamic> json) =
       _$UpdateDoctorProfileModelResponseImpl.fromJson;
 
+  @override
+  bool? get value;
   @override
   DoctorModel? get data;
   @override

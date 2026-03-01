@@ -11,6 +11,8 @@ class AuthenticationModelResponse with _$AuthenticationModelResponse {
     bool? value,
     String? token,
     @JsonKey(name: 'data') DoctorModel? doctorModel,
+    String? provider,
+    List<String>? permissions,
   }) = _AuthenticationModelResponse;
   factory AuthenticationModelResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationModelResponseFromJson(json);
@@ -46,11 +48,10 @@ class DoctorModel with _$DoctorModel {
     bool? blocked,
     bool? limited,
     List<PatientHomeDataModel>? patients,
+    @JsonKey(name: 'user_type') String? userType,
     @JsonKey(name: 'created_at') String? createdAt,
     @JsonKey(name: 'updated_at') String? updatedAt,
   }) = _DoctorModel;
   factory DoctorModel.fromJson(Map<String, dynamic> json) =>
       _$DoctorModelFromJson(json);
 }
-
-

@@ -30,7 +30,7 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
           value.response,
           value.isDelete,
           value.isFinalSubmit,
-          value.message,
+          '',
           value.isLoading,
           value.reportProgress,
           value.filePath,
@@ -246,58 +246,88 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
 
   // Mark patient as bookmarked
   void markPatient(String patientId) async {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionsState.loaded(
+        value.response.copyWith(isMarked: true),
+        value.isDelete,
+        value.isFinalSubmit,
+        '',
+        value.isLoading,
+        value.reportProgress,
+        value.filePath,
+        value.isDownloadingReport,
+        value.isDownloadedReport,
+        counterChanges,
+      ),
+    ));
     final result = await _makeMarkPatientUsecase.execute(patientId);
     result.fold(
       (l) {
         // Handle error - could show snackbar or update state
-        emit(state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => PatientSectionsState.loaded(
-            value.response,
-            value.isDelete,
-            value.isFinalSubmit,
-            l.message,
-            value.isLoading,
-            value.reportProgress,
-            value.filePath,
-            value.isDownloadingReport,
-            value.isDownloadedReport,
-            counterChanges,
-          ),
-        ));
+        // emit(state.maybeMap(
+        //   orElse: () => state,
+        //   loaded: (value) => PatientSectionsState.loaded(
+        //     value.response.copyWith(isMarked: true),
+        //     value.isDelete,
+        //     value.isFinalSubmit,
+        //     l.message,
+        //     value.isLoading,
+        //     value.reportProgress,
+        //     value.filePath,
+        //     value.isDownloadingReport,
+        //     value.isDownloadedReport,
+        //     counterChanges,
+        //   ),
+        // ));
       },
       (r) async {
         // Success - refresh the screen to update bookmark status
-        refreshScreen();
+        // refreshScreen();
       },
     );
   }
 
   // Unmark patient (remove bookmark)
   void unmarkPatient(String patientId) async {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionsState.loaded(
+        value.response.copyWith(isMarked: false),
+        value.isDelete,
+        value.isFinalSubmit,
+        '',
+        value.isLoading,
+        value.reportProgress,
+        value.filePath,
+        value.isDownloadingReport,
+        value.isDownloadedReport,
+        counterChanges,
+      ),
+    ));
     final result = await _makeUnMarkPatientUsecase.execute(patientId);
     result.fold(
       (l) {
         // Handle error - could show snackbar or update state
-        emit(state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => PatientSectionsState.loaded(
-            value.response,
-            value.isDelete,
-            value.isFinalSubmit,
-            l.message,
-            value.isLoading,
-            value.reportProgress,
-            value.filePath,
-            value.isDownloadingReport,
-            value.isDownloadedReport,
-            counterChanges,
-          ),
-        ));
+        // emit(state.maybeMap(
+        //   orElse: () => state,
+        //   loaded: (value) => PatientSectionsState.loaded(
+        //     value.response.copyWith(isMarked: false),
+        //     value.isDelete,
+        //     value.isFinalSubmit,
+        //     l.message,
+        //     value.isLoading,
+        //     value.reportProgress,
+        //     value.filePath,
+        //     value.isDownloadingReport,
+        //     value.isDownloadedReport,
+        //     counterChanges,
+        //   ),
+        // ));
       },
       (r) async {
         // Success - refresh the screen to update bookmark status
-        refreshScreen();
+        // refreshScreen();
       },
     );
   }

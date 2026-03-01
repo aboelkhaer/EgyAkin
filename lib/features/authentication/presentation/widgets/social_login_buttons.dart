@@ -11,61 +11,72 @@ class SocialLoginButtons extends StatelessWidget {
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-        return Column(
-          children: [
-            // Clean Divider with "OR" text
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    color: isDarkMode
-                        ? AppColors.darkBorder
-                        : AppColors.description.withOpacity(0.3),
-                    thickness: 1,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Text(
-                    context.tr(AppStrings.or),
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? AppColors.darkDescription
-                          : AppColors.description,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w500,
+        return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              loading: () {
+                return const SizedBox.shrink();
+              },
+              orElse: () {
+                return Column(
+                  children: [
+                    // Clean Divider with "OR" text
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Divider(
+                            color: isDarkMode
+                                ? AppColors.darkBorder
+                                : AppColors.description.withOpacity(0.3),
+                            thickness: 1,
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Text(
+                            context.tr(AppStrings.or),
+                            style: TextStyle(
+                              color: isDarkMode
+                                  ? AppColors.darkDescription
+                                  : AppColors.description,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Divider(
+                            color: isDarkMode
+                                ? AppColors.darkBorder
+                                : AppColors.description.withOpacity(0.3),
+                            thickness: 1,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    color: isDarkMode
-                        ? AppColors.darkBorder
-                        : AppColors.description.withOpacity(0.3),
-                    thickness: 1,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20.h),
+                    SizedBox(height: 20.h),
 
-            // Social Login Buttons in Row
-            Row(
-              children: [
-                // Google Sign In Button
-                Expanded(
-                  child: _GoogleSignInButton(isDarkMode: isDarkMode),
-                ),
-                // Show Apple button only on iOS
-                if (Platform.isIOS) ...[
-                  SizedBox(width: 12.w),
-                  Expanded(
-                    child: _AppleSignInButton(isDarkMode: isDarkMode),
-                  ),
-                ],
-              ],
-            ),
-          ],
+                    // Social Login Buttons in Row
+                    Row(
+                      children: [
+                        // Google Sign In Button
+                        Expanded(
+                          child: _GoogleSignInButton(isDarkMode: isDarkMode),
+                        ),
+                        // Show Apple button only on iOS
+                        if (Platform.isIOS) ...[
+                          SizedBox(width: 12.w),
+                          Expanded(
+                            child: _AppleSignInButton(isDarkMode: isDarkMode),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -102,7 +113,21 @@ class _GoogleSignInButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            AuthenticationCubit.get(context).signInWithGoogle();
+            try {
+              AuthenticationCubit.get(context).signInWithGoogle();
+            } catch (e) {
+              debugPrint('Error in Google Sign-In button: $e');
+              // Show error to user
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Failed to start Google Sign-In. Please try again.'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
           },
           borderRadius: BorderRadius.circular(8.r),
           child: Container(
@@ -157,11 +182,23 @@ class _AppleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Apple Sign-In button colors based on dark mode
+    // Light mode: Black background with white text/icon
+    // Dark mode: White background with black text/icon (Apple HIG)
+    final Color backgroundColor = isDarkMode ? Colors.white : AppColors.black;
+    final Color textAndIconColor = isDarkMode ? AppColors.black : Colors.white;
+
     return Container(
       height: 38.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.r),
-        color: isDarkMode ? AppColors.darkTitle : AppColors.black,
+        color: backgroundColor,
+        border: isDarkMode
+            ? Border.all(
+                color: AppColors.darkBorder,
+                width: 1,
+              )
+            : null,
         boxShadow: isDarkMode
             ? null
             : [
@@ -176,36 +213,42 @@ class _AppleSignInButton extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // TODO: Implement Apple Sign In
-            _showComingSoonDialog(context);
+            try {
+              AuthenticationCubit.get(context).signInWithApple();
+            } catch (e) {
+              debugPrint('Error in Apple Sign-In button: $e');
+              // Show error to user
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(context
+                        .tr(AppStrings.failedToStartAppleSignInPleaseTryAgain)),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            }
           },
           borderRadius: BorderRadius.circular(8.r),
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 // Apple Logo
                 Icon(
                   Icons.apple,
                   size: 18.sp,
-                  color: Colors.white,
+                  color: textAndIconColor,
                 ),
                 SizedBox(width: 8.w),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Apple',
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+                Text(
+                  'Apple',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w500,
+                    color: textAndIconColor,
                   ),
                 ),
               ],

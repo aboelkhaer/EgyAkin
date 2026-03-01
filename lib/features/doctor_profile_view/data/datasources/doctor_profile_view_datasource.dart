@@ -12,6 +12,7 @@ abstract class DoctorProfileViewDataSource {
     required String registrationNumber,
     required String specialty,
     required String highestDegree,
+    required String userType,
   });
 }
 
@@ -32,8 +33,9 @@ class DoctorProfileViewDataSourceImpl implements DoctorProfileViewDataSource {
     required String specialty,
     required String highestDegree,
     required String registrationNumber,
+    required String userType,
   }) async {
     return await _apiServices.updateProfile(firstName, lastName, email, age,
-        specialty, workplace, phone, job, highestDegree, registrationNumber);
+        specialty, workplace, phone, job, highestDegree, registrationNumber, userType);
   }
 }

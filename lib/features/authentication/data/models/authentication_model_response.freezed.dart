@@ -25,6 +25,8 @@ mixin _$AuthenticationModelResponse {
   String? get token => throw _privateConstructorUsedError;
   @JsonKey(name: 'data')
   DoctorModel? get doctorModel => throw _privateConstructorUsedError;
+  String? get provider => throw _privateConstructorUsedError;
+  List<String>? get permissions => throw _privateConstructorUsedError;
 
   /// Serializes this AuthenticationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -47,7 +49,9 @@ abstract class $AuthenticationModelResponseCopyWith<$Res> {
   $Res call(
       {bool? value,
       String? token,
-      @JsonKey(name: 'data') DoctorModel? doctorModel});
+      @JsonKey(name: 'data') DoctorModel? doctorModel,
+      String? provider,
+      List<String>? permissions});
 
   $DoctorModelCopyWith<$Res>? get doctorModel;
 }
@@ -71,6 +75,8 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
     Object? value = freezed,
     Object? token = freezed,
     Object? doctorModel = freezed,
+    Object? provider = freezed,
+    Object? permissions = freezed,
   }) {
     return _then(_value.copyWith(
       value: freezed == value
@@ -85,6 +91,14 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
           ? _value.doctorModel
           : doctorModel // ignore: cast_nullable_to_non_nullable
               as DoctorModel?,
+      provider: freezed == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissions: freezed == permissions
+          ? _value.permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ) as $Val);
   }
 
@@ -115,7 +129,9 @@ abstract class _$$AuthenticationModelResponseImplCopyWith<$Res>
   $Res call(
       {bool? value,
       String? token,
-      @JsonKey(name: 'data') DoctorModel? doctorModel});
+      @JsonKey(name: 'data') DoctorModel? doctorModel,
+      String? provider,
+      List<String>? permissions});
 
   @override
   $DoctorModelCopyWith<$Res>? get doctorModel;
@@ -139,6 +155,8 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
     Object? value = freezed,
     Object? token = freezed,
     Object? doctorModel = freezed,
+    Object? provider = freezed,
+    Object? permissions = freezed,
   }) {
     return _then(_$AuthenticationModelResponseImpl(
       value: freezed == value
@@ -153,6 +171,14 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
           ? _value.doctorModel
           : doctorModel // ignore: cast_nullable_to_non_nullable
               as DoctorModel?,
+      provider: freezed == provider
+          ? _value.provider
+          : provider // ignore: cast_nullable_to_non_nullable
+              as String?,
+      permissions: freezed == permissions
+          ? _value._permissions
+          : permissions // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
     ));
   }
 }
@@ -162,7 +188,12 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
 class _$AuthenticationModelResponseImpl
     implements _AuthenticationModelResponse {
   const _$AuthenticationModelResponseImpl(
-      {this.value, this.token, @JsonKey(name: 'data') this.doctorModel});
+      {this.value,
+      this.token,
+      @JsonKey(name: 'data') this.doctorModel,
+      this.provider,
+      final List<String>? permissions})
+      : _permissions = permissions;
 
   factory _$AuthenticationModelResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -175,10 +206,21 @@ class _$AuthenticationModelResponseImpl
   @override
   @JsonKey(name: 'data')
   final DoctorModel? doctorModel;
+  @override
+  final String? provider;
+  final List<String>? _permissions;
+  @override
+  List<String>? get permissions {
+    final value = _permissions;
+    if (value == null) return null;
+    if (_permissions is EqualUnmodifiableListView) return _permissions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
 
   @override
   String toString() {
-    return 'AuthenticationModelResponse(value: $value, token: $token, doctorModel: $doctorModel)';
+    return 'AuthenticationModelResponse(value: $value, token: $token, doctorModel: $doctorModel, provider: $provider, permissions: $permissions)';
   }
 
   @override
@@ -189,12 +231,17 @@ class _$AuthenticationModelResponseImpl
             (identical(other.value, value) || other.value == value) &&
             (identical(other.token, token) || other.token == token) &&
             (identical(other.doctorModel, doctorModel) ||
-                other.doctorModel == doctorModel));
+                other.doctorModel == doctorModel) &&
+            (identical(other.provider, provider) ||
+                other.provider == provider) &&
+            const DeepCollectionEquality()
+                .equals(other._permissions, _permissions));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, value, token, doctorModel);
+  int get hashCode => Object.hash(runtimeType, value, token, doctorModel,
+      provider, const DeepCollectionEquality().hash(_permissions));
 
   /// Create a copy of AuthenticationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -216,10 +263,11 @@ class _$AuthenticationModelResponseImpl
 abstract class _AuthenticationModelResponse
     implements AuthenticationModelResponse {
   const factory _AuthenticationModelResponse(
-          {final bool? value,
-          final String? token,
-          @JsonKey(name: 'data') final DoctorModel? doctorModel}) =
-      _$AuthenticationModelResponseImpl;
+      {final bool? value,
+      final String? token,
+      @JsonKey(name: 'data') final DoctorModel? doctorModel,
+      final String? provider,
+      final List<String>? permissions}) = _$AuthenticationModelResponseImpl;
 
   factory _AuthenticationModelResponse.fromJson(Map<String, dynamic> json) =
       _$AuthenticationModelResponseImpl.fromJson;
@@ -231,6 +279,10 @@ abstract class _AuthenticationModelResponse
   @override
   @JsonKey(name: 'data')
   DoctorModel? get doctorModel;
+  @override
+  String? get provider;
+  @override
+  List<String>? get permissions;
 
   /// Create a copy of AuthenticationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -284,6 +336,8 @@ mixin _$DoctorModel {
   bool? get limited => throw _privateConstructorUsedError;
   List<PatientHomeDataModel>? get patients =>
       throw _privateConstructorUsedError;
+  @JsonKey(name: 'user_type')
+  String? get userType => throw _privateConstructorUsedError;
   @JsonKey(name: 'created_at')
   String? get createdAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
@@ -333,6 +387,7 @@ abstract class $DoctorModelCopyWith<$Res> {
       bool? blocked,
       bool? limited,
       List<PatientHomeDataModel>? patients,
+      @JsonKey(name: 'user_type') String? userType,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -379,6 +434,7 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? patients = freezed,
+    Object? userType = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -491,6 +547,10 @@ class _$DoctorModelCopyWithImpl<$Res, $Val extends DoctorModel>
           ? _value.patients
           : patients // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      userType: freezed == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -539,6 +599,7 @@ abstract class _$$DoctorModelImplCopyWith<$Res>
       bool? blocked,
       bool? limited,
       List<PatientHomeDataModel>? patients,
+      @JsonKey(name: 'user_type') String? userType,
       @JsonKey(name: 'created_at') String? createdAt,
       @JsonKey(name: 'updated_at') String? updatedAt});
 }
@@ -583,6 +644,7 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
     Object? blocked = freezed,
     Object? limited = freezed,
     Object? patients = freezed,
+    Object? userType = freezed,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
   }) {
@@ -695,6 +757,10 @@ class __$$DoctorModelImplCopyWithImpl<$Res>
           ? _value._patients
           : patients // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      userType: freezed == userType
+          ? _value.userType
+          : userType // ignore: cast_nullable_to_non_nullable
+              as String?,
       createdAt: freezed == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -738,6 +804,7 @@ class _$DoctorModelImpl implements _DoctorModel {
       this.blocked,
       this.limited,
       final List<PatientHomeDataModel>? patients,
+      @JsonKey(name: 'user_type') this.userType,
       @JsonKey(name: 'created_at') this.createdAt,
       @JsonKey(name: 'updated_at') this.updatedAt})
       : _patients = patients;
@@ -818,6 +885,9 @@ class _$DoctorModelImpl implements _DoctorModel {
   }
 
   @override
+  @JsonKey(name: 'user_type')
+  final String? userType;
+  @override
   @JsonKey(name: 'created_at')
   final String? createdAt;
   @override
@@ -826,7 +896,7 @@ class _$DoctorModelImpl implements _DoctorModel {
 
   @override
   String toString() {
-    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, invitationId: $invitationId, deviceId: $deviceId, blocked: $blocked, limited: $limited, patients: $patients, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DoctorModel(id: $id, firstName: $firstName, lastName: $lastName, email: $email, age: $age, fcmToken: $fcmToken, specialty: $specialty, token: $token, password: $password, workingplace: $workingplace, isSyndicateCardRequired: $isSyndicateCardRequired, phone: $phone, job: $job, gender: $gender, image: $image, passwordConfirmation: $passwordConfirmation, syndicateCard: $syndicateCard, patientsCount: $patientsCount, highestdegree: $highestdegree, registrationNumber: $registrationNumber, emailVerifiedAt: $emailVerifiedAt, phoneVerifiedAt: $phoneVerifiedAt, invitationId: $invitationId, deviceId: $deviceId, blocked: $blocked, limited: $limited, patients: $patients, userType: $userType, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -878,6 +948,8 @@ class _$DoctorModelImpl implements _DoctorModel {
             (identical(other.blocked, blocked) || other.blocked == blocked) &&
             (identical(other.limited, limited) || other.limited == limited) &&
             const DeepCollectionEquality().equals(other._patients, _patients) &&
+            (identical(other.userType, userType) ||
+                other.userType == userType) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -915,6 +987,7 @@ class _$DoctorModelImpl implements _DoctorModel {
         blocked,
         limited,
         const DeepCollectionEquality().hash(_patients),
+        userType,
         createdAt,
         updatedAt
       ]);
@@ -965,6 +1038,7 @@ abstract class _DoctorModel implements DoctorModel {
       final bool? blocked,
       final bool? limited,
       final List<PatientHomeDataModel>? patients,
+      @JsonKey(name: 'user_type') final String? userType,
       @JsonKey(name: 'created_at') final String? createdAt,
       @JsonKey(name: 'updated_at')
       final String? updatedAt}) = _$DoctorModelImpl;
@@ -1036,6 +1110,9 @@ abstract class _DoctorModel implements DoctorModel {
   bool? get limited;
   @override
   List<PatientHomeDataModel>? get patients;
+  @override
+  @JsonKey(name: 'user_type')
+  String? get userType;
   @override
   @JsonKey(name: 'created_at')
   String? get createdAt;

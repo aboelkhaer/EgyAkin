@@ -1,15 +1,52 @@
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 
-class LatestTrendsHashtags extends StatelessWidget {
+class LatestTrendsHashtags extends StatefulWidget {
   const LatestTrendsHashtags({super.key});
 
   @override
+  State<LatestTrendsHashtags> createState() => _LatestTrendsHashtagsState();
+}
+
+class _LatestTrendsHashtagsState extends State<LatestTrendsHashtags> {
+  @override
+  void initState() {
+    super.initState();
+    PermissionHelper.refreshPermissions().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  Future<void> _recheckPermission() async {
+    await PermissionHelper.refreshPermissions();
+    if (mounted) setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        return BlocBuilder<HomeCubit, HomeState>(
+    return BlocListener<HomeCubit, HomeState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (_, __, ___, ____, _____, ______, _______, ________,
+              _________, __________) {
+            _recheckPermission();
+          },
+          orElse: () {},
+        );
+      },
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDarkMode =
+              themeState is ThemeLoaded && themeState.isDarkMode;
+
+          // Check if user has viewTrendHashtagsInHome permission
+          if (!PermissionHelper.canPermission(
+              AppPermissions.viewTrendHashtagsInHome)) {
+            return const SizedBox.shrink();
+          }
+
+          return BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
             return state.maybeWhen(
               orElse: () {
@@ -116,6 +153,7 @@ class LatestTrendsHashtags extends StatelessWidget {
           },
         );
       },
+    ),
     );
   }
 }

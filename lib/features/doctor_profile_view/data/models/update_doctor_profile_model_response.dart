@@ -7,6 +7,7 @@ part 'update_doctor_profile_model_response.g.dart';
 @freezed
 class UpdateDoctorProfileModelResponse with _$UpdateDoctorProfileModelResponse {
   const factory UpdateDoctorProfileModelResponse({
+    bool? value,
     DoctorModel? data,
     String? message,
   }) = _UpdateDoctorProfileModelResponse;

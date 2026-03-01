@@ -10,12 +10,15 @@ import 'package:egy_akin/app/constants/local_storage_key.dart';
 import 'package:egy_akin/app/routes/app_routes.dart';
 import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
-import 'package:egy_akin/app/shared/functions/check_verified_user.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
+import 'dart:convert';
 import 'package:egy_akin/features/authentication/data/models/authentication_model_response.dart';
 import 'package:egy_akin/features/home/data/models/home_model_response.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';
+import 'package:egy_akin/features/home/domain/usecases/get_role_permissions_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
@@ -32,6 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
     this._getHomeUsecase,
     this._uploadSyndicateCardUsecase,
     this._signOutUsecase,
+    this._getRolePermissionsUsecase,
   ) : super(const HomeState.initial());
   static HomeCubit get(context) => BlocProvider.of(context);
   PersistentTabController tabsController =
@@ -41,6 +45,7 @@ class HomeCubit extends Cubit<HomeState> {
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   final SignOutUsecase _signOutUsecase;
+  final GetRolePermissionsUsecase _getRolePermissionsUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
   int _cacheClearCounter = 0;
@@ -53,7 +58,6 @@ class HomeCubit extends Cubit<HomeState> {
   String currentUserVersion = '';
   String currentUserBuildNumber = '';
   bool getCurrentUserVersion = false;
-  bool isGoneToCommunityForFirstTime = false;
 
   HomeModelResponse homeDataModel = const HomeModelResponse(
     data: HomeDataModelResponse(
@@ -302,7 +306,16 @@ class HomeCubit extends Cubit<HomeState> {
         isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
         currentDoctorRole = homeData.role.toString();
         homeDataModel = homeData;
+
         checkVerifyBanner();
+
+        // Fetch and save permissions when missing (e.g. after register) or when backend says they changed
+        final permissionsJson =
+            await sl<AppPreferences>().getString(AppLocalStrings.permissions);
+        final hasNoPermissions = permissionsJson == null || permissionsJson.isEmpty;
+        if (hasNoPermissions || homeData.permissionsChanged == true) {
+          await _updatePermissions();
+        }
 
         // Only emit new state if the Cubit is still active
         emit(
@@ -321,9 +334,10 @@ class HomeCubit extends Cubit<HomeState> {
         );
       },
     );
-    if (!isVerifiedUser(homeDataModel.isSyndicateCardRequired) &&
-        isGoneToCommunityForFirstTime == false) {
-      isGoneToCommunityForFirstTime = true;
+    // Check if user has accessHome permission
+    final hasAccessHome =
+        await PermissionHelper.hasPermission(AppPermissions.accessHome);
+    if (!hasAccessHome) {
       navigatorKey.currentState?.pushNamed(
         AppRoutes.community,
         arguments: AppRoutesArgs.communityRouteArgs(
@@ -568,6 +582,27 @@ class HomeCubit extends Cubit<HomeState> {
           value.changesCounter,
         ),
       ),
+    );
+  }
+
+  Future<void> _updatePermissions() async {
+    final result = await _getRolePermissionsUsecase.execute(NoParams());
+
+    await result.fold<Future<void>>(
+      (l) async {
+        debugPrint('Error updating permissions: ${l.message}');
+      },
+      (response) async {
+        // Save permissions to local storage
+        if (response.permissions != null && response.permissions!.isNotEmpty) {
+          final permissionsJson = jsonEncode(response.permissions!);
+          await sl<AppPreferences>()
+              .setData(AppLocalStrings.permissions, permissionsJson);
+          // Refresh permission cache
+          await PermissionHelper.refreshPermissions();
+          debugPrint('Permissions updated successfully');
+        }
+      },
     );
   }
 }

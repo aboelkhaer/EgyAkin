@@ -13,6 +13,7 @@ _$GetPatientSectionsModelResponseImpl
           submitStatus: json['submit_status'] as bool?,
           patientName: json['patient_name'] as String?,
           doctorId: json['doctor_Id'] as String?,
+          isMarked: json['is_marked'] as bool?,
           gfr: json['gfr'] == null
               ? null
               : GFRModel.fromJson(json['gfr'] as Map<String, dynamic>),
@@ -28,6 +29,7 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
       'submit_status': instance.submitStatus,
       'patient_name': instance.patientName,
       'doctor_Id': instance.doctorId,
+      'is_marked': instance.isMarked,
       'gfr': instance.gfr,
       'data': instance.data,
     };

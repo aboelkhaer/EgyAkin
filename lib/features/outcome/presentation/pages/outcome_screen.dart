@@ -1,6 +1,8 @@
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_not_submitted.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/if_outcome_submitted.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'dart:ui' as ui;
 
 import '../../../../exports.dart';
@@ -64,8 +66,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                       child: Text(
                         (widget.currentDoctorModel.id.toString() ==
                                     widget.doctorId.toString() ||
-                                widget.homeDataModel.role ==
-                                    AppStrings.roleAdmin)
+                                PermissionHelper.canPermission(
+                                    AppPermissions.viewPatientsName))
                             ? widget.patientName.toString()
                             : convertTextToSymbols(widget.patientName),
                         style: TextStyle(fontSize: 14.sp),

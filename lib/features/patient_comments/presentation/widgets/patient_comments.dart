@@ -60,26 +60,36 @@ class PatientComments extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: double.infinity,
-                  // height: double.maxFinite,
-                  child: ListView.builder(
-                    itemCount: comments.length,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(top: 25),
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) {
-                      return CommentCard(
-                        commentModel: comments[index],
-                        currentDoctorModel: currentDoctorModel,
-                        currentDoctorRole: currentDoctorRole,
-                        homeDataModel: homeDataModel,
-                        onDelete: () {
-                          cubit.deletePatientComment(
-                              comments[index].id.toString());
-                        },
-                      );
-                    },
+                PermissionGuard(
+                  permission: AppPermissions.viewPatientComments,
+                  fallback: Center(
+                      child: Column(
+                    children: [
+                      SizedBox(height: 8.h),
+                      Text(context.tr(AppStrings
+                          .youDontHavePermissionToViewPatientComments)),
+                    ],
+                  )),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ListView.builder(
+                      itemCount: comments.length,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.only(top: 25),
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return CommentCard(
+                          commentModel: comments[index],
+                          currentDoctorModel: currentDoctorModel,
+                          currentDoctorRole: currentDoctorRole,
+                          homeDataModel: homeDataModel,
+                          onDelete: () {
+                            cubit.deletePatientComment(
+                                comments[index].id.toString());
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
                 SizedBox(height: 100.h),
