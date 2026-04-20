@@ -375,15 +375,16 @@ class PostCard extends StatelessWidget {
                                                 );
                                               }
 
-                                              // Check if user has viewEditAndDeletePostForAdmin permission or is the post owner
+                                              // Show menu if user has viewEditAndDeletePostForAdmin permission OR is the post owner (same as show_single_feed_screen)
                                               return (!PermissionHelper
                                                           .canPermission(
                                                               AppPermissions
                                                                   .viewEditAndDeletePostForAdmin) &&
-                                                      currentDoctorModel.id
-                                                              .toString() !=
-                                                          feed.doctor!.id
-                                                              .toString())
+                                                      (feed.doctor == null ||
+                                                          currentDoctorModel.id
+                                                                  .toString() !=
+                                                              feed.doctor!.id
+                                                                  .toString()))
                                                   ? const SizedBox.shrink()
                                                   : PopupMenuButton<String>(
                                                       icon: const Icon(

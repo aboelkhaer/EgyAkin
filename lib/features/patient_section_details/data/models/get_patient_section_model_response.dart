@@ -9,6 +9,8 @@ class GetPatientSectionDetailsModelResponse
     with _$GetPatientSectionDetailsModelResponse {
   const factory GetPatientSectionDetailsModelResponse({
     bool? value,
+    @JsonKey(name: 'ai_mode') String? aiMode,
+    @JsonKey(name: 'ai_hint') String? aiHint,
     List<QuestionModel>? data,
   }) = _GetPatientSectionDetailsModelResponse;
   factory GetPatientSectionDetailsModelResponse.fromJson(

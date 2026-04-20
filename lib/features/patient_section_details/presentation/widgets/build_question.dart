@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
+import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
@@ -49,6 +50,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
           case AppStrings.questionTypeDouble:
             // Get current value (null if no answer exists)
             final currentAnswer = cubit.questionModelList[widget.index].answer;
+            final qidDouble =
+                cubit.questionModelList[widget.index].id.toString();
 
             // Split into whole and decimal parts only if value exists
             String? initialWhole;
@@ -65,9 +68,14 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   : '00';
             }
 
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (cubit.aiFilledQuestionIds.contains(qidDouble))
+                  const AiFilledFieldBanner(),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
                 // Whole number part
                 SizedBox(
                   width: 50,
@@ -139,14 +147,20 @@ class _BuildQuestionState extends State<BuildQuestion> {
                   ),
                 ),
               ],
+            ),
+              ],
             );
 
           //! String
           case AppStrings.questionTypeString:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
+            final qidStr =
+                cubit.questionModelList[widget.index].id.toString();
             return BuildStringValueQuestions(
               questionList: cubit.questionModelList,
               index: widget.index,
+              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidStr),
+              onClearAiFilledMark: () => cubit.clearAiFilledMark(qidStr),
               initialValue: initialValueInQuestions(
                 answer: questionAnswer,
                 currentDoctorId: widget.currentDoctorModel.id.toString(),
@@ -207,9 +221,17 @@ class _BuildQuestionState extends State<BuildQuestion> {
               AppStrings.otherField: AppStrings.empty
             };
             dynamic selectedValue;
+            final qidSel =
+                cubit.questionModelList[widget.index].id.toString();
             return BuildSelectValueQuestion(
               questionList: cubit.questionModelList,
               index: widget.index,
+              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidSel) &&
+                  selectQuestionHasDisplayableAnswer(
+                    optionValues: cubit.questionModelList[widget.index].values,
+                    storedAnswer: answerMap,
+                  ),
+              onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSel),
               selected: initialValueInSelectQuestion(
                   questionAnswer: questionAnswer is Map
                       ? questionAnswer[AppStrings.answers]
@@ -273,6 +295,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
               AppStrings.answers: [],
               AppStrings.otherField: AppStrings.empty
             };
+            final qidMulti =
+                cubit.questionModelList[widget.index].id.toString();
             if (cubit.questionModelList[widget.index].answer[AppStrings.answers]
                 is String) {
               String answers = cubit.questionModelList[widget.index]
@@ -285,6 +309,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 oldAnswer: cubit
                     .questionModelList[widget.index].answer[AppStrings.answers],
                 isOldAnswer: true,
+                showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+                onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
                 onChanged: (val) {
                   setState(() {
                     answerMap[AppStrings.otherField] = val;
@@ -328,12 +354,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                       child: ChoiceChip(
                         label: Text(
                           value.toString(),
-                          style: TextStyle(
-                            color: answers.contains(value)
-                                ? Colors.white
-                                : isDarkMode
-                                    ? AppColors.title
-                                    : Colors.black,
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 2,
@@ -344,6 +366,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                         selected: answers.contains(value),
                         selectedColor: AppColors.primary.withOpacity(0.7),
                         onSelected: (selected) {
+                          cubit.clearAiFilledMark(qidMulti);
                           setState(() {
                             // Check if `answers` is a String, and if so, replace it with an empty List<dynamic>
                             if (answerMap[AppStrings.answers] is String) {
@@ -399,6 +422,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 questionList: cubit.questionModelList,
                 initialValue: answerMap[AppStrings.otherField] ?? '',
                 listContainOther: answers,
+                showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+                onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
                 onChanged: (val) {
                   setState(() {
                     answerMap[AppStrings.otherField] = val;
@@ -442,12 +467,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                       child: ChoiceChip(
                         label: Text(
                           value.toString(),
-                          style: TextStyle(
-                            color: answers.contains(value)
-                                ? Colors.white
-                                : isDarkMode
-                                    ? AppColors.darkTitle
-                                    : Colors.black,
+                          style: const TextStyle(
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                           ),
                           maxLines: 2,
@@ -458,6 +479,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                         selected: answers.contains(value),
                         selectedColor: AppColors.primary.withOpacity(0.7),
                         onSelected: (selected) {
+                          cubit.clearAiFilledMark(qidMulti);
                           setState(() {
                             if (selected) {
                               answers.add(value);
@@ -500,10 +522,14 @@ class _BuildQuestionState extends State<BuildQuestion> {
           case AppStrings.questionTypeDate:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
             questionAnswer ??= DateTime.now().toString();
+            final qidDate =
+                cubit.questionModelList[widget.index].id.toString();
             // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
 
             return Column(
               children: [
+                if (cubit.aiFilledQuestionIds.contains(qidDate))
+                  const AiFilledFieldBanner(),
                 SizedBox(
                   height: MediaQuery.of(context).copyWith().size.height / 4,
                   child: CalendarDatePicker(
@@ -522,6 +548,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                     firstDate: DateTime(1900),
                     lastDate: DateTime(2100),
                     onDateChanged: (val) {
+                      cubit.clearAiFilledMark(qidDate);
                       questionAnswer = val.toString();
                       cubit.formData[cubit.questionModelList[widget.index].id
                           .toString()] = questionAnswer;
@@ -898,6 +925,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
     required String whole,
     required String decimal,
   }) {
+    cubit.clearAiFilledMark(cubit.questionModelList[index].id.toString());
     final wholeNum = whole.isEmpty ? 0 : int.parse(whole);
     final decimalNum = decimal.padRight(2, '0');
     final doubleValue = wholeNum + (int.parse(decimalNum) / 100);

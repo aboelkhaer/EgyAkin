@@ -656,7 +656,9 @@ abstract class ApiServices {
   );
 
   @POST(ApiEndPoint.exportFilteredPatients)
-  Future<ExportPatientsModelResponse> exportFilteredPatients();
+  Future<ExportPatientsModelResponse> exportFilteredPatients(
+    @Field('only_my_patients') bool isOnlyMyPatients,
+  );
 
   @POST('${ApiEndPoint.makeMarkPatient}/{patientId}')
   Future<MakeMarkPatientModelResponse> makeMarkPatient(
@@ -689,4 +691,11 @@ abstract class ApiServices {
   );
   @GET(ApiEndPoint.getRolePermissions)
   Future<GetPermissionsModelResponse> getRolePermissions();
+
+  @POST(ApiEndPoint.processSection)
+  @MultiPart()
+  Future<ProcessSectionModelResponse> processSection(
+    @Part(name: 'section_id') String sectionId,
+    @Part(name: 'audio') File audio,
+  );
 }

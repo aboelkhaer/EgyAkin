@@ -1,9 +1,15 @@
-String showAnswerWithSelectType(Map<String, dynamic> answer) {
-  final String answers = answer['answers'] ?? '...';
-  final String otherField = answer['other_field'] ?? '';
+import '../../constants/app_strings.dart';
+import '../../services/localization_service.dart';
 
-  if (answers == 'Others') {
-    return '$answers\n\nOther Answer: $otherField';
+String showAnswerWithSelectType(Map<String, dynamic> answer,
+    {LocalizationService? localization}) {
+  final String answers = answer[AppStrings.answers] ?? '...';
+  final String otherField = answer[AppStrings.otherField] ?? '';
+
+  if (answers == AppStrings.others) {
+    final loc = localization ?? LocalizationService.instance;
+    final label = loc.translate(AppStrings.yourOtherAnswer);
+    return '$answers\n\n$label: $otherField';
   }
   return answers;
 }

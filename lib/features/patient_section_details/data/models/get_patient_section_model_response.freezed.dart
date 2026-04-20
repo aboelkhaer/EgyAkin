@@ -22,6 +22,10 @@ GetPatientSectionDetailsModelResponse
 /// @nodoc
 mixin _$GetPatientSectionDetailsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_mode')
+  String? get aiMode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
 
   /// Serializes this GetPatientSectionDetailsModelResponse to a JSON map.
@@ -43,7 +47,11 @@ abstract class $GetPatientSectionDetailsModelResponseCopyWith<$Res> {
       _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
           GetPatientSectionDetailsModelResponse>;
   @useResult
-  $Res call({bool? value, List<QuestionModel>? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'ai_mode') String? aiMode,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      List<QuestionModel>? data});
 }
 
 /// @nodoc
@@ -63,6 +71,8 @@ class _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? value = freezed,
+    Object? aiMode = freezed,
+    Object? aiHint = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -70,6 +80,14 @@ class _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      aiMode: freezed == aiMode
+          ? _value.aiMode
+          : aiMode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -87,7 +105,11 @@ abstract class _$$GetPatientSectionDetailsModelResponseImplCopyWith<$Res>
       __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? value, List<QuestionModel>? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'ai_mode') String? aiMode,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      List<QuestionModel>? data});
 }
 
 /// @nodoc
@@ -106,6 +128,8 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? value = freezed,
+    Object? aiMode = freezed,
+    Object? aiHint = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetPatientSectionDetailsModelResponseImpl(
@@ -113,6 +137,14 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      aiMode: freezed == aiMode
+          ? _value.aiMode
+          : aiMode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -126,7 +158,10 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
 class _$GetPatientSectionDetailsModelResponseImpl
     implements _GetPatientSectionDetailsModelResponse {
   const _$GetPatientSectionDetailsModelResponseImpl(
-      {this.value, final List<QuestionModel>? data})
+      {this.value,
+      @JsonKey(name: 'ai_mode') this.aiMode,
+      @JsonKey(name: 'ai_hint') this.aiHint,
+      final List<QuestionModel>? data})
       : _data = data;
 
   factory _$GetPatientSectionDetailsModelResponseImpl.fromJson(
@@ -135,6 +170,12 @@ class _$GetPatientSectionDetailsModelResponseImpl
 
   @override
   final bool? value;
+  @override
+  @JsonKey(name: 'ai_mode')
+  final String? aiMode;
+  @override
+  @JsonKey(name: 'ai_hint')
+  final String? aiHint;
   final List<QuestionModel>? _data;
   @override
   List<QuestionModel>? get data {
@@ -147,7 +188,7 @@ class _$GetPatientSectionDetailsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionDetailsModelResponse(value: $value, data: $data)';
+    return 'GetPatientSectionDetailsModelResponse(value: $value, aiMode: $aiMode, aiHint: $aiHint, data: $data)';
   }
 
   @override
@@ -156,13 +197,15 @@ class _$GetPatientSectionDetailsModelResponseImpl
         (other.runtimeType == runtimeType &&
             other is _$GetPatientSectionDetailsModelResponseImpl &&
             (identical(other.value, value) || other.value == value) &&
+            (identical(other.aiMode, aiMode) || other.aiMode == aiMode) &&
+            (identical(other.aiHint, aiHint) || other.aiHint == aiHint) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, value, const DeepCollectionEquality().hash(_data));
+  int get hashCode => Object.hash(runtimeType, value, aiMode, aiHint,
+      const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of GetPatientSectionDetailsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -185,7 +228,10 @@ class _$GetPatientSectionDetailsModelResponseImpl
 abstract class _GetPatientSectionDetailsModelResponse
     implements GetPatientSectionDetailsModelResponse {
   const factory _GetPatientSectionDetailsModelResponse(
-          {final bool? value, final List<QuestionModel>? data}) =
+          {final bool? value,
+          @JsonKey(name: 'ai_mode') final String? aiMode,
+          @JsonKey(name: 'ai_hint') final String? aiHint,
+          final List<QuestionModel>? data}) =
       _$GetPatientSectionDetailsModelResponseImpl;
 
   factory _GetPatientSectionDetailsModelResponse.fromJson(
@@ -194,6 +240,12 @@ abstract class _GetPatientSectionDetailsModelResponse
 
   @override
   bool? get value;
+  @override
+  @JsonKey(name: 'ai_mode')
+  String? get aiMode;
+  @override
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint;
   @override
   List<QuestionModel>? get data;
 

@@ -31,13 +31,8 @@ class _ProfileFeaturesState extends State<ProfileFeatures> {
   @override
   void didUpdateWidget(ProfileFeatures oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Only update preserved count if the new value is not null/empty and we don't have a preserved value
-    // or if we're not in sign out loading state
-    if (widget.homeDataModel.markedPatientsCount != null &&
-        widget.homeDataModel.markedPatientsCount!.isNotEmpty &&
-        widget.homeDataModel.markedPatientsCount != '0') {
-      _preservedMarkedPatientsCount = widget.homeDataModel.markedPatientsCount;
-    }
+    // Always sync from widget so a new account shows its own marked count after sign in
+    _preservedMarkedPatientsCount = widget.homeDataModel.markedPatientsCount;
   }
 
   @override

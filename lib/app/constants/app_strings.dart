@@ -100,6 +100,7 @@ class AppStrings {
   static const String exclamationMark = '!';
   static const String thisFieldIsRequired = 'This field is required.';
   static const String answerHere = 'Answer here';
+  static const String filledByAi = 'Filled by AI';
   static const String toAddOutcomeYouMustVerifyYourEmailAddress =
       'To add outcome you must verify your email address';
   static const String submit = 'Submit';
@@ -598,4 +599,11 @@ class AppStrings {
       'Failed to start Apple Sign-In. Please try again.';
   static const String member = 'Member';
   static const String researchMember = 'Research Member';
+  static const String yourOtherAnswer = 'Your other answer';
+  static const String oldAnswer = 'Old Answer';
+  static const String youDontHavePermissionToCreateRecommendations =
+      'You don\'t have permission to create recommendations.';
+  static const String showCurrentUserPermissions = 'Show current user permissions';
+  static const String currentUserPermissions = 'Current user permissions';
+
 }

@@ -50,6 +50,7 @@ enum AppPermissions {
   verifySyndicateCard,
   blockUser,
   verifyUserEmail,
+  viewPatientsFinalSubmitAndDeleteContainerForAdmin,
 
   //! File Uploads
   uploadPatientFiles,
@@ -144,6 +145,8 @@ enum AppPermissions {
   viewDoseOptionInHomeSearch,
   viewPatientOptionInHomeSearch,
   viewExportPatientsButtonInAllPatientsForAdmin,
+  deletePatientForAdmin,
+  finalSubmitPatientForAdmin,
 }
 
 extension PermissionMapper on String {
@@ -176,6 +179,8 @@ extension PermissionMapper on String {
         return AppPermissions.submitPatientOutcome;
       case 'final-submit-patient':
         return AppPermissions.finalSubmitPatient;
+      case 'final-submit-patient-for-admin':
+        return AppPermissions.finalSubmitPatientForAdmin;
       case 'generate-patient-pdf':
         return AppPermissions.generatePatientPdf;
       case 'mark-patient':
@@ -238,6 +243,8 @@ extension PermissionMapper on String {
         return AppPermissions.blockUser;
       case 'verify-user-email':
         return AppPermissions.verifyUserEmail;
+      case 'view-patients-final-submit-and-delete-container-for-admin':
+        return AppPermissions.viewPatientsFinalSubmitAndDeleteContainerForAdmin;
 
       //! Files
       case 'upload-patient-files':
@@ -415,6 +422,8 @@ extension PermissionMapper on String {
 
       case 'view-export-patients-report-in-all-patients-button-for-admin':
         return AppPermissions.viewExportPatientsButtonInAllPatientsForAdmin;
+      case 'delete-patient-for-admin':
+        return AppPermissions.deletePatientForAdmin;
 
 
 

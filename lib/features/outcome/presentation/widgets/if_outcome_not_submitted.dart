@@ -305,9 +305,113 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
     );
   }
 
+  void _updateDoubleValue({
+    required OutcomeCubit cubit,
+    required int index,
+    required String whole,
+    required String decimal,
+  }) {
+    final wholeNum = whole.isEmpty ? 0 : int.parse(whole);
+    final decimalNum = decimal.padRight(2, '0');
+    final doubleValue = wholeNum + (int.parse(decimalNum) / 100);
+
+    cubit.updateQuestionAnswer(
+      cubit.questionModelList[index].id.toString(),
+      doubleValue,
+    );
+
+    cubit.formData[cubit.questionModelList[index].id.toString()] = doubleValue;
+  }
+
   Widget buildQuestionWidget(List<QuestionModel> questionList, int index,
       Size size, OutcomeCubit cubit) {
     switch (cubit.questionModelList[index].type) {
+      //! double
+      case AppStrings.questionTypeDouble:
+        final currentAnswer = cubit.questionModelList[index].answer;
+
+        String? initialWhole;
+        String? initialDecimal;
+
+        if (currentAnswer != null) {
+          final currentValue = currentAnswer is String
+              ? double.tryParse(currentAnswer) ?? 0.0
+              : currentAnswer as double;
+          final parts = currentValue.toString().split('.');
+          initialWhole = parts[0];
+          initialDecimal = parts.length > 1
+              ? parts[1].padRight(2, '0').substring(0, 2)
+              : '00';
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox(
+              width: 50,
+              child: CustomTextFormField(
+                title: '00',
+                textInputType: TextInputType.number,
+                contentPadding: EdgeInsets.zero,
+                maxLength: 2,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                textAlign: TextAlign.center,
+                initialValue: initialWhole,
+                onChanged: (wholeValue) {
+                  final decimalValue = cubit.getCurrentDecimalValue(index);
+                  _updateDoubleValue(
+                    cubit: cubit,
+                    index: index,
+                    whole: wholeValue,
+                    decimal: decimalValue,
+                  );
+                },
+                validator: (val) {
+                  if (cubit.questionModelList[index].mandatory == true &&
+                      (val == null || val.isEmpty)) {
+                    return AppStrings.thisFieldIsRequired;
+                  }
+                  return null;
+                },
+              ),
+            ),
+            Container(
+              width: 4,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade500,
+                shape: BoxShape.circle,
+              ),
+            ),
+            SizedBox(
+              width: 50,
+              child: CustomTextFormField(
+                title: '00',
+                textInputType: TextInputType.number,
+                contentPadding: EdgeInsets.zero,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(2),
+                ],
+                maxLength: 2,
+                textAlign: TextAlign.center,
+                initialValue: initialDecimal,
+                onChanged: (decimalValue) {
+                  final wholeValue = cubit.getCurrentWholeValue(index);
+                  _updateDoubleValue(
+                    cubit: cubit,
+                    index: index,
+                    whole: wholeValue,
+                    decimal: decimalValue,
+                  );
+                },
+                validator: (value) => null,
+              ),
+            ),
+          ],
+        );
+
       //! String
       case AppStrings.questionTypeString:
         var questionAnswer = cubit.questionModelList[index].answer;

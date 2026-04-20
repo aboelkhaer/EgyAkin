@@ -115,6 +115,39 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   }
 
   @override
+  void didUpdateWidget(CustomTextFormField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.textFormFieldController != null) return;
+
+    final oldIv = oldWidget.initialValue ?? '';
+    final newIv = widget.initialValue ?? '';
+    if (oldIv == newIv) return;
+
+    // Avoid setState / controller notifications during build (assertion).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || widget.textFormFieldController != null) return;
+      final iv = widget.initialValue ?? '';
+      if (iv != _controller.text) {
+        _controller.value = TextEditingValue(
+          text: iv,
+          selection: TextSelection.collapsed(offset: iv.length),
+        );
+      }
+      setState(() {
+        _isTextEmpty = iv.isEmpty;
+        if (iv.isNotEmpty) {
+          _currentTextDirection =
+              RegExp(r'[\u0600-\u06FF]').hasMatch(iv)
+                  ? TextDirection.rtl
+                  : TextDirection.ltr;
+        } else {
+          _currentTextDirection = TextDirection.ltr;
+        }
+      });
+    });
+  }
+
+  @override
   void dispose() {
     if (widget.textFormFieldController == null) {
       _controller.dispose();

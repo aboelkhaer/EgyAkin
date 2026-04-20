@@ -26,7 +26,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
     // Call textFormFieldControllersInit if the method exists
     if (widget.cubit != null && widget.filters != null) {
       try {
-    widget.cubit.textFormFieldControllersInit(widget.filters!);
+        widget.cubit.setFiltersForRequest(widget.filters);
+        widget.cubit.textFormFieldControllersInit(widget.filters!);
       } catch (e) {
         // Handle case where method doesn't exist
         log('textFormFieldControllersInit not available: $e');
@@ -177,8 +178,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         child: CustomElevatedButton(
                           onPressed: () {
                             try {
-                            widget.cubit.resetFormData();
-                            setState(() {});
+                              widget.cubit.resetFormData();
+                              setState(() {});
                             } catch (e) {
                               log('resetFormData not available: $e');
                             }
@@ -192,7 +193,8 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                           onPressed: () {
                             navigatorKey.currentState?.pop();
                             try {
-                              widget.cubit.applyPatientFilters(widget.isCurrentDoctor ? 'true' : 'false');
+                              widget.cubit.applyPatientFilters(
+                                  widget.isCurrentDoctor ? 'true' : 'false');
                             } catch (e) {
                               log('applyPatientFilters not available: $e');
                             }
@@ -334,7 +336,67 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                 );
               }).toList(),
             );
-            case 'date_range':
+          case 'multiple':
+            {
+              final stored = widget.cubit.formData[filter.id.toString()];
+              final List<String> selectedList =
+                  stored != null && stored.toString().trim().isNotEmpty
+                      ? stored
+                          .toString()
+                          .split(',')
+                          .map((e) => e.trim())
+                          .where((e) => e.isNotEmpty)
+                          .toList()
+                      : [];
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: filter.values!.map((value) {
+                  final valueStr = value.toString();
+                  final isSelected = selectedList.contains(valueStr);
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      chipTheme: Theme.of(context).chipTheme.copyWith(
+                        checkmarkColor: Colors.white,
+                      ),
+                    ),
+                    child: ChoiceChip(
+                      label: Text(
+                        valueStr,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : isDarkMode
+                                  ? Colors.white
+                                  : Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      backgroundColor: isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade400,
+                      selected: isSelected,
+                      selectedColor: AppColors.primary.withOpacity(0.7),
+                      onSelected: (selected) {
+                      setState(() {
+                        final List<String> updated = List.from(selectedList);
+                        if (selected) {
+                          if (!updated.contains(valueStr))
+                            updated.add(valueStr);
+                        } else {
+                          updated.remove(valueStr);
+                        }
+                        widget.cubit.formData[filter.id.toString()] =
+                            updated.join(',');
+                      });
+                      log(widget.cubit.formData.toString());
+                    },
+                    ),
+                  );
+                }).toList(),
+              );
+            }
+          case 'date_range':
             return Row(
               children: [
                 // From Date
@@ -571,39 +633,52 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      CustomTextFormField(
-                        title: '',
-                        textFormFieldController: TextEditingController(
-                          text: _extractNumberFromString(
+                      Builder(
+                        builder: (context) {
+                          final fromKey = '${filter.id}_from';
+                          final existingFromText = _extractNumberFromString(
                                   widget.cubit.formData['${filter.id}'],
                                   'from') ??
-                              '',
-                        ),
-                        textInputType: TextInputType.number,
-                        textInputAction: TextInputAction.next,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        validator: (value) {
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            // Get existing to number if it exists
-                            final existingTo = _extractNumberFromString(
-                                widget.cubit.formData['${filter.id}'], 'to');
+                              '';
+                          final fromController =
+                              widget.cubit.controllers[fromKey] ??
+                                  TextEditingController(
+                                    text: existingFromText,
+                                  );
+                          widget.cubit.controllers[fromKey] = fromController;
 
-                            // Build the complete string with both from and to numbers
-                            String newValue = '{from:$value';
-                            if (existingTo != null) {
-                              newValue += ',to:$existingTo';
-                            }
-                            newValue += '}';
+                          return CustomTextFormField(
+                            title: context.tr(AppStrings.from),
+                            textFormFieldController: fromController,
+                            textInputType: TextInputType.number,
+                            textInputAction: TextInputAction.next,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            validator: (value) {
+                              return null;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                // Get existing to number if it exists
+                                final existingTo = _extractNumberFromString(
+                                    widget.cubit.formData['${filter.id}'],
+                                    'to');
 
-                            widget.cubit.formData['${filter.id}'] = newValue;
-                          });
-                          log(widget.cubit.formData.toString());
+                                // Build the complete string with both from and to numbers
+                                String newValue = '{from:$value';
+                                if (existingTo != null) {
+                                  newValue += ',to:$existingTo';
+                                }
+                                newValue += '}';
+
+                                widget.cubit.formData['${filter.id}'] =
+                                    newValue;
+                              });
+                              log(widget.cubit.formData.toString());
+                            },
+                          );
                         },
                       ),
                     ],
@@ -624,40 +699,53 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      CustomTextFormField(
-                        title: '',
-                        textFormFieldController: TextEditingController(
-                          text: _extractNumberFromString(
+                      Builder(
+                        builder: (context) {
+                          final toKey = '${filter.id}_to';
+                          final existingToText = _extractNumberFromString(
                                   widget.cubit.formData['${filter.id}'],
                                   'to') ??
-                              '',
-                        ),
-                        textInputType: TextInputType.number,
-                        textInputAction: TextInputAction.done,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        validator: (value) {
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            // Get existing from number if it exists
-                            final existingFrom = _extractNumberFromString(
-                                widget.cubit.formData['${filter.id}'], 'from');
+                              '';
+                          final toController =
+                              widget.cubit.controllers[toKey] ??
+                                  TextEditingController(
+                                    text: existingToText,
+                                  );
+                          widget.cubit.controllers[toKey] = toController;
 
-                            // Build the complete string with both from and to numbers
-                            String newValue = '';
-                            if (existingFrom != null) {
-                              newValue += '{from:$existingFrom,to:$value}';
-                            } else {
-                              newValue = '{to:$value}';
-                            }
+                          return CustomTextFormField(
+                            title: context.tr(AppStrings.to),
+                            textFormFieldController: toController,
+                            textInputType: TextInputType.number,
+                            textInputAction: TextInputAction.done,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(10),
+                            ],
+                            validator: (value) {
+                              return null;
+                            },
+                            onChanged: (value) {
+                              setState(() {
+                                // Get existing from number if it exists
+                                final existingFrom = _extractNumberFromString(
+                                    widget.cubit.formData['${filter.id}'],
+                                    'from');
 
-                            widget.cubit.formData['${filter.id}'] = newValue;
-                          });
-                          log(widget.cubit.formData.toString());
+                                // Build the complete string with both from and to numbers
+                                String newValue = '';
+                                if (existingFrom != null) {
+                                  newValue += '{from:$existingFrom,to:$value}';
+                                } else {
+                                  newValue = '{to:$value}';
+                                }
+
+                                widget.cubit.formData['${filter.id}'] =
+                                    newValue;
+                              });
+                              log(widget.cubit.formData.toString());
+                            },
+                          );
                         },
                       ),
                     ],

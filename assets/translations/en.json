@@ -447,7 +447,7 @@
   "Sorry can't do that! You are admin.": "Sorry can't do that! You are admin.",
   "Voters": "Voters",
   "What's New": "What's New",
-  "update_dialog_content": "<ul><li><strong>🌙 Dark Mode Support</strong>: Experience the app in a beautiful dark theme that's easier on your eyes and perfect for low-light environments. Toggle between light and dark modes in settings.</li><li><strong>🌍 Multi-Language Support</strong>: Full localization support with seamless language switching. The app now adapts to your preferred language for a more personalized experience.</li><li><strong>📋 Discharge Recommendations</strong>: New comprehensive section providing detailed discharge planning and recommendations for better patient care transitions and follow-up care.</li><li><strong>📊 Statistics Dashboard</strong>: New statistics section in the More tab providing detailed insights, analytics, and data visualization for better decision-making and tracking.</li><li><strong>🚀 Enhanced User Experience</strong>: Major improvements across the entire app including better navigation, smoother animations, improved loading states, and more intuitive user interfaces.</li><li><strong>🔗 Enhanced Community Features</strong>: Improved URL handling in community posts with better link previews, clickable content, and enhanced sharing capabilities.</li><li><strong>📱 Share Post Feature</strong>: Easily share interesting community posts with others through various platforms and messaging apps with improved loading indicators.</li><li><strong>🛠️ Bug Fixes & Performance</strong>: Enjoy a significantly smoother and more reliable app experience with numerous fixes, optimizations, and performance enhancements.</li></ul>",
+  "update_dialog_content": "<ul><li><strong>🔐 Permission-based access</strong>: Post edit/delete menu now shows for your own posts and for admins. Patient name, final submit button, delete button, and doctor profile access are controlled by permissions for finer access control.</li><li><strong>📌 Marked patients</strong>: Marked patients count now updates correctly after you sign out and sign in with another account.</li><li><strong>✏️ Community posts</strong>: Edit and delete menu appears when you are the post author or have admin permission, on both the feed and the single post screen.</li><li><strong>👤 Doctor profile</strong>: Research Member / Member toggle updates the screen correctly. Your user type stays in sync with the server after loading home.</li><li><strong>🔍 Filters</strong>: Reset button now clears all filter fields including number ranges (e.g. age from/to). New <strong>multiple choice</strong> filter type: select several options with chips; values are sent to the API as a list for both All Patients and Your Patients.</li><li><strong>📝 Outcome forms</strong>: Permission check before opening doctor profile from outcomes. New <strong>double (decimal)</strong> question type. Dropdowns and \"Other answer\" text follow app theme and language.</li><li><strong>📋 Patient sections</strong>: Visibility of patient name, final submit button, and delete button is based on permissions instead of role.</li><li><strong>🛠️ More & translations</strong>: Current user permissions are shown as a list in More. \"Other answer\" and related strings are fully localized.</li></ul>",
   "Clear Update Message to show it again": "Clear Update Message to show it again",
   "Admin Only - Clear Update Message Flag": "Admin Only - Clear Update Message Flag",
   "Update message flag cleared successfully!": "Update message flag cleared successfully!",
@@ -480,5 +480,12 @@
   "Reply": "Reply",
   "Failed to start Apple Sign-In. Please try again.": "Failed to start Apple Sign-In. Please try again.",
   "Member": "Member",
-  "Research Member": "Research Member"
+  "Research Member": "Research Member",
+  "Your other answer": "Your other answer",
+  "Answer here": "Answer here",
+  "Old Answer": "Old Answer",
+  "You don't have permission to create recommendations.": "You don't have permission to create recommendations.",
+  "Show current user permissions": "Show current user permissions",
+  "Current user permissions": "Current user permissions",
+  "Filled by AI": "Filled by AI"
 }

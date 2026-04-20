@@ -9,6 +9,8 @@ class BuildSelectValueQuestion extends StatelessWidget {
   final dynamic selected;
   final bool isAddPatient;
   final Map<String, dynamic>? formData;
+  final bool showAiFilledBanner;
+  final VoidCallback? onClearAiFilledMark;
 
   const BuildSelectValueQuestion({
     super.key,
@@ -20,12 +22,19 @@ class BuildSelectValueQuestion extends StatelessWidget {
     required this.onChangedForOtherField,
     this.isAddPatient = false,
     this.formData,
+    this.showAiFilledBanner = false,
+    this.onClearAiFilledMark,
   });
 
   @override
   Widget build(BuildContext context) {
+    final screenH = MediaQuery.sizeOf(context).height;
+    final menuMaxHeight = (screenH * 0.38).clamp(200.0, 380.0);
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
+        if (showAiFilledBanner) const AiFilledFieldBanner(),
         Container(
           // padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
           decoration: BoxDecoration(
@@ -33,6 +42,7 @@ class BuildSelectValueQuestion extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: DropdownButtonFormField<dynamic>(
+            menuMaxHeight: menuMaxHeight,
             hint: Text(isAddPatient
                 ? (!formData!.containsKey(questionList[index].id.toString()) ||
                         formData![questionList[index].id.toString()]
@@ -41,11 +51,11 @@ class BuildSelectValueQuestion extends StatelessWidget {
                         formData![questionList[index].id.toString()]
                                 ['answers'] ==
                             null
-                    ? 'Choose'
+                    ? AppStrings.choose
                     : formData![questionList[index].id.toString()]['answers'])
                 : (questionList[index].answer['answers'] == '' ||
                         questionList[index].answer['answers'] == null
-                    ? 'Choose'
+                    ? context.tr(AppStrings.choose)
                     : questionList[index].answer['answers'])),
             validator: validator,
             value: selected,
@@ -57,11 +67,15 @@ class BuildSelectValueQuestion extends StatelessWidget {
               );
             }).toList(),
 
-            onChanged: onChanged,
+            onChanged: (v) {
+              onClearAiFilledMark?.call();
+              onChanged?.call(v);
+            },
             isExpanded: true,
             decoration: const InputDecoration(
               border: OutlineInputBorder(borderSide: BorderSide.none),
             ),
+
             // decoration: const InputDecoration(label: Text('Choose')),
           ),
         ),
@@ -72,17 +86,17 @@ class BuildSelectValueQuestion extends StatelessWidget {
                 ? Column(
                     children: [
                       const SizedBox(height: 10),
-                      const Row(
+                      Row(
                         children: [
-                          Text('Your other answer',
-                              style: TextStyle(
+                          Text(context.tr(AppStrings.yourOtherAnswer),
+                              style: const TextStyle(
                                 color: Colors.grey,
                               )),
                         ],
                       ),
                       const SizedBox(height: 5),
                       CustomTextFormField(
-                        title: 'Answer here',
+                        title: context.tr(AppStrings.answerHere),
                         initialValue: isAddPatient
                             ? (formData!.containsKey(
                                     questionList[index].id.toString())
@@ -93,7 +107,10 @@ class BuildSelectValueQuestion extends StatelessWidget {
                         textInputType: TextInputType.text,
                         textInputAction: TextInputAction.next,
                         validator: validator,
-                        onChanged: onChangedForOtherField,
+                        onChanged: (v) {
+                          onClearAiFilledMark?.call();
+                          onChangedForOtherField?.call(v);
+                        },
                       ),
                     ],
                   )
@@ -102,22 +119,25 @@ class BuildSelectValueQuestion extends StatelessWidget {
                 ? Column(
                     children: [
                       const SizedBox(height: 10),
-                      const Row(
+                      Row(
                         children: [
-                          Text('Your other answer',
-                              style: TextStyle(
+                          Text(context.tr(AppStrings.yourOtherAnswer),
+                              style: const TextStyle(
                                 color: Colors.grey,
                               )),
                         ],
                       ),
                       const SizedBox(height: 5),
                       CustomTextFormField(
-                        title: 'Answer here',
+                        title: context.tr(AppStrings.answerHere),
                         initialValue: questionList[index].answer['other_field'],
                         textInputType: TextInputType.text,
                         textInputAction: TextInputAction.next,
                         validator: validator,
-                        onChanged: onChangedForOtherField,
+                        onChanged: (v) {
+                          onClearAiFilledMark?.call();
+                          onChangedForOtherField?.call(v);
+                        },
                       )
                     ],
                   )

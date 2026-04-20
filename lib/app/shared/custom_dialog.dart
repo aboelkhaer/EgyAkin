@@ -135,7 +135,7 @@ Widget descriptionWidget(
 
   if (description is List<dynamic>) {
     return SizedBox(
-      height: 100,
+      height: description.length > 10 ? 300 : 100,
       width: double.maxFinite,
       child: ListView.builder(
         shrinkWrap: true,

@@ -1,7 +1,10 @@
 import 'dart:developer';
 import 'package:egy_akin/app/shared/functions/hint_dialog.dart';
+import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:intl/intl.dart';
+import 'package:egy_akin/features/record/presentation/cubit/record_cubit.dart';
+import 'package:egy_akin/features/record/presentation/pages/record_screen.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -67,6 +70,33 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             backgroundColor:
                 isDarkMode ? AppColors.darkCardBG : AppColors.primary,
             systemOverlayStyle: SystemUiOverlayStyle.light,
+            actions: [
+              IconButton(
+                icon: Icon(
+                  Icons.mic,
+                  color: isDarkMode ? AppColors.darkTitle : Colors.white,
+                ),
+                onPressed: () async {
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                        create: (_) => sl<RecordCubit>(),
+                        child: RecordScreen(
+                          questions: cubit.questionModelList ?? [],
+                          source: 'add_patient',
+                          sectionId: '1',
+                        ),
+                      ),
+                    ),
+                  );
+
+                  if (result is Map<String, dynamic>) {
+                    cubit.applyVoiceAnswers(result);
+                    if (mounted) setState(() {});
+                  }
+                },
+              ),
+            ],
           ),
           body: Stack(
             children: [
@@ -304,11 +334,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       case AppStrings.string:
         var questionAnswer = questionList[index].answer;
         questionAnswer ??= '';
+        final qid = questionList[index].id.toString();
         return BuildStringValueQuestions(
           questionList: questionList,
-          initialValue: cubit.formData[questionList[index].id.toString()] ??
-              AppStrings.empty,
+          initialValue: cubit.formData[qid] ?? AppStrings.empty,
           index: index,
+          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qid),
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qid),
           textInputFormatter:
               questionList[index].question == AppStrings.phone ||
                       questionList[index].question == AppStrings.mobile
@@ -355,11 +387,22 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
 
         dynamic selectedValue;
 
+        final qidSelect = questionList[index].id.toString();
         return BuildSelectValueQuestion(
           questionList: questionList,
           index: index,
           formData: cubit.formData,
           isAddPatient: true,
+          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidSelect) &&
+              selectQuestionHasDisplayableAnswer(
+                optionValues: questionList[index].values,
+                storedAnswer: cubit.formData[qidSelect] ??
+                    {
+                      AppStrings.answers: '',
+                      AppStrings.otherField: AppStrings.empty,
+                    },
+              ),
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSelect),
           selected: initialValueInSelectQuestion(
               questionAnswer: questionAnswer is Map
                   ? questionAnswer[AppStrings.answers]
@@ -416,10 +459,13 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   AppStrings.otherField: AppStrings.empty,
                 };
 
+        final qidMulti = questionList[index].id.toString();
         return BuildMultipleValueQuestion(
           index: index,
           questionList: questionList,
           initialValue: answerMap[AppStrings.otherField] ?? AppStrings.empty,
+          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
           onChanged: (val) {
             setState(() {
               answerMap[AppStrings.otherField] = val;
@@ -463,12 +509,8 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               child: ChoiceChip(
                 label: Text(
                   value.toString(),
-                  style: TextStyle(
-                    color: isSelected
-                        ? Colors.white
-                        : isDarkModeLocal
-                            ? AppColors.darkTitle
-                            : Colors.black,
+                  style: const TextStyle(
+                    color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -478,6 +520,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 selected: isSelected,
                 selectedColor: AppColors.primary.withOpacity(0.7),
                 onSelected: (selected) {
+                  cubit.clearAiFilledMark(qidMulti);
                   setState(() {
                     if (selected) {
                       (answerMap[AppStrings.answers] as List).add(value);

@@ -13,6 +13,11 @@ import 'package:egy_akin/features/more/data/datasource/more_datasource.dart';
 import 'package:egy_akin/features/more/data/repositories/more_repo_impl.dart';
 import 'package:egy_akin/features/more/domain/repositories/more_repo.dart';
 import 'package:egy_akin/features/more/domain/usecases/change_language_usecase.dart';
+import 'package:egy_akin/features/record/data/datasources/record_datasource.dart';
+import 'package:egy_akin/features/record/data/repositories/record_repo_impl.dart';
+import 'package:egy_akin/features/record/domain/repositories/record_repo.dart';
+import 'package:egy_akin/features/record/domain/usecases/process_section_record_usecase.dart';
+import 'package:egy_akin/features/record/presentation/cubit/record_cubit.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_recommendations_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/delete_patient_recommendation_usecase.dart';
@@ -73,6 +78,7 @@ Future<void> diInit() async {
   sl.registerFactory(
       () => DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
+  sl.registerFactory(() => RecordCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
   sl.registerFactory(() => ChangePasswordCubit(sl()));
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
@@ -113,7 +119,9 @@ Future<void> diInit() async {
   sl.registerLazySingleton(
       () => AllDoctorPostsCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => GroupsInvitationsCubit(sl(), sl(), sl()));
-  sl.registerFactory(() => MarkedPatientsCubit(sl(),));
+  sl.registerFactory(() => MarkedPatientsCubit(
+        sl(),
+      ));
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -150,6 +158,7 @@ Future<void> diInit() async {
       () => DoctorInfoViewDataSourceImpl(sl()));
   sl.registerLazySingleton<ContactUsDataSource>(
       () => ContactUsDataSourceImpl(sl()));
+  sl.registerLazySingleton<RecordDataSource>(() => RecordDataSourceImpl(sl()));
   sl.registerLazySingleton<SplashDataSource>(() => SplashDataSourceImpl(sl()));
   sl.registerLazySingleton<ChangePasswordDataSource>(
       () => ChangePasswordDataSourceImpl(sl()));
@@ -224,6 +233,8 @@ Future<void> diInit() async {
       () => DoctorInfoViewRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ContactUsRepository>(
       () => ContactUsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<RecordRepository>(
+      () => RecordRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<SplashRepository>(
       () => SplashRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ChangePasswordRepository>(
@@ -263,7 +274,6 @@ Future<void> diInit() async {
   sl.registerLazySingleton<MarkedPatientsRepository>(
       () => MarkedPatientsRepositoryImpl(sl(), sl()));
 
-      
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {
     sl.registerFactory<SignInUsecase>(() => SignInUsecase(sl()));
@@ -287,7 +297,8 @@ Future<void> diInit() async {
     sl.registerFactory<GetHomeUsecase>(() => GetHomeUsecase(sl()));
   }
   if (!GetIt.I.isRegistered<GetRolePermissionsUsecase>()) {
-    sl.registerFactory<GetRolePermissionsUsecase>(() => GetRolePermissionsUsecase(sl()));
+    sl.registerFactory<GetRolePermissionsUsecase>(
+        () => GetRolePermissionsUsecase(sl()));
   }
 
   if (!GetIt.I.isRegistered<UpdateNotificationUsecase>()) {
@@ -390,6 +401,10 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<AddContactUsUsecase>()) {
     sl.registerFactory<AddContactUsUsecase>(() => AddContactUsUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<ProcessSectionRecordUsecase>()) {
+    sl.registerFactory<ProcessSectionRecordUsecase>(
+        () => ProcessSectionRecordUsecase(sl()));
   }
   if (!GetIt.I.isRegistered<DownloadPatientReportUsecase>()) {
     sl.registerFactory<DownloadPatientReportUsecase>(

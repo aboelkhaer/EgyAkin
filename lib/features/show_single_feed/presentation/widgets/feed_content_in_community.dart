@@ -248,7 +248,8 @@ class FeedContentInCommunity extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 5),
-                              feedResponse.likesCount! > 0
+                              feedResponse.likesCount != null &&
+                                      feedResponse.likesCount! > 0
                                   ? InkResponse(
                                       onTap: () async {
                                         showCustomBottomSheet(

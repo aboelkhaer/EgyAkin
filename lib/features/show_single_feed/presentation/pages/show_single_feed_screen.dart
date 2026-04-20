@@ -241,12 +241,15 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                             radius: 20.r,
                                             backgroundColor: AppColors.primary
                                                 .withOpacity(0.8),
-                                            child: CustomCachedNetworkImage(
-                                              imageUrl: feedToUse.doctor!.image
-                                                  .toString(),
-                                              height: 100.h,
-                                              width: 100.w,
-                                            ),
+                                            child: feedToUse.doctor == null
+                                                ? const Text('@')
+                                                : CustomCachedNetworkImage(
+                                                    imageUrl: feedToUse
+                                                        .doctor!.image
+                                                        .toString(),
+                                                    height: 100.h,
+                                                    width: 100.w,
+                                                  ),
                                           ),
                                         ),
                                       ),
@@ -298,18 +301,21 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                     children: [
                                                       Flexible(
                                                         child: Text(
-                                                          doctorName(
-                                                            firstName: feedToUse
-                                                                .doctor!
-                                                                .firstName,
-                                                            lastName: feedToUse
-                                                                .doctor!
-                                                                .lastName,
-                                                            role: feedToUse
-                                                                .doctor!
-                                                                .isSyndicateCardRequired
-                                                                .toString(),
-                                                          ),
+                                                          feedToUse.doctor ==
+                                                                  null
+                                                              ? 'Unknown User'
+                                                              : doctorName(
+                                                                  firstName: feedToUse
+                                                                      .doctor!
+                                                                      .firstName,
+                                                                  lastName: feedToUse
+                                                                      .doctor!
+                                                                      .lastName,
+                                                                  role: feedToUse
+                                                                      .doctor!
+                                                                      .isSyndicateCardRequired
+                                                                      .toString(),
+                                                                ),
                                                           style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
@@ -325,25 +331,30 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               .ellipsis,
                                                         ),
                                                       ),
-                                                      isVerifiedUser(feed
-                                                              .doctor!
-                                                              .isSyndicateCardRequired)
-                                                          ? const VerificationIcon(
-                                                              isPatientCard:
-                                                                  false,
-                                                            )
-                                                          : const SizedBox
-                                                              .shrink(),
+                                                      feedToUse.doctor == null
+                                                          ? const SizedBox
+                                                              .shrink()
+                                                          : isVerifiedUser(feed
+                                                                  .doctor!
+                                                                  .isSyndicateCardRequired)
+                                                              ? const VerificationIcon(
+                                                                  isPatientCard:
+                                                                      false,
+                                                                )
+                                                              : const SizedBox
+                                                                  .shrink(),
                                                     ],
                                                   ),
                                                   Text(
-                                                    // formatDateTimeForCommunity(
-                                                    //     widget.feed.createdAt.toString()),
-                                                    TimeAgoService.instance
-                                                        .formatTimeAgoFromString(
-                                                            feedToUse.createdAt
-                                                                .toString(),
-                                                            context),
+                                                    feedToUse.createdAt == null
+                                                        ? ''
+                                                        : TimeAgoService
+                                                            .instance
+                                                            .formatTimeAgoFromString(
+                                                                feedToUse
+                                                                    .createdAt
+                                                                    .toString(),
+                                                                context),
                                                     style: TextStyle(
                                                       color: isDarkMode
                                                           ? AppColors
@@ -362,10 +373,12 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                             (!PermissionHelper.canPermission(
                                                         AppPermissions
                                                             .viewEditAndDeletePostForAdmin) &&
-                                                    widget.currentDoctorModel.id
-                                                            .toString() !=
-                                                        feed.doctor!.id
-                                                            .toString())
+                                                    (feed.doctor == null ||
+                                                        widget.currentDoctorModel
+                                                                .id
+                                                                .toString() !=
+                                                            feed.doctor!.id
+                                                                .toString()))
                                                 ? const SizedBox.shrink()
                                                 : PopupMenuButton<String>(
                                                     icon: const Icon(
@@ -406,8 +419,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                   style:
                                                                       TextStyle(
                                                                     color: isDarkMode
-                                                                        ? AppColors.darkTitle
-                                                                        : AppColors.title,
+                                                                        ? AppColors
+                                                                            .darkTitle
+                                                                        : AppColors
+                                                                            .title,
                                                                   ),
                                                                 ),
                                                                 content: Text(
@@ -417,8 +432,10 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                   style:
                                                                       TextStyle(
                                                                     color: isDarkMode
-                                                                        ? AppColors.darkDescription
-                                                                        : AppColors.description,
+                                                                        ? AppColors
+                                                                            .darkDescription
+                                                                        : AppColors
+                                                                            .description,
                                                                   ),
                                                                 ),
                                                                 actions: [
@@ -491,13 +508,13 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                             value: 'Edit',
                                                             child:
                                                                 AdminOnlyBadge(
-                                                              showBadge: PermissionHelper.canPermission(
-                                                                      AppPermissions
-                                                                          .viewEditAndDeletePostForAdmin) &&
-                                                                  widget
-                                                                      .currentDoctorModel
-                                                                      .id
-                                                                      .toString() !=
+                                                              showBadge: PermissionHelper
+                                                                      .canPermission(
+                                                                          AppPermissions
+                                                                              .viewEditAndDeletePostForAdmin) &&
+                                                                  widget.currentDoctorModel
+                                                                          .id
+                                                                          .toString() !=
                                                                       feedToUse
                                                                           .doctor!
                                                                           .id
@@ -505,13 +522,12 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               style: BadgeStyle
                                                                   .premium,
                                                               fontSize: 6.sp,
-                                                              badgePadding:
-                                                                  EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              3.w,
-                                                                          vertical:
-                                                                              0.5.h),
+                                                              badgePadding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          3.w,
+                                                                      vertical:
+                                                                          0.5.h),
                                                               showIcon: false,
                                                               glowEffect: true,
                                                               pulseAnimation:
@@ -555,13 +571,13 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                             value: 'Delete',
                                                             child:
                                                                 AdminOnlyBadge(
-                                                              showBadge: PermissionHelper.canPermission(
-                                                                      AppPermissions
-                                                                          .viewEditAndDeletePostForAdmin) &&
-                                                                  widget
-                                                                      .currentDoctorModel
-                                                                      .id
-                                                                      .toString() !=
+                                                              showBadge: PermissionHelper
+                                                                      .canPermission(
+                                                                          AppPermissions
+                                                                              .viewEditAndDeletePostForAdmin) &&
+                                                                  widget.currentDoctorModel
+                                                                          .id
+                                                                          .toString() !=
                                                                       feedToUse
                                                                           .doctor!
                                                                           .id
@@ -569,13 +585,12 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               style: BadgeStyle
                                                                   .premium,
                                                               fontSize: 6.sp,
-                                                              badgePadding:
-                                                                  EdgeInsets
-                                                                      .symmetric(
-                                                                          horizontal:
-                                                                              3.w,
-                                                                          vertical:
-                                                                              0.5.h),
+                                                              badgePadding: EdgeInsets
+                                                                  .symmetric(
+                                                                      horizontal:
+                                                                          3.w,
+                                                                      vertical:
+                                                                          0.5.h),
                                                               showIcon: false,
                                                               glowEffect: true,
                                                               pulseAnimation:
@@ -820,13 +835,11 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                         ],
                                       ),
                                     ),
-                                    (!PermissionHelper.canPermission(
-                                                AppPermissions
-                                                    .viewEditAndDeletePostForAdmin) &&
+                                    (!PermissionHelper.canPermission(AppPermissions
+                                                .viewEditAndDeletePostForAdmin) &&
                                             widget.currentDoctorModel.id
                                                     .toString() !=
-                                                feedToUse.doctor!.id
-                                                    .toString())
+                                                feedToUse.doctor!.id.toString())
                                         ? const SizedBox.shrink()
                                         : PopupMenuButton<String>(
                                             icon: const Icon(Icons.more_vert),
@@ -862,18 +875,21 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                               .deletePost),
                                                           style: TextStyle(
                                                             color: isDarkMode
-                                                                ? AppColors.darkTitle
-                                                                : AppColors.title,
+                                                                ? AppColors
+                                                                    .darkTitle
+                                                                : AppColors
+                                                                    .title,
                                                           ),
                                                         ),
                                                         content: Text(
-                                                          context.tr(
-                                                              AppStrings
-                                                                  .areYouSureYouWantToDeleteThisPost),
+                                                          context.tr(AppStrings
+                                                              .areYouSureYouWantToDeleteThisPost),
                                                           style: TextStyle(
                                                             color: isDarkMode
-                                                                ? AppColors.darkDescription
-                                                                : AppColors.description,
+                                                                ? AppColors
+                                                                    .darkDescription
+                                                                : AppColors
+                                                                    .description,
                                                           ),
                                                         ),
                                                         actions: [
@@ -888,7 +904,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                                       .cancel),
                                                               style: TextStyle(
                                                                 color: isDarkMode
-                                                                    ? AppColors.darkDescription
+                                                                    ? AppColors
+                                                                        .darkDescription
                                                                     : Colors
                                                                         .grey
                                                                         .shade600,
@@ -933,29 +950,27 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                       widget
                                                           .currentDoctorModel.id
                                                           .toString() ||
-                                                  PermissionHelper
-                                                      .canPermission(
-                                                          AppPermissions
-                                                              .viewEditAndDeletePostForAdmin)) {
+                                                  PermissionHelper.canPermission(
+                                                      AppPermissions
+                                                          .viewEditAndDeletePostForAdmin)) {
                                                 items.add(
                                                   PopupMenuItem(
                                                     value: 'Edit',
                                                     child: AdminOnlyBadge(
-                                                      showBadge: PermissionHelper.canPermission(
-                                                              AppPermissions
-                                                                  .viewEditAndDeletePostForAdmin) &&
-                                                          widget
-                                                              .currentDoctorModel
-                                                              .id
-                                                              .toString() !=
-                                                              feedToUse
-                                                                  .doctor!
+                                                      showBadge: PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .viewEditAndDeletePostForAdmin) &&
+                                                          widget.currentDoctorModel
                                                                   .id
+                                                                  .toString() !=
+                                                              feedToUse
+                                                                  .doctor!.id
                                                                   .toString(),
                                                       style: BadgeStyle.premium,
                                                       fontSize: 6.sp,
-                                                      badgePadding: EdgeInsets
-                                                          .symmetric(
+                                                      badgePadding:
+                                                          EdgeInsets.symmetric(
                                                               horizontal: 3.w,
                                                               vertical: 0.5.h),
                                                       showIcon: false,
@@ -972,7 +987,8 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                           SizedBox(width: 8.w),
                                                           Text(
                                                             context.tr(
-                                                                AppStrings.edit),
+                                                                AppStrings
+                                                                    .edit),
                                                           ),
                                                         ],
                                                       ),
@@ -985,29 +1001,27 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen> {
                                                       widget
                                                           .currentDoctorModel.id
                                                           .toString() ||
-                                                  PermissionHelper
-                                                      .canPermission(
-                                                          AppPermissions
-                                                              .viewEditAndDeletePostForAdmin)) {
+                                                  PermissionHelper.canPermission(
+                                                      AppPermissions
+                                                          .viewEditAndDeletePostForAdmin)) {
                                                 items.add(
                                                   PopupMenuItem(
                                                     value: 'Delete',
                                                     child: AdminOnlyBadge(
-                                                      showBadge: PermissionHelper.canPermission(
-                                                              AppPermissions
-                                                                  .viewEditAndDeletePostForAdmin) &&
-                                                          widget
-                                                              .currentDoctorModel
-                                                              .id
-                                                              .toString() !=
-                                                              feedToUse
-                                                                  .doctor!
+                                                      showBadge: PermissionHelper
+                                                              .canPermission(
+                                                                  AppPermissions
+                                                                      .viewEditAndDeletePostForAdmin) &&
+                                                          widget.currentDoctorModel
                                                                   .id
+                                                                  .toString() !=
+                                                              feedToUse
+                                                                  .doctor!.id
                                                                   .toString(),
                                                       style: BadgeStyle.premium,
                                                       fontSize: 6.sp,
-                                                      badgePadding: EdgeInsets
-                                                          .symmetric(
+                                                      badgePadding:
+                                                          EdgeInsets.symmetric(
                                                               horizontal: 3.w,
                                                               vertical: 0.5.h),
                                                       showIcon: false,

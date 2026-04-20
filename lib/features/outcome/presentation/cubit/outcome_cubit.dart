@@ -35,6 +35,35 @@ class OutcomeCubit extends Cubit<OutcomeState> {
     }
   }
 
+  String getCurrentWholeValue(int index) {
+    final current = questionModelList[index].answer ?? 0.0;
+    if (current is double) return current.toString().split('.')[0];
+    if (current is String) {
+      return double.tryParse(current)?.toString().split('.')[0] ?? '0';
+    }
+    return '0';
+  }
+
+  String getCurrentDecimalValue(int index) {
+    final current = questionModelList[index].answer ?? 0.0;
+    if (current is double) {
+      final parts = current.toString().split('.');
+      return parts.length > 1
+          ? parts[1].padRight(2, '0').substring(0, 2)
+          : '00';
+    }
+    if (current is String) {
+      final parsed = double.tryParse(current);
+      if (parsed != null) {
+        final parts = parsed.toString().split('.');
+        return parts.length > 1
+            ? parts[1].padRight(2, '0').substring(0, 2)
+            : '00';
+      }
+    }
+    return '00';
+  }
+
   getOutcome(String patientId) async {
     emit(const OutcomeState.loading());
     await Future.delayed(const Duration(

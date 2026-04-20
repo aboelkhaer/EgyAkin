@@ -3,10 +3,10 @@ class ApiEndPoint {
   static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  // static const baseUrl = 'https://api.egyakin.com';
+//   static const baseUrl = 'https://api.egyakin.com';
 
   // versioning
-  static const versioning = 'v2';
+  static const versioning = 'v3';
 
   static const home = '$baseUrl/api/$versioning/homeNew';
   static const signIn = '$baseUrl/api/$versioning/login';
@@ -153,4 +153,6 @@ class ApiEndPoint {
   static const getMarkedPatients = '$baseUrl/api/$versioning/markedPatients';
   static const getRolePermissions =
       '$baseUrl/api/$versioning/user/role-permissions';
+  static const processSection =
+      '$baseUrl/api/$versioning/ai-form/process-section';
 }

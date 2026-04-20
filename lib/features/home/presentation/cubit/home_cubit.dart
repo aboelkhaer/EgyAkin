@@ -144,7 +144,7 @@ class HomeCubit extends Cubit<HomeState> {
   getUpdateMessageStatusFromLocal() async {
     if (checkUpdateMessageCounter == 0) {
       isUpdateMessageHidden4 = (await sl<AppPreferences>()
-              .getBool(AppLocalStrings.isUpdateMessageHidden5)) ??
+              .getBool(AppLocalStrings.isUpdateMessageHidden6)) ??
           false;
       checkUpdateMessageCounter++;
     }
@@ -153,7 +153,7 @@ class HomeCubit extends Cubit<HomeState> {
   setUpdateMessageStatusToLocal() async {
     isUpdateMessageHidden4 = true;
     (await sl<AppPreferences>()
-        .setBool(AppLocalStrings.isUpdateMessageHidden5, true));
+        .setBool(AppLocalStrings.isUpdateMessageHidden6, true));
   }
 
   getDoctorDataFromLocal() async {
@@ -307,12 +307,24 @@ class HomeCubit extends Cubit<HomeState> {
         currentDoctorRole = homeData.role.toString();
         homeDataModel = homeData;
 
+        // Keep local doctor userType in sync with the latest value from home
+        if (homeData.userType != null && homeData.userType!.isNotEmpty) {
+          final localDoctor = await sl<AppPreferences>().getDoctorData();
+          if (localDoctor != null &&
+              localDoctor.userType != homeData.userType) {
+            final updatedDoctor =
+                localDoctor.copyWith(userType: homeData.userType);
+            await sl<AppPreferences>().setDoctorData(updatedDoctor);
+          }
+        }
+
         checkVerifyBanner();
 
         // Fetch and save permissions when missing (e.g. after register) or when backend says they changed
         final permissionsJson =
             await sl<AppPreferences>().getString(AppLocalStrings.permissions);
-        final hasNoPermissions = permissionsJson == null || permissionsJson.isEmpty;
+        final hasNoPermissions =
+            permissionsJson == null || permissionsJson.isEmpty;
         if (hasNoPermissions || homeData.permissionsChanged == true) {
           await _updatePermissions();
         }

@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>EgyAkin needs microphone access to record your answers and fill form fields.</string>
 </dict>
 </plist>

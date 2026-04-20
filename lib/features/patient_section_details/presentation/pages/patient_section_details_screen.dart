@@ -2,6 +2,8 @@ import 'package:egy_akin/features/patient_section_details/presentation/widgets/b
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/patient_recommendation_model.dart';
+import 'package:egy_akin/features/record/presentation/cubit/record_cubit.dart';
+import 'package:egy_akin/features/record/presentation/pages/record_screen.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 
@@ -334,6 +336,30 @@ class _PatientSectionDetailsScreenState
                 isDarkMode ? AppColors.darkCardBG : AppColors.primary,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             actions: [
+              if (widget.sectionModel.sectionId != 12)
+                IconButton(
+                  onPressed: () async {
+                    final result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider(
+                          create: (_) => sl<RecordCubit>(),
+                          child: RecordScreen(
+                            questions: cubit.questionModelList,
+                            source: 'section_details',
+                            sectionId: widget.sectionModel.sectionId.toString(),
+                          ),
+                        ),
+                      ),
+                    );
+                    if (result is Map<String, dynamic>) {
+                      cubit.applyVoiceAnswers(result);
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.mic,
+                    color: Colors.white,
+                  ),
+                ),
               // Only show add recommendation button for medication section and when not final submitted
               if (widget.sectionModel.sectionId == 12 &&
                   !widget.finalSubmitStatus)
@@ -354,8 +380,8 @@ class _PatientSectionDetailsScreenState
                       showCustomDialog(
                         context: context,
                         title: context.tr(AppStrings.attention),
-                        description:
-                            'You don\'t have permission to create recommendations.',
+                        description: context.tr(AppStrings
+                            .youDontHavePermissionToCreateRecommendations),
                         coloredButtonText: context.tr(AppStrings.ok),
                         coloredButtonOnTap: () => Navigator.of(context).pop(),
                         isNoColorShow: false,

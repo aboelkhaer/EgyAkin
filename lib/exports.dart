@@ -105,6 +105,7 @@ export 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 export 'package:egy_akin/features/home/presentation/cubit/home_cubit.dart';
 export 'package:egy_akin/features/home/presentation/pages/home_screen.dart';
 export 'package:egy_akin/features/reset_password/presentation/pages/reset_password_screen.dart';
+export 'package:egy_akin/features/record/data/models/process_section_model_response.dart';
 export 'package:egy_akin/features/home/data/models/home_model_response.dart';
 export 'package:egy_akin/features/home/data/models/get_permissions_model_response.dart';
 export 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';
@@ -248,6 +249,7 @@ export 'package:egy_akin/features/patient_section_details/domain/repositories/pa
 export 'package:egy_akin/app/shared/widgets/build_multiple_value_questions.dart';
 export 'package:egy_akin/app/shared/widgets/build_select_value_questions.dart';
 export 'package:egy_akin/app/shared/widgets/build_string_value_questions.dart';
+export 'package:egy_akin/app/shared/widgets/ai_filled_field_banner.dart';
 export 'package:egy_akin/features/add_patient/presentation/widgets/submit_botton.dart';
 export 'package:egy_akin/app/shared/widgets/custom_cached_network_image.dart';
 export 'package:egy_akin/features/contact_us/data/datasources/contact_us_datasource.dart';

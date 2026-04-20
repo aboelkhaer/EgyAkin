@@ -10,6 +10,8 @@ class BuildMultipleValueQuestion extends StatelessWidget {
   final List<dynamic> listContainOther;
   final bool isOldAnswer;
   final String? oldAnswer;
+  final bool showAiFilledBanner;
+  final VoidCallback? onClearAiFilledMark;
 
   const BuildMultipleValueQuestion({
     super.key,
@@ -22,12 +24,15 @@ class BuildMultipleValueQuestion extends StatelessWidget {
     required this.listContainOther,
     this.isOldAnswer = false,
     this.oldAnswer,
+    this.showAiFilledBanner = false,
+    this.onClearAiFilledMark,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (showAiFilledBanner) const AiFilledFieldBanner(),
         Wrap(
           spacing: 8,
           alignment: WrapAlignment.center,
@@ -37,23 +42,26 @@ class BuildMultipleValueQuestion extends StatelessWidget {
         isOldAnswer == false
             ? listContainOther.contains('Others')
                 ? CustomTextFormField(
-                    title: 'Answer here',
+                    title: context.tr(AppStrings.answerHere),
                     initialValue: initialValue,
                     textInputType: TextInputType.text,
                     textInputAction: TextInputAction.next,
                     validator: validator,
-                    onChanged: onChanged,
+                    onChanged: (v) {
+                      onClearAiFilledMark?.call();
+                      onChanged?.call(v);
+                    },
                   )
                 : const SizedBox.shrink()
             : const SizedBox.shrink(),
         isOldAnswer
             ? Row(
                 children: [
-                  const Text('Old Answer:'),
+                  Text('${context.tr(AppStrings.oldAnswer)}:'),
                   const SizedBox(width: 5),
                   Flexible(
                     child: Text(
-                      oldAnswer ?? '',
+                      context.tr(oldAnswer ?? ''),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                       ),

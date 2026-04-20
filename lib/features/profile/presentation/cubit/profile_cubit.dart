@@ -11,6 +11,7 @@ import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/tr
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/consultation/presentation/cubit/consultation_cubit.dart';
 import 'package:egy_akin/features/group_details_in_community/presentation/cubit/group_details_in_community_cubit.dart';
+import 'package:egy_akin/features/home/presentation/cubit/home_cubit.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/features/profile/domain/usecases/upload_profile_image_usecase.dart';
 import 'package:egy_akin/features/profile/presentation/cubit/profile_state.dart';
@@ -111,6 +112,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
     _resetCubit<ConsultationCubit>(
         () => ConsultationCubit(sl(), sl()));
+    _resetCubit<HomeCubit>(() => HomeCubit(sl(), sl(), sl(), sl()));
 
     final result = await _signOutUsecase.execute(NoParams());
 

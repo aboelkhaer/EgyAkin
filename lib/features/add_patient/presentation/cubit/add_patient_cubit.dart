@@ -1,3 +1,4 @@
+import '../../../../app/shared/functions/select_question_has_displayable_answer.dart';
 import '../../../../exports.dart';
 
 class AddPatientCubit extends Cubit<AddPatientState> {
@@ -14,6 +15,9 @@ class AddPatientCubit extends Cubit<AddPatientState> {
   List<QuestionModel>? questionModelList = [];
   Map<String, dynamic> formData = {};
 
+  /// Question ids whose current value was last applied from voice/AI (cleared on manual edit).
+  final Set<String> aiFilledQuestionIds = {};
+
   getPatientHistoryForAddPatient() async {
     emit(const AddPatientState.loading());
     await Future.delayed(const Duration(
@@ -25,6 +29,7 @@ class AddPatientCubit extends Cubit<AddPatientState> {
       },
       (response) async {
         questionModelList = response.data;
+        aiFilledQuestionIds.clear();
         emit(AddPatientState.loaded(
             response.data ?? [], false, 0, false, '', snackbarErrorCounter));
       },
@@ -36,10 +41,36 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
     for (var question in questionModelList!) {
       if (question.mandatory == true) {
+        if (question.type == 'select') {
+          Map myMap = formData[question.id.toString()] ??= {
+            'answers': '',
+            'other_field': ''
+          };
+
+          if (myMap.containsKey('answers')) {
+            dynamic answersValue = myMap['answers'];
+            if (answersValue == null || answersValue.isEmpty) {
+              debugPrint('"answers" key is either null or an empty list.');
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => AddPatientState.loaded(
+                    value.questions,
+                    false,
+                    0,
+                    false,
+                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+                    snackbarErrorCounter += 1),
+              ));
+              isValid = false;
+              break;
+            }
+          }
+        }
+
         if (question.type == 'multiple') {
           Map myMap = formData[question.id.toString()] ??= {
-            "answers": [],
-            "other_field": ''
+            'answers': [],
+            'other_field': ''
           };
 
           // Check if "answers" key is either null or an empty list
@@ -77,7 +108,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                   false,
                   0,
                   false,
-                  LocalizationService.instance.translate(AppStrings.somethingWentWrong),
+                  LocalizationService.instance
+                      .translate(AppStrings.somethingWentWrong),
                   snackbarErrorCounter += 1),
             ));
             isValid = false;
@@ -117,7 +149,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nameShouldContainOnlyEnglishLetters),
+                    LocalizationService.instance.translate(
+                        AppStrings.nameShouldContainOnlyEnglishLetters),
                     snackbarErrorCounter += 1),
               ));
 
@@ -137,7 +170,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1),
               ));
 
@@ -152,7 +186,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1),
               ));
               isValid = false;
@@ -172,7 +207,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1),
               ));
 
@@ -187,7 +223,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1),
               ));
               isValid = false;
@@ -211,7 +248,8 @@ class AddPatientCubit extends Cubit<AddPatientState> {
                     false,
                     0,
                     false,
-                    LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120),
+                    LocalizationService.instance
+                        .translate(AppStrings.ageShouldBeLessThan120),
                     snackbarErrorCounter += 1),
               ));
 
@@ -266,5 +304,87 @@ class AddPatientCubit extends Cubit<AddPatientState> {
         },
       );
     }
+  }
+
+  dynamic _normalizeVoiceAnswer(QuestionModel question, dynamic value) {
+    if (question.type == AppStrings.multipleType) {
+      if (value is Map<String, dynamic>) return value;
+      if (value is List) {
+        return {
+          AppStrings.answers: value,
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+      if (value is String && value.trim().isNotEmpty) {
+        return {
+          AppStrings.answers: value.split(',').map((e) => e.trim()).toList(),
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+    }
+
+    if (question.type == AppStrings.questionTypeSelect) {
+      if (value is Map<String, dynamic>) return value;
+      return {
+        AppStrings.answers: value,
+        AppStrings.otherField: AppStrings.empty,
+      };
+    }
+
+    return value;
+  }
+
+  void applyVoiceAnswers(Map<String, dynamic> answersMap) {
+    if (questionModelList == null || questionModelList!.isEmpty) return;
+
+    for (final question in questionModelList!) {
+      final idKey = question.id.toString();
+      final textKey = (question.question ?? '').trim().toLowerCase();
+      dynamic value = answersMap[idKey];
+      value ??= answersMap[textKey];
+      if (value == null) continue;
+
+      final normalizedValue = _normalizeVoiceAnswer(question, value);
+      formData[idKey] = normalizedValue;
+      if (question.type == AppStrings.questionTypeSelect) {
+        if (selectQuestionHasDisplayableAnswer(
+          optionValues: question.values,
+          storedAnswer: normalizedValue,
+        )) {
+          aiFilledQuestionIds.add(idKey);
+        } else {
+          aiFilledQuestionIds.remove(idKey);
+        }
+      } else {
+        aiFilledQuestionIds.add(idKey);
+      }
+    }
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => AddPatientState.loaded(
+        value.questions,
+        value.isAddedPatientSuccessfully,
+        value.patientId,
+        value.isAddPatientLoading,
+        value.message,
+        value.snackbarErrorCounter + 1,
+      ),
+    ));
+  }
+
+  void clearAiFilledMark(String questionId) {
+    if (!aiFilledQuestionIds.remove(questionId)) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => AddPatientState.loaded(
+        value.questions,
+        value.isAddedPatientSuccessfully,
+        value.patientId,
+        value.isAddPatientLoading,
+        value.message,
+        value.snackbarErrorCounter + 1,
+      ),
+    ));
   }
 }

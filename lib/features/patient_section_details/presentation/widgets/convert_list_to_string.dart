@@ -1,6 +1,8 @@
 import '../../../../exports.dart';
+import '../../../../app/services/localization_service.dart';
 
-String convertDynamicToString(QuestionModel question) {
+String convertDynamicToString(QuestionModel question,
+    {LocalizationService? localization}) {
   if (question.answer[AppStrings.answers] is String) {
     return question.answer[AppStrings.answers];
   } else {
@@ -11,16 +13,18 @@ String convertDynamicToString(QuestionModel question) {
     // Create a new list to avoid modifying the original one
     List<dynamic> resultList = List.from(dynamicList);
 
-    // Add "Other answer:" only once
-    if (resultList.contains('Others') &&
-        !resultList.any((item) => item.toString().contains('Other answer:'))) {
+    // Localized "Your other answer" label
+    final loc = localization ?? LocalizationService.instance;
+    final otherLabel = loc.translate(AppStrings.yourOtherAnswer);
+
+    // Add "Your other answer" only once when "Others" is selected
+    if (resultList.contains(AppStrings.others) &&
+        !resultList.any((item) => item.toString().contains(otherLabel))) {
       resultList.add(
-          '\nOther answer: ${question.answer[AppStrings.otherField] ?? '...'}');
+        '\n$otherLabel: ${question.answer[AppStrings.otherField] ?? '...'}',
+      );
     }
 
-    return resultList
-        .map((item) =>
-            item.toString().contains('Other answer:') ? item : '$item')
-        .join(',\n');
+    return resultList.map((item) => item.toString()).join(',\n');
   }
 }

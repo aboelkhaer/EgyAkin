@@ -1,4 +1,6 @@
 import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 
 import '../../../../exports.dart';
@@ -67,22 +69,47 @@ class IfOutcomeSubmitted extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         GestureDetector(
-                          onTap: () {
-                            navigatorKey.currentState?.pushNamed(
-                              AppRoutes.doctorInfoView,
-                              arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
-                                doctorId: submitterModel.id.toString(),
-                                currentDoctorModel: currentDoctorModel,
-                                accountVerification: accountVerification,
-                                currentDoctorPoints: currentDoctorPoints,
-                                isSyndicateCardRequired:
-                                    isSyndicateCardRequired,
-                                currentDoctorRole: currentDoctorRole,
-                                homeDataModel: homeDataModel,
-                                initialIndex: 0,
-                                isNavigateToTheButtonOfInformationTab: false,
-                              ),
+                          onTap: () async {
+                            // Check permission before navigating to doctor info view
+                            final hasPermission =
+                                await PermissionHelper.hasPermission(
+                              AppPermissions.viewDoctorPatients,
                             );
+
+                            if (!hasPermission &&
+                                currentDoctorModel.id.toString() !=
+                                    submitterModel.id.toString()) {
+                              // User doesn't have permission - show permission denied dialog
+                              showCustomDialog(
+                                context: context,
+                                title: context.tr(AppStrings.attention),
+                                description: context.tr(AppStrings
+                                    .youDontHavePermissionToViewDoctorProfiles),
+                                coloredButtonText:
+                                    context.tr(AppStrings.ok),
+                                coloredButtonOnTap: () =>
+                                    navigatorKey.currentState?.pop(),
+                                isNoColorShow: false,
+                              );
+                            } else {
+                              // User has permission (or is the same doctor) - navigate
+                              navigatorKey.currentState?.pushNamed(
+                                AppRoutes.doctorInfoView,
+                                arguments:
+                                    AppRoutesArgs.doctorInfoViewRouteArgs(
+                                  doctorId: submitterModel.id.toString(),
+                                  currentDoctorModel: currentDoctorModel,
+                                  accountVerification: accountVerification,
+                                  currentDoctorPoints: currentDoctorPoints,
+                                  isSyndicateCardRequired:
+                                      isSyndicateCardRequired,
+                                  currentDoctorRole: currentDoctorRole,
+                                  homeDataModel: homeDataModel,
+                                  initialIndex: 0,
+                                  isNavigateToTheButtonOfInformationTab: false,
+                                ),
+                              );
+                            }
                           },
                           child: Text(
                             doctorName(

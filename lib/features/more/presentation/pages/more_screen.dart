@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:egy_akin/features/more/presentation/cubit/more_state.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
@@ -436,7 +438,7 @@ class _MoreScreenState extends State<MoreScreen> {
                                       final prefs =
                                           await SharedPreferences.getInstance();
                                       await prefs.remove(AppLocalStrings
-                                          .isUpdateMessageHidden5);
+                                          .isUpdateMessageHidden6);
 
                                       if (context.mounted) {
                                         customSnackBar(
@@ -467,6 +469,83 @@ class _MoreScreenState extends State<MoreScreen> {
                                   child: Text(
                                     context.tr(AppStrings
                                         .clearUpdateMessageToShowItAgain),
+                                    style: const TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10.h),
+                            Center(
+                              child: AdminOnlyBadge(
+                                style: BadgeStyle.premium,
+                                glowEffect: true,
+                                pulseAnimation: true,
+                                fontSize: 8.sp,
+                                badgePadding: EdgeInsets.symmetric(
+                                    horizontal: 5.w, vertical: 1.h),
+                                tooltipMessage: context
+                                    .tr(AppStrings.showCurrentUserPermissions),
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      final permissions = prefs.getString(
+                                          AppLocalStrings.permissions);
+
+                                      if (permissions != null) {
+                                        final decoded = jsonDecode(permissions);
+                                        final List<dynamic> permissionsList =
+                                            decoded is List<dynamic>
+                                                ? decoded
+                                                : (decoded is List
+                                                    ? List<dynamic>.from(
+                                                        decoded)
+                                                    : <dynamic>[
+                                                        decoded.toString()
+                                                      ]);
+                                        debugPrint(
+                                            'permissionsList: $permissionsList');
+                                        showCustomDialog(
+                                          context: context,
+                                          title: context.tr(AppStrings
+                                              .currentUserPermissions),
+                                          description: permissionsList,
+                                          coloredButtonText:
+                                              context.tr(AppStrings.close),
+                                          coloredButtonOnTap: () {
+                                            navigatorKey.currentState?.pop();
+                                          },
+                                          isNoColorShow: false,
+                                          noColoredButtonText:
+                                              context.tr(AppStrings.close),
+                                          noColoredButtonOnTap: () {
+                                            navigatorKey.currentState?.pop();
+                                          },
+                                        );
+                                      }
+                                    } catch (e) {
+                                      if (context.mounted) {
+                                        customSnackBar(
+                                          context: context,
+                                          message: context.tr(
+                                              'Failed to show current user permissions: ${e.toString()}'),
+                                        );
+                                      }
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    context.tr(
+                                        AppStrings.showCurrentUserPermissions),
                                     style: const TextStyle(fontSize: 12),
                                   ),
                                 ),

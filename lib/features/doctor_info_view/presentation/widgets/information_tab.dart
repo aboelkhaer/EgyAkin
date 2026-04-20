@@ -183,6 +183,7 @@ class InformationTab extends StatelessWidget {
                     AdminSide(
                       homeDataModel: homeDataModel,
                       doctorInfo: doctorInfo,
+                      currentDoctorModel: currentDoctorModel,
                     ),
                   ],
                 ),

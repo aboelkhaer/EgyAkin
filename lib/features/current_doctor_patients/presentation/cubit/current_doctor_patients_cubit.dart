@@ -15,6 +15,8 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   ScrollController? scrollController;
   Map<String, String> formData = {};
   Map<String, TextEditingController> controllers = {};
+  GetFiltersOptionsModelResponse filtersOptions =
+      const GetFiltersOptionsModelResponse(data: []);
   bool isApplyFilterDone = false;
   bool isLoadingMoreForScrollForFilter = false;
   bool isLastPageFilter = false;
@@ -31,10 +33,15 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
         emit(CurrentDoctorPatientsState.error(l.message));
       },
       (r) async {
+        filtersOptions = GetFiltersOptionsModelResponse(data: r.filters ?? []);
         emit(CurrentDoctorPatientsState.loaded(
             r, false, '', false, false, false, false, null, null, 0));
       },
     );
+  }
+
+  void setFiltersForRequest(List<GetFiltersOptionsDataModelResponse>? filters) {
+    filtersOptions = GetFiltersOptionsModelResponse(data: filters ?? []);
   }
 
   textFormFieldControllersInit(
@@ -44,6 +51,28 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
         text: formData[filter.id.toString()] ?? '',
       );
     }
+  }
+
+  /// Builds request map with multiple-type filter values as List; other values stay as String.
+  Map<String, dynamic> _formDataToRequestMap() {
+    final multipleFilterIds = filtersOptions.data
+            ?.where((f) => f.type == 'multiple')
+            .map((f) => f.id.toString())
+            .toSet() ??
+        {};
+    final result = <String, dynamic>{};
+    for (final e in formData.entries) {
+      if (multipleFilterIds.contains(e.key) && e.value.trim().isNotEmpty) {
+        result[e.key] = e.value
+            .split(',')
+            .map((s) => s.trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
+      } else {
+        result[e.key] = e.value;
+      }
+    }
+    return result;
   }
 
   void resetFormData() {
@@ -78,7 +107,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
 
     final result = await _applyPatientsFiltersUsecase.execute(
         ApplyPatientsFiltersUsecaseInput(
-            map: formData, page: currentPageInFilter));
+            map: _formDataToRequestMap(), page: currentPageInFilter));
 
     result.fold(
       (l) {
@@ -153,7 +182,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
 
     final result = await _applyPatientsFiltersUsecase.execute(
         ApplyPatientsFiltersUsecaseInput(
-            map: formData, page: currentPageInFilter));
+            map: _formDataToRequestMap(), page: currentPageInFilter));
 
     result.fold(
       (l) {
@@ -236,7 +265,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
     );
   }
 
-  exportFilteredPatients() async {
+  exportFilteredPatients(bool isOnlyMyPatients) async {
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -255,7 +284,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
         },
       ),
     );
-    final result = await _exportPatientsUsecase.execute(NoParams());
+    final result = await _exportPatientsUsecase.execute(isOnlyMyPatients);
     result.fold(
       (l) {
         emit(

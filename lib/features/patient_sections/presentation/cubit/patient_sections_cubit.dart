@@ -190,56 +190,6 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
           loaded: (value) => PatientSectionsState.loaded(value.response, false,
               false, '', false, 1.0, '', false, true, counterChanges),
         ));
-
-        // try {
-        //   final directory = await getApplicationDocumentsDirectory();
-        //   final filePath = '${directory.path}/report_$patientId.pdf';
-        //   final file = File(filePath);
-        //   await _dio.download(
-        //     result.pdfUrl.toString(),
-        //     filePath,
-        //     onReceiveProgress: (received, total) {
-        //       if (total != -1) {
-        //         final progress = received / total;
-        //         emit(state.maybeMap(
-        //           orElse: () => state,
-        //           loaded: (value) => PatientSectionsState.loaded(
-        //             value.response,
-        //             false,
-        //             false,
-        //             '',
-        //             true,
-        //             progress,
-        //             '',
-        //             true,
-        //             false,
-        //           ),
-        //         ));
-        //       }
-        //     },
-        //   );
-
-        //   emit(state.maybeMap(
-        //     orElse: () => state,
-        //     loaded: (value) => PatientSectionsState.loaded(value.response,
-        //         false, false, '', false, 1.0, filePath, false, true),
-        //   ));
-        // } catch (error) {
-        //   emit(state.maybeMap(
-        //     orElse: () => state,
-        //     loaded: (value) => PatientSectionsState.loaded(
-        //       value.response,
-        //       false,
-        //       false,
-        //       error.toString(),
-        //       false,
-        //       0.0,
-        //       '',
-        //       false,
-        //       false,
-        //     ),
-        //   ));
-        // }
       },
     );
   }
@@ -256,8 +206,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         value.isLoading,
         value.reportProgress,
         value.filePath,
-        value.isDownloadingReport,
-        value.isDownloadedReport,
+        false,
+        false,
         counterChanges,
       ),
     ));
@@ -300,8 +250,8 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         value.isLoading,
         value.reportProgress,
         value.filePath,
-        value.isDownloadingReport,
-        value.isDownloadedReport,
+        false,
+        false,
         counterChanges,
       ),
     ));

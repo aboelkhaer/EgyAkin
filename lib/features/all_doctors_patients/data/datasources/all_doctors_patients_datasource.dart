@@ -10,7 +10,7 @@ abstract class AllDoctorsPatientsDataSource {
     Map<String, dynamic> map,
     int page,
   );
-  Future<ExportPatientsModelResponse> exportFilteredPatients();
+  Future<ExportPatientsModelResponse> exportFilteredPatients(bool isOnlyMyPatients);
 }
 
 class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
@@ -31,7 +31,7 @@ class AllDoctorsPatientsDataSourceImpl implements AllDoctorsPatientsDataSource {
   }
 
   @override
-  Future<ExportPatientsModelResponse> exportFilteredPatients() async {
-    return await _apiServices.exportFilteredPatients();
+  Future<ExportPatientsModelResponse> exportFilteredPatients(bool isOnlyMyPatients) async {
+    return await _apiServices.exportFilteredPatients(isOnlyMyPatients);
   }
 }

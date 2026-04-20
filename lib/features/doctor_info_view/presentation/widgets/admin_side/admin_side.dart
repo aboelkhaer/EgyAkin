@@ -10,9 +10,13 @@ import '../../../../../app/services/theme_bloc.dart';
 class AdminSide extends StatelessWidget {
   final HomeModelResponse homeDataModel;
   final DoctorInfoViewModelResponse doctorInfo;
+  final DoctorModel currentDoctorModel;
 
   const AdminSide(
-      {super.key, required this.homeDataModel, required this.doctorInfo});
+      {super.key,
+      required this.homeDataModel,
+      required this.doctorInfo,
+      required this.currentDoctorModel});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,8 @@ class AdminSide extends StatelessWidget {
 
         // Check if user has viewYourPatients permission
         if (!PermissionHelper.canPermission(
-            AppPermissions.viewAdminSideInProfiles)) {
+                AppPermissions.viewAdminSideInProfiles) ||
+            currentDoctorModel.id == doctorInfo.data!.id) {
           return const SizedBox.shrink();
         }
 

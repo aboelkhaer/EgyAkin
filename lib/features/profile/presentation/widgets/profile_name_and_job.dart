@@ -48,13 +48,8 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
   @override
   void didUpdateWidget(ProfileNameAndJob oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Only update preserved count if the new value is not null/empty and not '0'
-    if (widget.homeDataModel.markedPatientsCount != null &&
-        widget.homeDataModel.markedPatientsCount!.isNotEmpty &&
-        widget.homeDataModel.markedPatientsCount != '0') {
-      _preservedMarkedPatientsCount = widget.homeDataModel.markedPatientsCount;
-    }
-    // Preserve doctor model if it has valid data
+    // Always sync from widget so a new account shows its own marked count after sign in
+    _preservedMarkedPatientsCount = widget.homeDataModel.markedPatientsCount;
     if (widget.currentDoctorModel.firstName != null &&
         widget.currentDoctorModel.lastName != null) {
       _preservedDoctorModel = widget.currentDoctorModel;

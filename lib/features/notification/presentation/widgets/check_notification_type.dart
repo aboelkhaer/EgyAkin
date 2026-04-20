@@ -1042,9 +1042,12 @@ class CheckNotificationType extends StatelessWidget {
                                   AppColors.primary.withOpacity(0.8),
                               child: notificationModel.typeDoctor!.image == null
                                   ? Text(
-                                      notificationModel
-                                          .typeDoctor!.firstName![0]
-                                          .toUpperCase(),
+                                      notificationModel.typeDoctor!.firstName ==
+                                              null
+                                          ? '@'
+                                          : notificationModel
+                                              .typeDoctor!.firstName![0]
+                                              .toUpperCase(),
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16.sp),

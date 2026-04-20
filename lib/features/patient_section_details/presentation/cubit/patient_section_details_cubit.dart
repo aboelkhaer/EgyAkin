@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
+import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
@@ -50,6 +51,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   int snackbarErrorCounter = 0;
   String removeFilesId = '';
   int counterChanges = 0;
+  /// Question ids whose current value was last applied from voice/AI (cleared on manual edit).
+  final Set<String> aiFilledQuestionIds = {};
 
   // Pagination variables for search
   bool isLastPageInSearch = false;
@@ -359,6 +362,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       },
       (response) async {
         questionModelList = response.data!;
+        aiFilledQuestionIds.clear();
         emit(PatientSectionDetailsState.loaded(
           response.data!,
           false,
@@ -533,31 +537,38 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           }
 
           if (question.type == AppStrings.selectType) {
-            if (question.answer['answers'] == null ||
-                question.answer['answers'] == '') {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                  false,
-                  false,
-                  false,
-                  counterChanges,
-                  false,
-                  false,
-                  '',
-                ),
-              ));
+            Map myMap = formData[question.id.toString()] ??= {
+              AppStrings.answers: AppStrings.empty,
+              AppStrings.otherField: AppStrings.empty,
+            };
 
-              isValid = false;
-              break;
+            if (myMap.containsKey(AppStrings.answers)) {
+              dynamic answersValue = myMap[AppStrings.answers];
+              if (answersValue == null || answersValue.toString().isEmpty) {
+                emit(state.maybeMap(
+                  orElse: () => state,
+                  loaded: (value) => PatientSectionDetailsState.loaded(
+                    value.questions,
+                    false,
+                    false,
+                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+                    snackbarErrorCounter += 1,
+                    false,
+                    false,
+                    0.0,
+                    false,
+                    false,
+                    false,
+                    counterChanges,
+                    false,
+                    false,
+                    '',
+                  ),
+                ));
+
+                isValid = false;
+                break;
+              }
             }
           }
           if (question.question == 'Name') {
@@ -1470,5 +1481,107 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         return true; // Return true for success
       },
     );
+  }
+
+  dynamic _normalizeVoiceAnswer(QuestionModel question, dynamic value) {
+    if (question.type == AppStrings.multipleType) {
+      if (value is Map<String, dynamic>) return value;
+      if (value is List) {
+        return {
+          AppStrings.answers: value,
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+      if (value is String && value.trim().isNotEmpty) {
+        return {
+          AppStrings.answers: value.split(',').map((e) => e.trim()).toList(),
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+    }
+
+    if (question.type == AppStrings.questionTypeSelect) {
+      if (value is Map<String, dynamic>) return value;
+      return {
+        AppStrings.answers: value,
+        AppStrings.otherField: AppStrings.empty,
+      };
+    }
+
+    return value;
+  }
+
+  void applyVoiceAnswers(Map<String, dynamic> answersMap) {
+    if (questionModelList.isEmpty) return;
+
+    for (var i = 0; i < questionModelList.length; i++) {
+      final question = questionModelList[i];
+      final idKey = question.id.toString();
+      final textKey = (question.question ?? '').trim().toLowerCase();
+      dynamic value = answersMap[idKey];
+      value ??= answersMap[textKey];
+      if (value == null) continue;
+
+      final normalizedValue = _normalizeVoiceAnswer(question, value);
+      formData[idKey] = normalizedValue;
+      questionModelList[i] = question.copyWith(answer: normalizedValue);
+      if (question.type == AppStrings.questionTypeSelect) {
+        if (selectQuestionHasDisplayableAnswer(
+          optionValues: question.values,
+          storedAnswer: normalizedValue,
+        )) {
+          aiFilledQuestionIds.add(idKey);
+        } else {
+          aiFilledQuestionIds.remove(idKey);
+        }
+      } else {
+        aiFilledQuestionIds.add(idKey);
+      }
+    }
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        questionModelList,
+        value.isSubmitLoading,
+        value.isSubmitted,
+        value.message,
+        snackbarErrorCounter + 1,
+        value.isChooseFilesLoading,
+        value.isChooseFilesLoaded,
+        value.uploadFilesProgress,
+        value.isGetMedicationsLoading,
+        value.isGetMedicationsLoaded,
+        value.isSearchMedicationLoading,
+        counterChanges + 1,
+        value.isCreateMedicationLoading,
+        value.isCreateMedicationLoaded,
+        value.dialogMessage,
+      ),
+    ));
+  }
+
+  void clearAiFilledMark(String questionId) {
+    if (!aiFilledQuestionIds.remove(questionId)) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        value.questions,
+        value.isSubmitLoading,
+        value.isSubmitted,
+        value.message,
+        value.snackbarErrorCounter + 1,
+        value.isChooseFilesLoading,
+        value.isChooseFilesLoaded,
+        value.uploadFilesProgress,
+        value.isGetMedicationsLoading,
+        value.isGetMedicationsLoaded,
+        value.isSearchMedicationLoading,
+        counterChanges,
+        value.isCreateMedicationLoading,
+        value.isCreateMedicationLoaded,
+        value.dialogMessage,
+      ),
+    ));
   }
 }

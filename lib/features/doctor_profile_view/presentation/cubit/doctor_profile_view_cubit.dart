@@ -75,16 +75,16 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
   profileChangedIsTrue() {
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => DoctorProfileViewState.loaded(
-          value.currentDoctorModel, true, '', false, false, isMedicalStatistics),
+      loaded: (value) => DoctorProfileViewState.loaded(value.currentDoctorModel,
+          true, '', false, false, isMedicalStatistics),
     ));
   }
 
   profileChangedIsFalse() {
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => DoctorProfileViewState.loaded(
-          value.currentDoctorModel, false, '', false, false, isMedicalStatistics),
+      loaded: (value) => DoctorProfileViewState.loaded(value.currentDoctorModel,
+          false, '', false, false, isMedicalStatistics),
     ));
   }
 
@@ -143,7 +143,12 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => DoctorProfileViewState.loaded(
-            value.currentDoctorModel, false, '', true, false, isMedicalStatistics),
+            value.currentDoctorModel,
+            false,
+            '',
+            true,
+            false,
+            isMedicalStatistics),
       ));
       final result = await _updateDoctorProfileUsecase.execute(
         UpdateDoctorProfileUsecaseInput(
@@ -164,7 +169,12 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => DoctorProfileViewState.loaded(
-              value.currentDoctorModel, false, l.message, false, false, isMedicalStatistics),
+              value.currentDoctorModel,
+              false,
+              l.message,
+              false,
+              false,
+              isMedicalStatistics),
         ));
       }, (r) async {
         if (r.value == true) {

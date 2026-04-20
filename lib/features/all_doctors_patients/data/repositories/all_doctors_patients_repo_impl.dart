@@ -48,13 +48,13 @@ class AllDoctorsPatientsRepositoryImpl extends AllDoctorsPatientsRepository {
 
   @override
   Future<Either<Failure, ExportPatientsModelResponse>>
-      exportFilteredPatients() async {
+      exportFilteredPatients(bool isOnlyMyPatients) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response =
-            await allDoctorsPatientsDataSource.exportFilteredPatients();
+            await allDoctorsPatientsDataSource.exportFilteredPatients(isOnlyMyPatients);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

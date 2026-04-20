@@ -64,9 +64,9 @@ class _LatestTrendsHashtagsState extends State<LatestTrendsHashtags> {
                 isUserBlocked,
                 changesCounter,
               ) {
-                if (isVerifiedUser(homeData.isSyndicateCardRequired)) {
-                  return const SizedBox.shrink();
-                }
+                // if (isVerifiedUser(homeData.isSyndicateCardRequired)) {
+                //   return const SizedBox.shrink();
+                // }
 
                 return Column(
                   children: [

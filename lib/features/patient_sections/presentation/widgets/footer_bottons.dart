@@ -34,12 +34,14 @@ class FooterButtons extends StatelessWidget {
           child: Center(
             child: Container(
               height: 90,
+              padding: const EdgeInsets.only(bottom: 20),
               color:
                   isDarkMode ? AppColors.darkScaffoldBG : Colors.grey.shade100,
               child: Row(
                 children: [
                   finalSubmit &&
-                          currentDoctorRole != AppStrings.roleAdmin &&
+                          !PermissionHelper.canPermission(AppPermissions
+                              .viewPatientsFinalSubmitAndDeleteContainerForAdmin) &&
                           currentDoctorPoints < 200
                       ? const SizedBox.shrink()
                       : Expanded(
@@ -86,17 +88,18 @@ class FooterButtons extends StatelessWidget {
                               },
                               title: context.tr(AppStrings.delete),
                               isDelete: true,
-                              isDisable:
-                                  currentDoctorRole == AppStrings.roleAdmin
+                              isDisable: PermissionHelper.canPermission(
+                                      AppPermissions.deletePatientForAdmin)
+                                  ? false
+                                  : doctorId == currentDoctorId
                                       ? false
-                                      : doctorId == currentDoctorId
-                                          ? false
-                                          : true,
+                                      : true,
                             ),
                           ),
                         ),
                   finalSubmit &&
-                          currentDoctorRole != AppStrings.roleAdmin &&
+                          !PermissionHelper.canPermission(AppPermissions
+                              .viewPatientsFinalSubmitAndDeleteContainerForAdmin) &&
                           currentDoctorPoints < 200
                       ? const SizedBox.shrink()
                       : const SizedBox(width: 10),
@@ -105,6 +108,8 @@ class FooterButtons extends StatelessWidget {
                       height: 50,
                       child: finalSubmit
                           ? CustomElevatedButton(
+                              isDisable: !PermissionHelper.canPermission(
+                                  AppPermissions.generatePatientPdf),
                               onPressed: () {
                                 cubit.downloadPatientReport(patientId);
                               },
@@ -139,12 +144,15 @@ class FooterButtons extends StatelessWidget {
                                 }
                               },
                               title: context.tr(AppStrings.finalSubmit),
-                              isDisable:
-                                  currentDoctorRole == AppStrings.roleAdmin
+                              isDisable: (PermissionHelper.canPermission(
+                                          AppPermissions
+                                              .finalSubmitPatientForAdmin) &&
+                                      PermissionHelper.canPermission(
+                                          AppPermissions.finalSubmitPatient))
+                                  ? false
+                                  : doctorId == currentDoctorId
                                       ? false
-                                      : doctorId == currentDoctorId
-                                          ? false
-                                          : true,
+                                      : true,
                             ),
                     ),
                   ),

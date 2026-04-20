@@ -456,7 +456,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   orElse: () => FloatingActionButton(
                     onPressed: () {
                       // Export patients (filtered or all)
-                      cubit.exportFilteredPatients();
+                      cubit.exportFilteredPatients( false);
                     },
                     backgroundColor: AppColors.primary.withOpacity(0.8),
                     heroTag: 'export',
@@ -533,7 +533,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           ? null
                           : () {
                               // Export patients (filtered or all)
-                              cubit.exportFilteredPatients();
+                              cubit.exportFilteredPatients(false);
                             },
                       backgroundColor: AppColors.primary.withOpacity(0.8),
                       heroTag: 'export',

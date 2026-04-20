@@ -83,6 +83,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                           showErrorDialog(context, error);
                         },
                       );
+                      
                     }
                   },
                 );
@@ -107,7 +108,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                     return Text(
                       (widget.currentDoctorModel.id.toString() ==
                                   response.doctorId.toString() ||
-                              widget.homeDataModel.role == AppStrings.roleAdmin)
+                              PermissionHelper.canPermission(
+                                  AppPermissions.viewPatientsName))
                           ? response.patientName == null
                               ? ''
                               : response.patientName.toString()
@@ -552,6 +554,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                   if (isDownloadingReport) {
                                     return Container(
                                       height: 90,
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
                                       color: isDarkMode
                                           ? AppColors.darkScaffoldBG
                                           : Colors.grey.shade100,
@@ -576,8 +580,8 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                                               widget.currentDoctorModel.id
                                                   .toString()) &&
                                           (response.submitStatus == true) ||
-                                      widget.currentDoctorRole ==
-                                          AppStrings.roleAdmin)) {
+                                      PermissionHelper.canPermission(AppPermissions
+                                          .viewPatientsFinalSubmitAndDeleteContainerForAdmin))) {
                                     return FooterButtons(
                                       currentDoctorId: widget
                                           .currentDoctorModel.id
