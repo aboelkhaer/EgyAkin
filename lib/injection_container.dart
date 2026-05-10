@@ -4,6 +4,11 @@ import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_go
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_apple_usecase.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
+import 'package:egy_akin/features/ai_form_upload/data/datasources/ai_form_upload_datasource.dart';
+import 'package:egy_akin/features/ai_form_upload/data/repositories/ai_form_upload_repo_impl.dart';
+import 'package:egy_akin/features/ai_form_upload/domain/repositories/ai_form_upload_repo.dart';
+import 'package:egy_akin/features/ai_form_upload/domain/usecases/upload_ai_form_files_usecase.dart';
+import 'package:egy_akin/features/ai_form_upload/presentation/cubit/ai_form_upload_cubit.dart';
 import 'package:egy_akin/features/marked_patients/data/datasources/marked_patients_datasource.dart';
 import 'package:egy_akin/features/marked_patients/data/repositories/marked_patients_repo_impl.dart';
 import 'package:egy_akin/features/marked_patients/domain/repositories/marked_patients_repo.dart';
@@ -16,6 +21,7 @@ import 'package:egy_akin/features/more/domain/usecases/change_language_usecase.d
 import 'package:egy_akin/features/record/data/datasources/record_datasource.dart';
 import 'package:egy_akin/features/record/data/repositories/record_repo_impl.dart';
 import 'package:egy_akin/features/record/domain/repositories/record_repo.dart';
+import 'package:egy_akin/features/record/domain/usecases/process_section_images_usecase.dart';
 import 'package:egy_akin/features/record/domain/usecases/process_section_record_usecase.dart';
 import 'package:egy_akin/features/record/presentation/cubit/record_cubit.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/create_new_medicine_usecase.dart';
@@ -79,6 +85,7 @@ Future<void> diInit() async {
       () => DoctorInfoViewCubit(sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => RecordCubit(sl()));
+  sl.registerFactory(() => AiFormUploadCubit(sl()));
   sl.registerFactory(() => GfrCalculatorCubit());
   sl.registerFactory(() => ChangePasswordCubit(sl()));
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
@@ -159,6 +166,8 @@ Future<void> diInit() async {
   sl.registerLazySingleton<ContactUsDataSource>(
       () => ContactUsDataSourceImpl(sl()));
   sl.registerLazySingleton<RecordDataSource>(() => RecordDataSourceImpl(sl()));
+  sl.registerLazySingleton<AiFormUploadDatasource>(
+      () => AiFormUploadDatasourceImpl(sl()));
   sl.registerLazySingleton<SplashDataSource>(() => SplashDataSourceImpl(sl()));
   sl.registerLazySingleton<ChangePasswordDataSource>(
       () => ChangePasswordDataSourceImpl(sl()));
@@ -235,6 +244,8 @@ Future<void> diInit() async {
       () => ContactUsRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<RecordRepository>(
       () => RecordRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<AiFormUploadRepo>(
+      () => AiFormUploadRepoImpl(sl(), sl()));
   sl.registerLazySingleton<SplashRepository>(
       () => SplashRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<ChangePasswordRepository>(
@@ -405,6 +416,14 @@ Future<void> diInit() async {
   if (!GetIt.I.isRegistered<ProcessSectionRecordUsecase>()) {
     sl.registerFactory<ProcessSectionRecordUsecase>(
         () => ProcessSectionRecordUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<ProcessSectionImagesUsecase>()) {
+    sl.registerFactory<ProcessSectionImagesUsecase>(
+        () => ProcessSectionImagesUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<UploadAiFormFilesUsecase>()) {
+    sl.registerFactory<UploadAiFormFilesUsecase>(
+        () => UploadAiFormFilesUsecase(sl()));
   }
   if (!GetIt.I.isRegistered<DownloadPatientReportUsecase>()) {
     sl.registerFactory<DownloadPatientReportUsecase>(

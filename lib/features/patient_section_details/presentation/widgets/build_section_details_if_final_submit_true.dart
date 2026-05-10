@@ -1,6 +1,8 @@
 import 'package:egy_akin/app/shared/functions/convert_dynamic_list_to_string_list.dart';
 import 'package:egy_akin/app/shared/functions/hide_email.dart';
 import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import '../../../../exports.dart';
@@ -33,6 +35,9 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
           itemBuilder: (context, index) {
             var question = questionList[index];
             String answerText = getAnswerText(question.answer);
+            final canViewPatientIdentity = PermissionHelper.canPermission(
+              AppPermissions.viewPatientsName,
+            );
 
             return Container(
               margin: const EdgeInsets.all(16),
@@ -82,12 +87,15 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                                         ? formatDateTime(question.answer)
                                         : question.question ==
                                                 AppStrings.nationalID
-                                            ? currentDoctorId == doctorId
+                                            ? (currentDoctorId == doctorId ||
+                                                    canViewPatientIdentity)
                                                 ? question.answer ?? '...'
                                                 : hideNationalId(
                                                     question.answer ?? '...')
                                             : question.question == 'Name'
-                                                ? currentDoctorId == doctorId
+                                                ? (currentDoctorId ==
+                                                            doctorId ||
+                                                        canViewPatientIdentity)
                                                     ? question.answer ?? '...'
                                                     : isAllDataOpen
                                                         ? question.answer ??
@@ -95,8 +103,9 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                                                         : convertTextToSymbols(
                                                             question.answer)
                                                 : question.question == 'Phone'
-                                                    ? currentDoctorId ==
-                                                            doctorId
+                                                    ? (currentDoctorId ==
+                                                                doctorId ||
+                                                            canViewPatientIdentity)
                                                         ? question.answer ??
                                                             '...'
                                                         : isAllDataOpen

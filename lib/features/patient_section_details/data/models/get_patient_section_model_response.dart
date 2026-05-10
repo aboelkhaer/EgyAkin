@@ -11,6 +11,7 @@ class GetPatientSectionDetailsModelResponse
     bool? value,
     @JsonKey(name: 'ai_mode') String? aiMode,
     @JsonKey(name: 'ai_hint') String? aiHint,
+    @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
     List<QuestionModel>? data,
   }) = _GetPatientSectionDetailsModelResponse;
   factory GetPatientSectionDetailsModelResponse.fromJson(

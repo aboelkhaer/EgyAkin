@@ -26,6 +26,8 @@ mixin _$GetPatientSectionDetailsModelResponse {
   String? get aiMode => throw _privateConstructorUsedError;
   @JsonKey(name: 'ai_hint')
   String? get aiHint => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
 
   /// Serializes this GetPatientSectionDetailsModelResponse to a JSON map.
@@ -51,6 +53,7 @@ abstract class $GetPatientSectionDetailsModelResponseCopyWith<$Res> {
       {bool? value,
       @JsonKey(name: 'ai_mode') String? aiMode,
       @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
       List<QuestionModel>? data});
 }
 
@@ -73,6 +76,7 @@ class _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
     Object? value = freezed,
     Object? aiMode = freezed,
     Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -88,6 +92,10 @@ class _$GetPatientSectionDetailsModelResponseCopyWithImpl<$Res,
           ? _value.aiHint
           : aiHint // ignore: cast_nullable_to_non_nullable
               as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -109,6 +117,7 @@ abstract class _$$GetPatientSectionDetailsModelResponseImplCopyWith<$Res>
       {bool? value,
       @JsonKey(name: 'ai_mode') String? aiMode,
       @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
       List<QuestionModel>? data});
 }
 
@@ -130,6 +139,7 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
     Object? value = freezed,
     Object? aiMode = freezed,
     Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetPatientSectionDetailsModelResponseImpl(
@@ -145,6 +155,10 @@ class __$$GetPatientSectionDetailsModelResponseImplCopyWithImpl<$Res>
           ? _value.aiHint
           : aiHint // ignore: cast_nullable_to_non_nullable
               as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -161,6 +175,7 @@ class _$GetPatientSectionDetailsModelResponseImpl
       {this.value,
       @JsonKey(name: 'ai_mode') this.aiMode,
       @JsonKey(name: 'ai_hint') this.aiHint,
+      @JsonKey(name: 'ai_voice_time') this.aiVoiceTime,
       final List<QuestionModel>? data})
       : _data = data;
 
@@ -176,6 +191,9 @@ class _$GetPatientSectionDetailsModelResponseImpl
   @override
   @JsonKey(name: 'ai_hint')
   final String? aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  final int? aiVoiceTime;
   final List<QuestionModel>? _data;
   @override
   List<QuestionModel>? get data {
@@ -188,7 +206,7 @@ class _$GetPatientSectionDetailsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionDetailsModelResponse(value: $value, aiMode: $aiMode, aiHint: $aiHint, data: $data)';
+    return 'GetPatientSectionDetailsModelResponse(value: $value, aiMode: $aiMode, aiHint: $aiHint, aiVoiceTime: $aiVoiceTime, data: $data)';
   }
 
   @override
@@ -199,13 +217,15 @@ class _$GetPatientSectionDetailsModelResponseImpl
             (identical(other.value, value) || other.value == value) &&
             (identical(other.aiMode, aiMode) || other.aiMode == aiMode) &&
             (identical(other.aiHint, aiHint) || other.aiHint == aiHint) &&
+            (identical(other.aiVoiceTime, aiVoiceTime) ||
+                other.aiVoiceTime == aiVoiceTime) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, aiMode, aiHint,
-      const DeepCollectionEquality().hash(_data));
+      aiVoiceTime, const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of GetPatientSectionDetailsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -231,6 +251,7 @@ abstract class _GetPatientSectionDetailsModelResponse
           {final bool? value,
           @JsonKey(name: 'ai_mode') final String? aiMode,
           @JsonKey(name: 'ai_hint') final String? aiHint,
+          @JsonKey(name: 'ai_voice_time') final int? aiVoiceTime,
           final List<QuestionModel>? data}) =
       _$GetPatientSectionDetailsModelResponseImpl;
 
@@ -246,6 +267,9 @@ abstract class _GetPatientSectionDetailsModelResponse
   @override
   @JsonKey(name: 'ai_hint')
   String? get aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime;
   @override
   List<QuestionModel>? get data;
 

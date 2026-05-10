@@ -23,6 +23,12 @@ GetOutcomeModelResponse _$GetOutcomeModelResponseFromJson(
 mixin _$GetOutcomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_mode')
+  String? get aiMode => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime => throw _privateConstructorUsedError;
   @JsonKey(name: 'Submitter')
   OutcomeSubmitterModel? get submitter => throw _privateConstructorUsedError;
 
@@ -45,6 +51,9 @@ abstract class $GetOutcomeModelResponseCopyWith<$Res> {
   $Res call(
       {bool? value,
       List<QuestionModel>? data,
+      @JsonKey(name: 'ai_mode') String? aiMode,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
       @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter});
 
   $OutcomeSubmitterModelCopyWith<$Res>? get submitter;
@@ -68,6 +77,9 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
   $Res call({
     Object? value = freezed,
     Object? data = freezed,
+    Object? aiMode = freezed,
+    Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? submitter = freezed,
   }) {
     return _then(_value.copyWith(
@@ -79,6 +91,18 @@ class _$GetOutcomeModelResponseCopyWithImpl<$Res,
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as List<QuestionModel>?,
+      aiMode: freezed == aiMode
+          ? _value.aiMode
+          : aiMode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       submitter: freezed == submitter
           ? _value.submitter
           : submitter // ignore: cast_nullable_to_non_nullable
@@ -113,6 +137,9 @@ abstract class _$$GetOutcomeModelResponseImplCopyWith<$Res>
   $Res call(
       {bool? value,
       List<QuestionModel>? data,
+      @JsonKey(name: 'ai_mode') String? aiMode,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
       @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter});
 
   @override
@@ -136,6 +163,9 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? value = freezed,
     Object? data = freezed,
+    Object? aiMode = freezed,
+    Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? submitter = freezed,
   }) {
     return _then(_$GetOutcomeModelResponseImpl(
@@ -147,6 +177,18 @@ class __$$GetOutcomeModelResponseImplCopyWithImpl<$Res>
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<QuestionModel>?,
+      aiMode: freezed == aiMode
+          ? _value.aiMode
+          : aiMode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       submitter: freezed == submitter
           ? _value.submitter
           : submitter // ignore: cast_nullable_to_non_nullable
@@ -161,6 +203,9 @@ class _$GetOutcomeModelResponseImpl implements _GetOutcomeModelResponse {
   const _$GetOutcomeModelResponseImpl(
       {this.value,
       final List<QuestionModel>? data,
+      @JsonKey(name: 'ai_mode') this.aiMode,
+      @JsonKey(name: 'ai_hint') this.aiHint,
+      @JsonKey(name: 'ai_voice_time') this.aiVoiceTime,
       @JsonKey(name: 'Submitter') this.submitter})
       : _data = data;
 
@@ -180,12 +225,21 @@ class _$GetOutcomeModelResponseImpl implements _GetOutcomeModelResponse {
   }
 
   @override
+  @JsonKey(name: 'ai_mode')
+  final String? aiMode;
+  @override
+  @JsonKey(name: 'ai_hint')
+  final String? aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  final int? aiVoiceTime;
+  @override
   @JsonKey(name: 'Submitter')
   final OutcomeSubmitterModel? submitter;
 
   @override
   String toString() {
-    return 'GetOutcomeModelResponse(value: $value, data: $data, submitter: $submitter)';
+    return 'GetOutcomeModelResponse(value: $value, data: $data, aiMode: $aiMode, aiHint: $aiHint, aiVoiceTime: $aiVoiceTime, submitter: $submitter)';
   }
 
   @override
@@ -195,14 +249,24 @@ class _$GetOutcomeModelResponseImpl implements _GetOutcomeModelResponse {
             other is _$GetOutcomeModelResponseImpl &&
             (identical(other.value, value) || other.value == value) &&
             const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.aiMode, aiMode) || other.aiMode == aiMode) &&
+            (identical(other.aiHint, aiHint) || other.aiHint == aiHint) &&
+            (identical(other.aiVoiceTime, aiVoiceTime) ||
+                other.aiVoiceTime == aiVoiceTime) &&
             (identical(other.submitter, submitter) ||
                 other.submitter == submitter));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, value,
-      const DeepCollectionEquality().hash(_data), submitter);
+  int get hashCode => Object.hash(
+      runtimeType,
+      value,
+      const DeepCollectionEquality().hash(_data),
+      aiMode,
+      aiHint,
+      aiVoiceTime,
+      submitter);
 
   /// Create a copy of GetOutcomeModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -225,6 +289,9 @@ abstract class _GetOutcomeModelResponse implements GetOutcomeModelResponse {
   const factory _GetOutcomeModelResponse(
           {final bool? value,
           final List<QuestionModel>? data,
+          @JsonKey(name: 'ai_mode') final String? aiMode,
+          @JsonKey(name: 'ai_hint') final String? aiHint,
+          @JsonKey(name: 'ai_voice_time') final int? aiVoiceTime,
           @JsonKey(name: 'Submitter') final OutcomeSubmitterModel? submitter}) =
       _$GetOutcomeModelResponseImpl;
 
@@ -235,6 +302,15 @@ abstract class _GetOutcomeModelResponse implements GetOutcomeModelResponse {
   bool? get value;
   @override
   List<QuestionModel>? get data;
+  @override
+  @JsonKey(name: 'ai_mode')
+  String? get aiMode;
+  @override
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime;
   @override
   @JsonKey(name: 'Submitter')
   OutcomeSubmitterModel? get submitter;

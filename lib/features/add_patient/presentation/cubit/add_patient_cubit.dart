@@ -14,21 +14,32 @@ class AddPatientCubit extends Cubit<AddPatientState> {
   GlobalKey<FormState> addPatientKeyForm = GlobalKey<FormState>();
   List<QuestionModel>? questionModelList = [];
   Map<String, dynamic> formData = {};
+  /// HTML guidance from API (`ai_hint`) for voice recording on add patient.
+  String? addPatientAiHint;
+
+  /// Max voice recording length from API (`ai_voice_time`), in seconds.
+  int? addPatientAiVoiceTime;
 
   /// Question ids whose current value was last applied from voice/AI (cleared on manual edit).
   final Set<String> aiFilledQuestionIds = {};
 
   getPatientHistoryForAddPatient() async {
+    addPatientAiHint = null;
+    addPatientAiVoiceTime = null;
     emit(const AddPatientState.loading());
     await Future.delayed(const Duration(
         milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
     final result = await _getPatientHistoryForAddPatientUsecase.execute('1');
     result.fold(
       (l) {
+        addPatientAiHint = null;
+        addPatientAiVoiceTime = null;
         emit(AddPatientState.error(l.message));
       },
       (response) async {
         questionModelList = response.data;
+        addPatientAiHint = response.aiHint;
+        addPatientAiVoiceTime = response.aiVoiceTime;
         aiFilledQuestionIds.clear();
         emit(AddPatientState.loaded(
             response.data ?? [], false, 0, false, '', snackbarErrorCounter));

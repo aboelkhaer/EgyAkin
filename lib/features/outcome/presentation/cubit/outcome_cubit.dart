@@ -1,4 +1,5 @@
 import '../../../../exports.dart';
+import '../../../../app/shared/functions/select_question_has_displayable_answer.dart';
 
 class OutcomeCubit extends Cubit<OutcomeState> {
   OutcomeCubit(this._getOutcomeUsecase, this._submitOutcomeUsecase)
@@ -11,6 +12,14 @@ class OutcomeCubit extends Cubit<OutcomeState> {
   int snackbarErrorCounter = 0;
   List<QuestionModel> questionModelList = [];
   OutcomeSubmitterModel submitterModel = const OutcomeSubmitterModel();
+  String? outcomeAiMode;
+  String? outcomeAiHint;
+
+  /// Max voice recording length from API (`ai_voice_time`), in seconds.
+  int? outcomeAiVoiceTime;
+
+  /// Question ids whose value was applied from AI voice fill.
+  final Set<String> aiFilledQuestionIds = {};
 
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
@@ -72,11 +81,18 @@ class OutcomeCubit extends Cubit<OutcomeState> {
         .execute(GetOutcomeUsecaseInput(sectionId: '8', patientId: patientId));
     result.fold(
       (l) {
+        outcomeAiMode = null;
+        outcomeAiHint = null;
+        outcomeAiVoiceTime = null;
         emit(OutcomeState.error(l.message));
       },
       (data) async {
         questionModelList = data.data!;
         submitterModel = data.submitter!;
+        outcomeAiMode = data.aiMode?.trim().toLowerCase();
+        outcomeAiHint = data.aiHint;
+        outcomeAiVoiceTime = data.aiVoiceTime;
+        aiFilledQuestionIds.clear();
 
         emit(OutcomeState.loaded(
           questionModelList,
@@ -88,6 +104,122 @@ class OutcomeCubit extends Cubit<OutcomeState> {
         ));
       },
     );
+  }
+
+  dynamic _normalizeVoiceAnswer(QuestionModel question, dynamic value) {
+    if (question.type == AppStrings.multipleType) {
+      if (value is Map<String, dynamic>) return value;
+      if (value is List) {
+        return {
+          AppStrings.answers: value,
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+      if (value is String && value.trim().isNotEmpty) {
+        return {
+          AppStrings.answers: value.split(',').map((e) => e.trim()).toList(),
+          AppStrings.otherField: AppStrings.empty,
+        };
+      }
+    }
+
+    if (question.type == AppStrings.selectType ||
+        question.type == AppStrings.questionTypeSelect) {
+      if (value is Map<String, dynamic>) return value;
+      return {
+        AppStrings.answers: value,
+        AppStrings.otherField: AppStrings.empty,
+      };
+    }
+
+    return value;
+  }
+
+  bool _hasDisplayableAiAnswer(QuestionModel question, dynamic value) {
+    if (value == null) return false;
+
+    if (question.type == AppStrings.questionTypeSelect ||
+        question.type == AppStrings.selectType) {
+      return selectQuestionHasDisplayableAnswer(
+        optionValues: question.values,
+        storedAnswer: value,
+      );
+    }
+
+    if (question.type == AppStrings.questionTypeMultiple ||
+        question.type == AppStrings.multipleType) {
+      if (value is Map) {
+        final answers = value[AppStrings.answers];
+        if (answers is List) return answers.isNotEmpty;
+        if (answers is String) return answers.trim().isNotEmpty;
+        return answers != null;
+      }
+      if (value is List) return value.isNotEmpty;
+      if (value is String) return value.trim().isNotEmpty;
+      return false;
+    }
+
+    if (value is String) return value.trim().isNotEmpty;
+    if (value is Map) return value.isNotEmpty;
+    if (value is List) return value.isNotEmpty;
+    return true;
+  }
+
+  void applyVoiceAnswers(Map<String, dynamic> answersMap) {
+    if (questionModelList.isEmpty) return;
+
+    final updatedQuestionModelList = List<QuestionModel>.from(questionModelList);
+    for (var i = 0; i < updatedQuestionModelList.length; i++) {
+      final question = updatedQuestionModelList[i];
+      final idKey = question.id?.toString();
+      final textKey = (question.question ?? '').trim().toLowerCase();
+
+      dynamic value;
+      if (idKey != null && idKey.isNotEmpty) {
+        value = answersMap[idKey];
+      }
+      value ??= answersMap[textKey];
+      if (value == null) continue;
+
+      final normalizedValue = _normalizeVoiceAnswer(question, value);
+      updatedQuestionModelList[i] = question.copyWith(answer: normalizedValue);
+      if (idKey != null && idKey.isNotEmpty) {
+        formData[idKey] = normalizedValue;
+        if (_hasDisplayableAiAnswer(question, normalizedValue)) {
+          aiFilledQuestionIds.add(idKey);
+        } else {
+          aiFilledQuestionIds.remove(idKey);
+        }
+      }
+    }
+
+    questionModelList = updatedQuestionModelList;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => OutcomeState.loaded(
+        questionModelList,
+        value.isSubmitedOutcome,
+        value.message,
+        value.snackbarErrorCounter + 1,
+        value.isSubmitedOutcomeLoading,
+        submitterModel,
+      ),
+    ));
+  }
+
+  void clearAiFilledMark(String questionId) {
+    if (!aiFilledQuestionIds.remove(questionId)) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => OutcomeState.loaded(
+        value.questionList,
+        value.isSubmitedOutcome,
+        value.message,
+        value.snackbarErrorCounter + 1,
+        value.isSubmitedOutcomeLoading,
+        submitterModel,
+      ),
+    ));
   }
 
   // submitOutcome(String patientId) async {

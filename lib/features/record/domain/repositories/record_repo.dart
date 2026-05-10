@@ -9,4 +9,9 @@ abstract class RecordRepository {
     required String sectionId,
     required File audioFile,
   });
+
+  Future<Either<Failure, ProcessSectionModelResponse>> processSectionImages({
+    required String sectionId,
+    required List<File> imageFiles,
+  });
 }

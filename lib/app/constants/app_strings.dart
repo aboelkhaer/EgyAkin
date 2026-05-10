@@ -603,7 +603,7 @@ class AppStrings {
   static const String oldAnswer = 'Old Answer';
   static const String youDontHavePermissionToCreateRecommendations =
       'You don\'t have permission to create recommendations.';
-  static const String showCurrentUserPermissions = 'Show current user permissions';
+  static const String showCurrentUserPermissions =
+      'Show current user permissions';
   static const String currentUserPermissions = 'Current user permissions';
-
 }

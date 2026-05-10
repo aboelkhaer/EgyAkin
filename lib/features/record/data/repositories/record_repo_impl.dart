@@ -31,4 +31,24 @@ class RecordRepositoryImpl extends RecordRepository {
     }
     return Left(DataSource.noInternetConnection.getFailure());
   }
+
+  @override
+  Future<Either<Failure, ProcessSectionModelResponse>> processSectionImages({
+    required String sectionId,
+    required List<File> imageFiles,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final response = await _recordDataSource.processSectionImages(
+          sectionId: sectionId,
+          imageFiles: imageFiles,
+        );
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

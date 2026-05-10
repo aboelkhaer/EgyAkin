@@ -698,4 +698,12 @@ abstract class ApiServices {
     @Part(name: 'section_id') String sectionId,
     @Part(name: 'audio') File audio,
   );
+
+  @POST(ApiEndPoint.processSection)
+  @MultiPart()
+  Future<ProcessSectionModelResponse> processSectionFiles(
+    @Part(name: 'section_id') String sectionId,
+    @Part(name: 'images[]') List<File> images,
+    @Part(name: 'files[]') List<File> files,
+  );
 }

@@ -383,7 +383,7 @@ class _MoreScreenState extends State<MoreScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'v${context.read<HomeCubit>().currentUserVersion} (${context.read<HomeCubit>().currentUserBuildNumber}) ${ApiEndPoint.baseUrl == 'https://test.egyakin.com' ? 'T' : 'P'}',
+                                      'v${context.read<HomeCubit>().currentUserVersion} (${context.read<HomeCubit>().currentUserBuildNumber}-${ApiEndPoint.versioning}) ${ApiEndPoint.baseUrl == 'https://test.egyakin.com' ? 'T' : 'P'}',
                                       style: TextStyle(
                                         color: Colors.grey.shade500,
                                         fontSize: 12.sp,
@@ -438,7 +438,7 @@ class _MoreScreenState extends State<MoreScreen> {
                                       final prefs =
                                           await SharedPreferences.getInstance();
                                       await prefs.remove(AppLocalStrings
-                                          .isUpdateMessageHidden6);
+                                          .isUpdateMessageHidden8);
 
                                       if (context.mounted) {
                                         customSnackBar(

@@ -11,6 +11,8 @@ _$GetPatientHistoryForAddPatientModelResponseImpl
             Map<String, dynamic> json) =>
         _$GetPatientHistoryForAddPatientModelResponseImpl(
           value: json['value'] as bool?,
+          aiHint: json['ai_hint'] as String?,
+          aiVoiceTime: (json['ai_voice_time'] as num?)?.toInt(),
           data: (json['data'] as List<dynamic>?)
               ?.map((e) => QuestionModel.fromJson(e as Map<String, dynamic>))
               .toList(),
@@ -20,6 +22,8 @@ Map<String, dynamic> _$$GetPatientHistoryForAddPatientModelResponseImplToJson(
         _$GetPatientHistoryForAddPatientModelResponseImpl instance) =>
     <String, dynamic>{
       'value': instance.value,
+      'ai_hint': instance.aiHint,
+      'ai_voice_time': instance.aiVoiceTime,
       'data': instance.data,
     };
 

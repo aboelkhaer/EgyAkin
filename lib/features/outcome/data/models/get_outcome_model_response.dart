@@ -9,6 +9,9 @@ class GetOutcomeModelResponse with _$GetOutcomeModelResponse {
   const factory GetOutcomeModelResponse({
     bool? value,
     List<QuestionModel>? data,
+    @JsonKey(name: 'ai_mode') String? aiMode,
+    @JsonKey(name: 'ai_hint') String? aiHint,
+    @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
     @JsonKey(name: 'Submitter') OutcomeSubmitterModel? submitter,
   }) = _GetOutcomeModelResponse;
   factory GetOutcomeModelResponse.fromJson(Map<String, dynamic> json) =>

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart' hide RecordState;
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../../exports.dart';
 import '../cubit/record_cubit.dart';
@@ -12,12 +13,22 @@ class RecordScreen extends StatefulWidget {
   final List<QuestionModel> questions;
   final String source;
   final String sectionId;
+  final String aiMode;
+
+  /// Server-provided HTML (`ai_hint`) — shown while recording so the doctor knows what to cover.
+  final String? aiHintHtml;
+
+  /// Max recording length from API (`ai_voice_time`), in seconds. Falls back to 2 minutes if null or ≤0.
+  final int? aiVoiceTime;
 
   const RecordScreen({
     super.key,
     required this.questions,
     required this.source,
     required this.sectionId,
+    required this.aiMode,
+    this.aiHintHtml,
+    this.aiVoiceTime,
   });
 
   @override
@@ -25,8 +36,17 @@ class RecordScreen extends StatefulWidget {
 }
 
 class _RecordScreenState extends State<RecordScreen> {
-  // Change this to control the max recording limit.
-  static const Duration _recordLimit = Duration(minutes: 2);
+  static const Duration _defaultRecordLimit = Duration(minutes: 2);
+
+  Duration get _recordLimit {
+    final sec = widget.aiVoiceTime;
+    if (sec != null && sec > 0) return Duration(seconds: sec);
+    return _defaultRecordLimit;
+  }
+
+  String get _trimmedAiHint => widget.aiHintHtml?.trim() ?? '';
+
+  bool get _showRecordingHint => _trimmedAiHint.isNotEmpty;
 
   final AudioRecorder _recorder = AudioRecorder();
   final AudioPlayer _player = AudioPlayer();
@@ -35,7 +55,11 @@ class _RecordScreenState extends State<RecordScreen> {
   bool _isPlaybackCompleted = false;
   bool _isRecordPaused = false;
   String? _recordFilePath;
+  final ScrollController _hintScrollController = ScrollController();
   final List<double> _waveSamples = [];
+
+  /// First `onAmplitudeChanged` tick is often bogus (e.g. current=0 → full bars); skip it.
+  bool _skipNextAmplitudeSample = false;
   StreamSubscription<Amplitude>? _amplitudeSub;
   StreamSubscription<Duration>? _positionSub;
   StreamSubscription<Duration?>? _durationSub;
@@ -51,6 +75,8 @@ class _RecordScreenState extends State<RecordScreen> {
 
   @override
   void dispose() {
+    unawaited(WakelockPlus.disable());
+    _hintScrollController.dispose();
     _amplitudeSub?.cancel();
     _positionSub?.cancel();
     _durationSub?.cancel();
@@ -107,20 +133,7 @@ class _RecordScreenState extends State<RecordScreen> {
       path: path,
     );
 
-    _amplitudeSub?.cancel();
-    _amplitudeSub =
-        _recorder.onAmplitudeChanged(const Duration(milliseconds: 80)).listen(
-      (amp) {
-        final normalized = ((amp.current + 60) / 60).clamp(0.0, 1.0);
-        if (!mounted) return;
-        setState(() {
-          _waveSamples.add(normalized);
-          if (_waveSamples.length > 45) {
-            _waveSamples.removeAt(0);
-          }
-        });
-      },
-    );
+    await WakelockPlus.enable();
 
     if (!mounted) return;
     setState(() {
@@ -134,6 +147,26 @@ class _RecordScreenState extends State<RecordScreen> {
       _waveSamples.clear();
       _recordDuration = Duration.zero;
     });
+
+    _amplitudeSub?.cancel();
+    _skipNextAmplitudeSample = true;
+    _amplitudeSub =
+        _recorder.onAmplitudeChanged(const Duration(milliseconds: 80)).listen(
+      (amp) {
+        if (_skipNextAmplitudeSample) {
+          _skipNextAmplitudeSample = false;
+          return;
+        }
+        final normalized = _amplitudeDbToBarHeight(amp);
+        if (!mounted) return;
+        setState(() {
+          _waveSamples.add(normalized);
+          if (_waveSamples.length > 45) {
+            _waveSamples.removeAt(0);
+          }
+        });
+      },
+    );
     _recordStopwatch
       ..reset()
       ..start();
@@ -146,6 +179,7 @@ class _RecordScreenState extends State<RecordScreen> {
       await _recorder.resume();
       _recordStopwatch.start();
       _startRecordTimer();
+      _skipNextAmplitudeSample = true;
     } else {
       await _recorder.pause();
       _recordStopwatch.stop();
@@ -157,7 +191,12 @@ class _RecordScreenState extends State<RecordScreen> {
   }
 
   Future<void> _stopRecord() async {
-    final path = await _recorder.stop();
+    String? path;
+    try {
+      path = await _recorder.stop();
+    } finally {
+      await WakelockPlus.disable();
+    }
     _recordStopwatch.stop();
     _recordTimer?.cancel();
     await _amplitudeSub?.cancel();
@@ -267,6 +306,90 @@ class _RecordScreenState extends State<RecordScreen> {
     return '$minutes:$seconds';
   }
 
+  /// Maps dBFS amplitude to [0, 1] bar fill. `(current + 60) / 60` treats `current == 0` as
+  /// maximum (0 dBFS); the platform often emits `0` before real readings → a flash of full bars.
+  double _amplitudeDbToBarHeight(Amplitude amp) {
+    final c = amp.current;
+    final m = amp.max;
+    if (!c.isFinite || !m.isFinite) return 0.04;
+    if (c == 0 && m == 0) return 0.04;
+    if (c > 0) return 0.04;
+    final db = c.clamp(-60.0, 0.0);
+    return ((db + 60) / 60).clamp(0.0, 1.0);
+  }
+
+  Widget _buildRecordingHintPanel(bool isDarkMode) {
+    final htmlStyle = TextStyle(
+      fontSize: 12.5.sp,
+      color: isDarkMode ? AppColors.darkDescription : Colors.black87,
+      height: 1.4,
+    );
+
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 520),
+      curve: Curves.easeOutCubic,
+      tween: Tween<double>(begin: 0, end: 1),
+      builder: (context, t, child) {
+        return Opacity(
+          opacity: t,
+          child: Transform.translate(
+            offset: Offset(0, (1 - t) * 18),
+            child: Transform.scale(
+              scale: 0.96 + (0.04 * t),
+              alignment: Alignment.topCenter,
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 4),
+        padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: isDarkMode
+              ? AppColors.darkCardBG.withOpacity(0.92)
+              : Colors.white.withOpacity(0.95),
+          border: Border.all(
+            color: isDarkMode
+                ? AppColors.darkBorder
+                : AppColors.primary.withOpacity(0.14),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isDarkMode
+                  ? Colors.black.withOpacity(0.18)
+                  : AppColors.primary.withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Scrollbar(
+          controller: _hintScrollController,
+          thumbVisibility: true,
+          radius: const Radius.circular(8),
+          child: SingleChildScrollView(
+            controller: _hintScrollController,
+            physics: const BouncingScrollPhysics(),
+            child: HtmlWidget(
+              _trimmedAiHint,
+              onTapUrl: (url) {
+                launchURL(
+                  url: url,
+                  onError: (_) {},
+                );
+                return true;
+              },
+              textStyle: htmlStyle,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _sendRecordAndFill() async {
     if (_recordFilePath == null || _recordFilePath!.isEmpty) {
       customSnackBar(context: context, message: 'Please record first.');
@@ -289,6 +412,15 @@ class _RecordScreenState extends State<RecordScreen> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final elapsedRatio = _recordLimit.inMilliseconds == 0
+            ? 0.0
+            : (_recordDuration.inMilliseconds / _recordLimit.inMilliseconds)
+                .clamp(0.0, 1.0);
+        final remainingRatio = (1 - elapsedRatio).clamp(0.0, 1.0);
+        final remainingDuration = Duration(
+          milliseconds:
+              (_recordLimit.inMilliseconds * remainingRatio.toDouble()).round(),
+        );
         final bgGradient = isDarkMode
             ? [const Color(0xFF11161E), const Color(0xFF0B0F14)]
             : [const Color(0xFFF7FAFF), const Color(0xFFEFF4FF)];
@@ -379,22 +511,75 @@ class _RecordScreenState extends State<RecordScreen> {
                               ),
                               child: Column(
                                 children: [
-                                  Container(
-                                    height: 84,
-                                    width: 84,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: isDarkMode
-                                          ? AppColors.darkBorder
-                                              .withOpacity(0.35)
-                                          : AppColors.primary.withOpacity(0.1),
-                                    ),
-                                    child: Icon(
-                                      _isRecording ? Icons.mic : Icons.mic_none,
-                                      size: 44,
-                                      color: _isRecording
-                                          ? Colors.red
-                                          : AppColors.primary,
+                                  SizedBox(
+                                    height: 106,
+                                    width: 106,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SizedBox(
+                                          height: 106,
+                                          width: 106,
+                                          child: CircularProgressIndicator(
+                                            value: remainingRatio.toDouble(),
+                                            strokeWidth: 7,
+                                            strokeCap: StrokeCap.round,
+                                            backgroundColor: isDarkMode
+                                                ? AppColors.darkBorder
+                                                    .withOpacity(0.35)
+                                                : AppColors.primary
+                                                    .withOpacity(0.15),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                              _isRecording
+                                                  ? Colors.redAccent
+                                                  : AppColors.primary,
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          height: 84,
+                                          width: 84,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isDarkMode
+                                                ? AppColors.darkBorder
+                                                    .withOpacity(0.35)
+                                                : AppColors.primary
+                                                    .withOpacity(0.1),
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                _isRecording
+                                                    ? Icons.mic
+                                                    : Icons.mic_none,
+                                                size: 34,
+                                                color: _isRecording
+                                                    ? Colors.red
+                                                    : AppColors.primary,
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                _formatDuration(
+                                                  _isRecording
+                                                      ? remainingDuration
+                                                      : _recordLimit,
+                                                ),
+                                                style: TextStyle(
+                                                  fontSize: 10.sp,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: isDarkMode
+                                                      ? AppColors.darkTitle
+                                                      : Colors.black87,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(height: 12),
@@ -412,7 +597,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                               : _waveSamples.length,
                                           (index) {
                                             final value = _waveSamples.isEmpty
-                                                ? 0.06
+                                                ? 0.03
                                                 : _waveSamples[index];
                                             final h = 6 + (value * 26);
                                             return AnimatedContainer(
@@ -455,21 +640,21 @@ class _RecordScreenState extends State<RecordScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    _isRecording
-                                        ? '${_formatDuration(_recordDuration)} / ${_formatDuration(_recordLimit)}'
-                                        : (_recordDuration > Duration.zero
-                                            ? 'Recorded: ${_formatDuration(_recordDuration)}'
-                                            : 'Max: ${_formatDuration(_recordLimit)}'),
-                                    style: TextStyle(
-                                      color: isDarkMode
-                                          ? AppColors.darkDescription
-                                          : Colors.black54,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 11.5.sp,
-                                    ),
-                                  ),
+                                  // const SizedBox(height: 6),
+                                  // Text(
+                                  //   _isRecording
+                                  //       ? '${_formatDuration(_recordDuration)} / ${_formatDuration(_recordLimit)}'
+                                  //       : (_recordDuration > Duration.zero
+                                  //           ? 'Recorded: ${_formatDuration(_recordDuration)}'
+                                  //           : 'Time limit: ${_formatDuration(_recordLimit)}'),
+                                  //   style: TextStyle(
+                                  //     color: isDarkMode
+                                  //         ? AppColors.darkDescription
+                                  //         : Colors.black54,
+                                  //     fontWeight: FontWeight.w600,
+                                  //     fontSize: 11.5.sp,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -643,7 +828,7 @@ class _RecordScreenState extends State<RecordScreen> {
                                                       (index) {
                                                         final value =
                                                             _waveSamples.isEmpty
-                                                                ? 0.06
+                                                                ? 0.03
                                                                 : _waveSamples[
                                                                     index];
                                                         final h =
@@ -716,7 +901,64 @@ class _RecordScreenState extends State<RecordScreen> {
                                 ),
                               ),
                             ],
-                            const Spacer(),
+                            Expanded(
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 520),
+                                switchInCurve: Curves.easeOutCubic,
+                                switchOutCurve: Curves.easeInCubic,
+                                // `SizedBox.shrink()` has no extent — transitions look instant.
+                                layoutBuilder: (Widget? currentChild,
+                                    List<Widget> previousChildren) {
+                                  return Stack(
+                                    fit: StackFit.expand,
+                                    alignment: Alignment.topCenter,
+                                    clipBehavior: Clip.hardEdge,
+                                    children: <Widget>[
+                                      ...previousChildren,
+                                      if (currentChild != null) currentChild,
+                                    ],
+                                  );
+                                },
+                                transitionBuilder: (Widget child,
+                                    Animation<double> animation) {
+                                  final curved = CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutCubic,
+                                    reverseCurve: Curves.easeInCubic,
+                                  );
+                                  return FadeTransition(
+                                    opacity: curved,
+                                    child: SlideTransition(
+                                      position: Tween<Offset>(
+                                        begin: const Offset(0, 0.1),
+                                        end: Offset.zero,
+                                      ).animate(curved),
+                                      child: ScaleTransition(
+                                        scale: Tween<double>(begin: 0.9, end: 1)
+                                            .animate(curved),
+                                        alignment: Alignment.topCenter,
+                                        child: child,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: _showRecordingHint &&
+                                        !recordState.isAnalysisBusy
+                                    ? KeyedSubtree(
+                                        key:
+                                            const ValueKey('recording_ai_hint'),
+                                        child: _buildRecordingHintPanel(
+                                            isDarkMode),
+                                      )
+                                    : const ColoredBox(
+                                        key:
+                                            ValueKey('recording_ai_hint_empty'),
+                                        color: Colors.transparent,
+                                        child: SizedBox.expand(),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(height: 14),
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 380),
                               switchInCurve: Curves.easeOutCubic,

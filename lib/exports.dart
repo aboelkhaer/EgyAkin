@@ -106,6 +106,7 @@ export 'package:egy_akin/features/home/presentation/cubit/home_cubit.dart';
 export 'package:egy_akin/features/home/presentation/pages/home_screen.dart';
 export 'package:egy_akin/features/reset_password/presentation/pages/reset_password_screen.dart';
 export 'package:egy_akin/features/record/data/models/process_section_model_response.dart';
+export 'package:egy_akin/features/ai_form_upload/data/models/ai_form_upload_analysis_model_response.dart';
 export 'package:egy_akin/features/home/data/models/home_model_response.dart';
 export 'package:egy_akin/features/home/data/models/get_permissions_model_response.dart';
 export 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';

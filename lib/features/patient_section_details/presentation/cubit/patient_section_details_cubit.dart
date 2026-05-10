@@ -51,6 +51,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   int snackbarErrorCounter = 0;
   String removeFilesId = '';
   int counterChanges = 0;
+  String? sectionAiMode;
+  /// HTML guidance from API (`ai_hint`) for voice recording.
+  String? sectionAiHint;
+
+  /// Max voice recording length from API (`ai_voice_time`), in seconds.
+  int? sectionAiVoiceTime;
+
   /// Question ids whose current value was last applied from voice/AI (cleared on manual edit).
   final Set<String> aiFilledQuestionIds = {};
 
@@ -351,6 +358,9 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   }
 
   getPatientSectionDetails(String sectionId, String patientId) async {
+    sectionAiMode = null;
+    sectionAiHint = null;
+    sectionAiVoiceTime = null;
     emit(const PatientSectionDetailsState.loading());
     final result = await _getPatientSectionDetailsUsecase.execute(
         GetPatientSectionDetailsUsecaseInput(
@@ -358,10 +368,15 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
     result.fold(
       (l) {
+        sectionAiHint = null;
+        sectionAiVoiceTime = null;
         emit(PatientSectionDetailsState.error(l.message));
       },
       (response) async {
         questionModelList = response.data!;
+        sectionAiMode = response.aiMode?.trim().toLowerCase();
+        sectionAiHint = response.aiHint;
+        sectionAiVoiceTime = response.aiVoiceTime;
         aiFilledQuestionIds.clear();
         emit(PatientSectionDetailsState.loaded(
           response.data!,
@@ -393,6 +408,9 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         emit(PatientSectionDetailsState.error(l.message));
       },
       (response) async {
+        sectionAiMode = null;
+        sectionAiHint = null;
+        sectionAiVoiceTime = null;
         emit(PatientSectionDetailsState.medicationSectionLoaded(
           response,
           counterChanges,
@@ -1511,11 +1529,40 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     return value;
   }
 
+  bool _hasDisplayableAiAnswer(QuestionModel question, dynamic value) {
+    if (value == null) return false;
+
+    if (question.type == AppStrings.questionTypeSelect) {
+      return selectQuestionHasDisplayableAnswer(
+        optionValues: question.values,
+        storedAnswer: value,
+      );
+    }
+
+    if (question.type == AppStrings.questionTypeMultiple) {
+      if (value is Map) {
+        final answers = value[AppStrings.answers];
+        if (answers is List) return answers.isNotEmpty;
+        if (answers is String) return answers.trim().isNotEmpty;
+        return answers != null;
+      }
+      if (value is List) return value.isNotEmpty;
+      if (value is String) return value.trim().isNotEmpty;
+      return false;
+    }
+
+    if (value is String) return value.trim().isNotEmpty;
+    if (value is Map) return value.isNotEmpty;
+    if (value is List) return value.isNotEmpty;
+    return true;
+  }
+
   void applyVoiceAnswers(Map<String, dynamic> answersMap) {
     if (questionModelList.isEmpty) return;
+    final updatedQuestionModelList = List<QuestionModel>.from(questionModelList);
 
-    for (var i = 0; i < questionModelList.length; i++) {
-      final question = questionModelList[i];
+    for (var i = 0; i < updatedQuestionModelList.length; i++) {
+      final question = updatedQuestionModelList[i];
       final idKey = question.id.toString();
       final textKey = (question.question ?? '').trim().toLowerCase();
       dynamic value = answersMap[idKey];
@@ -1524,25 +1571,19 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
       final normalizedValue = _normalizeVoiceAnswer(question, value);
       formData[idKey] = normalizedValue;
-      questionModelList[i] = question.copyWith(answer: normalizedValue);
-      if (question.type == AppStrings.questionTypeSelect) {
-        if (selectQuestionHasDisplayableAnswer(
-          optionValues: question.values,
-          storedAnswer: normalizedValue,
-        )) {
-          aiFilledQuestionIds.add(idKey);
-        } else {
-          aiFilledQuestionIds.remove(idKey);
-        }
-      } else {
+      updatedQuestionModelList[i] = question.copyWith(answer: normalizedValue);
+      if (_hasDisplayableAiAnswer(question, normalizedValue)) {
         aiFilledQuestionIds.add(idKey);
+      } else {
+        aiFilledQuestionIds.remove(idKey);
       }
     }
+    questionModelList = updatedQuestionModelList;
 
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => PatientSectionDetailsState.loaded(
-        questionModelList,
+        updatedQuestionModelList,
         value.isSubmitLoading,
         value.isSubmitted,
         value.message,

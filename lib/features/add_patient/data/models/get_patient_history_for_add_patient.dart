@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_annotation_target
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 part 'get_patient_history_for_add_patient.freezed.dart';
 part 'get_patient_history_for_add_patient.g.dart';
@@ -8,6 +9,8 @@ class GetPatientHistoryForAddPatientModelResponse
     with _$GetPatientHistoryForAddPatientModelResponse {
   const factory GetPatientHistoryForAddPatientModelResponse({
     bool? value,
+    @JsonKey(name: 'ai_hint') String? aiHint,
+    @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
     List<QuestionModel>? data,
   }) = _GetPatientHistoryForAddPatientModelResponse;
   factory GetPatientHistoryForAddPatientModelResponse.fromJson(

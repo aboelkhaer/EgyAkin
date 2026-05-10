@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/ai_form_upload/presentation/pages/ai_form_upload_screen.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_dose_section.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
@@ -336,63 +337,108 @@ class _PatientSectionDetailsScreenState
                 isDarkMode ? AppColors.darkCardBG : AppColors.primary,
             systemOverlayStyle: SystemUiOverlayStyle.light,
             actions: [
-              if (widget.sectionModel.sectionId != 12)
-                IconButton(
-                  onPressed: () async {
-                    final result = await Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => BlocProvider(
-                          create: (_) => sl<RecordCubit>(),
-                          child: RecordScreen(
-                            questions: cubit.questionModelList,
-                            source: 'section_details',
-                            sectionId: widget.sectionModel.sectionId.toString(),
+              BlocBuilder<PatientSectionDetailsCubit,
+                  PatientSectionDetailsState>(
+                builder: (context, _) {
+                  final currentAiMode =
+                      PatientSectionDetailsCubit.get(context).sectionAiMode;
+                  final canShowAiActions =
+                      !(widget.sectionModel.sectionStatus ?? false) &&
+                          !widget.finalSubmitStatus;
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (canShowAiActions && currentAiMode == 'voice')
+                        IconButton(
+                          onPressed: () async {
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider(
+                                  create: (_) => sl<RecordCubit>(),
+                                  child: RecordScreen(
+                                    questions: cubit.questionModelList,
+                                    source: 'section_details',
+                                    sectionId: widget.sectionModel.sectionId
+                                        .toString(),
+                                    aiMode: 'voice',
+                                    aiHintHtml: cubit.sectionAiHint,
+                                    aiVoiceTime: cubit.sectionAiVoiceTime,
+                                  ),
+                                ),
+                              ),
+                            );
+                            if (result is Map<String, dynamic>) {
+                              cubit.applyVoiceAnswers(result);
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.mic,
+                            color: Colors.white,
                           ),
                         ),
-                      ),
-                    );
-                    if (result is Map<String, dynamic>) {
-                      cubit.applyVoiceAnswers(result);
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.mic,
-                    color: Colors.white,
-                  ),
-                ),
-              // Only show add recommendation button for medication section and when not final submitted
-              if (widget.sectionModel.sectionId == 12 &&
-                  !widget.finalSubmitStatus)
-                IconButton(
-                  onPressed: () async {
-                    // Check permission before showing add recommendation bottom sheet
-                    final hasPermission = await PermissionHelper.hasPermission(
-                      AppPermissions.createRecommendation,
-                    );
+                      if (canShowAiActions && currentAiMode == 'image')
+                        IconButton(
+                          onPressed: () async {
+                            final result = await Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => AiFormUploadScreen(
+                                  sectionId:
+                                      widget.sectionModel.sectionId.toString(),
+                                ),
+                              ),
+                            );
+                            if (result is Map) {
+                              final answersMap =
+                                  Map<String, dynamic>.from(result);
+                              cubit.applyVoiceAnswers(answersMap);
+                              if (mounted) setState(() {});
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.image_outlined,
+                            color: Colors.white,
+                          ),
+                          tooltip: 'AI image analysis',
+                        ),
+                      // Only show add recommendation button for medication section and when not final submitted
+                      if (widget.sectionModel.sectionId == 12 &&
+                          !widget.finalSubmitStatus)
+                        IconButton(
+                          onPressed: () async {
+                            // Check permission before showing add recommendation bottom sheet
+                            final hasPermission =
+                                await PermissionHelper.hasPermission(
+                              AppPermissions.createRecommendation,
+                            );
 
-                    if (!mounted) return;
+                            if (!mounted) return;
 
-                    if (hasPermission) {
-                      // User has permission - show add recommendation bottom sheet
-                      _showAddRecommendationBottomSheet(context);
-                    } else {
-                      // User doesn't have permission - show permission denied dialog
-                      showCustomDialog(
-                        context: context,
-                        title: context.tr(AppStrings.attention),
-                        description: context.tr(AppStrings
-                            .youDontHavePermissionToCreateRecommendations),
-                        coloredButtonText: context.tr(AppStrings.ok),
-                        coloredButtonOnTap: () => Navigator.of(context).pop(),
-                        isNoColorShow: false,
-                      );
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: Colors.white,
-                  ),
-                ),
+                            if (hasPermission) {
+                              // User has permission - show add recommendation bottom sheet
+                              _showAddRecommendationBottomSheet(context);
+                            } else {
+                              // User doesn't have permission - show permission denied dialog
+                              showCustomDialog(
+                                context: context,
+                                title: context.tr(AppStrings.attention),
+                                description: context.tr(AppStrings
+                                    .youDontHavePermissionToCreateRecommendations),
+                                coloredButtonText: context.tr(AppStrings.ok),
+                                coloredButtonOnTap: () =>
+                                    Navigator.of(context).pop(),
+                                isNoColorShow: false,
+                              );
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
+                        ),
+                    ],
+                  );
+                },
+              ),
             ],
           ),
           body: BlocConsumer<PatientSectionDetailsCubit,

@@ -23,6 +23,10 @@ GetPatientHistoryForAddPatientModelResponse
 /// @nodoc
 mixin _$GetPatientHistoryForAddPatientModelResponse {
   bool? get value => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint => throw _privateConstructorUsedError;
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime => throw _privateConstructorUsedError;
   List<QuestionModel>? get data => throw _privateConstructorUsedError;
 
   /// Serializes this GetPatientHistoryForAddPatientModelResponse to a JSON map.
@@ -44,7 +48,11 @@ abstract class $GetPatientHistoryForAddPatientModelResponseCopyWith<$Res> {
       _$GetPatientHistoryForAddPatientModelResponseCopyWithImpl<$Res,
           GetPatientHistoryForAddPatientModelResponse>;
   @useResult
-  $Res call({bool? value, List<QuestionModel>? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
+      List<QuestionModel>? data});
 }
 
 /// @nodoc
@@ -65,6 +73,8 @@ class _$GetPatientHistoryForAddPatientModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? value = freezed,
+    Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? data = freezed,
   }) {
     return _then(_value.copyWith(
@@ -72,6 +82,14 @@ class _$GetPatientHistoryForAddPatientModelResponseCopyWithImpl<$Res,
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
@@ -90,7 +108,11 @@ abstract class _$$GetPatientHistoryForAddPatientModelResponseImplCopyWith<$Res>
       __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool? value, List<QuestionModel>? data});
+  $Res call(
+      {bool? value,
+      @JsonKey(name: 'ai_hint') String? aiHint,
+      @JsonKey(name: 'ai_voice_time') int? aiVoiceTime,
+      List<QuestionModel>? data});
 }
 
 /// @nodoc
@@ -110,6 +132,8 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? value = freezed,
+    Object? aiHint = freezed,
+    Object? aiVoiceTime = freezed,
     Object? data = freezed,
   }) {
     return _then(_$GetPatientHistoryForAddPatientModelResponseImpl(
@@ -117,6 +141,14 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
           ? _value.value
           : value // ignore: cast_nullable_to_non_nullable
               as bool?,
+      aiHint: freezed == aiHint
+          ? _value.aiHint
+          : aiHint // ignore: cast_nullable_to_non_nullable
+              as String?,
+      aiVoiceTime: freezed == aiVoiceTime
+          ? _value.aiVoiceTime
+          : aiVoiceTime // ignore: cast_nullable_to_non_nullable
+              as int?,
       data: freezed == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
@@ -130,7 +162,10 @@ class __$$GetPatientHistoryForAddPatientModelResponseImplCopyWithImpl<$Res>
 class _$GetPatientHistoryForAddPatientModelResponseImpl
     implements _GetPatientHistoryForAddPatientModelResponse {
   const _$GetPatientHistoryForAddPatientModelResponseImpl(
-      {this.value, final List<QuestionModel>? data})
+      {this.value,
+      @JsonKey(name: 'ai_hint') this.aiHint,
+      @JsonKey(name: 'ai_voice_time') this.aiVoiceTime,
+      final List<QuestionModel>? data})
       : _data = data;
 
   factory _$GetPatientHistoryForAddPatientModelResponseImpl.fromJson(
@@ -139,6 +174,12 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
 
   @override
   final bool? value;
+  @override
+  @JsonKey(name: 'ai_hint')
+  final String? aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  final int? aiVoiceTime;
   final List<QuestionModel>? _data;
   @override
   List<QuestionModel>? get data {
@@ -151,7 +192,7 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientHistoryForAddPatientModelResponse(value: $value, data: $data)';
+    return 'GetPatientHistoryForAddPatientModelResponse(value: $value, aiHint: $aiHint, aiVoiceTime: $aiVoiceTime, data: $data)';
   }
 
   @override
@@ -160,13 +201,16 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
         (other.runtimeType == runtimeType &&
             other is _$GetPatientHistoryForAddPatientModelResponseImpl &&
             (identical(other.value, value) || other.value == value) &&
+            (identical(other.aiHint, aiHint) || other.aiHint == aiHint) &&
+            (identical(other.aiVoiceTime, aiVoiceTime) ||
+                other.aiVoiceTime == aiVoiceTime) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, value, const DeepCollectionEquality().hash(_data));
+  int get hashCode => Object.hash(runtimeType, value, aiHint, aiVoiceTime,
+      const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of GetPatientHistoryForAddPatientModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -191,7 +235,10 @@ class _$GetPatientHistoryForAddPatientModelResponseImpl
 abstract class _GetPatientHistoryForAddPatientModelResponse
     implements GetPatientHistoryForAddPatientModelResponse {
   const factory _GetPatientHistoryForAddPatientModelResponse(
-          {final bool? value, final List<QuestionModel>? data}) =
+          {final bool? value,
+          @JsonKey(name: 'ai_hint') final String? aiHint,
+          @JsonKey(name: 'ai_voice_time') final int? aiVoiceTime,
+          final List<QuestionModel>? data}) =
       _$GetPatientHistoryForAddPatientModelResponseImpl;
 
   factory _GetPatientHistoryForAddPatientModelResponse.fromJson(
@@ -200,6 +247,12 @@ abstract class _GetPatientHistoryForAddPatientModelResponse
 
   @override
   bool? get value;
+  @override
+  @JsonKey(name: 'ai_hint')
+  String? get aiHint;
+  @override
+  @JsonKey(name: 'ai_voice_time')
+  int? get aiVoiceTime;
   @override
   List<QuestionModel>? get data;
 

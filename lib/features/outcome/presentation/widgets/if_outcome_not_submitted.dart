@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
+import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/submit_button.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
 
@@ -329,6 +330,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
       //! double
       case AppStrings.questionTypeDouble:
         final currentAnswer = cubit.questionModelList[index].answer;
+        final qidDouble = cubit.questionModelList[index].id.toString();
 
         String? initialWhole;
         String? initialDecimal;
@@ -344,9 +346,13 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               : '00';
         }
 
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
+        return Column(
           children: [
+            if (cubit.aiFilledQuestionIds.contains(qidDouble))
+              const AiFilledFieldBanner(),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
             SizedBox(
               width: 50,
               child: CustomTextFormField(
@@ -358,6 +364,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 textAlign: TextAlign.center,
                 initialValue: initialWhole,
                 onChanged: (wholeValue) {
+                  cubit.clearAiFilledMark(qidDouble);
                   final decimalValue = cubit.getCurrentDecimalValue(index);
                   _updateDoubleValue(
                     cubit: cubit,
@@ -398,6 +405,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 textAlign: TextAlign.center,
                 initialValue: initialDecimal,
                 onChanged: (decimalValue) {
+                  cubit.clearAiFilledMark(qidDouble);
                   final wholeValue = cubit.getCurrentWholeValue(index);
                   _updateDoubleValue(
                     cubit: cubit,
@@ -409,15 +417,20 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 validator: (value) => null,
               ),
             ),
+              ],
+            ),
           ],
         );
 
       //! String
       case AppStrings.questionTypeString:
         var questionAnswer = cubit.questionModelList[index].answer;
+        final qid = cubit.questionModelList[index].id.toString();
         return BuildStringValueQuestions(
           questionList: cubit.questionModelList,
           index: index,
+          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qid),
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qid),
           initialValue: initialValueInQuestions(
             answer: questionAnswer,
             currentDoctorId: widget.currentDoctorModel.id.toString(),
@@ -473,9 +486,22 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
           AppStrings.otherField: AppStrings.empty
         };
         dynamic selectedValue;
+        final qidSelect = cubit.questionModelList[index].id.toString();
         return BuildSelectValueQuestion(
           questionList: cubit.questionModelList,
           index: index,
+          isAddPatient: true,
+          formData: cubit.formData,
+          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidSelect) &&
+              selectQuestionHasDisplayableAnswer(
+                optionValues: cubit.questionModelList[index].values,
+                storedAnswer: cubit.formData[qidSelect] ??
+                    {
+                      AppStrings.answers: '',
+                      AppStrings.otherField: AppStrings.empty,
+                    },
+              ),
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSelect),
           selected: initialValueInSelectQuestion(
               questionAnswer: questionAnswer is Map
                   ? questionAnswer[AppStrings.answers]
@@ -536,6 +562,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
           AppStrings.answers: [],
           AppStrings.otherField: AppStrings.empty
         };
+        final qidMulti = cubit.questionModelList[index].id.toString();
         if (cubit.questionModelList[index].answer[AppStrings.answers]
             is String) {
           String answers =
@@ -548,6 +575,8 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
             oldAnswer:
                 cubit.questionModelList[index].answer[AppStrings.answers],
             isOldAnswer: true,
+            showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+            onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
             onChanged: (val) {
               setState(() {
                 answerMap[AppStrings.otherField] = val;
@@ -663,6 +692,8 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
             questionList: cubit.questionModelList,
             initialValue: answerMap[AppStrings.otherField] ?? '',
             listContainOther: answers,
+            showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+            onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
             onChanged: (val) {
               setState(() {
                 answerMap[AppStrings.otherField] = val;
@@ -764,9 +795,12 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
       case AppStrings.questionTypeDate:
         var questionAnswer = cubit.questionModelList[index].answer;
         questionAnswer ??= DateTime.now().toString();
+        final qidDate = cubit.questionModelList[index].id.toString();
         // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
         return Column(
           children: [
+            if (cubit.aiFilledQuestionIds.contains(qidDate))
+              const AiFilledFieldBanner(),
             SizedBox(
               height: MediaQuery.of(context).copyWith().size.height / 4,
               child: CalendarDatePicker(
@@ -785,6 +819,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 firstDate: DateTime(1900),
                 lastDate: DateTime(2100),
                 onDateChanged: (val) {
+                  cubit.clearAiFilledMark(qidDate);
                   questionAnswer = val.toString();
                   cubit.formData[cubit.questionModelList[index].id.toString()] =
                       questionAnswer;

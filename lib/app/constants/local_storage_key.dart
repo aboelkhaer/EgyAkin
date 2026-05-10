@@ -19,7 +19,8 @@ class AppLocalStrings {
   static const String currentDoctorRegistrationNumber =
       'currentDoctorRegistrationNumber';
   static const String isUpdateMessageHidden = 'isUpdateMessageHidden';
-  static const String isUpdateMessageHidden6 = 'isUpdateMessageHidden6';
+  static const String isUpdateMessageHidden7 = 'isUpdateMessageHidden7';
+  static const String isUpdateMessageHidden8 = 'isUpdateMessageHidden8';
   static const String userAppVersion = 'userAppVersion';
   static const String isExistVerificationBanner = 'isExistVerificationBanner';
   static const String permissions = 'permissions';

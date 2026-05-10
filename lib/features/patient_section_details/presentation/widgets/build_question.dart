@@ -750,8 +750,6 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                   .map(
                                 (file) {
                                   String fileName = file['file_name']!;
-                                  String filePath = file[
-                                      'file_data']!; // Assuming this holds the file path or base64 data
 
                                   return ListTile(
                                     title: Text(fileName),
@@ -759,12 +757,14 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                       String fileName = file['file_name']!;
                                       String filePath = file[
                                           'file_data']!; // Assuming this is the base64 string
+                                      final normalizedFileName =
+                                          fileName.toLowerCase();
 
                                       debugPrint('Tapped on file: $fileName');
 
-                                      if (fileName.endsWith('.jpg') ||
-                                          fileName.endsWith('.png') ||
-                                          fileName.endsWith('.jpeg')) {
+                                      if (normalizedFileName.endsWith('.jpg') ||
+                                          normalizedFileName.endsWith('.png') ||
+                                          normalizedFileName.endsWith('.jpeg')) {
                                         // Handle image file
                                         debugPrint('Opening image file.');
                                         showDialog(
@@ -790,51 +790,39 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                             );
                                           },
                                         );
-                                      } else if (fileName.endsWith('.pdf') ||
-                                          fileName.endsWith('.doc') ||
-                                          fileName.endsWith('.docx')) {
+                                      } else if (normalizedFileName
+                                              .endsWith('.pdf') ||
+                                          normalizedFileName.endsWith('.doc') ||
+                                          normalizedFileName
+                                              .endsWith('.docx')) {
                                         debugPrint(
                                             'Opening document file: $fileName');
 
-                                        // Check if it's base64 PDF
-                                        if (filePath.startsWith(
-                                            'data:application/pdf;base64,')) {
-                                          debugPrint('Detected base64 PDF.');
-
-                                          // Extract the base64 data
-                                          final base64Data =
-                                              filePath.split(',').last;
-                                          final bytes = base64Decode(
-                                              base64Data); // Decode the base64 string
-
-                                          // Get the temporary directory
+                                        // Newly selected files are stored as raw base64
+                                        // (or sometimes with a data-uri prefix). Decode both.
+                                        try {
+                                          final base64Data = filePath.contains(',')
+                                              ? filePath.split(',').last
+                                              : filePath;
+                                          final bytes = base64Decode(base64Data);
                                           final dir =
                                               await getTemporaryDirectory();
                                           final tempFile =
                                               File('${dir.path}/$fileName');
-
-                                          debugPrint(
-                                              'Writing to temporary file: ${tempFile.path}');
-
-                                          // Write bytes to the temp file
                                           await tempFile.writeAsBytes(bytes);
-
-                                          // Check if the file was written successfully
                                           if (await tempFile.exists()) {
-                                            debugPrint(
-                                                'Temporary PDF file exists. Attempting to open.');
-                                            final result = await OpenFile.open(
-                                                tempFile.path);
+                                            final result =
+                                                await OpenFile.open(tempFile.path);
                                             debugPrint(
                                                 'OpenFile result: ${result.message}');
                                           } else {
                                             debugPrint(
-                                                'Error: Temporary PDF file does not exist after writing.');
+                                                'Error: Temp file does not exist after writing.');
                                           }
-                                        } else {
-                                          // Regular file path handling
+                                        } catch (_) {
+                                          // Fallback for existing absolute path values.
                                           debugPrint(
-                                              'Opening regular file: $filePath');
+                                              'Fallback to opening path: $filePath');
                                           final result =
                                               await OpenFile.open(filePath);
                                           debugPrint(
