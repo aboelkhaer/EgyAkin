@@ -16,6 +16,7 @@ class CustomTextFormField extends StatefulWidget {
   final String? initialValue;
   final int? maxLines;
   final Widget? prefixIcon;
+  final Widget? suffix;
   final bool? visiblePasswordIcon;
   final TextInputAction? textInputAction;
   final bool isSearchIconInCenter;
@@ -37,6 +38,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool showClearButton;
   final VoidCallback? onClear;
   final bool showCounter;
+  final bool isChatInput;
 
   const CustomTextFormField({
     super.key,
@@ -44,6 +46,7 @@ class CustomTextFormField extends StatefulWidget {
     this.textFormFieldController,
     this.onTextClick,
     this.prefixIcon,
+    this.suffix,
     this.unVisiblePasswordIconFunction,
     this.isSearchIconInCenter = false,
     this.isCommunitySearch = false,
@@ -75,6 +78,7 @@ class CustomTextFormField extends StatefulWidget {
     this.showClearButton = false,
     this.onClear,
     this.showCounter = false,
+    this.isChatInput = false,
   });
 
   @override
@@ -161,9 +165,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
-        return SizedBox(
-          height: 40.h,
-          child: Stack(
+        final field = Stack(
             alignment: Alignment.center,
             children: [
               TextFormField(
@@ -202,18 +204,25 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 },
                 maxLength: widget.maxLength,
                 maxLines: widget.maxLines,
+                minLines: widget.isChatInput ? 1 : null,
                 textAlign: widget.textAlign,
                 style: widget.style,
                 obscureText: widget.obscureText,
                 textInputAction: widget.textInputAction,
                 decoration: InputDecoration(
+                  isDense: widget.isChatInput,
                   contentPadding: widget.contentPadding ??
-                      const EdgeInsets.only(
-                        left: 11,
-                        right: 11,
-                        top: 14,
-                        bottom: 14,
-                      ),
+                      (widget.isChatInput
+                          ? const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            )
+                          : const EdgeInsets.only(
+                              left: 11,
+                              right: 11,
+                              top: 14,
+                              bottom: 14,
+                            )),
                   counterText: widget.showCounter ? null : '',
                   hintText: widget.title,
                   hintStyle: TextStyle(
@@ -226,30 +235,42 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   filled: true,
                   fillColor: widget.isCreatePostInCommunity
                       ? Colors.transparent
-                      : isDarkMode
-                          ? AppColors.darkCardBG
-                          : AppColors.subBG,
+                      : widget.isChatInput
+                          ? (isDarkMode
+                              ? AppColors.darkCardBG
+                              : Colors.white)
+                          : isDarkMode
+                              ? AppColors.darkCardBG
+                              : AppColors.subBG,
                   enabledBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                            widget.isChatInput ? 20 : 10,
+                          ),
                           borderSide: BorderSide(
-                              color: isDarkMode
-                                  ? AppColors.darkBorder
-                                  : Colors.grey.shade300),
+                            color: isDarkMode
+                                ? AppColors.darkBorder
+                                : Colors.grey.shade300,
+                            width: widget.isChatInput ? 1 : 1,
+                          ),
                         ),
                   focusedBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : widget.isCommunitySearch
                           ? OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                widget.isChatInput ? 20 : 10,
+                              ),
                               borderSide: BorderSide(
                                   color: isDarkMode
                                       ? AppColors.darkBorder
                                       : Colors.grey.shade300),
                             )
                           : OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(
+                                widget.isChatInput ? 20 : 10,
+                              ),
                               borderSide: BorderSide(
                                   color: isDarkMode
                                       ? AppColors.darkPrimary
@@ -258,7 +279,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   disabledBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                            widget.isChatInput ? 20 : 10,
+                          ),
                           borderSide: BorderSide(
                               color: isDarkMode
                                   ? AppColors.darkBorder
@@ -267,7 +290,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   errorBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                            widget.isChatInput ? 20 : 10,
+                          ),
                           borderSide: BorderSide(
                               color: widget.isOTP
                                   ? Colors.red
@@ -278,13 +303,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   focusedErrorBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(
+                            widget.isChatInput ? 20 : 10,
+                          ),
                           borderSide: BorderSide(
                               color: isDarkMode
                                   ? AppColors.darkPrimary
                                   : AppColors.primary),
                         ),
-                  suffixIcon: widget.visiblePasswordIcon == true
+                  suffixIcon: widget.suffix ??
+                      (widget.visiblePasswordIcon == true
                       ? GestureDetector(
                           onTap: widget.visiblePasswordIconFunction,
                           child: Icon(
@@ -322,7 +350,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                                     size: 20,
                                   ),
                                 )
-                              : null,
+                              : null),
                   prefixIcon: widget.prefixIcon,
                   prefixIconConstraints: widget.prefixIconConstraints,
                 ),
@@ -353,7 +381,18 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   ),
                 ),
             ],
-          ),
+          );
+
+        if (widget.isChatInput) {
+          return SizedBox(
+            height: 36.h,
+            child: field,
+          );
+        }
+
+        return SizedBox(
+          height: 40.h,
+          child: field,
         );
       },
     );

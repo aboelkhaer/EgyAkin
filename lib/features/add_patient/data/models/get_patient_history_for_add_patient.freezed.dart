@@ -280,6 +280,7 @@ mixin _$QuestionModel {
   bool? get mandatory => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
   dynamic get answer => throw _privateConstructorUsedError;
 
   /// Serializes this QuestionModel to a JSON map.
@@ -306,6 +307,7 @@ abstract class $QuestionModelCopyWith<$Res> {
       @JsonKey(name: 'keyboard_type') String? keyboardType,
       bool? mandatory,
       @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
       dynamic answer});
 }
 
@@ -386,6 +388,7 @@ abstract class _$$QuestionModelImplCopyWith<$Res>
       @JsonKey(name: 'keyboard_type') String? keyboardType,
       bool? mandatory,
       @JsonKey(name: 'updated_at') String? updatedAt,
+      @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
       dynamic answer});
 }
 
@@ -459,6 +462,7 @@ class _$QuestionModelImpl implements _QuestionModel {
       @JsonKey(name: 'keyboard_type') this.keyboardType,
       this.mandatory,
       @JsonKey(name: 'updated_at') this.updatedAt,
+      @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
       this.answer})
       : _values = values;
 
@@ -490,6 +494,7 @@ class _$QuestionModelImpl implements _QuestionModel {
   @JsonKey(name: 'updated_at')
   final String? updatedAt;
   @override
+  @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
   final dynamic answer;
 
   @override
@@ -554,6 +559,7 @@ abstract class _QuestionModel implements QuestionModel {
       @JsonKey(name: 'keyboard_type') final String? keyboardType,
       final bool? mandatory,
       @JsonKey(name: 'updated_at') final String? updatedAt,
+      @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
       final dynamic answer}) = _$QuestionModelImpl;
 
   factory _QuestionModel.fromJson(Map<String, dynamic> json) =
@@ -576,6 +582,7 @@ abstract class _QuestionModel implements QuestionModel {
   @JsonKey(name: 'updated_at')
   String? get updatedAt;
   @override
+  @JsonKey(fromJson: questionAnswerFromJson, toJson: questionAnswerToJson)
   dynamic get answer;
 
   /// Create a copy of QuestionModel

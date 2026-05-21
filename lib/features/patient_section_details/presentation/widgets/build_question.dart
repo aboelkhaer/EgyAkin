@@ -7,6 +7,7 @@ import 'package:egy_akin/app/shared/functions/select_question_has_displayable_an
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/repeatable_question_widget.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -76,86 +77,89 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                // Whole number part
-                SizedBox(
-                  width: 50,
-                  child: CustomTextFormField(
-                    title: '00',
-                    textInputType: TextInputType.number,
-                    contentPadding: EdgeInsets.zero,
-                    maxLength: 2,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    textAlign: TextAlign.center,
-                    initialValue: initialWhole, // null will show title '00'
-                    onChanged: (wholeValue) {
-                      final decimalValue =
-                          cubit.getCurrentDecimalValue(widget.index);
-                      _updateDoubleValue(
-                        cubit: cubit,
-                        index: widget.index,
-                        whole: wholeValue,
-                        decimal: decimalValue,
-                      );
-                    },
-                    validator: (val) {
-                      if (cubit.questionModelList[widget.index].mandatory ==
-                              true &&
-                          (val == null || val.isEmpty)) {
-                        return AppStrings.thisFieldIsRequired;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
+                    // Whole number part
+                    SizedBox(
+                      width: 50,
+                      child: CustomTextFormField(
+                        title: '00',
+                        textInputType: TextInputType.number,
+                        contentPadding: EdgeInsets.zero,
+                        maxLength: 2,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        textAlign: TextAlign.center,
+                        initialValue: initialWhole, // null will show title '00'
+                        onChanged: (wholeValue) {
+                          final decimalValue =
+                              cubit.getCurrentDecimalValue(widget.index);
+                          _updateDoubleValue(
+                            cubit: cubit,
+                            index: widget.index,
+                            whole: wholeValue,
+                            decimal: decimalValue,
+                          );
+                        },
+                        validator: (val) {
+                          if (cubit.questionModelList[widget.index].mandatory ==
+                                  true &&
+                              (val == null || val.isEmpty)) {
+                            return AppStrings.thisFieldIsRequired;
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
 
-                //! Decimal point
-                Container(
-                  width: 4,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 5, left: 10, right: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade500,
-                    shape: BoxShape.circle,
-                  ),
-                ),
+                    //! Decimal point
+                    Container(
+                      width: 4,
+                      height: 4,
+                      margin:
+                          const EdgeInsets.only(bottom: 5, left: 10, right: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade500,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
 
-                //! Decimal part
-                SizedBox(
-                  width: 50,
-                  child: CustomTextFormField(
-                    title: '00',
-                    textInputType: TextInputType.number,
-                    contentPadding: EdgeInsets.zero,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(2),
-                    ],
-                    maxLength: 2,
-                    textAlign: TextAlign.center,
-                    initialValue: initialDecimal, // null will show title '00'
-                    onChanged: (decimalValue) {
-                      final wholeValue =
-                          cubit.getCurrentWholeValue(widget.index);
-                      _updateDoubleValue(
-                        cubit: cubit,
-                        index: widget.index,
-                        whole: wholeValue,
-                        decimal: decimalValue,
-                      );
-                    },
-                    validator: (value) => null,
-                  ),
+                    //! Decimal part
+                    SizedBox(
+                      width: 50,
+                      child: CustomTextFormField(
+                        title: '00',
+                        textInputType: TextInputType.number,
+                        contentPadding: EdgeInsets.zero,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(2),
+                        ],
+                        maxLength: 2,
+                        textAlign: TextAlign.center,
+                        initialValue:
+                            initialDecimal, // null will show title '00'
+                        onChanged: (decimalValue) {
+                          final wholeValue =
+                              cubit.getCurrentWholeValue(widget.index);
+                          _updateDoubleValue(
+                            cubit: cubit,
+                            index: widget.index,
+                            whole: wholeValue,
+                            decimal: decimalValue,
+                          );
+                        },
+                        validator: (value) => null,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
               ],
             );
 
           //! String
           case AppStrings.questionTypeString:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
-            final qidStr =
-                cubit.questionModelList[widget.index].id.toString();
+            final qidStr = cubit.questionModelList[widget.index].id.toString();
             return BuildStringValueQuestions(
               questionList: cubit.questionModelList,
               index: widget.index,
@@ -221,8 +225,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
               AppStrings.otherField: AppStrings.empty
             };
             dynamic selectedValue;
-            final qidSel =
-                cubit.questionModelList[widget.index].id.toString();
+            final qidSel = cubit.questionModelList[widget.index].id.toString();
             return BuildSelectValueQuestion(
               questionList: cubit.questionModelList,
               index: widget.index,
@@ -309,7 +312,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 oldAnswer: cubit
                     .questionModelList[widget.index].answer[AppStrings.answers],
                 isOldAnswer: true,
-                showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+                showAiFilledBanner:
+                    cubit.aiFilledQuestionIds.contains(qidMulti),
                 onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
                 onChanged: (val) {
                   setState(() {
@@ -422,7 +426,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 questionList: cubit.questionModelList,
                 initialValue: answerMap[AppStrings.otherField] ?? '',
                 listContainOther: answers,
-                showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+                showAiFilledBanner:
+                    cubit.aiFilledQuestionIds.contains(qidMulti),
                 onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
                 onChanged: (val) {
                   setState(() {
@@ -517,13 +522,26 @@ class _BuildQuestionState extends State<BuildQuestion> {
             }
             return const SizedBox.shrink();
 
+          //! Repeatable (e.g. creatinine readings)
+          case AppStrings.questionTypeRepeatable:
+            final qidRepeatable =
+                cubit.questionModelList[widget.index].id.toString();
+            return RepeatableQuestionWidget(
+              questionIndex: widget.index,
+              keyboardType: cubit.questionModelList[widget.index].keyboardType,
+              mandatory:
+                  cubit.questionModelList[widget.index].mandatory == true,
+              showAiFilledBanner:
+                  cubit.aiFilledQuestionIds.contains(qidRepeatable),
+              onClearAiFilledMark: () => cubit.clearAiFilledMark(qidRepeatable),
+            );
+
           //! Date
 
           case AppStrings.questionTypeDate:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
             questionAnswer ??= DateTime.now().toString();
-            final qidDate =
-                cubit.questionModelList[widget.index].id.toString();
+            final qidDate = cubit.questionModelList[widget.index].id.toString();
             // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
 
             return Column(
@@ -764,7 +782,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
 
                                       if (normalizedFileName.endsWith('.jpg') ||
                                           normalizedFileName.endsWith('.png') ||
-                                          normalizedFileName.endsWith('.jpeg')) {
+                                          normalizedFileName
+                                              .endsWith('.jpeg')) {
                                         // Handle image file
                                         debugPrint('Opening image file.');
                                         showDialog(
@@ -801,18 +820,20 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                         // Newly selected files are stored as raw base64
                                         // (or sometimes with a data-uri prefix). Decode both.
                                         try {
-                                          final base64Data = filePath.contains(',')
-                                              ? filePath.split(',').last
-                                              : filePath;
-                                          final bytes = base64Decode(base64Data);
+                                          final base64Data =
+                                              filePath.contains(',')
+                                                  ? filePath.split(',').last
+                                                  : filePath;
+                                          final bytes =
+                                              base64Decode(base64Data);
                                           final dir =
                                               await getTemporaryDirectory();
                                           final tempFile =
                                               File('${dir.path}/$fileName');
                                           await tempFile.writeAsBytes(bytes);
                                           if (await tempFile.exists()) {
-                                            final result =
-                                                await OpenFile.open(tempFile.path);
+                                            final result = await OpenFile.open(
+                                                tempFile.path);
                                             debugPrint(
                                                 'OpenFile result: ${result.message}');
                                           } else {

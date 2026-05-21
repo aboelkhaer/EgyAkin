@@ -5,6 +5,8 @@ import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
+
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
 import 'dart:ui' as ui;
@@ -85,7 +87,12 @@ class BuildSectionDetailsIfFinalSubmitTrue extends StatelessWidget {
                                     : question.type ==
                                             AppStrings.questionTypeDate
                                         ? formatDateTime(question.answer)
-                                        : question.question ==
+                                        : question.type ==
+                                                AppStrings
+                                                    .questionTypeRepeatable
+                                            ? formatRepeatableAnswerForDisplay(
+                                                question.answer)
+                                            : question.question ==
                                                 AppStrings.nationalID
                                             ? (currentDoctorId == doctorId ||
                                                     canViewPatientIdentity)

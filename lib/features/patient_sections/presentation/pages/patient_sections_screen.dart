@@ -1,10 +1,7 @@
 import 'dart:ui' as ui;
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/consultation_button.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
-
 import '../../../../exports.dart';
 
 class PatientSectionsScreen extends StatefulWidget {
@@ -33,6 +30,137 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
   void initState() {
     context.read<PatientSectionsCubit>().getPatientSections(widget.patientId);
     super.initState();
+  }
+
+  void _showReportReadyDialog(BuildContext context, String reportUrl) {
+    final trimmed = reportUrl.trim();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!context.mounted) return;
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
+          return AlertDialog(
+            backgroundColor: isDark ? AppColors.darkCardBG : Colors.white,
+            title: Text(
+              context.tr(AppStrings.reportReady),
+              style: TextStyle(
+                color: isDark ? AppColors.darkTitle : Colors.black87,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    context.tr(AppStrings.reportUrlSelectableHint),
+                    style: TextStyle(
+                      color:
+                          isDark ? AppColors.darkDescription : Colors.black54,
+                      fontSize: 13.sp,
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  Material(
+                    color: AppColors.primary.withOpacity(isDark ? 0.12 : 0.08),
+                    borderRadius: BorderRadius.circular(8.r),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(8.r),
+                      onTap: trimmed.isEmpty
+                          ? null
+                          : () {
+                              Clipboard.setData(ClipboardData(text: trimmed));
+                              if (context.mounted) {
+                                customSnackBar(
+                                  context: context,
+                                  message:
+                                      context.tr(AppStrings.reportLinkCopied),
+                                );
+                              }
+                            },
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 12.h,
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                trimmed.isEmpty ? '—' : trimmed,
+                                style: TextStyle(
+                                  color: isDark
+                                      ? AppColors.darkTitle
+                                      : AppColors.primary,
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              Icons.copy_rounded,
+                              size: 22.sp,
+                              color: isDark
+                                  ? AppColors.darkDescription
+                                  : AppColors.primary,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: Text(
+                  context.tr(AppStrings.cancel),
+                  style: TextStyle(
+                    color: isDark ? AppColors.darkDescription : Colors.black54,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.of(dialogContext).pop();
+                  if (!context.mounted) return;
+                  if (trimmed.isEmpty) {
+                    customSnackBar(
+                      context: context,
+                      message: context.tr(AppStrings.somethingWentWrong),
+                    );
+                    return;
+                  }
+
+                  launchURL(
+                    url: trimmed,
+                    externalBrowserOnly: true,
+                    onError: (error) {
+                      if (!context.mounted) return;
+                      showErrorDialog(context, error);
+                    },
+                  );
+                },
+                child: Text(
+                  context.tr(AppStrings.open),
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    });
   }
 
   @override
@@ -77,13 +205,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                           arguments: 0);
                     }
                     if (isDownloadedReport) {
-                      launchURL(
-                        url: cubit.reportPdfUrl,
-                        onError: (error) {
-                          showErrorDialog(context, error);
-                        },
-                      );
-                      
+                      _showReportReadyDialog(context, cubit.reportPdfUrl);
                     }
                   },
                 );

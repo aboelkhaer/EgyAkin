@@ -450,4 +450,14 @@ class AppRoutesArgs {
       'homeDataModel': homeDataModel,
     };
   }
+
+  static Map<String, dynamic> chatRoomRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'homeDataModel': homeDataModel,
+    };
+  }
 }

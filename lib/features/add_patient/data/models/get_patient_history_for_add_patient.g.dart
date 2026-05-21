@@ -36,7 +36,7 @@ _$QuestionModelImpl _$$QuestionModelImplFromJson(Map<String, dynamic> json) =>
       keyboardType: json['keyboard_type'] as String?,
       mandatory: json['mandatory'] as bool?,
       updatedAt: json['updated_at'] as String?,
-      answer: json['answer'],
+      answer: questionAnswerFromJson(json['answer']),
     );
 
 Map<String, dynamic> _$$QuestionModelImplToJson(_$QuestionModelImpl instance) =>
@@ -48,5 +48,5 @@ Map<String, dynamic> _$$QuestionModelImplToJson(_$QuestionModelImpl instance) =>
       'keyboard_type': instance.keyboardType,
       'mandatory': instance.mandatory,
       'updated_at': instance.updatedAt,
-      'answer': instance.answer,
+      'answer': questionAnswerToJson(instance.answer),
     };

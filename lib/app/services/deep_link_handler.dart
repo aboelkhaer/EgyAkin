@@ -11,7 +11,8 @@ class DeepLinkHandler {
   DeepLinkHandler._internal();
 
   final AppLinks _appLinks = AppLinks();
-  final DeepLinkNavigationService _navigationService = DeepLinkNavigationService();
+  final DeepLinkNavigationService _navigationService =
+      DeepLinkNavigationService();
   late BuildContext _context;
   bool _isAppInitialized = false;
   bool _hasPendingDeepLink = false;
@@ -19,21 +20,23 @@ class DeepLinkHandler {
 
   void initialize(BuildContext context) {
     _context = context;
-    
+
     // Check if app was launched from a custom scheme deep link
     _checkIfLaunchedFromCustomScheme().then((wasLaunchedFromCustomScheme) {
       if (wasLaunchedFromCustomScheme) {
-        debugPrint('=== APP LAUNCHED FROM CUSTOM SCHEME - Skipping deep link handler setup ===');
+        debugPrint(
+            '=== APP LAUNCHED FROM CUSTOM SCHEME - Skipping deep link handler setup ===');
         // Don't set up deep link handling if app was launched from custom scheme
         // The route generator will handle it
         _checkForExistingPendingDeepLink();
       } else {
-        debugPrint('=== APP LAUNCHED NORMALLY - Setting up deep link handler ===');
+        debugPrint(
+            '=== APP LAUNCHED NORMALLY - Setting up deep link handler ===');
         _setupDeepLinkHandling();
         _checkForExistingPendingDeepLink();
       }
     });
-    
+
     // Mark app as initialized after a delay
     Future.delayed(const Duration(seconds: 3), () {
       _isAppInitialized = true;
@@ -50,7 +53,11 @@ class DeepLinkHandler {
           debugPrint('=== APP LAUNCHED FROM CUSTOM SCHEME ===');
           return true;
         } else {
-          debugPrint('=== APP LAUNCHED FROM UNIVERSAL LINK - Processing it ===');
+          if (_isWebFileOrStorageUrlNotPostDeepLink(initialLink)) {
+            return false;
+          }
+          debugPrint(
+              '=== APP LAUNCHED FROM UNIVERSAL LINK - Processing it ===');
           _storeDeepLinkForLater(initialLink);
           return false;
         }
@@ -68,7 +75,8 @@ class DeepLinkHandler {
       final existingPostId = prefs.getString('pending_post_id');
       if (existingPostId != null) {
         _hasPendingDeepLink = true;
-        debugPrint('Found existing pending deep link for post: $existingPostId');
+        debugPrint(
+            'Found existing pending deep link for post: $existingPostId');
       }
     });
   }
@@ -76,44 +84,57 @@ class DeepLinkHandler {
   void _setupDeepLinkHandling() {
     // Handle deep links when app is already running
     _appLinks.uriLinkStream.listen((Uri? uri) {
-      if (uri != null) {
-        debugPrint('=== DEEP LINK HANDLER: uriLinkStream called ===');
-        debugPrint('URI: $uri');
-        debugPrint('Scheme: ${uri.scheme}');
-        debugPrint('App initialized: $_isAppInitialized');
-        
-        // When app is already running, just store the deep link, don't navigate immediately
-        _storeDeepLinkForLater(uri);
-        debugPrint('=== END DEEP LINK HANDLER: uriLinkStream ===');
-      }
+      if (uri == null) return;
+      // Opening a report PDF in a browser still delivers VIEW to the app; app_links
+      // forwards it here. That is not a /post/… deep link — skip silently (no logs).
+      if (_isWebFileOrStorageUrlNotPostDeepLink(uri)) return;
+
+      debugPrint('=== DEEP LINK HANDLER: uriLinkStream called ===');
+      debugPrint('URI: $uri');
+      debugPrint('Scheme: ${uri.scheme}');
+      debugPrint('App initialized: $_isAppInitialized');
+
+      // When app is already running, just store the deep link, don't navigate immediately
+      _storeDeepLinkForLater(uri);
+      debugPrint('=== END DEEP LINK HANDLER: uriLinkStream ===');
     }, onError: (err) {
       debugPrint('Deep link error: $err');
     });
   }
 
+  /// PDF/report URLs are opened via [launchURL]; [app_links] may still emit them.
+  bool _isWebFileOrStorageUrlNotPostDeepLink(Uri uri) {
+    if (uri.scheme != 'https' && uri.scheme != 'http') return false;
+    final p = uri.path.toLowerCase();
+    return p.contains('/storage/pdfs/') || p.endsWith('.pdf');
+  }
+
   void _handleDeepLink(Uri uri) {
     // This method is disabled - all deep links should use _storeDeepLinkForLater
-    debugPrint('_handleDeepLink called but disabled - using _storeDeepLinkForLater instead');
+    debugPrint(
+        '_handleDeepLink called but disabled - using _storeDeepLinkForLater instead');
     _storeDeepLinkForLater(uri);
   }
 
   void _navigateToPost(String postId) {
     debugPrint('Navigating to post: $postId');
-    
+
     // Always store the post ID first
     _storePendingPostId(postId);
-    
+
     // Don't navigate immediately - let the home screen handle it when ready
     // This prevents the "no page found" issue when app is already open
   }
 
   void _storeDeepLinkForLater(Uri uri) {
+    if (_isWebFileOrStorageUrlNotPostDeepLink(uri)) return;
+
     // Prevent double processing
     if (_isProcessingDeepLink) {
       debugPrint('=== SKIPPING DEEP LINK - Already processing ===');
       return;
     }
-    
+
     _isProcessingDeepLink = true;
     debugPrint('=== STORING DEEP LINK FOR LATER ===');
     debugPrint('URI: $uri');
@@ -122,14 +143,16 @@ class DeepLinkHandler {
     debugPrint('Path: ${uri.path}');
     debugPrint('Path segments: ${uri.pathSegments}');
     debugPrint('App initialized: $_isAppInitialized');
-    
+
     // Extract post ID and store it for later processing
     String? postId;
-    
+
     if (uri.scheme == 'https') {
       // Handle Universal Links: https://test.egyakin.com/post/123
       final pathSegments = uri.pathSegments;
-      if (pathSegments.isNotEmpty && pathSegments[0] == 'post' && pathSegments.length >= 2) {
+      if (pathSegments.isNotEmpty &&
+          pathSegments[0] == 'post' &&
+          pathSegments.length >= 2) {
         postId = pathSegments[1];
       }
     } else if (uri.scheme == 'egyakin') {
@@ -137,7 +160,9 @@ class DeepLinkHandler {
       if (uri.host == 'post' && uri.path.isNotEmpty) {
         // Format: egyakin://post/48 (host is 'post', path is '/48')
         postId = uri.path.substring(1); // Remove the leading '/'
-      } else if (uri.pathSegments.isNotEmpty && uri.pathSegments[0] == 'post' && uri.pathSegments.length >= 2) {
+      } else if (uri.pathSegments.isNotEmpty &&
+          uri.pathSegments[0] == 'post' &&
+          uri.pathSegments.length >= 2) {
         // Format: egyakin:///post/48 (path segments are ['post', '48'])
         postId = uri.pathSegments[1];
       } else if (uri.pathSegments.isNotEmpty) {
@@ -145,16 +170,17 @@ class DeepLinkHandler {
         postId = uri.pathSegments[0];
       }
     }
-    
+
     if (postId != null) {
       debugPrint('Extracted post ID for later: $postId');
       _storePendingPostId(postId);
-      
+
       // Don't process immediately - always let the home screen handle it
       debugPrint('Deep link stored, will be processed by home screen');
       debugPrint('=== END STORING DEEP LINK ===');
     } else {
       debugPrint('Invalid deep link format: $uri');
+      _isProcessingDeepLink = false;
       debugPrint('=== END STORING DEEP LINK ===');
     }
   }
@@ -203,12 +229,12 @@ class DeepLinkHandler {
     try {
       final pendingPostId = await getPendingPostIdAsync();
       if (pendingPostId != null) {
-        debugPrint('Processing pending deep link for post: $pendingPostId from home screen');
+        debugPrint(
+            'Processing pending deep link for post: $pendingPostId from home screen');
         _navigationService.navigateToPostFromDeepLink(pendingPostId, context);
       }
     } catch (e) {
       debugPrint('Error processing pending deep links: $e');
     }
   }
-} 
-
+}

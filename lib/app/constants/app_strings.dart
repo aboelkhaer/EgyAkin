@@ -42,6 +42,7 @@ class AppStrings {
   static const String questionTypeDate = 'date';
   static const String questionTypeFiles = 'files';
   static const String questionTypeDouble = 'double';
+  static const String questionTypeRepeatable = 'repeatable';
 
   static const String pleaseEnterYourEmail = 'Please enter your email';
   static const String pleaseEnterAVlidEmail = 'Please enter a valid email';
@@ -354,6 +355,12 @@ class AppStrings {
   static const String areYouSureYouWantToDelete =
       'Are you sure you want to delete';
   static const String requestReport = 'Request report';
+  static const String reportReady = 'Report ready';
+  static const String reportUrlSelectableHint =
+      'Tap the box below to copy the link, or use Open to view it.';
+  static const String reportLinkCopied = 'Link copied to clipboard';
+  static const String openWith = 'Open with';
+  static const String open = 'Open';
   static const String deletePoll = 'Delete Poll';
   static const String areYouSureYouWantToDeleteThisPoll =
       'Are you sure you want to delete this poll?';
@@ -555,6 +562,14 @@ class AppStrings {
   static const String or = 'or';
   static const String continueWithGoogle = 'Continue with Google';
   static const String continueWithApple = 'Continue with Apple';
+  static const String onlineNow = 'Online now';
+  static const String today = 'Today';
+  static const String reply = 'Reply';
+  static const String forward = 'Forward';
+  static const String copy = 'Copy';
+  static const String star = 'Star';
+  static const String moreOptions = 'More...';
+  static const String messageCopied = 'Message copied';
   static const String comingSoon = 'Coming Soon';
   static const String socialLoginComingSoon =
       'Social login features are coming soon!';
@@ -594,7 +609,6 @@ class AppStrings {
       'You don\'t have permission to like feed comments.';
   static const String youDontHavePermissionToReplyOnFeeds =
       'You don\'t have permission to reply on feeds.';
-  static const String reply = 'Reply';
   static const String failedToStartAppleSignInPleaseTryAgain =
       'Failed to start Apple Sign-In. Please try again.';
   static const String member = 'Member';
@@ -606,4 +620,21 @@ class AppStrings {
   static const String showCurrentUserPermissions =
       'Show current user permissions';
   static const String currentUserPermissions = 'Current user permissions';
+  static const String addReading = 'Add Reading';
+  static const String editReading = 'Edit Reading';
+  static const String addReadingTitle = 'Add Reading';
+  static const String noReadingsAddedYet =
+      'No readings added yet. Tap Add Reading to start.';
+  static const String readingSaved = 'Reading saved';
+  static const String undo = 'Undo';
+  static const String fieldDate = 'DATE';
+  static const String fieldTimeOptional = 'TIME - optional';
+  static const String fieldValue = 'VALUE';
+  static const String yesterday = 'Yesterday';
+  static const String twoDaysAgo = '2 days ago';
+  static const String now = 'Now';
+  static const String oneHourAgo = '1h ago';
+  static const String twoHoursAgo = '2h ago';
+  static const String pleaseFillRequiredFieldsBeforeSaving =
+      'Please fill in the required fields before saving';
 }

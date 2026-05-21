@@ -2,6 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:egy_akin/features/all_doctors_patients/domain/usecases/export_patients_usecase.dart';
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_apple_usecase.dart';
+import 'package:egy_akin/features/chat_room/data/datasources/chat_room_datasource.dart';
+import 'package:egy_akin/features/chat_room/data/repositories/chat_room_repo_impl.dart';
+import 'package:egy_akin/features/chat_room/domain/repositories/chat_room_repo.dart';
+import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.dart';
 import 'package:egy_akin/features/consultation_details/domain/usecases/lock_or_unlock_consultation_usecase.dart';
 import 'package:egy_akin/features/create_group_in_community/domain/usecases/update_group_with_header_and_group_image_usecase.dart';
 import 'package:egy_akin/features/ai_form_upload/data/datasources/ai_form_upload_datasource.dart';
@@ -129,6 +133,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => MarkedPatientsCubit(
         sl(),
       ));
+  sl.registerFactory(() => ChatRoomCubit());
 
   //! REMOTE DATASOURCE
   sl.registerLazySingleton<AuthenticationDataSource>(
@@ -205,6 +210,8 @@ Future<void> diInit() async {
   sl.registerLazySingleton<MoreDataSource>(() => MoreDataSourceImpl(sl()));
   sl.registerLazySingleton<MarkedPatientsDataSource>(
       () => MarkedPatientsDataSourceImpl(sl()));
+  sl.registerLazySingleton<ChatRoomDataSource>(
+      () => ChatRoomDataSourceImpl(sl()));
   //! Repository
   sl.registerLazySingleton<AuthenticationRepository>(
       () => AuthenticationRepositoryImpl(sl(), sl()));
@@ -284,6 +291,8 @@ Future<void> diInit() async {
       () => MoreRepositoryImpl(sl(), sl()));
   sl.registerLazySingleton<MarkedPatientsRepository>(
       () => MarkedPatientsRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton<ChatRoomRepository>(
+      () => ChatRoomRepositoryImpl(sl(), sl()));
 
   //! USECASES
   if (!GetIt.I.isRegistered<SignInUsecase>()) {

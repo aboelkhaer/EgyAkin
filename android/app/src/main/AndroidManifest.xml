@@ -17,6 +17,12 @@
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
  <queries>
+        <package android:name="com.android.chrome" />
+        <package android:name="com.google.android.apps.chrome" />
+        <package android:name="org.mozilla.firefox" />
+        <package android:name="com.microsoft.emmx" />
+        <package android:name="com.sec.android.app.sbrowser" />
+        <package android:name="com.android.browser" />
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />
@@ -70,14 +76,34 @@
             </intent-filter>
              <!-- Deep links - Universal Links -->
              <!-- Note: Update the host values below to match your API base URL -->
-    <intent-filter android:autoVerify="true">
-    <action android:name="android.intent.action.VIEW" />
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="https" android:host="test.egyakin.com" />
-    <data android:scheme="https" android:host="api.egyakin.com" />
-    <data android:scheme="https" android:host="egyakin.com" />
-</intent-filter>
+            <!-- App Links: only /post/… so PDFs and other API paths open in the browser -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="test.egyakin.com"
+                    android:pathPrefix="/post" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="api.egyakin.com"
+                    android:pathPrefix="/post" />
+            </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="egyakin.com"
+                    android:pathPrefix="/post" />
+            </intent-filter>
 
 <!-- Custom URL scheme as fallback -->
 <intent-filter>

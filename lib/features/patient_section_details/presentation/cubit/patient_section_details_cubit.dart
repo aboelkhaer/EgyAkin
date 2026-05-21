@@ -19,6 +19,7 @@ import 'package:egy_akin/features/patient_section_details/domain/usecases/search
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_recommendation_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/domain/usecases/update_patient_section_details_usecase.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/cubit/patient_section_details_state.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -361,6 +362,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     sectionAiMode = null;
     sectionAiHint = null;
     sectionAiVoiceTime = null;
+    formData.clear();
     emit(const PatientSectionDetailsState.loading());
     final result = await _getPatientSectionDetailsUsecase.execute(
         GetPatientSectionDetailsUsecaseInput(
@@ -373,13 +375,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         emit(PatientSectionDetailsState.error(l.message));
       },
       (response) async {
-        questionModelList = response.data!;
+        questionModelList =
+            _hydrateRepeatableAnswersFromApi(response.data ?? []);
         sectionAiMode = response.aiMode?.trim().toLowerCase();
         sectionAiHint = response.aiHint;
         sectionAiVoiceTime = response.aiVoiceTime;
         aiFilledQuestionIds.clear();
         emit(PatientSectionDetailsState.loaded(
-          response.data!,
+          questionModelList,
           false,
           false,
           '',
@@ -397,6 +400,25 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         ));
       },
     );
+  }
+
+  List<QuestionModel> _hydrateRepeatableAnswersFromApi(
+      List<QuestionModel> questions) {
+    return questions.map((question) {
+      if (question.type?.trim() != AppStrings.questionTypeRepeatable) {
+        return question;
+      }
+
+      final entries = RepeatableReadingEntry.listFromAnswer(question.answer);
+      if (entries.isEmpty) return question;
+
+      final payload = RepeatableReadingEntry.toApiPayload(entries);
+      final id = question.id?.toString();
+      if (id != null) {
+        formData[id] = payload;
+      }
+      return question.copyWith(answer: payload);
+    }).toList();
   }
 
   getMedicationSection(String patientId) async {
@@ -763,6 +785,37 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               }
             }
           }
+          if (question.type == AppStrings.questionTypeRepeatable) {
+            final answer = question.answer;
+            final isEmpty = answer == null ||
+                (answer is List && answer.isEmpty);
+            if (isEmpty) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                  value.questions,
+                  false,
+                  false,
+                  '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                  0.0,
+                  false,
+                  false,
+                  false,
+                  counterChanges,
+                  false,
+                  false,
+                  '',
+                ),
+              ));
+              isValid = false;
+              break;
+            }
+            continue;
+          }
+
           if (question.answer == null || question.answer == '') {
             emit(state.maybeMap(
               orElse: () => state,
