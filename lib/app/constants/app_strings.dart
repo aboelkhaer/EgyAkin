@@ -158,12 +158,29 @@ class AppStrings {
   static const String gfrCalculator = 'GFR Calculator';
   static const String privacySecurity = 'Privacy & Security';
   static const String changePassword = 'Change Password';
+  static const String changePasswordSubtitle =
+      'Keep your account secure with a strong new password.';
+  static const String changePasswordFormHint =
+      'Enter your current password, then choose a new one that meets the requirements below.';
+  static const String changePasswordRequirementsTitle =
+      'Password requirements';
+  static const String changePasswordSecurityTip =
+      'Never share your password. Use a unique password you don\'t use elsewhere.';
   static const String emailVerification = 'Email Verification';
   static const String waitingForApproval = 'Waiting for approval...';
   static const String syndicateCardVerification = 'Syndicate card verification';
   static const String privacyPolicy = 'Privacy Policy';
   static const String support = 'Support';
   static const String contactUs = 'Contact us';
+  static const String contactUsSubtitle =
+      'We\'d love to hear from you. Send feedback or reach our team directly.';
+  static const String contactUsSendFeedback = 'Send Feedback';
+  static const String contactUsFeedbackHint =
+      'Share your questions, suggestions, or report an issue…';
+  static const String contactUsEmailSupport = 'Email Support';
+  static const String contactUsVisitWebsite = 'Visit Website';
+  static const String contactUsSupportEmail = 'support@egyakin.com';
+  static const String contactUsWebsiteUrl = 'https://egyakin.com';
   static const String aboutUs = 'About us';
   static const String account = 'Account';
   static const String consultation = 'Consultation';
@@ -204,13 +221,34 @@ class AppStrings {
   static const String no = 'No';
   static const String pleaseEnterAge = 'Please enter age';
   static const String creatinineMgDl = 'Creatinine (mg/dL)';
+  static const String cystatinCMgL = 'Cystatin C (mg/L)';
   static const String pleaseEnterCreatinineLevel =
       'Please enter creatinine level';
+  static const String pleaseEnterCreatinineOrCystatin =
+      'Enter creatinine and/or cystatin C';
+  static const String pleaseEnterCystatinLevel = 'Please enter cystatin C level';
+  static const String nkfEgfrCalculator = 'CKD-EPI';
+  static const String nkfBiomarker = 'Biomarker';
+  static const String nkfUseCreatinine = 'Creatinine';
+  static const String nkfUseCystatin = 'Cystatin C';
+  static const String nkfUseBoth = 'Both';
+  static const String ckdEpiCreatinine2021 =
+      'CKD-EPI creatinine equation (2021)';
+  static const String ckdEpiCreatinineCystatin2021 =
+      'CKD-EPI creatinine-cystatin equation (2021)';
+  static const String ckdEpiCystatinC2012 = 'CKD-EPI cystatin C equation (2012)';
+  static const String egfrUnitIndexed = 'mL/min/1.73m²';
   static const String gender = 'Gender';
   static const String male = 'Male';
   static const String female = 'Female';
   static const String calculate = 'Calculate';
   static const String temporaryHistory = 'Temporary History';
+  static const String estimatedGfr = 'Estimated eGFR';
+  static const String gfrNoHistoryYet =
+      'No calculations yet. Results appear here after you calculate.';
+  static const String gfrClearAllHistory = 'Clear all';
+  static const String gfrClearAllHistoryConfirm =
+      'Are you sure you want to clear all GFR calculation history?';
   static const String gfrResult = 'GFR Result';
   static const String yourEstimatedGfrIs = 'Your estimated GFR is';
   static const String inputError = 'Input Error';
@@ -237,22 +275,37 @@ class AppStrings {
   static const String keyFeatures = 'Key Features';
   static const String patientDataManagement = 'Patient Data Management';
   static const String patientDataManagementDesc =
-      'Easily add and manage patient details including name, age, gender, and medical history.';
-  static const String gfrCalculation = 'GFR Calculation';
+      'Add and manage patients with structured clinical sections, advanced filters, export options, and role-based access for your practice.';
+  static const String gfrCalculation = 'eGFR Calculator';
   static const String gfrCalculationDesc =
-      'Utilize accurate CKD-EPI, MDRD and Sobh equations to calculate the Glomerular Filtration Rate (GFR) for better kidney health management.';
+      'Our program uses the 2021 race-free CKD-EPI equation as the primary eGFR method according to NKF/ASN recommendations, while MDRD and Sobh equations are retained for comparison and research purposes only.';
+  static const String aboutRepeatableReadings = 'Repeatable Clinical Readings';
+  static const String aboutRepeatableReadingsDesc =
+      'Record serial lab values such as creatinine with date and time, edit or remove entries, and review reading history within patient sections.';
   static const String historicalDataTracking = 'Historical Data Tracking';
   static const String historicalDataTrackingDesc =
-      'Monitor patient progress with detailed historical data tracking.';
-  static const String healthInsights = 'Health Insights';
-  static const String healthInsightsDesc =
-      'Gain valuable insights to improve kidney health outcomes.';
+      'Monitor kidney health over time with longitudinal patient data, section updates, and progress across visits.';
+  static const String aboutMedicalCommunity = 'Medical Community & Groups';
+  static const String aboutMedicalCommunityDesc =
+      'Share posts and images, join specialty groups, create polls, explore trending topics, and collaborate with peers across Egypt.';
+  static const String aboutDoctorConsultations = 'Doctor Consultations';
+  static const String aboutDoctorConsultationsDesc =
+      'Send and respond to clinical consultations between verified doctors, with threaded replies and case follow-up.';
+  static const String aiPoweredConsultations = 'AI-Powered Consultations';
+  static const String aiPoweredConsultationsDesc =
+      'Get AI-assisted clinical guidance and consultation history tailored for nephrology workflows.';
+  static const String aboutAiFormAnalysis = 'AI Medical Form Analysis';
+  static const String aboutAiFormAnalysisDesc =
+      'Upload clinical forms and documents for AI-assisted extraction and analysis to support faster documentation.';
+  static const String aboutSecureMessaging = 'Secure Doctor Messaging';
+  static const String aboutSecureMessagingDesc =
+      'Chat in real time with colleagues in dedicated rooms, with media sharing for coordinated patient care.';
   static const String communitySupport = 'Community Support';
   static const String communitySupportDesc =
       'Connect with healthcare professionals and patients through our community platform for knowledge sharing and support.';
-  static const String aiPoweredConsultations = 'AI-Powered Consultations';
-  static const String aiPoweredConsultationsDesc =
-      'Get instant medical guidance through our advanced AI consultation system.';
+  static const String healthInsights = 'Health Insights';
+  static const String healthInsightsDesc =
+      'Gain valuable insights to improve kidney health outcomes.';
   static const String disclaimer = 'Disclaimer';
   static const String disclaimerText =
       'This app is intended for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.';
@@ -620,12 +673,17 @@ class AppStrings {
   static const String showCurrentUserPermissions =
       'Show current user permissions';
   static const String currentUserPermissions = 'Current user permissions';
+  static const String searchPermissions = 'Search permissions…';
+  static const String permissionsTotal = 'permissions';
+  static const String noPermissionsMatchSearch =
+      'No permissions match your search';
   static const String addReading = 'Add Reading';
   static const String editReading = 'Edit Reading';
   static const String addReadingTitle = 'Add Reading';
   static const String noReadingsAddedYet =
       'No readings added yet. Tap Add Reading to start.';
   static const String readingSaved = 'Reading saved';
+  static const String readingUpdated = 'Reading updated';
   static const String undo = 'Undo';
   static const String fieldDate = 'DATE';
   static const String fieldTimeOptional = 'TIME - optional';

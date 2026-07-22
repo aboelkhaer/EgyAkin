@@ -39,6 +39,7 @@ class CustomTextFormField extends StatefulWidget {
   final VoidCallback? onClear;
   final bool showCounter;
   final bool isChatInput;
+  final Color? fillColor;
 
   const CustomTextFormField({
     super.key,
@@ -79,6 +80,7 @@ class CustomTextFormField extends StatefulWidget {
     this.onClear,
     this.showCounter = false,
     this.isChatInput = false,
+    this.fillColor,
   });
 
   @override
@@ -233,15 +235,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                       ? const TextStyle(height: 0, fontSize: 0)
                       : const TextStyle(fontSize: 9, height: 0.3),
                   filled: true,
-                  fillColor: widget.isCreatePostInCommunity
-                      ? Colors.transparent
-                      : widget.isChatInput
-                          ? (isDarkMode
-                              ? AppColors.darkCardBG
-                              : Colors.white)
-                          : isDarkMode
-                              ? AppColors.darkCardBG
-                              : AppColors.subBG,
+                  fillColor: widget.fillColor ??
+                      (widget.isCreatePostInCommunity
+                          ? Colors.transparent
+                          : widget.isChatInput
+                              ? (isDarkMode
+                                  ? AppColors.darkCardBG
+                                  : Colors.white)
+                              : isDarkMode
+                                  ? AppColors.darkCardBG
+                                  : AppColors.subBG),
                   enabledBorder: widget.isCreatePostInCommunity
                       ? InputBorder.none
                       : OutlineInputBorder(

@@ -1,138 +1,165 @@
 import 'package:egy_akin/features/contact_us/presentation/cubit/contact_us_state.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/features/contact_us/presentation/widgets/contact_us_ui.dart';
 
 import '../../../../exports.dart';
 
 class ContactUsScreen extends StatelessWidget {
   const ContactUsScreen({super.key});
 
+  void _openUrl(BuildContext context, String url) {
+    launchURL(
+      url: url,
+      onError: (error) => showErrorDialog(context, error),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    ContactUsCubit cubit = ContactUsCubit.get(context);
-    Size size = MediaQuery.of(context).size;
+    final cubit = ContactUsCubit.get(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final scaffoldBg =
+            isDarkMode ? AppColors.darkScaffoldBG : AppColors.scaffoldBG;
+        final appBarForeground =
+            isDarkMode ? AppColors.darkTitle : AppColors.title;
 
         return Scaffold(
+          backgroundColor: scaffoldBg,
           appBar: AppBar(
-            title: Text(context.tr(AppStrings.contactUs)),
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            backgroundColor: scaffoldBg,
+            foregroundColor: appBarForeground,
+            iconTheme: IconThemeData(color: appBarForeground),
+            title: Text(
+              context.tr(AppStrings.contactUs),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 17.sp,
+                color: appBarForeground,
+              ),
+            ),
           ),
           body: SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.all(20),
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 32.h),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    height: size.height * 0.1,
-                  ),
-                  Image.asset(
-                    AppImages.appIcon,
-                    height: size.height * 0.1,
-                    color: isDarkMode ? AppColors.title : null,
-                  ),
-                  SizedBox(
-                    height: size.height * 0.1,
-                  ),
-                  Form(
-                    key: cubit.feedbackFormKey,
-                    child: SizedBox(
-                      height: size.height * 0.2,
-                      child: Form(
-                        key: cubit.formKey,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: CustomTextFormField(
-                          title: context.tr(AppStrings.content),
-                          textInputType: TextInputType.multiline,
-                          textInputAction: TextInputAction.newline,
-                          maxLines: 10,
-                          onChanged: (val) {
-                            cubit.feedback = val;
-                            // if (val == AppStrings.empty) {
-                            //   controller.isSendNotEnable(true);
-                            // } else {
-                            //   controller.isSendNotEnable(false);
-                            // }
-                          },
-                          validator: (value) =>
-                              AppValidators.fieldsIsEmptyValidation(value!),
+                  const ContactHeroBanner(),
+                  SizedBox(height: 16.h),
+                  ContactSectionCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        ContactSectionHeader(
+                          icon: Icons.support_agent_outlined,
+                          title: context.tr(AppStrings.support),
+                          subtitle: context.tr(AppStrings.contactUsText),
                         ),
+                        SizedBox(height: 14.h),
+                        ContactInfoTile(
+                          icon: Icons.email_outlined,
+                          label: context.tr(AppStrings.contactUsEmailSupport),
+                          value: context.tr(AppStrings.contactUsSupportEmail),
+                          onTap: () => _openUrl(
+                            context,
+                            'mailto:${AppStrings.contactUsSupportEmail}',
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        ContactInfoTile(
+                          icon: Icons.language_outlined,
+                          label: context.tr(AppStrings.contactUsVisitWebsite),
+                          value: 'egyakin.com',
+                          onTap: () => _openUrl(
+                            context,
+                            AppStrings.contactUsWebsiteUrl,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  ContactSectionCard(
+                    child: Form(
+                      key: cubit.formKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ContactSectionHeader(
+                            icon: Icons.rate_review_outlined,
+                            title: context.tr(AppStrings.contactUsSendFeedback),
+                            subtitle:
+                                context.tr(AppStrings.contactUsFeedbackHint),
+                          ),
+                          SizedBox(height: 14.h),
+                          CustomTextFormField(
+                            title: context.tr(AppStrings.content),
+                            textInputType: TextInputType.multiline,
+                            textInputAction: TextInputAction.newline,
+                            maxLines: 8,
+                            onChanged: (val) => cubit.feedback = val,
+                            validator: (value) =>
+                                AppValidators.fieldsIsEmptyValidation(value!),
+                          ),
+                          SizedBox(height: 16.h),
+                          BlocConsumer<ContactUsCubit, ContactUsState>(
+                            listener: (context, state) {
+                              state.maybeWhen(
+                                orElse: () {},
+                                loaded: (message) {
+                                  navigatorKey.currentState?.pop();
+                                  customSnackBar(
+                                    context: context,
+                                    message: message,
+                                  );
+                                },
+                                error: (message) {
+                                  customSnackBar(
+                                    context: context,
+                                    message: message,
+                                  );
+                                },
+                              );
+                            },
+                            builder: (context, state) {
+                              return state.maybeWhen(
+                                loading: () => Center(
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 8.h,
+                                    ),
+                                    child: const CircularProgressIndicator(),
+                                  ),
+                                ),
+                                orElse: () => CustomElevatedButton(
+                                  onPressed: cubit.addContactUs,
+                                  title: context.tr(AppStrings.send),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: size.height * 0.03,
+                  SizedBox(height: 16.h),
+                  Text(
+                    context.tr(AppStrings.disclaimerText),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      height: 1.4,
+                      color: isDarkMode
+                          ? AppColors.darkDescription
+                          : Colors.grey.shade500,
+                    ),
                   ),
-                  SizedBox(
-                      width: size.width * 0.3,
-                      child: BlocConsumer<ContactUsCubit, ContactUsState>(
-                        listener: (context, state) {
-                          state.maybeWhen(
-                            orElse: () {},
-                            loaded: (message) {
-                              navigatorKey.currentState?.pop();
-                              customSnackBar(
-                                  context: context, message: message);
-                            },
-                          );
-                        },
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            orElse: () {
-                              return CustomElevatedButton(
-                                onPressed: () {
-                                  cubit.addContactUs();
-                                },
-                                title: context.tr(AppStrings.send),
-                              );
-                            },
-                            loading: () {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                          );
-                        },
-                      )),
-                  // SizedBox(height: 30.h),
-                  // const Text(
-                  //   'About EgyAkin',
-                  //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  // ),
-                  // const SizedBox(height: 10),
-                  // const Text(
-                  //   'EgyAkin is dedicated to empowering Egypt\'s fight against kidney failure with cutting-edge data collection, insights, and community support.',
-                  // ),
-                  // const SizedBox(height: 20),
-                  // const Text(
-                  //   'Developer Contact Information',
-                  //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  // ),
-                  // const SizedBox(height: 10),
-                  // const Text(
-                  //   'If you have any questions or need support, please contact us at:',
-                  // ),
-                  // const SizedBox(height: 10),
-                  // const Text(
-                  //   'Email: support@egyakin.com',
-                  //   style: TextStyle(color: Colors.blue),
-                  // ),
-                  // const Text(
-                  //   'Website: www.egyakin.com',
-                  //   style: TextStyle(color: Colors.blue),
-                  // ),
-                  // SizedBox(height: 30.h),
-                  // const Text(
-                  //   'Attention!',
-                  //   style: TextStyle(fontWeight: FontWeight.bold),
-                  // ),
-                  // SizedBox(height: 10.h),
-                  // const Text(
-                  //   'Disclaimer: This app provides informational content only and is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.',
-                  // ),
-                  // SizedBox(height: 50.h),
                 ],
               ),
             ),

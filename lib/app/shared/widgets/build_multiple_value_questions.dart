@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/widgets/multiple_question_other_field.dart';
+
 import '../../../exports.dart';
 
 class BuildMultipleValueQuestion extends StatelessWidget {
@@ -40,17 +42,13 @@ class BuildMultipleValueQuestion extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         isOldAnswer == false
-            ? listContainOther.contains('Others')
-                ? CustomTextFormField(
-                    title: context.tr(AppStrings.answerHere),
+            ? listContainOther.contains(AppStrings.others)
+                ? MultipleQuestionOtherField(
+                    key: ValueKey('multiple_other_${questionList[index].id}'),
                     initialValue: initialValue,
-                    textInputType: TextInputType.text,
-                    textInputAction: TextInputAction.next,
                     validator: validator,
-                    onChanged: (v) {
-                      onClearAiFilledMark?.call();
-                      onChanged?.call(v);
-                    },
+                    onClearAiFilledMark: onClearAiFilledMark,
+                    onChanged: onChanged,
                   )
                 : const SizedBox.shrink()
             : const SizedBox.shrink(),

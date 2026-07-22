@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
 import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
 import 'package:egy_akin/features/add_patient/data/models/get_patient_history_for_add_patient.dart';
@@ -32,7 +33,9 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       this._getRecommendationsUsecase,
       this._createRecommendationsUsecase,
       this._searchForDoseInMedicationSectionUsecase,
-      this._deletePatientRecommendationUsecase, this._updateRecommendationUsecase, this._createNewMedicineUsecase)
+      this._deletePatientRecommendationUsecase,
+      this._updateRecommendationUsecase,
+      this._createNewMedicineUsecase)
       : super(const PatientSectionDetailsState.initial());
   final GetPatientSectionDetailsUsecase _getPatientSectionDetailsUsecase;
   final UpdatePatientSectionDetailsUsecase _updatePatientSectionDetailsUsecase;
@@ -53,6 +56,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   String removeFilesId = '';
   int counterChanges = 0;
   String? sectionAiMode;
+
   /// HTML guidance from API (`ai_hint`) for voice recording.
   String? sectionAiHint;
 
@@ -65,7 +69,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   // Pagination variables for search
   bool isLastPageInSearch = false;
   bool isLoadingMoreForScrollInSearch = false;
-
 
   String deletePatientRecommendationId = '';
   deletePatientRecommendation(String patientId) async {
@@ -82,7 +85,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         value.isSubmitLoaded,
         false,
         value.searchForDoseInMedicationSectionResponse,
-        true,false,
+        true,
+        false,
       ),
     ));
     final result = await _deletePatientRecommendationUsecase.execute(
@@ -104,7 +108,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            false,false,
+            false,
+            false,
           ),
         ));
       },
@@ -125,7 +130,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            false,false,
+            false,
+            false,
           ),
         ));
       },
@@ -139,9 +145,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     currentPageInSearch = 1;
     isLastPageInSearch = false;
     isLoadingMoreForScrollInSearch = false;
-    
 
-    
     emit(state.maybeMap(
       orElse: () => state,
       medicationSectionLoaded: (value) =>
@@ -159,7 +163,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       ),
     ));
     final result = await _searchForDoseInMedicationSectionUsecase.execute(
-        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: currentPageInSearch));
+        SearchForDoseInMedicationSectionUsecaseInput(
+            dose: dose, page: currentPageInSearch));
     result.fold(
       (l) {
         emit(state.maybeMap(
@@ -174,18 +179,19 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             false,
             value.searchForDoseInMedicationSectionResponse,
-            value.isDeletePatientRecommendationLoading, false,
+            value.isDeletePatientRecommendationLoading,
+            false,
           ),
         ));
       },
       (medicationResponse) {
         // Check if this is the last page based on the initial response
         // If the response is empty or has very few items, it's likely the last page
-        if (medicationResponse.data?.data == null || 
+        if (medicationResponse.data?.data == null ||
             medicationResponse.data!.data!.isEmpty) {
           isLastPageInSearch = true;
         }
-        
+
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) =>
@@ -205,14 +211,15 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       },
     );
   }
+
   int currentPageInSearch = 1;
-   loadMoreSearchForDoseInMedicationSection(String dose) async {
+  loadMoreSearchForDoseInMedicationSection(String dose) async {
     // Don't load more if we're already at the last page or currently loading
     if (isLoadingMoreForScrollInSearch || isLastPageInSearch) return;
 
     currentPageInSearch++;
     isLoadingMoreForScrollInSearch = true;
-    
+
     emit(state.maybeMap(
       orElse: () => state,
       medicationSectionLoaded: (value) =>
@@ -230,7 +237,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       ),
     ));
     final result = await _searchForDoseInMedicationSectionUsecase.execute(
-        SearchForDoseInMedicationSectionUsecaseInput(dose: dose, page: currentPageInSearch));
+        SearchForDoseInMedicationSectionUsecaseInput(
+            dose: dose, page: currentPageInSearch));
     result.fold(
       (l) {
         currentPageInSearch--; // Roll back the page increment if the API call fails
@@ -257,38 +265,42 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           orElse: () => state,
           medicationSectionLoaded: (value) {
             // Get existing search results
-            final existingSearchResponse = value.searchForDoseInMedicationSectionResponse;
-            
+            final existingSearchResponse =
+                value.searchForDoseInMedicationSectionResponse;
+
             // If we have existing results, append new data to it
-            if (existingSearchResponse != null && 
-                existingSearchResponse.data != null && 
+            if (existingSearchResponse != null &&
+                existingSearchResponse.data != null &&
                 medicationResponse.data != null &&
                 medicationResponse.data!.data != null) {
-              
               // Get existing dose list
-              final existingDoses = List<DoseModelInSearch>.from(existingSearchResponse.data!.data ?? []);
+              final existingDoses = List<DoseModelInSearch>.from(
+                  existingSearchResponse.data!.data ?? []);
               // Get new dose list
-              final newDoses = List<DoseModelInSearch>.from(medicationResponse.data!.data ?? []);
-              
+              final newDoses = List<DoseModelInSearch>.from(
+                  medicationResponse.data!.data ?? []);
+
               // Combine the lists
               existingDoses.addAll(newDoses);
-              
+
               // Create updated data model with combined doses
-              final updatedDataModel = SearchForDoseInMedicationSectionDataModelResponse(
+              final updatedDataModel =
+                  SearchForDoseInMedicationSectionDataModelResponse(
                 data: existingDoses,
               );
-              
+
               // Create updated response with combined data
-              final updatedResponse = medicationResponse.copyWith(data: updatedDataModel);
-              
+              final updatedResponse =
+                  medicationResponse.copyWith(data: updatedDataModel);
+
               // Check if this is the last page based on response data
               // If the new response is empty, it's definitely the last page
               if (newDoses.isEmpty) {
                 isLastPageInSearch = true;
               }
-              
+
               isLoadingMoreForScrollInSearch = false;
-              
+
               return PatientSectionDetailsState.medicationSectionLoaded(
                 value.response,
                 value.changesCounter,
@@ -304,7 +316,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             } else {
               // If no existing results, just use the new response
               isLoadingMoreForScrollInSearch = false;
-              
+
               return PatientSectionDetailsState.medicationSectionLoaded(
                 value.response,
                 value.changesCounter,
@@ -323,8 +335,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       },
     );
   }
-
-
 
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
@@ -482,46 +492,17 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         //   log(question.toString());
         // }
         if (question.mandatory == true) {
-          if (question.type == 'multiple') {
-            Map myMap = question.answer;
-
-            // Check if "answers" key is either null or an empty list
-            if (myMap.containsKey('answers')) {
-              dynamic answersValue = myMap['answers'];
-
-              if (answersValue == null ||
-                  (answersValue is List && answersValue.isEmpty)) {
-                debugPrint('"answers" key is either null or an empty list.');
-
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
-
-                isValid = false;
-                break;
-              } else {
-                debugPrint(
-                    '"answers" key is present and has a non-empty list value: $answersValue');
-              }
-            } else {
-              debugPrint('"answers" key is not present in the map.');
+          if (question.type == AppStrings.questionTypeMultiple ||
+              question.type == AppStrings.multipleType) {
+            final questionId = question.id?.toString();
+            if (!hasValidMultipleAnswer(
+              storedInForm: questionId != null ? formData[questionId] : null,
+              storedOnQuestion: question.answer,
+            )) {
+              final messageKey = multipleValidationMessageKey(
+                storedInForm: questionId != null ? formData[questionId] : null,
+                storedOnQuestion: question.answer,
+              );
 
               emit(state.maybeMap(
                 orElse: () => state,
@@ -529,34 +510,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                   value.questions,
                   false,
                   false,
-                  AppStrings.somethingWentWrong,
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                  false,
-                  false,
-                  false,
-                  counterChanges,
-                  false,
-                  false,
-                  '',
-                ),
-              ));
-              isValid = false;
-              break;
-            }
-
-            if ((myMap['other_field'] == null ||
-                    myMap['other_field'].toString().isEmpty) &&
-                (myMap['answers'] as List).contains('Others')) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
+                  '${LocalizationService.instance.translate(messageKey)} \n{${question.question}}',
                   snackbarErrorCounter += 1,
                   false,
                   false,
@@ -576,39 +530,32 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             }
           }
 
-          if (question.type == AppStrings.selectType) {
-            Map myMap = formData[question.id.toString()] ??= {
-              AppStrings.answers: AppStrings.empty,
-              AppStrings.otherField: AppStrings.empty,
-            };
+          if (question.type == AppStrings.selectType ||
+              question.type == AppStrings.questionTypeSelect) {
+            if (!_hasValidSelectAnswer(question)) {
+              emit(state.maybeMap(
+                orElse: () => state,
+                loaded: (value) => PatientSectionDetailsState.loaded(
+                  value.questions,
+                  false,
+                  false,
+                  '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+                  snackbarErrorCounter += 1,
+                  false,
+                  false,
+                  0.0,
+                  false,
+                  false,
+                  false,
+                  counterChanges,
+                  false,
+                  false,
+                  '',
+                ),
+              ));
 
-            if (myMap.containsKey(AppStrings.answers)) {
-              dynamic answersValue = myMap[AppStrings.answers];
-              if (answersValue == null || answersValue.toString().isEmpty) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
-
-                isValid = false;
-                break;
-              }
+              isValid = false;
+              break;
             }
           }
           if (question.question == 'Name') {
@@ -625,7 +572,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nameShouldContainOnlyEnglishLetters),
+                    LocalizationService.instance.translate(
+                        AppStrings.nameShouldContainOnlyEnglishLetters),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -655,7 +603,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -680,7 +629,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.nationalIDShouldHave14Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -711,7 +661,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120),
+                    LocalizationService.instance
+                        .translate(AppStrings.ageShouldBeLessThan120),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -741,7 +692,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -766,7 +718,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                     value.questions,
                     false,
                     false,
-                    LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits),
+                    LocalizationService.instance
+                        .translate(AppStrings.phoneShouldHave11Digits),
                     snackbarErrorCounter += 1,
                     false,
                     false,
@@ -787,8 +740,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           }
           if (question.type == AppStrings.questionTypeRepeatable) {
             final answer = question.answer;
-            final isEmpty = answer == null ||
-                (answer is List && answer.isEmpty);
+            final isEmpty =
+                answer == null || (answer is List && answer.isEmpty);
             if (isEmpty) {
               emit(state.maybeMap(
                 orElse: () => state,
@@ -868,7 +821,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
         final result = await _updatePatientSectionDetailsUsecase.execute(
             UpdatePatientSectionDetailsUsecaseInput(
-                patientId: patientId, sectionId: sectionId, map: formData));
+              patientId: patientId,
+              sectionId: sectionId,
+              map: sanitizeMultipleAnswersInFormData(
+                formData,
+                questionModelList,
+              ),
+            ));
 
         result.fold(
           (l) {
@@ -924,7 +883,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           value.questions,
           false,
           false,
-          LocalizationService.instance.translate(AppStrings.youShouldUpdateAnyDataToSubmit),
+          LocalizationService.instance
+              .translate(AppStrings.youShouldUpdateAnyDataToSubmit),
           snackbarErrorCounter += 1,
           false,
           false,
@@ -1096,7 +1056,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.questions,
             value.isSubmitLoading,
             value.isSubmitted,
-            LocalizationService.instance.translate(AppStrings.totalSizeOfSelectedFilesExceeds10MB),
+            LocalizationService.instance
+                .translate(AppStrings.totalSizeOfSelectedFilesExceeds10MB),
             snackbarErrorCounter += 1,
             false,
             false,
@@ -1136,12 +1097,12 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             // Base64 encode the compressed image
             String fileData = base64Encode(compressedImageBytes);
 
-            filesList.add({"file_name": fileName, "file_data": fileData});
+            filesList.add({'file_name': fileName, 'file_data': fileData});
           }
         } else {
           // For non-image files, just read them as normal
           String fileData = base64Encode(await file.readAsBytes());
-          filesList.add({"file_name": fileName, "file_data": fileData});
+          filesList.add({'file_name': fileName, 'file_data': fileData});
         }
       }
 
@@ -1175,15 +1136,16 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         context: context,
         barrierDismissible: false, // Prevent dismissing the dialog
         builder: (BuildContext context) {
-          return  Dialog(
+          return Dialog(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(width: 16),
-                  Text(LocalizationService.instance.translate(AppStrings.uploadingFiles)),
+                  const CircularProgressIndicator(),
+                  const SizedBox(width: 16),
+                  Text(LocalizationService.instance
+                      .translate(AppStrings.uploadingFiles)),
                 ],
               ),
             ),
@@ -1204,6 +1166,11 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           Navigator.pop(context);
           customSnackBar(
               context: context, message: response.message.toString());
+          await _refreshFileQuestionAfterUpload(
+            questionIndex: questionIndex,
+            sectionId: sectionId,
+            patientId: patientId,
+          );
         },
       );
     }
@@ -1229,6 +1196,58 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         '',
       ),
     ));
+  }
+
+  Future<void> _refreshFileQuestionAfterUpload({
+    required int questionIndex,
+    required String sectionId,
+    required String patientId,
+  }) async {
+    final questionId = questionModelList[questionIndex].id?.toString();
+    if (questionId == null) return;
+
+    final result = await _getPatientSectionDetailsUsecase.execute(
+      GetPatientSectionDetailsUsecaseInput(
+        patientId: patientId,
+        sectionId: sectionId,
+      ),
+    );
+
+    result.fold(
+      (l) {},
+      (response) {
+        final hydrated = _hydrateRepeatableAnswersFromApi(response.data ?? []);
+        final updated = hydrated.cast<QuestionModel?>().firstWhere(
+              (q) => q?.id?.toString() == questionId,
+              orElse: () => null,
+            );
+        if (updated == null) return;
+
+        questionModelList[questionIndex] = updated;
+        formData.remove(questionId);
+
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => PatientSectionDetailsState.loaded(
+            List<QuestionModel>.from(questionModelList),
+            value.isSubmitLoading,
+            value.isSubmitted,
+            value.message,
+            snackbarErrorCounter,
+            false,
+            true,
+            0.0,
+            value.isGetMedicationsLoading,
+            value.isGetMedicationsLoaded,
+            value.isSearchMedicationLoading,
+            counterChanges + 1,
+            value.isCreateMedicationLoading,
+            value.isCreateMedicationLoaded,
+            value.dialogMessage,
+          ),
+        ));
+      },
+    );
   }
 
 // Add these methods to your cubit:
@@ -1318,7 +1337,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             value.isSubmitLoaded,
             value.isSearchMedicationLoading,
             value.searchForDoseInMedicationSectionResponse,
-            value.isDeletePatientRecommendationLoading, 
+            value.isDeletePatientRecommendationLoading,
             false,
           ),
         ));
@@ -1330,7 +1349,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           medicationSectionLoaded: (value) {
             final updatedData = List<GetRecommendationsDataModelResponse>.from(
                 value.response.data ?? []);
-            
+
             // Use the actual data from the API response if available
             if (response.data != null && response.data!.isNotEmpty) {
               // Add the newly created recommendation with the actual ID from the API
@@ -1349,7 +1368,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               );
               updatedData.insert(0, newMedication);
             }
-            
+
             return PatientSectionDetailsState.medicationSectionLoaded(
               value.response.copyWith(data: updatedData),
               value.changesCounter + 1,
@@ -1444,7 +1463,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 value.response.data ?? []);
             final index = updatedData.indexWhere(
                 (element) => element.id == int.parse(medication.id));
-            
+
             if (index != -1) {
               updatedData[index] = GetRecommendationsDataModelResponse(
                 id: int.parse(medication.id),
@@ -1534,7 +1553,6 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) {
-          
             return PatientSectionDetailsState.medicationSectionLoaded(
               value.response,
               value.changesCounter + 1,
@@ -1582,6 +1600,20 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
     return value;
   }
 
+  bool _hasValidSelectAnswer(QuestionModel question) {
+    final questionId = question.id?.toString();
+    if (questionId == null) return false;
+
+    return selectQuestionHasDisplayableAnswer(
+          optionValues: question.values,
+          storedAnswer: formData[questionId],
+        ) ||
+        selectQuestionHasDisplayableAnswer(
+          optionValues: question.values,
+          storedAnswer: question.answer,
+        );
+  }
+
   bool _hasDisplayableAiAnswer(QuestionModel question, dynamic value) {
     if (value == null) return false;
 
@@ -1612,7 +1644,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
 
   void applyVoiceAnswers(Map<String, dynamic> answersMap) {
     if (questionModelList.isEmpty) return;
-    final updatedQuestionModelList = List<QuestionModel>.from(questionModelList);
+    final updatedQuestionModelList =
+        List<QuestionModel>.from(questionModelList);
 
     for (var i = 0; i < updatedQuestionModelList.length; i++) {
       final question = updatedQuestionModelList[i];

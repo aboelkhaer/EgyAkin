@@ -34,6 +34,10 @@ Object? questionAnswerFromJson(Object? json) {
             map.containsKey('reading'))) {
       return [map];
     }
+    // Select / multiple: { answers, other_field } — keep the full map.
+    if (_isChoiceQuestionAnswerMap(map)) {
+      return map;
+    }
     for (final key in ['readings', 'items', 'data', 'answers']) {
       final nested = map[key];
       if (nested is List) {
@@ -51,6 +55,15 @@ Object? questionAnswerFromJson(Object? json) {
   }
 
   return json;
+}
+
+bool _isChoiceQuestionAnswerMap(Map<String, dynamic> map) {
+  if (!map.containsKey('answers')) return false;
+  if (map.containsKey('other_field') || map.containsKey('otherField')) {
+    return true;
+  }
+  // Select answers are a single string; multiple answers are a list.
+  return map['answers'] is! List;
 }
 
 Object? _normalizeQuestionAnswerElement(Object? item) {

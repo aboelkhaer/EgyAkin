@@ -12,6 +12,7 @@ import 'package:egy_akin/app/services/local_storage.dart';
 import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+import 'package:egy_akin/app/shared/functions/app_update_message_utils.dart';
 import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'dart:convert';
@@ -137,23 +138,21 @@ class HomeCubit extends Cubit<HomeState> {
     );
   }
 
-  bool isUpdateMessageHidden4 = true;
+  bool shouldShowUpdateMessage = false;
 
   int checkUpdateMessageCounter = 0;
 
   getUpdateMessageStatusFromLocal() async {
     if (checkUpdateMessageCounter == 0) {
-      isUpdateMessageHidden4 = (await sl<AppPreferences>()
-              .getBool(AppLocalStrings.isUpdateMessageHidden8)) ??
-          false;
+      shouldShowUpdateMessage =
+          await AppUpdateMessageUtils.shouldShow(sl<AppPreferences>());
       checkUpdateMessageCounter++;
     }
   }
 
   setUpdateMessageStatusToLocal() async {
-    isUpdateMessageHidden4 = true;
-    (await sl<AppPreferences>()
-        .setBool(AppLocalStrings.isUpdateMessageHidden8, true));
+    shouldShowUpdateMessage = false;
+    await AppUpdateMessageUtils.markDismissed(sl<AppPreferences>());
   }
 
   getDoctorDataFromLocal() async {

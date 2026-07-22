@@ -288,6 +288,7 @@ GFRCalculatorHistoryModelResponse _$GFRCalculatorHistoryModelResponseFromJson(
 mixin _$GFRCalculatorHistoryModelResponse {
   String? get age => throw _privateConstructorUsedError;
   String? get creatinine => throw _privateConstructorUsedError;
+  String? get cystatin => throw _privateConstructorUsedError;
   String? get gender => throw _privateConstructorUsedError;
   String? get result => throw _privateConstructorUsedError;
   String? get date => throw _privateConstructorUsedError;
@@ -316,6 +317,7 @@ abstract class $GFRCalculatorHistoryModelResponseCopyWith<$Res> {
   $Res call(
       {String? age,
       String? creatinine,
+      String? cystatin,
       String? gender,
       String? result,
       String? date,
@@ -342,6 +344,7 @@ class _$GFRCalculatorHistoryModelResponseCopyWithImpl<$Res,
   $Res call({
     Object? age = freezed,
     Object? creatinine = freezed,
+    Object? cystatin = freezed,
     Object? gender = freezed,
     Object? result = freezed,
     Object? date = freezed,
@@ -357,6 +360,10 @@ class _$GFRCalculatorHistoryModelResponseCopyWithImpl<$Res,
       creatinine: freezed == creatinine
           ? _value.creatinine
           : creatinine // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cystatin: freezed == cystatin
+          ? _value.cystatin
+          : cystatin // ignore: cast_nullable_to_non_nullable
               as String?,
       gender: freezed == gender
           ? _value.gender
@@ -398,6 +405,7 @@ abstract class _$$GFRCalculatorHistoryModelResponseImplCopyWith<$Res>
   $Res call(
       {String? age,
       String? creatinine,
+      String? cystatin,
       String? gender,
       String? result,
       String? date,
@@ -423,6 +431,7 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
   $Res call({
     Object? age = freezed,
     Object? creatinine = freezed,
+    Object? cystatin = freezed,
     Object? gender = freezed,
     Object? result = freezed,
     Object? date = freezed,
@@ -438,6 +447,10 @@ class __$$GFRCalculatorHistoryModelResponseImplCopyWithImpl<$Res>
       creatinine: freezed == creatinine
           ? _value.creatinine
           : creatinine // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cystatin: freezed == cystatin
+          ? _value.cystatin
+          : cystatin // ignore: cast_nullable_to_non_nullable
               as String?,
       gender: freezed == gender
           ? _value.gender
@@ -474,6 +487,7 @@ class _$GFRCalculatorHistoryModelResponseImpl
   const _$GFRCalculatorHistoryModelResponseImpl(
       {this.age,
       this.creatinine,
+      this.cystatin,
       this.gender,
       this.result,
       this.date,
@@ -490,6 +504,8 @@ class _$GFRCalculatorHistoryModelResponseImpl
   @override
   final String? creatinine;
   @override
+  final String? cystatin;
+  @override
   final String? gender;
   @override
   final String? result;
@@ -504,7 +520,7 @@ class _$GFRCalculatorHistoryModelResponseImpl
 
   @override
   String toString() {
-    return 'GFRCalculatorHistoryModelResponse(age: $age, creatinine: $creatinine, gender: $gender, result: $result, date: $date, weight: $weight, height: $height, equationType: $equationType)';
+    return 'GFRCalculatorHistoryModelResponse(age: $age, creatinine: $creatinine, cystatin: $cystatin, gender: $gender, result: $result, date: $date, weight: $weight, height: $height, equationType: $equationType)';
   }
 
   @override
@@ -515,6 +531,8 @@ class _$GFRCalculatorHistoryModelResponseImpl
             (identical(other.age, age) || other.age == age) &&
             (identical(other.creatinine, creatinine) ||
                 other.creatinine == creatinine) &&
+            (identical(other.cystatin, cystatin) ||
+                other.cystatin == cystatin) &&
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.result, result) || other.result == result) &&
             (identical(other.date, date) || other.date == date) &&
@@ -526,8 +544,8 @@ class _$GFRCalculatorHistoryModelResponseImpl
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, age, creatinine, gender, result,
-      date, weight, height, equationType);
+  int get hashCode => Object.hash(runtimeType, age, creatinine, cystatin,
+      gender, result, date, weight, height, equationType);
 
   /// Create a copy of GFRCalculatorHistoryModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -552,6 +570,7 @@ abstract class _GFRCalculatorHistoryModelResponse
   const factory _GFRCalculatorHistoryModelResponse(
       {final String? age,
       final String? creatinine,
+      final String? cystatin,
       final String? gender,
       final String? result,
       final String? date,
@@ -567,6 +586,8 @@ abstract class _GFRCalculatorHistoryModelResponse
   String? get age;
   @override
   String? get creatinine;
+  @override
+  String? get cystatin;
   @override
   String? get gender;
   @override

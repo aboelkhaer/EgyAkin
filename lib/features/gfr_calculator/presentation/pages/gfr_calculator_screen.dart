@@ -1,3 +1,8 @@
+import 'package:egy_akin/features/gfr_calculator/presentation/cubit/gfr_calculator_cubit.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/widgets/gfr_calculator_theme.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/widgets/gfr_calculator_ui.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/widgets/gfr_history_section.dart';
+
 import '../../../../exports.dart';
 
 class GfrCalculatorScreen extends StatelessWidget {
@@ -6,613 +11,493 @@ class GfrCalculatorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    GfrCalculatorCubit cubit = GfrCalculatorCubit.get(context);
+    final cubit = GfrCalculatorCubit.get(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.tr(AppStrings.gfrCalculator)),
-      ),
-      body: SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: cubit.formKey,
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      context.tr(AppStrings.equationType),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return Wrap(
-                          children: [
-                            ListTile(
-                              title: Text(
-                                'CKD-EPI',
-                                style: TextStyle(fontSize: 13.sp),
-                              ),
-                              leading: Radio<String>(
-                                value: 'CKD-EPI',
-                                groupValue: cubit.equationType,
-                                onChanged: (String? value) {
-                                  cubit.changeEquationTypeValue(value!);
-                                },
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: InkWell(
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const FullScreenImage(
-                                                  imageUrl: AppImages.ckd,
-                                                  isLocal: true,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(8.0),
-                                                  topRight:
-                                                      Radius.circular(8.0),
-                                                  bottomLeft:
-                                                      Radius.circular(8.0),
-                                                  bottomRight:
-                                                      Radius.circular(8.0),
-                                                ),
-                                                child: Image.asset(
-                                                  AppImages.ckd,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                                context.tr(AppStrings.close)),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.info_outline,
-                                  size: 20.r,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ),
-                            ListTile(
-                              title: Text(
-                                'Sobh Equation',
-                                style: TextStyle(fontSize: 13.sp),
-                              ),
-                              leading: Radio<String>(
-                                value: 'Sobh Equation',
-                                groupValue: cubit.equationType,
-                                onChanged: (String? value) {
-                                  cubit.changeEquationTypeValue(value!);
-                                },
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: InkWell(
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const FullScreenImage(
-                                                  imageUrl: AppImages.sobh,
-                                                  isLocal: true,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(8.0),
-                                                  topRight:
-                                                      Radius.circular(8.0),
-                                                  bottomLeft:
-                                                      Radius.circular(8.0),
-                                                  bottomRight:
-                                                      Radius.circular(8.0),
-                                                ),
-                                                child: Image.asset(
-                                                  AppImages.sobh,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                                context.tr(AppStrings.close)),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.info_outline,
-                                  size: 20.r,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ),
-                            ListTile(
-                              title: Text(
-                                'MDRD',
-                                style: TextStyle(fontSize: 13.sp),
-                              ),
-                              leading: Radio<String>(
-                                value: 'MDRD',
-                                groupValue: cubit.equationType,
-                                onChanged: (String? value) {
-                                  cubit.changeEquationTypeValue(value!);
-                                },
-                              ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        content: InkWell(
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const FullScreenImage(
-                                                  imageUrl: AppImages.mdrd,
-                                                  isLocal: true,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(8.0),
-                                                  topRight:
-                                                      Radius.circular(8.0),
-                                                  bottomLeft:
-                                                      Radius.circular(8.0),
-                                                  bottomRight:
-                                                      Radius.circular(8.0),
-                                                ),
-                                                child: Image.asset(
-                                                  AppImages.mdrd,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: Text(
-                                                context.tr(AppStrings.close)),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.info_outline,
-                                  size: 20.r,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: 20.h),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    if (cubit.equationType != 'Sobh Equation') {
-                      return const SizedBox.shrink();
-                    }
-                    return FadeIn(
-                      duration: const Duration(milliseconds: 500),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      context.tr(AppStrings.height),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    CustomTextFormField(
-                                      title: context.tr(AppStrings.heightCm),
-                                      textInputType: TextInputType.number,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return context
-                                              .tr(AppStrings.pleaseEnterHeight);
-                                        }
-                                        return null;
-                                      },
-                                      onChanged: (value) {
-                                        cubit.heightForm = value;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      context.tr(AppStrings.weight),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    SizedBox(height: 8.h),
-                                    CustomTextFormField(
-                                      title: context.tr(AppStrings.weightKg),
-                                      textInputType: TextInputType.number,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return context
-                                              .tr(AppStrings.pleaseEnterWeight);
-                                        }
-                                        return null;
-                                      },
-                                      onChanged: (value) {
-                                        cubit.weightForm = value;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    if (cubit.equationType != 'MDRD') {
-                      return const SizedBox.shrink();
-                    }
-                    return FadeIn(
-                      duration: const Duration(milliseconds: 500),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                context.tr(AppStrings.blackRace),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.h),
-                          BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                            builder: (context, state) {
-                              return state.maybeWhen(
-                                orElse: () {
-                                  return Row(
-                                    children: [
-                                      Expanded(
-                                        child: ListTile(
-                                          title: Text(
-                                            context.tr(AppStrings.yes),
-                                            style: TextStyle(fontSize: 13.sp),
-                                          ),
-                                          leading: Radio<String>(
-                                            value: 'Yes',
-                                            groupValue: cubit.isBlackForm,
-                                            onChanged: (String? value) {
-                                              cubit
-                                                  .changeBlackRaceValue(value!);
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: ListTile(
-                                          title: Text(
-                                            context.tr(AppStrings.no),
-                                            style: TextStyle(fontSize: 13.sp),
-                                          ),
-                                          leading: Radio<String>(
-                                            value: 'No',
-                                            groupValue: cubit.isBlackForm,
-                                            onChanged: (String? value) {
-                                              cubit
-                                                  .changeBlackRaceValue(value!);
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.tr(AppStrings.age),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          CustomTextFormField(
-                            title: context.tr(AppStrings.age),
-                            textInputType: TextInputType.number,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return context.tr(AppStrings.pleaseEnterAge);
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              cubit.ageForm = value;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            context.tr(AppStrings.creatinineMgDl),
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                          SizedBox(height: 8.h),
-                          CustomTextFormField(
-                            title: context.tr(AppStrings.creatinineMgDl),
-                            textInputType: TextInputType.text,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return context
-                                    .tr(AppStrings.pleaseEnterCreatinineLevel);
-                              }
-                              return null;
-                            },
-                            onChanged: (value) {
-                              cubit.creatinineForm = value;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  children: [
-                    Text(
-                      context.tr(AppStrings.gender),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: ListTile(
-                                title: Text(
-                                  context.tr(AppStrings.male),
-                                  style: TextStyle(fontSize: 13.sp),
-                                ),
-                                leading: Radio<String>(
-                                  value: 'Male',
-                                  groupValue: cubit.genderForm,
-                                  onChanged: (String? value) {
-                                    cubit.changeGenderValue(value!);
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListTile(
-                                title: Text(
-                                  context.tr(AppStrings.female),
-                                  style: TextStyle(fontSize: 13.sp),
-                                ),
-                                leading: Radio<String>(
-                                  value: 'Female',
-                                  groupValue: cubit.genderForm,
-                                  onChanged: (String? value) {
-                                    cubit.changeGenderValue(value!);
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: 30.h),
-                CustomElevatedButton(
-                  onPressed: () => cubit.calculateGFR(context),
-                  title: context.tr(AppStrings.calculate),
-                ),
-                // BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                //   builder: (context, state) {
-                //     if (homeDataModel.role == 'Admin') {
-                //       return Column(
-                //         children: [
-                //           SizedBox(height: 20.h),
-                //           Text(
-                //             'Disclaimer: The results are for informational purposes only and should not be used as a substitute for professional medical advice. Always seek the advice of your physician or another qualified health provider with any questions you may have regarding a medical condition.',
-                //             textAlign: TextAlign.center,
-                //             style: TextStyle(
-                //               fontSize: 12.0.sp,
-                //               color: Colors.red,
-                //             ),
-                //           ),
-                //         ],
-                //       );
-                //     }
-                //     return const SizedBox.shrink();
-                //   },
-                // ),
-                SizedBox(height: 30.h),
-                Row(
-                  children: [
-                    Text(
-                      context.tr(AppStrings.temporaryHistory),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-                BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      orElse: () {
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          padding: EdgeInsets.zero,
-                          reverse: true,
-                          physics: const BouncingScrollPhysics(),
-                          itemCount: cubit.gfrHistory.length,
-                          itemBuilder: (context, index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Text(formatDateTime2(
-                                    cubit.gfrHistory[index].date!)),
-                                Text(cubit.gfrHistory[index].result!),
-                              ],
-                            );
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
-                SizedBox(height: 20.h),
-              ],
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final theme = GfrCalculatorTheme(
+          themeState is ThemeLoaded && themeState.isDarkMode,
+        );
+
+        return Scaffold(
+          backgroundColor: theme.scaffoldBg,
+          appBar: AppBar(
+            elevation: 0,
+            iconTheme: IconThemeData(color: theme.title),
+            scrolledUnderElevation: 0,
+            backgroundColor: theme.scaffoldBg,
+            foregroundColor: theme.title,
+            title: Text(
+              context.tr(AppStrings.gfrCalculator),
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 17.sp,
+                color: theme.title,
+              ),
             ),
           ),
-        ),
+          body: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+              child: Form(
+                key: cubit.formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const GfrCalculatorHeroBanner(),
+                    SizedBox(height: 16.h),
+                    _EquationSection(cubit: cubit),
+                    BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                      builder: (context, state) {
+                        if (cubit.equationType !=
+                            GfrCalculatorCubit.equationNkfEgfr) {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: _NkfBiomarkerSection(cubit: cubit),
+                        );
+                      },
+                    ),
+                    BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                      builder: (context, state) {
+                        if (cubit.equationType != 'Sobh Equation') {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: _SobhFieldsSection(cubit: cubit),
+                        );
+                      },
+                    ),
+                    BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                      builder: (context, state) {
+                        if (cubit.equationType != 'MDRD') {
+                          return const SizedBox.shrink();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(top: 12.h),
+                          child: _MdrdRaceSection(cubit: cubit),
+                        );
+                      },
+                    ),
+                    SizedBox(height: 12.h),
+                    _PatientInputsSection(cubit: cubit),
+                    SizedBox(height: 20.h),
+                    CustomElevatedButton(
+                      onPressed: () => cubit.calculateGFR(context),
+                      title: context.tr(AppStrings.calculate),
+                    ),
+                    SizedBox(height: 24.h),
+                    BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+                      builder: (context, state) {
+                        return GfrHistorySection(history: cubit.gfrHistory);
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _EquationSection extends StatelessWidget {
+  final GfrCalculatorCubit cubit;
+
+  const _EquationSection({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+      builder: (context, state) {
+        return GfrSectionCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              GfrSectionHeader(
+                icon: Icons.functions_outlined,
+                title: context.tr(AppStrings.equationType),
+              ),
+              SizedBox(height: 14.h),
+              GfrSelectOption(
+                label: context.tr(AppStrings.nkfEgfrCalculator),
+                subtitle: 'Primary race-free equation (2021)',
+                icon: Icons.medical_services_outlined,
+                selected:
+                    cubit.equationType == GfrCalculatorCubit.equationNkfEgfr,
+                onTap: () => cubit.changeEquationTypeValue(
+                  GfrCalculatorCubit.equationNkfEgfr,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              GfrSelectOption(
+                label: 'Sobh Equation',
+                icon: Icons.straighten_outlined,
+                selected: cubit.equationType == 'Sobh Equation',
+                onTap: () => cubit.changeEquationTypeValue('Sobh Equation'),
+              ),
+              SizedBox(height: 8.h),
+              GfrSelectOption(
+                label: 'MDRD (2006)',
+                subtitle: '4-variable IDMS equation',
+                icon: Icons.calculate_outlined,
+                selected: cubit.equationType == 'MDRD',
+                onTap: () => cubit.changeEquationTypeValue('MDRD'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _NkfBiomarkerSection extends StatelessWidget {
+  final GfrCalculatorCubit cubit;
+
+  const _NkfBiomarkerSection({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+      builder: (context, state) {
+        return GfrSectionCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              GfrSectionHeader(
+                icon: Icons.biotech_outlined,
+                title: context.tr(AppStrings.nkfBiomarker),
+                subtitle:
+                    context.tr(AppStrings.pleaseEnterCreatinineOrCystatin),
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: GfrChoiceChip(
+                      label: context.tr(AppStrings.nkfUseCreatinine),
+                      selected: cubit.nkfBiomarkerMode ==
+                          GfrCalculatorCubit.nkfBiomarkerCreatinine,
+                      onTap: () => cubit.changeNkfBiomarkerMode(
+                        GfrCalculatorCubit.nkfBiomarkerCreatinine,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: GfrChoiceChip(
+                      label: context.tr(AppStrings.nkfUseCystatin),
+                      selected: cubit.nkfBiomarkerMode ==
+                          GfrCalculatorCubit.nkfBiomarkerCystatin,
+                      onTap: () => cubit.changeNkfBiomarkerMode(
+                        GfrCalculatorCubit.nkfBiomarkerCystatin,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: GfrChoiceChip(
+                      label: context.tr(AppStrings.nkfUseBoth),
+                      selected: cubit.nkfBiomarkerMode ==
+                          GfrCalculatorCubit.nkfBiomarkerBoth,
+                      onTap: () => cubit.changeNkfBiomarkerMode(
+                        GfrCalculatorCubit.nkfBiomarkerBoth,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (cubit.showNkfCreatinineField ||
+                  cubit.showNkfCystatinField) ...[
+                SizedBox(height: 14.h),
+                if (cubit.showNkfCreatinineField && cubit.showNkfCystatinField)
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: CustomTextFormField(
+                          fillColor: GfrCalculatorTheme.of(context).inputFill,
+                          title: context.tr(AppStrings.creatinineMgDl),
+                          textInputType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return context.tr(
+                                AppStrings.pleaseEnterCreatinineLevel,
+                              );
+                            }
+                            return null;
+                          },
+                          onChanged: (value) => cubit.creatinineForm = value,
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: CustomTextFormField(
+                          fillColor: GfrCalculatorTheme.of(context).inputFill,
+                          title: context.tr(AppStrings.cystatinCMgL),
+                          textInputType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return context.tr(
+                                AppStrings.pleaseEnterCystatinLevel,
+                              );
+                            }
+                            return null;
+                          },
+                          onChanged: cubit.changeCystatinValue,
+                        ),
+                      ),
+                    ],
+                  )
+                else if (cubit.showNkfCreatinineField)
+                  CustomTextFormField(
+                    fillColor: GfrCalculatorTheme.of(context).inputFill,
+                    title: context.tr(AppStrings.creatinineMgDl),
+                    textInputType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return context.tr(
+                          AppStrings.pleaseEnterCreatinineLevel,
+                        );
+                      }
+                      return null;
+                    },
+                    onChanged: (value) => cubit.creatinineForm = value,
+                  )
+                else
+                  CustomTextFormField(
+                    fillColor: GfrCalculatorTheme.of(context).inputFill,
+                    title: context.tr(AppStrings.cystatinCMgL),
+                    textInputType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return context.tr(
+                          AppStrings.pleaseEnterCystatinLevel,
+                        );
+                      }
+                      return null;
+                    },
+                    onChanged: cubit.changeCystatinValue,
+                  ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SobhFieldsSection extends StatelessWidget {
+  final GfrCalculatorCubit cubit;
+
+  const _SobhFieldsSection({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return GfrSectionCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          GfrSectionHeader(
+            icon: Icons.height_outlined,
+            title:
+                '${context.tr(AppStrings.height)} & ${context.tr(AppStrings.weight)}',
+          ),
+          SizedBox(height: 12.h),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CustomTextFormField(
+                  fillColor: GfrCalculatorTheme.of(context).inputFill,
+                  title: context.tr(AppStrings.heightCm),
+                  textInputType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return context.tr(AppStrings.pleaseEnterHeight);
+                    }
+                    return null;
+                  },
+                  onChanged: (value) => cubit.heightForm = value,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              Expanded(
+                child: CustomTextFormField(
+                  fillColor: GfrCalculatorTheme.of(context).inputFill,
+                  title: context.tr(AppStrings.weightKg),
+                  textInputType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return context.tr(AppStrings.pleaseEnterWeight);
+                    }
+                    return null;
+                  },
+                  onChanged: (value) => cubit.weightForm = value,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _MdrdRaceSection extends StatelessWidget {
+  final GfrCalculatorCubit cubit;
+
+  const _MdrdRaceSection({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+      builder: (context, state) {
+        return GfrSectionCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              GfrSectionHeader(
+                icon: Icons.groups_outlined,
+                title: context.tr(AppStrings.blackRace),
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: GfrChoiceChip(
+                      label: context.tr(AppStrings.yes),
+                      selected: cubit.isBlackForm == 'Yes',
+                      onTap: () => cubit.changeBlackRaceValue('Yes'),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: GfrChoiceChip(
+                      label: context.tr(AppStrings.no),
+                      selected: cubit.isBlackForm == 'No',
+                      onTap: () => cubit.changeBlackRaceValue('No'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PatientInputsSection extends StatelessWidget {
+  final GfrCalculatorCubit cubit;
+
+  const _PatientInputsSection({required this.cubit});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<GfrCalculatorCubit, GfrCalculatorState>(
+      builder: (context, state) {
+        final isNkf = cubit.equationType == GfrCalculatorCubit.equationNkfEgfr;
+        final showCreatinine = !isNkf;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            GfrSectionCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  GfrSectionHeader(
+                    icon: Icons.person_outline,
+                    title:
+                        '${context.tr(AppStrings.gender)} & ${context.tr(AppStrings.age)}',
+                  ),
+                  SizedBox(height: 12.h),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GfrChoiceChip(
+                          label: context.tr(AppStrings.male),
+                          selected: cubit.genderForm == 'Male',
+                          onTap: () => cubit.changeGenderValue('Male'),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: GfrChoiceChip(
+                          label: context.tr(AppStrings.female),
+                          selected: cubit.genderForm == 'Female',
+                          onTap: () => cubit.changeGenderValue('Female'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 14.h),
+                  CustomTextFormField(
+                    fillColor: GfrCalculatorTheme.of(context).inputFill,
+                    title: context.tr(AppStrings.age),
+                    textInputType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return context.tr(AppStrings.pleaseEnterAge);
+                      }
+                      return null;
+                    },
+                    onChanged: (value) => cubit.ageForm = value,
+                  ),
+                ],
+              ),
+            ),
+            if (showCreatinine) ...[
+              SizedBox(height: 12.h),
+              GfrSectionCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    GfrSectionHeader(
+                      icon: Icons.science_outlined,
+                      title: context.tr(AppStrings.creatinineMgDl),
+                    ),
+                    SizedBox(height: 12.h),
+                    CustomTextFormField(
+                      fillColor: GfrCalculatorTheme.of(context).inputFill,
+                      title: context.tr(AppStrings.creatinineMgDl),
+                      textInputType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return context.tr(
+                            AppStrings.pleaseEnterCreatinineLevel,
+                          );
+                        }
+                        return null;
+                      },
+                      onChanged: (value) => cubit.creatinineForm = value,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        );
+      },
     );
   }
 }

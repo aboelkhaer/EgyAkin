@@ -1,15 +1,13 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_file_utils.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/repeatable_question_widget.dart';
-import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../exports.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
@@ -293,234 +291,118 @@ class _BuildQuestionState extends State<BuildQuestion> {
 
           //! Multiple
           case AppStrings.questionTypeMultiple:
-            var questionAnswer = cubit.questionModelList[widget.index].answer;
-            Map<String, dynamic> answerMap = questionAnswer ??= {
-              AppStrings.answers: [],
-              AppStrings.otherField: AppStrings.empty
-            };
+            final questionAnswer = cubit.questionModelList[widget.index].answer;
             final qidMulti =
                 cubit.questionModelList[widget.index].id.toString();
-            if (cubit.questionModelList[widget.index].answer[AppStrings.answers]
-                is String) {
-              String answers = cubit.questionModelList[widget.index]
-                  .answer[AppStrings.answers] ??= '';
-              return BuildMultipleValueQuestion(
-                index: widget.index,
-                questionList: cubit.questionModelList,
-                initialValue: answerMap[AppStrings.otherField] ?? '',
-                listContainOther: const [],
-                oldAnswer: cubit
-                    .questionModelList[widget.index].answer[AppStrings.answers],
-                isOldAnswer: true,
-                showAiFilledBanner:
-                    cubit.aiFilledQuestionIds.contains(qidMulti),
-                onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
-                onChanged: (val) {
-                  setState(() {
-                    answerMap[AppStrings.otherField] = val;
-                    cubit.formData[
-                        cubit.questionModelList[widget.index].id.toString()] = {
-                      AppStrings.answers: answers,
-                      AppStrings.otherField: answers.contains(AppStrings.others)
-                          ? val
-                          : AppStrings.empty,
-                    };
-                  });
 
-                  log('map ${cubit.formData}');
-                },
-                validator: (val) {
-                  if (cubit.questionModelList[widget.index].mandatory == true) {
-                    if (val == null || val.isEmpty) {
-                      return AppStrings.chooseAtLeastOnOption;
-                    }
-                  }
-                  return null;
-                },
-                children:
-                    cubit.questionModelList[widget.index].values!.map((value) {
-                  return Tooltip(
-                    message: value.toString(),
-                    child: Theme(
-                      data: ThemeData(
-                        chipTheme: ChipThemeData(
-                          selectedColor: AppColors.primary.withOpacity(0.7),
-                          checkmarkColor:
-                              Colors.white, // Change the checkmark color
-                          showCheckmark: true,
-
-                          labelStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      child: ChoiceChip(
-                        label: Text(
-                          value.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                        ),
-                        backgroundColor: isDarkMode
-                            ? Colors.grey.shade700
-                            : Colors.grey.shade400,
-                        selected: answers.contains(value),
-                        selectedColor: AppColors.primary.withOpacity(0.7),
-                        onSelected: (selected) {
-                          cubit.clearAiFilledMark(qidMulti);
-                          setState(() {
-                            // Check if `answers` is a String, and if so, replace it with an empty List<dynamic>
-                            if (answerMap[AppStrings.answers] is String) {
-                              answerMap[AppStrings.answers] = <dynamic>[];
-                            }
-
-                            // Now safely retrieve `answers` as a List<dynamic>
-                            List<dynamic> answers =
-                                answerMap[AppStrings.answers] as List<dynamic>;
-
-                            if (selected) {
-                              answers.add(value);
-                              // Show other field if "Other" is selected
-                              if (value == AppStrings.others) {
-                                answerMap[AppStrings.otherField] =
-                                    ''; // Reset other field if selected
-                              }
-                            } else {
-                              answers.remove(value);
-                              // Clear other field if "Other" is deselected
-                              if (value == AppStrings.others) {
-                                answerMap[AppStrings.otherField] =
-                                    AppStrings.empty;
-                              }
-                            }
-
-                            // Update the answerMap with the modified `answers` list
-                            answerMap[AppStrings.answers] = answers;
-
-                            // Update cubit.formData with the answers list and other field
-                            cubit.formData[cubit
-                                .questionModelList[widget.index].id
-                                .toString()] = {
-                              AppStrings.answers: answers,
-                              AppStrings.otherField:
-                                  answers.contains(AppStrings.others)
-                                      ? answerMap[AppStrings.otherField]
-                                      : AppStrings.empty,
-                            };
-                            log('map ${cubit.formData}');
-                          });
-                        },
-                      ),
-                    ),
+            final answerMap = resolveMultipleAnswerMap(
+              questionAnswer: questionAnswer,
+              formEntry: cubit.formData[qidMulti],
+            );
+            final hasLegacyStringAnswer =
+                answerMap[AppStrings.answers] is String;
+            final String oldAnswer = hasLegacyStringAnswer
+                ? (answerMap[AppStrings.answers] as String? ?? AppStrings.empty)
+                : AppStrings.empty;
+            final List<dynamic> answers = hasLegacyStringAnswer
+                ? cubit.questionModelList[widget.index].values!
+                    .where((value) => oldAnswer.contains(value.toString()))
+                    .toList()
+                : List<dynamic>.from(
+                    answerMap[AppStrings.answers] as List<dynamic>? ??
+                        <dynamic>[],
                   );
-                }).toList(),
+
+            void syncMultipleAnswer() {
+              final payload = multipleAnswerPayload(
+                answers: answers,
+                otherText: answerMap[AppStrings.otherField],
               );
-            } else if (cubit.questionModelList[widget.index].answer is Map) {
-              List<dynamic> answers = cubit.questionModelList[widget.index]
-                  .answer[AppStrings.answers] ??= [];
-              return BuildMultipleValueQuestion(
-                index: widget.index,
-                questionList: cubit.questionModelList,
-                initialValue: answerMap[AppStrings.otherField] ?? '',
-                listContainOther: answers,
-                showAiFilledBanner:
-                    cubit.aiFilledQuestionIds.contains(qidMulti),
-                onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
-                onChanged: (val) {
-                  setState(() {
-                    answerMap[AppStrings.otherField] = val;
-                    cubit.formData[
-                        cubit.questionModelList[widget.index].id.toString()] = {
-                      AppStrings.answers: answers,
-                      AppStrings.otherField: answers.contains(AppStrings.others)
-                          ? val
-                          : AppStrings.empty,
-                    };
-                  });
-
-                  log('map ${cubit.formData}');
-                },
-                validator: (val) {
-                  if (cubit.questionModelList[widget.index].mandatory == true) {
-                    if (val == null || val.isEmpty) {
-                      return AppStrings.chooseAtLeastOnOption;
-                    }
-                  }
-                  return null;
-                },
-                children:
-                    cubit.questionModelList[widget.index].values!.map((value) {
-                  return Tooltip(
-                    message: value.toString(),
-                    child: Theme(
-                      data: ThemeData(
-                        chipTheme: ChipThemeData(
-                          selectedColor: AppColors.primary.withOpacity(0.7),
-                          checkmarkColor:
-                              Colors.white, // Change the checkmark color
-                          showCheckmark: true,
-
-                          labelStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      child: ChoiceChip(
-                        label: Text(
-                          value.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          maxLines: 2,
-                        ),
-                        backgroundColor: isDarkMode
-                            ? Colors.grey.shade700
-                            : Colors.grey.shade400,
-                        selected: answers.contains(value),
-                        selectedColor: AppColors.primary.withOpacity(0.7),
-                        onSelected: (selected) {
-                          cubit.clearAiFilledMark(qidMulti);
-                          setState(() {
-                            if (selected) {
-                              answers.add(value);
-                              // Show other field if "Other" is selected
-                              if (value == AppStrings.others) {
-                                answerMap[AppStrings.otherField] =
-                                    ''; // Reset other field if selected
-                              }
-                            } else {
-                              answers.remove(value);
-                              // Clear other field if "Other" is deselected
-                              if (value == AppStrings.others) {
-                                answerMap[AppStrings.otherField] =
-                                    AppStrings.empty;
-                              }
-                            }
-
-                            cubit.formData[cubit
-                                .questionModelList[widget.index].id
-                                .toString()] = {
-                              AppStrings.answers: answers,
-                              AppStrings.otherField:
-                                  answers.contains(AppStrings.others)
-                                      ? answerMap[AppStrings.otherField]
-                                      : AppStrings.empty,
-                            };
-                            log('map ${cubit.formData}');
-                          });
-                        },
-                      ),
-                    ),
-                  );
-                }).toList(),
-              );
+              answerMap[AppStrings.answers] = payload[AppStrings.answers];
+              answerMap[AppStrings.otherField] = payload[AppStrings.otherField];
+              cubit.updateQuestionAnswer(qidMulti, payload);
+              cubit.formData[qidMulti] = payload;
             }
-            return const SizedBox.shrink();
+
+            return BuildMultipleValueQuestion(
+              index: widget.index,
+              questionList: cubit.questionModelList,
+              initialValue: answerMap[AppStrings.otherField]?.toString() ?? '',
+              listContainOther: answers,
+              oldAnswer: null,
+              isOldAnswer: false,
+              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+              onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
+              onChanged: (val) {
+                setState(() {
+                  answerMap[AppStrings.otherField] = val;
+                  syncMultipleAnswer();
+                });
+
+                log('map ${cubit.formData}');
+              },
+              validator: (val) {
+                if (cubit.questionModelList[widget.index].mandatory == true) {
+                  if (val == null || val.isEmpty) {
+                    return AppStrings.chooseAtLeastOnOption;
+                  }
+                }
+                return null;
+              },
+              children:
+                  cubit.questionModelList[widget.index].values!.map((value) {
+                return Tooltip(
+                  message: value.toString(),
+                  child: Theme(
+                    data: ThemeData(
+                      chipTheme: ChipThemeData(
+                        selectedColor: AppColors.primary.withOpacity(0.7),
+                        checkmarkColor: Colors.white,
+                        showCheckmark: true,
+                        labelStyle: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    child: ChoiceChip(
+                      label: Text(
+                        value.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 2,
+                      ),
+                      backgroundColor: isDarkMode
+                          ? Colors.grey.shade700
+                          : Colors.grey.shade400,
+                      selected: answers.contains(value),
+                      selectedColor: AppColors.primary.withOpacity(0.7),
+                      onSelected: (selected) {
+                        cubit.clearAiFilledMark(qidMulti);
+                        setState(() {
+                          if (selected) {
+                            if (!answers.contains(value)) {
+                              answers.add(value);
+                            }
+                          } else {
+                            answers.remove(value);
+                            if (value == AppStrings.others) {
+                              answerMap[AppStrings.otherField] =
+                                  AppStrings.empty;
+                            }
+                          }
+
+                          syncMultipleAnswer();
+                          log('map ${cubit.formData}');
+                        });
+                      },
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
 
           //! Repeatable (e.g. creatinine readings)
           case AppStrings.questionTypeRepeatable:
@@ -761,109 +643,65 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                       .questionModelList[widget.index].id
                                       .toString()] !=
                                   []) {
-                            return Column(
-                              children: (cubit.formData[cubit
-                                      .questionModelList[widget.index].id
-                                      .toString()] as List<Map<String, String>>)
-                                  .map(
-                                (file) {
-                                  String fileName = file['file_name']!;
+                            final rawFiles = cubit.formData[cubit
+                                .questionModelList[widget.index].id
+                                .toString()] as List;
+                            final remoteUrls = fileUrlsFromQuestionAnswer(
+                              rawFiles,
+                            );
 
+                            if (remoteUrls.isNotEmpty &&
+                                remoteUrls.length == rawFiles.length &&
+                                rawFiles.every(
+                                  (item) =>
+                                      item is String ||
+                                      (item is Map &&
+                                          remoteFileUrlFromEntry(
+                                                Map<String, dynamic>.from(
+                                                  item.map(
+                                                    (k, v) => MapEntry(
+                                                      k.toString(),
+                                                      v,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ) !=
+                                              null),
+                                )) {
+                              return FileListWhenSubmit(files: remoteUrls);
+                            }
+
+                            return Column(
+                              children: rawFiles.map((file) {
+                                if (file is String && isRemoteFileUrl(file)) {
+                                  final fileName = Uri.tryParse(file)
+                                          ?.pathSegments
+                                          .lastOrNull ??
+                                      file.split('/').last;
                                   return ListTile(
                                     title: Text(fileName),
-                                    onTap: () async {
-                                      String fileName = file['file_name']!;
-                                      String filePath = file[
-                                          'file_data']!; // Assuming this is the base64 string
-                                      final normalizedFileName =
-                                          fileName.toLowerCase();
-
-                                      debugPrint('Tapped on file: $fileName');
-
-                                      if (normalizedFileName.endsWith('.jpg') ||
-                                          normalizedFileName.endsWith('.png') ||
-                                          normalizedFileName
-                                              .endsWith('.jpeg')) {
-                                        // Handle image file
-                                        debugPrint('Opening image file.');
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              content: SizedBox(
-                                                width: double.maxFinite,
-                                                height: 300,
-                                                child: Image.memory(
-                                                  base64Decode(filePath),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  child: const Text('Close'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      } else if (normalizedFileName
-                                              .endsWith('.pdf') ||
-                                          normalizedFileName.endsWith('.doc') ||
-                                          normalizedFileName
-                                              .endsWith('.docx')) {
-                                        debugPrint(
-                                            'Opening document file: $fileName');
-
-                                        // Newly selected files are stored as raw base64
-                                        // (or sometimes with a data-uri prefix). Decode both.
-                                        try {
-                                          final base64Data =
-                                              filePath.contains(',')
-                                                  ? filePath.split(',').last
-                                                  : filePath;
-                                          final bytes =
-                                              base64Decode(base64Data);
-                                          final dir =
-                                              await getTemporaryDirectory();
-                                          final tempFile =
-                                              File('${dir.path}/$fileName');
-                                          await tempFile.writeAsBytes(bytes);
-                                          if (await tempFile.exists()) {
-                                            final result = await OpenFile.open(
-                                                tempFile.path);
-                                            debugPrint(
-                                                'OpenFile result: ${result.message}');
-                                          } else {
-                                            debugPrint(
-                                                'Error: Temp file does not exist after writing.');
-                                          }
-                                        } catch (_) {
-                                          // Fallback for existing absolute path values.
-                                          debugPrint(
-                                              'Fallback to opening path: $filePath');
-                                          final result =
-                                              await OpenFile.open(filePath);
-                                          debugPrint(
-                                              'OpenFile result: ${result.message}');
-                                        }
-                                      } else {
-                                        debugPrint(
-                                            'Unsupported file type: $fileName');
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                            content: Text(context.tr(AppStrings
-                                                .unsupportedFileType)),
-                                          ),
-                                        );
-                                      }
-                                    },
+                                    onTap: () => launchURL(
+                                      url: file,
+                                      onError: (error) =>
+                                          showErrorDialog(context, error),
+                                    ),
                                   );
-                                },
-                              ).toList(),
+                                }
+
+                                final fileMap = Map<String, dynamic>.from(
+                                  (file as Map).map(
+                                    (k, v) => MapEntry(k.toString(), v),
+                                  ),
+                                );
+
+                                return ListTile(
+                                  title: Text(fileDisplayName(fileMap)),
+                                  onTap: () => openPatientSectionFile(
+                                    context,
+                                    fileMap,
+                                  ),
+                                );
+                              }).toList(),
                             );
                           }
                           return const SizedBox.shrink();
@@ -908,10 +746,17 @@ class _BuildQuestionState extends State<BuildQuestion> {
                                       .questionModelList[widget.index].id
                                       .toString()] ==
                                   {}) {
+                            final savedUrls = fileUrlsFromQuestionAnswer(
+                              cubit.questionModelList[widget.index].answer,
+                            );
+                            if (savedUrls.isNotEmpty) {
+                              return FileListWhenSubmit(files: savedUrls);
+                            }
                             return FileListWhenSubmit(
-                                files: cubit
-                                    .questionModelList[widget.index].answer
-                                    .cast<String>());
+                              files: cubit
+                                  .questionModelList[widget.index].answer
+                                  .cast<String>(),
+                            );
                           }
                           return const SizedBox.shrink();
                         },

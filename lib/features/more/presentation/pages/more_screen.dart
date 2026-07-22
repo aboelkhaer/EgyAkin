@@ -6,9 +6,10 @@ import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../exports.dart';
+import '../../../../app/shared/functions/app_update_message_utils.dart';
 import '../../../../app/shared/widgets/admin_only_badge.dart';
+import '../widgets/searchable_permissions_dialog.dart';
 
 class MoreScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
@@ -435,10 +436,9 @@ class _MoreScreenState extends State<MoreScreen> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     try {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.remove(AppLocalStrings
-                                          .isUpdateMessageHidden8);
+                                      await AppUpdateMessageUtils
+                                          .clearDismissedFlag(
+                                              sl<AppPreferences>());
 
                                       if (context.mounted) {
                                         customSnackBar(
@@ -504,24 +504,14 @@ class _MoreScreenState extends State<MoreScreen> {
                                                     : <dynamic>[
                                                         decoded.toString()
                                                       ]);
-                                        debugPrint(
-                                            'permissionsList: $permissionsList');
-                                        showCustomDialog(
-                                          context: context,
-                                          title: context.tr(AppStrings
-                                              .currentUserPermissions),
-                                          description: permissionsList,
-                                          coloredButtonText:
-                                              context.tr(AppStrings.close),
-                                          coloredButtonOnTap: () {
-                                            navigatorKey.currentState?.pop();
-                                          },
-                                          isNoColorShow: false,
-                                          noColoredButtonText:
-                                              context.tr(AppStrings.close),
-                                          noColoredButtonOnTap: () {
-                                            navigatorKey.currentState?.pop();
-                                          },
+                                        final permissionStrings =
+                                            permissionsList
+                                                .map((e) => e.toString())
+                                                .toList();
+                                        if (!context.mounted) return;
+                                        await showSearchablePermissionsDialog(
+                                          context,
+                                          permissions: permissionStrings,
                                         );
                                       }
                                     } catch (e) {

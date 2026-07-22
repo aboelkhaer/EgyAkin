@@ -24,6 +24,7 @@ class GFRCalculatorHistoryModelResponse
   const factory GFRCalculatorHistoryModelResponse({
     String? age,
     String? creatinine,
+    String? cystatin,
     String? gender,
     String? result,
     String? date,

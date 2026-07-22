@@ -238,6 +238,18 @@ class RepeatableReadingEntry {
       value: value ?? this.value,
     );
   }
+
+  /// Same date (to the minute), time, and value — used to skip no-op edits.
+  bool hasSameDataAs(RepeatableReadingEntry other) {
+    if (value.trim() != other.value.trim()) return false;
+    final a = dateTime;
+    final b = other.dateTime;
+    return a.year == b.year &&
+        a.month == b.month &&
+        a.day == b.day &&
+        a.hour == b.hour &&
+        a.minute == b.minute;
+  }
 }
 
 String formatRepeatableAnswerForDisplay(dynamic answer) {

@@ -90,7 +90,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => ContactUsCubit(sl()));
   sl.registerFactory(() => RecordCubit(sl()));
   sl.registerFactory(() => AiFormUploadCubit(sl()));
-  sl.registerFactory(() => GfrCalculatorCubit());
+  sl.registerFactory(() => GfrCalculatorCubit(sl<AppPreferences>()));
   sl.registerFactory(() => ChangePasswordCubit(sl()));
   sl.registerFactory(() => ProfilePatientsCubit(sl()));
   sl.registerFactory(() => ScoreHistoryCubit(sl()));

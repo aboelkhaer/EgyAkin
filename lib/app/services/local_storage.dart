@@ -15,6 +15,7 @@ abstract class LocalStorageProcess {
   Future<void> setDoctorData(DoctorModel doctorModel);
   Future<DoctorModel?> getDoctorData();
   Future<void> setBool(String key, bool value);
+  Future<void> setInt(String key, int value);
   Future<void> updateDoctorImageData(String newImageUrl);
   Future<void> updateDoctorProfile({
     required String firstName,
@@ -44,6 +45,11 @@ class AppPreferences implements LocalStorageProcess {
   @override
   Future setBool(String key, bool value) async {
     return _sharedPreferences.setBool(key, value);
+  }
+
+  @override
+  Future<void> setInt(String key, int value) async {
+    await _sharedPreferences.setInt(key, value);
   }
 
   @override

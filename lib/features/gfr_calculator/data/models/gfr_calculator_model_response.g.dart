@@ -34,6 +34,7 @@ _$GFRCalculatorHistoryModelResponseImpl
         _$GFRCalculatorHistoryModelResponseImpl(
           age: json['age'] as String?,
           creatinine: json['creatinine'] as String?,
+          cystatin: json['cystatin'] as String?,
           gender: json['gender'] as String?,
           result: json['result'] as String?,
           date: json['date'] as String?,
@@ -47,6 +48,7 @@ Map<String, dynamic> _$$GFRCalculatorHistoryModelResponseImplToJson(
     <String, dynamic>{
       'age': instance.age,
       'creatinine': instance.creatinine,
+      'cystatin': instance.cystatin,
       'gender': instance.gender,
       'result': instance.result,
       'date': instance.date,

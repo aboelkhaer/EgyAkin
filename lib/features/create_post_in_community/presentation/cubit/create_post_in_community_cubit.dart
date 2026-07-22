@@ -21,6 +21,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
 
 class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
+  /// Long edge cap — keeps text in infographics readable without huge files.
+  static const int _uploadMaxLongEdge = 2048;
+  static const int _uploadJpegQuality = 88;
+  static const int _maxUploadBytes = 2560 * 1024; // ~2.5 MB per image
+
   CreatePostInCommunityCubit(
     this._createPostInCommunityUsecase,
     this._createPostWithTextInCommunityUsecase,
@@ -118,14 +123,16 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
       // Process images
       for (final pickedFile in pickedFiles) {
-        final optimizedFile = await _optimizeImage(File(pickedFile.path), 80);
+        final optimizedFile = await _optimizeImage(File(pickedFile.path));
         imagesPicked.add(optimizedFile);
       }
 
       emit(loadedState()); // Update with new images
     } catch (e) {
       debugPrint('Error picking images: $e');
-      emit(loadedState(errorMessage: LocalizationService.instance.translate(AppStrings.failedToPickImages)));
+      emit(loadedState(
+          errorMessage: LocalizationService.instance
+              .translate(AppStrings.failedToPickImages)));
     }
   }
 
@@ -136,18 +143,12 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       // Handle single image from camera
       final image = await picker.pickImage(
         source: source,
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 80,
+        imageQuality: 95,
       );
       return image != null ? [image] : [];
     } else {
-      // Handle multiple images from gallery
-      return await picker.pickMultiImage(
-        maxWidth: 1024,
-        maxHeight: 1024,
-        imageQuality: 80,
-      );
+      // Full resolution from gallery; resize/compress once in _optimizeImage.
+      return await picker.pickMultiImage();
     }
   }
 
@@ -180,7 +181,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  Future<File> _optimizeImage(File imageFile, int qualityPercentage) async {
+  Future<File> _optimizeImage(File imageFile) async {
     final tempDir = await getTemporaryDirectory();
     final uniqueSuffix = DateTime.now().microsecondsSinceEpoch.toString();
     final optimizedImagePath =
@@ -191,7 +192,9 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       {
         'imageFile': imageFile,
         'optimizedImagePath': optimizedImagePath,
-        'qualityPercentage': qualityPercentage,
+        'maxLongEdge': _uploadMaxLongEdge,
+        'jpegQuality': _uploadJpegQuality,
+        'maxBytes': _maxUploadBytes,
       },
     );
 
@@ -202,37 +205,62 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   static File _processImage(Map<String, dynamic> params) {
     final imageFile = params['imageFile'] as File;
     final optimizedImagePath = params['optimizedImagePath'] as String;
-    final qualityPercentage = params['qualityPercentage'] as int;
+    final maxLongEdge = params['maxLongEdge'] as int;
+    final jpegQuality = params['jpegQuality'] as int;
+    final maxBytes = params['maxBytes'] as int;
 
-    // Decode the image
     final image = img.decodeImage(imageFile.readAsBytesSync())!;
 
-    // Calculate new dimensions to maintain the aspect ratio
-    const maxDimension = 1024;
-    final aspectRatio = image.width / image.height;
-    int newWidth, newHeight;
+    final longEdge = image.width > image.height ? image.width : image.height;
+    img.Image processed = image;
 
-    if (image.width > image.height) {
-      newWidth = maxDimension;
-      newHeight = (maxDimension / aspectRatio).round();
-    } else {
-      newHeight = maxDimension;
-      newWidth = (maxDimension * aspectRatio).round();
+    if (longEdge > maxLongEdge) {
+      final aspectRatio = image.width / image.height;
+      int newWidth;
+      int newHeight;
+
+      if (image.width >= image.height) {
+        newWidth = maxLongEdge;
+        newHeight = (maxLongEdge / aspectRatio).round();
+      } else {
+        newHeight = maxLongEdge;
+        newWidth = (maxLongEdge * aspectRatio).round();
+      }
+
+      processed = img.copyResize(
+        image,
+        width: newWidth,
+        height: newHeight,
+        interpolation: img.Interpolation.cubic,
+      );
     }
 
-    // Resize the image while maintaining aspect ratio
-    final resizedImage = img.copyResize(
-      image,
-      width: newWidth,
-      height: newHeight,
-      interpolation: img.Interpolation.cubic, // Higher quality resizing
-    );
+    var quality = jpegQuality;
+    var bytes = img.encodeJpg(processed, quality: quality);
 
-    // Save the optimized image with the provided quality percentage
+    while (bytes.length > maxBytes && quality > 72) {
+      quality -= 4;
+      bytes = img.encodeJpg(processed, quality: quality);
+    }
+
+    if (bytes.length > maxBytes && longEdge > maxLongEdge) {
+      const scale = 0.85;
+      processed = img.copyResize(
+        processed,
+        width: (processed.width * scale).round(),
+        height: (processed.height * scale).round(),
+        interpolation: img.Interpolation.cubic,
+      );
+      quality = jpegQuality;
+      bytes = img.encodeJpg(processed, quality: quality);
+      while (bytes.length > maxBytes && quality > 72) {
+        quality -= 4;
+        bytes = img.encodeJpg(processed, quality: quality);
+      }
+    }
+
     final optimizedImageFile = File(optimizedImagePath)
-      ..writeAsBytesSync(
-          img.encodeJpg(resizedImage, quality: qualityPercentage));
-
+      ..writeAsBytesSync(bytes);
     return optimizedImageFile;
   }
 
@@ -246,7 +274,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       if (imagesPicked.isEmpty && postContent.trim() == '') {
         customSnackBar(
           context: context,
-          message: LocalizationService.instance.translate(AppStrings.writeSomethingToPublish),
+          message: LocalizationService.instance
+              .translate(AppStrings.writeSomethingToPublish),
         );
         return;
       }
@@ -265,13 +294,15 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           editableFeed!.mediaPath!.isEmpty) {
         customSnackBar(
           context: context,
-          message: LocalizationService.instance.translate(AppStrings.writeSomethingToPublish),
+          message: LocalizationService.instance
+              .translate(AppStrings.writeSomethingToPublish),
         );
         return;
       }
       if (imagesPicked.isNotEmpty ||
           editableFeed!.existingMediaPath!.isNotEmpty) {
-        editPostWithImageInCommunity(groupId, context); // Handle multiple images
+        editPostWithImageInCommunity(
+            groupId, context); // Handle multiple images
         return;
       }
       // if (pollModel != null) {
@@ -351,24 +382,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       ),
     );
 
-    // Step 1: Copy picked images to unique paths
-    final tempDir = await getTemporaryDirectory();
-    final List<File> uniquelyCopiedImages = [];
-
-    for (final image in imagesPicked) {
-      final uniqueSuffix = DateTime.now().microsecondsSinceEpoch.toString();
-      final newImagePath = '${tempDir.path}/copied_$uniqueSuffix.jpg';
-      final copiedImage = await image.copy(newImagePath);
-      uniquelyCopiedImages.add(copiedImage);
-    }
-
-    // Step 2: Optimize copied images
-    final optimizedFiles = await Future.wait(
-      uniquelyCopiedImages.map((file) => _optimizeImage(file, 80)),
-    );
-
-    // Step 3: Convert to multipart files
-    final multipartFiles = await convertFilesToMultipart(optimizedFiles);
+    // Images are already optimized when picked — avoid a second JPEG pass.
+    final multipartFiles = await convertFilesToMultipart(imagesPicked);
 
     // Step 4: Execute post creation use case
     final result = await _createPostInCommunityUsecase.execute(
@@ -412,7 +427,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
             ),
           ),
         );
-        debugPrint("Post Success: ${response.message}");
+        debugPrint('Post Success: ${response.message}');
 
         // Optional: clear images after post
         imagesPicked.clear();
@@ -420,7 +435,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
   }
 
-  Future<void> editPostWithImageInCommunity(String? groupId,  context) async {
+  Future<void> editPostWithImageInCommunity(String? groupId, context) async {
     if (editableFeed == null) {
       emit(
         state.maybeMap(
@@ -431,7 +446,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
             false,
             false,
             false,
-            LocalizationService.instance.translate(AppStrings.noPostDataAvailableForEditing),
+            LocalizationService.instance
+                .translate(AppStrings.noPostDataAvailableForEditing),
           ),
         ),
       );
@@ -453,22 +469,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
 
     try {
-      final tempDir = await getTemporaryDirectory();
-      final List<File> uniquelyCopiedImages = [];
-
-      for (final image in imagesPicked) {
-        final uniqueSuffix = DateTime.now().microsecondsSinceEpoch.toString();
-        final newImagePath = '${tempDir.path}/copied_edit_$uniqueSuffix.jpg';
-        final copiedImage = await image.copy(newImagePath);
-        uniquelyCopiedImages.add(copiedImage);
-      }
-
-      final optimizedFiles = await Future.wait(
-        uniquelyCopiedImages.map((file) => _optimizeImage(file, 80)),
-      );
-
-      final multipartFiles = await convertFilesToMultipart(optimizedFiles);
-
+      final multipartFiles = await convertFilesToMultipart(imagesPicked);
 
       final result = await _editPostWithImageInCommunityUsecase.execute(
         EditPostWithImageInCommunityUsecaseInput(

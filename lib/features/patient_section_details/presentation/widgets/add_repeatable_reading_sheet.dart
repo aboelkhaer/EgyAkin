@@ -1,5 +1,6 @@
 import 'package:egy_akin/exports.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 import 'package:intl/intl.dart';
 
@@ -32,7 +33,6 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
   final FocusNode _valueFocus = FocusNode();
 
   _ReadingField _activeField = _ReadingField.date;
-  bool _showValidationBanner = false;
   bool _attemptedSave = false;
 
   /// 0=Today/Now, 1=Yesterday/1h ago, 2=2 days ago/2h ago, null=custom picker.
@@ -62,10 +62,10 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
           : null;
     } else {
       _selectedDate = DateTime(now.year, now.month, now.day);
-      _selectedTime = TimeOfDay.fromDateTime(now);
+      _selectedTime = null;
       _valueController = TextEditingController();
       _dateChipIndex = 0;
-      _timeChipIndex = 0;
+      _timeChipIndex = null;
     }
   }
 
@@ -112,7 +112,7 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
       text: updated,
       selection: TextSelection.collapsed(offset: start + char.length),
     );
-    setState(() => _showValidationBanner = false);
+    setState(() {});
   }
 
   void _backspaceValue() {
@@ -183,19 +183,41 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
     return null;
   }
 
-  void _onSave() {
-    setState(() {
-      _attemptedSave = true;
-      _showValidationBanner = !_canSave;
+  void _dismissKeyboard() {
+    _valueFocus.unfocus();
+    if (mounted) {
+      FocusScope.of(context).unfocus();
+    }
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  }
+
+  void _closeSheet([RepeatableReadingEntry? result]) {
+    _dismissKeyboard();
+    if (!mounted) return;
+    Navigator.pop(context, result);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
     });
+  }
+
+  void _onSave() {
+    setState(() => _attemptedSave = true);
     if (!_canSave) return;
-    Navigator.pop(
-      context,
-      RepeatableReadingEntry(
-        dateTime: _combinedDateTime,
-        value: _valueController.text.trim(),
-      ),
+
+    final entry = RepeatableReadingEntry(
+      dateTime: _combinedDateTime,
+      value: _valueController.text.trim(),
     );
+
+    if (_isEdit &&
+        widget.initialEntry != null &&
+        widget.initialEntry!.hasSameDataAs(entry)) {
+      _closeSheet();
+      return;
+    }
+
+    _closeSheet(entry);
   }
 
   void _applyDateShortcut(int daysAgo) {
@@ -204,7 +226,6 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
       _selectedDate = _dateOnly(base);
       _dateChipIndex = daysAgo;
       _activeField = _ReadingField.date;
-      _showValidationBanner = false;
     });
   }
 
@@ -219,7 +240,6 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
               ? 1
               : 2;
       _activeField = _ReadingField.time;
-      _showValidationBanner = false;
     });
   }
 
@@ -228,14 +248,9 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        final viewInsets = MediaQuery.viewInsetsOf(context);
         final isValueField = _activeField == _ReadingField.value;
-        final safeBottom = MediaQuery.paddingOf(context).bottom;
         final showDateTimePanel = !isValueField;
         final showValueNumpad = isValueField && _useEmbeddedNumpad;
-        final bottomPad = isValueField && !_useEmbeddedNumpad
-            ? viewInsets.bottom.clamp(0.0, _bottomPanelWithChips)
-            : 0.0;
 
         Widget? bottomPanel;
         if (showDateTimePanel) {
@@ -327,127 +342,118 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
           );
         }
 
+        final fields = Padding(
+          padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 8.h),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _ReadingFieldTile(
+                label: context.tr(AppStrings.fieldDate),
+                icon: Icons.calendar_today_outlined,
+                value: DateFormat('d MMM yyyy').format(_selectedDate),
+                isActive: _activeField == _ReadingField.date,
+                isValid: _isDateValid,
+                showError: _attemptedSave && !_isDateValid,
+                onTap: () {
+                  _valueFocus.unfocus();
+                  setState(() => _activeField = _ReadingField.date);
+                },
+              ),
+              SizedBox(height: 8.h),
+              _ReadingFieldTile(
+                label: context.tr(AppStrings.fieldTimeOptional),
+                icon: Icons.access_time_rounded,
+                value: _selectedTime == null
+                    ? '—'
+                    : _selectedTime!.format(context),
+                isActive: _activeField == _ReadingField.time,
+                isValid: true,
+                showError: false,
+                onTap: () {
+                  _valueFocus.unfocus();
+                  setState(() => _activeField = _ReadingField.time);
+                },
+              ),
+              SizedBox(height: 8.h),
+              _ReadingFieldTile(
+                label: context.tr(AppStrings.fieldValue),
+                letterLeading: true,
+                showRequiredAsterisk: true,
+                value: _valueController.text.isEmpty
+                    ? null
+                    : _valueController.text,
+                isActive: isValueField,
+                isValid: _isValueValid,
+                showError: _attemptedSave && !_isValueValid,
+                onTap: () {
+                  setState(() => _activeField = _ReadingField.value);
+                  _valueFocus.requestFocus();
+                },
+                valueLineHeight: 15.sp * 1.2,
+                child: isValueField
+                    ? TextField(
+                        controller: _valueController,
+                        focusNode: _valueFocus,
+                        maxLines: 1,
+                        minLines: 1,
+                        keyboardType: _useEmbeddedNumpad
+                            ? TextInputType.none
+                            : _valueInputType,
+                        readOnly: _useEmbeddedNumpad,
+                        showCursor: true,
+                        inputFormatters:
+                            _useEmbeddedNumpad ? null : _valueFormatters,
+                        cursorWidth: 1.2,
+                        cursorHeight: 14,
+                        textAlignVertical: TextAlignVertical.center,
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          color: isDarkMode
+                              ? AppColors.darkTitle
+                              : Colors.black87,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                          ),
+                        ),
+                        onChanged: (_) => setState(() {}),
+                      )
+                    : null,
+              ),
+            ],
+          ),
+        );
+
         return SafeArea(
           top: false,
           minimum: const EdgeInsets.only(bottom: 8),
-          child: Padding(
-            padding: EdgeInsets.only(
-              bottom: bottomPad + (safeBottom > 0 ? 0 : 8),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  margin: const EdgeInsets.only(top: 8, bottom: 4),
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                margin: const EdgeInsets.only(top: 8, bottom: 4),
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade400,
+                  borderRadius: BorderRadius.circular(2),
                 ),
-                _SheetHeader(
-                  title: _isEdit
-                      ? context.tr(AppStrings.editReading)
-                      : context.tr(AppStrings.addReadingTitle),
-                  canSave: _canSave,
-                  onCancel: () => Navigator.pop(context),
-                  onSave: _onSave,
-                ),
-                if (_showValidationBanner)
-                  _ValidationBanner(
-                    message: context
-                        .tr(AppStrings.pleaseFillRequiredFieldsBeforeSaving),
-                  ),
-                Padding(
-                  padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 8.h),
-                  child: Column(
-                    children: [
-                      _ReadingFieldTile(
-                        label: context.tr(AppStrings.fieldDate),
-                        icon: Icons.calendar_today_outlined,
-                        value: DateFormat('d MMM yyyy').format(_selectedDate),
-                        isActive: _activeField == _ReadingField.date,
-                        isValid: _isDateValid,
-                        showError: _attemptedSave && !_isDateValid,
-                        onTap: () {
-                          _valueFocus.unfocus();
-                          setState(() => _activeField = _ReadingField.date);
-                        },
-                      ),
-                      SizedBox(height: 8.h),
-                      _ReadingFieldTile(
-                        label: context.tr(AppStrings.fieldTimeOptional),
-                        icon: Icons.access_time_rounded,
-                        value: _selectedTime == null
-                            ? '—'
-                            : _selectedTime!.format(context),
-                        isActive: _activeField == _ReadingField.time,
-                        isValid: true,
-                        showError: false,
-                        onTap: () {
-                          _valueFocus.unfocus();
-                          setState(() => _activeField = _ReadingField.time);
-                        },
-                      ),
-                      SizedBox(height: 8.h),
-                      _ReadingFieldTile(
-                        label: context.tr(AppStrings.fieldValue),
-                        icon: Icons.text_fields_rounded,
-                        value: _valueController.text.isEmpty
-                            ? null
-                            : _valueController.text,
-                        isActive: isValueField,
-                        isValid: _isValueValid,
-                        showError: _attemptedSave && !_isValueValid,
-                        onTap: () {
-                          setState(() => _activeField = _ReadingField.value);
-                          _valueFocus.requestFocus();
-                        },
-                        valueLineHeight: 15.sp * 1.35,
-                        child: isValueField
-                            ? TextField(
-                                controller: _valueController,
-                                focusNode: _valueFocus,
-                                expands: true,
-                                maxLines: null,
-                                keyboardType: _useEmbeddedNumpad
-                                    ? TextInputType.none
-                                    : _valueInputType,
-                                readOnly: _useEmbeddedNumpad,
-                                showCursor: true,
-                                inputFormatters: _useEmbeddedNumpad
-                                    ? null
-                                    : _valueFormatters,
-                                cursorWidth: 1.2,
-                                cursorHeight: 14,
-                                textAlignVertical: TextAlignVertical.center,
-                                style: TextStyle(
-                                  fontSize: 15.sp,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.2,
-                                  color: isDarkMode
-                                      ? AppColors.darkTitle
-                                      : Colors.black87,
-                                ),
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 10.w,
-                                  ),
-                                ),
-                                onChanged: (_) => setState(() {
-                                  _showValidationBanner = false;
-                                }),
-                              )
-                            : null,
-                      ),
-                    ],
-                  ),
-                ),
-                if (bottomPanel != null) bottomPanel,
-              ],
-            ),
+              ),
+              _SheetHeader(
+                title: _isEdit
+                    ? context.tr(AppStrings.editReading)
+                    : context.tr(AppStrings.addReadingTitle),
+                canSave: _canSave,
+                onCancel: _closeSheet,
+                onSave: _onSave,
+              ),
+              fields,
+              if (bottomPanel != null) bottomPanel,
+            ],
           ),
         );
       },
@@ -514,41 +520,6 @@ class _SheetHeader extends StatelessWidget {
   }
 }
 
-class _ValidationBanner extends StatelessWidget {
-  final String message;
-
-  const _ValidationBanner({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: EdgeInsets.fromLTRB(16.w, 0, 16.w, 6.h),
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFEBEE),
-        borderRadius: BorderRadius.circular(8.r),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.error_outline, color: Colors.red.shade700, size: 16.sp),
-          SizedBox(width: 6.w),
-          Expanded(
-            child: Text(
-              message,
-              style: TextStyle(
-                color: Colors.red.shade800,
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _BottomToolPanel extends StatelessWidget {
   final Widget chips;
   final Widget tool;
@@ -587,18 +558,22 @@ class _BottomToolPanel extends StatelessWidget {
 
 class _ReadingFieldTile extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final IconData? icon;
+  final bool letterLeading;
   final String? value;
   final bool isActive;
   final bool isValid;
   final bool showError;
   final double? valueLineHeight;
+  final bool showRequiredAsterisk;
   final VoidCallback onTap;
   final Widget? child;
 
   const _ReadingFieldTile({
     required this.label,
-    required this.icon,
+    this.icon,
+    this.letterLeading = false,
+    this.showRequiredAsterisk = false,
     required this.value,
     required this.isActive,
     required this.isValid,
@@ -606,7 +581,34 @@ class _ReadingFieldTile extends StatelessWidget {
     required this.onTap,
     this.valueLineHeight,
     this.child,
-  });
+  }) : assert(icon != null || letterLeading);
+
+  Widget _buildLeading() {
+    if (letterLeading) {
+      return SizedBox(
+        width: 18.sp,
+        child: Text(
+          'A',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 17.sp,
+            fontWeight: FontWeight.w700,
+            height: 1,
+            color: showError ? Colors.red.shade600 : AppColors.primary,
+          ),
+        ),
+      );
+    }
+    return Icon(icon, color: AppColors.primary, size: 18.sp);
+  }
+
+  Color _valueTextColor(bool isDarkMode, String? value) {
+    final isPlaceholder = value == null || value.isEmpty || value == '—';
+    if (isPlaceholder) {
+      return isDarkMode ? AppColors.darkDescription : Colors.grey.shade500;
+    }
+    return isDarkMode ? AppColors.darkTitle : Colors.black87;
+  }
 
   Widget _buildValueRow({
     required bool isDarkMode,
@@ -614,6 +616,8 @@ class _ReadingFieldTile extends StatelessWidget {
     required Widget? child,
     required String? value,
   }) {
+    final valueColor = _valueTextColor(isDarkMode, value);
+
     if (valueLineHeight == null) {
       return Align(
         alignment: Alignment.centerLeft,
@@ -622,7 +626,7 @@ class _ReadingFieldTile extends StatelessWidget {
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w600,
-            color: isDarkMode ? AppColors.darkTitle : Colors.black87,
+            color: valueColor,
           ),
         ),
       );
@@ -647,7 +651,7 @@ class _ReadingFieldTile extends StatelessWidget {
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: FontWeight.w600,
-            color: isDarkMode ? AppColors.darkTitle : Colors.black87,
+            color: valueColor,
           ),
         ),
       ),
@@ -660,30 +664,30 @@ class _ReadingFieldTile extends StatelessWidget {
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
+        final hasValue = value != null && value!.isNotEmpty && value != '—';
+
         Color borderColor;
         Color fillColor;
         if (showError) {
           borderColor = Colors.red.shade400;
-          fillColor = const Color(0xFFFFEBEE);
-        } else if (isValid &&
-            !isActive &&
-            (value != null && value!.isNotEmpty)) {
-          borderColor = Colors.green.shade400;
-          fillColor = const Color(0xFFE8F5E9);
+          fillColor =
+              isDarkMode ? const Color(0xFF3A2222) : const Color(0xFFFFEBEE);
+        } else if (isValid && !isActive && hasValue) {
+          borderColor =
+              isDarkMode ? Colors.green.shade600 : Colors.green.shade400;
+          fillColor =
+              isDarkMode ? const Color(0xFF1E3326) : const Color(0xFFE8F5E9);
         } else if (isActive) {
           borderColor = AppColors.primary;
-          fillColor = isDarkMode ? AppColors.darkCardBG : Colors.white;
+          fillColor = isDarkMode ? AppColors.darkSurface : Colors.white;
         } else {
           borderColor =
               isDarkMode ? AppColors.darkBorder : Colors.grey.shade300;
-          fillColor = isDarkMode ? AppColors.darkCardBG : AppColors.subBG;
+          fillColor = isDarkMode ? AppColors.darkSurface : AppColors.subBG;
         }
 
         Widget? trailing;
-        if (showError) {
-          trailing = Icon(Icons.error_outline,
-              color: Colors.red.shade600, size: 18.sp);
-        } else if (isValid && value != null && value!.isNotEmpty && !isActive) {
+        if (isValid && value != null && value!.isNotEmpty && !isActive) {
           trailing = Container(
             width: 20.w,
             height: 20.w,
@@ -712,25 +716,38 @@ class _ReadingFieldTile extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(icon, color: AppColors.primary, size: 18.sp),
+                  _buildLeading(),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          label,
-                          style: TextStyle(
-                            fontSize: 9.sp,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.5,
-                            color: isActive
-                                ? AppColors.primary
-                                : (isDarkMode
-                                    ? AppColors.darkDescription
-                                    : Colors.grey.shade600),
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: 9.sp,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.5,
+                                color: isActive
+                                    ? AppColors.primary
+                                    : (isDarkMode
+                                        ? AppColors.darkDescription
+                                        : Colors.grey.shade600),
+                              ),
+                            ),
+                            if (showRequiredAsterisk)
+                              Text(
+                                ' *',
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: Colors.red.shade600,
+                                ),
+                              ),
+                          ],
                         ),
                         SizedBox(height: 2.h),
                         _buildValueRow(
@@ -889,42 +906,56 @@ class _QuickChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(labels.length, (index) {
-        final isSelected = selectedIndex == index;
-        return Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(left: index == 0 ? 0 : 6.w),
-            child: GestureDetector(
-              onTap: () => onSelected(index),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 7.h),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.primary.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(18.r),
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.primary.withOpacity(0.35),
-                    width: 1,
-                  ),
-                ),
-                child: Text(
-                  labels[index],
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : AppColors.primary,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+
+        return Row(
+          children: List.generate(labels.length, (index) {
+            final isSelected = selectedIndex == index;
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: index == 0 ? 0 : 6.w),
+                child: GestureDetector(
+                  onTap: () => onSelected(index),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 7.h),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primary
+                          : (isDarkMode
+                              ? AppColors.darkSurface
+                              : AppColors.primary.withOpacity(0.08)),
+                      borderRadius: BorderRadius.circular(18.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? AppColors.primary
+                            : (isDarkMode
+                                ? AppColors.darkBorder
+                                : AppColors.primary.withOpacity(0.35)),
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      labels[index],
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? Colors.white
+                            : (isDarkMode
+                                ? AppColors.darkTitle
+                                : AppColors.primary),
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 }
@@ -941,28 +972,40 @@ Future<RepeatableReadingEntry?> showAddRepeatableReadingSheet({
     builder: (ctx) => BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        final maxSheetHeight = MediaQuery.sizeOf(context).height * 0.75;
+        final media = MediaQuery.of(context);
+        final keyboardInset = media.viewInsets.bottom;
+        final availableHeight =
+            media.size.height - keyboardInset - media.padding.top;
+        final maxSheetHeight = keyboardInset > 0
+            ? availableHeight
+            : media.size.height * 0.75;
 
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: maxSheetHeight),
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.darkCardBG : Colors.white,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: AddRepeatableReadingSheet(
-                initialEntry: initialEntry,
-                keyboardType: keyboardType,
+        return Padding(
+          padding: EdgeInsets.only(bottom: keyboardInset),
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: maxSheetHeight),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: isDarkMode ? AppColors.darkCardBG : Colors.white,
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: AddRepeatableReadingSheet(
+                  initialEntry: initialEntry,
+                  keyboardType: keyboardType,
+                ),
               ),
             ),
           ),
         );
       },
     ),
-  );
+  ).whenComplete(() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+  });
 }

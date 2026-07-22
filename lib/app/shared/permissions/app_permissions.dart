@@ -425,8 +425,6 @@ extension PermissionMapper on String {
       case 'delete-patient-for-admin':
         return AppPermissions.deletePatientForAdmin;
 
-
-
       default:
         return null;
     }

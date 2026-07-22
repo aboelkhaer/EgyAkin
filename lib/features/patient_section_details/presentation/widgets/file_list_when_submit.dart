@@ -13,15 +13,14 @@ class FileListWhenSubmit extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         final fileUrl = files[index];
-        final fileName = fileUrl.split('/').last;
+        final fileName = Uri.tryParse(fileUrl)?.pathSegments.lastOrNull ??
+            fileUrl.split('/').last;
 
         return ListTile(
           title: Text(fileName),
           onTap: () => launchURL(
             url: fileUrl,
-            onError: (error) {
-              showErrorDialog(context, error);
-            },
+            onError: (error) => showErrorDialog(context, error),
           ),
         );
       },

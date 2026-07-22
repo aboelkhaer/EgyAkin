@@ -9,8 +9,7 @@ class AboutUsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.tr(AppStrings.aboutUs
-        )),
+        title: Text(context.tr(AppStrings.aboutUs)),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -63,10 +62,13 @@ class AboutUsScreen extends StatelessWidget {
         <ul>
             <li><strong>${context.tr(AppStrings.patientDataManagement)}:</strong> ${context.tr(AppStrings.patientDataManagementDesc)}</li>
             <li><strong>${context.tr(AppStrings.gfrCalculation)}:</strong> ${context.tr(AppStrings.gfrCalculationDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aboutRepeatableReadings)}:</strong> ${context.tr(AppStrings.aboutRepeatableReadingsDesc)}</li>
             <li><strong>${context.tr(AppStrings.historicalDataTracking)}:</strong> ${context.tr(AppStrings.historicalDataTrackingDesc)}</li>
-            <li><strong>${context.tr(AppStrings.healthInsights)}:</strong> ${context.tr(AppStrings.healthInsightsDesc)}</li>
-            <li><strong>${context.tr(AppStrings.communitySupport)}:</strong> ${context.tr(AppStrings.communitySupportDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aboutMedicalCommunity)}:</strong> ${context.tr(AppStrings.aboutMedicalCommunityDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aboutDoctorConsultations)}:</strong> ${context.tr(AppStrings.aboutDoctorConsultationsDesc)}</li>
             <li><strong>${context.tr(AppStrings.aiPoweredConsultations)}:</strong> ${context.tr(AppStrings.aiPoweredConsultationsDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aboutAiFormAnalysis)}:</strong> ${context.tr(AppStrings.aboutAiFormAnalysisDesc)}</li>
+            <li><strong>${context.tr(AppStrings.aboutSecureMessaging)}:</strong> ${context.tr(AppStrings.aboutSecureMessagingDesc)}</li>
         </ul>
         
         <h2>${context.tr(AppStrings.disclaimer)}</h2>

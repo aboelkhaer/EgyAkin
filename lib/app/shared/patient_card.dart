@@ -234,14 +234,15 @@ class PatientCard extends StatelessWidget {
                                               children: [
                                                 Flexible(
                                                   child: ConstrainedBox(
-                                                    constraints: const BoxConstraints(
-                                                        minWidth: 0),
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                            minWidth: 0),
                                                     child: Text(
                                                       doctorName(
-                                                        firstName:
-                                                            drFirstName.toString(),
-                                                        lastName:
-                                                            drLastName.toString(),
+                                                        firstName: drFirstName
+                                                            .toString(),
+                                                        lastName: drLastName
+                                                            .toString(),
                                                         role:
                                                             isSyndicateCardRequired,
                                                       ),
@@ -249,7 +250,8 @@ class PatientCard extends StatelessWidget {
                                                         color: isDarkMode
                                                             ? AppColors
                                                                 .darkDescription
-                                                            : AppColors.description,
+                                                            : AppColors
+                                                                .description,
                                                         fontSize: 13,
                                                       ),
                                                       maxLines: 1,

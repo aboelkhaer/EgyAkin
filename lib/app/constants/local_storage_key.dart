@@ -21,7 +21,10 @@ class AppLocalStrings {
   static const String isUpdateMessageHidden = 'isUpdateMessageHidden';
   static const String isUpdateMessageHidden7 = 'isUpdateMessageHidden7';
   static const String isUpdateMessageHidden8 = 'isUpdateMessageHidden8';
+  static const String dismissedUpdateMessageVersion =
+      'dismissedUpdateMessageVersion';
   static const String userAppVersion = 'userAppVersion';
   static const String isExistVerificationBanner = 'isExistVerificationBanner';
   static const String permissions = 'permissions';
+  static const String gfrCalculatorHistory = 'gfrCalculatorHistory';
 }

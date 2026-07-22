@@ -156,18 +156,18 @@ class _HomeTabState extends State<HomeTab> {
                           PostsSliderAndDots(
                               cubit: widget.cubit, isDarkMode: isDarkMode),
                           const CommunityButton(),
-                          ElevatedButton(
-                              onPressed: () {
-                                navigatorKey.currentState?.pushNamed(
-                                  AppRoutes.chatRoom,
-                                  arguments: AppRoutesArgs.chatRoomRouteArgs(
-                                    currentDoctorModel:
-                                        widget.cubit.currentDoctorModel,
-                                    homeDataModel: widget.cubit.homeDataModel,
-                                  ),
-                                );
-                              },
-                              child: const Text('Chat Room')),
+                          // ElevatedButton(
+                          //     onPressed: () {
+                          //       navigatorKey.currentState?.pushNamed(
+                          //         AppRoutes.chatRoom,
+                          //         arguments: AppRoutesArgs.chatRoomRouteArgs(
+                          //           currentDoctorModel:
+                          //               widget.cubit.currentDoctorModel,
+                          //           homeDataModel: widget.cubit.homeDataModel,
+                          //         ),
+                          //       );
+                          //     },
+                          //     child: const Text('Chat Room')),
                           const LatestTrendsHashtags(),
                           const GroupsHomeView(),
                           const DoctorsActivation(),

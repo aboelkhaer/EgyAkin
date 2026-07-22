@@ -59,8 +59,8 @@ android {
         applicationId "com.incode.EgyAkin"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 32
-        versionName "1.0.32"
+        versionCode 33
+        versionName "1.0.33"
     }
 
     signingConfigs {

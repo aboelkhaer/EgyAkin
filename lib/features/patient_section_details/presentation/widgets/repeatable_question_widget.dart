@@ -1,4 +1,5 @@
 import 'package:egy_akin/exports.dart';
+import 'package:flutter/services.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/models/repeatable_reading_entry.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/add_repeatable_reading_sheet.dart';
 
@@ -50,21 +51,40 @@ class RepeatableQuestionWidget extends StatelessWidget {
       initialEntry: initial,
       keyboardType: keyboardType ?? 'text',
     );
-    if (result == null || !context.mounted) return;
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    if (!context.mounted) return;
+    if (result == null) return;
 
     final updated = [...entries];
     if (editIndex != null) {
+      final previous = entries[editIndex];
+      if (previous.hasSameDataAs(result)) return;
+
       updated[editIndex] = result;
       _persistEntries(context, updated);
+      _showSavedSnackBarWithUndo(
+        context,
+        editIndex: editIndex,
+        previousEntry: previous,
+      );
     } else {
       updated.add(result);
       _persistEntries(context, updated);
-      _showSavedSnackBarWithUndo(context, updated.length - 1);
+      _showSavedSnackBarWithUndo(context, addedIndex: updated.length - 1);
     }
   }
 
-  void _showSavedSnackBarWithUndo(BuildContext context, int addedIndex) {
+  void _showSavedSnackBarWithUndo(
+    BuildContext context, {
+    int? addedIndex,
+    int? editIndex,
+    RepeatableReadingEntry? previousEntry,
+  }) {
     final cubit = PatientSectionDetailsCubit.get(context);
+    final isUpdate = editIndex != null && previousEntry != null;
+
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -75,7 +95,9 @@ class RepeatableQuestionWidget extends StatelessWidget {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                context.tr(AppStrings.readingSaved),
+                context.tr(isUpdate
+                    ? AppStrings.readingUpdated
+                    : AppStrings.readingSaved),
                 style: TextStyle(color: Colors.white, fontSize: 13.sp),
               ),
             ),
@@ -86,9 +108,16 @@ class RepeatableQuestionWidget extends StatelessWidget {
           textColor: AppColors.primary,
           onPressed: () {
             final entries = _entriesFromCubit(cubit);
-            if (addedIndex >= entries.length) return;
-            final reverted = [...entries]..removeAt(addedIndex);
-            _persistEntries(context, reverted);
+            if (isUpdate) {
+              if (editIndex >= entries.length) return;
+              final reverted = [...entries];
+              reverted[editIndex] = previousEntry;
+              _persistEntries(context, reverted);
+            } else {
+              if (addedIndex == null || addedIndex >= entries.length) return;
+              final reverted = [...entries]..removeAt(addedIndex);
+              _persistEntries(context, reverted);
+            }
           },
         ),
         duration: const Duration(seconds: 4),
@@ -125,9 +154,9 @@ class RepeatableQuestionWidget extends StatelessWidget {
                       context.tr(AppStrings.noReadingsAddedYet),
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 10.sp,
+                        fontSize: 12.sp,
                         fontStyle: FontStyle.italic,
-                        height: 1.35,
+                        height: 1.50,
                         color: isDarkMode
                             ? AppColors.darkDescription
                             : Colors.grey.shade500,
@@ -176,17 +205,6 @@ class RepeatableQuestionWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (mandatory && entries.isEmpty)
-                  Padding(
-                    padding: EdgeInsets.only(top: 6.h),
-                    child: Text(
-                      context.tr(AppStrings.thisFieldIsRequired),
-                      style: TextStyle(
-                        color: Colors.red.shade600,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ),
               ],
             );
           },

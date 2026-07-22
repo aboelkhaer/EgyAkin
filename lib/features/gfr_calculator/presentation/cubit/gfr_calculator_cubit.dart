@@ -1,21 +1,97 @@
+import 'package:egy_akin/features/gfr_calculator/data/datasources/gfr_calculator_history_storage.dart';
 import 'package:egy_akin/features/gfr_calculator/data/models/gfr_calculator_model_response.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/utils/gfr_equation_formulas.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/utils/gfr_history_result_codec.dart';
+import 'package:egy_akin/features/gfr_calculator/presentation/widgets/gfr_result_dialog.dart';
 import 'dart:math';
 import '../../../../exports.dart';
 
 class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
-  GfrCalculatorCubit() : super(const GfrCalculatorState.initial(0));
+  GfrCalculatorCubit(this._preferences)
+      : _historyStorage = GfrCalculatorHistoryStorage(),
+        super(const GfrCalculatorState.initial(0)) {
+    loadHistory();
+  }
+
   static GfrCalculatorCubit get(context) => BlocProvider.of(context);
+
+  final AppPreferences _preferences;
+  final GfrCalculatorHistoryStorage _historyStorage;
+
+  static const String equationNkfEgfr = 'NKF eGFR';
+  static const String nkfBiomarkerCreatinine = 'creatinine';
+  static const String nkfBiomarkerCystatin = 'cystatin';
+  static const String nkfBiomarkerBoth = 'both';
+
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String ageForm = '';
   String creatinineForm = '';
+  String cystatinForm = '';
   String genderForm = 'Male';
-  String equationType = 'CKD-EPI';
+  String equationType = equationNkfEgfr;
   String weightForm = '';
   String heightForm = '';
   int changesCounter = 0;
   String isBlackForm = 'No';
-  // String isBlack = 'No';
+  String nkfBiomarkerMode = nkfBiomarkerCreatinine;
   List<GFRCalculatorHistoryModelResponse> gfrHistory = [];
+
+  Future<void> loadHistory() async {
+    gfrHistory = await _historyStorage.load(_preferences);
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  Future<void> _persistHistory() async {
+    await _historyStorage.save(_preferences, gfrHistory);
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  Future<void> _appendHistoryEntry(
+    GFRCalculatorHistoryModelResponse entry,
+  ) async {
+    var updated = [...gfrHistory, entry];
+    if (updated.length > GfrCalculatorHistoryStorage.maxEntries) {
+      updated = updated.sublist(updated.length - GfrCalculatorHistoryStorage.maxEntries);
+    }
+    gfrHistory = updated;
+    await _persistHistory();
+  }
+
+  Future<void> removeHistoryEntry(int index) async {
+    if (index < 0 || index >= gfrHistory.length) return;
+    gfrHistory = [...gfrHistory]..removeAt(index);
+    await _persistHistory();
+  }
+
+  void confirmClearAllHistory(
+    BuildContext context, {
+    Future<void> Function()? onConfirmed,
+  }) {
+    if (gfrHistory.isEmpty) return;
+
+    showCustomDialog(
+      context: context,
+      title: context.tr(AppStrings.gfrClearAllHistory),
+      description: context.tr(AppStrings.gfrClearAllHistoryConfirm),
+      noColoredButtonText: context.tr(AppStrings.cancel),
+      coloredButtonText: context.tr(AppStrings.delete),
+      noColoredButtonOnTap: () => Navigator.of(context).pop(),
+      coloredButtonOnTap: () async {
+        Navigator.of(context).pop();
+        if (onConfirmed != null) {
+          await onConfirmed();
+        } else {
+          await clearAllHistory();
+        }
+      },
+    );
+  }
+
+  Future<void> clearAllHistory() async {
+    gfrHistory = [];
+    await _historyStorage.clear(_preferences);
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
 
   changeGenderValue(String value) {
     genderForm = value;
@@ -29,38 +105,49 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
 
   changeEquationTypeValue(String value) {
     equationType = value;
+    if (value == equationNkfEgfr) {
+      nkfBiomarkerMode = nkfBiomarkerCreatinine;
+    }
     emit(GfrCalculatorState.initial(changesCounter += 1));
   }
 
-  double calculateGFRforMDRD(
-      double serumCr, int age, String isBlack, bool isFemale) {
-    double constant = 175;
-    double ageFactor = pow(age, -0.203) as double;
-    double serumCrFactor = pow(serumCr, -1.154) as double;
-    double raceFactor = isBlack == 'Yes' ? 1.212 : 1.0;
-    double genderFactor = isFemale ? 0.742 : 1.0;
-    double gfr =
-        constant * serumCrFactor * ageFactor * raceFactor * genderFactor;
-
-    return gfr;
+  void changeNkfBiomarkerMode(String value) {
+    nkfBiomarkerMode = value;
+    if (value == nkfBiomarkerCreatinine) {
+      cystatinForm = '';
+    } else if (value == nkfBiomarkerCystatin) {
+      creatinineForm = '';
+    }
+    emit(GfrCalculatorState.initial(changesCounter += 1));
   }
 
-  double calculateGFRForCKD(bool isMale, int age, double creatinine) {
-    if (isMale) {
-      double A = 0.9;
-      double B = (creatinine <= 0.9) ? -0.302 : -1.200;
-      double gfr =
-          142 * pow(creatinine / A, B).toDouble() * pow(0.9938, age).toDouble();
-      return gfr;
-    } else {
-      double A = 0.7;
-      double B = (creatinine <= 0.7) ? -0.241 : -1.200;
-      double gfr = 142 *
-          pow(creatinine / A, B).toDouble() *
-          pow(0.9938, age).toDouble() *
-          1.012;
-      return gfr;
-    }
+  bool get showNkfCreatinineField =>
+      nkfBiomarkerMode == nkfBiomarkerCreatinine ||
+      nkfBiomarkerMode == nkfBiomarkerBoth;
+
+  bool get showNkfCystatinField =>
+      nkfBiomarkerMode == nkfBiomarkerCystatin ||
+      nkfBiomarkerMode == nkfBiomarkerBoth;
+
+  void changeCystatinValue(String value) {
+    cystatinForm = value;
+    emit(GfrCalculatorState.initial(changesCounter += 1));
+  }
+
+  /// MDRD 4-variable eGFR (Levey 2006, IDMS-standardized creatinine).
+  /// https://www.mdcalc.com/calc/76/mdrd-gfr-equation
+  double calculateGFRForMDRD2006({
+    required double scr,
+    required int age,
+    required bool isFemale,
+    required bool isBlack,
+  }) {
+    return (175.0 *
+            pow(scr, -1.154) *
+            pow(age, -0.203) *
+            (isFemale ? 0.742 : 1.0) *
+            (isBlack ? 1.212 : 1.0))
+        .toDouble();
   }
 
   double calculateSobhCcr(
@@ -71,20 +158,18 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         0.014;
   }
 
+  double? _parseOptionalDouble(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return null;
+    return parseDouble(trimmed);
+  }
+
   double parseDouble(String value) {
     try {
-      // Log the value before parsing
-      debugPrint('Parsing value: "$value"');
-
-      // Remove any whitespace or unwanted characters
       value = value.trim();
-
-      // If the value uses a comma as a decimal separator, replace it with a dot
       if (value.contains(',')) {
         value = value.replaceAll(',', '.');
       }
-
-      // Attempt to parse the double value
       return double.parse(value);
     } catch (e) {
       debugPrint('Error parsing input: $e');
@@ -92,7 +177,20 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
     }
   }
 
-  void calculateGFR(BuildContext context) {
+  String _equationLabel(BuildContext context) {
+    switch (equationType) {
+      case 'MDRD':
+        return 'MDRD (2006)';
+      case equationNkfEgfr:
+        return context.tr(AppStrings.nkfEgfrCalculator);
+      case 'CKD-EPI':
+        return 'CKD-EPI (2021)';
+      default:
+        return equationType;
+    }
+  }
+
+  Future<void> calculateGFR(BuildContext context) async {
     if (formKey.currentState?.validate() ?? false) {
       final data = GFRCalculatorModelResponse(
         age: ageForm,
@@ -104,21 +202,56 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
       );
 
       try {
-        debugPrint('Age: ${data.age}');
-        debugPrint('Creatinine: ${data.creatinine}');
-        debugPrint('Height: ${data.height}');
-        debugPrint('Weight: ${data.weight}');
-
         final age = int.parse(data.age!);
-        final creatinine = parseDouble(data.creatinine!);
-        final isMale = data.gender == 'Male';
         final isFemale = data.gender == 'Female';
+        final creatinine = _parseOptionalDouble(creatinineForm);
+        final cystatin = _parseOptionalDouble(cystatinForm);
 
-        // Ensure height and weight are provided if using the Sobh formula
+        if (equationType == equationNkfEgfr) {
+          if (creatinine == null && cystatin == null) {
+            throw const FormatException('Missing biomarkers');
+          }
+
+          final results = computeNkfEgfrResults(
+            age: age,
+            isFemale: isFemale,
+            scr: creatinine,
+            scys: cystatin,
+          );
+
+          if (results.isEmpty) {
+            throw const FormatException('No results');
+          }
+
+          await _appendHistoryEntry(
+            GFRCalculatorHistoryModelResponse(
+              age: age.toString(),
+              creatinine: creatinine?.toString() ?? '—',
+              cystatin: cystatin?.toString(),
+              gender: genderForm,
+              result: encodeNkfHistoryResult(results),
+              date: DateTime.now().toString(),
+              equationType: equationType,
+            ),
+          );
+
+          if (!context.mounted) return;
+          showGfrResultDialog(
+            context: context,
+            equationLabel: _equationLabel(context),
+            nkfResults: results,
+          );
+          return;
+        }
+
+        if (creatinine == null) {
+          throw const FormatException('Creatinine required');
+        }
+
         double height, weight;
-        if (equationType == 'CKD-EPI' || equationType == 'MDRD') {
-          height = 0; // Default value, won't be used in CKD-EPI or MDRD
-          weight = 0; // Default value, won't be used in CKD-EPI or MDRD
+        if (equationType == 'MDRD') {
+          height = 0;
+          weight = 0;
         } else {
           if (data.height!.isEmpty) {
             throw const FormatException('Height is required for Sobh formula');
@@ -131,46 +264,45 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
         }
 
         final double gfr;
-        if (equationType == 'CKD-EPI') {
-          gfr = calculateGFRForCKD(isMale, age, creatinine);
-        } else if (equationType == 'MDRD') {
-          gfr = calculateGFRforMDRD(creatinine, age, isBlackForm, isFemale);
+        if (equationType == 'MDRD') {
+          gfr = calculateGFRForMDRD2006(
+            scr: creatinine,
+            age: age,
+            isFemale: isFemale,
+            isBlack: isBlackForm == 'Yes',
+          );
         } else {
           gfr = calculateSobhCcr(age, weight, height, creatinine);
         }
 
-        gfrHistory.add(
+        await _appendHistoryEntry(
           GFRCalculatorHistoryModelResponse(
             age: age.toString(),
             creatinine: creatinine.toString(),
             gender: genderForm,
-            result: gfr.toStringAsFixed(2),
+            result: gfr.toStringAsFixed(1),
             date: DateTime.now().toString(),
+            equationType: equationType,
           ),
         );
 
-        emit(GfrCalculatorState.initial(changesCounter += 1));
-        showCustomDialog(
-            context: context,
-            title: context.tr(AppStrings.gfrResult),
-            description:
-                '${context.tr(AppStrings.yourEstimatedGfrIs)} ${gfr.toStringAsFixed(2)}',
-            coloredButtonText: context.tr(AppStrings.ok),
-            coloredButtonOnTap: () {
-              Navigator.of(context).pop();
-            },
-            isNoColorShow: false);
+        if (!context.mounted) return;
+        showGfrResultDialog(
+          context: context,
+          equationLabel: _equationLabel(context),
+          singleEgfr: gfr,
+        );
       } catch (e) {
         debugPrint('Error parsing input: $e');
+        if (!context.mounted) return;
         showCustomDialog(
-            context: context,
-            title: context.tr(AppStrings.inputError),
-            description: context.tr(AppStrings.pleaseEnterValidInputValues),
-            coloredButtonText: context.tr(AppStrings.ok),
-            coloredButtonOnTap: () {
-              Navigator.of(context).pop();
-            },
-            isNoColorShow: false);
+          context: context,
+          title: context.tr(AppStrings.inputError),
+          description: context.tr(AppStrings.pleaseEnterValidInputValues),
+          coloredButtonText: context.tr(AppStrings.ok),
+          coloredButtonOnTap: () => Navigator.of(context).pop(),
+          isNoColorShow: false,
+        );
       }
     }
   }
@@ -178,8 +310,10 @@ class GfrCalculatorCubit extends Cubit<GfrCalculatorState> {
   void resetForm() {
     ageForm = '';
     creatinineForm = '';
+    cystatinForm = '';
     genderForm = 'Male';
-    equationType = 'CKD-EPI';
+    equationType = equationNkfEgfr;
+    nkfBiomarkerMode = nkfBiomarkerCreatinine;
     formKey.currentState?.reset();
   }
 }
