@@ -1,9 +1,10 @@
-import 'dart:ui' as ui;
-import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
-import '../../../../exports.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/comment_exit_animator.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_comment_dialog.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/reply_widget_in_community.dart';
+
+import '../../../../exports.dart';
 
 class CommentWidgetInCommunity extends StatelessWidget {
   final HomeModelResponse homeDataModel;
@@ -27,685 +28,596 @@ class CommentWidgetInCommunity extends StatelessWidget {
     this.parentCommentId,
   });
 
-  // Helper function to detect if text is Arabic
   bool _isArabic(String text) {
     if (text.isEmpty) return false;
     return RegExp(r'[\u0600-\u06FF]').hasMatch(text.trim());
   }
 
-  // Helper function to get text direction
   TextDirection _getTextDirection(String text) {
     return _isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
+  }
+
+  void _openDoctorProfile(BuildContext context) {
+    final doctor = commentModel.doctor;
+    if (doctor?.id == null) return;
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.doctorInfoView,
+      arguments: AppRoutesArgs.doctorInfoViewRouteArgs(
+        doctorId: doctor!.id.toString(),
+        currentDoctorModel: currentDoctorModel,
+        isSyndicateCardRequired:
+            homeDataModel.isSyndicateCardRequired.toString(),
+        accountVerification: homeDataModel.verified!,
+        currentDoctorRole: homeDataModel.role.toString(),
+        currentDoctorPoints: int.parse(homeDataModel.scoreValue!),
+        homeDataModel: homeDataModel,
+        initialIndex: 0,
+        isNavigateToTheButtonOfInformationTab: false,
+      ),
+    );
+  }
+
+  Future<void> _onLike(BuildContext context, ShowSingleFeedCubit cubit) async {
+    final hasPermission =
+        await PermissionHelper.hasPermission(AppPermissions.likeFeedComment);
+    if (!hasPermission) {
+      if (!context.mounted) return;
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.attention),
+        description:
+            context.tr(AppStrings.youDontHavePermissionToLikeFeedComments),
+        coloredButtonText: context.tr(AppStrings.ok),
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+        isNoColorShow: false,
+      );
+      return;
+    }
+
+    if (isMainComment) {
+      cubit.addLikeOrUnlikeOnCommentInCommunity(
+        commentId: commentModel.id.toString(),
+      );
+    } else {
+      cubit.addLikeOrUnlikeOnReplyInCommunity(
+        commentId: commentModel.id.toString(),
+      );
+    }
+  }
+
+  Future<void> _onReply(BuildContext context, ShowSingleFeedCubit cubit) async {
+    final hasPermission =
+        await PermissionHelper.hasPermission(AppPermissions.replyFeedComment);
+    if (!hasPermission) {
+      if (!context.mounted) return;
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.attention),
+        description:
+            context.tr(AppStrings.youDontHavePermissionToReplyOnFeeds),
+        coloredButtonText: context.tr(AppStrings.ok),
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+        isNoColorShow: false,
+      );
+      return;
+    }
+
+    if (!context.mounted) return;
+    await cubit.beginReplyTo(commentModel);
+  }
+
+  Future<void> _onDelete(
+    BuildContext context,
+    ShowSingleFeedCubit cubit,
+  ) async {
+    final hasPermission =
+        await PermissionHelper.hasPermission(AppPermissions.deleteFeedComment);
+    if (!hasPermission) {
+      if (!context.mounted) return;
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.attention),
+        description:
+            context.tr(AppStrings.youDontHavePermissionToDeleteFeedComments),
+        coloredButtonText: context.tr(AppStrings.ok),
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+        isNoColorShow: false,
+      );
+      return;
+    }
+
+    if (!context.mounted) return;
+    await showDeleteFeedCommentDialog(
+      context: context,
+      onConfirm: () {
+        if (isMainComment) {
+          cubit.deleteCommentOnPostInCommunity(
+            commentModel.id.toString(),
+            updatedFeed,
+            index,
+            homeDataModel,
+            currentDoctorModel,
+          );
+        }
+      },
+    );
+  }
+
+  bool _canManage(ShowSingleFeedCubit cubit) {
+    return homeDataModel.role == AppStrings.roleAdmin ||
+        (commentModel.doctor != null &&
+            currentDoctorModel.id.toString() ==
+                commentModel.doctor!.id.toString());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+        final cubit = ShowSingleFeedCubit.get(context);
 
-        ShowSingleFeedCubit cubit = ShowSingleFeedCubit.get(context);
-        return Column(
-          children: [
-            BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  orElse: () {
-                    return const SizedBox.shrink();
-                  },
-                  loaded: (
-                    commentsResponse,
-                    changeCounter,
-                    feed,
-                    isSendCommentLoading,
-                    isSendCommentLoaded,
-                    message,
-                    highlightedCommentId,
-                    isDeleteCommentLoading,
-                    isDeleteCommentLoaded,
-                    isSendReplyLoading,
-                    isSendReplyLoaded,
-                    isSeeMore,
-                  ) {
-                    return AnimatedContainer(
-                      decoration: BoxDecoration(
-                        color: commentModel.id.toString() ==
-                                highlightedCommentId
-                            ? Colors.grey.shade300
-                            : Colors
-                                .transparent, // Ensure a clear start and end color
-                        borderRadius: BorderRadius.circular(
-                            8), // Add subtle rounding for effect
-                      ),
-                      duration: const Duration(
-                          milliseconds:
-                              300), // Shorter duration for smoother transition
-                      curve:
-                          Curves.easeInOut, // Add easing for smoother animation
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMainComment ? 20 : 0,
-                        vertical: 10,
-                      ),
-                      child: IntrinsicHeight(
-                        child: Row(
+        return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+          builder: (context, state) {
+            return state.maybeWhen(
+              orElse: () => const SizedBox.shrink(),
+              loaded: (
+                commentsResponse,
+                changeCounter,
+                feed,
+                isSendCommentLoading,
+                isSendCommentLoaded,
+                message,
+                highlightedCommentId,
+                isDeleteCommentLoading,
+                isDeleteCommentLoaded,
+                isSendReplyLoading,
+                isSendReplyLoaded,
+                isSeeMore,
+              ) {
+                final isHighlighted =
+                    commentModel.id.toString() == highlightedCommentId;
+                final isOwn = commentModel.doctor != null &&
+                    currentDoctorModel.id.toString() ==
+                        commentModel.doctor!.id.toString();
+                final name = commentModel.doctor == null
+                    ? ''
+                    : doctorName(
+                        firstName: commentModel.doctor!.firstName,
+                        lastName: commentModel.doctor!.lastName,
+                        role: commentModel.doctor!.isSyndicateCardRequired
+                            .toString(),
+                      );
+                final isVerified = commentModel.doctor
+                        ?.isSyndicateCardRequired ==
+                    'Verified';
+                final commentText = commentModel.comment ?? '';
+                final replies = commentModel.replies ?? [];
+                final deleting = isDeleteCommentLoading &&
+                    commentModel.id.toString() == cubit.deleteCommentId;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 320),
+                  curve: Curves.easeOutCubic,
+                  decoration: BoxDecoration(
+                    color: isHighlighted
+                        ? primary.withOpacity(isDark ? 0.18 : 0.1)
+                        : HomeDashboardColors.cardBg(isDark),
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(
+                      color: isHighlighted
+                          ? primary.withOpacity(0.45)
+                          : HomeDashboardColors.border(isDark)
+                              .withOpacity(0.7),
+                      width: isHighlighted ? 1.4 : 1,
+                    ),
+                    boxShadow: isDark
+                        ? (isHighlighted
+                            ? [
+                                BoxShadow(
+                                  color: primary.withOpacity(0.22),
+                                  blurRadius: 16,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ]
+                            : null)
+                        : [
+                            BoxShadow(
+                              color: isHighlighted
+                                  ? primary.withOpacity(0.14)
+                                  : Colors.black.withOpacity(0.03),
+                              blurRadius: isHighlighted ? 16 : 10,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(12.w, 12.h, 10.w, 10.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        KeyedSubtree(
+                          key: cubit
+                              .keyForComment(commentModel.id.toString()),
+                          child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    navigatorKey.currentState?.pushNamed(
-                                      AppRoutes.doctorInfoView,
-                                      arguments:
-                                          AppRoutesArgs.doctorInfoViewRouteArgs(
-                                        doctorId:
-                                            commentModel.doctor!.id.toString(),
-                                        currentDoctorModel: currentDoctorModel,
-                                        isSyndicateCardRequired: homeDataModel
-                                            .isSyndicateCardRequired
-                                            .toString(),
-                                        accountVerification:
-                                            homeDataModel.verified!,
-                                        currentDoctorRole:
-                                            homeDataModel.role.toString(),
-                                        currentDoctorPoints: int.parse(
-                                            homeDataModel.scoreValue!),
-                                        homeDataModel: homeDataModel,
-                                        initialIndex: 0,
-                                        isNavigateToTheButtonOfInformationTab:
-                                            false,
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.grey.withOpacity(0.4),
-                                          spreadRadius: 2,
-                                          blurRadius: 9,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(80.r),
-                                      child: CircleAvatar(
-                                        radius: 15.r,
-                                        backgroundColor:
-                                            AppColors.primary.withOpacity(0.8),
-                                        child: commentModel.doctor == null
-                                            ? const SizedBox.shrink()
-                                            : commentModel.doctor!.id == null
-                                                ? Text(
-                                                    commentModel
-                                                        .doctor!.firstName![0]
-                                                        .toUpperCase(),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 16.sp),
-                                                  )
-                                                : CustomCachedNetworkImage(
-                                                    imageUrl: commentModel
-                                                        .doctor!.image
-                                                        .toString(),
-                                                    height: 100.h,
-                                                    width: 100.w,
-                                                  ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                isMainComment
-                                    ? Expanded(
-                                        child: Container(
-                                          width: 1.5,
-                                          color: Colors
-                                              .grey.shade300, // Divider color
-                                        ),
-                                      )
-                                    : const SizedBox.shrink(),
-                              ],
+                            GestureDetector(
+                              onTap: () => _openDoctorProfile(context),
+                              child: _CommentAvatar(
+                                doctor: commentModel.doctor,
+                                primary: primary,
+                              ),
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(width: 10.w),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      SizedBox(
-                                        width: isMainComment ? 190.w : 160.w,
+                                      Expanded(
                                         child: Row(
                                           children: [
                                             Flexible(
                                               child: Text(
-                                                commentModel.doctor == null
-                                                    ? ''
-                                                    : doctorName(
-                                                        firstName: commentModel
-                                                            .doctor!.firstName,
-                                                        lastName: commentModel
-                                                            .doctor!.lastName,
-                                                        role: commentModel
-                                                            .doctor!
-                                                            .isSyndicateCardRequired
-                                                            .toString(),
-                                                      ),
-                                                style: TextStyle(
-                                                  color: commentModel.doctor ==
-                                                          null
-                                                      ? isDarkMode
-                                                          ? Colors.grey.shade400
-                                                          : Colors.grey.shade700
-                                                      : currentDoctorModel.id
-                                                                  .toString() ==
-                                                              commentModel
-                                                                  .doctor!.id
-                                                                  .toString()
-                                                          ? Colors.green
-                                                          : isDarkMode
-                                                              ? Colors
-                                                                  .grey.shade400
-                                                              : Colors.grey
-                                                                  .shade700,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 12.sp,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
+                                                name,
                                                 maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 12.5.sp,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: isOwn
+                                                      ? HomeDashboardColors
+                                                          .success
+                                                      : HomeDashboardColors
+                                                          .title(isDark),
+                                                ),
                                               ),
                                             ),
-                                            if (commentModel.doctor != null &&
-                                                commentModel.doctor!
-                                                        .isSyndicateCardRequired ==
-                                                    'Verified')
-                                              if (commentModel.doctor != null &&
-                                                  commentModel.doctor!
-                                                          .isSyndicateCardRequired ==
-                                                      'Verified')
-                                                const VerificationIcon(
+                                            if (isVerified)
+                                              const Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 4),
+                                                child: VerificationIcon(
                                                   duration: 300,
                                                   isSmaller: true,
                                                 ),
+                                              ),
                                           ],
                                         ),
                                       ),
                                       Text(
                                         TimeAgoService.instance
                                             .formatTimeAgoFromString(
-                                                commentModel.createdAt
-                                                    .toString(),
-                                                context),
+                                          commentModel.createdAt.toString(),
+                                          context,
+                                        ),
                                         style: TextStyle(
-                                          color: AppColors.description,
-                                          fontSize: 9.sp,
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: HomeDashboardColors.subtitle(
+                                              isDark),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment:
-                                        _isArabic(commentModel.comment ?? '')
-                                            ? MainAxisAlignment.end
-                                            : MainAxisAlignment.start,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          commentModel.comment ?? '',
-                                          style: TextStyle(
-                                            color: isDarkMode
-                                                ? AppColors.darkTitle
-                                                : const ui.Color.fromRGBO(
-                                                    117, 117, 117, 1),
-                                            // fontWeight: FontWeight.w400,
-                                            fontFamily: 'Tajawal',
-                                            fontWeight: FontWeight.w500,
-                                            height: 1.6,
-                                          ),
-                                          textDirection: _getTextDirection(
-                                              commentModel.comment ?? ''),
-                                          textAlign: _isArabic(
-                                                  commentModel.comment ?? '')
-                                              ? TextAlign.right
-                                              : TextAlign.left,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      BlocBuilder<ShowSingleFeedCubit,
-                                          ShowSingleFeedState>(
-                                        builder: (context, state) {
-                                          return state.maybeWhen(
-                                            orElse: () {
-                                              return const SizedBox.shrink();
-                                            },
-                                            loaded: (
-                                              commentsResponse,
-                                              changeCounter,
-                                              updatedFeed2,
-                                              isSendCommentLoading,
-                                              isSendCommentLoaded,
-                                              message,
-                                              highlightedCommentId,
-                                              isDeleteCommentLoading,
-                                              isDeleteCommentLoaded,
-                                              isSendReplyLoading,
-                                              isSendReplyLoaded,
-                                              isSeeMore,
-                                            ) {
-                                              return GestureDetector(
-                                                onTap: () async {
-                                                  // Permission check for liking feed comments
-                                                  final hasPermission =
-                                                      await PermissionHelper
-                                                          .hasPermission(
-                                                              AppPermissions
-                                                                  .likeFeedComment);
-                                                  if (!hasPermission) {
-                                                    showCustomDialog(
-                                                      context: context,
-                                                      title: context.tr(
-                                                          AppStrings.attention),
-                                                      description: context.tr(
-                                                          AppStrings
-                                                              .youDontHavePermissionToLikeFeedComments),
-                                                      coloredButtonText: context
-                                                          .tr(AppStrings.ok),
-                                                      coloredButtonOnTap: () =>
-                                                          Navigator.of(context)
-                                                              .pop(),
-                                                      isNoColorShow: false,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  if (isMainComment) {
-                                                    cubit.addLikeOrUnlikeOnCommentInCommunity(
-                                                        commentId: commentModel
-                                                            .id
-                                                            .toString());
-                                                  } else {
-                                                    cubit.addLikeOrUnlikeOnReplyInCommunity(
-                                                        commentId: commentModel
-                                                            .id
-                                                            .toString());
-                                                  }
-                                                },
-                                                child: Icon(
-                                                  Icons.favorite,
-                                                  size: 16.r,
-                                                  color: commentModel.isLiked ==
-                                                          true
-                                                      ? Colors.red.shade600
-                                                      : Colors.grey.shade400,
+                                      if (_canManage(cubit))
+                                        deleting
+                                            ? Padding(
+                                                padding: EdgeInsets.only(
+                                                    left: 6.w),
+                                                child: SizedBox(
+                                                  width: 14,
+                                                  height: 14,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 1.5,
+                                                    color: primary,
+                                                  ),
                                                 ),
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        commentModel.likesCount.toString(),
-                                        style: TextStyle(
-                                          color: Colors.grey.shade400,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      isMainComment
-                                          ? TextButton(
-                                              onPressed: () async {
-                                                // Permission check for replying to feed comments
-                                                final hasPermission =
-                                                    await PermissionHelper
-                                                        .hasPermission(
-                                                            AppPermissions
-                                                                .replyFeedComment);
-                                                if (!hasPermission) {
-                                                  showCustomDialog(
-                                                    context: context,
-                                                    title: context.tr(
-                                                        AppStrings.attention),
-                                                    description: context.tr(
-                                                        AppStrings
-                                                            .youDontHavePermissionToReplyOnFeeds),
-                                                    coloredButtonText: context
-                                                        .tr(AppStrings.ok),
-                                                    coloredButtonOnTap: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    isNoColorShow: false,
-                                                  );
-                                                  return;
-                                                }
-
-                                                cubit.commentToReply =
-                                                    commentModel;
-                                                cubit.refreshScreen();
-                                              },
-                                              child: Text(
-                                                  context.tr(AppStrings.reply)),
-                                            )
-                                          : TextButton(
-                                              onPressed: () {},
-                                              style: ButtonStyle(
-                                                overlayColor: WidgetStateProperty
-                                                    .all(Colors
-                                                        .transparent), // Remove feedback color
-                                                splashFactory: NoSplash
-                                                    .splashFactory, // Remove ripple effect
-                                              ),
-                                              child: const Text(''),
-                                            ),
-                                      const Spacer(),
-                                      BlocBuilder<ShowSingleFeedCubit,
-                                          ShowSingleFeedState>(
-                                        builder: (context, state) {
-                                          return state.maybeWhen(
-                                            orElse: () {
-                                              return const SizedBox.shrink();
-                                            },
-                                            loaded: (
-                                              commentsResponse,
-                                              changeCounter,
-                                              feed,
-                                              isSendCommentLoading,
-                                              isSendCommentLoaded,
-                                              message,
-                                              highlightedCommentId,
-                                              isDeleteCommentLoading,
-                                              isDeleteCommentLoaded,
-                                              isSendReplyLoading,
-                                              isSendReplyLoaded,
-                                              isSeeMore,
-                                            ) {
-                                              return homeDataModel
-                                                              .role ==
-                                                          AppStrings
-                                                              .roleAdmin ||
-                                                      (commentModel
-                                                                  .doctor !=
-                                                              null &&
-                                                          currentDoctorModel
-                                                                  .id
-                                                                  .toString() ==
-                                                              commentModel.doctor!
-                                                                  .id
-                                                                  .toString())
-                                                  ? (isDeleteCommentLoading &&
-                                                          commentModel
-                                                                  .id
-                                                                  .toString() ==
-                                                              cubit
-                                                                  .deleteCommentId)
-                                                      ? IconButton(
-                                                          highlightColor: Colors
-                                                              .transparent,
-                                                          hoverColor: Colors
-                                                              .transparent,
-                                                          splashColor: Colors
-                                                              .transparent,
-                                                          onPressed: () {},
-                                                          icon: const SizedBox(
-                                                            width: 15,
-                                                            height: 15,
-                                                            child:
-                                                                CircularProgressIndicator(
-                                                              strokeWidth: 1,
-                                                            ),
-                                                          ))
-                                                      // : IconButton(
-                                                      //     onPressed: () {
-                                                      //       showCustomDialog(
-                                                      //         context: context,
-                                                      //         title: 'Attention',
-                                                      //         description:
-                                                      //             'Are you sure to delete comment?',
-                                                      //         coloredButtonText:
-                                                      //             'Cancel',
-                                                      //         coloredButtonOnTap:
-                                                      //             () {
-                                                      //           Navigator.pop(
-                                                      //               context);
-                                                      //         },
-                                                      //         isNoColorShow: true,
-                                                      //         noColoredButtonOnTap:
-                                                      //             () {
-                                                      //           Navigator.pop(
-                                                      //               context);
-                                                      //           cubit
-                                                      //               .deleteCommentOnPostInCommunity(
-                                                      //             commentModel.id
-                                                      //                 .toString(),
-                                                      //             updatedFeed,
-                                                      //             index,
-                                                      //             homeDataModel,
-                                                      //             currentDoctorModel,
-                                                      //           );
-                                                      //         },
-                                                      //         noColoredButtonText:
-                                                      //             'Delete',
-                                                      //       );
-                                                      //     },
-                                                      //     icon: Icon(
-                                                      //       Icons.delete,
-                                                      //       color: Colors.red
-                                                      //           .withOpacity(0.5),
-                                                      //     ),
-                                                      //   )
-                                                      : PopupMenuButton<String>(
-                                                          icon: Icon(
-                                                            Icons.more_vert,
-                                                            color: Colors
-                                                                .grey.shade500,
-                                                          ),
-                                                          onSelected: (String
-                                                              value) async {
-                                                            switch (value) {
-                                                              case 'Report':
-                                                                // Handle report action
-                                                                print(
-                                                                    'Report clicked');
-                                                                break;
-                                                              case 'Delete':
-                                                                final hasPermission =
-                                                                    await PermissionHelper.hasPermission(
-                                                                        AppPermissions
-                                                                            .deleteFeedComment);
-                                                                if (!hasPermission) {
-                                                                  showCustomDialog(
-                                                                    context:
-                                                                        context,
-                                                                    title: context.tr(
-                                                                        AppStrings
-                                                                            .attention),
-                                                                    description:
-                                                                        context.tr(
-                                                                            AppStrings.youDontHavePermissionToDeleteFeedComments),
-                                                                    coloredButtonText:
-                                                                        context.tr(
-                                                                            AppStrings.ok),
-                                                                    coloredButtonOnTap: () =>
-                                                                        Navigator.of(context)
-                                                                            .pop(),
-                                                                    isNoColorShow:
-                                                                        false,
-                                                                  );
-                                                                  break;
-                                                                }
-                                                                // Handle delete action
-
-                                                                showCustomDialog(
-                                                                  context:
-                                                                      context,
-                                                                  title: context.tr(
-                                                                      AppStrings
-                                                                          .attention),
-                                                                  description:
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .areYouSureToDeleteComment),
-                                                                  coloredButtonText:
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .cancel),
-                                                                  coloredButtonOnTap:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                  },
-                                                                  isNoColorShow:
-                                                                      true,
-                                                                  noColoredButtonOnTap:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context);
-
-                                                                    if (isMainComment) {
-                                                                      cubit
-                                                                          .deleteCommentOnPostInCommunity(
-                                                                        commentModel
-                                                                            .id
-                                                                            .toString(),
-                                                                        updatedFeed,
-                                                                        index,
-                                                                        homeDataModel,
-                                                                        currentDoctorModel,
-                                                                      );
-                                                                    }
-                                                                  },
-                                                                  noColoredButtonText:
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .delete),
-                                                                );
-                                                                break;
-                                                            }
-                                                          },
-                                                          itemBuilder:
-                                                              (BuildContext
-                                                                  context) {
-                                                            final items =
-                                                                <PopupMenuEntry<
-                                                                    String>>[
-                                                              // PopupMenuItem(
-                                                              //   value: 'Report',
-                                                              //   child: Row(
-                                                              //     children: [
-                                                              //       const Icon(
-                                                              //           Icons
-                                                              //               .report,
-                                                              //           color: AppColors
-                                                              //               .description),
-                                                              //       SizedBox(
-                                                              //           width: 8.w),
-                                                              //       const Text(
-                                                              //           'Report'),
-                                                              //     ],
-                                                              //   ),
-                                                              // ),
-                                                            ];
-
-                                                            if (commentModel
-                                                                        .doctor!
-                                                                        .id
-                                                                        .toString() ==
-                                                                    currentDoctorModel
-                                                                        .id
-                                                                        .toString() ||
-                                                                homeDataModel
-                                                                        .role ==
-                                                                    AppStrings
-                                                                        .roleAdmin) {
-                                                              items.add(
-                                                                PopupMenuItem(
-                                                                  value:
-                                                                      'Delete',
-                                                                  child: Row(
-                                                                    children: [
-                                                                      const Icon(
-                                                                          Icons
-                                                                              .delete,
-                                                                          color:
-                                                                              AppColors.description),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              8.w),
-                                                                      Text(
-                                                                        context.tr(
-                                                                            AppStrings.delete),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            }
-
-                                                            return items;
-                                                          },
-                                                        )
-                                                  : const SizedBox.shrink();
-                                            },
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  commentModel.parentId != null
-                                      ? const SizedBox.shrink()
-                                      : commentModel.replies!.isEmpty
-                                          ? const SizedBox.shrink()
-                                          : Column(
-                                              children: [
-                                                ...List.generate(
-                                                  commentModel.replies!.length,
-                                                  (replyIndex) {
-                                                    var replyModel =
-                                                        commentModel.replies![
-                                                            replyIndex];
-                                                    return ReplyWidgetInCommunity(
-                                                      replyModel: replyModel,
-                                                      homeDataModel:
-                                                          homeDataModel,
-                                                      currentDoctorModel:
-                                                          currentDoctorModel,
-                                                      commentModel:
-                                                          commentModel,
-                                                      replyIndex: replyIndex,
-                                                    );
+                                              )
+                                            : SizedBox(
+                                                width: 28,
+                                                height: 28,
+                                                child: PopupMenuButton<String>(
+                                                  padding: EdgeInsets.zero,
+                                                  iconSize: 18.sp,
+                                                  icon: Icon(
+                                                    Icons.more_horiz_rounded,
+                                                    color: HomeDashboardColors
+                                                        .subtitle(isDark),
+                                                  ),
+                                                  onSelected: (value) {
+                                                    if (value == 'Delete') {
+                                                      _onDelete(
+                                                          context, cubit);
+                                                    }
                                                   },
+                                                  itemBuilder: (context) => [
+                                                    PopupMenuItem(
+                                                      value: 'Delete',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .delete_outline_rounded,
+                                                            size: 18.sp,
+                                                            color:
+                                                                HomeDashboardColors
+                                                                    .danger,
+                                                          ),
+                                                          SizedBox(width: 8.w),
+                                                          Text(
+                                                            context.tr(
+                                                                AppStrings
+                                                                    .delete),
+                                                            style: TextStyle(
+                                                              color:
+                                                                  HomeDashboardColors
+                                                                      .danger,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12.w,
+                                      vertical: 10.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: HomeDashboardColors.surfaceBg(
+                                          isDark),
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                    child: Text(
+                                      commentText,
+                                      textDirection:
+                                          _getTextDirection(commentText),
+                                      textAlign: _isArabic(commentText)
+                                          ? TextAlign.right
+                                          : TextAlign.left,
+                                      style: TextStyle(
+                                        fontSize: 13.sp,
+                                        fontWeight: FontWeight.w500,
+                                        height: 1.45,
+                                        fontFamily: 'Tajawal',
+                                        color:
+                                            HomeDashboardColors.title(isDark),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Row(
+                                    children: [
+                                      _CommentActionChip(
+                                        isDark: isDark,
+                                        primary: primary,
+                                        active: commentModel.isLiked == true,
+                                        activeColor: const Color(0xFFE11D48),
+                                        icon: commentModel.isLiked == true
+                                            ? Icons.favorite_rounded
+                                            : Icons.favorite_border_rounded,
+                                        label:
+                                            '${commentModel.likesCount ?? 0}',
+                                        onTap: () => _onLike(context, cubit),
+                                      ),
+                                      if (isMainComment) ...[
+                                        SizedBox(width: 8.w),
+                                        _CommentActionChip(
+                                          isDark: isDark,
+                                          primary: primary,
+                                          active: false,
+                                          icon: Icons.reply_rounded,
+                                          label: context.tr(AppStrings.reply),
+                                          onTap: () =>
+                                              _onReply(context, cubit),
+                                        ),
+                                      ],
+                                      if (replies.isNotEmpty) ...[
+                                        const Spacer(),
+                                        Text(
+                                          '${replies.length} ${replies.length == 1 ? 'reply' : 'replies'}',
+                                          style: TextStyle(
+                                            fontSize: 10.5.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: HomeDashboardColors.subtitle(
+                                                isDark),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    );
-                  },
+                        ),
+                        if (isMainComment &&
+                            commentModel.parentId == null &&
+                            replies.isNotEmpty) ...[
+                          SizedBox(height: 10.h),
+                          Container(
+                            margin: EdgeInsets.only(left: 18.w),
+                            padding: EdgeInsets.only(left: 12.w),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                left: BorderSide(
+                                  color: primary.withOpacity(0.28),
+                                  width: 2,
+                                ),
+                              ),
+                            ),
+                            child: Column(
+                              children: List.generate(
+                                replies.length,
+                                (replyIndex) {
+                                  final reply = replies[replyIndex];
+                                  final replyId = reply.id.toString();
+                                  return CommentExitAnimator(
+                                    key: ValueKey('reply-exit-$replyId'),
+                                    exiting: cubit.isItemExiting(replyId),
+                                    onExited: () =>
+                                        cubit.finalizeExitingItem(replyId),
+                                    child: Padding(
+                                      padding: EdgeInsets.only(
+                                        bottom: replyIndex ==
+                                                replies.length - 1
+                                            ? 0
+                                            : 8.h,
+                                      ),
+                                      child: KeyedSubtree(
+                                        key: cubit.keyForComment(replyId),
+                                        child: ReplyWidgetInCommunity(
+                                          replyModel: reply,
+                                          homeDataModel: homeDataModel,
+                                          currentDoctorModel:
+                                              currentDoctorModel,
+                                          commentModel: commentModel,
+                                          replyIndex: replyIndex,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 );
               },
-            ),
-            // const SizedBox(height: 5),
-            isMainComment
-                ? commentsResponse.data!.data!.length - 1 != index
-                    ? const Divider(thickness: 0.4)
-                    : const SizedBox.shrink()
-                : const SizedBox.shrink(),
-            // const SizedBox(height: 20),
-          ],
+            );
+          },
         );
       },
+    );
+  }
+}
+
+class _CommentAvatar extends StatelessWidget {
+  final DoctorModel? doctor;
+  final Color primary;
+
+  const _CommentAvatar({
+    required this.doctor,
+    required this.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 36.r,
+      height: 36.r,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(color: primary.withOpacity(0.25), width: 1.2),
+      ),
+      child: ClipOval(
+        child: doctor == null
+            ? ColoredBox(
+                color: primary.withOpacity(0.15),
+                child: Icon(Icons.person, size: 18.sp, color: primary),
+              )
+            : doctor!.id == null
+                ? ColoredBox(
+                    color: primary.withOpacity(0.15),
+                    child: Center(
+                      child: Text(
+                        (doctor!.firstName ?? 'D')[0].toUpperCase(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 14.sp,
+                          color: primary,
+                        ),
+                      ),
+                    ),
+                  )
+                : CustomCachedNetworkImage(
+                    imageUrl: doctor!.image.toString(),
+                    height: 36.r,
+                    width: 36.r,
+                    fit: BoxFit.cover,
+                  ),
+      ),
+    );
+  }
+}
+
+class _CommentActionChip extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final bool active;
+  final Color? activeColor;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _CommentActionChip({
+    required this.isDark,
+    required this.primary,
+    required this.active,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.activeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = activeColor ?? primary;
+    final fg = active ? accent : HomeDashboardColors.subtitle(isDark);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20.r),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
+          decoration: BoxDecoration(
+            color: active
+                ? accent.withOpacity(isDark ? 0.18 : 0.1)
+                : HomeDashboardColors.surfaceBg(isDark),
+            borderRadius: BorderRadius.circular(20.r),
+            border: Border.all(
+              color: active
+                  ? accent.withOpacity(0.28)
+                  : HomeDashboardColors.border(isDark).withOpacity(0.6),
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14.sp, color: fg),
+              SizedBox(width: 4.w),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w700,
+                  color: fg,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

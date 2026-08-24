@@ -455,6 +455,7 @@ abstract class ApiServices {
   @GET(ApiEndPoint.getMyGroups)
   Future<GetAllGroupsInCommunityModelResponse> getMyGroup(
     @Query('page') int pageNumber,
+    @Query('scope') String scope,
   );
 
   @POST('${ApiEndPoint.sendGroupInvitation}/{groupId}/invite')
@@ -657,7 +658,7 @@ abstract class ApiServices {
 
   @POST(ApiEndPoint.exportFilteredPatients)
   Future<ExportPatientsModelResponse> exportFilteredPatients(
-    @Field('only_my_patients') bool isOnlyMyPatients,
+    @Body() Map<String, dynamic> map,
   );
 
   @POST('${ApiEndPoint.makeMarkPatient}/{patientId}')

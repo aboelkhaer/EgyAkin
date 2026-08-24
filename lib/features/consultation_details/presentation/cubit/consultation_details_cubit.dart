@@ -137,13 +137,15 @@ class ConsultationDetailsCubit extends Cubit<ConsultationDetailsState> {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => ConsultationDetailsState.loaded(
-            value.consultDetails.copyWith(isOpen: isOpen), // Update the consultation details with new isOpen value
+            value.consultDetails.copyWith(isOpen: isOpen),
             value.newCommentValue,
             value.isSendingConsultation,
             value.isSendedConsultation,
-            r.message.toString(),
+            isOpen
+                ? AppStrings.consultationUnlocked
+                : AppStrings.consultationLocked,
             false,
-            !isOpen, // isLocked should be the opposite of isOpen
+            !isOpen,
           ),
         ));
       },

@@ -11,5 +11,7 @@ abstract class AllDoctorsPatientsRepository {
     Map<String, dynamic> map,
     int page,
   );
-  Future<Either<Failure, ExportPatientsModelResponse>> exportFilteredPatients(bool isOnlyMyPatients);
+  Future<Either<Failure, ExportPatientsModelResponse>> exportFilteredPatients(
+    Map<String, dynamic> map,
+  );
 }

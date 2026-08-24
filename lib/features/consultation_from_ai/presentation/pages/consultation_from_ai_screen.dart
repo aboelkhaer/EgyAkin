@@ -1,7 +1,11 @@
 import 'package:egy_akin/features/consultation_from_ai/presentation/cubit/consultation_from_ai_state.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/widgets/ai_consultation_bottom_cta.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/widgets/ai_consultation_header.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/widgets/ai_consultation_loading.dart';
+import 'package:egy_akin/features/consultation_from_ai/presentation/widgets/ai_opinion_card.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class ConsultationFromAiScreen extends StatefulWidget {
   final String patientId;
@@ -21,6 +25,7 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
 
   @override
   void initState() {
+    super.initState();
     context
         .read<ConsultationFromAICubit>()
         .getAIConsultationHistory(widget.patientId);
@@ -31,13 +36,12 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
         _cubit!.scrollController!.addListener(_onScroll);
       }
     });
-    super.initState();
   }
 
   @override
   void dispose() {
     if (_cubit != null && !_cubit!.isClosed) {
-      _cubit!.scrollController!.dispose();
+      _cubit!.scrollController?.dispose();
     }
     super.dispose();
   }
@@ -46,49 +50,42 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
     if (_cubit == null || _cubit!.isClosed) return;
 
     final cubit = context.read<ConsultationFromAICubit>();
-
-    // Don't trigger scroll event when already loading more data or on the last page
     if (cubit.isLastPage || cubit.isLoadingMoreForScroll) return;
+    if (cubit.scrollController == null || !cubit.scrollController!.hasClients) {
+      return;
+    }
 
     final currentScroll = cubit.scrollController!.position.pixels;
-    const threshold =
-        10.0; // A small threshold to allow for minor scroll before showing/hiding FAB
-
-    // Load more when nearing the bottom
+    const threshold = 10.0;
     final maxScroll = cubit.scrollController!.position.maxScrollExtent;
+
     if (maxScroll - currentScroll <= threshold) {
       cubit.isLoadingMoreForScroll = true;
       cubit.loadMorePatients(widget.patientId);
     }
 
-    // Hide FAB when at the bottom
     if (currentScroll < threshold) {
       if (showScrollToBottomFAB) {
-        setState(() {
-          showScrollToBottomFAB = false;
-        });
+        setState(() => showScrollToBottomFAB = false);
       }
-    }
-    // Show FAB when scrolling up
-    else if (currentScroll > threshold) {
+    } else if (currentScroll > threshold) {
       if (!showScrollToBottomFAB) {
-        setState(() {
-          showScrollToBottomFAB = true;
-        });
+        setState(() => showScrollToBottomFAB = true);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ConsultationFromAICubit cubit = ConsultationFromAICubit.get(context);
+    final cubit = ConsultationFromAICubit.get(context);
+
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+
         return Scaffold(
-          appBar: AppBar(
-            title: Text(context.tr(AppStrings.aiOpinions)),
-          ),
+          backgroundColor: HomeDashboardColors.scaffold(isDark),
           body: BlocConsumer<ConsultationFromAICubit, ConsultationFromAIState>(
             listener: (context, state) {
               state.maybeWhen(
@@ -96,176 +93,210 @@ class _ConsultationFromAiScreenState extends State<ConsultationFromAiScreen> {
                 error: (message) {
                   customSnackBar(context: context, message: message);
                 },
-                loaded: (aiHistoryResponse, isRequestAIOpinionLoading,
-                    isRequestAIOpinionLoaded, message, isSeeMore) {
-                  if (message != '') {
+                loaded: (
+                  aiHistoryResponse,
+                  isRequestAIOpinionLoading,
+                  isRequestAIOpinionLoaded,
+                  message,
+                  isSeeMore,
+                ) {
+                  if (message.isNotEmpty) {
                     customSnackBar(context: context, message: message);
                   }
                 },
               );
             },
             builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () => const Center(child: CircularProgressIndicator()),
-                loaded: (aiHistoryResponse, isRequestAIOpinionLoading,
-                    isRequestAIOpinionLoaded, message, isSeeMore) {
-                  if (isRequestAIOpinionLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      ListView.builder(
-                        reverse: true,
-                        controller: _cubit!.scrollController,
-                        itemCount: aiHistoryResponse.history!.data!.length +
-                            (isSeeMore ? 1 : 0),
-                        padding: EdgeInsets.only(top: 20, bottom: 85.h),
-                        itemBuilder: (context, index) {
-                          if (index ==
-                                  aiHistoryResponse.history!.data!.length &&
-                              isSeeMore) {
-                            return Column(
-                              children: [
-                                const SizedBox(
-                                  height: 15,
-                                  width: 15,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                  ),
-                                ),
-                                SizedBox(height: 20.h),
-                              ],
-                            );
-                          }
+              final trialCount = state.maybeWhen(
+                loaded: (response, _, __, ___, ____) =>
+                    response.trialCount ?? 0,
+                orElse: () => 0,
+              );
 
-                          var aiHistory =
-                              aiHistoryResponse.history!.data![index];
-                          return Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 20.r,
-                                      backgroundImage: const AssetImage(
-                                          'assets/images/ai.png'),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(15),
-                                        margin: const EdgeInsets.only(top: 15),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary
-                                              .withOpacity(0.1),
-                                          borderRadius: const BorderRadius.only(
-                                            topRight: Radius.circular(15),
-                                            bottomLeft: Radius.circular(15),
-                                            bottomRight: Radius.circular(15),
-                                          ),
-                                        ),
-                                        child: MarkdownBody(
-                                          data: aiHistory.response ?? '',
-                                          styleSheet: MarkdownStyleSheet(
-                                            h1: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold),
-                                            h2: const TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                            p: const TextStyle(fontSize: 16),
-                                            strong: const TextStyle(
-                                                fontWeight: FontWeight.bold),
-                                            blockSpacing: 8.0,
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AiConsultationHeader(
+                    isDark: isDark,
+                    title: context.tr(AppStrings.aiOpinions),
+                    subtitle: context.tr(
+                      AppStrings.clinicalInsightsFromPatientRecord,
+                    ),
+                    trialCount: trialCount,
+                    onBack: () => Navigator.of(context).maybePop(),
+                  ),
+                  Expanded(
+                    child: state.maybeWhen(
+                      orElse: () => AiConsultationLoadingList(isDark: isDark),
+                      error: (message) => Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 28.w),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.error_outline_rounded,
+                                size: 36.sp,
+                                color: HomeDashboardColors.danger,
+                              ),
+                              SizedBox(height: 12.h),
+                              Text(
+                                context.tr(AppStrings.somethingWentWrong),
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: HomeDashboardColors.title(isDark),
+                                ),
+                              ),
+                              SizedBox(height: 6.h),
+                              Text(
+                                message,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: HomeDashboardColors.subtitle(isDark),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      loaded: (
+                        aiHistoryResponse,
+                        isRequestAIOpinionLoading,
+                        isRequestAIOpinionLoaded,
+                        message,
+                        isSeeMore,
+                      ) {
+                        final items =
+                            aiHistoryResponse.history?.data ?? const [];
+
+                        return Stack(
+                          fit: StackFit.expand,
+                          clipBehavior: Clip.none,
+                          children: [
+                            if (items.isEmpty)
+                              AiConsultationEmptyState(isDark: isDark)
+                            else
+                              ListView.separated(
+                                reverse: true,
+                                controller: _cubit?.scrollController,
+                                itemCount: items.length + (isSeeMore ? 1 : 0),
+                                padding: EdgeInsets.fromLTRB(
+                                  0,
+                                  8.h,
+                                  0,
+                                  20.h,
+                                ),
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 14.h),
+                                itemBuilder: (context, index) {
+                                  if (index == items.length && isSeeMore) {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 16.h,
+                                      ),
+                                      child: Center(
+                                        child: SizedBox(
+                                          width: 18.r,
+                                          height: 18.r,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.2,
+                                            color: primary,
                                           ),
                                         ),
                                       ),
+                                    );
+                                  }
+
+                                  final aiHistory = items[index];
+                                  return AiOpinionCard(
+                                    isDark: isDark,
+                                    response: aiHistory.response ?? '',
+                                    timeAgo: TimeAgoService.instance
+                                        .formatTimeAgoFromString(
+                                      aiHistory.createdAt.toString(),
+                                      context,
                                     ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      TimeAgoService.instance
-                                          .formatTimeAgoFromString(
-                                              aiHistory.createdAt.toString(),
-                                              context),
-                                      style: TextStyle(
-                                          color: AppColors.description,
-                                          fontSize: 9.sp),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          // height: 60.h,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.darkCardBG
-                                : Colors.white,
-                            border: const Border(
-                                top: BorderSide(color: Colors.black12)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 20, right: 20, top: 10, bottom: 30),
-                            child: Column(
-                              children: [
-                                Text(
-                                  '${context.tr(AppStrings.youHave)} ${aiHistoryResponse.trialCount ?? 0} ${context.tr(AppStrings.remainingTrial)}',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                SizedBox(
-                                  height: 35.h,
-                                  child: CustomElevatedButton(
-                                    onPressed: () {
-                                      cubit.sendAIConsultationRequest(
-                                          widget.patientId);
+                                  );
+                                },
+                              ),
+                            if (showScrollToBottomFAB && items.isNotEmpty)
+                              PositionedDirectional(
+                                end: 16.w,
+                                bottom: 8.h,
+                                child: Material(
+                                  color: Colors.transparent,
+                                  elevation: 0,
+                                  child: InkWell(
+                                    onTap: () {
+                                      final controller = cubit.scrollController;
+                                      if (controller != null) {
+                                        animateToTopOfScreen(controller);
+                                      }
                                     },
-                                    title:
-                                        context.tr(AppStrings.requestAiOpinion),
+                                    borderRadius: BorderRadius.circular(14.r),
+                                    child: Ink(
+                                      width: 40.r,
+                                      height: 40.r,
+                                      decoration: BoxDecoration(
+                                        color: HomeDashboardColors.cardBg(
+                                          isDark,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(14.r),
+                                        border: Border.all(
+                                          color: HomeDashboardColors.border(
+                                            isDark,
+                                          ),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              isDark ? 0.25 : 0.08,
+                                            ),
+                                            blurRadius: 12,
+                                            offset: const Offset(0, 4),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        color: primary,
+                                        size: 22.sp,
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      if (showScrollToBottomFAB)
-                        Positioned(
-                          bottom: 70.h,
-                          right: 16,
-                          child: FloatingActionButton(
-                            onPressed: () => animateToTopOfScreen(cubit
-                                .scrollController!), // Scroll back to the top
-                            backgroundColor: AppColors.primary
-                                .withOpacity(0.2), // Adjust color as needed
-                            child: const Icon(
-                              Icons.arrow_downward, // Set to an upward arrow
-                              color: Colors.white, // Icon color
-                            ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
+                              ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                  state.maybeWhen(
+                    loaded: (
+                      aiHistoryResponse,
+                      isRequestAIOpinionLoading,
+                      _,
+                      __,
+                      ___,
+                    ) {
+                      return AiConsultationBottomCta(
+                        isDark: isDark,
+                        trialCount: aiHistoryResponse.trialCount ?? 0,
+                        trialsLabel:
+                            '${context.tr(AppStrings.youHave)} ${aiHistoryResponse.trialCount ?? 0} ${context.tr(AppStrings.remainingTrial)}',
+                        actionLabel: context.tr(AppStrings.request),
+                        isLoading: isRequestAIOpinionLoading,
+                        onPressed: () {
+                          cubit.sendAIConsultationRequest(widget.patientId);
+                        },
+                      );
+                    },
+                    orElse: () => const SizedBox.shrink(),
+                  ),
+                ],
               );
             },
           ),

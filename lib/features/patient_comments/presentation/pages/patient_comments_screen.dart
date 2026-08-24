@@ -1,3 +1,6 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/patient_comments/presentation/widgets/patient_comments_header.dart';
+
 import '../../../../exports.dart';
 
 class PatientCommentsScreen extends StatefulWidget {
@@ -27,67 +30,141 @@ class PatientCommentsScreen extends StatefulWidget {
 }
 
 class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
+  PatientCommentsCubit? _cubit;
+
   @override
   void initState() {
-    context.read<PatientCommentsCubit>().getPatientComments(widget.patientId);
-
     super.initState();
+    _cubit = context.read<PatientCommentsCubit>();
+    _cubit!.getPatientComments(widget.patientId);
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final cubit = context.read<PatientCommentsCubit>();
-    if (!cubit.isClosed && cubit.patientCommentsScrollController.hasClients) {
-      cubit.patientCommentsScrollController.dispose();
+  void dispose() {
+    final controller = _cubit?.patientCommentsScrollController;
+    if (_cubit != null && !_cubit!.isClosed && controller != null) {
+      controller.dispose();
     }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    PatientCommentsCubit cubit = PatientCommentsCubit.get(context);
+    final cubit = PatientCommentsCubit.get(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          LocalizationService.instance.translate(AppStrings.patientComments),
-        ),
-      ),
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          SingleChildScrollView(
-            controller: cubit.patientCommentsScrollController,
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              children: [
-               
-                PatientComments(
-                  cubit: cubit,
-                  currentDoctorModel: widget.currentDoctorModel,
-                  accountVerification: widget.accountVerification,
-                  patientId: widget.patientId,
-                  currentDoctorPoints: widget.currentDoctorPoints,
-                  currentDoctorRole: widget.currentDoctorRole,
-                  homeDataModel: widget.homeDataModel,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+
+        return Scaffold(
+          backgroundColor: HomeDashboardColors.scaffold(isDark),
+          body: Stack(
+            children: [
+              Positioned(
+                top: -40,
+                right: -30,
+                child: IgnorePointer(
+                  child: Container(
+                    width: 180.w,
+                    height: 180.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          primary.withOpacity(isDark ? 0.16 : 0.1),
+                          primary.withOpacity(0),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ],
-            ),
+              ),
+              Positioned(
+                bottom: 80,
+                left: -50,
+                child: IgnorePointer(
+                  child: Container(
+                    width: 160.w,
+                    height: 160.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          primary.withOpacity(isDark ? 0.1 : 0.06),
+                          primary.withOpacity(0),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              BlocBuilder<PatientCommentsCubit, PatientCommentsState>(
+                builder: (context, state) {
+                  final commentCount = state.maybeWhen(
+                    loaded: (comments, _, __, ___, ____) => comments.length,
+                    orElse: () => 0,
+                  );
+                  final patientLabel = (widget.patientName ?? '').trim().isEmpty
+                      ? context.tr(AppStrings.clinicalDiscussion)
+                      : widget.patientName!;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Listener(
+                          behavior: HitTestBehavior.translucent,
+                          onPointerDown: (_) {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              PatientCommentsHeader(
+                                isDark: isDark,
+                                title: context.tr(AppStrings.patientComments),
+                                subtitle: patientLabel,
+                                commentCount: commentCount,
+                                onBack: () =>
+                                    Navigator.of(context).maybePop(),
+                              ),
+                              Expanded(
+                                child: PatientComments(
+                                  cubit: cubit,
+                                  isDark: isDark,
+                                  currentDoctorModel:
+                                      widget.currentDoctorModel,
+                                  accountVerification:
+                                      widget.accountVerification,
+                                  patientId: widget.patientId,
+                                  currentDoctorPoints:
+                                      widget.currentDoctorPoints,
+                                  currentDoctorRole:
+                                      widget.currentDoctorRole,
+                                  homeDataModel: widget.homeDataModel,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      WriteCommentField(
+                        cubit: cubit,
+                        accountVerification: widget.accountVerification,
+                        currentDoctorModel: widget.currentDoctorModel,
+                        patientId: widget.patientId,
+                        isSyndicateCardRequired:
+                            widget.isSyndicateCardRequired,
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ],
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: WriteCommentField(
-              cubit: cubit,
-              accountVerification: widget.accountVerification,
-              currentDoctorModel: widget.currentDoctorModel,
-              patientId: widget.patientId,
-              isSyndicateCardRequired: widget.isSyndicateCardRequired,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

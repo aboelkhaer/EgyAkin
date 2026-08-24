@@ -1,4 +1,5 @@
 import '../../../../app/shared/functions/select_question_has_displayable_answer.dart';
+import '../../../../app/shared/functions/multiple_question_has_displayable_answer.dart';
 import '../../../../exports.dart';
 
 class AddPatientCubit extends Cubit<AddPatientState> {
@@ -20,8 +21,73 @@ class AddPatientCubit extends Cubit<AddPatientState> {
   /// Max voice recording length from API (`ai_voice_time`), in seconds.
   int? addPatientAiVoiceTime;
 
+  /// Question id to scroll to after validation failure (UI reads this).
+  String? firstInvalidQuestionId;
+
+  /// Index in [questionModelList] for the first invalid question.
+  int? firstInvalidQuestionIndex;
+
   /// Question ids whose current value was last applied from voice/AI (cleared on manual edit).
   final Set<String> aiFilledQuestionIds = {};
+
+  void _emitFieldError(String questionId, String message) {
+    firstInvalidQuestionId = questionId;
+    firstInvalidQuestionIndex = questionModelList?.indexWhere(
+      (q) => q.id.toString() == questionId,
+    );
+    if (firstInvalidQuestionIndex != null && firstInvalidQuestionIndex! < 0) {
+      firstInvalidQuestionIndex = null;
+    }
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => AddPatientState.loaded(
+        value.questions,
+        false,
+        0,
+        false,
+        message,
+        snackbarErrorCounter += 1,
+      ),
+    ));
+  }
+
+  /// Clears the red highlight after the user edits the invalid field.
+  void clearInvalidHighlight([String? questionId]) {
+    if (firstInvalidQuestionId == null) return;
+    if (questionId != null && firstInvalidQuestionId != questionId) return;
+    firstInvalidQuestionId = null;
+    firstInvalidQuestionIndex = null;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => AddPatientState.loaded(
+        value.questions,
+        value.isAddedPatientSuccessfully,
+        value.patientId,
+        value.isAddPatientLoading,
+        // Clear message so state != previous (Bloc skips equal emits).
+        '',
+        value.snackbarErrorCounter,
+      ),
+    ));
+  }
+
+  /// Clears the dialog message only — keeps highlight + scroll target.
+  void acknowledgeFieldErrorDialog() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        if (value.message.isEmpty) return state;
+        return AddPatientState.loaded(
+          value.questions,
+          value.isAddedPatientSuccessfully,
+          value.patientId,
+          value.isAddPatientLoading,
+          '',
+          value.snackbarErrorCounter,
+        );
+      },
+    ));
+  }
 
   getPatientHistoryForAddPatient() async {
     addPatientAiHint = null;
@@ -49,29 +115,33 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
   addPatientForFirstTime() async {
     bool isValid = true;
+    firstInvalidQuestionId = null;
+    firstInvalidQuestionIndex = null;
+    addPatientKeyForm.currentState?.validate();
+    // Prevent Form focus restoration from jumping to Age / other text fields.
+    FocusManager.instance.primaryFocus?.unfocus();
 
     for (var question in questionModelList!) {
+      final questionId = question.id.toString();
       if (question.mandatory == true) {
         if (question.type == 'select') {
-          Map myMap = formData[question.id.toString()] ??= {
+          Map myMap = formData[questionId] ??= {
             'answers': '',
-            'other_field': ''
+            'other_field': '',
           };
+
+          // Never keep null in other_field — breaks text fields / casts.
+          myMap['other_field'] ??= '';
 
           if (myMap.containsKey('answers')) {
             dynamic answersValue = myMap['answers'];
-            if (answersValue == null || answersValue.isEmpty) {
+            if (answersValue == null ||
+                answersValue.toString().trim().isEmpty) {
               debugPrint('"answers" key is either null or an empty list.');
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                    snackbarErrorCounter += 1),
-              ));
+              _emitFieldError(
+                questionId,
+                '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+              );
               isValid = false;
               break;
             }
@@ -79,30 +149,22 @@ class AddPatientCubit extends Cubit<AddPatientState> {
         }
 
         if (question.type == 'multiple') {
-          Map myMap = formData[question.id.toString()] ??= {
+          Map myMap = formData[questionId] ??= {
             'answers': [],
-            'other_field': ''
+            'other_field': '',
           };
+          myMap['other_field'] ??= '';
 
-          // Check if "answers" key is either null or an empty list
           if (myMap.containsKey('answers')) {
             dynamic answersValue = myMap['answers'];
 
             if (answersValue == null ||
                 (answersValue is List && answersValue.isEmpty)) {
               debugPrint('"answers" key is either null or an empty list.');
-
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                    snackbarErrorCounter += 1),
-              ));
-
+              _emitFieldError(
+                questionId,
+                '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+              );
               isValid = false;
               break;
             } else {
@@ -111,18 +173,11 @@ class AddPatientCubit extends Cubit<AddPatientState> {
             }
           } else {
             debugPrint('"answers" key is not present in the map.');
-
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  LocalizationService.instance
-                      .translate(AppStrings.somethingWentWrong),
-                  snackbarErrorCounter += 1),
-            ));
+            _emitFieldError(
+              questionId,
+              LocalizationService.instance
+                  .translate(AppStrings.somethingWentWrong),
+            );
             isValid = false;
             break;
           }
@@ -130,77 +185,68 @@ class AddPatientCubit extends Cubit<AddPatientState> {
           if ((myMap['other_field'] == null ||
                   myMap['other_field'].toString().isEmpty) &&
               (myMap['answers'] as List).contains('Others')) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => AddPatientState.loaded(
-                  value.questions,
-                  false,
-                  0,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
-                  snackbarErrorCounter += 1),
-            ));
-
+            _emitFieldError(
+              questionId,
+              '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
+            );
             isValid = false;
             break;
           }
         }
         if (question.question == 'Name') {
-          if (formData.containsKey(question.id.toString())) {
-            String name = formData[question.id.toString()];
+          if (formData.containsKey(questionId)) {
+            final rawName = formData[questionId];
+            if (rawName is! String) {
+              _emitFieldError(
+                questionId,
+                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+              );
+              isValid = false;
+              break;
+            }
+            final name = rawName;
 
-            // Regular expression for checking only English alphabetic characters
             RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
 
             if (!englishCharRegex.hasMatch(name)) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance.translate(
-                        AppStrings.nameShouldContainOnlyEnglishLetters),
-                    snackbarErrorCounter += 1),
-              ));
-
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance.translate(
+                    AppStrings.nameShouldContainOnlyEnglishLetters),
+              );
               isValid = false;
               break;
             }
           }
         }
         if (question.question == 'National ID') {
-          if (formData.containsKey(question.id.toString())) {
-            String nationalID = formData[question.id.toString()];
+          if (formData.containsKey(questionId)) {
+            final rawId = formData[questionId];
+            if (rawId is! String) {
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.nationalIDShouldHave14Digits),
+              );
+              isValid = false;
+              break;
+            }
+            final nationalID = rawId;
             if (nationalID.length != 14) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.nationalIDShouldHave14Digits),
-                    snackbarErrorCounter += 1),
-              ));
-
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.nationalIDShouldHave14Digits),
+              );
               isValid = false;
               break;
             }
             if (int.tryParse(nationalID) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.nationalIDShouldHave14Digits),
-                    snackbarErrorCounter += 1),
-              ));
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.nationalIDShouldHave14Digits),
+              );
               isValid = false;
               break;
             }
@@ -208,87 +254,78 @@ class AddPatientCubit extends Cubit<AddPatientState> {
         }
 
         if (question.question == 'Phone') {
-          if (formData.containsKey(question.id.toString())) {
-            String phoneNumber = formData[question.id.toString()];
+          if (formData.containsKey(questionId)) {
+            final rawPhone = formData[questionId];
+            if (rawPhone is! String) {
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.phoneShouldHave11Digits),
+              );
+              isValid = false;
+              break;
+            }
+            final phoneNumber = rawPhone;
             if (phoneNumber.length != 11) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.phoneShouldHave11Digits),
-                    snackbarErrorCounter += 1),
-              ));
-
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.phoneShouldHave11Digits),
+              );
               isValid = false;
               break;
             }
             if (int.tryParse(phoneNumber) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.phoneShouldHave11Digits),
-                    snackbarErrorCounter += 1),
-              ));
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.phoneShouldHave11Digits),
+              );
               isValid = false;
               break;
             }
           }
         }
 
-        if (question.question == 'Age' &&
-            (question.answer != null ||
-                question.answer.toString().trim() != '')) {
-          if (formData.containsKey(question.id.toString())) {
-            String age = formData[question.id.toString()];
-            if (int.tryParse(age) == null ||
-                int.parse(age) > 119 ||
-                int.parse(age) <= 0) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => AddPatientState.loaded(
-                    value.questions,
-                    false,
-                    0,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.ageShouldBeLessThan120),
-                    snackbarErrorCounter += 1),
-              ));
-
+        if (question.question == 'Age') {
+          final rawAge = formData[questionId];
+          final ageStr = rawAge is String ? rawAge.trim() : '';
+          // Only validate range when the user entered something.
+          // Empty age is handled by the required check below.
+          if (ageStr.isNotEmpty) {
+            final parsed = int.tryParse(ageStr);
+            if (parsed == null || parsed > 119 || parsed <= 0) {
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.ageShouldBeLessThan120),
+              );
               isValid = false;
               break;
             }
           }
         }
-        if (formData[question.id.toString()] == null ||
-            formData[question.id.toString()] == '') {
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => AddPatientState.loaded(
-                value.questions,
-                false,
-                0,
-                false,
-                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-                snackbarErrorCounter += 1),
-          ));
 
-          isValid = false;
-          break;
+        // Select/multiple store Maps — skip empty-string check for those.
+        if (question.type != 'select' && question.type != 'multiple') {
+          final value = formData[questionId];
+          if (value == null ||
+              value == '' ||
+              (value is String && value.trim().isEmpty)) {
+            _emitFieldError(
+              questionId,
+              '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+            );
+            isValid = false;
+            break;
+          }
         }
       }
     }
 
     if (isValid == true) {
+      firstInvalidQuestionId = null;
+      firstInvalidQuestionIndex = null;
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => AddPatientState.loaded(
@@ -319,25 +356,60 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
   dynamic _normalizeVoiceAnswer(QuestionModel question, dynamic value) {
     if (question.type == AppStrings.multipleType) {
-      if (value is Map<String, dynamic>) return value;
-      if (value is List) {
-        return {
-          AppStrings.answers: value,
-          AppStrings.otherField: AppStrings.empty,
-        };
+      final options = question.values ?? const <dynamic>[];
+      final rawAnswers = <dynamic>[];
+      var otherField = AppStrings.empty;
+
+      if (value is Map) {
+        final answersRaw = value[AppStrings.answers];
+        if (answersRaw is List) {
+          rawAnswers.addAll(answersRaw);
+        } else if (answersRaw is String && answersRaw.trim().isNotEmpty) {
+          rawAnswers.addAll(
+            answersRaw.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+          );
+        }
+        final otherRaw = value[AppStrings.otherField];
+        if (otherRaw != null && otherRaw.toString().trim().isNotEmpty) {
+          otherField = otherRaw.toString().trim();
+        }
+      } else if (value is List) {
+        rawAnswers.addAll(value);
+      } else if (value is String && value.trim().isNotEmpty) {
+        rawAnswers.addAll(
+          value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty),
+        );
       }
-      if (value is String && value.trim().isNotEmpty) {
-        return {
-          AppStrings.answers: value.split(',').map((e) => e.trim()).toList(),
-          AppStrings.otherField: AppStrings.empty,
-        };
+
+      final matched = <dynamic>[];
+      for (final raw in rawAnswers) {
+        final mapped = matchMultipleOptionValue(raw, options);
+        if (mapped != null && !matched.contains(mapped)) {
+          matched.add(mapped);
+        }
       }
+
+      // Keep "Others" + free text when AI only provided other_field.
+      if (otherField != AppStrings.empty &&
+          otherField.trim().isNotEmpty &&
+          !matched.any((e) => e.toString() == AppStrings.others)) {
+        final othersOpt = matchMultipleOptionValue(AppStrings.others, options);
+        if (othersOpt != null) matched.add(othersOpt);
+      }
+
+      return {
+        AppStrings.answers: matched,
+        AppStrings.otherField: otherField,
+      };
     }
 
     if (question.type == AppStrings.questionTypeSelect) {
       if (value is Map<String, dynamic>) return value;
+      if (value is Map) return Map<String, dynamic>.from(value);
+      final options = question.values ?? const <dynamic>[];
+      final matched = matchMultipleOptionValue(value, options) ?? value;
       return {
-        AppStrings.answers: value,
+        AppStrings.answers: matched,
         AppStrings.otherField: AppStrings.empty,
       };
     }
@@ -357,17 +429,36 @@ class AddPatientCubit extends Cubit<AddPatientState> {
 
       final normalizedValue = _normalizeVoiceAnswer(question, value);
       formData[idKey] = normalizedValue;
-      if (question.type == AppStrings.questionTypeSelect) {
-        if (selectQuestionHasDisplayableAnswer(
-          optionValues: question.values,
-          storedAnswer: normalizedValue,
-        )) {
-          aiFilledQuestionIds.add(idKey);
-        } else {
-          aiFilledQuestionIds.remove(idKey);
+
+      final shouldMarkAi = () {
+        if (question.type == AppStrings.questionTypeSelect) {
+          return selectQuestionHasDisplayableAnswer(
+            optionValues: question.values,
+            storedAnswer: normalizedValue,
+          );
         }
-      } else {
+        if (question.type == AppStrings.multipleType) {
+          return multipleQuestionHasDisplayableAnswer(
+            optionValues: question.values,
+            storedAnswer: normalizedValue,
+          );
+        }
+        if (normalizedValue is String) {
+          return normalizedValue.trim().isNotEmpty;
+        }
+        if (normalizedValue is Map) {
+          return normalizedValue.isNotEmpty;
+        }
+        if (normalizedValue is List) {
+          return normalizedValue.isNotEmpty;
+        }
+        return normalizedValue != null;
+      }();
+
+      if (shouldMarkAi) {
         aiFilledQuestionIds.add(idKey);
+      } else {
+        aiFilledQuestionIds.remove(idKey);
       }
     }
 

@@ -34,9 +34,16 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
   int _currentPage = 1;
+
+  void _resetPagination() {
+    _currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
+  }
+
   getGroupDetails(String groupId) async {
     emit(const GroupDetailsInCommunityState.loading());
-    _currentPage = 1;
+    _resetPagination();
     final result = await _getGroupDetailsInCommunityUsecase.execute(
       GetGroupDetailsInCommunityUsecaseInput(
         groupId: groupId,
@@ -47,6 +54,9 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
     result.fold((l) {
       emit(GroupDetailsInCommunityState.error(l.message));
     }, (r) async {
+      final lastPage = r.data?.posts?.lastPage;
+      final posts = r.data?.posts?.data ?? [];
+      isLastPage = posts.isEmpty || (lastPage != null && _currentPage >= lastPage);
       emit(GroupDetailsInCommunityState.loaded(
         r,
         '',
@@ -61,6 +71,16 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
   }
 
   void loadMoreFeeds(String groupId) async {
+    final posts = state.maybeWhen(
+      loaded: (groupDetails, _, __, ___, ____, _____, ______, _______) =>
+          groupDetails.data?.posts?.data ?? const <PostCommunityModel>[],
+      orElse: () => const <PostCommunityModel>[],
+    );
+    if (posts.isEmpty || isLastPage) {
+      isLoadingMoreForScroll = false;
+      return;
+    }
+
     _currentPage++;
     emit(state.maybeMap(
       orElse: () => state,
@@ -75,22 +95,37 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
         false,
       ),
     ));
+
     final result = await _getGroupDetailsInCommunityUsecase.execute(
       GetGroupDetailsInCommunityUsecaseInput(
         groupId: groupId,
         page: _currentPage,
       ),
     );
+
     result.fold(
       (l) {
         _currentPage--;
-        emit(GroupDetailsInCommunityState.error(l.message));
+        isLoadingMoreForScroll = false;
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => GroupDetailsInCommunityState.loaded(
+            value.groupDetails,
+            l.message,
+            '',
+            false,
+            false,
+            changeCounter,
+            false,
+            false,
+          ),
+        ));
       },
-      (loadMoreFeeds) async {
-        final currentState = state;
-        currentState.when(
-          initial: () {},
-          loading: () {},
+      (pageResponse) {
+        state.maybeWhen(
+          orElse: () {
+            isLoadingMoreForScroll = false;
+          },
           loaded: (
             groupDetails,
             snackBarMessage,
@@ -101,22 +136,30 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
             isSeeMore,
             isAcceptOrDeclineGroupInvitation,
           ) {
-            final updatedData = groupDetails.copyWith(
-              data: groupDetails.data!.copyWith(
-                posts: groupDetails.data!.posts!.copyWith(
-                  data: [
-                    ...groupDetails.data!.posts!.data!,
-                    ...loadMoreFeeds.data!.posts!.data!
-                  ],
-                ),
-              ),
-            );
-            if (_currentPage >= groupDetails.data!.posts!.lastPage!) {
+            final currentPosts = groupDetails.data?.posts?.data ?? [];
+            final incomingPosts = pageResponse.data?.posts?.data ?? [];
+            final lastPage = pageResponse.data?.posts?.lastPage ??
+                groupDetails.data?.posts?.lastPage;
+
+            if (incomingPosts.isEmpty ||
+                (lastPage != null && _currentPage >= lastPage)) {
               isLastPage = true;
             } else {
               isLastPage = false;
             }
             isLoadingMoreForScroll = false;
+
+            final updatedData = groupDetails.copyWith(
+              data: groupDetails.data?.copyWith(
+                posts: (groupDetails.data?.posts ?? pageResponse.data?.posts)
+                    ?.copyWith(
+                  data: [...currentPosts, ...incomingPosts],
+                  currentPage: _currentPage,
+                  lastPage: lastPage,
+                ),
+              ),
+            );
+
             emit(GroupDetailsInCommunityState.loaded(
               updatedData,
               '',
@@ -128,7 +171,6 @@ class GroupDetailsInCommunityCubit extends Cubit<GroupDetailsInCommunityState> {
               false,
             ));
           },
-          error: (error) {},
         );
       },
     );

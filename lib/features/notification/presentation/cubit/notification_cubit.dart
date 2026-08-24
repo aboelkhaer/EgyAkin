@@ -39,6 +39,8 @@ class NotificationCubit extends Cubit<NotificationState> {
       },
       (notificationData) async {
         emit(NotificationState.loaded(notificationData, false));
+        // Mark all as read on the server so the home header badge stays cleared.
+        await updateNotification();
       },
     );
   }

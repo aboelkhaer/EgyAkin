@@ -3,14 +3,14 @@ import 'package:egy_akin/features/all_doctors_patients/data/models/export_patien
 import '../../../../exports.dart';
 
 class ExportPatientsUsecase
-    implements BaseUseCase<bool, ExportPatientsModelResponse> {
+    implements BaseUseCase<Map<String, dynamic>, ExportPatientsModelResponse> {
   final AllDoctorsPatientsRepository repository;
 
   ExportPatientsUsecase(this.repository);
 
   @override
   Future<Either<Failure, ExportPatientsModelResponse>> execute(
-      bool isOnlyMyPatients) async {
-    return await repository.exportFilteredPatients(isOnlyMyPatients);
+      Map<String, dynamic> map) async {
+    return await repository.exportFilteredPatients(map);
   }
 }

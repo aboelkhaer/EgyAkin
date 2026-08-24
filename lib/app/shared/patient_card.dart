@@ -237,26 +237,105 @@ class PatientCard extends StatelessWidget {
                                                     constraints:
                                                         const BoxConstraints(
                                                             minWidth: 0),
-                                                    child: Text(
-                                                      doctorName(
-                                                        firstName: drFirstName
-                                                            .toString(),
-                                                        lastName: drLastName
-                                                            .toString(),
-                                                        role:
-                                                            isSyndicateCardRequired,
+                                                    child: GestureDetector(
+                                                      behavior:
+                                                          HitTestBehavior.opaque,
+                                                      onTap: () async {
+                                                        final hasPermission =
+                                                            await PermissionHelper
+                                                                .hasPermission(
+                                                          AppPermissions
+                                                              .viewDoctorProfile,
+                                                        );
+
+                                                        if (!hasPermission &&
+                                                            currentDoctorModel
+                                                                    .id
+                                                                    .toString() !=
+                                                                doctorId) {
+                                                          showCustomDialog(
+                                                            context: context,
+                                                            title: context.tr(
+                                                                AppStrings
+                                                                    .attention),
+                                                            description: context
+                                                                .tr(AppStrings
+                                                                    .youDontHavePermissionToViewDoctorProfiles),
+                                                            coloredButtonText:
+                                                                context.tr(
+                                                                    AppStrings
+                                                                        .ok),
+                                                            coloredButtonOnTap:
+                                                                () =>
+                                                                    navigatorKey
+                                                                        .currentState
+                                                                        ?.pop(),
+                                                            isNoColorShow:
+                                                                false,
+                                                          );
+                                                        } else {
+                                                          navigatorKey
+                                                              .currentState
+                                                              ?.pushNamed(
+                                                            AppRoutes
+                                                                .doctorInfoView,
+                                                            arguments: AppRoutesArgs
+                                                                .doctorInfoViewRouteArgs(
+                                                              doctorId:
+                                                                  doctorId,
+                                                              currentDoctorModel:
+                                                                  currentDoctorModel,
+                                                              isSyndicateCardRequired:
+                                                                  isSyndicateCardRequired,
+                                                              accountVerification:
+                                                                  accountVerification,
+                                                              currentDoctorRole:
+                                                                  currentDoctorRole,
+                                                              currentDoctorPoints:
+                                                                  currentDoctorPoints,
+                                                              homeDataModel:
+                                                                  homeDataModel,
+                                                              initialIndex: 0,
+                                                              isNavigateToTheButtonOfInformationTab:
+                                                                  false,
+                                                            ),
+                                                          );
+                                                        }
+                                                      },
+                                                      child: Text(
+                                                        doctorName(
+                                                          firstName: drFirstName
+                                                              .toString(),
+                                                          lastName: drLastName
+                                                              .toString(),
+                                                          role:
+                                                              isSyndicateCardRequired,
+                                                        ),
+                                                        style: TextStyle(
+                                                          color: isDarkMode
+                                                              ? AppColors
+                                                                  .darkPrimary
+                                                              : AppColors
+                                                                  .primary,
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          decoration:
+                                                              TextDecoration
+                                                                  .underline,
+                                                          decorationColor:
+                                                              (isDarkMode
+                                                                      ? AppColors
+                                                                          .darkPrimary
+                                                                      : AppColors
+                                                                          .primary)
+                                                                  .withOpacity(
+                                                                      0.4),
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
-                                                      style: TextStyle(
-                                                        color: isDarkMode
-                                                            ? AppColors
-                                                                .darkDescription
-                                                            : AppColors
-                                                                .description,
-                                                        fontSize: 13,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),

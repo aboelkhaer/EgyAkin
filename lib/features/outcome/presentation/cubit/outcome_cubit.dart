@@ -21,6 +21,67 @@ class OutcomeCubit extends Cubit<OutcomeState> {
   /// Question ids whose value was applied from AI voice fill.
   final Set<String> aiFilledQuestionIds = {};
 
+  /// Question id to scroll to after validation failure (UI reads this).
+  String? firstInvalidQuestionId;
+
+  /// Index in [questionModelList] for the first invalid question.
+  int? firstInvalidQuestionIndex;
+
+  final ScrollController outcomeScrollController = ScrollController();
+
+  void _emitFieldError(String questionId, String message) {
+    firstInvalidQuestionId = questionId;
+    firstInvalidQuestionIndex = questionModelList.indexWhere(
+      (q) => q.id.toString() == questionId,
+    );
+    if (firstInvalidQuestionIndex != null && firstInvalidQuestionIndex! < 0) {
+      firstInvalidQuestionIndex = null;
+    }
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => OutcomeState.loaded(
+        value.questionList,
+        false,
+        message,
+        snackbarErrorCounter += 1,
+        false,
+        submitterModel,
+      ),
+    ));
+  }
+
+  /// Clears the red highlight after the user edits the invalid field.
+  void clearInvalidHighlight([String? questionId]) {
+    if (firstInvalidQuestionId == null) return;
+    if (questionId != null && firstInvalidQuestionId != questionId) return;
+    firstInvalidQuestionId = null;
+    firstInvalidQuestionIndex = null;
+  }
+
+  /// Clears the dialog message only — keeps highlight + scroll target.
+  void acknowledgeFieldErrorDialog() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        if (value.message.isEmpty) return state;
+        return OutcomeState.loaded(
+          value.questionList,
+          value.isSubmitedOutcome,
+          '',
+          value.snackbarErrorCounter,
+          value.isSubmitedOutcomeLoading,
+          value.submitter,
+        );
+      },
+    ));
+  }
+
+  @override
+  Future<void> close() {
+    outcomeScrollController.dispose();
+    return super.close();
+  }
+
   void updateQuestionAnswer(String questionId, dynamic newAnswer) {
     // Create a new list from the existing list
     final updatedQuestionModelList =
@@ -248,56 +309,32 @@ class OutcomeCubit extends Cubit<OutcomeState> {
     bool isValid = true;
 
     for (var question in questionModelList) {
-      // if (question.question == 'Hospital') {
-      //   log(question.toString());
-      // }
+      final questionId = question.id.toString();
       if (question.mandatory == true) {
         if (question.type == 'multiple') {
-          Map myMap = formData[question.id.toString()] ??= {
+          Map myMap = formData[questionId] ??= {
             "answers": [],
             "other_field": ''
           };
 
-          // Check if "answers" key is either null or an empty list
           if (myMap.containsKey('answers')) {
             dynamic answersValue = myMap['answers'];
 
             if (answersValue == null ||
                 (answersValue is List && answersValue.isEmpty)) {
-              debugPrint('"answers" key is either null or an empty list.');
-
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
-
+              _emitFieldError(
+                questionId,
+                '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+              );
               isValid = false;
               break;
-            } else {
-              debugPrint(
-                  '"answers" key is present and has a non-empty list value: $answersValue');
             }
           } else {
-            debugPrint('"answers" key is not present in the map.');
-
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => OutcomeState.loaded(
-                value.questionList,
-                false,
-                LocalizationService.instance.translate(AppStrings.somethingWentWrong),
-                snackbarErrorCounter += 1,
-                false,
-                submitterModel,
-              ),
-            ));
+            _emitFieldError(
+              questionId,
+              LocalizationService.instance
+                  .translate(AppStrings.somethingWentWrong),
+            );
             isValid = false;
             break;
           }
@@ -305,151 +342,88 @@ class OutcomeCubit extends Cubit<OutcomeState> {
           if ((myMap['other_field'] == null ||
                   myMap['other_field'].toString().isEmpty) &&
               (myMap['answers'] as List).contains('Others')) {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => OutcomeState.loaded(
-                value.questionList,
-                false,
-                '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
-                snackbarErrorCounter += 1,
-                false,
-                submitterModel,
-              ),
-            ));
-
+            _emitFieldError(
+              questionId,
+              '${LocalizationService.instance.translate(AppStrings.youMustAddOthersFieldIn)} \n{${question.question}}',
+            );
             isValid = false;
             break;
           }
         }
 
         if (question.type == AppStrings.selectType) {
-          if (question.answer['answers'] == null ||
-              question.answer['answers'] == '') {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => OutcomeState.loaded(
-                value.questionList,
-                false,
-                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-                snackbarErrorCounter += 1,
-                false,
-                submitterModel,
-              ),
-            ));
-
+          final stored = formData[questionId] ?? question.answer;
+          final answers = stored is Map ? stored['answers'] : null;
+          if (answers == null || answers == '') {
+            _emitFieldError(
+              questionId,
+              '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+            );
             isValid = false;
             break;
           }
         }
 
         if (question.type == AppStrings.questionTypeString) {
+          final rawAnswer = formData[questionId] ?? question.answer;
           if (question.question == 'National ID') {
-            String nationalID = question.answer;
-            if (nationalID.length != 14) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits)}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
-
-              isValid = false;
-              break;
-            }
-            if (int.tryParse(nationalID) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.nationalIDShouldHave14Digits)}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
-
+            String nationalID = rawAnswer?.toString() ?? '';
+            if (nationalID.length != 14 || int.tryParse(nationalID) == null) {
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.nationalIDShouldHave14Digits),
+              );
               isValid = false;
               break;
             }
           }
 
           if (question.question == 'Age') {
-            String age = question.answer;
-
+            String age = rawAnswer?.toString() ?? '';
             if (int.tryParse(age) == null ||
                 (int.parse(age) > 119 || int.parse(age) <= 0)) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.ageShouldBeLessThan120)}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
-
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.ageShouldBeLessThan120),
+              );
               isValid = false;
               break;
             }
           }
 
           if (question.question == 'Phone') {
-            String phoneNumber = question.answer;
-
-            if (phoneNumber.length != 11) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits)}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
-              isValid = false;
-              break;
-            }
-
-            if (int.tryParse(phoneNumber) == null) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => OutcomeState.loaded(
-                  value.questionList,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.phoneShouldHave11Digits)}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  submitterModel,
-                ),
-              ));
+            String phoneNumber = rawAnswer?.toString() ?? '';
+            if (phoneNumber.length != 11 ||
+                int.tryParse(phoneNumber) == null) {
+              _emitFieldError(
+                questionId,
+                LocalizationService.instance
+                    .translate(AppStrings.phoneShouldHave11Digits),
+              );
               isValid = false;
               break;
             }
           }
         }
-        if (question.answer == null || question.answer == '') {
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => OutcomeState.loaded(
-              value.questionList,
-              false,
-              '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-              snackbarErrorCounter += 1,
-              false,
-              submitterModel,
-            ),
-          ));
 
+        final answer = formData[questionId] ?? question.answer;
+        final isEmptyAnswer = answer == null ||
+            answer == '' ||
+            (answer is String && answer.trim().isEmpty) ||
+            (answer is Map &&
+                (answer['answers'] == null ||
+                    answer['answers'] == '' ||
+                    (answer['answers'] is List &&
+                        (answer['answers'] as List).isEmpty)));
+        if (question.type != 'multiple' &&
+            question.type != AppStrings.selectType &&
+            isEmptyAnswer) {
+          _emitFieldError(
+            questionId,
+            '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+          );
           isValid = false;
           break;
         }
@@ -457,6 +431,8 @@ class OutcomeCubit extends Cubit<OutcomeState> {
     }
 
     if (isValid == true) {
+      firstInvalidQuestionId = null;
+      firstInvalidQuestionIndex = null;
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => OutcomeState.loaded(
@@ -491,8 +467,6 @@ class OutcomeCubit extends Cubit<OutcomeState> {
           ));
         },
         (response) async {
-          // emit(OutcomeState.loaded(
-          //     [], true, response.message!, snackbarErrorCounter, false));
           emit(state.maybeMap(
             orElse: () => state,
             loaded: (value) => OutcomeState.loaded(
@@ -506,6 +480,6 @@ class OutcomeCubit extends Cubit<OutcomeState> {
           ));
         },
       );
-    } else {}
+    }
   }
 }

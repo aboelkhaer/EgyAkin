@@ -228,7 +228,9 @@ class _AiFormUploadScreenState extends State<AiFormUploadScreen> {
                                   ),
                                   const SizedBox(height: 10),
                                   Text(
-                                    'No images or files selected yet.',
+                                    context.tr(
+                                      AppStrings.noImagesOrFilesSelectedYet,
+                                    ),
                                     style: TextStyle(
                                       color: isDarkMode
                                           ? AppColors.darkDescription

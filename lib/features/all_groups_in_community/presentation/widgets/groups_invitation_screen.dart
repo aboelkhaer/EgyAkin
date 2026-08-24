@@ -1,21 +1,32 @@
-import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/groups_invitations_cubit/groups_invitations_cubit.dart';
 import 'package:egy_akin/features/all_groups_in_community/presentation/cubit/groups_invitations_cubit/groups_invitations_state.dart';
+import 'package:egy_akin/features/all_groups_in_community/presentation/widgets/groups_list_card.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
 
 class GroupsInvitationScreen extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
-  const GroupsInvitationScreen(
-      {super.key,
-      required this.currentDoctorModel,
-      required this.homeDataModel});
+  const GroupsInvitationScreen({
+    super.key,
+    required this.currentDoctorModel,
+    required this.homeDataModel,
+  });
 
   @override
   State<GroupsInvitationScreen> createState() => _GroupsInvitationScreenState();
 }
 
 class _GroupsInvitationScreenState extends State<GroupsInvitationScreen> {
+  static const _accents = <Color>[
+    Color(0xFF22C55E),
+    Color(0xFFF59E0B),
+    Color(0xFF8B5CF6),
+    Color(0xFF3B82F6),
+    Color(0xFFEF4444),
+    Color(0xFF14B8A6),
+  ];
+
   @override
   void initState() {
     if (context.read<GroupsInvitationsCubit>().callGroupsInvitations == 0) {
@@ -27,226 +38,203 @@ class _GroupsInvitationScreenState extends State<GroupsInvitationScreen> {
     super.initState();
   }
 
+  void _openGroup(GroupModel group) {
+    if (group.id == null) return;
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.groupDetailsInCommunity,
+      arguments: AppRoutesArgs.groupDetailsInCommunityRouteArgs(
+        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: widget.homeDataModel,
+        groupId: group.id.toString(),
+      ),
+    );
+  }
+
+  bool _canJoin(GroupModel group) {
+    final status = group.userStatus;
+    return status != GroupInviteStatus.invited.name &&
+        status != GroupInviteStatus.joined.name &&
+        status != GroupInviteStatus.accepted.name &&
+        status != GroupInviteStatus.pending.name;
+  }
+
+  Widget _inviteActions({
+    required GroupModel group,
+    required GroupsInvitationsCubit cubit,
+    required bool isDark,
+    required Color primary,
+    required bool isAcceptLoading,
+    required bool isDeclineLoading,
+  }) {
+    final invited = group.userStatus == GroupInviteStatus.invited.name;
+    final isThisGroup =
+        group.id.toString() == cubit.groupIdForAcceptOrDeclineMember;
+
+    if (invited) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _CircleAction(
+            isDark: isDark,
+            loading: isDeclineLoading && isThisGroup,
+            icon: Icons.close_rounded,
+            color: HomeDashboardColors.danger,
+            onTap: () {
+              cubit.acceptOrDeclineMemberInGroup(
+                groupId: group.id.toString(),
+                invitationId: group.invitationId ?? 0,
+                status: AcceptOrDeclineMemberInGroup.declined.name,
+              );
+            },
+          ),
+          SizedBox(width: 6.w),
+          _CircleAction(
+            isDark: isDark,
+            loading: isAcceptLoading && isThisGroup,
+            icon: Icons.check_rounded,
+            color: HomeDashboardColors.success,
+            onTap: () {
+              cubit.acceptOrDeclineMemberInGroup(
+                groupId: group.id.toString(),
+                invitationId: group.invitationId ?? 0,
+                status: AcceptOrDeclineMemberInGroup.accepted.name,
+              );
+            },
+          ),
+        ],
+      );
+    }
+
+    return GroupsJoinChip(
+      isDark: isDark,
+      primary: primary,
+      label: translateGroupStatus(group.userStatus.toString(), context),
+      enabled: _canJoin(group),
+      onTap: () => cubit.joinGroup(group.id.toString()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    GroupsInvitationsCubit cubit = GroupsInvitationsCubit.get(context);
-    return RefreshIndicator(
-      onRefresh: () {
-        return cubit
-            .getGroupsInvitations(widget.currentDoctorModel.id.toString());
-      },
-      child: BlocBuilder<GroupsInvitationsCubit, GroupsInvitationsState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    bottom: 10,
-                    top: 20,
-                  ),
-                  child: LoadingForGroupRow(
-                    count: 20,
-                  ),
-                ),
-              );
-            },
-            loaded: (
-              response,
-              snackBarMessage,
-              dialogMessage,
-              isSeeMore,
-              isAcceptLoading,
-              isDeclineLoading,
-            ) {
-              if (response.data!.data!.isEmpty) {
-                return SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Center(
-                    child: Column(
+    final cubit = GroupsInvitationsCubit.get(context);
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+
+        return RefreshIndicator(
+          color: primary,
+          onRefresh: () => cubit
+              .getGroupsInvitations(widget.currentDoctorModel.id.toString()),
+          child: BlocBuilder<GroupsInvitationsCubit, GroupsInvitationsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () => GroupsListLoading(isDark: isDark),
+                loaded: (
+                  response,
+                  snackBarMessage,
+                  dialogMessage,
+                  isSeeMore,
+                  isAcceptLoading,
+                  isDeclineLoading,
+                ) {
+                  final groups = response.data?.data ?? [];
+                  if (groups.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
                       children: [
-                        SizedBox(
-                          height: 150.h,
-                        ),
-                        Image.asset(
-                          AppImages.notFound,
-                          width: 200,
-                          height: 200,
-                        ),
-                        SizedBox(
-                          height: 150.h,
+                        SizedBox(height: 80.h),
+                        DashboardEmptyState(
+                          isDark: isDark,
+                          icon: Icons.mail_outline_rounded,
+                          title: context.tr(AppStrings.noInvitations),
+                          subtitle: context.tr(
+                              AppStrings.whenSomeoneInvitesYouToGroup),
+                          hint: context.tr(AppStrings.pullToRefresh),
+                          hintIcon: Icons.sync_rounded,
                         ),
                       ],
-                    ),
-                  ),
-                );
-              }
+                    );
+                  }
 
-              return ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                // controller: cubit.scrollControllerForMyGroups,
-                padding: const EdgeInsets.only(
-                  top: 20,
-                  left: 20,
-                  right: 20,
-                  bottom: 10,
-                ),
-                children: [
-                  ...response.data!.data!.map(
-                    (groupModel) => Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: GroupRow(
-                        currentDoctorModel: widget.currentDoctorModel,
-                        homeDataModel: widget.homeDataModel,
-                        groupModel: groupModel,
-                        groupPosition: GroupPosition.myGroups,
-                        actionIcons: groupModel.userStatus ==
-                                GroupInviteStatus.invited.name
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  isDeclineLoading &&
-                                          groupModel.id.toString() ==
-                                              cubit
-                                                  .groupIdForAcceptOrDeclineMember
-                                      ? IconButton(
-                                          onPressed: () {},
-                                          icon: const SizedBox(
-                                            width: 15,
-                                            height: 15,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                        )
-                                      : IconButton(
-                                          onPressed: () {
-                                            cubit.acceptOrDeclineMemberInGroup(
-                                              groupId: groupModel.id.toString(),
-                                              invitationId:
-                                                  groupModel.invitationId ?? 0,
-                                              status:
-                                                  AcceptOrDeclineMemberInGroup
-                                                      .declined.name,
-                                            );
-                                          },
-                                          icon: Icon(
-                                            Icons.clear,
-                                            color: Colors.red.shade700,
-                                          ),
-                                        ),
-                                  isAcceptLoading &&
-                                          groupModel.id.toString() ==
-                                              cubit
-                                                  .groupIdForAcceptOrDeclineMember
-                                      ? IconButton(
-                                          onPressed: () {},
-                                          icon: const SizedBox(
-                                            width: 15,
-                                            height: 15,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                          splashColor: Colors.transparent,
-                                          highlightColor: Colors.transparent,
-                                        )
-                                      : IconButton(
-                                          onPressed: () {
-                                            cubit.acceptOrDeclineMemberInGroup(
-                                              groupId: groupModel.id.toString(),
-                                              invitationId:
-                                                  groupModel.invitationId ?? 0,
-                                              status:
-                                                  AcceptOrDeclineMemberInGroup
-                                                      .accepted.name,
-                                            );
-                                          },
-                                          icon: Icon(Icons.check,
-                                              color: Colors.green.shade700),
-                                        ),
-                                ],
-                              )
-                            : TextButton(
-                                onPressed: groupModel.userStatus ==
-                                            GroupInviteStatus.invited.name ||
-                                        groupModel.userStatus ==
-                                            GroupInviteStatus.joined.name ||
-                                        groupModel.userStatus ==
-                                            GroupInviteStatus.accepted.name ||
-                                        (groupModel.userStatus ==
-                                            GroupInviteStatus.pending.name)
-                                    ? null // Disable the button if the user is already invited or joined
-                                    : () {
-                                        cubit.joinGroup(
-                                            groupModel.id.toString());
-                                      },
-                                style: TextButton.styleFrom(
-                                  foregroundColor:
-                                      AppColors.primary, // Text and icon color
-                                  disabledForegroundColor: Colors
-                                      .grey, // Color when the button is disabled
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.group_add,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      (groupModel.userStatus ==
-                                                      GroupInviteStatus
-                                                          .invited.name &&
-                                                  groupModel.privacy ==
-                                                      GroupStatus
-                                                          .private.name) ||
-                                              (groupModel.userStatus ==
-                                                  GroupInviteStatus
-                                                      .pending.name)
-                                          ? 'Pending'
-                                          : groupModel.userStatus ==
-                                                      GroupInviteStatus
-                                                          .accepted.name ||
-                                                  groupModel.userStatus ==
-                                                      GroupInviteStatus
-                                                          .joined.name ||
-                                                  groupModel.userStatus ==
-                                                      GroupInviteStatus
-                                                          .invited.name
-                                              ? 'Joined'
-                                              : 'Join',
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                  // if (isSeeMore)
-                  //   Padding(
-                  //     padding: EdgeInsets.only(bottom: 20.h),
-                  //     child: const Center(
-                  //       child: SizedBox(
-                  //         height: 15,
-                  //         width: 15,
-                  //         child: CircularProgressIndicator(
-                  //           strokeWidth: 3,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                ],
+                  return ListView.separated(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                    itemCount: groups.length,
+                    separatorBuilder: (_, __) => SizedBox(height: 10.h),
+                    itemBuilder: (context, index) {
+                      final group = groups[index];
+                      return FadeInUp(
+                        from: 10,
+                        duration: const Duration(milliseconds: 380),
+                        delay: Duration(
+                          milliseconds: (index.clamp(0, 8) * 40),
+                        ),
+                        child: GroupsListCard(
+                          group: group,
+                          isDark: isDark,
+                          primary: primary,
+                          accent: _accents[
+                              (group.id ?? 0).abs() % _accents.length],
+                          onTap: () => _openGroup(group),
+                          trailing: _inviteActions(
+                            group: group,
+                            cubit: cubit,
+                            isDark: isDark,
+                            primary: primary,
+                            isAcceptLoading: isAcceptLoading,
+                            isDeclineLoading: isDeclineLoading,
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               );
             },
-          );
-        },
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CircleAction extends StatelessWidget {
+  final bool isDark;
+  final bool loading;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _CircleAction({
+    required this.isDark,
+    required this.loading,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: color.withOpacity(isDark ? 0.18 : 0.12),
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: loading ? null : onTap,
+        child: SizedBox(
+          width: 34.r,
+          height: 34.r,
+          child: loading
+              ? Padding(
+                  padding: EdgeInsets.all(8.r),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: color,
+                  ),
+                )
+              : Icon(icon, size: 16.sp, color: color),
+        ),
       ),
     );
   }

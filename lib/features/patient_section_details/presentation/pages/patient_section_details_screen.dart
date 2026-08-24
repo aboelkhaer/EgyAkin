@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/ai_form_upload/presentation/pages/ai_form_upload_screen.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_dose_section.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_false.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/build_section_details_if_final_submit_true.dart';
@@ -43,6 +44,23 @@ class _PatientSectionDetailsScreenState
     extends State<PatientSectionDetailsScreen> {
   late TextEditingController _recommendationController;
   final GlobalKey<FormState> _recommendationFormKey = GlobalKey<FormState>();
+
+  /// Patient final-submit locks editing, unless this section is always_open.
+  /// - finalSubmit=false                   → always editable
+  /// - finalSubmit=true + alwaysOpen=true  → editable
+  /// - finalSubmit=true + alwaysOpen=false → read-only
+  bool get _isSectionAlwaysOpen => widget.sectionModel.alwaysOpen == true;
+
+  bool get _isEditingLocked =>
+      widget.finalSubmitStatus && !_isSectionAlwaysOpen;
+
+  /// Editable form vs read-only summary. Ownership is NOT used here —
+  /// finalSubmit / always_open alone decide lock state.
+  bool get _canEditSection {
+    if (widget.currentDoctorRole == AppStrings.roleAdmin) return true;
+    if (!widget.finalSubmitStatus) return true;
+    return _isSectionAlwaysOpen;
+  }
 
   @override
   void initState() {
@@ -310,253 +328,471 @@ class _PatientSectionDetailsScreenState
     );
   }
 
+  Future<void> _openVoice(PatientSectionDetailsCubit cubit) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider(
+          create: (_) => sl<RecordCubit>(),
+          child: RecordScreen(
+            questions: cubit.questionModelList,
+            source: 'section_details',
+            sectionId: widget.sectionModel.sectionId.toString(),
+            aiMode: 'voice',
+            aiHintHtml: cubit.sectionAiHint,
+            aiVoiceTime: cubit.sectionAiVoiceTime,
+          ),
+        ),
+      ),
+    );
+    if (result is Map<String, dynamic>) {
+      cubit.applyVoiceAnswers(result);
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _openImageAi(PatientSectionDetailsCubit cubit) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AiFormUploadScreen(
+          sectionId: widget.sectionModel.sectionId.toString(),
+        ),
+      ),
+    );
+    if (result is Map) {
+      cubit.applyVoiceAnswers(Map<String, dynamic>.from(result));
+      if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _onAddRecommendation() async {
+    final hasPermission = await PermissionHelper.hasPermission(
+      AppPermissions.createRecommendation,
+    );
+    if (!mounted) return;
+    if (hasPermission) {
+      _showAddRecommendationBottomSheet(context);
+    } else {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.attention),
+        description:
+            context.tr(AppStrings.youDontHavePermissionToCreateRecommendations),
+        coloredButtonText: context.tr(AppStrings.ok),
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+        isNoColorShow: false,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
+        final scaffold = HomeDashboardColors.scaffold(isDark);
+        final titleColor = HomeDashboardColors.title(isDark);
 
-        return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
-          appBar: AppBar(
-            title: GestureDetector(
-                onTap: () {
-                  animateToTopOfScreen(
-                      cubit.patientSectionDetailsScrollController);
-                },
-                child: Text(
-                  widget.sectionModel.sectionName.toString(),
-                  style: TextStyle(
-                    color: isDarkMode ? AppColors.darkTitle : Colors.white,
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light.copyWith(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
+                  statusBarBrightness: Brightness.dark,
+                )
+              : SystemUiOverlayStyle.dark.copyWith(
+                  statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
+                ),
+          child: Scaffold(
+            backgroundColor: scaffold,
+            body: Column(
+              children: [
+                AnimatedContainer(
+                  duration: Duration.zero,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: isDark
+                          ? [
+                              const Color(0xFF4A2F7A),
+                              const Color(0xFF2B1A52),
+                              scaffold,
+                            ]
+                          : [
+                              primary.withOpacity(0.28),
+                              primary.withOpacity(0.14),
+                              scaffold,
+                            ],
+                      stops: const [0.0, 0.55, 1.0],
+                    ),
                   ),
-                )),
-            centerTitle: true,
-            backgroundColor:
-                isDarkMode ? AppColors.darkCardBG : AppColors.primary,
-            systemOverlayStyle: SystemUiOverlayStyle.light,
-            actions: [
-              BlocBuilder<PatientSectionDetailsCubit,
-                  PatientSectionDetailsState>(
-                builder: (context, _) {
-                  final currentAiMode =
-                      PatientSectionDetailsCubit.get(context).sectionAiMode;
-                  final canShowAiActions =
-                      !(widget.sectionModel.sectionStatus ?? false) &&
-                          !widget.finalSubmitStatus;
-                  return Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (canShowAiActions && currentAiMode == 'voice')
-                        IconButton(
-                          onPressed: () async {
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => BlocProvider(
-                                  create: (_) => sl<RecordCubit>(),
-                                  child: RecordScreen(
-                                    questions: cubit.questionModelList,
-                                    source: 'section_details',
-                                    sectionId: widget.sectionModel.sectionId
-                                        .toString(),
-                                    aiMode: 'voice',
-                                    aiHintHtml: cubit.sectionAiHint,
-                                    aiVoiceTime: cubit.sectionAiVoiceTime,
-                                  ),
+                  child: SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 8.h),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          _SectionRoundIconButton(
+                            isDark: isDark,
+                            icon: Icons.arrow_back_ios_new_rounded,
+                            onTap: () => Navigator.of(context).maybePop(),
+                          ),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                animateToTopOfScreen(
+                                  cubit.patientSectionDetailsScrollController,
+                                );
+                              },
+                              child: Text(
+                                widget.sectionModel.sectionName.toString(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark ? Colors.white : titleColor,
+                                  letterSpacing: -0.2,
                                 ),
                               ),
-                            );
-                            if (result is Map<String, dynamic>) {
-                              cubit.applyVoiceAnswers(result);
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.mic,
-                            color: Colors.white,
+                            ),
                           ),
-                        ),
-                      if (canShowAiActions && currentAiMode == 'image')
-                        IconButton(
-                          onPressed: () async {
-                            final result = await Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => AiFormUploadScreen(
-                                  sectionId:
-                                      widget.sectionModel.sectionId.toString(),
-                                ),
-                              ),
-                            );
-                            if (result is Map) {
-                              final answersMap =
-                                  Map<String, dynamic>.from(result);
-                              cubit.applyVoiceAnswers(answersMap);
-                              if (mounted) setState(() {});
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.image_outlined,
-                            color: Colors.white,
-                          ),
-                          tooltip: 'AI image analysis',
-                        ),
-                      // Only show add recommendation button for medication section and when not final submitted
-                      if (widget.sectionModel.sectionId == 12 &&
-                          !widget.finalSubmitStatus)
-                        IconButton(
-                          onPressed: () async {
-                            // Check permission before showing add recommendation bottom sheet
-                            final hasPermission =
-                                await PermissionHelper.hasPermission(
-                              AppPermissions.createRecommendation,
-                            );
-
-                            if (!mounted) return;
-
-                            if (hasPermission) {
-                              // User has permission - show add recommendation bottom sheet
-                              _showAddRecommendationBottomSheet(context);
-                            } else {
-                              // User doesn't have permission - show permission denied dialog
-                              showCustomDialog(
-                                context: context,
-                                title: context.tr(AppStrings.attention),
-                                description: context.tr(AppStrings
-                                    .youDontHavePermissionToCreateRecommendations),
-                                coloredButtonText: context.tr(AppStrings.ok),
-                                coloredButtonOnTap: () =>
-                                    Navigator.of(context).pop(),
-                                isNoColorShow: false,
+                          BlocBuilder<PatientSectionDetailsCubit,
+                              PatientSectionDetailsState>(
+                            builder: (context, _) {
+                              final currentAiMode =
+                                  PatientSectionDetailsCubit.get(context)
+                                      .sectionAiMode;
+                              final canShowAiActions =
+                                  !(widget.sectionModel.sectionStatus ??
+                                          false) &&
+                                      !_isEditingLocked;
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (canShowAiActions &&
+                                      currentAiMode == 'voice') ...[
+                                    SizedBox(width: 8.w),
+                                    _SectionAiActionButton(
+                                      primary: primary,
+                                      icon: Icons.mic_rounded,
+                                      onTap: () => _openVoice(cubit),
+                                    ),
+                                  ],
+                                  if (canShowAiActions &&
+                                      currentAiMode == 'image') ...[
+                                    SizedBox(width: 8.w),
+                                    _SectionAiActionButton(
+                                      primary: primary,
+                                      icon: Icons.image_outlined,
+                                      onTap: () => _openImageAi(cubit),
+                                    ),
+                                  ],
+                                  if (widget.sectionModel.sectionId == 12 &&
+                                      !_isEditingLocked) ...[
+                                    SizedBox(width: 8.w),
+                                    _SectionRoundIconButton(
+                                      isDark: isDark,
+                                      icon: Icons.add_rounded,
+                                      onTap: _onAddRecommendation,
+                                    ),
+                                  ],
+                                ],
                               );
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.add,
-                            color: Colors.white,
+                            },
                           ),
-                        ),
-                    ],
-                  );
-                },
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: BlocConsumer<PatientSectionDetailsCubit,
+                      PatientSectionDetailsState>(
+                    listener: (context, state) {
+                      state.maybeWhen(
+                          orElse: () {},
+                          error: (message) {
+                            customSnackBar(context: context, message: message);
+                          },
+                          medicationSectionLoaded: (
+                            response,
+                            changesCounter,
+                            snackBarMessage,
+                            dialogMessage,
+                            isSubmitLoading,
+                            isSubmitLoaded,
+                            isSearchMedicationLoading,
+                            searchForDoseInMedicationSectionResponse,
+                            isDeletePatientRecommendationLoading,
+                            isSeeMore,
+                          ) {
+                            if (snackBarMessage.isNotEmpty) {
+                              customSnackBar(
+                                  context: context, message: snackBarMessage);
+                            }
+                          });
+                    },
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        orElse: () {
+                          return _SectionDetailsLoadingView(
+                            isDark: isDark,
+                            primary: primary,
+                          );
+                        },
+                        loaded: (
+                          questions,
+                          isSubmitLoading,
+                          isSubmitted,
+                          message,
+                          snackbarErrorCounter,
+                          isChooseFilesLoading,
+                          isChooseFilesLoaded,
+                          uploadFilesProgress,
+                          isGetMedicationsLoading,
+                          isGetMedicationsLoaded,
+                          isSearchMedicationLoading,
+                          counterChanges,
+                          isCreateMedicationLoading,
+                          isCreateMedicationLoaded,
+                          dialogMessage,
+                        ) {
+                          // finalSubmit=false → editable
+                          // finalSubmit=true + always_open → editable
+                          // finalSubmit=true + !always_open → read-only
+                          if (_canEditSection) {
+                            return BuildSectionDetailsIfFinalSubmitFalse(
+                              questions: questions,
+                              patientId: widget.patientId,
+                              doctorId: widget.doctorId,
+                              sectionModel: widget.sectionModel,
+                              homeDataModel: widget.homeDataModel,
+                              currentDoctorModel: widget.currentDoctorModel,
+                              finalSubmitStatus: widget.finalSubmitStatus,
+                              isAllDataOpen: widget.isAllDataOpen,
+                            );
+                          }
+
+                          return BuildSectionDetailsIfFinalSubmitTrue(
+                            questionList: cubit.questionModelList,
+                            doctorId: widget.doctorId,
+                            isAllDataOpen: widget.isAllDataOpen,
+                            currentDoctorId:
+                                widget.currentDoctorModel.id.toString(),
+                          );
+                        },
+                        medicationSectionLoaded: (
+                          response,
+                          changesCounter,
+                          snackBarMessage,
+                          dialogMessage,
+                          isSubmitLoading,
+                          isSubmitLoaded,
+                          isSearchMedicationLoading,
+                          searchForDoseInMedicationSectionResponse,
+                          isDeletePatientRecommendationLoading,
+                          isSeeMore,
+                        ) {
+                          return BlocProvider<PatientSectionDetailsCubit>.value(
+                            value: cubit,
+                            child: BuildDoseSection(
+                              currentDoctorModel: widget.currentDoctorModel,
+                              patientId: widget.patientId,
+                              doctorId: widget.doctorId,
+                              sectionModel: widget.sectionModel,
+                              homeDataModel: widget.homeDataModel,
+                              finalSubmitStatus: _isEditingLocked,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SectionRoundIconButton extends StatelessWidget {
+  final bool isDark;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _SectionRoundIconButton({
+    required this.isDark,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38.r,
+        height: 38.r,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isDark ? const Color(0xFF2A2A2E) : Colors.white,
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.08)
+                : const Color(0xFFE8E8EE),
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+        ),
+        child: Icon(
+          icon,
+          size: 15.sp,
+          color: HomeDashboardColors.title(isDark),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionAiActionButton extends StatelessWidget {
+  final Color primary;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _SectionAiActionButton({
+    required this.primary,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 34.r,
+            height: 34.r,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  primary,
+                  Color.lerp(primary, const Color(0xFFB794F6), 0.35)!,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primary.withOpacity(0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 16.sp,
+            ),
+          ),
+          Positioned(
+            top: -2.h,
+            right: -2.w,
+            child: Container(
+              width: 13.r,
+              height: 13.r,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(color: primary, width: 1),
+              ),
+              child: Icon(
+                Icons.auto_awesome,
+                size: 7.sp,
+                color: primary,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionDetailsLoadingView extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+
+  const _SectionDetailsLoadingView({
+    required this.isDark,
+    required this.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final shimmer = isDark ? const Color(0xFF2A2A2E) : const Color(0xFFE8E8EE);
+
+    return ListView.separated(
+      padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 24.h),
+      itemCount: 6,
+      separatorBuilder: (_, __) => SizedBox(height: 8.h),
+      itemBuilder: (_, __) {
+        return Container(
+          padding: EdgeInsets.fromLTRB(12.w, 12.h, 12.w, 12.h),
+          decoration: BoxDecoration(
+            color: cardBg,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.06)
+                  : const Color(0xFFE8E8EE),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 12.h,
+                width: 140.w,
+                decoration: BoxDecoration(
+                  color: shimmer,
+                  borderRadius: BorderRadius.circular(6.r),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Container(
+                height: 42.h,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: shimmer.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
               ),
             ],
-          ),
-          body: BlocConsumer<PatientSectionDetailsCubit,
-              PatientSectionDetailsState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                  orElse: () {},
-                  error: (message) {
-                    customSnackBar(context: context, message: message);
-                  },
-                  medicationSectionLoaded: (
-                    response,
-                    changesCounter,
-                    snackBarMessage,
-                    dialogMessage,
-                    isSubmitLoading,
-                    isSubmitLoaded,
-                    isSearchMedicationLoading,
-                    searchForDoseInMedicationSectionResponse,
-                    isDeletePatientRecommendationLoading,
-                    isSeeMore,
-                  ) {
-                    if (snackBarMessage.isNotEmpty) {
-                      customSnackBar(
-                          context: context, message: snackBarMessage);
-                    }
-                  });
-            },
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const ShimmerLoadingPatientsCards(ishorizontal: false);
-                },
-                loaded: (
-                  questions,
-                  isSubmitLoading,
-                  isSubmitted,
-                  message,
-                  snackbarErrorCounter,
-                  isChooseFilesLoading,
-                  isChooseFilesLoaded,
-                  uploadFilesProgress,
-                  isGetMedicationsLoading,
-                  isGetMedicationsLoaded,
-                  isSearchMedicationLoading,
-                  counterChanges,
-                  isCreateMedicationLoading,
-                  isCreateMedicationLoaded,
-                  dialogMessage,
-                ) {
-                  if (widget.currentDoctorRole == AppStrings.roleAdmin) {
-                    return BuildSectionDetailsIfFinalSubmitFalse(
-                      questions: questions,
-                      patientId: widget.patientId,
-                      doctorId: widget.doctorId,
-                      sectionModel: widget.sectionModel,
-                      homeDataModel: widget.homeDataModel,
-                      currentDoctorModel: widget.currentDoctorModel,
-                      finalSubmitStatus: widget.finalSubmitStatus,
-                      isAllDataOpen: widget.isAllDataOpen,
-                    );
-                  }
-                  if (widget.finalSubmitStatus &&
-                      widget.sectionModel.sectionId != 12) {
-                    return BuildSectionDetailsIfFinalSubmitTrue(
-                      questionList: cubit.questionModelList,
-                      doctorId: widget.doctorId,
-                      isAllDataOpen: widget.isAllDataOpen,
-                      currentDoctorId: widget.currentDoctorModel.id.toString(),
-                    );
-                  }
-                  if (widget.doctorId.toString() !=
-                      widget.currentDoctorModel.id.toString()) {
-                    BuildSectionDetailsIfFinalSubmitTrue(
-                      questionList: cubit.questionModelList,
-                      doctorId: widget.doctorId,
-                      isAllDataOpen: widget.isAllDataOpen,
-                      currentDoctorId: widget.currentDoctorModel.id.toString(),
-                    );
-                  }
-
-                  return BuildSectionDetailsIfFinalSubmitFalse(
-                    questions: questions,
-                    patientId: widget.patientId,
-                    doctorId: widget.doctorId,
-                    sectionModel: widget.sectionModel,
-                    homeDataModel: widget.homeDataModel,
-                    currentDoctorModel: widget.currentDoctorModel,
-                    finalSubmitStatus: widget.finalSubmitStatus,
-                    isAllDataOpen: widget.isAllDataOpen,
-                  );
-                },
-                medicationSectionLoaded: (
-                  response,
-                  changesCounter,
-                  snackBarMessage,
-                  dialogMessage,
-                  isSubmitLoading,
-                  isSubmitLoaded,
-                  isSearchMedicationLoading,
-                  searchForDoseInMedicationSectionResponse,
-                  isDeletePatientRecommendationLoading,
-                  isSeeMore,
-                ) {
-                  return BlocProvider<PatientSectionDetailsCubit>.value(
-                    value: cubit,
-                    child: BuildDoseSection(
-                      currentDoctorModel: widget.currentDoctorModel,
-                      patientId: widget.patientId,
-                      doctorId: widget.doctorId,
-                      sectionModel: widget.sectionModel,
-                      homeDataModel: widget.homeDataModel,
-                      finalSubmitStatus: widget.finalSubmitStatus,
-                    ),
-                  );
-                },
-              );
-            },
           ),
         );
       },

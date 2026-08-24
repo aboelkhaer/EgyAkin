@@ -23,17 +23,47 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   int currentPageInFilter = 1;
   int totalPatientInFilter = 0;
 
-  getCurrentDoctorPatients() async {
-    emit(const CurrentDoctorPatientsState.loading());
+  getCurrentDoctorPatients({bool showLoading = true}) async {
+    if (isClosed) return;
+    if (showLoading) {
+      emit(const CurrentDoctorPatientsState.loading());
+    }
     _currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
+    isApplyFilterDone = false;
 
     final result = await _getCurrentDoctorPatientsUsecase.execute(_currentPage);
+    if (isClosed) return;
     result.fold(
       (l) {
-        emit(CurrentDoctorPatientsState.error(l.message));
+        if (isClosed) return;
+        if (showLoading) {
+          emit(CurrentDoctorPatientsState.error(l.message));
+          return;
+        }
+        emit(state.maybeMap(
+          orElse: () => CurrentDoctorPatientsState.error(l.message),
+          loaded: (value) => CurrentDoctorPatientsState.loaded(
+            value.response,
+            false,
+            l.message,
+            value.isApplyFilterLoading,
+            value.isApplyFilterLoaded,
+            value.isExportLoading,
+            value.isExportLoaded,
+            value.fileUrl,
+            value.filters,
+            value.totalPatientInFilter,
+          ),
+        ));
       },
       (r) async {
+        if (isClosed) return;
         filtersOptions = GetFiltersOptionsModelResponse(data: r.filters ?? []);
+        final lastPage = r.data?.lastPage ?? 1;
+        final currentPage = r.data?.currentPage ?? 1;
+        isLastPage = currentPage >= lastPage;
         emit(CurrentDoctorPatientsState.loaded(
             r, false, '', false, false, false, false, null, null, 0));
       },
@@ -265,6 +295,12 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
     );
   }
 
+  Map<String, dynamic> _exportRequestMap(bool isOnlyMyPatients) {
+    final map = _formDataToRequestMap();
+    map['only_my_patients'] = isOnlyMyPatients;
+    return map;
+  }
+
   exportFilteredPatients(bool isOnlyMyPatients) async {
     emit(
       state.maybeMap(
@@ -284,7 +320,8 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
         },
       ),
     );
-    final result = await _exportPatientsUsecase.execute(isOnlyMyPatients);
+    final result =
+        await _exportPatientsUsecase.execute(_exportRequestMap(isOnlyMyPatients));
     result.fold(
       (l) {
         emit(
@@ -351,10 +388,13 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   bool isLastPage = false;
   int _currentPage = 1;
   void loadMorePatients() async {
-    // Early exit if already on last page
-    if (isLastPage) return;
+    if (isClosed || isLastPage || isApplyFilterDone) {
+      isLoadingMoreForScroll = false;
+      return;
+    }
 
     _currentPage++;
+    if (isClosed) return;
     emit(state.maybeMap(
       orElse: () => state,
       loaded: (value) => CurrentDoctorPatientsState.loaded(
@@ -371,14 +411,31 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
     ));
 
     final result = await _getCurrentDoctorPatientsUsecase.execute(_currentPage);
+    if (isClosed) return;
 
     result.fold(
       (failure) {
-        _currentPage--; // Revert page increment on failure
+        _currentPage--;
         isLoadingMoreForScroll = false;
-        emit(CurrentDoctorPatientsState.error(failure.message));
+        if (isClosed) return;
+        emit(state.maybeMap(
+          orElse: () => CurrentDoctorPatientsState.error(failure.message),
+          loaded: (value) => CurrentDoctorPatientsState.loaded(
+            value.response,
+            false,
+            failure.message,
+            value.isApplyFilterLoading,
+            value.isApplyFilterLoaded,
+            value.isExportLoading,
+            value.isExportLoaded,
+            value.fileUrl,
+            value.filters,
+            value.totalPatientInFilter,
+          ),
+        ));
       },
       (newData) {
+        if (isClosed) return;
         final currentState = state;
         currentState.maybeWhen(
           loaded: (responseData,
@@ -391,26 +448,26 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
               fileUrl,
               filters,
               totalPatientInFilter) {
-            // Check if we've reached the last page
-            final reachedLastPage =
-                _currentPage >= responseData.data!.lastPage!;
+            final pageLast =
+                newData.data?.lastPage ?? responseData.data?.lastPage ?? 1;
+            isLastPage = _currentPage >= pageLast;
+            isLoadingMoreForScroll = false;
 
             final updatedData = responseData.copyWith(
               data: responseData.data!.copyWith(
                 data: [
                   ...responseData.data!.data!,
-                  ...newData.data!.data!,
+                  ...?newData.data?.data,
                 ],
+                currentPage: newData.data?.currentPage,
+                lastPage: pageLast,
+                total: newData.data?.total ?? responseData.data?.total,
               ),
             );
 
-            // Update state variables
-            isLastPage = reachedLastPage;
-            isLoadingMoreForScroll = false;
-
             emit(CurrentDoctorPatientsState.loaded(
               updatedData,
-              false, // Hide loading indicator
+              false,
               message,
               isApplyFilterLoading,
               isApplyFilterLoaded,

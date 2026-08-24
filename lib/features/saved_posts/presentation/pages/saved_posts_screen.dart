@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_cubit.dart';
 import 'package:egy_akin/features/saved_posts/presentation/cubit/saved_posts_state.dart';
 
@@ -70,53 +71,91 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
   @override
   Widget build(BuildContext context) {
     SavedPostsCubit cubit = SavedPostsCubit.get(context);
-    return Scaffold(
-      appBar: AppBar(
-        // title: Text(widget.doctorName),
-        title: Text(context.tr(AppStrings.savedPosts)),
-      ),
-      body: BlocBuilder<SavedPostsCubit, SavedPostsState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return const SizedBox.shrink();
-            },
-            loading: () {
-              return const ShimmerLoadingFeeds(
-                numberOfShimmer: 5,
-              );
-            },
-            loaded: (
-              response,
-              snackBarMessage,
-              dialogMessage,
-              isDeletePostLoading,
-              isDeletePostLoaded,
-              isSeeMore,
-              changeCounter,
-            ) {
-              return response.data!.data!.isEmpty
-                  ? Center(
-                      child: Image.asset(
-                        AppImages.notFound,
-                        width: 200,
-                        height: 200,
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+        final scaffold = HomeDashboardColors.scaffold(isDark);
+        final titleColor = HomeDashboardColors.title(isDark);
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Colors.transparent)
+              : SystemUiOverlayStyle.dark
+                  .copyWith(statusBarColor: Colors.transparent),
+          child: Scaffold(
+            backgroundColor: scaffold,
+            body: Column(
+              children: [
+                _PostsListHeader(
+                  isDark: isDark,
+                  scaffold: scaffold,
+                  primary: primary,
+                  titleColor: titleColor,
+                  title: context.tr(AppStrings.savedPosts),
+                  onBack: () => Navigator.of(context).maybePop(),
+                ),
+                Expanded(
+                  child: BlocBuilder<SavedPostsCubit, SavedPostsState>(
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return const SizedBox.shrink();
+                },
+                loading: () {
+                  return const ShimmerLoadingFeeds(
+                    numberOfShimmer: 5,
+                  );
+                },
+                loaded: (
+                  response,
+                  snackBarMessage,
+                  dialogMessage,
+                  isDeletePostLoading,
+                  isDeletePostLoaded,
+                  isSeeMore,
+                  changeCounter,
+                ) {
+                  final posts = response.data?.data ?? [];
+                  if (posts.isEmpty) {
+                    return RefreshIndicator(
+                      onRefresh: () => cubit.getSavedPosts(widget.doctorId),
+                      color: primary,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.sizeOf(context).height * 0.62,
+                            child: _SavedPostsEmptyState(
+                              isDark: isDark,
+                              primary: primary,
+                            ),
+                          ),
+                        ],
                       ),
-                    )
-                  : Column(
+                    );
+                  }
+                  return Column(
                       children: [
                         Expanded(
                           child: RefreshIndicator(
                             onRefresh: () {
                               return cubit.getSavedPosts(widget.doctorId);
                             },
-                            color: AppColors.primary,
+                            color: primary,
                             child: ListView.builder(
                               itemCount: response.data!.data!.length,
                               physics: const AlwaysScrollableScrollPhysics(),
                               controller: cubit.scrollController,
-                              padding: const EdgeInsets.all(20) +
-                                  EdgeInsets.only(bottom: 60.h),
+                              padding: EdgeInsets.fromLTRB(
+                                0,
+                                12.h,
+                                0,
+                                60.h,
+                              ),
                               itemBuilder: (context, index) {
                                 var feed = response.data!.data![index];
                                 final poll = feed
@@ -297,8 +336,10 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                                                           .toString())
                                               ? const SizedBox.shrink()
                                               : PopupMenuButton<String>(
-                                                  icon: const Icon(
-                                                      Icons.more_vert),
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    color: titleColor,
+                                                  ),
                                                   onSelected: (String value) {
                                                     switch (value) {
                                                       case 'Report':
@@ -457,9 +498,225 @@ class _SavedPostsScreenState extends State<SavedPostsScreen> {
                         ),
                       ],
                     );
+                },
+              );
             },
-          );
-        },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PostsListHeader extends StatelessWidget {
+  final bool isDark;
+  final Color scaffold;
+  final Color primary;
+  final Color titleColor;
+  final String title;
+  final VoidCallback onBack;
+
+  const _PostsListHeader({
+    required this.isDark,
+    required this.scaffold,
+    required this.primary,
+    required this.titleColor,
+    required this.title,
+    required this.onBack,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [
+                  const Color(0xFF4A2F7A),
+                  const Color(0xFF2B1A52),
+                  scaffold,
+                ]
+              : [
+                  primary.withOpacity(0.28),
+                  primary.withOpacity(0.14),
+                  scaffold,
+                ],
+          stops: const [0.0, 0.55, 1.0],
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 12.h),
+          child: SizedBox(
+            height: 36.w,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 44.w),
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white : titleColor,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Material(
+                    color: isDark ? const Color(0xFF2A2733) : Colors.white,
+                    shape: const CircleBorder(),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: onBack,
+                      child: Container(
+                        width: 36.w,
+                        height: 36.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isDark
+                                ? const Color(0xFF3A3645)
+                                : const Color(0xFFE6E2F0),
+                          ),
+                        ),
+                        child: Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 16.sp,
+                          color:
+                              isDark ? Colors.white : const Color(0xFF1F2937),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SavedPostsEmptyState extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+
+  const _SavedPostsEmptyState({
+    required this.isDark,
+    required this.primary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cardBg = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    final border = isDark
+        ? Colors.white.withOpacity(0.06)
+        : const Color(0xFFE8E8EE);
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 88.r,
+              height: 88.r,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    primary.withOpacity(isDark ? 0.28 : 0.16),
+                    primary.withOpacity(isDark ? 0.1 : 0.05),
+                  ],
+                ),
+                border: Border.all(color: primary.withOpacity(0.22)),
+              ),
+              child: Icon(
+                Icons.bookmark_border_rounded,
+                size: 36.sp,
+                color: primary,
+              ),
+            ),
+            SizedBox(height: 18.h),
+            Text(
+              context.tr(AppStrings.noSavedPostsYet),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.3,
+                color: HomeDashboardColors.title(isDark),
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              context.tr(AppStrings.bookmarkPostsToRevisit),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12.5.sp,
+                fontWeight: FontWeight.w500,
+                height: 1.45,
+                color: HomeDashboardColors.subtitle(isDark),
+              ),
+            ),
+            SizedBox(height: 18.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+              decoration: BoxDecoration(
+                color: cardBg,
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(color: border),
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.bookmark_rounded,
+                    size: 14.sp,
+                    color: primary,
+                  ),
+                  SizedBox(width: 6.w),
+                  Text(
+                    context.tr(AppStrings.tapBookmarkOnAnyPostToSave),
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: HomeDashboardColors.subtitle(isDark),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

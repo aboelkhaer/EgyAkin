@@ -51,29 +51,35 @@ class PostCard extends StatelessWidget {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
         return Container(
-          margin: EdgeInsets.only(bottom: isGroupPosts ? 0 : 16),
-          // padding: const EdgeInsets.all(20),
+          margin: EdgeInsets.only(
+            bottom: isGroupPosts ? 0 : 12.h,
+            left: isGroupPosts ? 0 : 20,
+            right: isGroupPosts ? 0 : 20,
+          ),
           decoration: BoxDecoration(
             color: isDarkMode ? AppColors.darkCardBG : Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: isDarkMode
-                    ? Colors.black.withOpacity(0.3)
-                    : Colors.grey.withOpacity(0.4),
-                spreadRadius: 2,
-                blurRadius: 12,
-                offset: const Offset(0, 5), // changes position of shadow
-              ),
-            ],
+            borderRadius: BorderRadius.circular(18.r),
+            border: Border.all(
+              color: isDarkMode
+                  ? AppColors.darkBorder.withOpacity(0.7)
+                  : const Color(0xFFE8E8EE),
+            ),
+            boxShadow: isDarkMode
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: Column(
             children: [
               Container(
                 padding: isGroupPosts
-                    ? const EdgeInsets.only(
-                        top: 20, left: 20, right: 20, bottom: 20)
-                    : const EdgeInsets.all(20),
+                    ? EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 14.h)
+                    : EdgeInsets.fromLTRB(14.w, 14.h, 14.w, 12.h),
                 child: Column(
                   children: [
                     isGroupPosts && feed.group != null
@@ -284,12 +290,29 @@ class PostCard extends StatelessWidget {
                                         ],
                                       ),
                                       Text(
-                                        // formatDateTimeForCommunity(
-                                        //     feed.createdAt.toString()),
-                                        TimeAgoService.instance
-                                            .formatTimeAgoFromString(
-                                                feed.createdAt.toString(),
-                                                context),
+                                        [
+                                          capitalizeFirstText(
+                                                [
+                                                  feed.doctor!.workingplace,
+                                                  feed.doctor!.specialty,
+                                                  context.tr(AppStrings.member),
+                                                ]
+                                                    .map((e) =>
+                                                        (e ?? '').trim())
+                                                    .firstWhere(
+                                                      (e) => e.isNotEmpty,
+                                                      orElse: () => context
+                                                          .tr(AppStrings.member),
+                                                    ),
+                                              ) ??
+                                              context.tr(AppStrings.member),
+                                          TimeAgoService.instance
+                                              .formatTimeAgoFromString(
+                                                  feed.createdAt.toString(),
+                                                  context),
+                                        ]
+                                            .where((e) => e.trim().isNotEmpty)
+                                            .join(' · '),
                                         style: TextStyle(
                                           color: isDarkMode
                                               ? AppColors.darkDescription
@@ -864,108 +887,145 @@ class PostCard extends StatelessWidget {
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              if (isGroupPosts || isCommunitySearch) {
-                                onLikeAndUnlikeAdditional!();
-                              } else {
-                                cubit.addLikeOrUnlikeOnPost(
-                                  feed.id.toString(),
-                                  likeOrUnlike:
-                                      feed.isLiked! ? 'unlike' : 'like',
-                                );
-                              }
-                            },
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite,
+                      // Like — fixed size; highlight only toggles color
+                      InkWell(
+                        onTap: () {
+                          if (isGroupPosts || isCommunitySearch) {
+                            onLikeAndUnlikeAdditional!();
+                          } else {
+                            cubit.addLikeOrUnlikeOnPost(
+                              feed.id.toString(),
+                              likeOrUnlike:
+                                  feed.isLiked! ? 'unlike' : 'like',
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(20.r),
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: feed.isLiked == true
+                                ? (isDarkMode
+                                    ? const Color(0xFF5C1A1A)
+                                    : const Color(0xFFFFE4E6))
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                feed.isLiked == true
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                size: 16.sp,
+                                color: feed.isLiked == true
+                                    ? (isDarkMode
+                                        ? const Color(0xFFFDA4AF)
+                                        : const Color(0xFFE11D48))
+                                    : Colors.grey.shade400,
+                              ),
+                              SizedBox(width: 5.w),
+                              Text(
+                                feed.likesCount?.toString() ?? '0',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
                                   color: feed.isLiked == true
-                                      ? Colors.red.shade600
+                                      ? (isDarkMode
+                                          ? const Color(0xFFFDA4AF)
+                                          : const Color(0xFFE11D48))
                                       : Colors.grey.shade400,
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  feed.likesCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 20),
-                          GestureDetector(
-                            onTap: () {
-                              navigatorKey.currentState?.pushNamed(
-                                AppRoutes.showSingleFeed,
-                                arguments:
-                                    AppRoutesArgs.showSingleFeedRouteArgs(
-                                  homeDataModel: homeDataModel,
-                                  currentDoctorModel: currentDoctorModel,
-                                  feed: feed,
-                                  isComeFromNotification: false,
-                                  feedId: '',
-                                  showPostFrom: showPostFrom,
-                                ),
-                              );
-                            },
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.comment,
-                                  color: Colors.grey.shade400,
-                                  size: 23,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  feed.commentsCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          ShareButton(feed: feed),
-                          InkWell(
-                            onTap: () {
-                              if (isGroupPosts || isCommunitySearch) {
-                                onSaveAndUnSaveAdditional!();
-                              } else {
-                                cubit.addSaveOrUnsaveOnPost(
-                                  feed.id.toString(),
-                                  saveOrUnsave:
-                                      feed.isSaved! ? 'unsave' : 'save',
-                                );
-                              }
-                            },
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  feed.isSaved == true
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline,
-                                  color: feed.isSaved == true
-                                      ? Colors.amber
-                                      : Colors.grey.shade400,
-                                ),
-                              ],
+                      SizedBox(width: 14.w),
+                      GestureDetector(
+                        onTap: () {
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.showSingleFeed,
+                            arguments: AppRoutesArgs.showSingleFeedRouteArgs(
+                              homeDataModel: homeDataModel,
+                              currentDoctorModel: currentDoctorModel,
+                              feed: feed,
+                              isComeFromNotification: false,
+                              feedId: '',
+                              showPostFrom: showPostFrom,
                             ),
+                          );
+                        },
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.mode_comment_outlined,
+                              color: Colors.grey.shade400,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 5.w),
+                            Text(
+                              feed.commentsCount?.toString() ?? '0',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 14.w),
+                      ShareButton(feed: feed),
+                      const Spacer(),
+                      // Save — fixed size; badge color only when saved
+                      InkWell(
+                        onTap: () {
+                          if (isGroupPosts || isCommunitySearch) {
+                            onSaveAndUnSaveAdditional!();
+                          } else {
+                            cubit.addSaveOrUnsaveOnPost(
+                              feed.id.toString(),
+                              saveOrUnsave:
+                                  feed.isSaved! ? 'unsave' : 'save',
+                            );
+                          }
+                        },
+                        borderRadius: BorderRadius.circular(10.r),
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: 34.r,
+                          height: 34.r,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: feed.isSaved == true
+                                ? (isDarkMode
+                                    ? const Color(0xFF3D2E0A)
+                                    : const Color(0xFFFEF3C7))
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10.r),
                           ),
-                        ],
+                          child: Icon(
+                            feed.isSaved == true
+                                ? Icons.bookmark
+                                : Icons.bookmark_outline,
+                            size: 18.sp,
+                            color: feed.isSaved == true
+                                ? (isDarkMode
+                                    ? const Color(0xFFFBBF24)
+                                    : const Color(0xFFF59E0B))
+                                : Colors.grey.shade400,
+                          ),
+                        ),
                       ),
                     ],
                   ),

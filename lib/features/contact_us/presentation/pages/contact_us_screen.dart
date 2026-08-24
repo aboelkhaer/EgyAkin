@@ -102,6 +102,7 @@ class ContactUsScreen extends StatelessWidget {
                             title: context.tr(AppStrings.content),
                             textInputType: TextInputType.multiline,
                             textInputAction: TextInputAction.newline,
+                            minLines: 5,
                             maxLines: 8,
                             onChanged: (val) => cubit.feedback = val,
                             validator: (value) =>

@@ -1,13 +1,12 @@
 import 'dart:developer';
 
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
-import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
-import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_file_utils.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
-import 'package:egy_akin/features/patient_section_details/presentation/widgets/file_list_when_submit.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/repeatable_question_widget.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/widgets/section_files_question.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
@@ -70,8 +69,6 @@ class _BuildQuestionState extends State<BuildQuestion> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (cubit.aiFilledQuestionIds.contains(qidDouble))
-                  const AiFilledFieldBanner(),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -89,6 +86,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                         textAlign: TextAlign.center,
                         initialValue: initialWhole, // null will show title '00'
                         onChanged: (wholeValue) {
+                          cubit.clearAiFilledMark(qidDouble);
                           final decimalValue =
                               cubit.getCurrentDecimalValue(widget.index);
                           _updateDoubleValue(
@@ -137,6 +135,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
                         initialValue:
                             initialDecimal, // null will show title '00'
                         onChanged: (decimalValue) {
+                          cubit.clearAiFilledMark(qidDouble);
                           final wholeValue =
                               cubit.getCurrentWholeValue(widget.index);
                           _updateDoubleValue(
@@ -161,7 +160,8 @@ class _BuildQuestionState extends State<BuildQuestion> {
             return BuildStringValueQuestions(
               questionList: cubit.questionModelList,
               index: widget.index,
-              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidStr),
+              showAiFilledBanner: false,
+              compact: true,
               onClearAiFilledMark: () => cubit.clearAiFilledMark(qidStr),
               initialValue: initialValueInQuestions(
                 answer: questionAnswer,
@@ -218,72 +218,70 @@ class _BuildQuestionState extends State<BuildQuestion> {
           //! Select
           case AppStrings.questionTypeSelect:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
-            Map<String, dynamic> answerMap = questionAnswer ??= {
-              AppStrings.answers: '',
-              AppStrings.otherField: AppStrings.empty
-            };
-            dynamic selectedValue;
             final qidSel = cubit.questionModelList[widget.index].id.toString();
+
+            // Keep a mutable map tied to formData (never store null other_field).
+            Map<String, dynamic> answerMap = Map<String, dynamic>.from(
+              cubit.formData[qidSel] is Map
+                  ? cubit.formData[qidSel] as Map
+                  : (questionAnswer is Map
+                      ? Map<String, dynamic>.from(questionAnswer)
+                      : {
+                          AppStrings.answers: '',
+                          AppStrings.otherField: AppStrings.empty,
+                        }),
+            );
+            answerMap[AppStrings.answers] ??= '';
+            answerMap[AppStrings.otherField] ??= AppStrings.empty;
+            cubit.formData[qidSel] = answerMap;
+
+            final storedAnswer = answerMap[AppStrings.answers];
+            final modelAnswer = questionAnswer is Map
+                ? questionAnswer[AppStrings.answers]
+                : questionAnswer;
+
             return BuildSelectValueQuestion(
               questionList: cubit.questionModelList,
               index: widget.index,
-              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidSel) &&
-                  selectQuestionHasDisplayableAnswer(
-                    optionValues: cubit.questionModelList[widget.index].values,
-                    storedAnswer: answerMap,
-                  ),
+              formData: cubit.formData,
+              isAddPatient: true,
+              overlayLeadingInset: 0,
+              embedOthersField: true,
+              showFieldBorder: true,
+              showAiFilledBanner: false,
               onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSel),
               selected: initialValueInSelectQuestion(
-                  questionAnswer: questionAnswer is Map
-                      ? questionAnswer[AppStrings.answers]
-                      : questionAnswer,
-                  selectedValue: selectedValue,
-                  values: cubit.questionModelList[widget.index].values!),
+                questionAnswer: storedAnswer ?? modelAnswer,
+                selectedValue: storedAnswer,
+                values: cubit.questionModelList[widget.index].values!,
+              ),
               validator: (val) {
+                final answers = answerMap[AppStrings.answers];
                 if (cubit.questionModelList[widget.index].mandatory == true &&
-                    (cubit.questionModelList[widget.index].answer['answers'] ==
-                            null ||
-                        cubit.questionModelList[widget.index]
-                                .answer['answers'] ==
-                            AppStrings.empty)) {
+                    (answers == null ||
+                        answers.toString().trim().isEmpty ||
+                        answers == AppStrings.empty)) {
                   return AppStrings.thisFieldIsRequired;
                 }
-
                 return null;
               },
               onChanged: (val) {
-                selectedValue = val;
-                if (questionAnswer != val) {
-                  // questionAnswer['answers'] = val;
-                  answerMap[AppStrings.answers] = val;
-                  if (answerMap[AppStrings.otherField] != 'Others') {
-                    answerMap[AppStrings.otherField] = null;
+                cubit.clearInvalidHighlight(qidSel);
+                setState(() {
+                  answerMap[AppStrings.answers] = val ?? '';
+                  if (val != AppStrings.others && val != 'Others') {
+                    answerMap[AppStrings.otherField] = AppStrings.empty;
                   }
-                  cubit.updateQuestionAnswer(
-                      cubit.questionModelList[widget.index].id.toString(),
-                      answerMap);
-
-                  cubit.formData[cubit.questionModelList[widget.index].id
-                      .toString()] = answerMap;
-                } else {
-                  // questionAnswer['answers'] = '';
-
-                  cubit.updateQuestionAnswer(
-                      cubit.questionModelList[widget.index].id.toString(),
-                      {'answers': null, 'otherField': null});
-                  cubit.formData.remove(
-                      cubit.questionModelList[widget.index].id.toString());
-                }
-                // make log for the map
+                  cubit.updateQuestionAnswer(qidSel, answerMap);
+                  cubit.formData[qidSel] = Map<String, dynamic>.from(answerMap);
+                });
                 log(cubit.formData.toString());
-
-                setState(() {});
               },
               onChangedForOtherField: (value) {
                 setState(() {
-                  answerMap[AppStrings.otherField] = value;
-                  cubit.formData[cubit.questionModelList[widget.index].id
-                      .toString()] = answerMap;
+                  answerMap[AppStrings.otherField] = value ?? AppStrings.empty;
+                  cubit.updateQuestionAnswer(qidSel, answerMap);
+                  cubit.formData[qidSel] = Map<String, dynamic>.from(answerMap);
                 });
                 log(cubit.formData.toString());
               },
@@ -327,11 +325,12 @@ class _BuildQuestionState extends State<BuildQuestion> {
             return BuildMultipleValueQuestion(
               index: widget.index,
               questionList: cubit.questionModelList,
-              initialValue: answerMap[AppStrings.otherField]?.toString() ?? '',
+              initialValue:
+                  answerMap[AppStrings.otherField]?.toString() ?? '',
               listContainOther: answers,
               oldAnswer: null,
               isOldAnswer: false,
-              showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
+              showAiFilledBanner: false,
               onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
               onChanged: (val) {
                 setState(() {
@@ -342,62 +341,71 @@ class _BuildQuestionState extends State<BuildQuestion> {
                 log('map ${cubit.formData}');
               },
               validator: (val) {
-                if (cubit.questionModelList[widget.index].mandatory == true) {
+                if (cubit.questionModelList[widget.index].mandatory == true &&
+                    answers.contains(AppStrings.others)) {
                   if (val == null || val.isEmpty) {
-                    return AppStrings.chooseAtLeastOnOption;
+                    return AppStrings.thisFieldIsRequired;
                   }
                 }
                 return null;
               },
               children:
                   cubit.questionModelList[widget.index].values!.map((value) {
-                return Tooltip(
-                  message: value.toString(),
-                  child: Theme(
-                    data: ThemeData(
-                      chipTheme: ChipThemeData(
-                        selectedColor: AppColors.primary.withOpacity(0.7),
-                        checkmarkColor: Colors.white,
-                        showCheckmark: true,
-                        labelStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                final isSelected = answers.contains(value);
+                final primaryLocal =
+                    isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+
+                return GestureDetector(
+                  onTap: () {
+                    cubit.clearAiFilledMark(qidMulti);
+                    cubit.clearInvalidHighlight(qidMulti);
+                    setState(() {
+                      if (isSelected) {
+                        answers.remove(value);
+                        if (value == AppStrings.others) {
+                          answerMap[AppStrings.otherField] = AppStrings.empty;
+                        }
+                      } else {
+                        if (!answers.contains(value)) {
+                          answers.add(value);
+                        }
+                      }
+                      syncMultipleAnswer();
+                      log('map ${cubit.formData}');
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 140),
+                    margin: EdgeInsets.only(bottom: 6.h),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? primaryLocal
+                              .withOpacity(isDarkMode ? 0.28 : 0.14)
+                          : (isDarkMode
+                              ? const Color(0xFF2A2A2E)
+                              : const Color(0xFFF3F4F6)),
+                      borderRadius: BorderRadius.circular(20.r),
+                      border: Border.all(
+                        color: isSelected
+                            ? primaryLocal.withOpacity(0.55)
+                            : (isDarkMode
+                                ? Colors.white.withOpacity(0.08)
+                                : const Color(0xFFE5E7EB)),
                       ),
                     ),
-                    child: ChoiceChip(
-                      label: Text(
-                        value.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
+                    child: Text(
+                      value.toString(),
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? (isDarkMode ? Colors.white : primaryLocal)
+                            : (isDarkMode
+                                ? Colors.white70
+                                : const Color(0xFF4B5563)),
                       ),
-                      backgroundColor: isDarkMode
-                          ? Colors.grey.shade700
-                          : Colors.grey.shade400,
-                      selected: answers.contains(value),
-                      selectedColor: AppColors.primary.withOpacity(0.7),
-                      onSelected: (selected) {
-                        cubit.clearAiFilledMark(qidMulti);
-                        setState(() {
-                          if (selected) {
-                            if (!answers.contains(value)) {
-                              answers.add(value);
-                            }
-                          } else {
-                            answers.remove(value);
-                            if (value == AppStrings.others) {
-                              answerMap[AppStrings.otherField] =
-                                  AppStrings.empty;
-                            }
-                          }
-
-                          syncMultipleAnswer();
-                          log('map ${cubit.formData}');
-                        });
-                      },
                     ),
                   ),
                 );
@@ -413,8 +421,7 @@ class _BuildQuestionState extends State<BuildQuestion> {
               keyboardType: cubit.questionModelList[widget.index].keyboardType,
               mandatory:
                   cubit.questionModelList[widget.index].mandatory == true,
-              showAiFilledBanner:
-                  cubit.aiFilledQuestionIds.contains(qidRepeatable),
+              showAiFilledBanner: false,
               onClearAiFilledMark: () => cubit.clearAiFilledMark(qidRepeatable),
             );
 
@@ -422,40 +429,144 @@ class _BuildQuestionState extends State<BuildQuestion> {
 
           case AppStrings.questionTypeDate:
             var questionAnswer = cubit.questionModelList[widget.index].answer;
-            questionAnswer ??= DateTime.now().toString();
             final qidDate = cubit.questionModelList[widget.index].id.toString();
-            // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
+            final storedRaw = cubit.formData[qidDate] ?? questionAnswer;
+
+            DateTime selectedDate = DateTime.now();
+            if (storedRaw != null &&
+                storedRaw.toString().trim().isNotEmpty) {
+              try {
+                selectedDate = DateTime.parse(storedRaw.toString());
+              } catch (_) {
+                selectedDate = DateTime.now();
+              }
+            }
+
+            final primaryLocal =
+                isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+            final fieldBg = isDarkMode
+                ? const Color(0xFF2A2A2E)
+                : const Color(0xFFF3F4F6);
+            final mutedLocal =
+                isDarkMode ? Colors.white54 : const Color(0xFF6B7280);
+            final titleLocal =
+                isDarkMode ? Colors.white : const Color(0xFF111827);
+            final hasStoredAnswer = cubit.formData.containsKey(qidDate) ||
+                (questionAnswer != null &&
+                    questionAnswer.toString().trim().isNotEmpty);
 
             return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (cubit.aiFilledQuestionIds.contains(qidDate))
-                  const AiFilledFieldBanner(),
-                SizedBox(
-                  height: MediaQuery.of(context).copyWith().size.height / 4,
-                  child: CalendarDatePicker(
-                    initialDate: () {
-                      if (questionAnswer == null || questionAnswer == '') {
-                        return DateTime.now();
-                      }
-                      try {
-                        return DateTime.parse(questionAnswer);
-                      } catch (e) {
-                        // Log the error or handle it as needed
-                        return DateTime
-                            .now(); // Default to the current date if parsing fails
-                      }
-                    }(),
-                    firstDate: DateTime(1900),
-                    lastDate: DateTime(2100),
-                    onDateChanged: (val) {
+                Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12.r),
+                    onTap: () async {
+                      cubit.clearInvalidHighlight(qidDate);
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: selectedDate,
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime(2100),
+                        builder: (context, child) {
+                          return Theme(
+                            data: Theme.of(context).copyWith(
+                              colorScheme: isDarkMode
+                                  ? ColorScheme.dark(
+                                      primary: primaryLocal,
+                                      onPrimary: Colors.white,
+                                      surface: const Color(0xFF1C1C1E),
+                                      onSurface: Colors.white,
+                                    )
+                                  : ColorScheme.light(
+                                      primary: primaryLocal,
+                                      onPrimary: Colors.white,
+                                      surface: Colors.white,
+                                      onSurface: const Color(0xFF111827),
+                                    ),
+                            ),
+                            child: child!,
+                          );
+                        },
+                      );
+                      if (picked == null) return;
                       cubit.clearAiFilledMark(qidDate);
-                      questionAnswer = val.toString();
-                      cubit.formData[cubit.questionModelList[widget.index].id
-                          .toString()] = questionAnswer;
-                      log(cubit.formData[
-                          cubit.questionModelList[widget.index].id.toString()]);
+                      final value = picked.toString();
+                      cubit.formData[qidDate] = value;
+                      log(cubit.formData[qidDate].toString());
                       setState(() {});
                     },
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        color: fieldBg,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: primaryLocal.withOpacity(0.55),
+                          width: 1.2,
+                        ),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 12.h,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 36.w,
+                              height: 36.w,
+                              decoration: BoxDecoration(
+                                color: primaryLocal.withOpacity(
+                                  isDarkMode ? 0.22 : 0.12,
+                                ),
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              child: Icon(
+                                Icons.calendar_today_rounded,
+                                size: 16.sp,
+                                color: primaryLocal,
+                              ),
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    hasStoredAnswer
+                                        ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
+                                        : context.tr(AppStrings.selectDate),
+                                    style: TextStyle(
+                                      fontSize: 13.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: titleLocal,
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.h),
+                                  Text(
+                                    hasStoredAnswer
+                                        ? DateFormat('EEEE, d MMM yyyy')
+                                            .format(selectedDate)
+                                        : context.tr(AppStrings.addDate),
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: mutedLocal,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right_rounded,
+                              size: 20.sp,
+                              color: mutedLocal,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 isValidDate(
@@ -463,307 +574,63 @@ class _BuildQuestionState extends State<BuildQuestion> {
                     ? const SizedBox.shrink()
                     : cubit.questionModelList[widget.index].answer == null
                         ? const SizedBox.shrink()
-                        : Row(
-                            children: [
-                              const Text('Old Answer:'),
-                              const SizedBox(width: 5),
-                              Text(
-                                cubit.questionModelList[widget.index].answer
-                                    .toString(),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                        : Padding(
+                            padding: EdgeInsets.only(top: 8.h),
+                            child: Row(
+                              children: [
+                                Text(
+                                  '${context.tr(AppStrings.oldAnswer)}:',
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: mutedLocal,
+                                  ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    cubit.questionModelList[widget.index]
+                                        .answer
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: titleLocal,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
               ],
             );
 
           //! File
           case AppStrings.questionTypeFiles:
-            // List<String> filesList =
-            //     List.from(cubit.questionModelList[widget.index].answer);
             return PermissionGuard(
               permission: AppPermissions.uploadPatientFiles,
               fallback: Container(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+                decoration: BoxDecoration(
+                  color: isDarkMode
+                      ? const Color(0xFF2A2A2E)
+                      : const Color(0xFFF3F4F6),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
                 child: Text(
-                  context
-                      .tr(AppStrings.youDontHavePermissionToUploadPatientFiles),
+                  context.tr(
+                    AppStrings.youDontHavePermissionToUploadPatientFiles,
+                  ),
                   style: TextStyle(
                     color: isDarkMode ? Colors.grey.shade400 : Colors.grey,
-                    fontSize: 14,
+                    fontSize: 12.sp,
                   ),
                 ),
               ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: InkWell(
-                          onTap: () async {
-                            cubit.questionIndexWhichDoctorClicked =
-                                widget.index.toString();
-                            cubit.pickFilesForQuestions(
-                                widget.index,
-                                widget.patientId,
-                                widget.sectionModel.sectionId.toString(),
-                                context);
-                          },
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          child: BlocBuilder<PatientSectionDetailsCubit,
-                              PatientSectionDetailsState>(
-                            builder: (context, state) {
-                              return state.maybeWhen(
-                                orElse: () {
-                                  return const SizedBox(
-                                    height: 50,
-                                    child: Icon(
-                                      Icons.cloud_upload_outlined,
-                                      color: AppColors.primary,
-                                    ),
-                                  );
-                                },
-                                loaded: (
-                                  questions,
-                                  isSubmitLoading,
-                                  isSubmitted,
-                                  message,
-                                  snackbarErrorCounter,
-                                  isChooseFilesLoading,
-                                  isChooseFilesLoaded,
-                                  uploadFilesProgress,
-                                  isGetMedicationsLoading,
-                                  isGetMedicationsLoaded,
-                                  isSearchMedicationLoading,
-                                  counterChanges,
-                                  isCreateMedicationLoading,
-                                  isCreateMedicationLoaded,
-                                  dialogMessage,
-                                ) {
-                                  if (cubit.questionIndexWhichDoctorClicked ==
-                                      widget.index.toString()) {
-                                    if (isChooseFilesLoading) {
-                                      return const SizedBox(
-                                        height: 50,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SizedBox(
-                                              height: 25,
-                                              width: 25,
-                                              child: CircularProgressIndicator(
-                                                strokeWidth: 3,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  }
-
-                                  return const SizedBox(
-                                    height: 50,
-                                    child: Icon(
-                                      Icons.cloud_upload_outlined,
-                                      color: AppColors.primary,
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Display the picked files
-                  BlocConsumer<PatientSectionDetailsCubit,
-                      PatientSectionDetailsState>(
-                    listener: (context, state) {
-                      state.maybeWhen(
-                        orElse: () {},
-                        error: (message) {
-                          customSnackBar(context: context, message: message);
-                        },
-                        loaded: (
-                          questions,
-                          isSubmitLoading,
-                          isSubmitted,
-                          message,
-                          snackbarErrorCounter,
-                          isChooseFilesLoading,
-                          isChooseFilesLoaded,
-                          uploadFilesProgress,
-                          isGetMedicationsLoading,
-                          isGetMedicationsLoaded,
-                          isSearchMedicationLoading,
-                          counterChanges,
-                          isCreateMedicationLoading,
-                          isCreateMedicationLoaded,
-                          dialogMessage,
-                        ) {
-                          if (message != '') {
-                            customSnackBar(context: context, message: message);
-                          }
-                        },
-                      );
-                    },
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return const SizedBox.shrink();
-                        },
-                        loaded: (
-                          questions,
-                          isSubmitLoading,
-                          isSubmitted,
-                          message,
-                          snackbarErrorCounter,
-                          isChooseFilesLoading,
-                          isChooseFilesLoaded,
-                          uploadFilesProgress,
-                          isGetMedicationsLoading,
-                          isGetMedicationsLoaded,
-                          isSearchMedicationLoading,
-                          counterChanges,
-                          isCreateMedicationLoading,
-                          isCreateMedicationLoaded,
-                          dialogMessage,
-                        ) {
-                          if (cubit.formData.containsKey(cubit
-                                  .questionModelList[widget.index].id
-                                  .toString()) &&
-                              cubit.formData[cubit
-                                      .questionModelList[widget.index].id
-                                      .toString()] !=
-                                  []) {
-                            final rawFiles = cubit.formData[cubit
-                                .questionModelList[widget.index].id
-                                .toString()] as List;
-                            final remoteUrls = fileUrlsFromQuestionAnswer(
-                              rawFiles,
-                            );
-
-                            if (remoteUrls.isNotEmpty &&
-                                remoteUrls.length == rawFiles.length &&
-                                rawFiles.every(
-                                  (item) =>
-                                      item is String ||
-                                      (item is Map &&
-                                          remoteFileUrlFromEntry(
-                                                Map<String, dynamic>.from(
-                                                  item.map(
-                                                    (k, v) => MapEntry(
-                                                      k.toString(),
-                                                      v,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ) !=
-                                              null),
-                                )) {
-                              return FileListWhenSubmit(files: remoteUrls);
-                            }
-
-                            return Column(
-                              children: rawFiles.map((file) {
-                                if (file is String && isRemoteFileUrl(file)) {
-                                  final fileName = Uri.tryParse(file)
-                                          ?.pathSegments
-                                          .lastOrNull ??
-                                      file.split('/').last;
-                                  return ListTile(
-                                    title: Text(fileName),
-                                    onTap: () => launchURL(
-                                      url: file,
-                                      onError: (error) =>
-                                          showErrorDialog(context, error),
-                                    ),
-                                  );
-                                }
-
-                                final fileMap = Map<String, dynamic>.from(
-                                  (file as Map).map(
-                                    (k, v) => MapEntry(k.toString(), v),
-                                  ),
-                                );
-
-                                return ListTile(
-                                  title: Text(fileDisplayName(fileMap)),
-                                  onTap: () => openPatientSectionFile(
-                                    context,
-                                    fileMap,
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      );
-                    },
-                  ),
-
-                  BlocBuilder<PatientSectionDetailsCubit,
-                      PatientSectionDetailsState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return const SizedBox.shrink();
-                        },
-                        loaded: (
-                          questions,
-                          isSubmitLoading,
-                          isSubmitted,
-                          message,
-                          snackbarErrorCounter,
-                          isChooseFilesLoading,
-                          isChooseFilesLoaded,
-                          uploadFilesProgress,
-                          isGetMedicationsLoading,
-                          isGetMedicationsLoaded,
-                          isSearchMedicationLoading,
-                          counterChanges,
-                          isCreateMedicationLoading,
-                          isCreateMedicationLoaded,
-                          dialogMessage,
-                        ) {
-                          if (cubit.formData[cubit
-                                      .questionModelList[widget.index].id
-                                      .toString()] ==
-                                  null ||
-                              (cubit.formData[cubit
-                                      .questionModelList[widget.index].id
-                                      .toString()]) as List ==
-                                  [] ||
-                              cubit.formData[cubit
-                                      .questionModelList[widget.index].id
-                                      .toString()] ==
-                                  {}) {
-                            final savedUrls = fileUrlsFromQuestionAnswer(
-                              cubit.questionModelList[widget.index].answer,
-                            );
-                            if (savedUrls.isNotEmpty) {
-                              return FileListWhenSubmit(files: savedUrls);
-                            }
-                            return FileListWhenSubmit(
-                              files: cubit
-                                  .questionModelList[widget.index].answer
-                                  .cast<String>(),
-                            );
-                          }
-                          return const SizedBox.shrink();
-                        },
-                      );
-                    },
-                  ),
-                ],
+              child: SectionFilesQuestion(
+                questionIndex: widget.index,
+                patientId: widget.patientId,
+                sectionId: widget.sectionModel.sectionId.toString(),
+                isDark: isDarkMode,
               ),
             );
           default:

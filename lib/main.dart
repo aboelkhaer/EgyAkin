@@ -34,6 +34,10 @@ void main() async {
   await di.diInit();
   Bloc.observer = MyBlocObserver();
 
+  // Load saved language + translations before first frame so splash
+  // does not briefly show English keys.
+  await LocalizationService.instance.initialize();
+
   runApp(const MyApp());
 }
 
@@ -66,9 +70,11 @@ class _MyAppState extends State<MyApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeNotificationServices();
       _initializeDeepLinks();
-      _initializeLocalization();
-      _initializeTheme();
     });
+    // Locale is already loaded in main(); sync bloc state immediately
+    // (don't wait for first frame or English keys flash on splash).
+    _initializeLocalization();
+    _initializeTheme();
   }
 
   Future<void> _initializeNotificationServices() async {
@@ -143,7 +149,11 @@ class _MyAppState extends State<MyApp> {
                       themeMode: themeState is ThemeLoaded
                           ? themeState.themeMode
                           : ThemeMode.system,
-                      locale: state is LocalizationLoaded ? state.locale : null,
+                      locale: state is LocalizationLoaded
+                          ? state.locale
+                          : (LocalizationService.instance.isInitialized
+                              ? LocalizationService.instance.currentLocale
+                              : const Locale('en')),
                       supportedLocales: LocalizationService.supportedLocales,
                       localizationsDelegates: const [
                         GlobalMaterialLocalizations.delegate,

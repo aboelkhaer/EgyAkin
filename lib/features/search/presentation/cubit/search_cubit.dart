@@ -10,6 +10,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   bool patientOrDoctorOrHospital = false;
   bool dose = true;
+  bool patientsOnlyMode = false;
+
+  void configurePatientsOnlyMode() {
+    patientsOnlyMode = true;
+    patientOrDoctorOrHospital = true;
+    dose = false;
+  }
 
   getSearchHome(bool isVerifiedUser) async {
     if (searchController.text.trim().isNotEmpty) {
@@ -20,7 +27,7 @@ class SearchCubit extends Cubit<SearchState> {
       if (patientOrDoctorOrHospital) {
         patientValue = searchController.text;
       }
-      if (dose) {
+      if (dose && !patientsOnlyMode) {
         doseValue = searchController.text;
       }
 
@@ -31,7 +38,10 @@ class SearchCubit extends Cubit<SearchState> {
       result.fold(
         (l) => emit(SearchState.error(l.message)),
         (r) {
-          emit(SearchState.loaded(r.data!.patients, r.data!.doses));
+          emit(SearchState.loaded(
+            r.data!.patients,
+            patientsOnlyMode ? const [] : r.data!.doses,
+          ));
         },
       );
     }
@@ -39,8 +49,13 @@ class SearchCubit extends Cubit<SearchState> {
 
   void clearSearchResults() {
     searchController.clear();
-    patientOrDoctorOrHospital = false;
-    dose = true;
+    if (patientsOnlyMode) {
+      patientOrDoctorOrHospital = true;
+      dose = false;
+    } else {
+      patientOrDoctorOrHospital = false;
+      dose = true;
+    }
     emit(const SearchState.initial());
   }
 

@@ -10,10 +10,12 @@ _$GetPatientSectionsModelResponseImpl
     _$$GetPatientSectionsModelResponseImplFromJson(Map<String, dynamic> json) =>
         _$GetPatientSectionsModelResponseImpl(
           value: json['value'] as bool?,
-          submitStatus: json['submit_status'] as bool?,
+          submitStatus: flexibleBoolFromJson(json['submit_status']),
           patientName: json['patient_name'] as String?,
-          doctorId: json['doctor_Id'] as String?,
-          isMarked: json['is_marked'] as bool?,
+          doctorId: doctorIdFromJson(json['doctor_Id']),
+          isMarked: flexibleBoolFromJson(json['is_marked']),
+          bmi: json['bmi'] as num?,
+          bmiCategory: json['bmi_category'] as String?,
           gfr: json['gfr'] == null
               ? null
               : GFRModel.fromJson(json['gfr'] as Map<String, dynamic>),
@@ -30,6 +32,8 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
       'patient_name': instance.patientName,
       'doctor_Id': instance.doctorId,
       'is_marked': instance.isMarked,
+      'bmi': instance.bmi,
+      'bmi_category': instance.bmiCategory,
       'gfr': instance.gfr,
       'data': instance.data,
     };
@@ -37,9 +41,10 @@ Map<String, dynamic> _$$GetPatientSectionsModelResponseImplToJson(
 _$SectionModelImpl _$$SectionModelImplFromJson(Map<String, dynamic> json) =>
     _$SectionModelImpl(
       sectionId: (json['section_id'] as num?)?.toInt(),
-      sectionStatus: json['section_status'] as bool?,
+      sectionStatus: flexibleBoolFromJson(json['section_status']),
       updatedAt: json['updated_at'],
       sectionName: json['section_name'] as String?,
+      alwaysOpen: alwaysOpenFromJson(json['always_open']),
     );
 
 Map<String, dynamic> _$$SectionModelImplToJson(_$SectionModelImpl instance) =>
@@ -48,6 +53,7 @@ Map<String, dynamic> _$$SectionModelImplToJson(_$SectionModelImpl instance) =>
       'section_status': instance.sectionStatus,
       'updated_at': instance.updatedAt,
       'section_name': instance.sectionName,
+      'always_open': instance.alwaysOpen,
     };
 
 _$GFRModelImpl _$$GFRModelImplFromJson(Map<String, dynamic> json) =>

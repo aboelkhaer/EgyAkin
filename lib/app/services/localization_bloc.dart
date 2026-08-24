@@ -34,14 +34,32 @@ class LocalizationError extends LocalizationState {
 class LocalizationBloc extends Bloc<LocalizationEvent, LocalizationState> {
   final LocalizationService _localizationService = LocalizationService.instance;
 
-  LocalizationBloc() : super(LocalizationInitial()) {
+  LocalizationBloc() : super(_resolveInitialState()) {
     on<InitializeLocalization>(_onInitialize);
     on<ChangeLanguage>(_onChangeLanguage);
   }
 
+  static LocalizationState _resolveInitialState() {
+    final service = LocalizationService.instance;
+    if (service.isInitialized) {
+      return LocalizationLoaded(
+        locale: service.currentLocale,
+        isRTL: service.isRTL,
+      );
+    }
+    return LocalizationInitial();
+  }
+
   Future<void> _onInitialize(InitializeLocalization event, Emitter<LocalizationState> emit) async {
-    emit(LocalizationLoading());
-    
+    // Avoid LocalizationLoading flash when language was already loaded in main().
+    if (_localizationService.isInitialized && state is LocalizationLoaded) {
+      return;
+    }
+
+    if (!_localizationService.isInitialized) {
+      emit(LocalizationLoading());
+    }
+
     try {
       await _localizationService.initialize();
       emit(LocalizationLoaded(

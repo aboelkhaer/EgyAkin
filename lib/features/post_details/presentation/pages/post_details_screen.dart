@@ -61,10 +61,8 @@ class _PostDetailsScreenState extends State<PostDetailsScreen> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => FullScreenImage(
-                            imageUrl: widget.postModel.image.toString(),
-                          ),
+                        FullScreenImage.route(
+                          imageUrl: widget.postModel.image.toString(),
                         ),
                       );
                     },

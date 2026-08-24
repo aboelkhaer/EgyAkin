@@ -22,14 +22,17 @@ GetPatientSectionsModelResponse _$GetPatientSectionsModelResponseFromJson(
 /// @nodoc
 mixin _$GetPatientSectionsModelResponse {
   bool? get value => throw _privateConstructorUsedError;
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
   bool? get submitStatus => throw _privateConstructorUsedError;
   @JsonKey(name: 'patient_name')
   String? get patientName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'doctor_Id')
+  @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson)
   String? get doctorId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'is_marked')
+  @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
   bool? get isMarked => throw _privateConstructorUsedError;
+  num? get bmi => throw _privateConstructorUsedError;
+  @JsonKey(name: 'bmi_category')
+  String? get bmiCategory => throw _privateConstructorUsedError;
   GFRModel? get gfr => throw _privateConstructorUsedError;
   List<SectionModel>? get data => throw _privateConstructorUsedError;
 
@@ -53,10 +56,14 @@ abstract class $GetPatientSectionsModelResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {bool? value,
-      @JsonKey(name: 'submit_status') bool? submitStatus,
+      @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
+      bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
-      @JsonKey(name: 'doctor_Id') String? doctorId,
-      @JsonKey(name: 'is_marked') bool? isMarked,
+      @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson) String? doctorId,
+      @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
+      bool? isMarked,
+      num? bmi,
+      @JsonKey(name: 'bmi_category') String? bmiCategory,
       GFRModel? gfr,
       List<SectionModel>? data});
 
@@ -84,6 +91,8 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
     Object? patientName = freezed,
     Object? doctorId = freezed,
     Object? isMarked = freezed,
+    Object? bmi = freezed,
+    Object? bmiCategory = freezed,
     Object? gfr = freezed,
     Object? data = freezed,
   }) {
@@ -108,6 +117,14 @@ class _$GetPatientSectionsModelResponseCopyWithImpl<$Res,
           ? _value.isMarked
           : isMarked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      bmi: freezed == bmi
+          ? _value.bmi
+          : bmi // ignore: cast_nullable_to_non_nullable
+              as num?,
+      bmiCategory: freezed == bmiCategory
+          ? _value.bmiCategory
+          : bmiCategory // ignore: cast_nullable_to_non_nullable
+              as String?,
       gfr: freezed == gfr
           ? _value.gfr
           : gfr // ignore: cast_nullable_to_non_nullable
@@ -145,10 +162,14 @@ abstract class _$$GetPatientSectionsModelResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {bool? value,
-      @JsonKey(name: 'submit_status') bool? submitStatus,
+      @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
+      bool? submitStatus,
       @JsonKey(name: 'patient_name') String? patientName,
-      @JsonKey(name: 'doctor_Id') String? doctorId,
-      @JsonKey(name: 'is_marked') bool? isMarked,
+      @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson) String? doctorId,
+      @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
+      bool? isMarked,
+      num? bmi,
+      @JsonKey(name: 'bmi_category') String? bmiCategory,
       GFRModel? gfr,
       List<SectionModel>? data});
 
@@ -176,6 +197,8 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
     Object? patientName = freezed,
     Object? doctorId = freezed,
     Object? isMarked = freezed,
+    Object? bmi = freezed,
+    Object? bmiCategory = freezed,
     Object? gfr = freezed,
     Object? data = freezed,
   }) {
@@ -200,6 +223,14 @@ class __$$GetPatientSectionsModelResponseImplCopyWithImpl<$Res>
           ? _value.isMarked
           : isMarked // ignore: cast_nullable_to_non_nullable
               as bool?,
+      bmi: freezed == bmi
+          ? _value.bmi
+          : bmi // ignore: cast_nullable_to_non_nullable
+              as num?,
+      bmiCategory: freezed == bmiCategory
+          ? _value.bmiCategory
+          : bmiCategory // ignore: cast_nullable_to_non_nullable
+              as String?,
       gfr: freezed == gfr
           ? _value.gfr
           : gfr // ignore: cast_nullable_to_non_nullable
@@ -218,10 +249,13 @@ class _$GetPatientSectionsModelResponseImpl
     implements _GetPatientSectionsModelResponse {
   const _$GetPatientSectionsModelResponseImpl(
       {this.value,
-      @JsonKey(name: 'submit_status') this.submitStatus,
+      @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
+      this.submitStatus,
       @JsonKey(name: 'patient_name') this.patientName,
-      @JsonKey(name: 'doctor_Id') this.doctorId,
-      @JsonKey(name: 'is_marked') this.isMarked,
+      @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson) this.doctorId,
+      @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson) this.isMarked,
+      this.bmi,
+      @JsonKey(name: 'bmi_category') this.bmiCategory,
       this.gfr,
       final List<SectionModel>? data})
       : _data = data;
@@ -233,17 +267,22 @@ class _$GetPatientSectionsModelResponseImpl
   @override
   final bool? value;
   @override
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
   final bool? submitStatus;
   @override
   @JsonKey(name: 'patient_name')
   final String? patientName;
   @override
-  @JsonKey(name: 'doctor_Id')
+  @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson)
   final String? doctorId;
   @override
-  @JsonKey(name: 'is_marked')
+  @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
   final bool? isMarked;
+  @override
+  final num? bmi;
+  @override
+  @JsonKey(name: 'bmi_category')
+  final String? bmiCategory;
   @override
   final GFRModel? gfr;
   final List<SectionModel>? _data;
@@ -258,7 +297,7 @@ class _$GetPatientSectionsModelResponseImpl
 
   @override
   String toString() {
-    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, isMarked: $isMarked, gfr: $gfr, data: $data)';
+    return 'GetPatientSectionsModelResponse(value: $value, submitStatus: $submitStatus, patientName: $patientName, doctorId: $doctorId, isMarked: $isMarked, bmi: $bmi, bmiCategory: $bmiCategory, gfr: $gfr, data: $data)';
   }
 
   @override
@@ -275,14 +314,26 @@ class _$GetPatientSectionsModelResponseImpl
                 other.doctorId == doctorId) &&
             (identical(other.isMarked, isMarked) ||
                 other.isMarked == isMarked) &&
+            (identical(other.bmi, bmi) || other.bmi == bmi) &&
+            (identical(other.bmiCategory, bmiCategory) ||
+                other.bmiCategory == bmiCategory) &&
             (identical(other.gfr, gfr) || other.gfr == gfr) &&
             const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, value, submitStatus, patientName,
-      doctorId, isMarked, gfr, const DeepCollectionEquality().hash(_data));
+  int get hashCode => Object.hash(
+      runtimeType,
+      value,
+      submitStatus,
+      patientName,
+      doctorId,
+      isMarked,
+      bmi,
+      bmiCategory,
+      gfr,
+      const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of GetPatientSectionsModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -306,10 +357,15 @@ abstract class _GetPatientSectionsModelResponse
     implements GetPatientSectionsModelResponse {
   const factory _GetPatientSectionsModelResponse(
       {final bool? value,
-      @JsonKey(name: 'submit_status') final bool? submitStatus,
+      @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
+      final bool? submitStatus,
       @JsonKey(name: 'patient_name') final String? patientName,
-      @JsonKey(name: 'doctor_Id') final String? doctorId,
-      @JsonKey(name: 'is_marked') final bool? isMarked,
+      @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson)
+      final String? doctorId,
+      @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
+      final bool? isMarked,
+      final num? bmi,
+      @JsonKey(name: 'bmi_category') final String? bmiCategory,
       final GFRModel? gfr,
       final List<SectionModel>? data}) = _$GetPatientSectionsModelResponseImpl;
 
@@ -319,17 +375,22 @@ abstract class _GetPatientSectionsModelResponse
   @override
   bool? get value;
   @override
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: flexibleBoolFromJson)
   bool? get submitStatus;
   @override
   @JsonKey(name: 'patient_name')
   String? get patientName;
   @override
-  @JsonKey(name: 'doctor_Id')
+  @JsonKey(name: 'doctor_Id', fromJson: doctorIdFromJson)
   String? get doctorId;
   @override
-  @JsonKey(name: 'is_marked')
+  @JsonKey(name: 'is_marked', fromJson: flexibleBoolFromJson)
   bool? get isMarked;
+  @override
+  num? get bmi;
+  @override
+  @JsonKey(name: 'bmi_category')
+  String? get bmiCategory;
   @override
   GFRModel? get gfr;
   @override
@@ -352,12 +413,14 @@ SectionModel _$SectionModelFromJson(Map<String, dynamic> json) {
 mixin _$SectionModel {
   @JsonKey(name: 'section_id')
   int? get sectionId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'section_status')
+  @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
   bool? get sectionStatus => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   dynamic get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: 'section_name')
   String? get sectionName => throw _privateConstructorUsedError;
+  @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+  bool? get alwaysOpen => throw _privateConstructorUsedError;
 
   /// Serializes this SectionModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -377,9 +440,12 @@ abstract class $SectionModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'section_id') int? sectionId,
-      @JsonKey(name: 'section_status') bool? sectionStatus,
+      @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
+      bool? sectionStatus,
       @JsonKey(name: 'updated_at') dynamic updatedAt,
-      @JsonKey(name: 'section_name') String? sectionName});
+      @JsonKey(name: 'section_name') String? sectionName,
+      @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+      bool? alwaysOpen});
 }
 
 /// @nodoc
@@ -401,6 +467,7 @@ class _$SectionModelCopyWithImpl<$Res, $Val extends SectionModel>
     Object? sectionStatus = freezed,
     Object? updatedAt = freezed,
     Object? sectionName = freezed,
+    Object? alwaysOpen = freezed,
   }) {
     return _then(_value.copyWith(
       sectionId: freezed == sectionId
@@ -419,6 +486,10 @@ class _$SectionModelCopyWithImpl<$Res, $Val extends SectionModel>
           ? _value.sectionName
           : sectionName // ignore: cast_nullable_to_non_nullable
               as String?,
+      alwaysOpen: freezed == alwaysOpen
+          ? _value.alwaysOpen
+          : alwaysOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ) as $Val);
   }
 }
@@ -433,9 +504,12 @@ abstract class _$$SectionModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'section_id') int? sectionId,
-      @JsonKey(name: 'section_status') bool? sectionStatus,
+      @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
+      bool? sectionStatus,
       @JsonKey(name: 'updated_at') dynamic updatedAt,
-      @JsonKey(name: 'section_name') String? sectionName});
+      @JsonKey(name: 'section_name') String? sectionName,
+      @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+      bool? alwaysOpen});
 }
 
 /// @nodoc
@@ -455,6 +529,7 @@ class __$$SectionModelImplCopyWithImpl<$Res>
     Object? sectionStatus = freezed,
     Object? updatedAt = freezed,
     Object? sectionName = freezed,
+    Object? alwaysOpen = freezed,
   }) {
     return _then(_$SectionModelImpl(
       sectionId: freezed == sectionId
@@ -473,6 +548,10 @@ class __$$SectionModelImplCopyWithImpl<$Res>
           ? _value.sectionName
           : sectionName // ignore: cast_nullable_to_non_nullable
               as String?,
+      alwaysOpen: freezed == alwaysOpen
+          ? _value.alwaysOpen
+          : alwaysOpen // ignore: cast_nullable_to_non_nullable
+              as bool?,
     ));
   }
 }
@@ -482,9 +561,12 @@ class __$$SectionModelImplCopyWithImpl<$Res>
 class _$SectionModelImpl implements _SectionModel {
   const _$SectionModelImpl(
       {@JsonKey(name: 'section_id') this.sectionId,
-      @JsonKey(name: 'section_status') this.sectionStatus,
+      @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
+      this.sectionStatus,
       @JsonKey(name: 'updated_at') this.updatedAt,
-      @JsonKey(name: 'section_name') this.sectionName});
+      @JsonKey(name: 'section_name') this.sectionName,
+      @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+      this.alwaysOpen});
 
   factory _$SectionModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SectionModelImplFromJson(json);
@@ -493,7 +575,7 @@ class _$SectionModelImpl implements _SectionModel {
   @JsonKey(name: 'section_id')
   final int? sectionId;
   @override
-  @JsonKey(name: 'section_status')
+  @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
   final bool? sectionStatus;
   @override
   @JsonKey(name: 'updated_at')
@@ -501,10 +583,13 @@ class _$SectionModelImpl implements _SectionModel {
   @override
   @JsonKey(name: 'section_name')
   final String? sectionName;
+  @override
+  @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+  final bool? alwaysOpen;
 
   @override
   String toString() {
-    return 'SectionModel(sectionId: $sectionId, sectionStatus: $sectionStatus, updatedAt: $updatedAt, sectionName: $sectionName)';
+    return 'SectionModel(sectionId: $sectionId, sectionStatus: $sectionStatus, updatedAt: $updatedAt, sectionName: $sectionName, alwaysOpen: $alwaysOpen)';
   }
 
   @override
@@ -518,13 +603,15 @@ class _$SectionModelImpl implements _SectionModel {
                 other.sectionStatus == sectionStatus) &&
             const DeepCollectionEquality().equals(other.updatedAt, updatedAt) &&
             (identical(other.sectionName, sectionName) ||
-                other.sectionName == sectionName));
+                other.sectionName == sectionName) &&
+            (identical(other.alwaysOpen, alwaysOpen) ||
+                other.alwaysOpen == alwaysOpen));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, sectionId, sectionStatus,
-      const DeepCollectionEquality().hash(updatedAt), sectionName);
+      const DeepCollectionEquality().hash(updatedAt), sectionName, alwaysOpen);
 
   /// Create a copy of SectionModel
   /// with the given fields replaced by the non-null parameter values.
@@ -544,11 +631,13 @@ class _$SectionModelImpl implements _SectionModel {
 
 abstract class _SectionModel implements SectionModel {
   const factory _SectionModel(
-          {@JsonKey(name: 'section_id') final int? sectionId,
-          @JsonKey(name: 'section_status') final bool? sectionStatus,
-          @JsonKey(name: 'updated_at') final dynamic updatedAt,
-          @JsonKey(name: 'section_name') final String? sectionName}) =
-      _$SectionModelImpl;
+      {@JsonKey(name: 'section_id') final int? sectionId,
+      @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
+      final bool? sectionStatus,
+      @JsonKey(name: 'updated_at') final dynamic updatedAt,
+      @JsonKey(name: 'section_name') final String? sectionName,
+      @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+      final bool? alwaysOpen}) = _$SectionModelImpl;
 
   factory _SectionModel.fromJson(Map<String, dynamic> json) =
       _$SectionModelImpl.fromJson;
@@ -557,7 +646,7 @@ abstract class _SectionModel implements SectionModel {
   @JsonKey(name: 'section_id')
   int? get sectionId;
   @override
-  @JsonKey(name: 'section_status')
+  @JsonKey(name: 'section_status', fromJson: flexibleBoolFromJson)
   bool? get sectionStatus;
   @override
   @JsonKey(name: 'updated_at')
@@ -565,6 +654,9 @@ abstract class _SectionModel implements SectionModel {
   @override
   @JsonKey(name: 'section_name')
   String? get sectionName;
+  @override
+  @JsonKey(name: 'always_open', fromJson: alwaysOpenFromJson)
+  bool? get alwaysOpen;
 
   /// Create a copy of SectionModel
   /// with the given fields replaced by the non-null parameter values.

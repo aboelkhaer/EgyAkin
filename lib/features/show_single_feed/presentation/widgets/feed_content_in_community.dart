@@ -2,7 +2,6 @@ import 'package:egy_akin/features/community/presentation/widgets/share_button.da
 import 'package:egy_akin/features/group_members/presentation/pages/group_members_screen.dart';
 import 'package:egy_akin/features/show_single_feed/presentation/widgets/images_in_single_post.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
-import 'dart:ui' as ui;
 import '../../../../exports.dart';
 
 class FeedContentInCommunity extends StatelessWidget {
@@ -171,272 +170,199 @@ class FeedContentInCommunity extends StatelessWidget {
                 },
               ),
         Container(
-          padding: const EdgeInsets.only(
-            top: 15,
-            left: 20,
-            right: 20,
-            bottom: 20,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? AppColors.darkSubBG
+                : AppColors.subBG,
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(12),
+              bottomRight: Radius.circular(12),
+            ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return InkWell(
-                            onTap: () {
-                              // Handle like functionality here
-                            },
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite,
-                                  color: feed.isLiked == true
-                                      ? Colors.red.shade600
-                                      : Colors.grey.shade400,
-                                ),
-                                const SizedBox(width: 5),
-                                Padding(
-                                  padding:
-                                      context.currentLocale?.languageCode ==
-                                              'ar'
-                                          ? const EdgeInsets.only(left: 10)
-                                          : const EdgeInsets.only(right: 10),
-                                  child: Text(
-                                    feed.likesCount.toString(),
-                                    style: TextStyle(
-                                      color: Colors.grey.shade400,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        loaded: (
-                          commentsResponse,
-                          changeCounter,
-                          feedResponse,
-                          isSendCommentLoading,
-                          isSendCommentLoaded,
-                          message,
-                          highlightedCommentId,
-                          isDeleteCommentLoading,
-                          isDeleteCommentLoaded,
-                          isSendReplyLoading,
-                          isSendReplyLoaded,
-                          isSeeMore,
-                        ) {
-                          return Row(
+          child: BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              final isDarkMode =
+                  themeState is ThemeLoaded && themeState.isDarkMode;
+
+              return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+                builder: (context, state) {
+                  final feedResponse = state.maybeWhen(
+                    loaded: (
+                      _,
+                      __,
+                      updatedFeed,
+                      ___,
+                      ____,
+                      _____,
+                      ______,
+                      _______,
+                      ________,
+                      _________,
+                      __________,
+                      ___________,
+                    ) =>
+                        updatedFeed,
+                    orElse: () => feed,
+                  );
+                  final commentsCount = state.maybeWhen(
+                    loaded: (
+                      _,
+                      __,
+                      updatedFeed,
+                      ___,
+                      ____,
+                      _____,
+                      ______,
+                      _______,
+                      ________,
+                      _________,
+                      __________,
+                      ___________,
+                    ) =>
+                        updatedFeed.commentsCount,
+                    orElse: () => feed.commentsCount,
+                  );
+
+                  return Row(
+                    children: [
+                      InkWell(
+                        onTap: () => cubit.addOrRemoveLike(),
+                        borderRadius: BorderRadius.circular(20.r),
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: feedResponse.isLiked == true
+                                ? (isDarkMode
+                                    ? const Color(0xFF5C1A1A)
+                                    : const Color(0xFFFFE4E6))
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              InkWell(
-                                onTap: () async {
-                                  cubit.addOrRemoveLike();
+                              Icon(
+                                feedResponse.isLiked == true
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                size: 16.sp,
+                                color: feedResponse.isLiked == true
+                                    ? (isDarkMode
+                                        ? const Color(0xFFFDA4AF)
+                                        : const Color(0xFFE11D48))
+                                    : Colors.grey.shade400,
+                              ),
+                              SizedBox(width: 5.w),
+                              GestureDetector(
+                                onTap: () {
+                                  if ((feedResponse.likesCount ?? 0) <= 0) {
+                                    return;
+                                  }
+                                  showCustomBottomSheet(
+                                    context: context,
+                                    builder: (context) {
+                                      return BlocProvider(
+                                        create: (context) => GroupMembersCubit(
+                                          sl(),
+                                          sl(),
+                                          sl(),
+                                          sl(),
+                                        ),
+                                        child: GroupMembersScreen(
+                                          groupId: '',
+                                          currentDoctorModel:
+                                              currentDoctorModel,
+                                          homeDataModel: homeDataModel,
+                                          postId: feedResponse.id.toString(),
+                                          isPostLikes: true,
+                                          ownerId: '',
+                                        ),
+                                      );
+                                    },
+                                  );
                                 },
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                                child: Icon(
-                                  Icons.favorite,
-                                  color: feedResponse.isLiked == true
-                                      ? Colors.red.shade600
-                                      : Colors.grey.shade400,
+                                child: Text(
+                                  feedResponse.likesCount?.toString() ?? '0',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: feedResponse.isLiked == true
+                                        ? (isDarkMode
+                                            ? const Color(0xFFFDA4AF)
+                                            : const Color(0xFFE11D48))
+                                        : Colors.grey.shade400,
+                                  ),
                                 ),
                               ),
-                              const SizedBox(width: 5),
-                              feedResponse.likesCount != null &&
-                                      feedResponse.likesCount! > 0
-                                  ? InkResponse(
-                                      onTap: () async {
-                                        showCustomBottomSheet(
-                                          context: context,
-                                          builder: (context) {
-                                            return BlocProvider(
-                                              create: (context) =>
-                                                  GroupMembersCubit(
-                                                sl(),
-                                                sl(),
-                                                sl(),
-                                                sl(),
-                                              ),
-                                              child: GroupMembersScreen(
-                                                groupId: '',
-                                                currentDoctorModel:
-                                                    currentDoctorModel,
-                                                homeDataModel: homeDataModel,
-                                                postId:
-                                                    feedResponse.id.toString(),
-                                                isPostLikes: true,
-                                                ownerId: '',
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      radius:
-                                          20, // This increases the ripple effect area
-                                      containedInkWell: true,
-                                      child: Padding(
-                                        padding: context.currentLocale
-                                                    ?.languageCode ==
-                                                'ar'
-                                            ? const EdgeInsets.only(left: 10)
-                                            : const EdgeInsets.only(right: 10),
-                                        child: Text(
-                                          feedResponse.likesCount.toString(),
-                                          style: const TextStyle(
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : InkResponse(
-                                      onTap: () async {},
-                                      highlightColor: Colors.transparent,
-                                      splashColor: Colors.transparent,
-                                      radius:
-                                          20, // This increases the ripple effect area
-                                      containedInkWell: true,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 10),
-                                        child: Text(
-                                          feedResponse.likesCount.toString(),
-                                          style: TextStyle(
-                                            color: Colors.grey.shade400,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
                             ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 20),
-                  GestureDetector(
-                    onTap: () {},
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.comment,
-                          color: Colors.grey.shade400,
-                          size: 23,
+                          ),
                         ),
-                        const SizedBox(width: 5),
-                        BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-                          builder: (context, state) {
-                            return state.maybeWhen(
-                              orElse: () {
-                                return Text(
-                                  feed.commentsCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                );
-                              },
-                              loaded: (
-                                commentsResponse,
-                                changeCounter,
-                                updatedFeed,
-                                isSendCommentLoading,
-                                isSendCommentLoaded,
-                                message,
-                                highlightedCommentId,
-                                isDeleteCommentLoading,
-                                isDeleteCommentLoaded,
-                                isSendReplyLoading,
-                                isSendReplyLoaded,
-                                isSeeMore,
-                              ) {
-                                return Text(
-                                  updatedFeed.commentsCount.toString(),
-                                  style: TextStyle(
-                                    color: Colors.grey.shade400,
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                      ),
+                      SizedBox(width: 14.w),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.mode_comment_outlined,
+                            color: Colors.grey.shade400,
+                            size: 20.sp,
+                          ),
+                          SizedBox(width: 5.w),
+                          Text(
+                            commentsCount?.toString() ?? '0',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.grey.shade400,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(width: 14.w),
+                      ShareButton(feed: feedResponse),
+                      const Spacer(),
+                      InkWell(
+                        onTap: () => cubit.addOrRemoveSave(),
+                        borderRadius: BorderRadius.circular(10.r),
+                        highlightColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: 34.r,
+                          height: 34.r,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: feedResponse.isSaved == true
+                                ? (isDarkMode
+                                    ? const Color(0xFF3D2E0A)
+                                    : const Color(0xFFFEF3C7))
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Icon(
+                            feedResponse.isSaved == true
+                                ? Icons.bookmark
+                                : Icons.bookmark_outline,
+                            size: 18.sp,
+                            color: feedResponse.isSaved == true
+                                ? (isDarkMode
+                                    ? const Color(0xFFFBBF24)
+                                    : const Color(0xFFF59E0B))
+                                : Colors.grey.shade400,
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  ShareButton(feed: feed),
-                  BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return InkWell(
-                            onTap: () {},
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  feed.isSaved == true
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline,
-                                  color: feed.isSaved == true
-                                      ? Colors.amber
-                                      : Colors.grey.shade400,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        loaded: (
-                          commentsResponse,
-                          changeCounter,
-                          feed,
-                          isSendCommentLoading,
-                          isSendCommentLoaded,
-                          message,
-                          highlightedCommentId,
-                          isDeleteCommentLoading,
-                          isDeleteCommentLoaded,
-                          isSendReplyLoading,
-                          isSendReplyLoaded,
-                          isSeeMore,
-                        ) {
-                          return InkWell(
-                            onTap: () {
-                              // Handle save functionality here
-                              cubit.addOrRemoveSave();
-                            },
-                            highlightColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  feed.isSaved == true
-                                      ? Icons.bookmark
-                                      : Icons.bookmark_outline,
-                                  color: feed.isSaved == true
-                                      ? Colors.amber
-                                      : Colors.grey.shade400,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
           ),
         ),
       ],

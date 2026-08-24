@@ -214,30 +214,31 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     emit(const DoctorInfoViewState.loading());
 
     final result = await _getDoctorInfoViewUsecase.execute(doctorId);
-    result.fold(
+    final loadedDoctor = result.fold<DoctorInfoViewModelResponse?>(
       (l) {
         if (!isClosed) {
           emit(DoctorInfoViewState.error(l.message));
         }
+        return null;
       },
-      (doctorInfo) async {
+      (doctorInfo) {
+        if (doctorInfo.data!.isSyndicateCardRequired == 'Verified') {
+          isSyndicateCardVerified = true;
+        } else {
+          isSyndicateCardVerified = false;
+        }
+        if (doctorInfo.data!.blocked == true) {
+          doctorBlocked = true;
+        } else {
+          doctorBlocked = false;
+        }
+        if (doctorInfo.data!.emailVerifiedAt != null) {
+          doctorVerifiedEmail = true;
+        } else {
+          doctorVerifiedEmail = false;
+        }
+        updatedDoctor = doctorInfo;
         if (!isClosed) {
-          if (doctorInfo.data!.isSyndicateCardRequired == 'Verified') {
-            isSyndicateCardVerified = true;
-          } else {
-            isSyndicateCardVerified = false;
-          }
-          if (doctorInfo.data!.blocked == true) {
-            doctorBlocked = true;
-          } else {
-            doctorBlocked = false;
-          }
-          if (doctorInfo.data!.emailVerifiedAt != null) {
-            doctorVerifiedEmail = true;
-          } else {
-            doctorVerifiedEmail = false;
-          }
-          updatedDoctor = doctorInfo;
           emit(DoctorInfoViewState.loaded(
             updatedDoctor,
             false,
@@ -247,9 +248,14 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
             changesCounter,
           ));
         }
+        return doctorInfo;
       },
     );
-    getAchievementsV1(doctorId);
+
+    // Load achievements only after doctor info is in state (avoids race).
+    if (loadedDoctor != null && !isClosed) {
+      await getAchievementsV1(doctorId);
+    }
   }
 
   getAchievementsV2(String doctorId) async {
@@ -299,16 +305,16 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
               loaded: (value) => DoctorInfoViewState.loaded(
                 value.doctorInfo,
                 false,
-                false,
+                true,
                 l.message,
-                null,
+                const [],
                 changesCounter,
               ),
             ),
           );
         }
       },
-      (achievements) async {
+      (achievements) {
         if (!isClosed) {
           emit(
             state.maybeMap(

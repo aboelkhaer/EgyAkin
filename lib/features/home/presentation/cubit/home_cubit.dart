@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -42,7 +41,11 @@ class HomeCubit extends Cubit<HomeState> {
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselSliderController carouselController = CarouselSliderController();
-  late ScrollController homeTabScrollController;
+  ScrollController homeTabScrollController = ScrollController();
+
+  /// Bumped when home "Add outcomes → View all" should open Patients tab
+  /// filtered to the current doctor's patients without an outcome.
+  final ValueNotifier<int> withoutOutcomeFilterSignal = ValueNotifier(0);
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   final SignOutUsecase _signOutUsecase;
@@ -240,6 +243,13 @@ class HomeCubit extends Cubit<HomeState> {
     ));
   }
 
+  /// Patients tab (index 1) + my patients missing an outcome.
+  void openMyPatientsWithoutOutcome() {
+    tabsController.jumpToTab(1);
+    hideHomeHeader(1);
+    withoutOutcomeFilterSignal.value++;
+  }
+
   void changeDotsPositions() {
     emit(
       state.maybeMap(
@@ -269,7 +279,7 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> getHome() async {
+  Future<void> getHome({bool showLoading = false}) async {
     if (isClosed) return; // Prevents further execution
 
     // Clear cached network images every 5 calls
@@ -281,7 +291,26 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     dotsPosition = 0;
-    emit(HomeState.loading(tabsController.index));
+    final alreadyLoaded = state.maybeWhen(
+      loaded: (
+        _,
+        __,
+        ___,
+        ____,
+        _____,
+        ______,
+        _______,
+        ________,
+        _________,
+        __________,
+      ) =>
+          true,
+      orElse: () => false,
+    );
+    // Show skeleton on first load and when pull-to-refresh requests it.
+    if (!alreadyLoaded || showLoading) {
+      emit(HomeState.loading(tabsController.index));
+    }
 
     // Get doctor data from local storage and update messages
     getDoctorDataFromLocal();
@@ -290,8 +319,8 @@ class HomeCubit extends Cubit<HomeState> {
     // Fetch home data from the use case
     final result = await _getHomeUsecase.execute(NoParams());
 
-    result.fold(
-      (l) {
+    await result.fold<Future<void>>(
+      (l) async {
         if (!isClosed) {
           emit(HomeState.error(l.message));
         }
@@ -329,20 +358,22 @@ class HomeCubit extends Cubit<HomeState> {
         }
 
         // Only emit new state if the Cubit is still active
-        emit(
-          HomeState.loaded(
-            homeData,
-            currentDoctorModel,
-            dotsPosition,
-            tabsController.index,
-            false,
-            false,
-            '',
-            checkUpdateMessageCounter,
-            false,
-            changesCounter,
-          ),
-        );
+        if (!isClosed) {
+          emit(
+            HomeState.loaded(
+              homeData,
+              currentDoctorModel,
+              dotsPosition,
+              tabsController.index,
+              false,
+              false,
+              '',
+              checkUpdateMessageCounter,
+              false,
+              changesCounter,
+            ),
+          );
+        }
       },
     );
     // Check if user has accessHome permission
@@ -574,14 +605,13 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   removeNotificationCount() {
-    log('done');
-    HomeModelResponse updatedHomeDataModel =
-        homeDataModel.copyWith(unreadCount: '0');
+    isUnreadNotification = false;
+    homeDataModel = homeDataModel.copyWith(unreadCount: '0');
     emit(
       state.maybeMap(
         orElse: () => state,
         loaded: (value) => HomeState.loaded(
-          updatedHomeDataModel,
+          homeDataModel,
           value.currentDoctorModel,
           value.dotsPosition,
           tabsController.index,

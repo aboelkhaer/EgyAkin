@@ -27,7 +27,20 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
   }
 
   addPatientComments({required String patientId}) async {
-    emit(const PatientCommentsState.loading());
+    final previousComments = state.maybeWhen(
+      loaded: (comments, _, __, ___, ____) => comments,
+      orElse: () => <CommentModel>[],
+    );
+    final previousDraft = newComment;
+
+    emit(PatientCommentsState.loaded(
+      previousComments,
+      previousDraft,
+      true,
+      false,
+      '',
+    ));
+
     final result = await _addPatientCommentsUsecase.execute(
         AddCommentUseCaseInput(patientId: patientId, content: newComment));
 
@@ -46,7 +59,8 @@ class PatientCommentsCubit extends Cubit<PatientCommentsState> {
           (r) async {
             emit(PatientCommentsState.loaded(r.data!, '', false, false, ''));
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (patientCommentsScrollController.hasClients) {
+              if (patientCommentsScrollController.hasClients &&
+                  patientCommentsScrollController.positions.length == 1) {
                 animateToBottomOfScreen(patientCommentsScrollController);
               }
             });

@@ -387,6 +387,7 @@ class CommunityCubit extends Cubit<CommunityState> {
 
   void updatePost(PostCommunityModel updatedPost) {
     log('Updating post: ${updatedPost.id}'); // Debug log
+    changeCounter += 1;
 
     emit(
       state.maybeMap(

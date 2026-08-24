@@ -1,15 +1,21 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
 import '../../../../exports.dart';
 
 class SignInForm extends StatelessWidget {
   const SignInForm({
     super.key,
     required this.cubit,
+    required this.isDark,
   });
 
   final AuthenticationCubit cubit;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
+    final primary = HomeDashboardColors.primary(isDark);
+
     return Form(
       key: cubit.signInFormKey,
       autovalidateMode: cubit.signInErrorValidCounter == 0
@@ -18,9 +24,12 @@ class SignInForm extends StatelessWidget {
       child: Column(
         children: [
           CustomTextFormField(
-            title: context.tr(AppStrings.email),  
+            title: context.tr(AppStrings.email),
             enableSuggestions: true,
-            style: TextStyle(fontSize: 12.sp),
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: HomeDashboardColors.title(isDark),
+            ),
             textInputType: TextInputType.emailAddress,
             onChanged: (value) {
               cubit.signInEmail = value;
@@ -28,7 +37,7 @@ class SignInForm extends StatelessWidget {
             validator: (value) => AppValidators.emailValidator(value),
             textInputAction: TextInputAction.next,
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 10.h),
           BlocBuilder<AuthenticationCubit, AuthenticationState>(
             builder: (context, state) {
               return state.maybeWhen(
@@ -36,7 +45,10 @@ class SignInForm extends StatelessWidget {
                     (signInObscureText, signInVisiblePasswordIcon) {
                   return CustomTextFormField(
                     title: context.tr(AppStrings.password),
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: HomeDashboardColors.title(isDark),
+                    ),
                     textInputType: TextInputType.visiblePassword,
                     onChanged: (value) {
                       cubit.signInPassword = value;
@@ -56,7 +68,10 @@ class SignInForm extends StatelessWidget {
                   return CustomTextFormField(
                     title: context.tr(AppStrings.password),
                     textInputType: TextInputType.visiblePassword,
-                    style: TextStyle(fontSize: 12.sp),
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: HomeDashboardColors.title(isDark),
+                    ),
                     onChanged: (value) {
                       cubit.signInPassword = value;
                     },
@@ -75,26 +90,22 @@ class SignInForm extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.resetPassword);
-                },
-                child: SizedBox(
-                  child: Text(
-                    context.tr(AppStrings.forgotPassword),
-                    style: TextStyle(
-                      color: Colors.grey.shade500,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10.sp,
-                    ),
-                  ),
+          SizedBox(height: 8.h),
+          Align(
+            alignment: Alignment.centerRight,
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.resetPassword);
+              },
+              child: Text(
+                context.tr(AppStrings.forgotPassword),
+                style: TextStyle(
+                  color: primary,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11.sp,
                 ),
               ),
-            ],
+            ),
           ),
         ],
       ),

@@ -26,9 +26,12 @@ class GroupsCubit extends Cubit<GroupsState> {
 
   int changeCounter = 0;
 
-  getGroupsTab() async {
+  Future<void> getGroupsTab({bool showLoading = true}) async {
     _currentPage = 1;
-    emit(const GroupsState.loading());
+    isLastPage = false;
+    if (showLoading) {
+      emit(const GroupsState.loading());
+    }
     final result = await _getGroupsTabUsecase.execute(_currentPage);
     result.fold(
       (l) {

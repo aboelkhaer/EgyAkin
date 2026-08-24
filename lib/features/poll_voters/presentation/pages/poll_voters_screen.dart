@@ -1,3 +1,4 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/poll_voters/presentation/cubit/poll_voters_cubit.dart';
 import 'package:egy_akin/features/poll_voters/presentation/cubit/poll_voters_state.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
@@ -127,12 +128,17 @@ class _PollVotersScreenState extends State<PollVotersScreen> {
                         changeCounter,
                       ) {
                         return response.data!.isEmpty
-                            ? Center(
-                                child: Image.asset(
-                                  AppImages.notFound,
-                                  width: 100.h,
-                                  height: 150.h,
+                            ? DashboardEmptyState(
+                                isDark: isDarkMode,
+                                icon: Icons.how_to_vote_outlined,
+                                title: context.tr(AppStrings.noVotesYet),
+                                subtitle: context.tr(
+                                  AppStrings.nobodyHasVotedForThisOption,
                                 ),
+                                hint: context.tr(
+                                  AppStrings.checkBackAfterMoreColleaguesVote,
+                                ),
+                                hintIcon: Icons.groups_outlined,
                               )
                             : ListView.builder(
                                 itemCount: response.data!.length,

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -20,11 +19,19 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:image/image.dart' as img;
 
+enum PostImageUploadMode {
+  /// Compresses images for quicker upload.
+  fast,
+
+  /// Keeps original resolution/quality (slower upload).
+  fullQuality,
+}
+
 class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
-  /// Long edge cap — keeps text in infographics readable without huge files.
-  static const int _uploadMaxLongEdge = 2048;
-  static const int _uploadJpegQuality = 88;
-  static const int _maxUploadBytes = 2560 * 1024; // ~2.5 MB per image
+  /// Used only for [PostImageUploadMode.fast].
+  static const int _uploadMaxLongEdge = 1600;
+  static const int _uploadJpegQuality = 82;
+  static const int _maxUploadBytes = 1800 * 1024; // ~1.8 MB per image
 
   CreatePostInCommunityCubit(
     this._createPostInCommunityUsecase,
@@ -42,9 +49,27 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
   final EditPostWithTextInCommunityUsecase _editPostWithTextInCommunityUsecase;
 
   PostCommunityModel? editableFeed;
-  // PollModel? poll;
   String postContent = '';
   List<File> imagesPicked = [];
+  PostImageUploadMode uploadMode = PostImageUploadMode.fast;
+
+  void setUploadMode(PostImageUploadMode mode) {
+    if (uploadMode == mode) return;
+    uploadMode = mode;
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => CreatePostInCommunityState.loaded(
+          value.postLength,
+          value.changeCounter + 1,
+          value.isImagePick,
+          value.isUploadPostLoading,
+          value.isUploadPostLoaded,
+          '',
+        ),
+      ),
+    );
+  }
 
   changePostLength(int postLengthValue) {
     emit(
@@ -111,23 +136,20 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
   Future<void> pickImageAndShowIt(bool isCamera, BuildContext context) async {
     try {
-      emit(loadingState()); // Show loading state
+      // Show loading immediately so the tap feels responsive.
+      emit(loadingState());
+      await Future<void>.delayed(const Duration(milliseconds: 80));
 
       final source = isCamera ? ImageSource.camera : ImageSource.gallery;
       final pickedFiles = await _pickImages(source, isCamera);
 
       if (pickedFiles.isEmpty) {
-        emit(loadedState()); // Return to loaded state if no images selected
+        emit(loadedState());
         return;
       }
 
-      // Process images
-      for (final pickedFile in pickedFiles) {
-        final optimizedFile = await _optimizeImage(File(pickedFile.path));
-        imagesPicked.add(optimizedFile);
-      }
-
-      emit(loadedState()); // Update with new images
+      imagesPicked.addAll(pickedFiles.map((x) => File(x.path)));
+      emit(loadedState());
     } catch (e) {
       debugPrint('Error picking images: $e');
       emit(loadedState(
@@ -140,26 +162,24 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     final picker = ImagePicker();
 
     if (isCamera) {
-      // Handle single image from camera
       final image = await picker.pickImage(
         source: source,
-        imageQuality: 95,
+        imageQuality: 100,
+        requestFullMetadata: false,
       );
       return image != null ? [image] : [];
-    } else {
-      // Full resolution from gallery; resize/compress once in _optimizeImage.
-      return await picker.pickMultiImage();
     }
+
+    return picker.pickMultiImage(requestFullMetadata: false);
   }
 
-// Helper methods for state management
   CreatePostInCommunityState loadingState() {
     return state.maybeMap(
       orElse: () => state,
       loaded: (value) => CreatePostInCommunityState.loaded(
         postContent.length,
         value.changeCounter + 1,
-        true, // isLoading
+        true, // isImagePick
         false,
         false,
         '',
@@ -173,12 +193,50 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
       loaded: (value) => CreatePostInCommunityState.loaded(
         postContent.length,
         value.changeCounter + 1,
-        false, // isLoading
+        false,
         false,
         false,
         errorMessage ?? '',
       ),
     );
+  }
+
+  /// Prepares files based on [uploadMode] right before upload.
+  Future<List<File>> _filesForUpload() async {
+    if (imagesPicked.isEmpty) return const [];
+
+    if (uploadMode == PostImageUploadMode.fast) {
+      return Future.wait(imagesPicked.map(_optimizeImage));
+    }
+
+    return Future.wait(imagesPicked.map(_prepareFullQualityFile));
+  }
+
+  Future<File> _prepareFullQualityFile(File imageFile) async {
+    final ext = imageFile.path.split('.').last.toLowerCase();
+    const passthrough = {'jpg', 'jpeg', 'png', 'webp', 'gif'};
+    if (passthrough.contains(ext)) {
+      return imageFile;
+    }
+
+    final tempDir = await getTemporaryDirectory();
+    final outPath =
+        '${tempDir.path}/full_q_${DateTime.now().microsecondsSinceEpoch}.jpg';
+    return compute(_convertToJpegFullQuality, {
+      'imageFile': imageFile,
+      'outPath': outPath,
+    });
+  }
+
+  static File _convertToJpegFullQuality(Map<String, dynamic> params) {
+    final imageFile = params['imageFile'] as File;
+    final outPath = params['outPath'] as String;
+    final decoded = img.decodeImage(imageFile.readAsBytesSync());
+    if (decoded == null) {
+      throw StateError('Unable to decode image: ${imageFile.path}');
+    }
+    final bytes = img.encodeJpg(decoded, quality: 100);
+    return File(outPath)..writeAsBytesSync(bytes);
   }
 
   Future<File> _optimizeImage(File imageFile) async {
@@ -187,7 +245,7 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     final optimizedImagePath =
         '${tempDir.path}/optimized_image_$uniqueSuffix.jpg';
 
-    final optimizedImageFile = await compute(
+    return compute(
       _processImage,
       {
         'imageFile': imageFile,
@@ -197,11 +255,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         'maxBytes': _maxUploadBytes,
       },
     );
-
-    return optimizedImageFile;
   }
 
-  // Background processing function
   static File _processImage(Map<String, dynamic> params) {
     final imageFile = params['imageFile'] as File;
     final optimizedImagePath = params['optimizedImagePath'] as String;
@@ -216,8 +271,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
 
     if (longEdge > maxLongEdge) {
       final aspectRatio = image.width / image.height;
-      int newWidth;
-      int newHeight;
+      late final int newWidth;
+      late final int newHeight;
 
       if (image.width >= image.height) {
         newWidth = maxLongEdge;
@@ -231,37 +286,19 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
         image,
         width: newWidth,
         height: newHeight,
-        interpolation: img.Interpolation.cubic,
+        interpolation: img.Interpolation.linear,
       );
     }
 
     var quality = jpegQuality;
     var bytes = img.encodeJpg(processed, quality: quality);
 
-    while (bytes.length > maxBytes && quality > 72) {
-      quality -= 4;
+    while (bytes.length > maxBytes && quality > 70) {
+      quality -= 5;
       bytes = img.encodeJpg(processed, quality: quality);
     }
 
-    if (bytes.length > maxBytes && longEdge > maxLongEdge) {
-      const scale = 0.85;
-      processed = img.copyResize(
-        processed,
-        width: (processed.width * scale).round(),
-        height: (processed.height * scale).round(),
-        interpolation: img.Interpolation.cubic,
-      );
-      quality = jpegQuality;
-      bytes = img.encodeJpg(processed, quality: quality);
-      while (bytes.length > maxBytes && quality > 72) {
-        quality -= 4;
-        bytes = img.encodeJpg(processed, quality: quality);
-      }
-    }
-
-    final optimizedImageFile = File(optimizedImagePath)
-      ..writeAsBytesSync(bytes);
-    return optimizedImageFile;
+    return File(optimizedImagePath)..writeAsBytesSync(bytes);
   }
 
   submitPost(
@@ -375,64 +412,77 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
           value.postLength,
           value.changeCounter,
           false,
-          true, // isLoading
+          true,
           false,
           '',
         ),
       ),
     );
 
-    // Images are already optimized when picked — avoid a second JPEG pass.
-    final multipartFiles = await convertFilesToMultipart(imagesPicked);
+    try {
+      final files = await _filesForUpload();
+      final multipartFiles = await convertFilesToMultipart(files);
+      final result = await _createPostInCommunityUsecase.execute(
+        CreatePostWithImageInCommunityUsecaseInput(
+          postContent: postContent.trim(),
+          images: multipartFiles,
+          mediaType: 'image',
+          visibility: 'Public',
+          groupId: groupId,
+        ),
+      );
 
-    // Step 4: Execute post creation use case
-    final result = await _createPostInCommunityUsecase.execute(
-      CreatePostWithImageInCommunityUsecaseInput(
-        postContent: postContent.trim(),
-        images: multipartFiles,
-        mediaType: 'image',
-        visibility: 'Public',
-        groupId: groupId,
-      ),
-    );
-
-    // Step 5: Handle result
-    result.fold(
-      (l) {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => CreatePostInCommunityState.loaded(
-              value.postLength,
-              value.changeCounter,
-              false,
-              false,
-              false,
-              l.message,
+      result.fold(
+        (l) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => CreatePostInCommunityState.loaded(
+                value.postLength,
+                value.changeCounter,
+                false,
+                false,
+                false,
+                l.message,
+              ),
             ),
-          ),
-        );
-      },
-      (response) async {
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => CreatePostInCommunityState.loaded(
-              value.postLength,
-              value.changeCounter,
-              false,
-              false,
-              true,
-              '',
+          );
+        },
+        (response) {
+          emit(
+            state.maybeMap(
+              orElse: () => state,
+              loaded: (value) => CreatePostInCommunityState.loaded(
+                value.postLength,
+                value.changeCounter,
+                false,
+                false,
+                true,
+                '',
+              ),
             ),
+          );
+          debugPrint('Post Success: ${response.message}');
+          imagesPicked.clear();
+        },
+      );
+    } catch (e) {
+      debugPrint('createPostWithImageInCommunity error: $e');
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => CreatePostInCommunityState.loaded(
+            value.postLength,
+            value.changeCounter,
+            false,
+            false,
+            false,
+            LocalizationService.instance
+                .translate(AppStrings.somethingWentWrong),
           ),
-        );
-        debugPrint('Post Success: ${response.message}');
-
-        // Optional: clear images after post
-        imagesPicked.clear();
-      },
-    );
+        ),
+      );
+    }
   }
 
   Future<void> editPostWithImageInCommunity(String? groupId, context) async {
@@ -469,7 +519,8 @@ class CreatePostInCommunityCubit extends Cubit<CreatePostInCommunityState> {
     );
 
     try {
-      final multipartFiles = await convertFilesToMultipart(imagesPicked);
+      final files = await _filesForUpload();
+      final multipartFiles = await convertFilesToMultipart(files);
 
       final result = await _editPostWithImageInCommunityUsecase.execute(
         EditPostWithImageInCommunityUsecaseInput(

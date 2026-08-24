@@ -1,5 +1,8 @@
+import 'dart:ui';
+
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class WriteCommentInCommunity extends StatefulWidget {
   final bool accountVerification;
@@ -21,301 +24,416 @@ class WriteCommentInCommunity extends StatefulWidget {
 }
 
 class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
+  late final TextEditingController _controller;
+  late TextDirection _textDirection;
+  late bool _hasText;
+
+  static final _arabicChar = RegExp(r'[\u0600-\u06FF]');
+  static final _latinChar = RegExp(r'[A-Za-z]');
+
+  TextDirection _appTextDirection() =>
+      context.isRTL ? TextDirection.rtl : TextDirection.ltr;
+
+  TextDirection _directionFor(String text) {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return _appTextDirection();
+    for (final match in RegExp(r'[A-Za-z\u0600-\u06FF]').allMatches(trimmed)) {
+      final ch = match.group(0)!;
+      if (_arabicChar.hasMatch(ch)) return TextDirection.rtl;
+      if (_latinChar.hasMatch(ch)) return TextDirection.ltr;
+    }
+    return _appTextDirection();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final cubit = context.read<ShowSingleFeedCubit>();
+    _controller = TextEditingController(text: cubit.commentContent.text);
+    _hasText = _controller.text.trim().isNotEmpty;
+    _textDirection =
+        _hasText ? _directionFor(_controller.text) : _appTextDirection();
+    _controller.addListener(() {
+      cubit.commentContent.text = _controller.text;
+      final nextHasText = _controller.text.trim().isNotEmpty;
+      final nextDirection = _directionFor(_controller.text);
+      if (!mounted) return;
+      // Avoid rebuilding the whole composer (BackdropFilter) on every keystroke.
+      if (nextHasText != _hasText || nextDirection != _textDirection) {
+        setState(() {
+          _hasText = nextHasText;
+          _textDirection = nextDirection;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit(
+    ShowSingleFeedCubit cubit,
+    dynamic commentsData,
+  ) {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+
+    // Clear the field immediately for snappy UX.
+    _controller.clear();
+    cubit.commentContent.clear();
+    if (mounted) {
+      setState(() {
+        _hasText = false;
+        _textDirection = _appTextDirection();
+      });
+    }
+
+    if (cubit.commentToReply != null) {
+      cubit.createReplyOnComment(
+        widget.feed.id.toString(),
+        cubit.commentToReply!.id.toString(),
+        cubit.commentToReply!,
+        widget.currentDoctorModel,
+        commentText: text,
+      );
+    } else {
+      cubit.createCommentOnPostInCommunity(
+        widget.feed.id.toString(),
+        text,
+        widget.feed,
+        commentsData ?? [],
+        widget.currentDoctorModel,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    ShowSingleFeedCubit cubit = ShowSingleFeedCubit.get(context);
+    final cubit = ShowSingleFeedCubit.get(context);
+    final padding = MediaQuery.paddingOf(context).bottom;
+    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+    // Lift with the keyboard; keep home-indicator only when keyboard is closed.
+    final bottomInset = keyboard > 0 ? keyboard : padding;
 
-    Size size = MediaQuery.of(context).size;
     return PermissionGuard(
       permission: AppPermissions.createFeedComment,
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
-          final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+          final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+          final primary = HomeDashboardColors.primary(isDark);
 
           return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
             builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
-                },
-                loading: () {
-                  return Container(
-                    height: cubit.commentToReply == null
-                        ? size.height * 0.12
-                        : size.height * 0.15,
-                    width: double.infinity,
-                    alignment: Alignment.topCenter,
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 10,
-                      top: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.darkCardBG : Colors.white,
-                      border: Border(
-                          top: BorderSide(
-                        color:
-                            isDarkMode ? AppColors.darkBorder : Colors.black12,
-                      )),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        cubit.commentToReply == null
-                            ? const SizedBox(height: 5)
-                            : Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        context.tr(AppStrings.replyTo),
-                                        style: TextStyle(
-                                          color: isDarkMode
-                                              ? AppColors.darkTitle
-                                              : AppColors.title,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        '@${doctorName(
-                                          firstName: cubit.commentToReply!
-                                              .doctor!.firstName,
-                                          lastName: cubit
-                                              .commentToReply!.doctor!.lastName,
-                                          role: cubit.commentToReply!.doctor!
-                                              .isSyndicateCardRequired
-                                              .toString(),
-                                        )}',
-                                        style: TextStyle(
-                                          color: isDarkMode
-                                              ? AppColors.darkPrimary
-                                              : Colors.blue,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 3),
-                                      GestureDetector(
-                                        onTap: () {
-                                          cubit.commentToReply = null;
-                                          cubit.refreshScreen();
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          color: isDarkMode
-                                              ? Colors.red.shade300
-                                              : Colors.red,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: CustomTextFormField(
-                                title: context.tr(AppStrings.writeComment),
-                                textInputType: TextInputType.text,
-                                enableSuggestions: true,
-                                onChanged: (val) {
-                                  cubit.commentContent.text = val;
-                                },
-                                onFieldSubmitted: (val) {},
-                                textInputAction: TextInputAction.done,
-                                validator: (val) {
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: Icon(
-                                    Icons.send_outlined,
-                                    size: 30,
-                                    color: isDarkMode
-                                        ? AppColors.darkPrimary.withOpacity(0.7)
-                                        : AppColors.primary.withOpacity(0.7),
-                                  ),
-                                ),
-                                // SizedBox(
-                                //   height: size.height * 0.012,
-                                // )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
+              final isSending = state.maybeWhen(
                 loaded: (
-                  commentsResponse,
-                  changeCounter,
-                  feed,
+                  _,
+                  __,
+                  ___,
                   isSendCommentLoading,
-                  isSendCommentLoaded,
-                  message,
-                  highlightedCommentId,
-                  isDeleteCommentLoading,
-                  isDeleteCommentLoaded,
+                  ____,
+                  _____,
+                  ______,
+                  _______,
+                  ________,
                   isSendReplyLoading,
-                  isSendReplyLoaded,
-                  isSeeMore,
-                ) {
-                  if (isSendCommentLoading) {
-                    return const SizedBox.shrink();
-                  }
-                  if (isSendReplyLoading) {
-                    return const SizedBox.shrink();
-                  }
+                  _________,
+                  __________,
+                ) =>
+                    isSendCommentLoading || isSendReplyLoading,
+                orElse: () => false,
+              );
 
-                  return Container(
-                    height: cubit.commentToReply == null
-                        ? size.height * 0.12
-                        : size.height * 0.15,
-                    width: double.infinity,
-                    alignment: Alignment.topCenter,
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 10,
-                      top: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDarkMode ? AppColors.darkCardBG : Colors.white,
-                      border: Border(
-                          top: BorderSide(
-                        color:
-                            isDarkMode ? AppColors.darkBorder : Colors.black12,
-                      )),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        cubit.commentToReply == null
-                            ? const SizedBox(height: 5)
-                            : Column(
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        context.tr(AppStrings.replyTo),
-                                        style: TextStyle(
-                                          color: isDarkMode
-                                              ? AppColors.darkTitle
-                                              : AppColors.title,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        '@${doctorName(
-                                          firstName: cubit.commentToReply!
-                                              .doctor!.firstName,
-                                          lastName: cubit
-                                              .commentToReply!.doctor!.lastName,
-                                          role: cubit.commentToReply!.doctor!
-                                              .isSyndicateCardRequired
-                                              .toString(),
-                                        )}',
-                                        style: TextStyle(
-                                          color: isDarkMode
-                                              ? AppColors.darkPrimary
-                                              : Colors.blue,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 3),
-                                      GestureDetector(
-                                        onTap: () {
-                                          cubit.commentToReply = null;
-                                          cubit.refreshScreen();
-                                        },
-                                        child: Icon(
-                                          Icons.close,
-                                          color: isDarkMode
-                                              ? Colors.red.shade300
-                                              : Colors.red,
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                ],
-                              ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: CustomTextFormField(
-                                title: context.tr(AppStrings.writeComment),
-                                textInputType: TextInputType.text,
-                                enableSuggestions: true,
-                                onChanged: (val) {
-                                  cubit.commentContent.text = val;
-                                },
-                                onFieldSubmitted: (val) {},
-                                textInputAction: TextInputAction.done,
-                                validator: (val) {
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    if (cubit.commentToReply != null) {
-                                      cubit.createReplyOnComment(
-                                        feed.id.toString(),
-                                        cubit.commentToReply!.id.toString(),
-                                        cubit.commentToReply!,
-                                        widget.currentDoctorModel,
-                                      );
-                                    } else {
-                                      cubit.createCommentOnPostInCommunity(
-                                        feed.id.toString(),
-                                        cubit.commentContent.text,
-                                        feed,
-                                        commentsResponse.data!.data ?? [],
-                                        widget.currentDoctorModel,
-                                      );
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.send_outlined,
-                                    size: 30,
-                                    color: isDarkMode
-                                        ? AppColors.darkPrimary.withOpacity(0.7)
-                                        : AppColors.primary.withOpacity(0.7),
-                                  ),
-                                ),
-                                // SizedBox(
-                                //   height: size.height * 0.012,
-                                // )
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
+              final commentsData = state.maybeWhen(
+                loaded: (commentsResponse, _, __, ___, ____, _____, ______,
+                        _______, ________, _________, __________, ___________) =>
+                    commentsResponse.data?.data,
+                orElse: () => null,
+              );
+
+              final canSend = _hasText && !isSending;
+
+              // Always keep the composer mounted to avoid bottom-bar flashes.
+              return _ComposerShell(
+                isDark: isDark,
+                primary: primary,
+                bottomInset: bottomInset,
+                replyingTo: cubit.commentToReply,
+                canSend: canSend,
+                isSending: isSending,
+                controller: _controller,
+                textDirection: _textDirection,
+                focusNode: cubit.commentFocusNode,
+                onClearReply: () {
+                  cubit.clearReplyTarget();
+                  setState(() {});
                 },
+                onSend: () => _submit(cubit, commentsData),
               );
             },
           );
         },
       ),
+    );
+  }
+}
+
+class _ComposerShell extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final double bottomInset;
+  final dynamic replyingTo;
+  final bool canSend;
+  final bool isSending;
+  final TextEditingController controller;
+  final TextDirection textDirection;
+  final FocusNode focusNode;
+  final VoidCallback onClearReply;
+  final VoidCallback onSend;
+
+  const _ComposerShell({
+    required this.isDark,
+    required this.primary,
+    required this.bottomInset,
+    required this.replyingTo,
+    required this.canSend,
+    required this.isSending,
+    required this.controller,
+    required this.textDirection,
+    required this.focusNode,
+    required this.onClearReply,
+    required this.onSend,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final replyName = replyingTo == null
+        ? null
+        : doctorName(
+            firstName: replyingTo.doctor!.firstName,
+            lastName: replyingTo.doctor!.lastName,
+            role: replyingTo.doctor!.isSyndicateCardRequired.toString(),
+          );
+
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(12.w, 10, 12.w, 10 + bottomInset),
+          decoration: BoxDecoration(
+            color: (isDark ? const Color(0xFF12101A) : Colors.white)
+                .withOpacity(0.94),
+            border: Border(
+              top: BorderSide(
+                color: HomeDashboardColors.border(isDark).withOpacity(0.85),
+              ),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (replyName != null) ...[
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: primary.withOpacity(isDark ? 0.16 : 0.08),
+                    borderRadius: BorderRadius.circular(10.r),
+                    border: Border.all(color: primary.withOpacity(0.22)),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.reply_rounded, size: 14.sp, color: primary),
+                      SizedBox(width: 6.w),
+                      Expanded(
+                        child: Text(
+                          '${context.tr(AppStrings.replyTo)} @$replyName',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w700,
+                            color: HomeDashboardColors.title(isDark),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: onClearReply,
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 16.sp,
+                          color: HomeDashboardColors.danger,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Builder(
+                      builder: (context) {
+                        final fieldColor = isDark
+                            ? AppColors.darkSurface
+                            : const Color(0xFFF3F4F6);
+
+                        return Container(
+                          height: 52,
+                          alignment: Alignment.center,
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          decoration: BoxDecoration(
+                            color: fieldColor,
+                            borderRadius: BorderRadius.circular(26),
+                            border: Border.all(
+                              color: HomeDashboardColors.border(isDark)
+                                  .withOpacity(0.8),
+                            ),
+                          ),
+                          child: TextField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            enabled: !isSending,
+                            cursorColor: primary,
+                            minLines: 1,
+                            maxLines: 1,
+                            textDirection: textDirection,
+                            textAlign: TextAlign.start,
+                            textAlignVertical: TextAlignVertical.center,
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (_) {
+                              if (canSend) onSend();
+                            },
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
+                              color: HomeDashboardColors.title(isDark),
+                            ),
+                            decoration: InputDecoration(
+                              isDense: true,
+                              isCollapsed: true,
+                              filled: true,
+                              fillColor: Colors.transparent,
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.zero,
+                              hintText: context.tr(AppStrings.writeComment),
+                              hintStyle: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: HomeDashboardColors.subtitle(isDark),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  _SendCommentButton(
+                    isDark: isDark,
+                    primary: primary,
+                    canSend: canSend,
+                    isSending: isSending,
+                    onSend: onSend,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SendCommentButton extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final bool canSend;
+  final bool isSending;
+  final VoidCallback onSend;
+
+  const _SendCommentButton({
+    required this.isDark,
+    required this.primary,
+    required this.canSend,
+    required this.isSending,
+    required this.onSend,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final active = canSend || isSending;
+    final idleColor =
+        isDark ? AppColors.darkSurface : const Color(0xFFF3F4F6);
+    final iconIdle = HomeDashboardColors.subtitle(isDark);
+
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(end: active ? 1 : 0),
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, _) {
+        final bg = Color.lerp(idleColor, primary, t)!;
+        final iconColor = Color.lerp(iconIdle, Colors.white, t)!;
+        final shadowOpacity = 0.28 * t;
+
+        return Container(
+          width: 52,
+          height: 52,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: bg,
+            boxShadow: [
+              BoxShadow(
+                color: primary.withOpacity(shadowOpacity),
+                blurRadius: 8 * t,
+                offset: Offset(0, 3 * t),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            shape: const CircleBorder(),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: canSend ? onSend : null,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  child: isSending
+                      ? const SizedBox(
+                          key: ValueKey('sending'),
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Icon(
+                          Icons.send_rounded,
+                          key: const ValueKey('idle'),
+                          size: 18.sp,
+                          color: iconColor,
+                        ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

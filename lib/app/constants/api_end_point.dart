@@ -1,9 +1,9 @@
 class ApiEndPoint {
   //! test url
-  // static const baseUrl = 'https://test.egyakin.com';
+  static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  static const baseUrl = 'https://api.egyakin.com';
+  // static const baseUrl = 'https://api.egyakin.com';
 
   // versioning
   static const versioning = 'v3';

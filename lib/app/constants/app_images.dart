@@ -28,4 +28,5 @@ class AppImages {
   static const String info = '$imagePath/info.png';
   static const String whatsNew = '$imagePath/whatsnew.jpeg';
   static const String more = '$imagePath/more.png';
+  static const String arrowTrend = '$imagePath/arrow-trend.svg';
 }

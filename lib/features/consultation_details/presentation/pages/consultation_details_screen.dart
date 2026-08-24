@@ -1,7 +1,9 @@
 import 'package:egy_akin/features/consultation_details/presentation/cubit/consultation_details_state.dart';
+import 'package:egy_akin/features/consultation_details/presentation/widgets/consultation_lock_widget.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
 import 'package:readmore/readmore.dart';
-import '../widgets/consultation_lock_widget.dart';
-import '../../../../app/services/theme_bloc.dart';
+
 import '../../../../exports.dart';
 
 class ConsultationDetailsScreen extends StatefulWidget {
@@ -40,8 +42,7 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
     final cubit = context.read<ConsultationDetailsCubit>();
     final currentState = cubit.state;
 
-    // Get current isOpen value from the consultation details
-    bool currentIsOpen = true; // Default value
+    bool currentIsOpen = true;
     if (currentState.maybeWhen(
       loaded: (consultDetails, newCommentValue, isSendingConsultation,
           isSendedConsultation, message, isLocking, isLocked) {
@@ -50,911 +51,1085 @@ class _ConsultationDetailsScreenState extends State<ConsultationDetailsScreen> {
       },
       orElse: () => false,
     )) {
-      // Toggle the isOpen value - if currently open, send false to close; if currently closed, send true to open
-      final newIsOpen = !currentIsOpen;
+      await cubit.lockOrUnlockConsultation(
+        widget.consultationId,
+        !currentIsOpen,
+      );
+    }
+  }
 
-      // Call the cubit method to lock/unlock consultation
-      await cubit.lockOrUnlockConsultation(widget.consultationId, newIsOpen);
+  void _onSendReply({
+    required ConsultationDetailsCubit cubit,
+    required GetConsultationDetailsModelResponse consultDetails,
+    required String reply,
+  }) {
+    if (!widget.homeDataModel.verified!) {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.emailVerification),
+        description: context
+            .tr(AppStrings.toAddConsultationYouMustVerifyYourEmailAddress),
+        noColoredButtonOnTap: () => Navigator.of(context).pop(),
+        coloredButtonText: context.tr(AppStrings.verify),
+        noColoredButtonText: context.tr(AppStrings.cancel),
+        coloredButtonOnTap: () {
+          Navigator.of(context).pop();
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.emailVerification,
+            arguments: AppRoutesArgs.emailVerificationRouteArgs(
+              currentDoctorModel: widget.currentDoctorModel,
+            ),
+          );
+        },
+      );
+    }
 
-      // Show success message
-      // if (mounted) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text(
-      //         newIsOpen
-      //             ? context.tr(AppStrings.consultationUnlocked)
-      //             : context.tr(AppStrings.consultationLocked),
-      //       ),
-      //       backgroundColor: AppColors.primary,
-      //       duration: const Duration(seconds: 2),
-      //     ),
-      //   );
-      // }
+    if (widget.homeDataModel.verified! &&
+        widget.homeDataModel.isSyndicateCardRequired != 'Required' &&
+        widget.homeDataModel.isSyndicateCardRequired != 'Pending') {
+      cubit.addConsultationReply(
+        consultationId: consultDetails.id.toString(),
+        reply: reply,
+      );
+    } else {
+      if (widget.homeDataModel.isSyndicateCardRequired != 'Required' &&
+          widget.homeDataModel.isSyndicateCardRequired != 'Pending') {
+        showCustomDialog(
+          context: context,
+          title: context.tr(AppStrings.emailVerification),
+          description: context
+              .tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
+          noColoredButtonOnTap: () => Navigator.of(context).pop(),
+          coloredButtonText: context.tr(AppStrings.verify),
+          noColoredButtonText: context.tr(AppStrings.cancel),
+          coloredButtonOnTap: () {
+            Navigator.of(context).pop();
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.emailVerification,
+              arguments: AppRoutesArgs.emailVerificationRouteArgs(
+                currentDoctorModel: widget.currentDoctorModel,
+              ),
+            );
+          },
+        );
+      }
+    }
+
+    if (widget.homeDataModel.verified! &&
+        (widget.homeDataModel.isSyndicateCardRequired == 'Required' ||
+            widget.homeDataModel.isSyndicateCardRequired == 'Pending')) {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.syndicateCardVerification),
+        description: context
+            .tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
+        noColoredButtonOnTap: () => Navigator.of(context).pop(),
+        coloredButtonText: context.tr(AppStrings.ok),
+        noColoredButtonText: '',
+        isNoColorShow: true,
+        coloredButtonOnTap: () => Navigator.of(context).pop(),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ConsultationDetailsCubit cubit = ConsultationDetailsCubit.get(context);
+    final cubit = ConsultationDetailsCubit.get(context);
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final scaffold = HomeDashboardColors.scaffold(isDark);
+        final primary = HomeDashboardColors.primary(isDark);
+        final titleColor = HomeDashboardColors.title(isDark);
+        final muted = HomeDashboardColors.subtitle(isDark);
 
-        return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
-          appBar: AppBar(
-            iconTheme: const IconThemeData(
-              color: AppColors.darkTitle,
-            ),
-            title: Text(
-              widget.patientName.toString(),
-              style: const TextStyle(
-                color: AppColors.darkTitle,
-              ),
-            ),
-            actions: [
-              BlocBuilder<ConsultationDetailsCubit, ConsultationDetailsState>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return const SizedBox.shrink();
-                    },
-                    loaded: (
-                      consultDetails,
-                      newCommentValue,
-                      isSendingConsultation,
-                      isSendedConsultation,
-                      message,
-                      isLocking,
-                      isLocked,
-                    ) {
-                      if (isLocked) {
-                        return const SizedBox.shrink();
-                      }
-                      return IconButton(
-                        onPressed: () {
-                          navigatorKey.currentState?.pushNamed(
-                            AppRoutes.sendConsultation,
-                            arguments: AppRoutesArgs.sendConsultationRouteArgs(
-                              homeDataModel: widget.homeDataModel,
-                              currentDoctorModel: widget.currentDoctorModel,
-                              patientId:
-                                  consultDetails.patientModel!.id.toString(),
-                              isSendConsultation: true,
-                              groupId: '',
-                              isForAddNewDoctors: true,
-                              consultationId: widget.consultationId,
-                              ownerOfConsultationId:
-                                  consultDetails.doctorId.toString(),
-                            ),
-                          );
-                        },
-                        icon: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(Icons.person),
-                            const SizedBox(height: 2),
-                            Text(
-                              context.tr(AppStrings.doctors),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 7.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Colors.transparent)
+              : SystemUiOverlayStyle.dark
+                  .copyWith(statusBarColor: Colors.transparent),
+          child: Scaffold(
+            backgroundColor: scaffold,
+            body:
+                BlocConsumer<ConsultationDetailsCubit, ConsultationDetailsState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                  orElse: () {},
+                  error: (message) {
+                    customSnackBar(
+                      context: context,
+                      message: context.tr(message),
+                    );
+                  },
+                  loaded: (
+                    consultDetails,
+                    newCommentValue,
+                    isSendingConsultation,
+                    isSendedConsultation,
+                    message,
+                    isLocking,
+                    isLocked,
+                  ) {
+                    if (message != '') {
+                      customSnackBar(
+                        context: context,
+                        message: context.tr(message),
                       );
-                    },
-                  );
-                },
-              )
-            ],
-          ),
-          body:
-              BlocConsumer<ConsultationDetailsCubit, ConsultationDetailsState>(
-            listener: (context, state) {
-              state.maybeWhen(
-                orElse: () {},
-                error: (message) {
-                  customSnackBar(context: context, message: message);
-                },
-                loaded: (
-                  consultDetails,
-                  newCommentValue,
-                  isSendingConsultation,
-                  isSendedConsultation,
-                  message,
-                  isLocking,
-                  isLocked,
-                ) {
-                  if (message != '') {
-                    customSnackBar(context: context, message: message);
-                  }
-                  if (isSendedConsultation) {
-                    cubit.getConsultationDetails(
-                        widget.consultationId.toString());
-                  }
-                },
-              );
-            },
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                },
-                loaded: (
-                  consultDetails,
-                  newConsultationValue,
-                  isSendingConsultation,
-                  isSendedConsultation,
-                  message,
-                  isLocking,
-                  isLocked,
-                ) {
-                  return Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          children: [
-                            // Consultation Lock Widget
-                            widget.isReceivedConsultation &&
-                                    consultDetails.doctorId.toString() !=
-                                        widget.currentDoctorModel.id.toString()
-                                ? const SizedBox.shrink()
-                                : BlocBuilder<ConsultationDetailsCubit,
-                                    ConsultationDetailsState>(
-                                    builder: (context, state) {
-                                      return state.maybeWhen(
-                                        loaded: (consultDetails,
-                                            newCommentValue,
-                                            isSendingConsultation,
-                                            isSendedConsultation,
-                                            message,
-                                            isLocking,
-                                            isLocked) {
-                                          return ConsultationLockWidget(
-                                            isLocked: !(consultDetails.isOpen ??
-                                                true), // isLocked is opposite of isOpen
-                                            isLoading: isLocking,
-                                            onToggle: _toggleConsultationLock,
-                                          );
-                                        },
-                                        orElse: () => ConsultationLockWidget(
-                                          isLocked: false,
-                                          isLoading: false,
-                                          onToggle: _toggleConsultationLock,
-                                        ),
-                                      );
-                                    },
-                                  ),
+                    }
+                    if (isSendedConsultation) {
+                      cubit.getConsultationDetails(
+                        widget.consultationId.toString(),
+                      );
+                    }
+                  },
+                );
+              },
+              builder: (context, state) {
+                return state.maybeWhen(
+                  orElse: () => _LoadingView(isDark: isDark, primary: primary),
+                  loaded: (
+                    consultDetails,
+                    newConsultationValue,
+                    isSendingConsultation,
+                    isSendedConsultation,
+                    message,
+                    isLocking,
+                    isLocked,
+                  ) {
+                    final isOpen = consultDetails.isOpen ?? true;
+                    final replies = (consultDetails.consultationDoctors ?? [])
+                        .where((d) =>
+                            d.reply != null &&
+                            d.reply != 'No reply available remove this')
+                        .toList();
+                    final canManageLock = !(widget.isReceivedConsultation &&
+                        consultDetails.doctorId.toString() !=
+                            widget.currentDoctorModel.id.toString());
 
-                            Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(10),
-                              alignment: Alignment.center,
-                              margin: const EdgeInsets.only(
-                                  left: 20, top: 20, right: 20),
-                              decoration: BoxDecoration(
-                                  color: isDarkMode
-                                      ? AppColors.darkBorder
-                                      : AppColors.primary.withOpacity(0.15),
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: ReadMoreText(
-                                '${consultDetails.consultMessage}',
-                                trimMode: TrimMode.Line,
-                                trimLines: 2,
-                                colorClickableText: Colors.blue,
-                                trimCollapsedText:
-                                    ' ${context.tr(AppStrings.seeMore)} ',
-                                trimExpandedText:
-                                    ' ${context.tr(AppStrings.seeLess)} ',
-                                moreStyle: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.blue,
-                                  fontSize: 11.sp,
-                                ),
-                                lessStyle: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.blue,
-                                  fontSize: 11.sp,
-                                ),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12.sp,
-                                  color: isDarkMode
-                                      ? AppColors.darkTitle
-                                      : Colors.grey.shade700,
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(top: 20),
-                              child: PatientCard(
-                                patientName: consultDetails.patientModel!.name
-                                    .toString(),
-                                drFirstName: consultDetails
-                                    .patientModel!.doctor!.firstName
-                                    .toString(),
-                                isAllDataOpen: true,
-                                width: 300.w,
-                                drLastName: consultDetails
-                                    .patientModel!.doctor!.lastName
-                                    .toString(),
-                                isOutcomeStatus: consultDetails
-                                    .patientModel!.sections!.outcomeStatus!,
-                                hospital: consultDetails.patientModel!.hospital
-                                    .toString(),
-                                submitStatus: consultDetails
-                                    .patientModel!.sections!.submitStatus!,
-                                updatedAt: consultDetails
-                                    .patientModel!.updatedAt
-                                    .toString(),
-                                doctorImage: consultDetails
-                                    .patientModel!.doctor!.image
-                                    .toString(),
-                                doctorId: consultDetails
-                                    .patientModel!.doctor!.id
-                                    .toString(),
-                                currentDoctorModel: widget.currentDoctorModel,
-                                isSyndicateCardRequired: consultDetails
-                                    .patientModel!
-                                    .doctor!
-                                    .isSyndicateCardRequired
-                                    .toString(),
-                                accountVerification: consultDetails
-                                            .patientModel!
-                                            .doctor!
-                                            .emailVerifiedAt ==
-                                        null
-                                    ? false
-                                    : true,
-                                currentDoctorRole:
-                                    widget.homeDataModel.role.toString(),
-                                currentDoctorPoints: int.parse(
-                                    widget.homeDataModel.scoreValue.toString()),
+                    return Column(
+                      children: [
+                        _Header(
+                          isDark: isDark,
+                          scaffold: scaffold,
+                          primary: primary,
+                          titleColor: titleColor,
+                          muted: muted,
+                          patientName: widget.patientName,
+                          isOpen: isOpen,
+                          showDoctorsAction: !isLocked,
+                          onBack: () => Navigator.of(context).maybePop(),
+                          onDoctorsTap: () {
+                            navigatorKey.currentState?.pushNamed(
+                              AppRoutes.sendConsultation,
+                              arguments:
+                                  AppRoutesArgs.sendConsultationRouteArgs(
                                 homeDataModel: widget.homeDataModel,
-                                onAddCommentTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.comments,
-                                    arguments: AppRoutesArgs
-                                        .patientCommentsRouteArgs(
-                                            patientId: consultDetails
-                                                .patientModel!.id
-                                                .toString(),
-                                            currentDoctorModel: widget
-                                                .currentDoctorModel,
-                                            verified: widget
-                                                .homeDataModel.verified!,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                patientId: consultDetails.patientModel!.id
+                                    .toString(),
+                                isSendConsultation: true,
+                                groupId: '',
+                                isForAddNewDoctors: true,
+                                consultationId: widget.consultationId,
+                                ownerOfConsultationId:
+                                    consultDetails.doctorId.toString(),
+                              ),
+                            );
+                          },
+                        ),
+                        Expanded(
+                          child: Stack(
+                            children: [
+                              ListView(
+                                physics: const BouncingScrollPhysics(),
+                                padding: EdgeInsets.fromLTRB(
+                                  14.w,
+                                  8.h,
+                                  14.w,
+                                  isOpen ? 100.h : 24.h,
+                                ),
+                                children: [
+                                  if (canManageLock)
+                                    ConsultationLockWidget(
+                                      isLocked: !isOpen,
+                                      isLoading: isLocking,
+                                      onToggle: _toggleConsultationLock,
+                                    ),
+                                  if (canManageLock) SizedBox(height: 12.h),
+                                  _SectionLabel(
+                                    isDark: isDark,
+                                    title: context
+                                        .tr(AppStrings.message)
+                                        .toUpperCase(),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  _MessageCard(
+                                    isDark: isDark,
+                                    primary: primary,
+                                    message:
+                                        consultDetails.consultMessage ?? '',
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  _SectionLabel(
+                                    isDark: isDark,
+                                    title: context
+                                        .tr(AppStrings.patient)
+                                        .toUpperCase(),
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  if (consultDetails.patientModel != null)
+                                    HomePatientCard(
+                                      isDark: isDark,
+                                      patient: consultDetails.patientModel!,
+                                      onAddCommentTap: () {
+                                        final patient =
+                                            consultDetails.patientModel!;
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.comments,
+                                          arguments: AppRoutesArgs
+                                              .patientCommentsRouteArgs(
+                                            patientId: patient.id.toString(),
+                                            currentDoctorModel:
+                                                widget.currentDoctorModel,
+                                            verified:
+                                                widget.homeDataModel.verified!,
                                             patientName:
-                                                consultDetails.patientModel!.name
-                                                    .toString(),
-                                            currentDoctorPoints: int
-                                                .parse(
-                                                    widget.homeDataModel
-                                                        .scoreValue!),
+                                                patient.name.toString(),
+                                            currentDoctorPoints: int.parse(widget
+                                                .homeDataModel.scoreValue!),
                                             currentDoctorRole: widget
                                                 .homeDataModel.role
                                                 .toString(),
                                             homeDataModel: widget.homeDataModel,
                                             isSyndicateCardRequired: widget
                                                 .homeDataModel
-                                                .isSyndicateCardRequired!),
-                                  );
-                                },
-                                onOutcomeTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.outcome,
-                                    arguments: AppRoutesArgs.outcomeRouteArgs(
-                                      verified: widget.homeDataModel.verified!,
-                                      outcomeStatus: consultDetails
-                                          .patientModel!
-                                          .sections!
-                                          .outcomeStatus!,
-                                      patientName: consultDetails
-                                          .patientModel!.name
-                                          .toString(),
-                                      patientId: consultDetails.patientModel!.id
-                                          .toString(),
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      doctorId: consultDetails
-                                          .patientModel!.doctor!.id
-                                          .toString(),
-                                      isSyndicateCardRequired: widget
-                                          .homeDataModel
-                                          .isSyndicateCardRequired!,
-                                      currentDoctorRole:
-                                          widget.homeDataModel.role.toString(),
-                                      currentDoctorPoints: int.parse(
-                                          widget.homeDataModel.scoreValue!),
-                                      homeDataModel: widget.homeDataModel,
+                                                .isSyndicateCardRequired!,
+                                          ),
+                                        );
+                                      },
+                                      onOutcomeTap: () {
+                                        final patient =
+                                            consultDetails.patientModel!;
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.outcome,
+                                          arguments:
+                                              AppRoutesArgs.outcomeRouteArgs(
+                                            verified:
+                                                widget.homeDataModel.verified!,
+                                            outcomeStatus: patient
+                                                    .sections?.outcomeStatus ??
+                                                false,
+                                            patientName:
+                                                patient.name.toString(),
+                                            patientId: patient.id.toString(),
+                                            currentDoctorModel:
+                                                widget.currentDoctorModel,
+                                            doctorId: patient.doctor?.id
+                                                    .toString() ??
+                                                '',
+                                            isSyndicateCardRequired: widget
+                                                .homeDataModel
+                                                .isSyndicateCardRequired!,
+                                            currentDoctorRole: widget
+                                                .homeDataModel.role
+                                                .toString(),
+                                            currentDoctorPoints: int.parse(widget
+                                                .homeDataModel.scoreValue!),
+                                            homeDataModel: widget.homeDataModel,
+                                          ),
+                                        );
+                                      },
+                                      onTap: () {
+                                        final patient =
+                                            consultDetails.patientModel!;
+                                        navigatorKey.currentState?.pushNamed(
+                                          AppRoutes.patientSections,
+                                          arguments: AppRoutesArgs
+                                              .patientSectionsRouteArguments(
+                                            patientId: patient.id.toString(),
+                                            currentDoctorRole: widget
+                                                .homeDataModel.role
+                                                .toString(),
+                                            currentDoctorPoints: int.parse(widget
+                                                .homeDataModel.scoreValue!),
+                                            currentDoctorModel:
+                                                widget.currentDoctorModel,
+                                            homeDataModel: widget.homeDataModel,
+                                            isAllDataOpen: true,
+                                          ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                                onTap: () {
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.patientSections,
-                                    arguments: AppRoutesArgs
-                                        .patientSectionsRouteArguments(
-                                      patientId: consultDetails.patientModel!.id
-                                          .toString(),
-                                      currentDoctorRole:
-                                          widget.homeDataModel.role.toString(),
-                                      currentDoctorPoints: int.parse(
-                                          widget.homeDataModel.scoreValue!),
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      homeDataModel: widget.homeDataModel,
-                                      isAllDataOpen: true,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: 20,
-                                left: 20,
-                                right: 20,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    '${context.tr(AppStrings.consultations)}:',
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey.shade700,
-                                    ),
+                                  SizedBox(height: 18.h),
+                                  _SectionLabel(
+                                    isDark: isDark,
+                                    title: context
+                                        .tr(AppStrings.consultations)
+                                        .toUpperCase(),
+                                    trailing: replies.isEmpty
+                                        ? null
+                                        : _CountPill(
+                                            isDark: isDark,
+                                            primary: primary,
+                                            count: replies.length,
+                                          ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            ListView.builder(
-                              itemCount:
-                                  consultDetails.consultationDoctors!.length,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.only(bottom: 100.h),
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) {
-                                var doctorConsultation =
-                                    consultDetails.consultationDoctors![index];
-                                // todo: remove this
-                                return doctorConsultation.reply == null ||
-                                        doctorConsultation.reply ==
-                                            'No reply available remove this'
-                                    ? const SizedBox.shrink()
-                                    : Card(
-                                        color: isDarkMode
-                                            ? AppColors.darkCardBG
-                                            : Colors.white,
-                                        margin: const EdgeInsets.only(
-                                          left: 20,
-                                          right: 20,
-                                          top: 20,
-                                        ),
-                                        elevation: 0.8,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: InkWell(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          splashColor: isDarkMode
-                                              ? AppColors.darkBorder
-                                              : AppColors.subBG, // Splash color
-                                          // onLongPress: () {
-                                          //   if (doctorConsultation.doctorId.toString() ==
-                                          //           widget.currentDoctorModel.id.toString() ||
-                                          //       widget.homeDataModel.role.toString() ==
-                                          //           'Admin') {
-                                          //     showCustomDialog(
-                                          //         context: context,
-                                          //         title: 'Delete',
-                                          //         description:
-                                          //             'Are you sure to delete comment?',
-                                          //         noColoredButtonOnTap: () {
-                                          //           Navigator.of(context).pop();
-                                          //         },
-                                          //         coloredButtonText: 'Cancel',
-                                          //         noColoredButtonText: 'Delete',
-                                          //         isNoColorShow: true,
-                                          //         coloredButtonOnTap: () =>
-                                          //             Navigator.of(context).pop());
-                                          //   }
-                                          // },
-                                          onTap: () {},
-                                          child: Container(
-                                            width: 300.w,
-                                            padding: const EdgeInsets.all(16),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        navigatorKey
-                                                            .currentState
-                                                            ?.pushNamed(
-                                                          AppRoutes
-                                                              .doctorInfoView,
-                                                          arguments: AppRoutesArgs
-                                                              .doctorInfoViewRouteArgs(
-                                                            doctorId:
-                                                                doctorConsultation
-                                                                    .doctorId
-                                                                    .toString(),
-                                                            currentDoctorModel:
-                                                                widget
-                                                                    .currentDoctorModel,
-                                                            isSyndicateCardRequired:
-                                                                widget
-                                                                    .homeDataModel
-                                                                    .isSyndicateCardRequired
-                                                                    .toString(),
-                                                            accountVerification:
-                                                                widget
-                                                                    .homeDataModel
-                                                                    .verified!,
-                                                            currentDoctorRole:
-                                                                widget
-                                                                    .homeDataModel
-                                                                    .role
-                                                                    .toString(),
-                                                            currentDoctorPoints:
-                                                                int.parse(widget
-                                                                    .homeDataModel
-                                                                    .scoreValue
-                                                                    .toString()),
-                                                            homeDataModel: widget
-                                                                .homeDataModel,
-                                                            initialIndex: 0,
-                                                            isNavigateToTheButtonOfInformationTab:
-                                                                false,
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: Colors.grey
-                                                                  .withOpacity(
-                                                                      0.4),
-                                                              spreadRadius: 2,
-                                                              blurRadius: 9,
-                                                              offset:
-                                                                  const Offset(
-                                                                      0, 3),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      80.r),
-                                                          child: CircleAvatar(
-                                                            radius: 20.r,
-                                                            backgroundColor:
-                                                                AppColors
-                                                                    .primary
-                                                                    .withOpacity(
-                                                                        0.8),
-                                                            child: doctorConsultation
-                                                                        .doctorId ==
-                                                                    null
-                                                                ? Text(
-                                                                    doctorConsultation
-                                                                        .doctorFirstName![
-                                                                            0]
-                                                                        .toUpperCase(),
-                                                                    style: TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .bold,
-                                                                        fontSize:
-                                                                            16.sp),
-                                                                  )
-                                                                : CustomCachedNetworkImage(
-                                                                    imageUrl: doctorConsultation
-                                                                        .doctorImage
-                                                                        .toString(),
-                                                                    height:
-                                                                        100.h,
-                                                                    width:
-                                                                        100.w,
-                                                                  ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          const SizedBox(
-                                                              width: 15),
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Row(
-                                                                  // mainAxisAlignment:
-                                                                  //     MainAxisAlignment
-                                                                  //         .spaceBetween,
-                                                                  children: [
-                                                                    Flexible(
-                                                                      child:
-                                                                          Text(
-                                                                        doctorName(
-                                                                          firstName:
-                                                                              doctorConsultation.doctorFirstName ?? '',
-                                                                          lastName:
-                                                                              doctorConsultation.doctorLastName ?? '',
-                                                                          role: doctorConsultation
-                                                                              .isVerified
-                                                                              .toString(),
-                                                                        ),
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold,
-                                                                          color: doctorConsultation.doctorId.toString() == widget.currentDoctorModel.id.toString()
-                                                                              ? Colors.green.shade600
-                                                                              : isDarkMode
-                                                                                  ? AppColors.darkTitle
-                                                                                  : AppColors.title,
-                                                                          fontSize:
-                                                                              12.sp,
-                                                                        ),
-                                                                        maxLines:
-                                                                            1,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
-                                                                    ),
-                                                                    doctorConsultation
-                                                                            .isVerified!
-                                                                        ? const VerificationIcon()
-                                                                        : const SizedBox
-                                                                            .shrink(),
-                                                                  ],
-                                                                ),
-                                                                const SizedBox(
-                                                                    height: 4),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
+                                  SizedBox(height: 8.h),
+                                  if (replies.isEmpty)
+                                    _EmptyReplies(isDark: isDark, muted: muted)
+                                  else
+                                    ...replies.map(
+                                      (doctorConsultation) => Padding(
+                                        padding: EdgeInsets.only(bottom: 10.h),
+                                        child: _ReplyCard(
+                                          isDark: isDark,
+                                          primary: primary,
+                                          titleColor: titleColor,
+                                          muted: muted,
+                                          reply: doctorConsultation,
+                                          isCurrentDoctor: doctorConsultation
+                                                  .doctorId
+                                                  .toString() ==
+                                              widget.currentDoctorModel.id
+                                                  .toString(),
+                                          onDoctorTap: () {
+                                            navigatorKey.currentState
+                                                ?.pushNamed(
+                                              AppRoutes.doctorInfoView,
+                                              arguments: AppRoutesArgs
+                                                  .doctorInfoViewRouteArgs(
+                                                doctorId: doctorConsultation
+                                                    .doctorId
+                                                    .toString(),
+                                                currentDoctorModel:
+                                                    widget.currentDoctorModel,
+                                                isSyndicateCardRequired: widget
+                                                    .homeDataModel
+                                                    .isSyndicateCardRequired
+                                                    .toString(),
+                                                accountVerification: widget
+                                                    .homeDataModel.verified!,
+                                                currentDoctorRole: widget
+                                                    .homeDataModel.role
+                                                    .toString(),
+                                                currentDoctorPoints: int.parse(
+                                                  widget.homeDataModel.scoreValue
+                                                      .toString(),
                                                 ),
-                                                const SizedBox(
-                                                  height: 20,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Flexible(
-                                                      child: Text(
-                                                        doctorConsultation.reply
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 12.sp,
-                                                          height: 1.6,
-                                                          wordSpacing: 2,
-                                                          letterSpacing: 1,
-                                                          color: isDarkMode
-                                                              ? AppColors
-                                                                  .darkTitle
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(height: 5.h),
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      TimeAgoService.instance
-                                                          .formatTimeAgoFromString(
-                                                              doctorConsultation
-                                                                  .updatedAt
-                                                                  .toString(),
-                                                              context),
-                                                      style: TextStyle(
-                                                        color: isDarkMode
-                                                            ? AppColors
-                                                                .darkDescription
-                                                            : AppColors
-                                                                .description,
-                                                        fontSize: 12,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      BlocBuilder<ConsultationDetailsCubit,
-                          ConsultationDetailsState>(
-                        builder: (context, state) {
-                          return state.maybeWhen(
-                            loaded: (consultDetails,
-                                newCommentValue,
-                                isSendingConsultation,
-                                isSendedConsultation,
-                                message,
-                                isLocking,
-                                isLocked) {
-                              return (consultDetails.isOpen ?? true)
-                                  ? Positioned(
-                                      bottom: 0,
-                                      left: 0,
-                                      right: 0,
-                                      child: Container(
-                                        height: 80.h,
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.all(16.0) +
-                                            const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                bottom: 16),
-                                        decoration: BoxDecoration(
-                                          color: isDarkMode
-                                              ? AppColors.darkCardBG
-                                              : Colors.white,
-                                          border: Border(
-                                            top: BorderSide(
-                                              color: isDarkMode
-                                                  ? AppColors.darkBorder
-                                                  : Colors.black12,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            isSendingConsultation
-                                                ? const SizedBox(
-                                                    width: 30,
-                                                    height: 30,
-                                                    child:
-                                                        CircularProgressIndicator(),
-                                                  )
-                                                : Expanded(
-                                                    child: CustomTextFormField(
-                                                      title: context.tr(AppStrings
-                                                          .writeConsultation),
-                                                      textInputType:
-                                                          TextInputType.text,
-                                                      enableSuggestions: true,
-                                                      onChanged: (val) {
-                                                        cubit.newConsultation =
-                                                            val;
-                                                        if (val
-                                                            .trim()
-                                                            .isNotEmpty) {
-                                                          cubit
-                                                              .newConsultationValueChanged(
-                                                                  val);
-                                                        }
-                                                        if (val
-                                                            .trim()
-                                                            .isEmpty) {
-                                                          cubit
-                                                              .newConsultationValueChanged(
-                                                                  val);
-                                                        }
-                                                      },
-                                                      onFieldSubmitted:
-                                                          (val) {},
-                                                      textInputAction:
-                                                          TextInputAction.done,
-                                                      validator: (val) {
-                                                        return null;
-                                                      },
-                                                    ),
-                                                  ),
-                                            isSendingConsultation
-                                                ? const SizedBox.shrink()
-                                                : BlocBuilder<
-                                                    ConsultationDetailsCubit,
-                                                    ConsultationDetailsState>(
-                                                    builder: (context, state) {
-                                                      return state.maybeWhen(
-                                                        orElse: () {
-                                                          return const SizedBox
-                                                              .shrink();
-                                                        },
-                                                        loaded: (
-                                                          consultDetails,
-                                                          newConsultationValue,
-                                                          isSendingConsultation,
-                                                          isSendedConsultation,
-                                                          message,
-                                                          isLocking,
-                                                          isLocked,
-                                                        ) {
-                                                          return newConsultationValue
-                                                                      .trim() ==
-                                                                  AppStrings
-                                                                      .empty
-                                                              ? const SizedBox
-                                                                  .shrink()
-                                                              : Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    IconButton(
-                                                                      onPressed:
-                                                                          () {
-                                                                        if (!widget
-                                                                            .homeDataModel
-                                                                            .verified!) {
-                                                                          showCustomDialog(
-                                                                            context:
-                                                                                context,
-                                                                            title:
-                                                                                context.tr(AppStrings.emailVerification),
-                                                                            description:
-                                                                                context.tr(AppStrings.toAddConsultationYouMustVerifyYourEmailAddress),
-                                                                            noColoredButtonOnTap:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            coloredButtonText:
-                                                                                context.tr(AppStrings.verify),
-                                                                            noColoredButtonText:
-                                                                                context.tr(AppStrings.cancel),
-                                                                            coloredButtonOnTap:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                              navigatorKey.currentState?.pushNamed(
-                                                                                AppRoutes.emailVerification,
-                                                                                arguments: AppRoutesArgs.emailVerificationRouteArgs(currentDoctorModel: widget.currentDoctorModel),
-                                                                              );
-                                                                            },
-                                                                          );
-                                                                        }
-                                                                        if (widget.homeDataModel.verified! &&
-                                                                            widget.homeDataModel.isSyndicateCardRequired !=
-                                                                                'Required' &&
-                                                                            widget.homeDataModel.isSyndicateCardRequired !=
-                                                                                'Pending') {
-                                                                          cubit
-                                                                              .addConsultationReply(
-                                                                            consultationId:
-                                                                                consultDetails.id.toString(),
-                                                                            reply:
-                                                                                newConsultationValue,
-                                                                          );
-                                                                        } else {
-                                                                          if (widget.homeDataModel.isSyndicateCardRequired != 'Required' &&
-                                                                              widget.homeDataModel.isSyndicateCardRequired != 'Pending') {
-                                                                            showCustomDialog(
-                                                                              context: context,
-                                                                              title: context.tr(AppStrings.emailVerification),
-                                                                              description: context.tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
-                                                                              noColoredButtonOnTap: () {
-                                                                                Navigator.of(context).pop();
-                                                                              },
-                                                                              coloredButtonText: context.tr(AppStrings.verify),
-                                                                              noColoredButtonText: context.tr(AppStrings.cancel),
-                                                                              coloredButtonOnTap: () {
-                                                                                Navigator.of(context).pop();
-                                                                                navigatorKey.currentState?.pushNamed(
-                                                                                  AppRoutes.emailVerification,
-                                                                                  arguments: AppRoutesArgs.emailVerificationRouteArgs(currentDoctorModel: widget.currentDoctorModel),
-                                                                                );
-                                                                              },
-                                                                            );
-                                                                          }
-                                                                        }
-                                                                        if (widget.homeDataModel.verified! &&
-                                                                            (widget.homeDataModel.isSyndicateCardRequired == 'Required' ||
-                                                                                widget.homeDataModel.isSyndicateCardRequired == 'Pending')) {
-                                                                          showCustomDialog(
-                                                                            context:
-                                                                                context,
-                                                                            title:
-                                                                                context.tr(AppStrings.syndicateCardVerification),
-                                                                            description:
-                                                                                context.tr(AppStrings.toAddConsultationYouMustVerifyYourSyndicateCard),
-                                                                            noColoredButtonOnTap:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                            coloredButtonText:
-                                                                                context.tr(AppStrings.ok),
-                                                                            noColoredButtonText:
-                                                                                '',
-                                                                            isNoColorShow:
-                                                                                true,
-                                                                            coloredButtonOnTap:
-                                                                                () {
-                                                                              Navigator.of(context).pop();
-                                                                            },
-                                                                          );
-                                                                        }
-                                                                      },
-                                                                      icon:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .send_outlined,
-                                                                        size:
-                                                                            30,
-                                                                        color: AppColors
-                                                                            .primary
-                                                                            .withOpacity(0.7),
-                                                                      ),
-                                                                    ),
-                                                                    // SizedBox(
-                                                                    //   height: 7.h,
-                                                                    // )
-                                                                  ],
-                                                                );
-                                                        },
-                                                      );
-                                                    },
-                                                  ),
-                                          ],
+                                                homeDataModel:
+                                                    widget.homeDataModel,
+                                                initialIndex: 0,
+                                                isNavigateToTheButtonOfInformationTab:
+                                                    false,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
-                                    )
-                                  : const SizedBox.shrink();
-                            },
-                            orElse: () => const SizedBox.shrink(),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
+                                    ),
+                                ],
+                              ),
+                              if (isOpen)
+                                Positioned(
+                                  left: 0,
+                                  right: 0,
+                                  bottom: 0,
+                                  child: _ReplyComposer(
+                                    isDark: isDark,
+                                    primary: primary,
+                                    isSending: isSendingConsultation,
+                                    showSend: newConsultationValue.trim() !=
+                                        AppStrings.empty,
+                                    onChanged: (val) {
+                                      cubit.newConsultation = val;
+                                      cubit.newConsultationValueChanged(val);
+                                    },
+                                    onSend: () => _onSendReply(
+                                      cubit: cubit,
+                                      consultDetails: consultDetails,
+                                      reply: newConsultationValue,
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
           ),
         );
       },
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  final bool isDark;
+  final Color scaffold;
+  final Color primary;
+  final Color titleColor;
+  final Color muted;
+  final String patientName;
+  final bool isOpen;
+  final bool showDoctorsAction;
+  final VoidCallback onBack;
+  final VoidCallback onDoctorsTap;
+
+  const _Header({
+    required this.isDark,
+    required this.scaffold,
+    required this.primary,
+    required this.titleColor,
+    required this.muted,
+    required this.patientName,
+    required this.isOpen,
+    required this.showDoctorsAction,
+    required this.onBack,
+    required this.onDoctorsTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            HomeDashboardColors.header(isDark),
+            scaffold,
+          ],
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 10.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _RoundIconButton(
+                    isDark: isDark,
+                    icon: Icons.arrow_back_ios_new_rounded,
+                    onTap: onBack,
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Text(
+                      patientName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w800,
+                        color: titleColor,
+                        letterSpacing: -0.2,
+                      ),
+                    ),
+                  ),
+                  if (showDoctorsAction) ...[
+                    SizedBox(width: 8.w),
+                    _HeaderActionButton(
+                      isDark: isDark,
+                      primary: primary,
+                      icon: Icons.group_outlined,
+                      label: context.tr(AppStrings.doctors),
+                      onTap: onDoctorsTap,
+                    ),
+                  ],
+                ],
+              ),
+              SizedBox(height: 10.h),
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: isOpen
+                          ? HomeDashboardColors.success
+                              .withOpacity(isDark ? 0.18 : 0.12)
+                          : HomeDashboardColors.danger
+                              .withOpacity(isDark ? 0.18 : 0.12),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isOpen ? Icons.lock_open_rounded : Icons.lock_rounded,
+                          size: 12.sp,
+                          color: isOpen
+                              ? HomeDashboardColors.success
+                              : HomeDashboardColors.danger,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          isOpen
+                              ? context.tr(AppStrings.opened)
+                              : context.tr(AppStrings.locked),
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w700,
+                            color: isOpen
+                                ? HomeDashboardColors.success
+                                : HomeDashboardColors.danger,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Flexible(
+                    child: Text(
+                      context.tr(AppStrings.consultationDetails),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11.sp,
+                        fontWeight: FontWeight.w500,
+                        color: muted,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  final bool isDark;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _RoundIconButton({
+    required this.isDark,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: isDark ? const Color(0xFF2A2733) : Colors.white,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Container(
+          width: 36.w,
+          height: 36.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDark ? const Color(0xFF3A3645) : const Color(0xFFE6E2F0),
+            ),
+          ),
+          child: Icon(
+            icon,
+            size: 16.sp,
+            color: HomeDashboardColors.title(isDark),
+            textDirection: Directionality.of(context),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderActionButton extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const _HeaderActionButton({
+    required this.isDark,
+    required this.primary,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: isDark ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.75),
+      borderRadius: BorderRadius.circular(12.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+          child: Row(
+            children: [
+              Icon(icon, size: 14.sp, color: primary),
+              SizedBox(width: 4.w),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final bool isDark;
+  final String title;
+  final Widget? trailing;
+
+  const _SectionLabel({
+    required this.isDark,
+    required this.title,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = HomeDashboardColors.subtitle(isDark);
+    final line = HomeDashboardColors.border(isDark);
+
+    return Row(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 10.sp,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.7,
+            color: color,
+          ),
+        ),
+        if (trailing != null) ...[
+          SizedBox(width: 8.w),
+          trailing!,
+        ],
+        SizedBox(width: 10.w),
+        Expanded(child: Container(height: 1, color: line)),
+      ],
+    );
+  }
+}
+
+class _CountPill extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final int count;
+
+  const _CountPill({
+    required this.isDark,
+    required this.primary,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 2.h),
+      decoration: BoxDecoration(
+        color: primary.withOpacity(isDark ? 0.2 : 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        '$count',
+        style: TextStyle(
+          fontSize: 9.sp,
+          fontWeight: FontWeight.w700,
+          color: primary,
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageCard extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final String message;
+
+  const _MessageCard({
+    required this.isDark,
+    required this.primary,
+    required this.message,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(14.w),
+      decoration: HomeDashboardDecor.card(isDark),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 28.w,
+                height: 28.w,
+                decoration: BoxDecoration(
+                  color: primary.withOpacity(isDark ? 0.2 : 0.12),
+                  borderRadius: BorderRadius.circular(9.r),
+                ),
+                child: Icon(
+                  Icons.chat_bubble_outline_rounded,
+                  size: 14.sp,
+                  color: primary,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Flexible(
+                child: Text(
+                  context.tr(AppStrings.consultationRequest),
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w700,
+                    color: HomeDashboardColors.title(isDark),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          ReadMoreText(
+            message,
+            trimMode: TrimMode.Line,
+            trimLines: 3,
+            colorClickableText: primary,
+            trimCollapsedText: ' ${context.tr(AppStrings.seeMore)} ',
+            trimExpandedText: ' ${context.tr(AppStrings.seeLess)} ',
+            moreStyle: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: primary,
+              fontSize: 11.sp,
+            ),
+            lessStyle: TextStyle(
+              fontWeight: FontWeight.w700,
+              color: primary,
+              fontSize: 11.sp,
+            ),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+              height: 1.45,
+              color: HomeDashboardColors.subtitle(isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReplyCard extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final Color titleColor;
+  final Color muted;
+  final DoctorsConsultationDetailsModelResponse reply;
+  final bool isCurrentDoctor;
+  final VoidCallback onDoctorTap;
+
+  const _ReplyCard({
+    required this.isDark,
+    required this.primary,
+    required this.titleColor,
+    required this.muted,
+    required this.reply,
+    required this.isCurrentDoctor,
+    required this.onDoctorTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: HomeDashboardDecor.card(isDark),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              GestureDetector(
+                onTap: onDoctorTap,
+                child: Container(
+                  width: 36.w,
+                  height: 36.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: primary.withOpacity(isDark ? 0.2 : 0.12),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: reply.doctorId == null
+                      ? Center(
+                          child: Text(
+                            (reply.doctorFirstName ?? 'D')[0].toUpperCase(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 13.sp,
+                              color: primary,
+                            ),
+                          ),
+                        )
+                      : CustomCachedNetworkImage(
+                          imageUrl: reply.doctorImage.toString(),
+                          height: 36.w,
+                          width: 36.w,
+                        ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            doctorName(
+                              firstName: reply.doctorFirstName ?? '',
+                              lastName: reply.doctorLastName ?? '',
+                              role: reply.isVerified.toString(),
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12.sp,
+                              color: isCurrentDoctor
+                                  ? HomeDashboardColors.success
+                                  : titleColor,
+                            ),
+                          ),
+                        ),
+                        if (reply.isVerified == true) ...[
+                          SizedBox(width: 4.w),
+                          const VerificationIcon(),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      TimeAgoService.instance.formatTimeAgoFromString(
+                        reply.updatedAt.toString(),
+                        context,
+                      ),
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w500,
+                        color: muted,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            reply.reply.toString(),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+              height: 1.45,
+              color: HomeDashboardColors.title(isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyReplies extends StatelessWidget {
+  final bool isDark;
+  final Color muted;
+
+  const _EmptyReplies({required this.isDark, required this.muted});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(vertical: 28.h, horizontal: 16.w),
+      decoration: HomeDashboardDecor.card(isDark),
+      child: Column(
+        children: [
+          Icon(Icons.forum_outlined, size: 28.sp, color: muted),
+          SizedBox(height: 8.h),
+          Text(
+            context.tr(AppStrings.noRepliesYet),
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: HomeDashboardColors.title(isDark),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Text(
+            context.tr(AppStrings.beTheFirstToAddConsultationReply),
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+              color: muted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReplyComposer extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final bool isSending;
+  final bool showSend;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onSend;
+
+  const _ReplyComposer({
+    required this.isDark,
+    required this.primary,
+    required this.isSending,
+    required this.showSend,
+    required this.onChanged,
+    required this.onSend,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final barBg = isDark ? HomeDashboardColors.cardBg(isDark) : Colors.white;
+    final topBorder = HomeDashboardColors.border(isDark);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: barBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(22.r)),
+        border: Border(top: BorderSide(color: topBorder, width: 0.8)),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, -4),
+                ),
+              ],
+      ),
+      child: SafeArea(
+        top: false,
+        minimum: EdgeInsets.only(bottom: 8.h),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 10.h, 14.w, 2.h),
+          child: Row(
+            children: [
+              if (isSending)
+                SizedBox(
+                  width: 28.w,
+                  height: 28.w,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.2,
+                    color: primary,
+                  ),
+                )
+              else
+                Expanded(
+                  child: CustomTextFormField(
+                    title: context.tr(AppStrings.writeConsultation),
+                    textInputType: TextInputType.text,
+                    enableSuggestions: true,
+                    onChanged: onChanged,
+                    onFieldSubmitted: (_) {},
+                    textInputAction: TextInputAction.done,
+                    validator: (_) => null,
+                  ),
+                ),
+              if (!isSending && showSend) ...[
+                SizedBox(width: 8.w),
+                Material(
+                  color: primary,
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: InkWell(
+                    onTap: onSend,
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: SizedBox(
+                      width: 42.w,
+                      height: 42.w,
+                      child: Icon(
+                        Icons.send_rounded,
+                        size: 18.sp,
+                        color: Colors.white,
+                        textDirection: Directionality.of(context),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadingView extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+
+  const _LoadingView({required this.isDark, required this.primary});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: 28.w,
+            height: 28.w,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.5,
+              color: primary,
+            ),
+          ),
+          SizedBox(height: 12.h),
+          Text(
+            context.tr(AppStrings.loadingConsultation),
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w600,
+              color: HomeDashboardColors.subtitle(isDark),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

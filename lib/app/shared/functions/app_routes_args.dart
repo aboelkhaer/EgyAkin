@@ -38,6 +38,24 @@ class AppRoutesArgs {
     };
   }
 
+  static Map<String, dynamic> notificationRouteArgs({
+    required DoctorModel currentDoctorModel,
+    required bool accountVerification,
+    required String isSyndicateCardRequired,
+    required String currentDoctorRole,
+    required int currentDoctorPoints,
+    required HomeModelResponse homeDataModel,
+  }) {
+    return {
+      'currentDoctorModel': currentDoctorModel,
+      'accountVerification': accountVerification,
+      'isSyndicateCardRequired': isSyndicateCardRequired,
+      'currentDoctorRole': currentDoctorRole,
+      'currentDoctorPoints': currentDoctorPoints,
+      'homeDataModel': homeDataModel,
+    };
+  }
+
   static Map<String, dynamic> addPatientRouteArgs({
     required DoctorModel currentDoctorModel,
     required String currentDoctorRole,
@@ -87,6 +105,7 @@ class AppRoutesArgs {
     required String currentDoctorRole,
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
+    bool patientsOnly = false,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
@@ -95,6 +114,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'patientsOnly': patientsOnly,
     };
   }
 
@@ -149,6 +169,7 @@ class AppRoutesArgs {
     required String currentDoctorRole,
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
+    bool openFilterOnLoad = false,
   }) {
     return {
       'accountVerification': accountVerification,
@@ -157,6 +178,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'openFilterOnLoad': openFilterOnLoad,
     };
   }
 
@@ -334,6 +356,7 @@ class AppRoutesArgs {
     required HomeModelResponse homeDataModel,
     PostCommunityModel? feed,
     String? groupId,
+    String? groupName,
     VoidCallback? onPostUploaded,
   }) {
     return {
@@ -341,6 +364,7 @@ class AppRoutesArgs {
       'homeDataModel': homeDataModel,
       'feed': feed,
       'groupId': groupId,
+      'groupName': groupName,
       'onPostUploaded': onPostUploaded,
     };
   }
@@ -360,10 +384,12 @@ class AppRoutesArgs {
   static Map<String, dynamic> allGroupsInCommunityRouteArgs({
     required DoctorModel currentDoctorModel,
     required HomeModelResponse homeDataModel,
+    int initialTab = 0,
   }) {
     return {
       'currentDoctorModel': currentDoctorModel,
       'homeDataModel': homeDataModel,
+      'initialTab': initialTab,
     };
   }
 

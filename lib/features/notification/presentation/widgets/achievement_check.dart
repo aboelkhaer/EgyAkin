@@ -20,12 +20,13 @@ class AchievementCheck extends StatelessWidget {
       return Flexible(
         child: RichText(
           text: TextSpan(
-            text: 'Congratulations!',
+            text: context.tr(AppStrings.congratulations),
             style: TextStyle(color: AppColors.title, fontSize: 12.sp),
-            children: const <TextSpan>[
+            children: <TextSpan>[
               TextSpan(
-                text: '🎉 You have earned a new achievement!',
-                style: TextStyle(
+                text:
+                    '🎉 ${context.tr(AppStrings.youHaveEarnedNewAchievement)}',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
                 ),
@@ -36,8 +37,8 @@ class AchievementCheck extends StatelessWidget {
               //     style: TextStyle(
               //         fontWeight: FontWeight.bold)),
               TextSpan(
-                  text: 'Keep up the great work!',
-                  style: TextStyle(
+                  text: context.tr(AppStrings.keepUpTheGreatWork),
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   )),
             ],
@@ -53,10 +54,11 @@ class AchievementCheck extends StatelessWidget {
           text: TextSpan(
             text: 'Dr.$notificationDoctorName',
             style: TextStyle(color: AppColors.title, fontSize: 12.sp),
-            children: const <TextSpan>[
+            children: <TextSpan>[
               TextSpan(
-                text: ' has earned a new achievement! 🎉',
-                style: TextStyle(
+                text:
+                    ' ${context.tr(AppStrings.hasEarnedNewAchievement)} 🎉',
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.green,
                 ),

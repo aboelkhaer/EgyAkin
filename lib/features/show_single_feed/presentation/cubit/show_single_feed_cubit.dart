@@ -35,14 +35,276 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   final Map<int, int?> postSelectedOption = {};
 
   CommentModelInCommunity? commentToReply;
+  /// Extra top inset while replying so early comments can sit above the keyboard.
+  double replyAnchorTopPadding = 0;
+  /// Items playing exit animation before being removed from the list.
+  final Set<String> exitingItemIds = {};
   bool isLoadingMoreForScroll = false;
   bool isLastPage = false;
   int _currentPage = 1;
 
   TextEditingController commentContent = TextEditingController();
+  final FocusNode commentFocusNode = FocusNode();
+  ScrollController? feedScrollController;
+  final GlobalKey composerKey = GlobalKey(debugLabel: 'feed-comment-composer');
+  final Map<String, GlobalKey> _commentKeys = {};
   int changeCounter = 0;
   final GlobalKey<AnimatedListState> listKeyForComments =
       GlobalKey<AnimatedListState>();
+
+  GlobalKey keyForComment(String commentId) {
+    return _commentKeys.putIfAbsent(
+      commentId,
+      () => GlobalKey(debugLabel: 'feed-comment-$commentId'),
+    );
+  }
+
+  void clearReplyTarget({bool refresh = true}) {
+    commentToReply = null;
+    replyAnchorTopPadding = 0;
+    if (refresh) refreshScreen();
+  }
+
+  bool isItemExiting(String itemId) => exitingItemIds.contains(itemId);
+
+  /// Called when a delete exit animation finishes — removes the item from state.
+  void finalizeExitingItem(String itemId) {
+    if (!exitingItemIds.remove(itemId)) return;
+
+    final currentState = state.maybeMap(
+      orElse: () => null,
+      loaded: (value) => value,
+    );
+    if (currentState == null) return;
+
+    final comments =
+        List<CommentModelInCommunity>.from(
+            currentState.commentsResponse.data?.data ?? []);
+
+    final commentIndex =
+        comments.indexWhere((c) => c.id.toString() == itemId);
+
+    if (commentIndex != -1) {
+      comments.removeAt(commentIndex);
+    } else {
+      for (var i = 0; i < comments.length; i++) {
+        final replies = comments[i].replies;
+        if (replies == null ||
+            !replies.any((r) => r.id.toString() == itemId)) {
+          continue;
+        }
+        comments[i] = comments[i].copyWith(
+          replies: replies.where((r) => r.id.toString() != itemId).toList(),
+          repliesCount: ((comments[i].repliesCount ?? 1) - 1) < 0
+              ? 0
+              : (comments[i].repliesCount ?? 1) - 1,
+        );
+        break;
+      }
+    }
+
+    emit(
+      ShowSingleFeedState.loaded(
+        currentState.commentsResponse.copyWith(
+          data: currentState.commentsResponse.data?.copyWith(
+            data: comments,
+          ),
+        ),
+        changeCounter + 1,
+        currentState.feed,
+        currentState.isSendCommentLoading,
+        currentState.isSendCommentLoaded,
+        '',
+        currentState.highlightedCommentId,
+        false,
+        currentState.isDeleteCommentLoaded,
+        currentState.isSendReplyLoading,
+        currentState.isSendReplyLoaded,
+        currentState.isSeeMore,
+      ),
+    );
+  }
+
+  void _beginExitAnimation(String itemId) {
+    exitingItemIds.add(itemId);
+    deleteCommentId = '';
+    refreshScreen();
+  }
+
+  /// Focus the composer and scroll the target comment just above it.
+  Future<void> beginReplyTo(CommentModelInCommunity comment) async {
+    commentToReply = comment;
+    replyAnchorTopPadding = 0;
+    refreshScreen();
+
+    await Future<void>.delayed(const Duration(milliseconds: 16));
+    if (isClosed) return;
+
+    commentFocusNode.requestFocus();
+
+    // Wait until keyboard + reply chip are ready, then scroll once.
+    await _waitForKeyboard(keyForComment(comment.id.toString()));
+    if (isClosed) return;
+
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    if (isClosed) return;
+    await WidgetsBinding.instance.endOfFrame;
+    if (isClosed) return;
+
+    await scrollItemAboveComposer(comment.id.toString());
+  }
+
+  Future<void> _waitForKeyboard(GlobalKey commentKey) async {
+    final started = DateTime.now();
+    const timeout = Duration(milliseconds: 400);
+    double lastInset = 0;
+    var stableFrames = 0;
+
+    while (DateTime.now().difference(started) < timeout) {
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      if (isClosed) return;
+
+      final ctx = commentKey.currentContext;
+      if (ctx == null || !ctx.mounted) continue;
+
+      final inset = MediaQuery.viewInsetsOf(ctx).bottom;
+      if (inset > 60) {
+        // Keyboard started; wait until inset stops growing.
+        if ((inset - lastInset).abs() < 1) {
+          stableFrames++;
+          if (stableFrames >= 2) {
+            await WidgetsBinding.instance.endOfFrame;
+            return;
+          }
+        } else {
+          stableFrames = 0;
+        }
+        lastInset = inset;
+      }
+    }
+
+    await WidgetsBinding.instance.endOfFrame;
+  }
+
+  /// Places a comment/reply (full card) clearly above the composer bar.
+  Future<void> scrollItemAboveComposer(
+    String itemId, {
+    bool didApplyTopPad = false,
+  }) async {
+    final controller = feedScrollController;
+    if (controller == null || !controller.hasClients) return;
+
+    final ctx = keyForComment(itemId).currentContext;
+    if (ctx == null || !ctx.mounted) return;
+
+    final commentBox = ctx.findRenderObject() as RenderBox?;
+    if (commentBox == null || !commentBox.hasSize || !commentBox.attached) {
+      return;
+    }
+
+    final position = controller.position;
+    final viewportContext = position.context.notificationContext;
+    final viewportBox = viewportContext?.findRenderObject() as RenderBox?;
+    if (viewportBox == null || !viewportBox.hasSize) return;
+
+    final viewportTopGlobal = viewportBox.localToGlobal(Offset.zero).dy;
+    final commentTopGlobal = commentBox.localToGlobal(Offset.zero).dy;
+    final commentBottomInViewport =
+        (commentTopGlobal - viewportTopGlobal) + commentBox.size.height;
+
+    // Align to the real composer top (not an estimate of keyboard + bar).
+    const gap = 16.0;
+    double targetBottom;
+    final composerBox =
+        composerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (composerBox != null && composerBox.hasSize) {
+      final composerTopGlobal = composerBox.localToGlobal(Offset.zero).dy;
+      targetBottom = composerTopGlobal - viewportTopGlobal - gap;
+    } else {
+      final media = MediaQuery.of(ctx);
+      final keyboard = media.viewInsets.bottom;
+      final fallbackComposer = commentToReply != null ? 130.h : 100.h;
+      targetBottom =
+          viewportBox.size.height - keyboard - fallbackComposer - gap;
+    }
+
+    if (targetBottom <= 0) return;
+
+    final delta = commentBottomInViewport - targetBottom;
+    final idealTarget = position.pixels + delta;
+
+    // Early items often can't move down (already at scroll 0). Inject top
+    // padding so they can sit just above the keyboard/composer.
+    if (idealTarget < position.minScrollExtent - 0.5 && !didApplyTopPad) {
+      final missing = position.minScrollExtent - idealTarget;
+      if (missing > 1) {
+        replyAnchorTopPadding = missing;
+        refreshScreen();
+        await Future<void>.delayed(const Duration(milliseconds: 16));
+        if (isClosed) return;
+        await WidgetsBinding.instance.endOfFrame;
+        if (isClosed) return;
+        await scrollItemAboveComposer(
+          itemId,
+          didApplyTopPad: true,
+        );
+        return;
+      }
+    }
+
+    final target = idealTarget.clamp(
+      position.minScrollExtent,
+      position.maxScrollExtent,
+    );
+
+    if ((target - position.pixels).abs() < 1) return;
+
+    await controller.animateTo(
+      target,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  Future<void> _scrollToNewlyAddedItem(String itemId) async {
+    // Wait for highlight/entrance widgets to mount with their GlobalKey.
+    await WidgetsBinding.instance.endOfFrame;
+    await Future<void>.delayed(const Duration(milliseconds: 80));
+    if (isClosed) return;
+    await scrollItemAboveComposer(itemId);
+  }
+
+  @override
+  Future<void> close() {
+    commentFocusNode.dispose();
+    return super.close();
+  }
+
+  bool _isLastCommentsPage({
+    required int currentPage,
+    required PostCommentsData? pagination,
+    bool itemsAreSinglePageOnly = false,
+  }) {
+    if (pagination == null) return true;
+
+    final nextPageUrl = pagination.nextPageUrl?.trim();
+    if (nextPageUrl == null || nextPageUrl.isEmpty) return true;
+
+    final lastPage = pagination.lastPage;
+    if (lastPage != null && currentPage >= lastPage) return true;
+
+    final loadedCount = pagination.data?.length ?? 0;
+    final perPage = pagination.perPage ?? 10;
+    final total = pagination.total;
+
+    // Single API page response: fewer items than page size means no more pages.
+    if (itemsAreSinglePageOnly && loadedCount < perPage) return true;
+
+    // Merged list / known totals.
+    if (total != null && loadedCount >= total) return true;
+
+    return false;
+  }
 
   Future<PostCommunityModel> getPostByIdWhenComeFromNotification(
       String postId) async {
@@ -82,13 +344,14 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       String postId, PostCommunityModel feed, bool isComeFromNotification,
       {String? highlightedCommentId}) async {
     commentToReply = null;
+    replyAnchorTopPadding = 0;
+    exitingItemIds.clear();
     _currentPage = 1;
-    // Emit loading state only if no silent refresh
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
     if (highlightedCommentId == null) {
-      // if(isComeFromNotification ==true)
-      if (!isComeFromNotification) {
-        emit(const ShowSingleFeedState.loading());
-      }
+      // Clear previous post's comments without a full-screen loading flash.
+      emit(const ShowSingleFeedState.initial());
 
       final result = await _getCommentsInCommunityUsecase.execute(
         GetCommentsInCommunityUsecaseInput(
@@ -101,6 +364,11 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           emit(ShowSingleFeedState.error(l.message));
         },
         (r) async {
+          isLastPage = _isLastCommentsPage(
+            currentPage: _currentPage,
+            pagination: r.data,
+            itemsAreSinglePageOnly: true,
+          );
           if (highlightedCommentId == null) {
             emit(
               ShowSingleFeedState.loaded(
@@ -150,6 +418,21 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   loadMoreComments(String postId) async {
     // Don't load more if we're already at the last page or currently loading
     if (isLoadingMoreForScroll || isLastPage) return;
+
+    // Re-check against current pagination before requesting page 2+.
+    final currentPagination = state.maybeWhen(
+      loaded: (commentsResponse, _, __, ___, ____, _____, ______, _______,
+              ________, _________, __________, ___________) =>
+          commentsResponse.data,
+      orElse: () => null,
+    );
+    if (_isLastCommentsPage(
+      currentPage: _currentPage,
+      pagination: currentPagination,
+    )) {
+      isLastPage = true;
+      return;
+    }
 
     _currentPage++;
     isLoadingMoreForScroll = true;
@@ -208,20 +491,28 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) {
-            // Check if we've reached the last page
-            isLastPage = loadMoreComments.data?.lastPage == null ||
-                _currentPage >= loadMoreComments.data!.lastPage!;
+            final newPageItems = loadMoreComments.data?.data ?? [];
+            isLastPage = newPageItems.isEmpty ||
+                _isLastCommentsPage(
+                  currentPage: _currentPage,
+                  pagination: loadMoreComments.data,
+                  itemsAreSinglePageOnly: true,
+                );
 
             // Merge the existing comments with the new ones
             final updatedComments = value.commentsResponse.copyWith(
               data: value.commentsResponse.data?.copyWith(
                 data: [
                   ...(value.commentsResponse.data?.data ?? []),
-                  ...(loadMoreComments.data?.data ?? []),
+                  ...newPageItems,
                 ],
                 currentPage: _currentPage,
                 lastPage: loadMoreComments.data?.lastPage,
                 nextPageUrl: loadMoreComments.data?.nextPageUrl,
+                total: loadMoreComments.data?.total ??
+                    value.commentsResponse.data?.total,
+                perPage: loadMoreComments.data?.perPage ??
+                    value.commentsResponse.data?.perPage,
               ),
             );
 
@@ -686,6 +977,16 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     List<CommentModelInCommunity> commentsList,
     DoctorModel currentDoctorModel,
   ) async {
+    commentContent.clear();
+    replyAnchorTopPadding = 0;
+
+    final baseFeed = state.maybeWhen(
+      loaded: (_, __, stateFeed, ___, ____, _____, ______, _______, ________,
+              _________, __________, ___________) =>
+          stateFeed,
+      orElse: () => feed,
+    );
+
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -738,15 +1039,13 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
       },
       // Handle success case
       (r) async {
-        commentContent.clear();
-
-        final updatedFeed = feed.copyWith(
-          commentsCount:
-              (feed.commentsCount ?? 0) + 1, // Increment comments count
+        final updatedFeed = baseFeed.copyWith(
+          commentsCount: (baseFeed.commentsCount ?? 0) + 1,
         );
-        sl<CommunityCubit>().updatePost(updatedFeed);
+        try {
+          sl<CommunityCubit>().updatePost(updatedFeed);
+        } catch (_) {}
 
-        // Adding new comment logic
         final newComment = CommentModelInCommunity(
           id: r.data!.id,
           feedPostId: int.parse(postId),
@@ -760,53 +1059,50 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           replies: [],
         );
 
-// Add the new comment at the beginning of the list
         final mutableCommentsList =
             List<CommentModelInCommunity>.from(commentsList);
         mutableCommentsList.insert(0, newComment);
 
-// Notify the AnimatedList about the new item
-        listKeyForComments.currentState
-            ?.insertItem(0, duration: const Duration(seconds: 1));
-
-// Update the state to include the new comment
-
         emit(
           state.maybeMap(
             orElse: () => state,
-            loaded: (value) => ShowSingleFeedState.loaded(
-              value.commentsResponse.copyWith(
-                data: value.commentsResponse.data?.copyWith(
-                  data: mutableCommentsList, // Updated list with new comment
+            loaded: (value) {
+              final previousTotal = value.commentsResponse.data?.total ??
+                  (value.commentsResponse.data?.data?.length ?? 0);
+              return ShowSingleFeedState.loaded(
+                value.commentsResponse.copyWith(
+                  data: value.commentsResponse.data?.copyWith(
+                    data: mutableCommentsList,
+                    total: previousTotal + 1,
+                  ),
                 ),
-              ),
-              changeCounter,
-              updatedFeed, // Use the updated feed
-              true,
-              false,
-              '',
-              r.data!.id.toString(),
-              value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded,
-              value.isSendReplyLoading,
-              value.isSendReplyLoaded,
-              value.isSeeMore,
-            ),
+                changeCounter + 1,
+                updatedFeed,
+                false,
+                true,
+                '',
+                r.data!.id.toString(),
+                value.isDeleteCommentLoading,
+                value.isDeleteCommentLoaded,
+                value.isSendReplyLoading,
+                value.isSendReplyLoaded,
+                value.isSeeMore,
+              );
+            },
           ),
         );
-        await Future.delayed(const Duration(milliseconds: 100));
+
+        await _scrollToNewlyAddedItem(r.data!.id.toString());
+
+        await Future.delayed(const Duration(milliseconds: 1200));
         emit(
           state.maybeMap(
             orElse: () => state,
             loaded: (value) => ShowSingleFeedState.loaded(
-              value.commentsResponse.copyWith(
-                data: value.commentsResponse.data?.copyWith(
-                  data: mutableCommentsList, // Updated list with new comment
-                ),
-              ),
-              changeCounter,
-              updatedFeed, // Use the updated feed
-              true,
+              value.commentsResponse,
+              value.changeCounter,
+              value.feed,
+              false,
               false,
               '',
               null,
@@ -817,14 +1113,6 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
               value.isSeeMore,
             ),
           ),
-        );
-
-        // Optionally refresh comments from the server
-        await getCommentsInCommunity(
-          postId,
-          updatedFeed, // Pass updated feed
-          false,
-          highlightedCommentId: r.data!.id.toString(),
         );
       },
     );
@@ -876,6 +1164,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
     result.fold(
       (l) {
+        deleteCommentId = '';
         emit(ShowSingleFeedState.loaded(
           currentState.commentsResponse,
           changeCounter,
@@ -888,71 +1177,30 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           false,
           false,
           false,
-          false,
+          currentState.isSeeMore,
         ));
       },
       (r) async {
-        final List<CommentModelInCommunity> updatedComments = [
-          ...?currentState.commentsResponse.data?.data
-        ];
-
-        int totalDeleted = 1;
-
-        // If main comment, delete replies too
-        if (!isReply) {
-          final repliesToDelete = updatedComments
-              .where((c) => c.parentId == deletedComment.id)
-              .toList();
-
-          totalDeleted += repliesToDelete.length;
-
-          updatedComments.removeWhere((c) =>
-              c.id.toString() == commentId || c.parentId == deletedComment.id);
-        } else {
-          // If reply, update parent's repliesCount
-          final parentIndex = updatedComments
-              .indexWhere((c) => c.id == deletedComment.parentId);
-          if (parentIndex != -1) {
-            final parent = updatedComments[parentIndex];
-            updatedComments[parentIndex] = parent.copyWith(
-              repliesCount: (parent.repliesCount ?? 1) - 1,
-            );
-          }
-          updatedComments.removeWhere((c) => c.id.toString() == commentId);
-        }
+        final deletedRepliesCount = !isReply
+            ? (deletedComment.replies?.length ??
+                deletedComment.repliesCount ??
+                0)
+            : 0;
+        final totalDeleted = 1 + deletedRepliesCount;
 
         final updatedFeed = feed.copyWith(
-          commentsCount: (feed.commentsCount ?? 0) - totalDeleted,
+          commentsCount: ((feed.commentsCount ?? 0) - totalDeleted) < 0
+              ? 0
+              : (feed.commentsCount ?? 0) - totalDeleted,
         );
 
-        final updatedResponse = currentState.commentsResponse.copyWith(
-          data: currentState.commentsResponse.data?.copyWith(
-            data: updatedComments,
-          ),
-        );
+        try {
+          sl<CommunityCubit>().updatePost(updatedFeed);
+        } catch (_) {}
 
-        sl<CommunityCubit>().updatePost(updatedFeed);
-
-        if (listKeyForComments.currentState != null) {
-          listKeyForComments.currentState?.removeItem(
-            index,
-            (context, animation) => SizeTransition(
-              sizeFactor: animation,
-              child: CommentWidgetInCommunity(
-                commentModel: deletedComment,
-                homeDataModel: homeDataModel,
-                currentDoctorModel: currentDoctorModel,
-                commentsResponse: currentState.commentsResponse,
-                index: index,
-                updatedFeed: updatedFeed,
-              ),
-            ),
-            duration: const Duration(milliseconds: 300),
-          );
-        }
-
+        // Keep the item mounted so the exit animation can play.
         emit(ShowSingleFeedState.loaded(
-          updatedResponse,
+          currentState.commentsResponse,
           changeCounter + 1,
           updatedFeed,
           false,
@@ -963,12 +1211,12 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           true,
           false,
           false,
-          false,
+          currentState.isSeeMore,
         ));
+
+        _beginExitAnimation(commentId);
       },
     );
-
-    deleteCommentId = '';
   }
 
   final Map<int, GlobalKey<AnimatedListState>> listKeyForReplies = {};
@@ -1014,6 +1262,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
 
     result.fold(
       (failure) {
+        deleteCommentId = '';
         emit(
           ShowSingleFeedState.loaded(
             currentState.commentsResponse,
@@ -1027,60 +1276,25 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             false,
             false,
             false,
-            false,
+            currentState.isSeeMore,
           ),
         );
       },
       (success) async {
         final updatedFeed = feed.copyWith(
-          commentsCount: (feed.commentsCount ?? 0) - 1,
+          commentsCount: ((feed.commentsCount ?? 0) - 1) < 0
+              ? 0
+              : (feed.commentsCount ?? 0) - 1,
         );
 
-        final updatedReplies = commentModel.replies
-            ?.where((reply) => reply.id.toString() != replyId)
-            .toList();
-        final updatedComment = commentModel.copyWith(
-          replies: updatedReplies,
-          repliesCount: (commentModel.repliesCount ?? 0) - 1,
-        );
+        try {
+          sl<CommunityCubit>().updatePost(updatedFeed);
+        } catch (_) {}
 
-        final updatedCommentsData = currentState.commentsResponse.data?.data
-            ?.map((comment) =>
-                comment.id == commentModel.id ? updatedComment : comment)
-            .toList();
-        final updatedCommentsResponse = currentState.commentsResponse.copyWith(
-          data: currentState.commentsResponse.data?.copyWith(
-            data: updatedCommentsData,
-          ),
-        );
-
-        if (listKeyForReplies[commentModel.id]?.currentState != null) {
-          listKeyForReplies[commentModel.id]?.currentState?.removeItem(
-            replyIndex,
-            (context, animation) {
-              final replyToRemove = commentModel.replies![replyIndex];
-              return SizeTransition(
-                sizeFactor: animation,
-                axisAlignment: 0.0,
-                child: CommentWidgetInCommunity(
-                  commentModel: replyToRemove,
-                  homeDataModel: homeDataModel,
-                  currentDoctorModel: currentDoctorModel,
-                  commentsResponse: currentState.commentsResponse,
-                  index: replyIndex,
-                  updatedFeed: updatedFeed,
-                ),
-              );
-            },
-            duration: const Duration(milliseconds: 300),
-          );
-
-          await Future.delayed(const Duration(milliseconds: 300));
-        }
-
+        // Keep the reply mounted so the exit animation can play.
         emit(
           ShowSingleFeedState.loaded(
-            updatedCommentsResponse,
+            currentState.commentsResponse,
             changeCounter + 1,
             updatedFeed,
             false,
@@ -1091,14 +1305,13 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
             true,
             false,
             false,
-            false,
+            currentState.isSeeMore,
           ),
         );
+
+        _beginExitAnimation(replyId);
       },
     );
-
-    deleteCommentId = '';
-    commentContent.clear();
   }
 
   //! create reply
@@ -1107,8 +1320,14 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     String postId,
     String commentId,
     CommentModelInCommunity parentComment,
-    DoctorModel currentDoctorModel,
-  ) async {
+    DoctorModel currentDoctorModel, {
+    String? commentText,
+  }) async {
+    final replyText = (commentText ?? commentContent.text).trim();
+    commentContent.clear();
+    commentToReply = null;
+    replyAnchorTopPadding = 0;
+
     // Start the loading state for sending a reply
     emit(
       state.maybeMap(
@@ -1134,7 +1353,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     final result = await _createReplyOnCommentInCommunityUsecase.execute(
       CreateReplyOnCommentInCommunityUsecaseInput(
         postId: postId,
-        comment: commentContent.text,
+        comment: replyText,
         parentId: int.parse(commentId),
       ),
     );
@@ -1177,6 +1396,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         final updatedFeed = currentState.feed.copyWith(
           commentsCount: (currentState.feed.commentsCount ?? 0) + 1,
         );
+        try {
+          sl<CommunityCubit>().updatePost(updatedFeed);
+        } catch (_) {}
 
         // Create the new reply model
         final newReply = CommentModelInCommunity(
@@ -1184,7 +1406,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           feedPostId: parentComment.feedPostId,
           parentId: parentComment.id,
           doctor: currentDoctorModel,
-          comment: commentContent.text,
+          comment: replyText,
           createdAt: DateTime.now().toIso8601String(),
           updatedAt: DateTime.now().toIso8601String(),
           likesCount: 0,
@@ -1209,6 +1431,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         final updatedCommentsResponse = currentState.commentsResponse.copyWith(
           data: currentState.commentsResponse.data?.copyWith(
             data: updatedComments,
+            total: (currentState.commentsResponse.data?.total ??
+                    updatedComments.length) +
+                1,
           ),
         );
 
@@ -1238,7 +1463,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           ),
         );
 
-        await Future.delayed(const Duration(milliseconds: 100));
+        await _scrollToNewlyAddedItem(success.data!.id.toString());
+
+        await Future.delayed(const Duration(milliseconds: 1200));
 
         // Remove highlight after delay
         emit(
@@ -1259,6 +1486,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
         );
 
         commentToReply = null;
+        replyAnchorTopPadding = 0;
         commentContent.clear();
       },
     );

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:egy_akin/app/constants/app_strings.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_file_utils.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
 import 'package:egy_akin/app/services/localization_service.dart';
 import 'package:egy_akin/app/utilities/custom_snack_bar.dart';
@@ -56,6 +57,77 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   String removeFilesId = '';
   int counterChanges = 0;
   String? sectionAiMode;
+
+  /// Question id to scroll to after validation failure (UI reads this).
+  String? firstInvalidQuestionId;
+
+  /// Index in [questionModelList] for the first invalid question.
+  int? firstInvalidQuestionIndex;
+
+  void _emitFieldError(String questionId, String message) {
+    firstInvalidQuestionId = questionId;
+    firstInvalidQuestionIndex = questionModelList.indexWhere(
+      (q) => q.id.toString() == questionId,
+    );
+    if (firstInvalidQuestionIndex != null && firstInvalidQuestionIndex! < 0) {
+      firstInvalidQuestionIndex = null;
+    }
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => PatientSectionDetailsState.loaded(
+        value.questions,
+        false,
+        false,
+        message,
+        snackbarErrorCounter += 1,
+        false,
+        false,
+        0.0,
+        false,
+        false,
+        false,
+        counterChanges,
+        false,
+        false,
+        '',
+      ),
+    ));
+  }
+
+  /// Clears the red highlight after the user edits the invalid field.
+  void clearInvalidHighlight([String? questionId]) {
+    if (firstInvalidQuestionId == null) return;
+    if (questionId != null && firstInvalidQuestionId != questionId) return;
+    firstInvalidQuestionId = null;
+    firstInvalidQuestionIndex = null;
+  }
+
+  /// Clears the dialog message only — keeps highlight + scroll target.
+  void acknowledgeFieldErrorDialog() {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        if (value.message.isEmpty) return state;
+        return PatientSectionDetailsState.loaded(
+          value.questions,
+          value.isSubmitLoading,
+          value.isSubmitted,
+          '',
+          value.snackbarErrorCounter,
+          value.isChooseFilesLoading,
+          value.isChooseFilesLoaded,
+          value.uploadFilesProgress,
+          value.isGetMedicationsLoading,
+          value.isGetMedicationsLoaded,
+          value.isSearchMedicationLoading,
+          value.counterChanges,
+          value.isCreateMedicationLoading,
+          value.isCreateMedicationLoaded,
+          value.dialogMessage,
+        );
+      },
+    ));
+  }
 
   /// HTML guidance from API (`ai_hint`) for voice recording.
   String? sectionAiHint;
@@ -488,9 +560,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       log(questionModelList.toString());
 
       for (var question in questionModelList) {
-        // if (question.question == 'Hospital') {
-        //   log(question.toString());
-        // }
+        final qid = question.id?.toString() ?? '';
         if (question.mandatory == true) {
           if (question.type == AppStrings.questionTypeMultiple ||
               question.type == AppStrings.multipleType) {
@@ -504,26 +574,10 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
                 storedOnQuestion: question.answer,
               );
 
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  '${LocalizationService.instance.translate(messageKey)} \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                  false,
-                  false,
-                  false,
-                  counterChanges,
-                  false,
-                  false,
-                  '',
-                ),
-              ));
+              _emitFieldError(
+                qid,
+                '${LocalizationService.instance.translate(messageKey)} \n{${question.question}}',
+              );
 
               isValid = false;
               break;
@@ -533,26 +587,10 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           if (question.type == AppStrings.selectType ||
               question.type == AppStrings.questionTypeSelect) {
             if (!_hasValidSelectAnswer(question)) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                  false,
-                  false,
-                  false,
-                  counterChanges,
-                  false,
-                  false,
-                  '',
-                ),
-              ));
+              _emitFieldError(
+                qid,
+                '${LocalizationService.instance.translate(AppStrings.youMustSelectAtLeastOneChoice)} \n{${question.question}}',
+              );
 
               isValid = false;
               break;
@@ -566,27 +604,11 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               RegExp englishCharRegex = RegExp(r'^[a-zA-Z\s]+$');
 
               if (!englishCharRegex.hasMatch(name)) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance.translate(
-                        AppStrings.nameShouldContainOnlyEnglishLetters),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance.translate(
+                      AppStrings.nameShouldContainOnlyEnglishLetters),
+                );
 
                 isValid = false;
                 break;
@@ -597,53 +619,21 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             if (question.question == 'National ID') {
               String nationalID = question.answer;
               if (nationalID.length != 14) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.nationalIDShouldHave14Digits),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance
+                      .translate(AppStrings.nationalIDShouldHave14Digits),
+                );
 
                 isValid = false;
                 break;
               }
               if (int.tryParse(nationalID) == null) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.nationalIDShouldHave14Digits),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance
+                      .translate(AppStrings.nationalIDShouldHave14Digits),
+                );
 
                 isValid = false;
                 break;
@@ -653,29 +643,22 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             if (question.question == 'Age') {
               String age = question.answer;
 
+              if (age.toString().trim().isEmpty) {
+                _emitFieldError(
+                  qid,
+                  '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+                );
+                isValid = false;
+                break;
+              }
+
               if (int.tryParse(age) == null ||
                   (int.parse(age) > 119 || int.parse(age) <= 0)) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.ageShouldBeLessThan120),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance
+                      .translate(AppStrings.ageShouldBeLessThan120),
+                );
 
                 isValid = false;
                 break;
@@ -686,53 +669,21 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
               String phoneNumber = question.answer;
 
               if (phoneNumber.length != 11) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.phoneShouldHave11Digits),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance
+                      .translate(AppStrings.phoneShouldHave11Digits),
+                );
                 isValid = false;
                 break;
               }
 
               if (int.tryParse(phoneNumber) == null) {
-                emit(state.maybeMap(
-                  orElse: () => state,
-                  loaded: (value) => PatientSectionDetailsState.loaded(
-                    value.questions,
-                    false,
-                    false,
-                    LocalizationService.instance
-                        .translate(AppStrings.phoneShouldHave11Digits),
-                    snackbarErrorCounter += 1,
-                    false,
-                    false,
-                    0.0,
-                    false,
-                    false,
-                    false,
-                    counterChanges,
-                    false,
-                    false,
-                    '',
-                  ),
-                ));
+                _emitFieldError(
+                  qid,
+                  LocalizationService.instance
+                      .translate(AppStrings.phoneShouldHave11Digits),
+                );
                 isValid = false;
                 break;
               }
@@ -743,26 +694,10 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
             final isEmpty =
                 answer == null || (answer is List && answer.isEmpty);
             if (isEmpty) {
-              emit(state.maybeMap(
-                orElse: () => state,
-                loaded: (value) => PatientSectionDetailsState.loaded(
-                  value.questions,
-                  false,
-                  false,
-                  '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-                  snackbarErrorCounter += 1,
-                  false,
-                  false,
-                  0.0,
-                  false,
-                  false,
-                  false,
-                  counterChanges,
-                  false,
-                  false,
-                  '',
-                ),
-              ));
+              _emitFieldError(
+                qid,
+                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+              );
               isValid = false;
               break;
             }
@@ -770,26 +705,10 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           }
 
           if (question.answer == null || question.answer == '') {
-            emit(state.maybeMap(
-              orElse: () => state,
-              loaded: (value) => PatientSectionDetailsState.loaded(
-                value.questions,
-                false,
-                false,
-                '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
-                snackbarErrorCounter += 1,
-                false,
-                false,
-                0.0,
-                false,
-                false,
-                false,
-                counterChanges,
-                false,
-                false,
-                '',
-              ),
-            ));
+            _emitFieldError(
+              qid,
+              '${LocalizationService.instance.translate(AppStrings.thisQuestionIsRequired)} \n{${question.question}}',
+            );
 
             isValid = false;
             break;
@@ -798,6 +717,8 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       }
 
       if (isValid == true) {
+        firstInvalidQuestionId = null;
+        firstInvalidQuestionIndex = null;
         emit(state.maybeMap(
           orElse: () => state,
           loaded: (value) => PatientSectionDetailsState.loaded(
@@ -1106,10 +1027,17 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         }
       }
 
-      // Store files in formData
-      formData[questionModelList[questionIndex].id.toString()] = filesList;
+      final questionId = questionModelList[questionIndex].id.toString();
+      // Keep already-uploaded files and append the newly picked ones,
+      // otherwise the API replaces the whole list.
+      final mergedFiles = _mergeExistingFilesWithNewUploads(
+        questionId: questionId,
+        questionIndex: questionIndex,
+        newlyPicked: filesList,
+      );
+      formData[questionId] = mergedFiles;
 
-      log(formData[questionModelList[questionIndex].id.toString()].toString());
+      log(formData[questionId].toString());
       emit(state.maybeMap(
         orElse: () => state,
         loaded: (value) => PatientSectionDetailsState.loaded(
@@ -1153,10 +1081,13 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         },
       );
 
-      // API call to upload files
+      // API call to upload files (send only this question so other
+      // answers are not wiped while appending files).
       final getResponse = await _updatePatientSectionDetailsUsecase.execute(
           UpdatePatientSectionDetailsUsecaseInput(
-              patientId: patientId, sectionId: sectionId, map: formData));
+              patientId: patientId,
+              sectionId: sectionId,
+              map: {questionId: mergedFiles}));
       getResponse.fold(
         (l) {
           Navigator.pop(context);
@@ -1248,6 +1179,67 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
         ));
       },
     );
+  }
+
+  List<dynamic> _existingFilesForQuestion({
+    required String questionId,
+    required int questionIndex,
+  }) {
+    final formEntry = formData[questionId];
+    if (formEntry is List && formEntry.isNotEmpty) {
+      return List<dynamic>.from(formEntry);
+    }
+
+    final answer = questionModelList[questionIndex].answer;
+    if (answer is List && answer.isNotEmpty) {
+      return List<dynamic>.from(answer);
+    }
+    return const [];
+  }
+
+  /// Builds the payload as [existing kept files] + [newly picked uploads]
+  /// so adding more files does not wipe previous ones on the API.
+  List<dynamic> _mergeExistingFilesWithNewUploads({
+    required String questionId,
+    required int questionIndex,
+    required List<Map<String, String>> newlyPicked,
+  }) {
+    final existing = _existingFilesForQuestion(
+      questionId: questionId,
+      questionIndex: questionIndex,
+    );
+    final kept = <dynamic>[];
+
+    for (final item in existing) {
+      if (item is String && isRemoteFileUrl(item)) {
+        kept.add(item);
+        continue;
+      }
+
+      if (item is Map) {
+        final map = Map<String, dynamic>.from(
+          item.map((k, v) => MapEntry(k.toString(), v)),
+        );
+        final url = remoteFileUrlFromEntry(map);
+        if (url != null) {
+          kept.add({
+            'file_name': fileDisplayName(map),
+            'file_url': url,
+          });
+          continue;
+        }
+
+        final data = map['file_data']?.toString();
+        if (data != null && data.isNotEmpty && !isRemoteFileUrl(data)) {
+          kept.add({
+            'file_name': map['file_name']?.toString() ?? 'file',
+            'file_data': data,
+          });
+        }
+      }
+    }
+
+    return [...kept, ...newlyPicked];
   }
 
 // Add these methods to your cubit:

@@ -10,39 +10,51 @@ class NotificationsView extends StatelessWidget {
   final String currentDoctorRole;
   final HomeModelResponse homeDataModel;
   final bool isDarkMode;
-  const NotificationsView(
-      {super.key,
-      required this.notificationsModel,
-      required this.currentDoctorModel,
-      required this.accountVerification,
-      required this.isSyndicateCardRequired,
-      required this.currentDoctorRole,
-      required this.currentDoctorPoints,
-      required this.homeDataModel,
-      required this.isDarkMode});
+  final bool animateItems;
+
+  const NotificationsView({
+    super.key,
+    required this.notificationsModel,
+    required this.currentDoctorModel,
+    required this.accountVerification,
+    required this.isSyndicateCardRequired,
+    required this.currentDoctorRole,
+    required this.currentDoctorPoints,
+    required this.homeDataModel,
+    required this.isDarkMode,
+    this.animateItems = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.zero,
-        itemCount: notificationsModel.length,
-        itemBuilder: (context, index) {
-          return CheckNotificationType(
-            notificationModel: notificationsModel[index],
-            currentDoctorModel: currentDoctorModel,
-            accountVerification: accountVerification,
-            currentDoctorRole: currentDoctorRole,
-            currentDoctorPoints: currentDoctorPoints,
-            isSyndicateCardRequired: isSyndicateCardRequired,
-            homeDataModel: homeDataModel,
-            isDarkMode: isDarkMode,
-          );
-        },
-      ),
+    return ListView.separated(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      itemCount: notificationsModel.length,
+      separatorBuilder: (_, __) => SizedBox(height: 8.h),
+      itemBuilder: (context, index) {
+        final tile = CheckNotificationType(
+          notificationModel: notificationsModel[index],
+          currentDoctorModel: currentDoctorModel,
+          accountVerification: accountVerification,
+          currentDoctorRole: currentDoctorRole,
+          currentDoctorPoints: currentDoctorPoints,
+          isSyndicateCardRequired: isSyndicateCardRequired,
+          homeDataModel: homeDataModel,
+          isDarkMode: isDarkMode,
+        );
+
+        if (!animateItems) return tile;
+
+        final delayIndex = index > 10 ? 10 : index;
+        return FadeInUp(
+          from: 14,
+          duration: const Duration(milliseconds: 420),
+          delay: Duration(milliseconds: 35 * delayIndex),
+          child: tile,
+        );
+      },
     );
   }
 }

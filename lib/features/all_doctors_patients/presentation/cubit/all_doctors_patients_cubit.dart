@@ -60,21 +60,97 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     return result;
   }
 
-  getCurrentDoctorPatients() async {
-    emit(const AllDoctorsPatientsState.loading());
+  getCurrentDoctorPatients({bool showLoading = true}) async {
+    if (isClosed) return;
+    if (showLoading) {
+      emit(const AllDoctorsPatientsState.loading());
+    }
     _currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
+    isApplyFilterDone = false;
 
     final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
+    if (isClosed) return;
     result.fold(
       (l) {
-        emit(AllDoctorsPatientsState.error(l.message));
+        if (isClosed) return;
+        if (showLoading) {
+          emit(AllDoctorsPatientsState.error(l.message));
+          return;
+        }
+        emit(state.maybeMap(
+          orElse: () => AllDoctorsPatientsState.error(l.message),
+          loaded: (value) => AllDoctorsPatientsState.loaded(
+            value.response,
+            false,
+            l.message,
+            value.isApplyFilterLoading,
+            value.isApplyFilterLoaded,
+            value.isExportLoading,
+            value.isExportLoaded,
+            value.fileUrl,
+          ),
+        ));
       },
       (r) async {
+        if (isClosed) return;
         filtersOptions =
             GetFiltersOptionsModelResponse(data: r.filters ?? []);
+        final lastPage = r.data?.lastPage ?? 1;
+        final currentPage = r.data?.currentPage ?? 1;
+        isLastPage = currentPage >= lastPage;
         emit(AllDoctorsPatientsState.loaded(
             r, false, '', false, false, false, false, null));
-        // getPatientFilters();
+      },
+    );
+  }
+
+  /// Loads filter definitions without blanking the UI with a loading state.
+  Future<bool> prefetchFilterOptions() async {
+    if (filtersOptions.data?.isNotEmpty ?? false) return true;
+
+    final result = await _getAllDoctorsPatientsUsecase.execute(1);
+    return result.fold(
+      (l) => false,
+      (r) {
+        filtersOptions =
+            GetFiltersOptionsModelResponse(data: r.filters ?? []);
+        final alreadyLoaded = state.maybeWhen(
+          loaded: (_, __, ___, ____, _____, ______, _______, ________) => true,
+          orElse: () => false,
+        );
+        if (!alreadyLoaded) {
+          final lastPage = r.data?.lastPage ?? 1;
+          final currentPage = r.data?.currentPage ?? 1;
+          isLastPage = currentPage >= lastPage;
+          _currentPage = currentPage;
+          emit(AllDoctorsPatientsState.loaded(
+            r,
+            false,
+            '',
+            false,
+            false,
+            false,
+            false,
+            null,
+          ));
+        } else {
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => AllDoctorsPatientsState.loaded(
+              value.response.copyWith(filters: r.filters),
+              value.isSeeMore,
+              value.message,
+              value.isApplyFilterLoading,
+              value.isApplyFilterLoaded,
+              value.isExportLoading,
+              value.isExportLoaded,
+              value.fileUrl,
+            ),
+          ));
+        }
+        return filtersOptions.data?.isNotEmpty ?? false;
       },
     );
   }
@@ -83,23 +159,56 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   bool isLastPage = false;
   int _currentPage = 1;
   void loadMorePatients() async {
+    if (isClosed || isLastPage || isApplyFilterDone) {
+      isLoadingMoreForScroll = false;
+      return;
+    }
     _currentPage++;
+    if (isClosed) return;
     emit(state.maybeMap(
       orElse: () => state,
-      loaded: (value) => AllDoctorsPatientsState.loaded(value.response, true,
-          '', false, false, value.isExportLoading, value.isExportLoaded, null),
+      loaded: (value) => AllDoctorsPatientsState.loaded(
+        value.response,
+        true,
+        '',
+        value.isApplyFilterLoading,
+        value.isApplyFilterLoaded,
+        value.isExportLoading,
+        value.isExportLoaded,
+        value.fileUrl,
+      ),
     ));
     final result = await _getAllDoctorsPatientsUsecase.execute(_currentPage);
+    if (isClosed) return;
     result.fold(
       (l) {
         _currentPage--;
-        emit(AllDoctorsPatientsState.error(l.message));
+        isLoadingMoreForScroll = false;
+        if (isClosed) return;
+        emit(state.maybeMap(
+          orElse: () => AllDoctorsPatientsState.error(l.message),
+          loaded: (value) => AllDoctorsPatientsState.loaded(
+            value.response,
+            false,
+            l.message,
+            value.isApplyFilterLoading,
+            value.isApplyFilterLoaded,
+            value.isExportLoading,
+            value.isExportLoaded,
+            value.fileUrl,
+          ),
+        ));
       },
       (loadMorePatients) async {
+        if (isClosed) return;
         final currentState = state;
         currentState.when(
-          initial: () {},
-          loading: () {},
+          initial: () {
+            isLoadingMoreForScroll = false;
+          },
+          loading: () {
+            isLoadingMoreForScroll = false;
+          },
           loaded: (
             responseData,
             isSeeMore,
@@ -110,24 +219,36 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             isExportLoaded,
             fileUrl,
           ) {
+            final pageLast = loadMorePatients.data?.lastPage ??
+                responseData.data?.lastPage ??
+                1;
+            isLastPage = _currentPage >= pageLast;
+            isLoadingMoreForScroll = false;
             final updatedData = responseData.copyWith(
               data: responseData.data!.copyWith(
                 data: [
                   ...responseData.data!.data!,
-                  ...loadMorePatients.data!.data!
+                  ...?loadMorePatients.data?.data,
                 ],
+                currentPage: loadMorePatients.data?.currentPage,
+                lastPage: pageLast,
+                total: loadMorePatients.data?.total ?? responseData.data?.total,
               ),
             );
-            if (_currentPage >= responseData.data!.lastPage!) {
-              isLastPage = true;
-            } else {
-              isLastPage = false;
-            }
-            isLoadingMoreForScroll = false;
             emit(AllDoctorsPatientsState.loaded(
-                updatedData, false, '', false, false, false, false, null));
+              updatedData,
+              false,
+              '',
+              isApplyFilterLoading,
+              isApplyFilterLoaded,
+              isExportLoading,
+              isExportLoaded,
+              fileUrl,
+            ));
           },
-          error: (error) {},
+          error: (error) {
+            isLoadingMoreForScroll = false;
+          },
         );
       },
     );
@@ -138,7 +259,9 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   applyPatientFilters(String isOnlyMyPatients) async {
     currentPageInFilter = 1;
     isLastPageFilter = false;
+    isLoadingMoreForScrollForFilter = false;
 
+    if (isClosed) return;
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -159,8 +282,11 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         ApplyPatientsFiltersUsecaseInput(
             map: _formDataToRequestMap(), page: currentPageInFilter));
 
+    if (isClosed) return;
+
     result.fold(
       (l) {
+        if (isClosed) return;
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -177,6 +303,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         );
       },
       (r) async {
+        if (isClosed) return;
         totalPatientInFilter = r.pagination!.total!;
         isApplyFilterDone = true;
         emit(
@@ -209,7 +336,12 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
   bool isLastPageFilter = false;
   int currentPageInFilter = 1;
   applyPatientFiltersLoadMore() async {
+    if (isClosed || isLastPageFilter) {
+      isLoadingMoreForScrollForFilter = false;
+      return;
+    }
     currentPageInFilter++;
+    if (isClosed) return;
     emit(
       state.maybeMap(
         orElse: () => state,
@@ -229,9 +361,13 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         ApplyPatientsFiltersUsecaseInput(
             map: _formDataToRequestMap(), page: currentPageInFilter));
 
+    if (isClosed) return;
+
     result.fold(
       (l) {
         currentPageInFilter--;
+        isLoadingMoreForScrollForFilter = false;
+        if (isClosed) return;
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -248,12 +384,17 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         );
       },
       (r) async {
+        if (isClosed) return;
         final currentState = state;
         totalPatientInFilter = r.pagination!.total!;
 
         currentState.when(
-          initial: () {},
-          loading: () {},
+          initial: () {
+            isLoadingMoreForScrollForFilter = false;
+          },
+          loading: () {
+            isLoadingMoreForScrollForFilter = false;
+          },
           loaded: (
             responseData,
             isSeeMore,
@@ -279,6 +420,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
             }
             isLoadingMoreForScrollForFilter = false;
 
+            if (isClosed) return;
             emit(
               state.maybeMap(
                 orElse: () => state,
@@ -288,7 +430,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
                       false,
                       '',
                       false,
-                      false,
+                      true,
                       value.isExportLoading,
                       value.isExportLoaded,
                       null);
@@ -296,46 +438,73 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
               ),
             );
           },
-          error: (error) {},
+          error: (error) {
+            isLoadingMoreForScrollForFilter = false;
+          },
         );
       },
     );
   }
 
+  Map<String, dynamic> _exportRequestMap(bool isOnlyMyPatients) {
+    final map = _formDataToRequestMap();
+    map['only_my_patients'] = isOnlyMyPatients;
+    return map;
+  }
+
   exportFilteredPatients(bool isOnlyMyPatients) async {
+    if (isClosed) return;
     emit(
       state.maybeMap(
         orElse: () => state,
         loaded: (value) {
           return AllDoctorsPatientsState.loaded(
-              value.response, false, '', false, false, true, false, null);
+              value.response,
+              value.isSeeMore,
+              '',
+              value.isApplyFilterLoading,
+              value.isApplyFilterLoaded,
+              true,
+              false,
+              null);
         },
       ),
     );
-    final result = await _exportPatientsUsecase.execute(isOnlyMyPatients);
+    final result =
+        await _exportPatientsUsecase.execute(_exportRequestMap(isOnlyMyPatients));
+    if (isClosed) return;
     result.fold(
       (l) {
+        if (isClosed) return;
         emit(
           state.maybeMap(
             orElse: () => state,
             loaded: (value) {
-              return AllDoctorsPatientsState.loaded(value.response, false,
-                  l.message, false, false, false, false, null);
+              return AllDoctorsPatientsState.loaded(
+                  value.response,
+                  value.isSeeMore,
+                  l.message,
+                  value.isApplyFilterLoading,
+                  value.isApplyFilterLoaded,
+                  false,
+                  false,
+                  null);
             },
           ),
         );
       },
       (r) {
+        if (isClosed) return;
         emit(
           state.maybeMap(
             orElse: () => state,
             loaded: (value) {
               return AllDoctorsPatientsState.loaded(
                 value.response,
-                false,
+                value.isSeeMore,
                 '',
-                false,
-                false,
+                value.isApplyFilterLoading,
+                value.isApplyFilterLoaded,
                 false,
                 true,
                 r.fileUrl,

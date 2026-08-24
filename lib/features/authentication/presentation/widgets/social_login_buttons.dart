@@ -1,80 +1,137 @@
-import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 import 'dart:io';
 
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
+import '../../../../exports.dart';
+
 class SocialLoginButtons extends StatelessWidget {
-  const SocialLoginButtons({super.key});
+  final bool isDark;
+
+  const SocialLoginButtons({
+    super.key,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-
-        return BlocBuilder<AuthenticationCubit, AuthenticationState>(
-          builder: (context, state) {
-            return state.maybeWhen(
-              loading: () {
-                return const SizedBox.shrink();
-              },
-              orElse: () {
-                return Column(
+    return BlocBuilder<AuthenticationCubit, AuthenticationState>(
+      builder: (context, state) {
+        return state.maybeWhen(
+          loading: () => const SizedBox.shrink(),
+          orElse: () {
+            return Column(
+              children: [
+                Row(
                   children: [
-                    // Clean Divider with "OR" text
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Divider(
-                            color: isDarkMode
-                                ? AppColors.darkBorder
-                                : AppColors.description.withOpacity(0.3),
-                            thickness: 1,
-                          ),
+                    Expanded(
+                      child: Divider(
+                        color: HomeDashboardColors.border(isDark)
+                            .withOpacity(0.8),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      child: Text(
+                        context.tr(AppStrings.or),
+                        style: TextStyle(
+                          color: HomeDashboardColors.subtitle(isDark),
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
                         ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Text(
-                            context.tr(AppStrings.or),
-                            style: TextStyle(
-                              color: isDarkMode
-                                  ? AppColors.darkDescription
-                                  : AppColors.description,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Expanded(
+                      child: Divider(
+                        color: HomeDashboardColors.border(isDark)
+                            .withOpacity(0.8),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 14.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _SocialButton(
+                        isDark: isDark,
+                        label: context.tr(AppStrings.google),
+                        onTap: () {
+                          try {
+                            AuthenticationCubit.get(context)
+                                .signInWithGoogle();
+                          } catch (e) {
+                            debugPrint('Error in Google Sign-In button: $e');
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    context.tr(
+                                      AppStrings.failedToStartGoogleSignIn,
+                                    ),
+                                  ),
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        leading: Container(
+                          width: 18.r,
+                          height: 18.r,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.r),
+                            color: Colors.white,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(4.r),
+                            child: Image.asset(
+                              'assets/images/google_logo.png',
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                        Expanded(
-                          child: Divider(
-                            color: isDarkMode
-                                ? AppColors.darkBorder
-                                : AppColors.description.withOpacity(0.3),
-                            thickness: 1,
+                      ),
+                    ),
+                    if (Platform.isIOS) ...[
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: _SocialButton(
+                          isDark: isDark,
+                          label: context.tr(AppStrings.apple),
+                          filled: !isDark,
+                          inverted: isDark,
+                          onTap: () {
+                            try {
+                              AuthenticationCubit.get(context)
+                                  .signInWithApple();
+                            } catch (e) {
+                              debugPrint('Error in Apple Sign-In button: $e');
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      context.tr(
+                                        AppStrings
+                                            .failedToStartAppleSignInPleaseTryAgain,
+                                      ),
+                                    ),
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          leading: Icon(
+                            Icons.apple,
+                            size: 18.sp,
+                            color: isDark ? Colors.black : Colors.white,
                           ),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 20.h),
-
-                    // Social Login Buttons in Row
-                    Row(
-                      children: [
-                        // Google Sign In Button
-                        Expanded(
-                          child: _GoogleSignInButton(isDarkMode: isDarkMode),
-                        ),
-                        // Show Apple button only on iOS
-                        if (Platform.isIOS) ...[
-                          SizedBox(width: 12.w),
-                          Expanded(
-                            child: _AppleSignInButton(isDarkMode: isDarkMode),
-                          ),
-                        ],
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
-                );
-              },
+                ),
+              ],
             );
           },
         );
@@ -83,215 +140,71 @@ class SocialLoginButtons extends StatelessWidget {
   }
 }
 
-class _GoogleSignInButton extends StatelessWidget {
-  final bool isDarkMode;
+class _SocialButton extends StatelessWidget {
+  final bool isDark;
+  final String label;
+  final Widget leading;
+  final VoidCallback onTap;
+  final bool filled;
+  final bool inverted;
 
-  const _GoogleSignInButton({required this.isDarkMode});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 38.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.r),
-        color: isDarkMode ? AppColors.darkCardBG : Colors.white,
-        border: Border.all(
-          color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade300,
-          width: 1,
-        ),
-        boxShadow: isDarkMode
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            try {
-              AuthenticationCubit.get(context).signInWithGoogle();
-            } catch (e) {
-              debugPrint('Error in Google Sign-In button: $e');
-              // Show error to user
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                        'Failed to start Google Sign-In. Please try again.'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            }
-          },
-          borderRadius: BorderRadius.circular(8.r),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Google logo image
-                Container(
-                  width: 18.w,
-                  height: 18.h,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(2.r),
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 0.5,
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(2.r),
-                    child: Image.asset(
-                      'assets/images/google_logo.png',
-                      width: 18.w,
-                      height: 18.h,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  'Google',
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                    color: isDarkMode ? AppColors.darkTitle : AppColors.title,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _AppleSignInButton extends StatelessWidget {
-  final bool isDarkMode;
-
-  const _AppleSignInButton({required this.isDarkMode});
+  const _SocialButton({
+    required this.isDark,
+    required this.label,
+    required this.leading,
+    required this.onTap,
+    this.filled = false,
+    this.inverted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    // Apple Sign-In button colors based on dark mode
-    // Light mode: Black background with white text/icon
-    // Dark mode: White background with black text/icon (Apple HIG)
-    final Color backgroundColor = isDarkMode ? Colors.white : AppColors.black;
-    final Color textAndIconColor = isDarkMode ? AppColors.black : Colors.white;
+    final bg = filled
+        ? Colors.black
+        : inverted
+            ? Colors.white
+            : HomeDashboardColors.cardBg(isDark);
+    final fg = filled
+        ? Colors.white
+        : inverted
+            ? Colors.black
+            : HomeDashboardColors.title(isDark);
 
-    return Container(
-      height: 38.h,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8.r),
-        color: backgroundColor,
-        border: isDarkMode
-            ? Border.all(
-                color: AppColors.darkBorder,
-                width: 1,
-              )
-            : null,
-        boxShadow: isDarkMode
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-      ),
+    return SizedBox(
+      height: 42.h,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () {
-            try {
-              AuthenticationCubit.get(context).signInWithApple();
-            } catch (e) {
-              debugPrint('Error in Apple Sign-In button: $e');
-              // Show error to user
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(context
-                        .tr(AppStrings.failedToStartAppleSignInPleaseTryAgain)),
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              }
-            }
-          },
-          borderRadius: BorderRadius.circular(8.r),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Apple Logo
-                Icon(
-                  Icons.apple,
-                  size: 18.sp,
-                  color: textAndIconColor,
-                ),
-                SizedBox(width: 8.w),
-                Text(
-                  'Apple',
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                    color: textAndIconColor,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-void _showComingSoonDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(12.r),
-        ),
-        title: Text(
-          context.tr(AppStrings.comingSoon),
-          style: TextStyle(
-            fontSize: 12.sp,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text(
-          context.tr(AppStrings.socialLoginComingSoon),
-          style: TextStyle(fontSize: 12.sp),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(
-              context.tr(AppStrings.ok),
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w600,
+          child: Ink(
+            decoration: BoxDecoration(
+              color: bg,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: filled
+                    ? Colors.transparent
+                    : HomeDashboardColors.border(isDark).withOpacity(0.85),
               ),
             ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                leading,
+                SizedBox(width: 8.w),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w600,
+                    color: fg,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      );
-    },
-  );
+        ),
+      ),
+    );
+  }
 }

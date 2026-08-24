@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:egy_akin/exports.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -12,7 +14,7 @@ class ImagesInSinglePost extends StatefulWidget {
   });
 
   @override
-  _ImagesInSinglePostState createState() => _ImagesInSinglePostState();
+  State<ImagesInSinglePost> createState() => _ImagesInSinglePostState();
 }
 
 class _ImagesInSinglePostState extends State<ImagesInSinglePost> {
@@ -55,7 +57,7 @@ class _ImagesInSinglePostState extends State<ImagesInSinglePost> {
     );
   }
 
-  double _heightForWidth(double width, int pageIndex) {
+  double _naturalHeight(double width, int pageIndex) {
     final ratio = _aspectRatios[pageIndex];
     if (ratio != null && ratio > 0) return width / ratio;
     for (final r in _aspectRatios.values) {
@@ -66,91 +68,91 @@ class _ImagesInSinglePostState extends State<ImagesInSinglePost> {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final pageHeight = _heightForWidth(width, _currentPage);
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    // Keep tall images from blowing past the viewport / stretching the action bar.
+    final maxHeight = screenHeight * 0.52;
 
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeInOut,
-      alignment: Alignment.topCenter,
-      child: SizedBox(
-        height: pageHeight,
-        width: width,
-        child: Stack(
-          alignment: Alignment.center,
-          clipBehavior: Clip.hardEdge,
-          children: [
-            PageView.builder(
-              controller: _pageController,
-              itemCount: widget.mediaPaths.length,
-              onPageChanged: (index) => setState(() => _currentPage = index),
-              itemBuilder: (context, index) {
-                final imageUrl = widget.mediaPaths[index];
-                if (imageUrl.isEmpty) {
-                  return const Placeholder();
-                }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth.isFinite && constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : MediaQuery.sizeOf(context).width;
+        final natural = _naturalHeight(width, _currentPage);
+        final pageHeight = math.min(natural, maxHeight);
 
-                final ratio = _aspectRatios[index] ?? 1.0;
+        return AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: pageHeight,
+            width: width,
+            child: Stack(
+              alignment: Alignment.center,
+              clipBehavior: Clip.hardEdge,
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.mediaPaths.length,
+                  onPageChanged: (index) =>
+                      setState(() => _currentPage = index),
+                  itemBuilder: (context, index) {
+                    final imageUrl = widget.mediaPaths[index];
+                    if (imageUrl.isEmpty) {
+                      return const Placeholder();
+                    }
 
-                return GestureDetector(
-                  onTap: () {
-                    navigatorKey.currentState?.push(
-                      MaterialPageRoute(
-                        builder: (context) => FullScreenImage(
-                          imageUrl: imageUrl,
+                    return GestureDetector(
+                      onTap: () {
+                        navigatorKey.currentState?.push(
+                          FullScreenImage.route(imageUrl: imageUrl),
+                        );
+                      },
+                      child: Hero(
+                        tag: widget.heroTag,
+                        child: ColoredBox(
+                          color: Colors.black,
+                          child: CustomCachedNetworkImage(
+                            imageUrl: imageUrl,
+                            width: width,
+                            height: pageHeight,
+                            // Contain keeps full chart visible; height is already capped.
+                            fit: BoxFit.contain,
+                          ),
                         ),
                       ),
                     );
                   },
-                  child: Hero(
-                    tag: widget.heroTag,
-                    child: AspectRatio(
-                      aspectRatio: ratio,
-                      child: CustomCachedNetworkImage(
-                        imageUrl: imageUrl,
-                        width: double.infinity,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-            if (widget.mediaPaths.length > 1)
-              Positioned(
-                bottom: 8,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 6.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 2,
-                        blurRadius: 9,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: SmoothPageIndicator(
-                    controller: _pageController,
-                    count: widget.mediaPaths.length,
-                    effect: const WormEffect(
-                      activeDotColor: AppColors.primary,
-                      dotColor: Colors.grey,
-                      dotHeight: 5,
-                      dotWidth: 5,
-                    ),
-                  ),
                 ),
-              ),
-          ],
-        ),
-      ),
+                if (widget.mediaPaths.length > 1)
+                  Positioned(
+                    bottom: 8,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 6.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SmoothPageIndicator(
+                        controller: _pageController,
+                        count: widget.mediaPaths.length,
+                        effect: const WormEffect(
+                          activeDotColor: AppColors.primary,
+                          dotColor: Colors.grey,
+                          dotHeight: 5,
+                          dotWidth: 5,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

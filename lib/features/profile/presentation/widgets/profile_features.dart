@@ -381,6 +381,7 @@ class _ProfileFeaturesState extends State<ProfileFeatures> {
               onTap: () {
                 showCustomBottomSheet(
                   context: context,
+                  heightFactor: 0.78,
                   builder: (context) {
                     return BlocProvider(
                       create: (context) => DoctorInfoViewCubit(

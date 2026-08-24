@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
+
 import '../../../../exports.dart';
 import '../cubit/marked_patients_cubit.dart';
 import '../cubit/marked_patients_state.dart';
@@ -74,7 +76,7 @@ class _MarkedPatientsScreenState extends State<MarkedPatientsScreen> {
             }
           },
           child: Text(
-            'Marked Patients', // TODO: Add to AppStrings
+            context.tr(AppStrings.markedPatients),
             style: TextStyle(fontSize: 16.sp),
           ),
         ),
@@ -110,12 +112,19 @@ class _MarkedPatientsScreenState extends State<MarkedPatientsScreen> {
                   loaded: (response, isSeeMore) {
                     if (response.data?.data == null ||
                         response.data!.data!.isEmpty) {
-                      return Center(
-                        child: Image.asset(
-                          AppImages.notFound,
-                          width: 150.h,
-                          height: 200.h,
-                        ),
+                      return BlocBuilder<ThemeBloc, ThemeState>(
+                        builder: (context, themeState) {
+                          final isDark = themeState is ThemeLoaded &&
+                              themeState.isDarkMode;
+                          return PatientsListEmptyState(
+                            isDark: isDark,
+                            title: context.tr(AppStrings.noMarkedPatients),
+                            subtitle: context.tr(
+                              AppStrings.patientsYouAddWillShowUpHere,
+                            ),
+                            hint: context.tr(AppStrings.openPatientAndUseMark),
+                          );
+                        },
                       );
                     }
 

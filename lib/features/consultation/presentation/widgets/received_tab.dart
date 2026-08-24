@@ -1,5 +1,5 @@
 import 'package:egy_akin/features/consultation/presentation/widgets/consultation_list.dart';
-import '../../../../app/services/theme_bloc.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
 
@@ -28,7 +28,8 @@ class _ReceivedTabState extends State<ReceivedTab> {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
 
         return BlocConsumer<ConsultationCubit, ConsultationState>(
           listener: (context, state) {
@@ -41,19 +42,20 @@ class _ReceivedTabState extends State<ReceivedTab> {
           },
           builder: (context, state) {
             return state.maybeWhen(
-              orElse: () {
-                return const SizedBox.shrink();
-              },
-              receivedConsultationsLoading: () {
-                return Center(
+              orElse: () => const SizedBox.shrink(),
+              receivedConsultationsLoading: () => Center(
+                child: SizedBox(
+                  width: 28.w,
+                  height: 28.w,
                   child: CircularProgressIndicator(
-                    color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                    strokeWidth: 2.5,
+                    color: primary,
                   ),
-                );
-              },
+                ),
+              ),
               receivedConsultationsLoaded: (consultations) {
                 return RefreshIndicator(
-                  color: isDarkMode ? AppColors.darkTitle : AppColors.primary,
+                  color: primary,
                   onRefresh: () async {
                     context
                         .read<ConsultationCubit>()
@@ -64,7 +66,7 @@ class _ReceivedTabState extends State<ReceivedTab> {
                     currentDoctorModel: widget.currentDoctorModel,
                     homeDataModel: widget.homeDataModel,
                     isReceivedConsultation: true,
-                    isDarkMode: isDarkMode,
+                    isDarkMode: isDark,
                   ),
                 );
               },

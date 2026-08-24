@@ -212,7 +212,7 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                         .markedPatientsCount ??
                                     _preservedMarkedPatientsCount ??
                                     '0',
-                                label: 'Marked Patients',
+                                label: context.tr(AppStrings.markedPatients),
                                 onTap: () {
                                   final preservedDoctor =
                                       _preservedDoctorModel ??
@@ -403,7 +403,7 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                         .markedPatientsCount ??
                                     _preservedMarkedPatientsCount ??
                                     '0',
-                                label: 'Marked Patients',
+                                label: context.tr(AppStrings.markedPatients),
                                 onTap: () {
                                   navigatorKey.currentState?.pushNamed(
                                     AppRoutes.markedPatients,
@@ -590,6 +590,7 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                 onTap: () {
                                   showCustomBottomSheet(
                                     context: context,
+                                    heightFactor: 0.72,
                                     builder: (context) {
                                       return BlocProvider(
                                         create: (context) =>
@@ -657,7 +658,7 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                         .markedPatientsCount ??
                                     _preservedMarkedPatientsCount ??
                                     '0',
-                                label: 'Marked Patients',
+                                label: context.tr(AppStrings.markedPatients),
                                 onTap: () {
                                   navigatorKey.currentState?.pushNamed(
                                     AppRoutes.markedPatients,

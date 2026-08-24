@@ -1,3 +1,5 @@
+import 'package:egy_akin/app/shared/widgets/professional_submit_button.dart';
+
 import '../../../../exports.dart';
 
 class SubmitButtonForOutcome extends StatefulWidget {
@@ -6,6 +8,8 @@ class SubmitButtonForOutcome extends StatefulWidget {
   final bool accountVerification;
   final String isSyndicateCardRequired;
   final DoctorModel currentDoctorModel;
+  final bool isDark;
+  final bool isLoading;
 
   const SubmitButtonForOutcome({
     super.key,
@@ -14,25 +18,26 @@ class SubmitButtonForOutcome extends StatefulWidget {
     required this.accountVerification,
     required this.isSyndicateCardRequired,
     required this.currentDoctorModel,
+    required this.isDark,
+    this.isLoading = false,
   });
 
   @override
-  _SubmitButtonForOutcomeState createState() => _SubmitButtonForOutcomeState();
+  State<SubmitButtonForOutcome> createState() => _SubmitButtonForOutcomeState();
 }
 
 class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
-  bool _hasShownDialog = false; // Add a flag to track if the dialog was shown
+  bool _hasShownDialog = false;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    // Logic to display dialog only if necessary and only once
     if (!_hasShownDialog &&
         !widget.accountVerification &&
         (widget.isSyndicateCardRequired == 'Required' ||
             widget.isSyndicateCardRequired == 'Pending')) {
-      _hasShownDialog = true; // Ensure the dialog shows only once
+      _hasShownDialog = true;
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showCustomDialog(
@@ -58,95 +63,73 @@ class _SubmitButtonForOutcomeState extends State<SubmitButtonForOutcome> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // Case 1: If account verification is true and syndicate card is not required or pending
+  VoidCallback get _onPressed {
     if (widget.accountVerification &&
-        (widget.isSyndicateCardRequired != 'Required' &&
-            widget.isSyndicateCardRequired != 'Pending')) {
-      return SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: CustomElevatedButton(
-            onPressed: () {
-              widget.cubit.submitOutcome(widget.patientId);
-            },
-            title: context.tr(AppStrings.submit),
-          ),
-        ),
-      );
+        widget.isSyndicateCardRequired != 'Required' &&
+        widget.isSyndicateCardRequired != 'Pending') {
+      return () => widget.cubit.submitOutcome(widget.patientId);
     }
 
-    // Case 2: If account verification is true but syndicate card is required or pending
     if (widget.accountVerification &&
         (widget.isSyndicateCardRequired == 'Required' ||
             widget.isSyndicateCardRequired == 'Pending')) {
-      return SizedBox(
-        width: double.infinity,
-        height: 50,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: CustomElevatedButton(
-            onPressed: () {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                showCustomDialog(
-                  context: context,
-                  title: context.tr(AppStrings.syndicateCardVerification),
-                  description: context.tr(
-                      AppStrings.toAddOutcomeYouMustVerifyYourSyndicateCard),
-                  noColoredButtonOnTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  coloredButtonText: context.tr(AppStrings.ok),
-                  noColoredButtonText: '',
-                  isNoColorShow: true,
-                  coloredButtonOnTap: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              });
+      return () {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showCustomDialog(
+            context: context,
+            title: context.tr(AppStrings.syndicateCardVerification),
+            description: context.tr(
+              AppStrings.toAddOutcomeYouMustVerifyYourSyndicateCard,
+            ),
+            noColoredButtonOnTap: () {
+              Navigator.of(context).pop();
             },
-            title: context.tr(AppStrings.submit),
-            isDisable: false,
-          ),
-        ),
-      );
+            coloredButtonText: context.tr(AppStrings.ok),
+            noColoredButtonText: '',
+            isNoColorShow: true,
+            coloredButtonOnTap: () {
+              Navigator.of(context).pop();
+            },
+          );
+        });
+      };
     }
 
-    // Default empty state
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: CustomElevatedButton(
-          onPressed: () {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              showCustomDialog(
-                context: context,
-                title: context.tr(AppStrings.emailVerification),
-                description: context
-                    .tr(AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress),
-                noColoredButtonOnTap: () {
-                  Navigator.of(context).pop();
-                },
-                coloredButtonText: context.tr(AppStrings.verify),
-                noColoredButtonText: context.tr(AppStrings.cancel),
-                coloredButtonOnTap: () {
-                  Navigator.of(context).pop();
-                  navigatorKey.currentState?.pushNamed(
-                      AppRoutes.emailVerification,
-                      arguments: AppRoutesArgs.emailVerificationRouteArgs(
-                          currentDoctorModel: widget.currentDoctorModel));
-                },
-              );
-            });
+    return () {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showCustomDialog(
+          context: context,
+          title: context.tr(AppStrings.emailVerification),
+          description: context.tr(
+            AppStrings.toAddOutcomeYouMustVerifyYourEmailAddress,
+          ),
+          noColoredButtonOnTap: () {
+            Navigator.of(context).pop();
           },
-          title: context.tr(AppStrings.submit),
-        ),
-      ),
+          coloredButtonText: context.tr(AppStrings.verify),
+          noColoredButtonText: context.tr(AppStrings.cancel),
+          coloredButtonOnTap: () {
+            Navigator.of(context).pop();
+            navigatorKey.currentState?.pushNamed(
+              AppRoutes.emailVerification,
+              arguments: AppRoutesArgs.emailVerificationRouteArgs(
+                currentDoctorModel: widget.currentDoctorModel,
+              ),
+            );
+          },
+        );
+      });
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ProfessionalSubmitBar(
+      isDark: widget.isDark,
+      isLoading: widget.isLoading,
+      onPressed: _onPressed,
+      label: context.tr(AppStrings.submit),
+      subtitle: context.tr(AppStrings.saveOutcomeAnswers),
     );
   }
 }

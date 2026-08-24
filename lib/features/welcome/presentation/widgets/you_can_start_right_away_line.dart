@@ -1,8 +1,13 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
 import '../../../../exports.dart';
 
 class YouCanStartRightAwayLine extends StatelessWidget {
+  final bool isDark;
+
   const YouCanStartRightAwayLine({
     super.key,
+    required this.isDark,
   });
 
   @override
@@ -10,8 +15,9 @@ class YouCanStartRightAwayLine extends StatelessWidget {
     return Text(
       'You can start right away',
       style: TextStyle(
-        color: AppColors.description,
-        fontSize: 12.sp,
+        color: HomeDashboardColors.subtitle(isDark),
+        fontSize: 11.sp,
+        fontWeight: FontWeight.w500,
       ),
     );
   }

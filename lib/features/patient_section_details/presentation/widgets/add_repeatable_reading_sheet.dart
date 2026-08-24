@@ -404,7 +404,7 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
                         inputFormatters:
                             _useEmbeddedNumpad ? null : _valueFormatters,
                         cursorWidth: 1.2,
-                        cursorHeight: 14,
+                        cursorHeight: 15.sp,
                         textAlignVertical: TextAlignVertical.center,
                         style: TextStyle(
                           fontSize: 15.sp,
@@ -414,11 +414,15 @@ class _AddRepeatableReadingSheetState extends State<AddRepeatableReadingSheet> {
                               ? AppColors.darkTitle
                               : Colors.black87,
                         ),
-                        decoration: InputDecoration(
+                        // Collapse Material's default 48px field height so the
+                        // typed value lines up with the inactive Text row.
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          isCollapsed: true,
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 10.w,
-                          ),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
                         ),
                         onChanged: (_) => setState(() {}),
                       )
@@ -632,12 +636,15 @@ class _ReadingFieldTile extends StatelessWidget {
       );
     }
 
-    // Fixed slot — TextField expands to fill it; outer tile height unchanged.
+    // Fixed slot — collapsed TextField matches inactive Text height.
     if (child != null) {
       return SizedBox(
         height: valueLineHeight,
         width: double.infinity,
-        child: child,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: child,
+        ),
       );
     }
 

@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_patient_usecase.dart';
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
+import 'package:egy_akin/features/patient_sections/presentation/widgets/final_submit_incomplete_dialog.dart';
 
 import '../../../../exports.dart';
 
@@ -126,42 +125,33 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
         },
       );
     } else {
-      showCustomDialog(
-          context: context,
-          title: LocalizationService.instance
-              .translate(AppStrings.youLeftSomeSectionsInBinding),
-          // description:
-          //     'You left sections not completed, you sure want to continue?',
-          description: sectionsNotCompleted,
-          noColoredButtonOnTap: () => Navigator.of(context).pop(),
-          coloredButtonText:
-              LocalizationService.instance.translate(AppStrings.submit),
-          noColoredButtonText:
-              LocalizationService.instance.translate(AppStrings.cancel),
-          coloredButtonOnTap: () async {
-            Navigator.of(context).pop();
-            emit(const PatientSectionsState.loading());
-            final result = await _finalSubmitUsecase.execute(patientId);
+      showFinalSubmitIncompleteDialog(
+        context: context,
+        incompleteSections: sectionsNotCompleted,
+        onSubmitAnyway: () async {
+          emit(const PatientSectionsState.loading());
+          final result = await _finalSubmitUsecase.execute(patientId);
 
-            result.fold(
-              (l) {
-                emit(PatientSectionsState.error(l.message));
-              },
-              (result) async {
-                emit(PatientSectionsState.loaded(
-                    const GetPatientSectionsModelResponse(),
-                    false,
-                    true,
-                    '',
-                    false,
-                    0.0,
-                    '',
-                    false,
-                    false,
-                    counterChanges));
-              },
-            );
-          });
+          result.fold(
+            (l) {
+              emit(PatientSectionsState.error(l.message));
+            },
+            (result) async {
+              emit(PatientSectionsState.loaded(
+                  const GetPatientSectionsModelResponse(),
+                  false,
+                  true,
+                  '',
+                  false,
+                  0.0,
+                  '',
+                  false,
+                  false,
+                  counterChanges));
+            },
+          );
+        },
+      );
     }
     sectionsNotCompleted = [];
   }

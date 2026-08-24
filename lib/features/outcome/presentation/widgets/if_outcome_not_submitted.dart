@@ -1,10 +1,15 @@
 import 'dart:developer';
+
 import 'package:egy_akin/app/shared/functions/initial_value_in_question.dart';
 import 'package:egy_akin/app/shared/functions/initial_value_in_select_question.dart';
 import 'package:egy_akin/app/shared/functions/is_date.dart';
+import 'package:egy_akin/app/shared/functions/multiple_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/submit_button.dart';
-import 'package:egy_akin/app/services/theme_bloc.dart';
+import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
+import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../exports.dart';
 
@@ -36,14 +41,175 @@ class IfOutcomeNotSubmitted extends StatefulWidget {
 
 class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
   Map<String, dynamic> answerMap = {};
+  final Map<String, GlobalKey> _questionKeys = {};
+  final ValueNotifier<String?> _invalidHighlightId =
+      ValueNotifier<String?>(null);
+  double? _pinnedInvalidScrollOffset;
+  int _lastHandledErrorCounter = -1;
+
   @override
   void initState() {
     answerMap = {
       AppStrings.answers: [],
       AppStrings.otherField: AppStrings.empty,
     };
-
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _invalidHighlightId.dispose();
+    super.dispose();
+  }
+
+  GlobalKey _keyForQuestion(String questionId) {
+    return _questionKeys.putIfAbsent(questionId, GlobalKey.new);
+  }
+
+  double? _revealOffsetForQuestion(String questionId) {
+    final ctx = _questionKeys[questionId]?.currentContext;
+    if (ctx == null || !ctx.mounted) return null;
+    final ro = ctx.findRenderObject();
+    if (ro == null || !ro.attached) return null;
+    final viewport = RenderAbstractViewport.maybeOf(ro);
+    if (viewport == null) return null;
+    return viewport.getOffsetToReveal(ro, 0.12).offset;
+  }
+
+  Future<void> _scrollToInvalidQuestion({
+    required ScrollController scrollController,
+    required String? questionId,
+    required int? questionIndex,
+  }) async {
+    if (!scrollController.hasClients) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+
+    final maxExtent = scrollController.position.maxScrollExtent;
+
+    if (questionIndex != null && questionIndex >= 0) {
+      final estimate = (10.h + questionIndex * 140.h).clamp(0.0, maxExtent);
+      if ((scrollController.offset - estimate).abs() > 24) {
+        scrollController.jumpTo(estimate);
+        await WidgetsBinding.instance.endOfFrame;
+        if (!mounted) return;
+        await Future<void>.delayed(const Duration(milliseconds: 24));
+        if (!mounted || !scrollController.hasClients) return;
+      }
+    }
+
+    double? measured =
+        questionId != null ? _revealOffsetForQuestion(questionId) : null;
+    final latestMax = scrollController.position.maxScrollExtent;
+    final target = (measured ?? scrollController.offset).clamp(0.0, latestMax);
+    final distance = (target - scrollController.offset).abs();
+    if (distance > 2) {
+      await scrollController.animateTo(
+        target,
+        duration: Duration(milliseconds: distance > 400 ? 420 : 280),
+        curve: Curves.easeOutCubic,
+      );
+    }
+
+    if (!mounted || !scrollController.hasClients) return;
+    _pinnedInvalidScrollOffset = scrollController.offset;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !scrollController.hasClients || questionId == null) {
+        return;
+      }
+      final refined = _revealOffsetForQuestion(questionId);
+      if (refined == null) return;
+      final refinedClamped =
+          refined.clamp(0.0, scrollController.position.maxScrollExtent);
+      if ((refinedClamped - scrollController.offset).abs() > 4) {
+        scrollController.jumpTo(refinedClamped);
+      }
+      _pinnedInvalidScrollOffset = scrollController.offset;
+    });
+  }
+
+  void _restorePinnedInvalidScroll(ScrollController scrollController) {
+    final pinned = _pinnedInvalidScrollOffset;
+    if (pinned == null || !scrollController.hasClients) return;
+    final max = scrollController.position.maxScrollExtent;
+    final target = pinned.clamp(0.0, max);
+    if ((scrollController.offset - target).abs() > 1) {
+      scrollController.jumpTo(target);
+    }
+  }
+
+  Future<void> _handleValidationMessage({
+    required OutcomeCubit cubit,
+    required String message,
+    required int snackbarErrorCounter,
+  }) async {
+    if (message.isEmpty) return;
+    if (snackbarErrorCounter == _lastHandledErrorCounter) return;
+    _lastHandledErrorCounter = snackbarErrorCounter;
+
+    final invalidId = cubit.firstInvalidQuestionId;
+    final invalidIndex = cubit.firstInvalidQuestionIndex;
+    final errorMessage = message;
+    _invalidHighlightId.value = invalidId;
+
+    FocusManager.instance.primaryFocus?.unfocus();
+    await WidgetsBinding.instance.endOfFrame;
+    if (!mounted) return;
+
+    await _scrollToInvalidQuestion(
+      scrollController: cubit.outcomeScrollController,
+      questionId: invalidId,
+      questionIndex: invalidIndex,
+    );
+    if (!mounted) return;
+
+    await showHintDialog(
+      context: context,
+      message: errorMessage,
+      dialogType: DialogType.error,
+    );
+    if (!mounted) return;
+
+    cubit.acknowledgeFieldErrorDialog();
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    if (!mounted) return;
+    FocusManager.instance.primaryFocus?.unfocus();
+    _restorePinnedInvalidScroll(cubit.outcomeScrollController);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      FocusManager.instance.primaryFocus?.unfocus();
+      _restorePinnedInvalidScroll(cubit.outcomeScrollController);
+    });
+  }
+
+  void _clearInvalid(OutcomeCubit cubit, String questionId) {
+    cubit.clearInvalidHighlight(questionId);
+    if (_invalidHighlightId.value == questionId) {
+      _invalidHighlightId.value = null;
+    }
+  }
+
+  bool _shouldShowAiBadge({
+    required OutcomeCubit cubit,
+    required QuestionModel question,
+    required String questionId,
+  }) {
+    if (!cubit.aiFilledQuestionIds.contains(questionId)) return false;
+    if (question.type == AppStrings.questionTypeSelect ||
+        question.type == AppStrings.selectType) {
+      return selectQuestionHasDisplayableAnswer(
+        optionValues: question.values,
+        storedAnswer: cubit.formData[questionId] ?? question.answer,
+      );
+    }
+    if (question.type == AppStrings.multipleType ||
+        question.type == AppStrings.questionTypeMultiple) {
+      return multipleQuestionHasDisplayableAnswer(
+        optionValues: question.values,
+        storedAnswer: cubit.formData[questionId] ?? question.answer,
+      );
+    }
+    return true;
   }
 
   @override
@@ -51,16 +217,32 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDarkMode);
+        final cardBg = HomeDashboardColors.cardBg(isDarkMode);
+        final titleColor = HomeDashboardColors.title(isDarkMode);
+        final muted = HomeDashboardColors.subtitle(isDarkMode);
         Size size = MediaQuery.of(context).size;
         OutcomeCubit cubit = OutcomeCubit.get(context);
 
-        return Stack(
+        return GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          behavior: HitTestBehavior.deferToChild,
+          child: Stack(
           children: [
             Form(
               key: cubit.outcomeFormKey,
               child: Column(
                 children: [
                   BlocConsumer<OutcomeCubit, OutcomeState>(
+                    listenWhen: (previous, current) {
+                      return current.maybeWhen(
+                        loaded: (_, isSubmitedOutcome, message, ____, _____,
+                            ______) {
+                          return isSubmitedOutcome || message.isNotEmpty;
+                        },
+                        orElse: () => false,
+                      );
+                    },
                     listener: (context, state) {
                       state.maybeWhen(
                         orElse: () {},
@@ -68,7 +250,7 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                           response,
                           isSubmitedOutcome,
                           message,
-                          _,
+                          snackbarErrorCounter,
                           isSubmitedOutcomeLoading,
                           submitterModel,
                         ) {
@@ -76,20 +258,34 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                             navigatorKey.currentState?.pushReplacementNamed(
                                 AppRoutes.home,
                                 arguments: 0);
-                          }
-                          if (message.isNotEmpty) {
-                            if (isSubmitedOutcome) {
+                            if (message.isNotEmpty) {
                               customSnackBar(
                                   context: context, message: message);
-                            } else {
-                              showHintDialog(
-                                context: context,
-                                message: message,
-                                dialogType: DialogType.error,
-                              );
                             }
+                            return;
+                          }
+                          if (isSubmitedOutcomeLoading) return;
+                          if (message.isNotEmpty) {
+                            _handleValidationMessage(
+                              cubit: cubit,
+                              message: message,
+                              snackbarErrorCounter: snackbarErrorCounter,
+                            );
                           }
                         },
+                      );
+                    },
+                    buildWhen: (previous, current) {
+                      return previous.maybeWhen(
+                        loaded: (questions, _, __, ___, isLoading, ____) {
+                          return current.maybeWhen(
+                            loaded: (q2, _, __, ___, loading2, ____) =>
+                                !identical(questions, q2) ||
+                                isLoading != loading2,
+                            orElse: () => true,
+                          );
+                        },
+                        orElse: () => true,
                       );
                     },
                     builder: (context, state) {
@@ -120,187 +316,296 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                                 ),
                               ),
                             );
-                          } else {
-                            return Expanded(
-                              child: ListView.builder(
-                                itemCount: questions.length,
-                                shrinkWrap: true,
-                                physics: const BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  var question = questions[index];
+                          }
 
-                                  return Container(
-                                    margin: const EdgeInsets.all(16),
-                                    padding: const EdgeInsets.all(16),
-                                    alignment: Alignment.center,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: AppColors.primary,
-                                      ),
+                          return Expanded(
+                            child: Theme(
+                              data: Theme.of(context).copyWith(
+                                inputDecorationTheme: InputDecorationTheme(
+                                  filled: true,
+                                  fillColor: Colors.transparent,
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8.w,
+                                    vertical: 10.h,
+                                  ),
+                                  border: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  focusedBorder: InputBorder.none,
+                                  hintStyle: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: muted,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  labelStyle: TextStyle(
+                                    fontSize: 11.sp,
+                                    color: muted,
+                                  ),
+                                ),
+                                textTheme: Theme.of(context).textTheme.apply(
+                                      fontSizeFactor: 0.92,
                                     ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              child: RichText(
-                                                text: TextSpan(
-                                                  children: [
-                                                    TextSpan(
-                                                      text:
-                                                          '${index + 1} - ${question.question!} ',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: isDarkMode
-                                                            ? AppColors
-                                                                .darkTitle
-                                                            : Colors.black,
+                              ),
+                              child: ListView.separated(
+                                itemCount: questions.length,
+                                controller: cubit.outcomeScrollController,
+                                physics: const BouncingScrollPhysics(),
+                                keyboardDismissBehavior:
+                                    ScrollViewKeyboardDismissBehavior.onDrag,
+                                cacheExtent: 10000,
+                                padding: EdgeInsets.fromLTRB(
+                                  14.w,
+                                  10.h,
+                                  14.w,
+                                  110.h,
+                                ),
+                                separatorBuilder: (_, __) =>
+                                    SizedBox(height: 8.h),
+                                itemBuilder: (context, index) {
+                                  final question = questions[index];
+                                  final questionId = question.id.toString();
+                                  final isRequired =
+                                      question.mandatory == true;
+                                  const errorRed = Color(0xFFEF4444);
+                                  final showAi = _shouldShowAiBadge(
+                                    cubit: cubit,
+                                    question: question,
+                                    questionId: questionId,
+                                  );
+
+                                  return ValueListenableBuilder<String?>(
+                                    valueListenable: _invalidHighlightId,
+                                    builder: (context, invalidId, _) {
+                                      final isInvalidHighlight =
+                                          invalidId == questionId;
+                                      return KeyedSubtree(
+                                        key: _keyForQuestion(questionId),
+                                        child: TweenAnimationBuilder<double>(
+                                          key: ValueKey(
+                                            'q-$questionId-invalid-$isInvalidHighlight',
+                                          ),
+                                          tween: Tween<double>(
+                                            begin: isInvalidHighlight
+                                                ? 0.96
+                                                : 1.0,
+                                            end: 1.0,
+                                          ),
+                                          duration: Duration(
+                                            milliseconds: isInvalidHighlight
+                                                ? 560
+                                                : 220,
+                                          ),
+                                          curve: isInvalidHighlight
+                                              ? Curves.easeOutBack
+                                              : Curves.easeOutCubic,
+                                          builder: (context, scale, child) {
+                                            return Transform.scale(
+                                              scale: scale,
+                                              alignment: Alignment.center,
+                                              child: child,
+                                            );
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 320),
+                                            curve: Curves.easeOutCubic,
+                                            padding: EdgeInsets.fromLTRB(
+                                              12.w,
+                                              10.h,
+                                              12.w,
+                                              10.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: isInvalidHighlight
+                                                  ? (isDarkMode
+                                                      ? errorRed
+                                                          .withOpacity(0.14)
+                                                      : const Color(
+                                                          0xFFFEF2F2))
+                                                  : cardBg,
+                                              borderRadius:
+                                                  BorderRadius.circular(16.r),
+                                              border: Border.all(
+                                                color: isInvalidHighlight
+                                                    ? errorRed.withOpacity(0.55)
+                                                    : (isDarkMode
+                                                        ? Colors.white
+                                                            .withOpacity(0.06)
+                                                        : const Color(
+                                                            0xFFE8E8EE)),
+                                                width: isInvalidHighlight
+                                                    ? 1.4
+                                                    : 1,
+                                              ),
+                                              boxShadow: isDarkMode
+                                                  ? null
+                                                  : [
+                                                      BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.03),
+                                                        blurRadius: 10,
+                                                        offset: const Offset(
+                                                            0, 3),
                                                       ),
-                                                    ),
-                                                    if (question.mandatory!)
-                                                      const TextSpan(
-                                                        text: AppStrings
-                                                            .asteriskMark,
-                                                        style: TextStyle(
-                                                          color: Colors.red,
+                                                    ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .center,
+                                                  children: [
+                                                    Expanded(
+                                                      child: RichText(
+                                                        text: TextSpan(
+                                                          children: [
+                                                            TextSpan(
+                                                              text:
+                                                                  '${index + 1} · ',
+                                                              style:
+                                                                  TextStyle(
+                                                                fontSize:
+                                                                    11.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: isInvalidHighlight
+                                                                    ? errorRed
+                                                                    : primary,
+                                                              ),
+                                                            ),
+                                                            TextSpan(
+                                                              text: question
+                                                                      .question ??
+                                                                  '',
+                                                              style:
+                                                                  TextStyle(
+                                                                fontSize:
+                                                                    12.sp,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color:
+                                                                    titleColor,
+                                                                height: 1.25,
+                                                              ),
+                                                            ),
+                                                            if (isRequired)
+                                                              TextSpan(
+                                                                text: ' *',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      12.sp,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w800,
+                                                                  color:
+                                                                      errorRed,
+                                                                ),
+                                                              ),
+                                                          ],
                                                         ),
                                                       ),
+                                                    ),
+                                                    if (showAi) ...[
+                                                      SizedBox(width: 8.w),
+                                                      const AiFilledFieldBanner(
+                                                        compact: true,
+                                                      ),
+                                                    ],
                                                   ],
                                                 ),
-                                              ),
+                                                SizedBox(height: 10.h),
+                                                buildQuestionWidget(
+                                                  cubit.questionModelList,
+                                                  index,
+                                                  size,
+                                                  cubit,
+                                                  isDarkMode: isDarkMode,
+                                                ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
-
-                                        const SizedBox(height: 16),
-                                        buildQuestionWidget(
-                                          cubit.questionModelList,
-                                          index,
-                                          size,
-                                          cubit,
-                                        ),
-                                        // BuildQuestion(index: index, currentDoctorModel:widget.currentDoctorModel, doctorId: doctorId, homeDataModel: widget.homeDataModel, isAllDataOpen: isAllDataOpen, patientId: widget.patientId, sectionModel: widget.sectionModel)
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   );
                                 },
                               ),
-                            );
-                          }
+                            ),
+                          );
                         },
                       );
                     },
                   ),
                   Container(
-                    height: 90,
-                    color: isDarkMode ? AppColors.darkScaffoldBG : null,
+                    height: 78,
+                    color: isDarkMode
+                        ? AppColors.darkScaffoldBG
+                        : HomeDashboardColors.scaffold(false),
                   ),
                 ],
               ),
             ),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                height: 90,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.darkCardBG : null,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade100,
-                      spreadRadius: 1,
-                      blurRadius: 7,
-                      offset: const Offset(3, 4),
-                    ),
-                  ],
-                ),
-                child: BlocConsumer<OutcomeCubit, OutcomeState>(
-                  listener: (context, state) {
-                    state.maybeWhen(
-                      orElse: () {},
-                      loaded: (
-                        response,
-                        isSubmitedOutcome,
-                        message,
-                        _,
-                        isSubmitedOutcomeLoading,
-                        submitterModel,
-                      ) {},
-                      error: (message) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          showCustomDialog(
-                            context: context,
-                            title: context.tr(AppStrings.attention),
-                            description: message,
-                            coloredButtonText: context.tr(AppStrings.cancel),
-                            isNoColorShow: false,
-                            coloredButtonOnTap: () {
-                              Navigator.of(context).pop();
-                            },
-                          );
-                        });
-                      },
-                    );
+            BlocConsumer<OutcomeCubit, OutcomeState>(
+              listener: (context, state) {
+                state.maybeWhen(
+                  orElse: () {},
+                  loaded: (
+                    response,
+                    isSubmitedOutcome,
+                    message,
+                    _,
+                    isSubmitedOutcomeLoading,
+                    submitterModel,
+                  ) {},
+                  error: (message) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showCustomDialog(
+                        context: context,
+                        title: context.tr(AppStrings.attention),
+                        description: message,
+                        coloredButtonText: context.tr(AppStrings.cancel),
+                        isNoColorShow: false,
+                        coloredButtonOnTap: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    });
                   },
-                  builder: (context, state) {
-                    return state.maybeWhen(
-                      loaded: (
-                        response,
-                        isSubmitedOutcome,
-                        message,
-                        snackbarErrorCounter,
-                        isSubmitedOutcomeLoading,
-                        submitterModel,
-                      ) {
-                        if (isSubmitedOutcomeLoading) {
-                          return const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                  height: 30,
-                                  width: 30,
-                                  child: CircularProgressIndicator()),
-                            ],
-                          );
-                        } else {
-                          return SubmitButtonForOutcome(
-                            cubit: cubit,
-                            patientId: widget.patientId,
-                            accountVerification: widget.accountVerification,
-                            isSyndicateCardRequired:
-                                widget.isSyndicateCardRequired,
-                            currentDoctorModel: widget.currentDoctorModel,
-                          );
-                        }
-                      },
-                      orElse: () {
-                        return SubmitButtonForOutcome(
-                          cubit: cubit,
-                          patientId: widget.patientId,
-                          accountVerification: widget.accountVerification,
-                          isSyndicateCardRequired:
-                              widget.isSyndicateCardRequired,
-                          currentDoctorModel: widget.currentDoctorModel,
-                        );
-                      },
-                      loading: () => const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                              height: 30,
-                              width: 30,
-                              child: CircularProgressIndicator()),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
+                );
+              },
+              builder: (context, state) {
+                final isLoading = state.maybeWhen(
+                  orElse: () => false,
+                  loading: () => true,
+                  loaded: (
+                    _,
+                    __,
+                    ___,
+                    ____,
+                    isSubmitedOutcomeLoading,
+                    _____,
+                  ) =>
+                      isSubmitedOutcomeLoading,
+                );
+
+                return SubmitButtonForOutcome(
+                  cubit: cubit,
+                  patientId: widget.patientId,
+                  accountVerification: widget.accountVerification,
+                  isSyndicateCardRequired: widget.isSyndicateCardRequired,
+                  currentDoctorModel: widget.currentDoctorModel,
+                  isDark: isDarkMode,
+                  isLoading: isLoading,
+                );
+              },
             ),
           ],
+        ),
         );
       },
     );
@@ -321,13 +626,19 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
       doubleValue,
     );
 
-    cubit.formData[cubit.questionModelList[index].id.toString()] = doubleValue;
+    final qid = cubit.questionModelList[index].id.toString();
+    _clearInvalid(cubit, qid);
+    cubit.formData[qid] = doubleValue;
   }
 
-  Widget buildQuestionWidget(List<QuestionModel> questionList, int index,
-      Size size, OutcomeCubit cubit) {
+  Widget buildQuestionWidget(
+    List<QuestionModel> questionList,
+    int index,
+    Size size,
+    OutcomeCubit cubit, {
+    required bool isDarkMode,
+  }) {
     switch (cubit.questionModelList[index].type) {
-      //! double
       case AppStrings.questionTypeDouble:
         final currentAnswer = cubit.questionModelList[index].answer;
         final qidDouble = cubit.questionModelList[index].id.toString();
@@ -346,13 +657,9 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
               : '00';
         }
 
-        return Column(
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (cubit.aiFilledQuestionIds.contains(qidDouble))
-              const AiFilledFieldBanner(),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
             SizedBox(
               width: 50,
               child: CustomTextFormField(
@@ -417,19 +724,17 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 validator: (value) => null,
               ),
             ),
-              ],
-            ),
           ],
         );
 
-      //! String
       case AppStrings.questionTypeString:
         var questionAnswer = cubit.questionModelList[index].answer;
         final qid = cubit.questionModelList[index].id.toString();
         return BuildStringValueQuestions(
           questionList: cubit.questionModelList,
           index: index,
-          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qid),
+          showAiFilledBanner: false,
+          compact: true,
           onClearAiFilledMark: () => cubit.clearAiFilledMark(qid),
           initialValue: initialValueInQuestions(
             answer: questionAnswer,
@@ -454,17 +759,15 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                       LengthLimitingTextInputFormatter(255),
                     ],
           onChanged: (val) {
+            final qid = cubit.questionModelList[index].id.toString();
+            _clearInvalid(cubit, qid);
             setState(() {
               if (questionAnswer != val) {
-                cubit.updateQuestionAnswer(
-                    cubit.questionModelList[index].id.toString(), val);
-                cubit.formData[cubit.questionModelList[index].id.toString()] =
-                    val;
+                cubit.updateQuestionAnswer(qid, val);
+                cubit.formData[qid] = val;
               } else {
-                cubit.updateQuestionAnswer(
-                    cubit.questionModelList[index].id.toString(), null);
-                cubit.formData
-                    .remove(cubit.questionModelList[index].id.toString());
+                cubit.updateQuestionAnswer(qid, null);
+                cubit.formData.remove(qid);
               }
             });
           },
@@ -473,381 +776,371 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                 (val == null || val.isEmpty)) {
               return AppStrings.thisFieldIsRequired;
             }
-
             return null;
           },
         );
 
-      //! Select
       case AppStrings.questionTypeSelect:
         var questionAnswer = cubit.questionModelList[index].answer;
-        Map<String, dynamic> answerMap = questionAnswer ??= {
-          AppStrings.answers: '',
-          AppStrings.otherField: AppStrings.empty
-        };
-        dynamic selectedValue;
         final qidSelect = cubit.questionModelList[index].id.toString();
+        Map<String, dynamic> answerMap = Map<String, dynamic>.from(
+          cubit.formData[qidSelect] is Map
+              ? cubit.formData[qidSelect] as Map
+              : (questionAnswer is Map
+                  ? Map<String, dynamic>.from(questionAnswer)
+                  : {
+                      AppStrings.answers: '',
+                      AppStrings.otherField: AppStrings.empty,
+                    }),
+        );
+        answerMap[AppStrings.answers] ??= '';
+        answerMap[AppStrings.otherField] ??= AppStrings.empty;
+        cubit.formData[qidSelect] = answerMap;
+
+        final storedAnswer = answerMap[AppStrings.answers];
+        final modelAnswer = questionAnswer is Map
+            ? questionAnswer[AppStrings.answers]
+            : questionAnswer;
+
         return BuildSelectValueQuestion(
           questionList: cubit.questionModelList,
           index: index,
           isAddPatient: true,
           formData: cubit.formData,
-          showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidSelect) &&
-              selectQuestionHasDisplayableAnswer(
-                optionValues: cubit.questionModelList[index].values,
-                storedAnswer: cubit.formData[qidSelect] ??
-                    {
-                      AppStrings.answers: '',
-                      AppStrings.otherField: AppStrings.empty,
-                    },
-              ),
+          overlayLeadingInset: 0,
+          embedOthersField: true,
+          showFieldBorder: true,
+          showAiFilledBanner: false,
           onClearAiFilledMark: () => cubit.clearAiFilledMark(qidSelect),
           selected: initialValueInSelectQuestion(
-              questionAnswer: questionAnswer is Map
-                  ? questionAnswer[AppStrings.answers]
-                  : questionAnswer,
-              selectedValue: selectedValue,
-              values: cubit.questionModelList[index].values!),
+            questionAnswer: storedAnswer ?? modelAnswer,
+            selectedValue: storedAnswer,
+            values: cubit.questionModelList[index].values!,
+          ),
           validator: (val) {
+            final answers = answerMap[AppStrings.answers];
             if (cubit.questionModelList[index].mandatory == true &&
-                (cubit.questionModelList[index].answer['answers'] == null ||
-                    cubit.questionModelList[index].answer['answers'] ==
-                        AppStrings.empty)) {
+                (answers == null ||
+                    answers.toString().trim().isEmpty ||
+                    answers == AppStrings.empty)) {
               return AppStrings.thisFieldIsRequired;
             }
-
             return null;
           },
           onChanged: (val) {
-            selectedValue = val;
-            if (questionAnswer != val) {
-              // questionAnswer['answers'] = val;
-              answerMap[AppStrings.answers] = val;
-              if (answerMap[AppStrings.otherField] != 'Others') {
-                answerMap[AppStrings.otherField] = null;
+            _clearInvalid(cubit, qidSelect);
+            setState(() {
+              answerMap[AppStrings.answers] = val ?? '';
+              if (val != AppStrings.others && val != 'Others') {
+                answerMap[AppStrings.otherField] = AppStrings.empty;
               }
-              cubit.updateQuestionAnswer(
-                  cubit.questionModelList[index].id.toString(), answerMap);
-
-              cubit.formData[cubit.questionModelList[index].id.toString()] =
-                  answerMap;
-            } else {
-              // questionAnswer['answers'] = '';
-
-              cubit.updateQuestionAnswer(
-                  cubit.questionModelList[index].id.toString(),
-                  {'answers': null, 'otherField': null});
-              cubit.formData
-                  .remove(cubit.questionModelList[index].id.toString());
-            }
-            // make log for the map
+              cubit.updateQuestionAnswer(qidSelect, answerMap);
+              cubit.formData[qidSelect] = Map<String, dynamic>.from(answerMap);
+            });
             log(cubit.formData.toString());
-
-            setState(() {});
           },
           onChangedForOtherField: (value) {
+            _clearInvalid(cubit, qidSelect);
             setState(() {
-              answerMap[AppStrings.otherField] = value;
-              cubit.formData[cubit.questionModelList[index].id.toString()] =
-                  answerMap;
+              answerMap[AppStrings.otherField] = value ?? AppStrings.empty;
+              cubit.updateQuestionAnswer(qidSelect, answerMap);
+              cubit.formData[qidSelect] = Map<String, dynamic>.from(answerMap);
             });
             log(cubit.formData.toString());
           },
         );
 
-      //! Multiple
       case AppStrings.questionTypeMultiple:
-        var questionAnswer = cubit.questionModelList[index].answer;
-        Map<String, dynamic> answerMap = questionAnswer ??= {
-          AppStrings.answers: [],
-          AppStrings.otherField: AppStrings.empty
-        };
+        final questionAnswer = cubit.questionModelList[index].answer;
         final qidMulti = cubit.questionModelList[index].id.toString();
-        if (cubit.questionModelList[index].answer[AppStrings.answers]
-            is String) {
-          String answers =
-              cubit.questionModelList[index].answer[AppStrings.answers] ??= '';
-          return BuildMultipleValueQuestion(
-            index: index,
-            questionList: cubit.questionModelList,
-            initialValue: answerMap[AppStrings.otherField] ?? '',
-            listContainOther: const [],
-            oldAnswer:
-                cubit.questionModelList[index].answer[AppStrings.answers],
-            isOldAnswer: true,
-            showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
-            onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
-            onChanged: (val) {
-              setState(() {
-                answerMap[AppStrings.otherField] = val;
-                cubit.formData[cubit.questionModelList[index].id.toString()] = {
-                  AppStrings.answers: answers,
-                  AppStrings.otherField: answers.contains(AppStrings.others)
-                      ? val
-                      : AppStrings.empty,
-                };
-              });
-
-              log('map ${cubit.formData}');
-            },
-            validator: (val) {
-              if (cubit.questionModelList[index].mandatory == true) {
-                if (val == null || val.isEmpty) {
-                  return AppStrings.chooseAtLeastOnOption;
-                }
-              }
-              return null;
-            },
-            children: cubit.questionModelList[index].values!.map((value) {
-              final currentTheme = BlocProvider.of<ThemeBloc>(context).state;
-              final isDarkModeLocal =
-                  currentTheme is ThemeLoaded && currentTheme.isDarkMode;
-              final isSelected = answers.contains(value);
-
-              return Tooltip(
-                message: value.toString(),
-                child: Theme(
-                  data: ThemeData(
-                    chipTheme: ChipThemeData(
-                      selectedColor: AppColors.primary.withOpacity(0.7),
-                      checkmarkColor:
-                          Colors.white, // Change the checkmark color
-                      showCheckmark: true,
-
-                      labelStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  child: ChoiceChip(
-                    label: Text(
-                      value.toString(),
-                      style: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : isDarkModeLocal
-                                ? AppColors.title
-                                : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                    ),
-                    backgroundColor: isDarkModeLocal
-                        ? Colors.grey.shade700
-                        : Colors.grey.shade400,
-                    selected: isSelected,
-                    selectedColor: AppColors.primary.withOpacity(0.7),
-                    onSelected: (selected) {
-                      setState(() {
-                        // Check if `answers` is a String, and if so, replace it with an empty List<dynamic>
-                        if (answerMap[AppStrings.answers] is String) {
-                          answerMap[AppStrings.answers] = <dynamic>[];
-                        }
-
-                        // Now safely retrieve `answers` as a List<dynamic>
-                        List<dynamic> answers =
-                            answerMap[AppStrings.answers] as List<dynamic>;
-
-                        if (selected) {
-                          answers.add(value);
-                          // Show other field if "Other" is selected
-                          if (value == AppStrings.others) {
-                            answerMap[AppStrings.otherField] =
-                                ''; // Reset other field if selected
-                          }
-                        } else {
-                          answers.remove(value);
-                          // Clear other field if "Other" is deselected
-                          if (value == AppStrings.others) {
-                            answerMap[AppStrings.otherField] = AppStrings.empty;
-                          }
-                        }
-
-                        // Update the answerMap with the modified `answers` list
-                        answerMap[AppStrings.answers] = answers;
-
-                        // Update cubit.formData with the answers list and other field
-                        cubit.formData[
-                            cubit.questionModelList[index].id.toString()] = {
-                          AppStrings.answers: answers,
-                          AppStrings.otherField:
-                              answers.contains(AppStrings.others)
-                                  ? answerMap[AppStrings.otherField]
-                                  : AppStrings.empty,
-                        };
-                        log('map ${cubit.formData}');
-                      });
-                    },
-                  ),
-                ),
+        final answerMap = resolveMultipleAnswerMap(
+          questionAnswer: questionAnswer,
+          formEntry: cubit.formData[qidMulti],
+        );
+        final hasLegacyStringAnswer = answerMap[AppStrings.answers] is String;
+        final String oldAnswer = hasLegacyStringAnswer
+            ? (answerMap[AppStrings.answers] as String? ?? AppStrings.empty)
+            : AppStrings.empty;
+        final List<dynamic> answers = hasLegacyStringAnswer
+            ? cubit.questionModelList[index].values!
+                .where((value) => oldAnswer.contains(value.toString()))
+                .toList()
+            : List<dynamic>.from(
+                answerMap[AppStrings.answers] as List<dynamic>? ?? <dynamic>[],
               );
-            }).toList(),
+
+        void syncMultipleAnswer() {
+          final payload = multipleAnswerPayload(
+            answers: answers,
+            otherText: answerMap[AppStrings.otherField],
           );
-        } else if (cubit.questionModelList[index].answer is Map) {
-          List<dynamic> answers =
-              cubit.questionModelList[index].answer[AppStrings.answers] ??= [];
-          return BuildMultipleValueQuestion(
-            index: index,
-            questionList: cubit.questionModelList,
-            initialValue: answerMap[AppStrings.otherField] ?? '',
-            listContainOther: answers,
-            showAiFilledBanner: cubit.aiFilledQuestionIds.contains(qidMulti),
-            onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
-            onChanged: (val) {
-              setState(() {
-                answerMap[AppStrings.otherField] = val;
-                cubit.formData[cubit.questionModelList[index].id.toString()] = {
-                  AppStrings.answers: answers,
-                  AppStrings.otherField: answers.contains(AppStrings.others)
-                      ? val
-                      : AppStrings.empty,
-                };
-              });
-
-              log('map ${cubit.formData}');
-            },
-            validator: (val) {
-              if (cubit.questionModelList[index].mandatory == true) {
-                if (val == null || val.isEmpty) {
-                  return AppStrings.chooseAtLeastOnOption;
-                }
-              }
-              return null;
-            },
-            children: cubit.questionModelList[index].values!.map((value) {
-              final currentTheme = BlocProvider.of<ThemeBloc>(context).state;
-              final isDarkModeLocal =
-                  currentTheme is ThemeLoaded && currentTheme.isDarkMode;
-              final isSelected = answers.contains(value);
-
-              return Tooltip(
-                message: value.toString(),
-                child: Theme(
-                  data: ThemeData(
-                    chipTheme: ChipThemeData(
-                      selectedColor: AppColors.primary.withOpacity(0.7),
-                      checkmarkColor:
-                          Colors.white, // Change the checkmark color
-                      showCheckmark: true,
-
-                      labelStyle: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  child: ChoiceChip(
-                    label: Text(
-                      value.toString(),
-                      style: TextStyle(
-                        color: isSelected
-                            ? Colors.white
-                            : isDarkModeLocal
-                                ? AppColors.darkTitle
-                                : Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 2,
-                    ),
-                    backgroundColor: isDarkModeLocal
-                        ? Colors.grey.shade700
-                        : Colors.grey.shade400,
-                    selected: isSelected,
-                    selectedColor: AppColors.primary.withOpacity(0.7),
-                    onSelected: (selected) {
-                      setState(() {
-                        if (selected) {
-                          answers.add(value);
-                          // Show other field if "Other" is selected
-                          if (value == AppStrings.others) {
-                            answerMap[AppStrings.otherField] =
-                                ''; // Reset other field if selected
-                          }
-                        } else {
-                          answers.remove(value);
-                          // Clear other field if "Other" is deselected
-                          if (value == AppStrings.others) {
-                            answerMap[AppStrings.otherField] = AppStrings.empty;
-                          }
-                        }
-
-                        cubit.formData[
-                            cubit.questionModelList[index].id.toString()] = {
-                          AppStrings.answers: answers,
-                          AppStrings.otherField:
-                              answers.contains(AppStrings.others)
-                                  ? answerMap[AppStrings.otherField]
-                                  : AppStrings.empty,
-                        };
-                        log('map ${cubit.formData}');
-                      });
-                    },
-                  ),
-                ),
-              );
-            }).toList(),
-          );
+          answerMap[AppStrings.answers] = payload[AppStrings.answers];
+          answerMap[AppStrings.otherField] = payload[AppStrings.otherField];
+          cubit.updateQuestionAnswer(qidMulti, payload);
+          cubit.formData[qidMulti] = payload;
         }
-        return const SizedBox.shrink();
 
-      //! Date
+        final primaryLocal =
+            isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+
+        return BuildMultipleValueQuestion(
+          index: index,
+          questionList: cubit.questionModelList,
+          initialValue: answerMap[AppStrings.otherField]?.toString() ?? '',
+          listContainOther: answers,
+          oldAnswer: null,
+          isOldAnswer: false,
+          showAiFilledBanner: false,
+          onClearAiFilledMark: () => cubit.clearAiFilledMark(qidMulti),
+          onChanged: (val) {
+            _clearInvalid(cubit, qidMulti);
+            setState(() {
+              answerMap[AppStrings.otherField] = val;
+              syncMultipleAnswer();
+            });
+            log('map ${cubit.formData}');
+          },
+          validator: (val) {
+            if (cubit.questionModelList[index].mandatory == true &&
+                answers.contains(AppStrings.others)) {
+              if (val == null || val.isEmpty) {
+                return AppStrings.thisFieldIsRequired;
+              }
+            }
+            return null;
+          },
+          children: cubit.questionModelList[index].values!.map((value) {
+            final isSelected = answers.contains(value);
+            return GestureDetector(
+              onTap: () {
+                cubit.clearAiFilledMark(qidMulti);
+                _clearInvalid(cubit, qidMulti);
+                setState(() {
+                  if (isSelected) {
+                    answers.remove(value);
+                    if (value == AppStrings.others) {
+                      answerMap[AppStrings.otherField] = AppStrings.empty;
+                    }
+                  } else {
+                    if (!answers.contains(value)) {
+                      answers.add(value);
+                    }
+                  }
+                  syncMultipleAnswer();
+                  log('map ${cubit.formData}');
+                });
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 140),
+                margin: EdgeInsets.only(bottom: 6.h),
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? primaryLocal.withOpacity(isDarkMode ? 0.28 : 0.14)
+                      : (isDarkMode
+                          ? const Color(0xFF2A2A2E)
+                          : const Color(0xFFF3F4F6)),
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? primaryLocal.withOpacity(0.55)
+                        : (isDarkMode
+                            ? Colors.white.withOpacity(0.08)
+                            : const Color(0xFFE5E7EB)),
+                  ),
+                ),
+                child: Text(
+                  value.toString(),
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? (isDarkMode ? Colors.white : primaryLocal)
+                        : (isDarkMode
+                            ? Colors.white70
+                            : const Color(0xFF4B5563)),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+
       case AppStrings.questionTypeDate:
         var questionAnswer = cubit.questionModelList[index].answer;
-        questionAnswer ??= DateTime.now().toString();
         final qidDate = cubit.questionModelList[index].id.toString();
-        // questionAnswer == null|| questionAnswer ==''? DateTime.now().toString(): questions[index].answer;
+        final storedRaw = cubit.formData[qidDate] ?? questionAnswer;
+
+        DateTime selectedDate = DateTime.now();
+        if (storedRaw != null && storedRaw.toString().trim().isNotEmpty) {
+          try {
+            selectedDate = DateTime.parse(storedRaw.toString());
+          } catch (_) {
+            selectedDate = DateTime.now();
+          }
+        }
+
+        final primaryLocal =
+            isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+        final fieldBg =
+            isDarkMode ? const Color(0xFF2A2A2E) : const Color(0xFFF3F4F6);
+        final mutedLocal =
+            isDarkMode ? Colors.white54 : const Color(0xFF6B7280);
+        final titleLocal =
+            isDarkMode ? Colors.white : const Color(0xFF111827);
+        final hasStoredAnswer = cubit.formData.containsKey(qidDate) ||
+            (questionAnswer != null &&
+                questionAnswer.toString().trim().isNotEmpty);
+
         return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (cubit.aiFilledQuestionIds.contains(qidDate))
-              const AiFilledFieldBanner(),
-            SizedBox(
-              height: MediaQuery.of(context).copyWith().size.height / 4,
-              child: CalendarDatePicker(
-                initialDate: () {
-                  if (questionAnswer == null || questionAnswer == '') {
-                    return DateTime.now();
-                  }
-                  try {
-                    return DateTime.parse(questionAnswer);
-                  } catch (e) {
-                    // Log the error or handle it as needed
-                    return DateTime
-                        .now(); // Default to the current date if parsing fails
-                  }
-                }(),
-                firstDate: DateTime(1900),
-                lastDate: DateTime(2100),
-                onDateChanged: (val) {
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12.r),
+                onTap: () async {
+                  final picked = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate,
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime(2100),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: isDarkMode
+                              ? ColorScheme.dark(
+                                  primary: primaryLocal,
+                                  onPrimary: Colors.white,
+                                  surface: const Color(0xFF1C1C1E),
+                                  onSurface: Colors.white,
+                                )
+                              : ColorScheme.light(
+                                  primary: primaryLocal,
+                                  onPrimary: Colors.white,
+                                  surface: Colors.white,
+                                  onSurface: const Color(0xFF111827),
+                                ),
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+                  if (picked == null) return;
                   cubit.clearAiFilledMark(qidDate);
-                  questionAnswer = val.toString();
-                  cubit.formData[cubit.questionModelList[index].id.toString()] =
-                      questionAnswer;
-                  log(cubit
-                      .formData[cubit.questionModelList[index].id.toString()]);
+                  _clearInvalid(cubit, qidDate);
+                  final value = picked.toString();
+                  cubit.formData[qidDate] = value;
+                  log(cubit.formData[qidDate].toString());
                   setState(() {});
                 },
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: fieldBg,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(
+                      color: primaryLocal.withOpacity(0.55),
+                      width: 1.2,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 12.h,
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 36.w,
+                          height: 36.w,
+                          decoration: BoxDecoration(
+                            color: primaryLocal.withOpacity(
+                              isDarkMode ? 0.22 : 0.12,
+                            ),
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Icon(
+                            Icons.calendar_today_rounded,
+                            size: 16.sp,
+                            color: primaryLocal,
+                          ),
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                hasStoredAnswer
+                                    ? '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}'
+                                    : context.tr(AppStrings.selectDate),
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: titleLocal,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                hasStoredAnswer
+                                    ? DateFormat('EEEE, d MMM yyyy')
+                                        .format(selectedDate)
+                                    : context.tr(AppStrings.addDate),
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: mutedLocal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          size: 20.sp,
+                          color: mutedLocal,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             isValidDate(cubit.questionModelList[index].answer.toString())
                 ? const SizedBox.shrink()
-                : Row(
-                    children: [
-                      const Text('Old Answer:'),
-                      const SizedBox(width: 5),
-                      Text(
-                        cubit.questionModelList[index].answer.toString(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+                : cubit.questionModelList[index].answer == null
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: EdgeInsets.only(top: 8.h),
+                        child: Row(
+                          children: [
+                            Text(
+                              '${context.tr(AppStrings.oldAnswer)}:',
+                              style: TextStyle(
+                                fontSize: 11.sp,
+                                color: mutedLocal,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                cubit.questionModelList[index].answer
+                                    .toString(),
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: titleLocal,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
           ],
         );
 
       default:
-        return Container();
+        return const SizedBox.shrink();
     }
   }
 }

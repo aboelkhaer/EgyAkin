@@ -55,7 +55,7 @@ class _DoctorsActivationState extends State<DoctorsActivation> {
               children: [
                 SizedBox(height: 10.h),
                 HomePatientTitleHeader(
-                    title: 'Doctors activation',
+                    title: context.tr(AppStrings.doctorsActivation),
                     patientCount: '',
                     leftArrow: '',
                     isWithIcon: false,

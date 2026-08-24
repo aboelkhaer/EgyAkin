@@ -1,6 +1,9 @@
+import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:egy_akin/app/shared/functions/hospital_text.dart';
+import 'package:egy_akin/features/all_doctors_patients/data/models/get_filters_options_model_response.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/cubit/all_doctors_patients_state.dart';
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
+import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 
@@ -13,6 +16,7 @@ class AllDoctorsPatientsScreen extends StatefulWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
+  final bool openFilterOnLoad;
 
   const AllDoctorsPatientsScreen(
       {super.key,
@@ -21,7 +25,8 @@ class AllDoctorsPatientsScreen extends StatefulWidget {
       required this.isSyndicateCardRequired,
       required this.currentDoctorRole,
       required this.currentDoctorPoints,
-      required this.homeDataModel});
+      required this.homeDataModel,
+      this.openFilterOnLoad = false});
 
   @override
   State<AllDoctorsPatientsScreen> createState() =>
@@ -30,6 +35,25 @@ class AllDoctorsPatientsScreen extends StatefulWidget {
 
 class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
   AllDoctorsPatientsCubit? _cubit;
+  bool _didAutoOpenFilter = false;
+
+  void _openFilterSheet(
+    BuildContext context,
+    AllDoctorsPatientsCubit cubit,
+    List<GetFiltersOptionsDataModelResponse>? filters,
+  ) {
+    showCustomBottomSheet(
+      context: context,
+      isFilter: true,
+      builder: (context) {
+        return BuildFilterWidget(
+          filters: filters,
+          cubit: cubit,
+          isCurrentDoctor: false,
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -194,17 +218,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                 ) {
                   return IconButton(
                     onPressed: () {
-                      showCustomBottomSheet(
-                        context: context,
-                        isFilter: true,
-                        builder: (context) {
-                          return BuildFilterWidget(
-                            filters: response.filters,
-                            cubit: cubit,
-                            isCurrentDoctor: false,
-                          );
-                        },
-                      );
+                      _openFilterSheet(context, cubit, response.filters);
                     },
                     icon: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -232,7 +246,33 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
         children: [
           Expanded(
             child:
-                BlocBuilder<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+                BlocConsumer<AllDoctorsPatientsCubit, AllDoctorsPatientsState>(
+              listener: (context, state) {
+                if (!widget.openFilterOnLoad || _didAutoOpenFilter) return;
+                state.maybeWhen(
+                  orElse: () {},
+                  loaded: (
+                    response,
+                    isSeeMore,
+                    message,
+                    isApplyFilterLoading,
+                    isApplyFilterLoaded,
+                    isExportLoading,
+                    isExportLoaded,
+                    fileUrl,
+                  ) {
+                    _didAutoOpenFilter = true;
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (!mounted) return;
+                      _openFilterSheet(
+                        context,
+                        AllDoctorsPatientsCubit.get(context),
+                        response.filters,
+                      );
+                    });
+                  },
+                );
+              },
               builder: (context, state) {
                 return state.maybeWhen(
                   orElse: () {
@@ -250,12 +290,22 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                     fileUrl,
                   ) {
                     return response.data!.data!.isEmpty
-                        ? Center(
-                            child: Image.asset(
-                              AppImages.notFound,
-                              width: 150.h,
-                              height: 200.h,
-                            ),
+                        ? BlocBuilder<ThemeBloc, ThemeState>(
+                            builder: (context, themeState) {
+                              final isDark = themeState is ThemeLoaded &&
+                                  themeState.isDarkMode;
+                              return PatientsListEmptyState(
+                                isDark: isDark,
+                                isFiltered: true,
+                                title: context.tr(AppStrings.noPatientsFound),
+                                subtitle: context.tr(
+                                  AppStrings.nothingMatchesCurrentFilters,
+                                ),
+                                hint: context.tr(
+                                  AppStrings.useFilterIconToChangeCriteria,
+                                ),
+                              );
+                            },
                           )
                         : isApplyFilterLoading
                             ? const Center(
@@ -456,7 +506,7 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                   orElse: () => FloatingActionButton(
                     onPressed: () {
                       // Export patients (filtered or all)
-                      cubit.exportFilteredPatients( false);
+                      cubit.exportFilteredPatients(false);
                     },
                     backgroundColor: AppColors.primary.withOpacity(0.8),
                     heroTag: 'export',
@@ -491,9 +541,11 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                             if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: Text('Cannot open URL: $fileUrl'),
+                                  content: Text(
+                                    '${context.tr(AppStrings.cannotOpenUrl)}: $fileUrl',
+                                  ),
                                   action: SnackBarAction(
-                                    label: 'Copy',
+                                    label: context.tr(AppStrings.copyUrl),
                                     onPressed: () {
                                       // Copy URL to clipboard
                                       Clipboard.setData(
@@ -509,9 +561,11 @@ class _AllDoctorsPatientsScreenState extends State<AllDoctorsPatientsScreen> {
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error opening file: $e'),
+                                content: Text(
+                                  '${context.tr(AppStrings.errorOpeningFile)}: $e',
+                                ),
                                 action: SnackBarAction(
-                                  label: 'Copy URL',
+                                  label: context.tr(AppStrings.copyUrl),
                                   onPressed: () {
                                     // Copy URL to clipboard
                                     Clipboard.setData(

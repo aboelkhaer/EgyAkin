@@ -1,6 +1,4 @@
-import 'package:egy_akin/app/shared/section_status_text.dart';
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class SectionCard extends StatelessWidget {
   final VoidCallback onTap;
@@ -8,6 +6,7 @@ class SectionCard extends StatelessWidget {
   final bool isSubmitStatus;
   final int index;
   final String sectionName;
+
   const SectionCard({
     super.key,
     required this.onTap,
@@ -19,147 +18,191 @@ class SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
-        return Stack(
-          children: [
-            Card(
-              color: isDarkMode
-                  ? AppColors.darkCardBG
-                  : Colors.white, // Background color
-              elevation: 0.8,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final cardBg = isDark ? AppColors.darkCardBG : Colors.white;
+        final border = isDark ? AppColors.darkBorder : const Color(0xFFE8E4F5);
+        final titleColor =
+            isDark ? AppColors.darkTitle : const Color(0xFF111827);
+        final muted =
+            isDark ? AppColors.darkDescription : const Color(0xFF9CA3AF);
+        const pending = Color(0xFFF59E0B);
+        const completed = Color(0xFF22C55E);
+        final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
+
+        final timeAgo = (updatedAt == null || updatedAt!.toString().isEmpty)
+            ? ''
+            : TimeAgoService.instance
+                .formatTimeAgoFromString(updatedAt!.toString(), context);
+
+        return Material(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(18.r),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(18.r),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.h),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(14.r),
+                border: Border.all(color: border),
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(10),
-                splashColor: isDarkMode
-                    ? AppColors.darkSubBG
-                    : AppColors.subBG, // Splash color
-                onTap: onTap,
-                child: Container(
-                  width: size.width * 0.85,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: isDarkMode
-                                ? AppColors.darkBorder
-                                : AppColors.subBG,
-                            radius: 20,
-                            child: Text(
-                              '${index + 1}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                  fontSize: 14),
-                            ),
-                          ),
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(width: 15),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          // Text(
-                                          //   isSubmitStatus
-                                          //       ? 'Completed'
-                                          //       : 'Binding...',
-                                          //   style: TextStyle(
-                                          //     color: isSubmitStatus
-                                          //         ? AppColors.primary
-                                          //             .withOpacity(0.7)
-                                          //         : Colors.amber,
-                                          //     fontSize: 13,
-                                          //   ),
-                                          //   maxLines: 1,
-                                          //   overflow: TextOverflow.ellipsis,
-                                          // ),
-                                          SectionStatusText(
-                                              isSubmitStatus: isSubmitStatus),
-                                          Text(
-                                            updatedAt == null ||
-                                                    updatedAt!.isEmpty
-                                                ? ''
-                                                : TimeAgoService.instance
-                                                    .formatTimeAgoFromString(
-                                                        updatedAt!, context),
-                                            style: const TextStyle(
-                                              color: AppColors.description,
-                                              fontSize: 10,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 4),
-                                      const Text(
-                                        '',
-                                        style: TextStyle(
-                                          color: AppColors.description,
-                                          fontSize: 13,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            sectionName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: isDarkMode
-                                                  ? AppColors.darkTitle
-                                                  : AppColors.title,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+              child: Row(
+                children: [
+                  _LeadingBadge(
+                    isCompleted: isSubmitStatus,
+                    number: index + 1,
+                    primary: primary,
+                    completed: completed,
+                    isDark: isDark,
                   ),
-                ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          sectionName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w700,
+                            color: titleColor,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Row(
+                          children: [
+                            Container(
+                              width: 5.w,
+                              height: 5.w,
+                              decoration: BoxDecoration(
+                                color: isSubmitStatus ? completed : pending,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            SizedBox(width: 5.w),
+                            Flexible(
+                              child: isSubmitStatus
+                                  ? Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: context.tr(
+                                              AppStrings.completed,
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 10.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: completed,
+                                            ),
+                                          ),
+                                          if (timeAgo.isNotEmpty)
+                                            TextSpan(
+                                              text: ' · $timeAgo',
+                                              style: TextStyle(
+                                                fontSize: 10.sp,
+                                                fontWeight: FontWeight.w500,
+                                                color: muted,
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    )
+                                  : Text(
+                                      context.tr(AppStrings.pending),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w600,
+                                        color: pending,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 6.w),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 18.sp,
+                    color: muted,
+                  ),
+                ],
               ),
             ),
-            // Positioned(
-            //   right: 0,
-            //   child: Icon(
-            //     isSubmitStatus ? AppIcons.isFinalSubmit : AppIcons.isFinalNotSubmit,
-            //     color: isSubmitStatus
-            //         ? AppColors.primary.withOpacity(0.7)
-            //         : Colors.amber,
-            //   ),
-            // ),
-          ],
+          ),
         );
       },
+    );
+  }
+}
+
+class _LeadingBadge extends StatelessWidget {
+  final bool isCompleted;
+  final int number;
+  final Color primary;
+  final Color completed;
+  final bool isDark;
+
+  const _LeadingBadge({
+    required this.isCompleted,
+    required this.number,
+    required this.primary,
+    required this.completed,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCompleted) {
+      return Container(
+        width: 32.w,
+        height: 32.w,
+        decoration: BoxDecoration(
+          color: completed.withOpacity(isDark ? 0.16 : 0.12),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          Icons.check_rounded,
+          size: 16.sp,
+          color: completed,
+        ),
+      );
+    }
+
+    return Container(
+      width: 32.w,
+      height: 32.w,
+      decoration: BoxDecoration(
+        color: primary.withOpacity(isDark ? 0.16 : 0.1),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        '$number',
+        style: TextStyle(
+          fontSize: 11.sp,
+          fontWeight: FontWeight.w700,
+          color: primary,
+        ),
+      ),
     );
   }
 }

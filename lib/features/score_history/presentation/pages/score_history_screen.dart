@@ -1,6 +1,6 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/score_history/presentation/cubit/score_history_state.dart';
 import '../../../../exports.dart';
-import '../../../../app/services/theme_bloc.dart';
 
 class ScoreHistoryScreen extends StatefulWidget {
   final String doctorId;
@@ -35,232 +35,290 @@ class _ScoreHistoryScreenState extends State<ScoreHistoryScreen> {
   }
 
   void _onScroll() {
-    if (context.read<ScoreHistoryCubit>().isLastPage) {
-      return;
-    } else {
-      final maxScroll = context
-          .read<ScoreHistoryCubit>()
-          .scrollController!
-          .position
-          .maxScrollExtent;
-      final currentScroll =
-          context.read<ScoreHistoryCubit>().scrollController!.position.pixels;
-      const threshold = 200.0;
-      if (context.read<ScoreHistoryCubit>().isLoadingMoreForScroll == false &&
-          maxScroll - currentScroll <= threshold) {
-        context.read<ScoreHistoryCubit>().isLoadingMoreForScroll = true;
+    final cubit = context.read<ScoreHistoryCubit>();
+    if (cubit.isLastPage) return;
 
-        context.read<ScoreHistoryCubit>().loadMorePatients(widget.doctorId);
-      }
+    final maxScroll = cubit.scrollController!.position.maxScrollExtent;
+    final currentScroll = cubit.scrollController!.position.pixels;
+    const threshold = 200.0;
+    if (!cubit.isLoadingMoreForScroll &&
+        maxScroll - currentScroll <= threshold) {
+      cubit.isLoadingMoreForScroll = true;
+      cubit.loadMorePatients(widget.doctorId);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ScoreHistoryCubit cubit = ScoreHistoryCubit.get(context);
+    final cubit = ScoreHistoryCubit.get(context);
+
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+        final titleColor = HomeDashboardColors.title(isDark);
+        final muted = HomeDashboardColors.subtitle(isDark);
+        final scaffold = HomeDashboardColors.scaffold(isDark);
 
-        return Scaffold(
-          backgroundColor: isDarkMode ? AppColors.darkSubBG : Colors.white,
-          body: Column(
+        return ColoredBox(
+          color: scaffold,
+          child: Column(
             children: [
-              SizedBox(height: 5.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 5.h,
-                    width: 60.w,
-                    decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppColors.darkBorder
-                          : Colors.grey.shade300,
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                ],
-              ),
               Padding(
-                padding: const EdgeInsets.only(
-                    top: 20, left: 20, right: 20, bottom: 10),
-                child: Row(
+                padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 10.h),
+                child: Column(
                   children: [
-                    Text(
-                      context.tr(AppStrings.scoreHistory),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.sp,
-                        color: isDarkMode
-                            ? AppColors.darkTitle
-                            : Colors.grey.shade800,
+                    Container(
+                      width: 40.w,
+                      height: 4.h,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.18)
+                            : const Color(0xFFD1D5DB),
+                        borderRadius: BorderRadius.circular(99),
                       ),
+                    ),
+                    SizedBox(height: 14.h),
+                    Row(
+                      children: [
+                        Container(
+                          width: 44.r,
+                          height: 44.r,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                HomeDashboardColors.score,
+                                Color.lerp(
+                                  HomeDashboardColors.score,
+                                  primary,
+                                  0.35,
+                                )!,
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: HomeDashboardColors.score
+                                    .withOpacity(0.35),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.stars_rounded,
+                            color: Colors.white,
+                            size: 22.sp,
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                context.tr(AppStrings.scoreHistory),
+                                style: TextStyle(
+                                  fontSize: 17.sp,
+                                  fontWeight: FontWeight.w800,
+                                  color: titleColor,
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                context.tr(
+                                  AppStrings.trackPointsEarnedFromYourActivity,
+                                ),
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: muted,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
               Expanded(
-                child: BlocConsumer<ScoreHistoryCubit, ScoreHistoryState>(
-                  listener: (context, state) {},
+                child: BlocBuilder<ScoreHistoryCubit, ScoreHistoryState>(
                   builder: (context, state) {
                     return state.maybeWhen(
-                      orElse: () {
-                        return const Center(child: CircularProgressIndicator());
-                      },
+                      orElse: () => Center(
+                        child: CircularProgressIndicator(color: primary),
+                      ),
                       loaded: (scoreHistory, isSeeMore) {
-                        return scoreHistory.data!.isEmpty
-                            ? Center(
-                                child: Image.asset(
-                                  AppImages.notFound,
-                                  width: 100.h,
-                                  height: 150.h,
+                        final entries = scoreHistory.data ?? [];
+                        if (entries.isEmpty) {
+                          return RefreshIndicator(
+                            onRefresh: () async {
+                              await cubit.getScoreHistory(widget.doctorId);
+                            },
+                            color: primary,
+                            child: ListView(
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.sizeOf(context).height * 0.4,
+                                  child: DashboardEmptyState(
+                                    isDark: isDark,
+                                    icon: Icons.workspace_premium_outlined,
+                                    title: context.tr(
+                                      AppStrings.noScoreActivityYet,
+                                    ),
+                                    subtitle: context.tr(
+                                      AppStrings.pointsEarnedWillAppearInHistory,
+                                    ),
+                                    hint: context.tr(
+                                      AppStrings.completeTasksToStartEarningPoints,
+                                    ),
+                                    hintIcon: Icons.star_outline_rounded,
+                                  ),
                                 ),
-                              )
-                            : ListView.builder(
-                                itemCount: scoreHistory.data!.length,
-                                controller: cubit.scrollController,
-                                itemBuilder: (context, index) {
-                                  ScoreModel scoreModel =
-                                      scoreHistory.data![index];
-                                  return Container(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 5, left: 20, right: 20),
-                                    child: Card(
-                                      color: isDarkMode
-                                          ? AppColors.darkCardBG
-                                          : Colors.white,
-                                      elevation: 0.8,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 8),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          color: isDarkMode
-                                              ? AppColors.darkPrimary
-                                                  .withOpacity(0.8)
-                                              : AppColors.primary
-                                                  .withOpacity(0.8),
+                              ],
+                            ),
+                          );
+                        }
+
+                        return ListView.separated(
+                          controller: cubit.scrollController,
+                          physics: const BouncingScrollPhysics(
+                            parent: AlwaysScrollableScrollPhysics(),
+                          ),
+                          padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 20.h),
+                          itemCount: entries.length + (isSeeMore ? 1 : 0),
+                          separatorBuilder: (_, __) => SizedBox(height: 8.h),
+                          itemBuilder: (context, index) {
+                            if (index >= entries.length) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 22.r,
+                                    height: 22.r,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      color: primary,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final scoreModel = entries[index];
+                            final points =
+                                int.tryParse(scoreModel.score ?? '0') ?? 0;
+                            final pointsLabel = points > 1
+                                ? context.tr(AppStrings.points)
+                                : (context.currentLocale?.languageCode == 'ar'
+                                    ? context.tr(AppStrings.points)
+                                    : context.tr(AppStrings.point));
+
+                            return Container(
+                              padding: EdgeInsets.fromLTRB(
+                                12.w,
+                                12.h,
+                                12.w,
+                                12.h,
+                              ),
+                              decoration: HomeDashboardDecor.card(isDark)
+                                  .copyWith(
+                                borderRadius: BorderRadius.circular(16.r),
+                              ),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 42.r,
+                                    height: 42.r,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: HomeDashboardColors.score
+                                          .withOpacity(isDark ? 0.2 : 0.12),
+                                    ),
+                                    child: Icon(
+                                      Icons.bolt_rounded,
+                                      color: HomeDashboardColors.score,
+                                      size: 20.sp,
+                                    ),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          context.tr(
+                                            scoreModel.action?.toString() ?? '',
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 13.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: titleColor,
+                                          ),
                                         ),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  scoreModel.action.toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      int.parse(scoreModel
-                                                                  .score!) >
-                                                              1
-                                                          ? '${context.tr(AppStrings.points)}:'
-                                                          : context.currentLocale
-                                                                      ?.languageCode ==
-                                                                  'ar'
-                                                              ? '${context.tr(AppStrings.points)}:'
-                                                              : '${context.tr(AppStrings.point)}:',
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 2),
-                                                    Text(
-                                                      '${scoreModel.score}',
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 3.h),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  TimeAgoService.instance
-                                                      .formatTimeAgoFromString(
-                                                    scoreModel.updateAt
-                                                        .toString(),
-                                                    context,
-                                                  ),
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                      fontSize: 10.sp),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                        SizedBox(height: 4.h),
+                                        Text(
+                                          TimeAgoService.instance
+                                              .formatTimeAgoFromString(
+                                            scoreModel.updateAt.toString(),
+                                            context,
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.w500,
+                                            color: muted,
+                                          ),
                                         ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Container(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 10.w,
+                                      vertical: 6.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: HomeDashboardColors.score
+                                          .withOpacity(isDark ? 0.18 : 0.12),
+                                      borderRadius: BorderRadius.circular(99),
+                                      border: Border.all(
+                                        color: HomeDashboardColors.score
+                                            .withOpacity(0.3),
                                       ),
                                     ),
-                                  );
-                                },
-                              );
+                                    child: Text(
+                                      '+$points $pointsLabel',
+                                      style: TextStyle(
+                                        fontSize: 11.sp,
+                                        fontWeight: FontWeight.w800,
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xFF047857),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
                       },
                     );
                   },
                 ),
-              ),
-              SizedBox(height: 10.h),
-              BlocBuilder<ScoreHistoryCubit, ScoreHistoryState>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return const SizedBox.shrink();
-                    },
-                    loaded: (data, isSeeMore) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          isSeeMore
-                              ? Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 15,
-                                      width: 15,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 3,
-                                      ),
-                                    ),
-                                    SizedBox(height: 20.h),
-                                  ],
-                                )
-                              : GestureDetector(
-                                  onTap: () {
-                                    cubit.loadMorePatients(widget.doctorId);
-                                  },
-                                  child: const Text(
-                                    '',
-                                  ),
-                                ),
-                        ],
-                      );
-                    },
-                  );
-                },
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:egy_akin/features/community/presentation/widgets/view_poll_widget.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_cubit.dart';
 import 'package:egy_akin/features/community_search/presentation/cubit/community_search_state.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -185,26 +186,18 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                             return const SizedBox.shrink();
                           }
                           return Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  AppImages.notFound,
-                                  width: 200,
-                                  height: 200,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  context.tr(
-                                      AppStrings.startTypingToSearchForPosts),
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: isDarkMode
-                                        ? AppColors.darkDescription
-                                        : Colors.grey[600],
-                                  ),
-                                ),
-                              ],
+                            child: DashboardEmptyState(
+                              isDark: isDarkMode,
+                              icon: Icons.search_rounded,
+                              title: context.tr(
+                                  AppStrings.startTypingToSearchForPosts),
+                              subtitle: context.tr(
+                                AppStrings.searchPostsAcrossCommunity,
+                              ),
+                              hint: context.tr(
+                                AppStrings.tryTopicDoctorNameOrKeyword,
+                              ),
+                              hintIcon: Icons.keyboard_rounded,
                             ),
                           );
                         },
@@ -225,26 +218,18 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           if (cubit.isSearchContentEmpty ||
                               (cubit.searchValue?.isEmpty ?? true)) {
                             return Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    AppImages.notFound,
-                                    width: 150,
-                                    height: 150,
-                                  ),
-                                  Text(
-                                    context.tr(
-                                        AppStrings.startTypingToSearchForPosts),
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      color: isDarkMode
-                                          ? AppColors.darkDescription
-                                          : Colors.grey.shade500,
-                                    ),
-                                  ),
-                                  SizedBox(height: 50.h),
-                                ],
+                              child: DashboardEmptyState(
+                                isDark: isDarkMode,
+                                icon: Icons.search_rounded,
+                                title: context.tr(
+                                    AppStrings.startTypingToSearchForPosts),
+                                subtitle: context.tr(
+                                  AppStrings.searchPostsAcrossCommunity,
+                                ),
+                                hint: context.tr(
+                                  AppStrings.tryTopicDoctorNameOrKeyword,
+                                ),
+                                hintIcon: Icons.keyboard_rounded,
                               ),
                             );
                           }
@@ -252,25 +237,17 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           return response.data!.data!.isEmpty ||
                                   response.data!.data == null
                               ? Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        AppImages.notFound,
-                                        width: 150,
-                                        height: 150,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        '${context.tr(AppStrings.noPostsFoundFor)} ${cubit.searchValue}',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: isDarkMode
-                                              ? AppColors.darkDescription
-                                              : Colors.grey[600],
-                                        ),
-                                      ),
-                                    ],
+                                  child: DashboardEmptyState(
+                                    isDark: isDarkMode,
+                                    icon: Icons.search_off_rounded,
+                                    title:
+                                        '${context.tr(AppStrings.noPostsFoundFor)} “${cubit.searchValue}”',
+                                    subtitle: context
+                                        .tr(AppStrings.tryDifferentSearchTerms),
+                                    hint: context.tr(
+                                      AppStrings.checkSpellingOrFewerWords,
+                                    ),
+                                    hintIcon: Icons.tips_and_updates_outlined,
                                   ),
                                 )
                               : ListView.builder(
@@ -278,8 +255,12 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                                   controller: _scrollController,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(20) +
-                                      EdgeInsets.only(bottom: 60.h),
+                                  padding: EdgeInsets.fromLTRB(
+                                    0,
+                                    8.h,
+                                    0,
+                                    60.h,
+                                  ),
                                   itemBuilder: (context, index) {
                                     var feed = response.data!.data![index];
                                     return PostCard(

@@ -1,5 +1,4 @@
 import 'package:egy_akin/exports.dart';
-import '../../services/theme_bloc.dart';
 
 class LanguageSelector extends StatelessWidget {
   final MoreCubit? moreCubit;
@@ -10,7 +9,11 @@ class LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
-        final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final titleColor =
+            isDark ? AppColors.darkTitle : const Color(0xFF111827);
+        final muted =
+            isDark ? AppColors.darkDescription : const Color(0xFF6B7280);
 
         return BlocBuilder<LocalizationBloc, LocalizationState>(
           builder: (context, state) {
@@ -19,38 +22,81 @@ class LanguageSelector extends StatelessWidget {
               currentLanguage = state.locale.languageCode;
             }
 
-            return ListTile(
-              title: Text(
-                context.tr('language'),
-                style: TextStyle(fontSize: 13.5.sp),
-              ),
-              leading: Icon(
-                Icons.language,
-                color: Colors.grey.shade600,
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    currentLanguage == 'en'
-                        ? context.tr('english')
-                        : context.tr('arabic'),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade600,
-                    ),
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  _showLanguageDialog(
+                    context,
+                    currentLanguage,
+                    isDark,
+                    moreCubit,
+                  );
+                },
+                child: Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 32.r,
+                        height: 32.r,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF06B6D4)
+                              .withOpacity(isDark ? 0.18 : 0.12),
+                          borderRadius: BorderRadius.circular(9.r),
+                        ),
+                        child: Icon(
+                          Icons.language_rounded,
+                          size: 15.sp,
+                          color: const Color(0xFF06B6D4),
+                        ),
+                      ),
+                      SizedBox(width: 10.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              context.tr('language'),
+                              style: TextStyle(
+                                fontSize: 11.5.sp,
+                                fontWeight: FontWeight.w700,
+                                color: titleColor,
+                              ),
+                            ),
+                            SizedBox(height: 1.h),
+                            Text(
+                              context.tr(AppStrings.appLanguage),
+                              style: TextStyle(
+                                fontSize: 9.5.sp,
+                                fontWeight: FontWeight.w500,
+                                color: muted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        currentLanguage == 'en'
+                            ? context.tr('english')
+                            : context.tr('arabic'),
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                          color: muted,
+                        ),
+                      ),
+                      SizedBox(width: 2.w),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: 16.sp,
+                        color: muted,
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 15.r,
-                  ),
-                ],
+                ),
               ),
-              onTap: () {
-                _showLanguageDialog(
-                    context, currentLanguage, isDarkMode, moreCubit);
-              },
             );
           },
         );
@@ -58,17 +104,25 @@ class LanguageSelector extends StatelessWidget {
     );
   }
 
-  void _showLanguageDialog(BuildContext context, String currentLanguage,
-      bool isDarkMode, MoreCubit? moreCubit) {
+  void _showLanguageDialog(
+    BuildContext context,
+    String currentLanguage,
+    bool isDarkMode,
+    MoreCubit? moreCubit,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: isDarkMode ? AppColors.darkCardBG : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.r),
+          ),
           title: Text(
             context.tr('language'),
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w700,
               color: isDarkMode ? AppColors.darkTitle : Colors.black,
             ),
           ),
@@ -83,7 +137,7 @@ class LanguageSelector extends StatelessWidget {
                 isDarkMode,
                 moreCubit,
               ),
-              const SizedBox(height: 12),
+              SizedBox(height: 10.h),
               _buildLanguageOption(
                 context,
                 'ar',
@@ -107,30 +161,28 @@ class LanguageSelector extends StatelessWidget {
     bool isDarkMode,
     MoreCubit? moreCubit,
   ) {
+    final primary = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
+
     return InkWell(
       onTap: () {
         Navigator.of(context).pop();
-        // Change language in LocalizationBloc
         context.read<LocalizationBloc>().add(ChangeLanguage(languageCode));
-        // Also send language change to API via MoreCubit if available
         if (moreCubit != null) {
           moreCubit.changeLanguage(languageCode);
         }
       },
+      borderRadius: BorderRadius.circular(12.r),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 14.w),
         decoration: BoxDecoration(
           color: isSelected
-              ? (isDarkMode
-                  ? AppColors.darkPrimary.withOpacity(0.1)
-                  : AppColors.primary.withOpacity(0.1))
+              ? primary.withOpacity(isDarkMode ? 0.14 : 0.1)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: isSelected
-                ? (isDarkMode ? AppColors.darkPrimary : AppColors.primary)
+                ? primary
                 : (isDarkMode ? AppColors.darkBorder : Colors.grey.shade300),
-            width: 1,
           ),
         ),
         child: Row(
@@ -138,20 +190,16 @@ class LanguageSelector extends StatelessWidget {
             Text(
               languageName,
               style: TextStyle(
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 13.sp,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 color: isSelected
-                    ? (isDarkMode ? AppColors.darkPrimary : AppColors.primary)
+                    ? primary
                     : (isDarkMode ? AppColors.darkTitle : Colors.black87),
               ),
             ),
             const Spacer(),
             if (isSelected)
-              Icon(
-                Icons.check,
-                color: isDarkMode ? AppColors.darkPrimary : AppColors.primary,
-                size: 20,
-              ),
+              Icon(Icons.check_rounded, color: primary, size: 18.sp),
           ],
         ),
       ),

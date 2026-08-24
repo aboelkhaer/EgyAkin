@@ -1,17 +1,20 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import '../../../../../app/services/theme_bloc.dart';
 
 class PostsTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
   final ScrollController feedsScrollController;
+  final Widget? listHeader;
 
   const PostsTab({
     super.key,
     required this.currentDoctorModel,
     required this.homeDataModel,
     required this.feedsScrollController,
+    this.listHeader,
   });
 
   @override
@@ -88,15 +91,10 @@ class _PostsTabState extends State<PostsTab> {
         final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
 
         return Container(
-          // color: Colors.grey.shade200,
           decoration: BoxDecoration(
-            color: isDarkMode ? AppColors.darkScaffoldBG : Colors.white,
-            border: Border(
-              top: BorderSide(
-                color: isDarkMode ? AppColors.darkBorder : Colors.grey.shade200,
-                width: 1.0,
-              ),
-            ),
+            color: isDarkMode
+                ? AppColors.darkScaffoldBG
+                : const Color(0xFFF5F5F7),
           ),
           child: BlocBuilder<CommunityCubit, CommunityState>(
             builder: (context, state) {
@@ -114,6 +112,9 @@ class _PostsTabState extends State<PostsTab> {
                   isSeeMore,
                   changeCounter,
                 ) {
+                  final headerCount = widget.listHeader != null ? 1 : 0;
+                  final feeds = feedsResponse.data!.data!;
+
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -122,35 +123,48 @@ class _PostsTabState extends State<PostsTab> {
                           onRefresh: () async {
                             await cubit.getAllFeeds();
                           },
-                          child: feedsResponse.data!.data!.isEmpty
+                          child: feeds.isEmpty
                               ? SingleChildScrollView(
+                                  controller: widget.feedsScrollController,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
-                                  child: Center(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(height: 150.h),
-                                        Image.asset(
-                                          AppImages.notFound,
-                                          width: 150.w,
-                                          height: 150.h,
+                                  child: Column(
+                                    children: [
+                                      if (widget.listHeader != null)
+                                        widget.listHeader!,
+                                      SizedBox(height: 80.h),
+                                      DashboardEmptyState(
+                                        isDark: isDarkMode,
+                                        icon: Icons.article_outlined,
+                                        title: context.tr(AppStrings.noPostsYet),
+                                        subtitle: context.tr(
+                                          AppStrings.communityPostsWillShowHere,
                                         ),
-                                        SizedBox(height: 150.h),
-                                      ],
-                                    ),
+                                        hint: context.tr(
+                                          AppStrings.pullDownToRefreshFeed,
+                                        ),
+                                        hintIcon: Icons.refresh_rounded,
+                                      ),
+                                      SizedBox(height: 80.h),
+                                    ],
                                   ),
                                 )
                               : ListView.builder(
-                                  itemCount: feedsResponse.data!.data!.length +
+                                  itemCount: headerCount +
+                                      feeds.length +
                                       (isSeeMore ? 1 : 0),
                                   controller: widget.feedsScrollController,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(20) +
-                                      EdgeInsets.only(bottom: 60.h),
+                                  padding: EdgeInsets.only(bottom: 60.h),
                                   itemBuilder: (context, index) {
-                                    if (index ==
-                                        feedsResponse.data!.data!.length) {
+                                    if (headerCount == 1 && index == 0) {
+                                      return widget.listHeader!;
+                                    }
+
+                                    final feedIndex = index - headerCount;
+
+                                    if (feedIndex == feeds.length) {
                                       return Container(
                                         padding: EdgeInsets.symmetric(
                                             vertical: 20.h),
@@ -165,7 +179,8 @@ class _PostsTabState extends State<PostsTab> {
                                         ),
                                       );
                                     }
-                                    var feed = feedsResponse.data!.data![index];
+
+                                    final feed = feeds[feedIndex];
                                     return PostCard(
                                       feed: feed,
                                       homeDataModel: widget.homeDataModel,

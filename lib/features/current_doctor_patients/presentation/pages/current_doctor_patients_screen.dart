@@ -1,4 +1,7 @@
 import 'package:egy_akin/features/all_doctors_patients/presentation/pages/widgets/build_filter_widget.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
+import 'package:egy_akin/features/home/presentation/widgets/patients/home_patients_loading.dart';
 
 import '../../../../exports.dart';
 
@@ -73,145 +76,130 @@ class _CurrentDoctorPatientsScreenState
   @override
   Widget build(BuildContext context) {
     CurrentDoctorPatientsCubit cubit = CurrentDoctorPatientsCubit.get(context);
-    Size size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
-          onTap: () {
-            animateToTopOfScreen(cubit.scrollController!);
-          },
-          child: Text(
-            context.tr(AppStrings.yourPatients),
-            style: TextStyle(fontSize: 16.sp),
-          ),
-        ),
-        actions: [
-          BlocBuilder<CurrentDoctorPatientsCubit, CurrentDoctorPatientsState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return const SizedBox.shrink();
-                },
-                loaded: (
-                  response,
-                  isSeeMore,
-                  message,
-                  isApplyFilterLoading,
-                  isApplyFilterLoaded,
-                  isExportLoading,
-                  isExportLoaded,
-                  fileUrl,
-                  filters,
-                  totalPatientInFilter,
-                ) {
-                  return IconButton(
-                    onPressed: () {},
-                    icon: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        cubit.totalPatientInFilter == 0
-                            ? const SizedBox.shrink()
-                            : FadeIn(
-                                child: Row(
-                                  children: [
-                                    Directionality(
-                                      textDirection:
-                                          context.currentLocale?.languageCode ==
-                                                  'ar'
-                                              ? TextDirection.rtl
-                                              : TextDirection.ltr,
-                                      child: Text(
-                                        '${response.data!.data!.length} ${context.tr(AppStrings.of)} ${cubit.totalPatientInFilter}',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 9.sp,
-                                        ),
-                                      ),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = HomeDashboardColors.primary(isDark);
+        final titleColor = HomeDashboardColors.title(isDark);
+        final scaffold = HomeDashboardColors.scaffold(isDark);
+        final muted = HomeDashboardColors.subtitle(isDark);
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Colors.transparent)
+              : SystemUiOverlayStyle.dark
+                  .copyWith(statusBarColor: Colors.transparent),
+          child: Scaffold(
+            backgroundColor: scaffold,
+            body: Column(
+              children: [
+                _PatientsScreenHeader(
+                  isDark: isDark,
+                  scaffold: scaffold,
+                  primary: primary,
+                  titleColor: titleColor,
+                  title: context.tr(AppStrings.yourPatients),
+                  onBack: () => Navigator.of(context).maybePop(),
+                  onTitleTap: () {
+                    if (cubit.scrollController != null) {
+                      animateToTopOfScreen(cubit.scrollController!);
+                    }
+                  },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      BlocBuilder<CurrentDoctorPatientsCubit,
+                          CurrentDoctorPatientsState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () => const SizedBox.shrink(),
+                            loaded: (
+                              response,
+                              isSeeMore,
+                              message,
+                              isApplyFilterLoading,
+                              isApplyFilterLoaded,
+                              isExportLoading,
+                              isExportLoaded,
+                              fileUrl,
+                              filters,
+                              totalPatientInFilter,
+                            ) {
+                              if (cubit.totalPatientInFilter == 0) {
+                                return const SizedBox.shrink();
+                              }
+                              final shown = response.data?.data?.length ?? 0;
+                              return Padding(
+                                padding: EdgeInsets.only(right: 4.w),
+                                child: FadeIn(
+                                  child: Text(
+                                    '$shown ${context.tr(AppStrings.of)} ${cubit.totalPatientInFilter}',
+                                    style: TextStyle(
+                                      color: isDark ? Colors.white70 : muted,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 11.sp,
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-          BlocBuilder<CurrentDoctorPatientsCubit, CurrentDoctorPatientsState>(
-            builder: (context, state) {
-              return state.maybeWhen(
-                orElse: () {
-                  return IconButton(
-                    onPressed: () {},
-                    icon: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.filter_list),
-                        const SizedBox(height: 2),
-                        Text(
-                          context.tr(AppStrings.filter),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                loaded: (
-                  response,
-                  isSeeMore,
-                  message,
-                  isApplyFilterLoading,
-                  isApplyFilterLoaded,
-                  isExportLoading,
-                  isExportLoaded,
-                  fileUrl,
-                  filters,
-                  totalPatientInFilter,
-                ) {
-                  return IconButton(
-                    onPressed: () {
-                      showCustomBottomSheet(
-                        context: context,
-                        isFilter: true,
-                        builder: (context) {
-                          return BuildFilterWidget(
-                            filters: response.filters,
-                            cubit: cubit,
-                            isCurrentDoctor: true,
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    icon: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.filter_list),
-                        const SizedBox(height: 2),
-                        Text(
-                          context.tr(AppStrings.filter),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      body: Column(
+                      ),
+                      BlocBuilder<CurrentDoctorPatientsCubit,
+                          CurrentDoctorPatientsState>(
+                        builder: (context, state) {
+                          return state.maybeWhen(
+                            orElse: () {
+                              return _HeaderIconButton(
+                                isDark: isDark,
+                                icon: Icons.tune_rounded,
+                                onTap: () {},
+                              );
+                            },
+                            loaded: (
+                              response,
+                              isSeeMore,
+                              message,
+                              isApplyFilterLoading,
+                              isApplyFilterLoaded,
+                              isExportLoading,
+                              isExportLoaded,
+                              fileUrl,
+                              filters,
+                              totalPatientInFilter,
+                            ) {
+                              return _HeaderIconButton(
+                                isDark: isDark,
+                                icon: cubit.isApplyFilterDone
+                                    ? Icons.filter_alt_rounded
+                                    : Icons.tune_rounded,
+                                color: cubit.isApplyFilterDone ? primary : null,
+                                onTap: () {
+                                  showCustomBottomSheet(
+                                    context: context,
+                                    isFilter: true,
+                                    builder: (context) {
+                                      return BuildFilterWidget(
+                                        filters: response.filters,
+                                        cubit: cubit,
+                                        isCurrentDoctor: true,
+                                      );
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Column(
         children: [
           Expanded(
             child: BlocBuilder<CurrentDoctorPatientsCubit,
@@ -219,8 +207,12 @@ class _CurrentDoctorPatientsScreenState
               builder: (context, state) {
                 return state.maybeWhen(
                   orElse: () {
-                    return const ShimmerLoadingPatientsCards(
-                        ishorizontal: false);
+                    return ListView(
+                      padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 24.h),
+                      children: [
+                        HomePatientsLoadingList(isDark: isDark),
+                      ],
+                    );
                   },
                   loaded: (
                     data,
@@ -234,127 +226,127 @@ class _CurrentDoctorPatientsScreenState
                     filters,
                     totalPatientInFilter,
                   ) {
-                    return data.data!.data!.isEmpty
-                        ? Center(
-                            child: Image.asset(
-                              AppImages.notFound,
-                              width: 150.h,
-                              height: 200.h,
+                    if (isApplyFilterLoading) {
+                      return Center(
+                        child: CircularProgressIndicator(color: primary),
+                      );
+                    }
+
+                    final patients = data.data?.data ?? [];
+                    if (patients.isEmpty) {
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          await cubit.getCurrentDoctorPatients();
+                        },
+                        color: primary,
+                        child: ListView(
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
+                          ),
+                          children: [
+                            SizedBox(
+                              height: MediaQuery.sizeOf(context).height * 0.62,
+                              child: PatientsListEmptyState(
+                                isDark: isDark,
+                                isFiltered: cubit.isApplyFilterDone,
+                                subtitle: cubit.isApplyFilterDone
+                                    ? null
+                                    : context.tr(
+                                        AppStrings.patientsYouAddWillShowUpHere,
+                                      ),
+                              ),
                             ),
-                          )
-                        : isApplyFilterLoading
-                            ? const Center(
-                                child: CircularProgressIndicator(),
-                              )
-                            : ListView.builder(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                controller: cubit.scrollController,
-                                scrollDirection: Axis.vertical,
-                                padding: const EdgeInsets.only(
-                                  left: 20,
-                                  top: 20,
-                                  right: 20,
-                                  bottom: 50,
-                                ),
-                                itemCount: data.data!.data!.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  var patient = data.data!.data![index];
-                                  return PatientCard(
-                                    patientName:
-                                        patient.name ?? AppStrings.empty,
-                                    drFirstName: patient.doctor!.firstName ??
-                                        AppStrings.empty,
-                                    isAllDataOpen: false,
-                                    width: 400.w,
-                                    doctorId: patient.doctor!.id.toString(),
-                                    homeDataModel: widget.homeDataModel,
-                                    updatedAt:
-                                        patient.updatedAt ?? AppStrings.empty,
-                                    drLastName: patient.doctor!.lastName ??
-                                        AppStrings.empty,
-                                    currentDoctorPoints:
-                                        widget.currentDoctorPoints,
-                                    accountVerification:
-                                        widget.accountVerification,
+                          ],
+                        ),
+                      );
+                    }
+
+                    return RefreshIndicator(
+                      onRefresh: () async {
+                        if (cubit.isApplyFilterDone) {
+                          await cubit.applyPatientFilters('true');
+                        } else {
+                          await cubit.getCurrentDoctorPatients();
+                        }
+                      },
+                      color: primary,
+                      child: ListView.builder(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        controller: cubit.scrollController,
+                        padding: EdgeInsets.fromLTRB(16.w, 12.h, 16.w, 80.h),
+                        itemCount: patients.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final patient = patients[index];
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: HomePatientCard(
+                              isDark: isDark,
+                              patient: patient,
+                              onOutcomeTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.outcome,
+                                  arguments: AppRoutesArgs.outcomeRouteArgs(
+                                    verified: widget.accountVerification,
+                                    outcomeStatus:
+                                        patient.sections?.outcomeStatus ??
+                                            false,
+                                    patientName: patient.name.toString(),
+                                    patientId: patient.id.toString(),
                                     currentDoctorModel:
                                         widget.currentDoctorModel,
-                                    hospital:
-                                        patient.hospital ?? AppStrings.empty,
-                                    isSyndicateCardRequired: patient
-                                        .doctor!.isSyndicateCardRequired!,
+                                    doctorId:
+                                        patient.doctor?.id.toString() ?? '',
+                                    isSyndicateCardRequired:
+                                        widget.isSyndicateCardRequired,
                                     currentDoctorRole: widget.currentDoctorRole,
-                                    doctorImage: patient.doctor!.image,
-                                    isOutcomeStatus:
-                                        patient.sections!.outcomeStatus!,
-                                    submitStatus: patient.sections == null
-                                        ? false
-                                        : patient.sections!.submitStatus ??
-                                            false,
-                                    onOutcomeTap: () {
-                                      navigatorKey.currentState?.pushNamed(
-                                        AppRoutes.outcome,
-                                        arguments:
-                                            AppRoutesArgs.outcomeRouteArgs(
-                                          verified: widget.accountVerification,
-                                          outcomeStatus:
-                                              patient.sections!.outcomeStatus!,
-                                          patientName: patient.name.toString(),
-                                          patientId: patient.id.toString(),
-                                          currentDoctorModel:
-                                              widget.currentDoctorModel,
-                                          doctorId:
-                                              patient.doctor!.id.toString(),
-                                          isSyndicateCardRequired:
-                                              widget.isSyndicateCardRequired,
-                                          currentDoctorRole:
-                                              widget.currentDoctorRole,
-                                          currentDoctorPoints:
-                                              widget.currentDoctorPoints,
-                                          homeDataModel: widget.homeDataModel,
-                                        ),
-                                      );
-                                    },
-                                    onAddCommentTap: () {
-                                      navigatorKey.currentState?.pushNamed(
-                                        AppRoutes.comments,
-                                        arguments: AppRoutesArgs
-                                            .patientCommentsRouteArgs(
-                                          patientId: patient.id.toString(),
-                                          currentDoctorModel:
-                                              widget.currentDoctorModel,
-                                          verified: widget.accountVerification,
-                                          patientName: patient.name.toString(),
-                                          currentDoctorPoints:
-                                              widget.currentDoctorPoints,
-                                          currentDoctorRole:
-                                              widget.currentDoctorRole,
-                                          isSyndicateCardRequired:
-                                              widget.isSyndicateCardRequired,
-                                          homeDataModel: widget.homeDataModel,
-                                        ),
-                                      );
-                                    },
-                                    onTap: () {
-                                      navigatorKey.currentState?.pushNamed(
-                                        AppRoutes.patientSections,
-                                        arguments: AppRoutesArgs
-                                            .patientSectionsRouteArguments(
-                                          patientId: patient.id.toString(),
-                                          currentDoctorModel:
-                                              widget.currentDoctorModel,
-                                          currentDoctorPoints:
-                                              widget.currentDoctorPoints,
-                                          currentDoctorRole:
-                                              widget.currentDoctorRole,
-                                          homeDataModel: widget.homeDataModel,
-                                          isAllDataOpen: false,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              );
+                                    currentDoctorPoints:
+                                        widget.currentDoctorPoints,
+                                    homeDataModel: widget.homeDataModel,
+                                  ),
+                                );
+                              },
+                              onAddCommentTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.comments,
+                                  arguments:
+                                      AppRoutesArgs.patientCommentsRouteArgs(
+                                    patientId: patient.id.toString(),
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    verified: widget.accountVerification,
+                                    patientName: patient.name.toString(),
+                                    currentDoctorPoints:
+                                        widget.currentDoctorPoints,
+                                    currentDoctorRole: widget.currentDoctorRole,
+                                    isSyndicateCardRequired:
+                                        widget.isSyndicateCardRequired,
+                                    homeDataModel: widget.homeDataModel,
+                                  ),
+                                );
+                              },
+                              onTap: () {
+                                navigatorKey.currentState?.pushNamed(
+                                  AppRoutes.patientSections,
+                                  arguments: AppRoutesArgs
+                                      .patientSectionsRouteArguments(
+                                    patientId: patient.id.toString(),
+                                    currentDoctorModel:
+                                        widget.currentDoctorModel,
+                                    currentDoctorPoints:
+                                        widget.currentDoctorPoints,
+                                    currentDoctorRole: widget.currentDoctorRole,
+                                    homeDataModel: widget.homeDataModel,
+                                    isAllDataOpen: false,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
                   },
                 );
               },
@@ -385,11 +377,12 @@ class _CurrentDoctorPatientsScreenState
                       isSeeMore
                           ? Column(
                               children: [
-                                const SizedBox(
+                                SizedBox(
                                   height: 15,
                                   width: 15,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 3,
+                                    color: primary,
                                   ),
                                 ),
                                 SizedBox(height: 20.h),
@@ -415,6 +408,9 @@ class _CurrentDoctorPatientsScreenState
           ),
         ],
       ),
+                ),
+              ],
+            ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -426,7 +422,7 @@ class _CurrentDoctorPatientsScreenState
                     // Export patients (filtered or all)
                     cubit.exportFilteredPatients(true);
                   },
-                  backgroundColor: AppColors.primary.withOpacity(0.8),
+                  backgroundColor: primary.withOpacity(0.9),
                   heroTag: 'export',
                   child: const Icon(
                     Icons.download,
@@ -464,9 +460,11 @@ class _CurrentDoctorPatientsScreenState
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Cannot open URL: $fileUrl'),
+                                content: Text(
+                                  '${context.tr(AppStrings.cannotOpenUrl)}: $fileUrl',
+                                ),
                                 action: SnackBarAction(
-                                  label: 'Copy',
+                                  label: context.tr(AppStrings.copyUrl),
                                   onPressed: () {
                                     // Copy URL to clipboard
                                     Clipboard.setData(
@@ -482,9 +480,11 @@ class _CurrentDoctorPatientsScreenState
                         if (mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Error opening file: $e'),
+                              content: Text(
+                                '${context.tr(AppStrings.errorOpeningFile)}: $e',
+                              ),
                               action: SnackBarAction(
-                                label: 'Copy URL',
+                                label: context.tr(AppStrings.copyUrl),
                                 onPressed: () {
                                   // Copy URL to clipboard
                                   Clipboard.setData(
@@ -508,7 +508,7 @@ class _CurrentDoctorPatientsScreenState
                             // Export patients (filtered or all)
                             cubit.exportFilteredPatients(true);
                           },
-                    backgroundColor: AppColors.primary.withOpacity(0.8),
+                    backgroundColor: primary.withOpacity(0.9),
                     heroTag: 'export',
                     child: isExportLoading
                         ? const SizedBox(
@@ -558,7 +558,7 @@ class _CurrentDoctorPatientsScreenState
                             cubit.totalPatientInFilter = 0;
                             cubit.getCurrentDoctorPatients();
                           },
-                          backgroundColor: AppColors.primary.withOpacity(0.8),
+                          backgroundColor: primary.withOpacity(0.9),
                           heroTag: 'clear',
                           child: const Icon(
                             Icons.clear,
@@ -574,6 +574,151 @@ class _CurrentDoctorPatientsScreenState
             },
           ),
         ],
+      ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PatientsScreenHeader extends StatelessWidget {
+  final bool isDark;
+  final Color scaffold;
+  final Color primary;
+  final Color titleColor;
+  final String title;
+  final VoidCallback onBack;
+  final VoidCallback onTitleTap;
+  final Widget trailing;
+
+  const _PatientsScreenHeader({
+    required this.isDark,
+    required this.scaffold,
+    required this.primary,
+    required this.titleColor,
+    required this.title,
+    required this.onBack,
+    required this.onTitleTap,
+    required this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [
+                  const Color(0xFF4A2F7A),
+                  const Color(0xFF2B1A52),
+                  scaffold,
+                ]
+              : [
+                  primary.withOpacity(0.28),
+                  primary.withOpacity(0.14),
+                  scaffold,
+                ],
+          stops: const [0.0, 0.55, 1.0],
+        ),
+      ),
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(14.w, 4.h, 10.w, 12.h),
+          child: Row(
+            children: [
+              Material(
+                color: isDark ? const Color(0xFF2A2733) : Colors.white,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: onBack,
+                  child: Container(
+                    width: 36.w,
+                    height: 36.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: isDark
+                            ? const Color(0xFF3A3645)
+                            : const Color(0xFFE6E2F0),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 16.sp,
+                      color: isDark ? Colors.white : const Color(0xFF1F2937),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              Expanded(
+                child: GestureDetector(
+                  onTap: onTitleTap,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? Colors.white : titleColor,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ),
+              ),
+              trailing,
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HeaderIconButton extends StatelessWidget {
+  final bool isDark;
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color? color;
+
+  const _HeaderIconButton({
+    required this.isDark,
+    required this.icon,
+    required this.onTap,
+    this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = color ??
+        (isDark ? Colors.white : const Color(0xFF1F2937));
+
+    return Material(
+      color: isDark ? const Color(0xFF2A2733) : Colors.white,
+      shape: const CircleBorder(),
+      child: InkWell(
+        customBorder: const CircleBorder(),
+        onTap: onTap,
+        child: Container(
+          width: 36.w,
+          height: 36.w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDark
+                  ? const Color(0xFF3A3645)
+                  : const Color(0xFFE6E2F0),
+            ),
+          ),
+          child: Icon(icon, size: 18.sp, color: fg),
+        ),
       ),
     );
   }

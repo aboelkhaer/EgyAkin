@@ -1,3 +1,5 @@
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+
 import '../../../../exports.dart';
 
 class YourPatientSection extends StatelessWidget {
@@ -90,10 +92,20 @@ class YourPatientSection extends StatelessWidget {
                     height:
                         homeData.data!.currentPatients!.isEmpty ? 100.h : 160.h,
                     child: homeData.data!.currentPatients!.isEmpty
-                        // ? Lottie.asset(AppImages.imageLoader, width: 150.w)
-                        ? Image.asset(
-                            AppImages.notFound,
-                            width: 90.w,
+                        ? BlocBuilder<ThemeBloc, ThemeState>(
+                            builder: (context, themeState) {
+                              final isDark = themeState is ThemeLoaded &&
+                                  themeState.isDarkMode;
+                              return DashboardEmptyState(
+                                isDark: isDark,
+                                compact: true,
+                                icon: Icons.person_outline_rounded,
+                                title: context.tr(AppStrings.noPatientsYet),
+                                subtitle: context.tr(
+                                  AppStrings.yourPatientsWillAppearOnceAdded,
+                                ),
+                              );
+                            },
                           )
                         : ListView.builder(
                             physics: const BouncingScrollPhysics(),

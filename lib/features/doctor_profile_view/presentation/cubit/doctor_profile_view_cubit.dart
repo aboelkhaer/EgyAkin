@@ -206,16 +206,16 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           originalIsMedicalStatistics = isMedicalStatistics;
         }
 
-        emit(state.maybeMap(
-          orElse: () => state,
-          loaded: (value) => DoctorProfileViewState.loaded(
-              value.currentDoctorModel,
-              false,
-              r.message.toString(),
-              false,
-              true,
-              isMedicalStatistics),
-        ));
+          emit(state.maybeMap(
+            orElse: () => state,
+            loaded: (value) => DoctorProfileViewState.loaded(
+                value.currentDoctorModel,
+                false,
+                AppStrings.profileUpdatedSuccessfully,
+                false,
+                true,
+                isMedicalStatistics),
+          ));
       });
     }
   }

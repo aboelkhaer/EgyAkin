@@ -1,22 +1,34 @@
 import '../../../exports.dart';
 
-/// Small label shown above a field when its value was applied from voice/AI analysis.
+/// Label shown when a field value was applied from voice/AI analysis.
+///
+/// Use [compact] inline next to a field title (add-patient cards).
+/// Default style sits above the control on other forms.
 class AiFilledFieldBanner extends StatelessWidget {
-  const AiFilledFieldBanner({super.key});
+  final bool compact;
+
+  const AiFilledFieldBanner({
+    super.key,
+    this.compact = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
+        final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
+
+        final chip = Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: compact ? 7.w : 8,
+            vertical: compact ? 3.h : 4,
+          ),
           decoration: BoxDecoration(
-            color: AppColors.primary.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(6),
+            color: primary.withOpacity(isDark ? 0.22 : 0.12),
+            borderRadius: BorderRadius.circular(compact ? 20.r : 6),
             border: Border.all(
-              color: AppColors.primary.withOpacity(0.35),
+              color: primary.withOpacity(isDark ? 0.45 : 0.35),
             ),
           ),
           child: Row(
@@ -24,22 +36,33 @@ class AiFilledFieldBanner extends StatelessWidget {
             children: [
               Icon(
                 Icons.auto_awesome_rounded,
-                size: 14,
-                color: AppColors.primary,
+                size: compact ? 11.sp : 14,
+                color: primary,
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: compact ? 4.w : 6),
               Text(
                 context.tr(AppStrings.filledByAi),
                 style: TextStyle(
-                  fontSize: 11,
+                  fontSize: compact ? 9.5.sp : 11,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primary,
+                  color: primary,
+                  height: 1.1,
                 ),
               ),
             ],
           ),
-        ),
-      ),
+        );
+
+        if (compact) return chip;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: chip,
+          ),
+        );
+      },
     );
   }
 }

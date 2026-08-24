@@ -191,6 +191,31 @@ class AppStrings {
       'Initiate or view consultations.';
   static const String exploreYourAccomplishments =
       'Explore your accomplishments.';
+  static const String myPatients = 'My patients';
+  static const String verifiedAccount = 'Verified account';
+  static const String emailAndSyndicateCardConfirmed =
+      'Email & syndicate card confirmed';
+  static const String settingsAndMore = 'Settings & more';
+  static const String settingsAndMoreSubtitle =
+      'Calculator, analytics, privacy...';
+  static const String settingsAndMoreHeaderSubtitle =
+      'Tools, privacy, support, and preferences';
+  static const String clinicalTools = 'Clinical tools';
+  static const String insightsAndReports = 'Insights and reports';
+  static const String accountSecurity = 'Account security';
+  static const String verifyYourEmail = 'Verify your email';
+  static const String legalInformation = 'Legal information';
+  static const String getInTouch = 'Get in touch';
+  static const String aboutEgyAkin = 'About EgyAkin';
+  static const String preferences = 'Preferences';
+  static const String pendingReview = 'Pending review';
+  static const String uploadSyndicateCard = 'Upload syndicate card';
+  static const String appearance = 'Appearance';
+  static const String appLanguage = 'App language';
+  static const String profile = 'Profile';
+  static const String home = 'Home';
+  static const String community = 'Community';
+  static const String inbox = 'Inbox';
   static const String patient = 'Patient';
   static const String score = 'Score';
   static const String savedPosts = 'Saved Posts';
@@ -466,6 +491,7 @@ class AppStrings {
   static const String totalSizeOfSelectedFilesExceeds10MB =
       'Total size of selected files exceeds 10MB.';
   static const String uploadingFiles = 'Uploading files...';
+  static const String choosingFiles = 'Choosing files...';
   static const String thisOptionAlreadyExistsForThePoll =
       'This option already exists for the poll';
   static const String searchForDoses = 'Search for doses';
@@ -481,6 +507,13 @@ class AppStrings {
   static const String requestAiOpinion = 'Request AI Opinion';
   static const String youHave = 'You have';
   static const String remainingTrial = 'remaining trial(s).';
+  static const String clinicalInsightsFromPatientRecord =
+      'Clinical insights generated from this patient record';
+  static const String leftLabel = 'left';
+  static const String requestAiInsight = 'Request AI insight';
+  static const String noTrialsLeft = 'No trials left';
+  static const String request = 'Request';
+  static const String aiClinicalOpinion = 'AI Clinical Opinion';
   static const String addRecommendation = 'Add Recommendation';
   static const String addANewRecommendationNote =
       'Add a new recommendation note';
@@ -668,6 +701,8 @@ class AppStrings {
   static const String researchMember = 'Research Member';
   static const String yourOtherAnswer = 'Your other answer';
   static const String oldAnswer = 'Old Answer';
+  static const String youDontHavePermissionToJoinGroups =
+      'You don\'t have permission to join groups.';
   static const String youDontHavePermissionToCreateRecommendations =
       'You don\'t have permission to create recommendations.';
   static const String showCurrentUserPermissions =
@@ -695,4 +730,437 @@ class AppStrings {
   static const String twoHoursAgo = '2h ago';
   static const String pleaseFillRequiredFieldsBeforeSaving =
       'Please fill in the required fields before saving';
+
+  // Home / dashboard / shared UI
+  static const String goodMorning = 'Good morning';
+  static const String goodAfternoon = 'Good afternoon';
+  static const String goodEvening = 'Good evening';
+  static const String searchPatientsAndDoses = 'Search patients and doses';
+  static const String searchPatientsEllipsis = 'Search patients...';
+  static const String findPatients = 'Find patients';
+  static const String findPatientsAndDoses = 'Find patients & doses';
+  static const String searchPatientsByNameOrId =
+      'Search patients by name or ID';
+  static const String searchAcrossPatientsAndMedicationDoses =
+      'Search across patients and medication doses';
+  static const String tools = 'Tools';
+  static const String gfrCalc = 'GFR Calc';
+  static const String consults = 'Consults';
+  static const String marked = 'Marked';
+  static const String updatedJustNow = 'Updated just now';
+  static const String pendingConsultations = 'Pending consultations';
+  static const String openChat = 'Open chat';
+  static const String seeAllLower = 'See all';
+  static const String noPatientsYet = 'No patients yet';
+  static const String addOutcomes = 'Add outcomes';
+  static const String viewAll = 'View all';
+  static const String pendingUpper = 'PENDING';
+  static const String plusOutcome = '+ Outcome';
+  static const String resumeDrafts = 'Resume drafts';
+  static const String inProgress = 'in progress';
+  static const String ofSections = 'of';
+  static const String sectionsLabel = 'sections';
+  static const String nextPrefix = 'Next:';
+  static const String resumeThisCase = 'Resume this case';
+  static const String lastSavedJustNow = 'Last saved just now';
+  static const String thisWeek = 'This week';
+  static const String outcomes = 'Outcomes';
+  static const String newPatients = 'New patients';
+  static const String networkInsights = 'Network insights';
+  static const String researchUpper = 'RESEARCH';
+  static const String deIdentified = 'de-identified';
+  static const String hospitals = 'hospitals';
+  static const String akiIncidence = 'AKI incidence';
+  static const String thisQuarter = '% this quarter';
+  static const String mostCommonCause = 'Most common cause';
+  static const String percentOfCases = '% of cases';
+  static const String avgEgfrAtAdmission = 'Avg eGFR at admission';
+  static const String vsPriorPeriod = 'vs prior period';
+  static const String doctorsActivation = 'Doctors activation';
+  static const String done = 'Done';
+  static const String noMatchingPatients = 'No matching patients';
+  static const String noPatientsMatchThisFilter =
+      'No patients match this filter';
+  static const String pendingOutcomesLabel = 'Pending outcomes';
+  static const String filteredLabel = 'Filtered';
+  static const String clear = 'Clear';
+  static const String download = 'Download';
+  static const String searchPatients = 'Search patients';
+  static const String cannotOpenUrl = 'Cannot open URL';
+  static const String errorOpeningFile = 'Error opening file';
+  static const String markedPatients = 'Marked Patients';
+
+  // Inbox
+  static const String composeComingSoon = 'Compose coming soon';
+  static const String all = 'All';
+  static const String noMessages = 'No messages';
+  static const String priorityUpper = 'PRIORITY';
+  static const String earlierUpper = 'EARLIER';
+  static const String searchMessages = 'Search messages...';
+  static const String urgentUpper = 'URGENT';
+
+  // Community
+  static const String searchPostsPeopleHashtags =
+      'Search posts, people, hashtags...';
+  static const String shareUpdateWithCommunity =
+      'Share an update with the community...';
+  static const String post = 'Post';
+  static const String noPostsYet = 'No posts yet';
+  static const String pullDownToRefreshFeed =
+      'Pull down to refresh the feed';
+  static const String yourGroups = 'Your groups';
+  static const String discoverGroups = 'Discover groups';
+  static const String joinGroupToSeeHere = 'Join a group to see it here';
+  static const String noGroupsToDiscoverYet = 'No groups to discover yet';
+  static const String topTrend = 'TOP TREND';
+  static const String postsCount = 'posts';
+  static const String figure = 'Figure';
+
+  // Notifications
+  static const String todayUpper = 'TODAY';
+  static const String recentUpper = 'RECENT';
+  static const String inboxUpper = 'INBOX';
+  static const String stayOnTopOfActivity =
+      'Stay on top of patients, community, and consults.';
+  static const String youreAllCaughtUp = "You're all caught up";
+  static const String newActivityWillShowHere =
+      'New activity from patients and community will show up here.';
+  static const String congratulations = 'Congratulations!';
+  static const String youHaveEarnedNewAchievement =
+      'You have earned a new achievement!';
+  static const String keepUpTheGreatWork = 'Keep up the great work!';
+  static const String hasEarnedNewAchievement =
+      'has earned a new achievement!';
+  static const String unread = 'unread';
+  static const String unreadOverflow = '99+ unread';
+
+  // Consultation
+  static const String reviewConsultationsSubtitle =
+      'Review sent and received clinical consultations.';
+  static const String noConsultationsYet = 'No consultations yet';
+  static const String receivedConsultationsWillAppearHere =
+      'Received consultations will appear here.';
+  static const String sentConsultationsWillAppearHere =
+      'Your sent consultations will appear here.';
+
+  // Auth
+  static const String accessYourClinicalWorkspace =
+      'Access your clinical workspace';
+  static const String welcomeBack = 'Welcome back';
+  static const String signInToContinueCollaborating =
+      'Sign in to continue collaborating on patient care';
+  static const String createYourAccount = 'Create your account';
+  static const String joinClinicalCollaborationNetwork =
+      'Join the clinical collaboration network';
+  static const String createAccountToCollaborate =
+      'Create an account to collaborate on patient care';
+  static const String failedToStartGoogleSignIn =
+      'Failed to start Google Sign-In. Please try again.';
+
+  // Missing ar keys
+  static const String toAddPatientsVerifySyndicateCard =
+      'To add patients, you must verify your syndicate card';
+
+  // Patient flows / posts / groups
+  static const String newPatientTitle = 'New patient';
+  static const String enterBasicDataToCreatePatient =
+      'Enter the basic data to create the patient.';
+  static const String preparingPatientForm = 'Preparing patient form…';
+  static const String encryptedVisibleOnlyToAssignedDoctors =
+      'Encrypted and visible only to assigned doctors.';
+  static const String createPatient = 'Create patient';
+  static const String continueToComplaintSection =
+      'Continue to complaint section';
+  static const String consultationUpper = 'CONSULTATION';
+  static const String needsAttention = 'Needs attention';
+  static const String patientSections = 'Patient sections';
+  static const String gfrEquations = 'GFR EQUATIONS';
+  static const String bmiUpper = 'BMI';
+  static const String gfrEquationsAndBmi = 'GFR EQUATIONS · BMI';
+  static const String ckdEpiShort = 'CKD-EPI';
+  static const String sobhEquation = 'SOBH EQUATION';
+  static const String mdrdShort = 'MDRD';
+  static const String currentGfr = 'Current GFR';
+  static const String basalCrGfr = 'Basal Cr GFR';
+  static const String dischargeGfr = 'Discharge GFR';
+  static const String saved = 'Saved';
+  static const String pendingLower = 'pending';
+  static const String doneLower = 'done';
+  static const String completeLower = 'complete';
+  static const String sectionsIncompleteCount = '{count} sections incomplete';
+  static const String completeTheseBeforeFinalSubmission =
+      'Complete these before final submission:';
+  static const String sectionsIncompleteBarrier = 'Sections incomplete';
+  static const String deletePatientBarrier = 'Delete patient';
+  static const String askADoctor = 'Ask a doctor';
+  static const String sendCaseToColleague = 'Send this case to a colleague';
+  static const String askAi = 'Ask AI';
+  static const String instantAiSecondOpinion = 'Instant AI second opinion';
+  static const String generatePatientPdfReport =
+      'Generate patient PDF report';
+  static const String submitCompletedRecord = 'Submit the completed record';
+  static const String deletePatientQuestion = 'Delete patient?';
+  static const String deletePatientDescription =
+      "This permanently removes the patient and all recorded sections. This action can't be undone.";
+  static const String keepEditing = 'Keep editing';
+  static const String submitAnyway = 'Submit anyway';
+  static const String addMoreFiles = 'Add more files';
+  static const String tapToUploadFiles = 'Tap to upload files';
+  static const String max5MbTotal = 'Max 5MB total';
+  static const String saveSectionAnswers = 'Save section answers';
+  static const String removeAll = 'Remove all';
+  static const String saveOutcomeAnswers = 'Save outcome answers';
+  static const String editDraftUpper = 'EDIT DRAFT';
+  static const String newPostUpper = 'NEW POST';
+  static const String compose = 'Compose';
+  static const String faster = 'Faster';
+  static const String fullQuality = 'Full quality';
+  static const String editPollUpper = 'EDIT POLL';
+  static const String newPollUpper = 'NEW POLL';
+  static const String buildAQuickBallot = 'Build a quick ballot';
+  static const String refineYourBallot = 'Refine your ballot';
+  static const String newPost = 'New post';
+  static const String postsAreLocked = 'Posts are locked';
+  static const String members = 'Members';
+  static const String access = 'Access';
+  static const String about = 'About';
+  static const String privateGroup = 'Private group';
+  static const String publicGroup = 'Public group';
+  static const String verifiedClinician = 'Verified clinician';
+  static const String noAchievementsYet = 'No achievements yet';
+  static const String findDoctors = 'Find doctors';
+  static const String selectDoctors = 'Select doctors';
+  static const String add = 'Add';
+  static const String noInvitedDoctorsYet = 'No invited doctors yet';
+  static const String searchByDoctorNameOrEmail =
+      'Search by doctor name or email';
+  static const String chooseAtLeastOneDoctor = 'Choose at least one doctor';
+  static const String doctorsAlreadyInvitedToThisConsultation =
+      'Doctors already invited to this consultation';
+  static const String searchAndAddDoctorsToThisConsultation =
+      'Search and add doctors to this consultation';
+  static const String selectDoctorsToConsultOnThisPatient =
+      'Select doctors to consult on this patient';
+  static const String selectDoctorsToInviteIntoThisGroup =
+      'Select doctors to invite into this group';
+  static const String readyToAdd = 'Ready to add';
+  static const String readyToApply = 'Ready to apply';
+  static const String readyToInvite = 'Ready to invite';
+  static const String sendingConsultation = 'Sending consultation…';
+  static const String sendingInvitations = 'Sending invitations…';
+  static const String sendingEllipsis = 'Sending…';
+  static const String selected = 'Selected';
+  static const String selectedLower = 'selected';
+  static const String doctorUnit = 'doctor';
+  static const String doctorsUnit = 'doctors';
+  static const String doctorPrefix = 'Dr.';
+  static const String alreadyInConsultation = 'Already in consultation';
+  static const String you = 'You';
+  static const String addShortClinicalNoteOptional =
+      'Add a short clinical note (optional)';
+  static const String noMarkedPatients = 'No marked patients';
+  static const String patientsYouAddWillShowUpHere =
+      'Patients you add will show up here.';
+  static const String noPatientsFound = 'No patients found';
+  static const String bodyMassIndex = 'Body mass index';
+  static const String preparingPhotos = 'Preparing photos';
+  static const String publishingEllipsis = 'Publishing…';
+  static const String savingEllipsis = 'Saving…';
+  static const String copyUrl = 'Copy URL';
+  static const String shareFirstClinicalUpdateWithGroup =
+      'Share the first clinical update with this group.';
+  static const String joinGroupToReadMemberPosts =
+      'Join the group to read member posts.';
+  static const String tapNewPostAbove = 'Tap New post above';
+  static const String requestAccessToContinue = 'Request access to continue';
+  static const String clinicalCommunity = 'CLINICAL COMMUNITY';
+  static const String noDescriptionYet = 'No description yet.';
+
+  static const String anyoneCanFindAndJoin = 'Anyone can find and join';
+  static const String membersJoinByInvite = 'Members join by invite';
+  static const String creatingEllipsis = 'Creating…';
+  static const String updatingEllipsis = 'Updating…';
+  static const String creatingYourGroup = 'Creating your group';
+  static const String updatingYourGroup = 'Updating your group';
+  static const String uploadingImagesAndSavingDetails =
+      'Uploading images and saving details.\nThis may take a moment.';
+  static const String noInvitations = 'No invitations';
+  static const String whenSomeoneInvitesYouToGroup =
+      'When someone invites you to a group, it will appear here.';
+  static const String pullToRefresh = 'Pull to refresh';
+  static const String noGroupsYet = 'No groups yet';
+  static const String createOrJoinGroupToCollaborate =
+      'Create or join a group to start collaborating.';
+  static const String tapPlusToCreateGroup = 'Tap + to create a group';
+  static const String noGroupsFound = 'No groups found';
+  static const String whenNewGroupsCreatedShowHere =
+      'When new groups are created, they will show up here.';
+  static const String communityPostsWillShowHere =
+      'Community posts will show up here when colleagues share updates.';
+  static const String searchPostsAcrossCommunity =
+      'Search posts across the community by keywords.';
+  static const String tryTopicDoctorNameOrKeyword =
+      'Try a topic, doctor name, or keyword';
+  static const String checkSpellingOrFewerWords =
+      'Check spelling or try fewer words';
+  static const String noLikesYet = 'No likes yet';
+  static const String beTheFirstToLikeThisPost =
+      'Be the first to like this post';
+  static const String likesWillAppearHere = 'Likes will appear here';
+  static const String noMembersYet = 'No members yet';
+  static const String inviteDoctorsToGrowGroup =
+      'Invite doctors to grow this group';
+  static const String useInviteFromGroupHeader =
+      'Use Invite from the group header';
+  static const String likeSingular = 'like';
+  static const String likesPlural = 'likes';
+  static const String loadingLikes = 'Loading likes…';
+  static const String loadingMembers = 'Loading members…';
+  static const String couldntLoadMembers = 'Couldn’t load members';
+  static const String closeAndOpenMembersAgain =
+      'Close and open members again';
+  static const String checkConnectionAndRetry =
+      'Check your connection and retry';
+  static const String likedThisPost = 'Liked this post';
+  static const String pendingInvitations = 'Pending invitations';
+  static const String noVotesYet = 'No votes yet';
+  static const String nobodyHasVotedForThisOption =
+      'Nobody has voted for this option so far.';
+  static const String checkBackAfterMoreColleaguesVote =
+      'Check back after more colleagues vote';
+  static const String noCommentsYet = 'No comments yet';
+  static const String beTheFirstToShareYourThoughts =
+      'Be the first to share your thoughts';
+  static const String noSavedPostsYet = 'No saved posts yet';
+  static const String bookmarkPostsToRevisit =
+      'Bookmark posts you want to revisit and they will show up here.';
+  static const String tapBookmarkOnAnyPostToSave =
+      'Tap bookmark on any post to save it';
+  static const String postsYouPublishWillShowHere =
+      'Posts you publish will show up here.';
+  static const String thisDoctorHasntPostedYet =
+      "This doctor hasn't posted yet.";
+  static const String createPostFromCommunityToGetStarted =
+      'Create a post from Community to get started';
+  static const String pullDownToRefreshThisList =
+      'Pull down to refresh this list';
+  static const String patientsFromNetworkWillShowHere =
+      'Patients from your network will show up here.';
+  static const String yourPatientsWillAppearOnceAdded =
+      'Your patients will appear here once added.';
+  static const String nothingMatchesCurrentFilters =
+      'Nothing matches the current filters. Try adjusting them to see more results.';
+  static const String patientsWillShowOnceAdded =
+      'Patients will show up here once they are added.';
+  static const String useFilterIconToChangeCriteria =
+      'Use the filter icon to change your criteria';
+  static const String openPatientAndUseMark =
+      'Open a patient and use Mark to add them';
+  static const String thisDoctorHasNoPatientsListed =
+      'This doctor has no patients listed yet.';
+  static const String noRepliesYet = 'No replies yet';
+  static const String beTheFirstToAddConsultationReply =
+      'Be the first to add a consultation reply.';
+  static const String consultationDetails = 'Consultation details';
+  static const String consultationRequest = 'Consultation request';
+  static const String loadingConsultation = 'Loading consultation…';
+  static const String locked = 'Locked';
+  static const String noAiOpinionsYet = 'No AI opinions yet';
+  static const String requestAiOpinionToGetStarted =
+      'Request an AI clinical opinion for this patient to get started.';
+  static const String tryAnotherNameOrEmail =
+      'Try another name or email and search again';
+  static const String invitedDoctorsWillAppearHere =
+      'Invited doctors will appear here';
+  static const String searchByNameOrEmailToStartConsultation =
+      'Search by name or email to start a consultation';
+  static const String searchByNameOrEmailToInviteMembers =
+      'Search by name or email to invite members';
+  static const String startTheDiscussion = 'Start the discussion';
+  static const String shareClinicalNotesAndCollaborate =
+      'Share clinical notes and collaborate with the care team on this patient.';
+  static const String noResultsFound = 'No results found';
+  static const String noScoreActivityYet = 'No score activity yet';
+  static const String pointsEarnedWillAppearInHistory =
+      'Points earned from actions will appear here in your history.';
+  static const String completeTasksToStartEarningPoints =
+      'Complete tasks and contribute to start earning points';
+  static const String badgesYouEarnWillShowHere =
+      'Badges you earn will show up here as you use the app.';
+  static const String thisDoctorHasNotEarnedAchievements =
+      'This doctor has not earned any achievements yet.';
+  static const String keepContributingToUnlockFirstBadge =
+      'Keep contributing to unlock your first badge';
+  static const String checkBackLaterForNewBadges =
+      'Check back later for new badges';
+  static const String noImagesOrFilesSelectedYet =
+      'No images or files selected yet.';
+
+  static const String badges = 'Badges';
+  static const String restrictedModerationTools =
+      'Restricted moderation tools';
+  static const String view = 'View';
+  static const String adminBadge = 'ADMIN';
+
+  static const String clinicalDiscussion = 'Clinical discussion';
+  static const String clinicalThread = 'Clinical thread';
+  static const String thisCannotBeUndone = 'This cannot be undone';
+  static const String dismiss = 'Dismiss';
+  static const String youInParentheses = '(You)';
+  static const String commentUnit = 'comment unit';
+  static const String commentsUnit = 'comments unit';
+
+  static const String trackPointsEarnedFromYourActivity =
+      'Track points earned from your activity';
+
+  // Splash / force update
+  static const String kidneyCareIntelligenceForClinicalTeams =
+      'Kidney care intelligence\nfor clinical teams';
+  static const String preparingYourWorkspace = 'Preparing your workspace';
+  static const String noInternetConnection = 'No internet connection';
+  static const String updateRequired = 'Update Required';
+  static const String aNewVersionIsAvailablePleaseUpdate =
+      'A new version is available. Please update to continue using the app.';
+  static const String updateNow = 'Update Now';
+  static const String couldNotLaunchAppStore = 'Could not launch app store';
+  static const String appIsCurrentlyUnavailablePleaseTryLater =
+      'App is currently unavailable. Please try later.';
+
+  static const String google = 'Google';
+  static const String apple = 'Apple';
+
+  // Create post
+  static const String groupFeed = 'Group feed';
+  static const String smallerFiles = 'Smaller files';
+  static const String originalSize = 'Original size';
+  static const String savingYourPost = 'Saving your post';
+  static const String publishingYourPost = 'Publishing your post';
+  static const String openingYourGalleryAndAddingSelectedImages =
+      'Opening your gallery and adding selected images…';
+  static const String sendingYourPost = 'Sending your post…';
+  static const String optimizingAndUploading = 'Optimizing & uploading';
+  static const String uploading = 'Uploading';
+  static const String inFullQualityEllipsis = 'in full quality…';
+  static const String photoSingular = 'photo';
+  static const String photosPlural = 'photos';
+  static const String postingIn = 'Posting in';
+  static const String publishingTo = 'Publishing to';
+  static const String attachmentsUpper = 'ATTACHMENTS';
+
+  // Edit profile
+  static const String basicInfo = 'Basic info';
+  static const String researchDetails = 'Research details';
+  static const String research = 'Research';
+  static const String updateYourAccountDetailsAndProfessionalInformation =
+      'Update your account details and professional information.';
+  static const String saveChangesToYourProfile =
+      'Save changes to your profile';
+  static const String savingProfile = 'Saving profile…';
+  static const String loadingProfile = 'Loading profile…';
+  static const String deleteAccount = 'Delete Account';
+  static const String forMoatzOnly = 'For Moatz only';
+  static const String thirtyDaysToDeleteYourAccount =
+      '30 days to delete your account.';
+  static const String profileUpdatedSuccessfully =
+      'Profile updated successfully';
 }

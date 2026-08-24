@@ -37,7 +37,8 @@ class BuildMultipleValueQuestion extends StatelessWidget {
         if (showAiFilledBanner) const AiFilledFieldBanner(),
         Wrap(
           spacing: 8,
-          alignment: WrapAlignment.center,
+          runSpacing: 0,
+          alignment: WrapAlignment.start,
           children: children,
         ),
         const SizedBox(height: 16),

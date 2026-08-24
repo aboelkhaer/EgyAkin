@@ -183,7 +183,7 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen> {
                           Future.delayed(Duration.zero, () {
                             navigatorKey.currentState?.pushReplacementNamed(
                               AppRoutes.home,
-                              arguments: 2,
+                              arguments: 4,
                             );
                             navigatorKey.currentState
                                 ?.pushReplacementNamed(AppRoutes.doctorProfile);

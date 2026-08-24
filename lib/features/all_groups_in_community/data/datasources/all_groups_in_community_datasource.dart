@@ -26,7 +26,7 @@ class AllGroupsInCommunityDatasourceImpl
 
   @override
   Future<GetAllGroupsInCommunityModelResponse> getMyGroups(int page) async {
-    return await _apiServices.getMyGroup(page);
+    return await _apiServices.getMyGroup(page, 'all');
   }
 
   @override

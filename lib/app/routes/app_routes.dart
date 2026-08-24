@@ -340,6 +340,7 @@ class RouteGenerator {
                   currentDoctorRole: args['currentDoctorRole'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  patientsOnly: args['patientsOnly'] as bool? ?? false,
                 ),
               ),
             );
@@ -446,6 +447,7 @@ class RouteGenerator {
                   currentDoctorRole: args['currentDoctorRole'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  openFilterOnLoad: args['openFilterOnLoad'] as bool? ?? false,
                 ),
               ),
             );
@@ -671,6 +673,45 @@ class RouteGenerator {
           return unDefinedRoute();
         }
 
+      case AppRoutes.notification:
+        if (settings.arguments != null &&
+            settings.arguments is Map<String, dynamic>) {
+          final Map<String, dynamic> args =
+              settings.arguments as Map<String, dynamic>;
+
+          if (args.containsKey('currentDoctorModel') &&
+              args.containsKey('accountVerification') &&
+              args.containsKey('isSyndicateCardRequired') &&
+              args.containsKey('currentDoctorRole') &&
+              args.containsKey('currentDoctorPoints') &&
+              args.containsKey('homeDataModel')) {
+            return MaterialPageRoute(
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<NotificationCubit>(
+                    create: (context) =>
+                        di.sl<NotificationCubit>()..getAllNotifications(),
+                  ),
+                  BlocProvider.value(value: di.sl<HomeCubit>()),
+                ],
+                child: NotificationScreen(
+                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
+                  accountVerification: args['accountVerification'] as bool,
+                  isSyndicateCardRequired:
+                      args['isSyndicateCardRequired'] as String,
+                  currentDoctorRole: args['currentDoctorRole'] as String,
+                  currentDoctorPoints: args['currentDoctorPoints'] as int,
+                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                ),
+              ),
+            );
+          } else {
+            return unDefinedRoute();
+          }
+        } else {
+          return unDefinedRoute();
+        }
+
       case AppRoutes.consultation:
         if (settings.arguments != null &&
             settings.arguments is Map<String, dynamic>) {
@@ -764,31 +805,66 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
-            return MaterialPageRoute(
-              builder: (_) => MultiBlocProvider(
-                providers: [
-                  BlocProvider.value(
-                    value: di
-                        .sl<ShowSingleFeedCubit>(), // Reuse the existing Cubit
+            return PageRouteBuilder(
+              settings: settings,
+              transitionDuration: const Duration(milliseconds: 380),
+              reverseTransitionDuration: const Duration(milliseconds: 280),
+              pageBuilder: (context, animation, secondaryAnimation) {
+                return MultiBlocProvider(
+                  providers: [
+                    BlocProvider.value(
+                      value: di.sl<ShowSingleFeedCubit>(),
+                    ),
+                    BlocProvider<CommunityCubit>(
+                      create: (context) => di.sl<CommunityCubit>(),
+                    ),
+                  ],
+                  child: ShowSingleFeedScreen(
+                    currentDoctorModel:
+                        args['currentDoctorModel'] as DoctorModel,
+                    homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                    feed: args['feed'] as PostCommunityModel,
+                    isComeFromNotification:
+                        args['isComeFromNotification'] as bool,
+                    feedId: args['feedId'] as String?,
+                    showPostFrom: args['showPostFrom'] as String,
                   ),
+                );
+              },
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                final curved = CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeOutCubic,
+                  reverseCurve: Curves.easeInCubic,
+                );
+                final fade = Tween<double>(begin: 0.0, end: 1.0).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: const Interval(0.0, 0.85, curve: Curves.easeOut),
+                    reverseCurve: Curves.easeIn,
+                  ),
+                );
+                final slide = Tween<Offset>(
+                  begin: const Offset(0.0, 0.06),
+                  end: Offset.zero,
+                ).animate(curved);
+                final scale = Tween<double>(begin: 0.985, end: 1.0).animate(
+                  curved,
+                );
 
-                  // BlocProvider.value(
-                  //   value: di.sl<CommunityCubit>(), // Reuse the existing Cubit
-                  // ),
-                  BlocProvider<CommunityCubit>(
-                    create: (context) => di.sl<CommunityCubit>(),
+                return FadeTransition(
+                  opacity: fade,
+                  child: SlideTransition(
+                    position: slide,
+                    child: ScaleTransition(
+                      scale: scale,
+                      alignment: Alignment.bottomCenter,
+                      child: child,
+                    ),
                   ),
-                ],
-                child: ShowSingleFeedScreen(
-                  currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
-                  homeDataModel: args['homeDataModel'] as HomeModelResponse,
-                  feed: args['feed'] as PostCommunityModel,
-                  isComeFromNotification:
-                      args['isComeFromNotification'] as bool,
-                  feedId: args['feedId'] as String,
-                  showPostFrom: args['showPostFrom'] as String,
-                ),
-              ),
+                );
+              },
             );
           } else {
             return unDefinedRoute();
@@ -839,6 +915,7 @@ class RouteGenerator {
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
                   feed: args['feed'] as PostCommunityModel?,
                   groupId: args['groupId'] as String?,
+                  groupName: args['groupName'] as String?,
                   onPostUploaded: args['onPostUploaded'] as VoidCallback?,
                 ),
               ),
@@ -912,6 +989,7 @@ class RouteGenerator {
                 child: AllGroupsInCommunityScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialTab: (args['initialTab'] as int?) ?? 0,
                 ),
               ),
             );

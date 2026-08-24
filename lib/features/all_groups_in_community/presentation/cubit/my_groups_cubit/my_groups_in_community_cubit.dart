@@ -17,9 +17,12 @@ class MyGroupsInCommunityCubit extends Cubit<MyGroupsInCommunityState> {
   bool isLastPageForMyGroups = false;
   int _currentPageForMyGroups = 1;
 
-  getMyGroups() async {
+  Future<void> getMyGroups({bool showLoading = true}) async {
     _currentPageForMyGroups = 1;
-    emit(const MyGroupsInCommunityState.loading());
+    isLastPageForMyGroups = false;
+    if (showLoading) {
+      emit(const MyGroupsInCommunityState.loading());
+    }
 
     final result = await _getMyGroupsUsecase.execute(_currentPageForMyGroups);
     result.fold(
