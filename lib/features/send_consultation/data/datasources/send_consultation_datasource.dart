@@ -6,8 +6,11 @@ import 'package:egy_akin/features/send_consultation/data/models/send_invitation_
 import '../../../../exports.dart';
 
 abstract class SendConsultationDataSource {
+  /// [groupId] switches to the group-invite search, which drops anyone the
+  /// group already has or has already invited.
   Future<GetConsultationSearchModelResponse> consultationDoctorSearch({
     required String searchContent,
+    String? groupId,
   });
   Future<SendConsultationModelResponse> sendConsultation({
     required String patientId,
@@ -44,7 +47,10 @@ class SendConsultationDataSourceImpl implements SendConsultationDataSource {
 
   @override
   Future<GetConsultationSearchModelResponse> consultationDoctorSearch(
-      {required String searchContent}) async {
+      {required String searchContent, String? groupId}) async {
+    if (groupId != null && groupId.isNotEmpty) {
+      return await _apiServices.searchInvitableDoctors(groupId, searchContent);
+    }
     return await _apiServices.consultationDoctorSearch(searchContent);
   }
 

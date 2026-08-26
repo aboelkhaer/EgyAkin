@@ -15,13 +15,15 @@ class SendConsultationRepositoryImpl extends SendConsultationRepository {
 
   @override
   Future<Either<Failure, GetConsultationSearchModelResponse>>
-      consultationDoctorSearch({required String searchContent}) async {
+      consultationDoctorSearch(
+          {required String searchContent, String? groupId}) async {
     if (await networkInfo.isConnected) {
       try {
         await Future.delayed(const Duration(
             milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
         final response = await sendConsultationDataSource
-            .consultationDoctorSearch(searchContent: searchContent);
+            .consultationDoctorSearch(
+                searchContent: searchContent, groupId: groupId);
         return Right(response);
       } catch (error) {
         debugPrint(error.toString());

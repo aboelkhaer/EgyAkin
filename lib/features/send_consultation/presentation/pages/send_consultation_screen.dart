@@ -328,7 +328,11 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                 child: SendConsultationSearchField(
                                   isDark: isDark,
                                   controller: cubit.searchController,
-                                  onSubmit: () => cubit.getConsultationSearch(),
+                                  onSubmit: () => cubit.getConsultationSearch(
+                                    groupId: widget.isSendConsultation
+                                        ? null
+                                        : widget.groupId,
+                                  ),
                                   onClear: () {
                                     cubit.searchController.clear();
                                     cubit.updateScreen();

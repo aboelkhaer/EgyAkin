@@ -7,9 +7,11 @@ import '../../../../exports.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class SendConsultationRepository {
+  /// [groupId] switches to the group-invite search — see the datasource.
   Future<Either<Failure, GetConsultationSearchModelResponse>>
       consultationDoctorSearch({
     required String searchContent,
+    String? groupId,
   });
   Future<Either<Failure, SendConsultationModelResponse>> sendConsultation({
     required String patientId,

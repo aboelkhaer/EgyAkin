@@ -248,6 +248,14 @@ abstract class ApiServices {
     @Path('searchContent') String searchContent,
   );
 
+  /// Doctors who can still be invited into [groupId]. Same response shape as
+  /// [consultationDoctorSearch], so it parses into the same model.
+  @POST('${ApiEndPoint.groupSearchInvitable}/{groupId}/searchInvitable')
+  Future<GetConsultationSearchModelResponse> searchInvitableDoctors(
+    @Path('groupId') String groupId,
+    @Field('query') String query,
+  );
+
   @POST(ApiEndPoint.createConsultation)
   Future<SendConsultationModelResponse> sendConsultation(
     @Field('patient_id') String patientId,

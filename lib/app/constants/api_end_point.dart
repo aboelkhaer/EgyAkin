@@ -62,6 +62,9 @@ class ApiEndPoint {
   static const uploadFileNew = '$baseUrl/api/$versioning/uploadFileNew';
   static const consultationDoctorSearch =
       '$baseUrl/api/$versioning/consultationDoctorSearch';
+
+  /// Same doctor search, minus anyone already in the group or already invited.
+  static const groupSearchInvitable = '$baseUrl/api/$versioning/groups';
   static const createConsultation = '$baseUrl/api/$versioning/consultations';
   static const getCurrentDoctorConsultation =
       '$baseUrl/api/$versioning/consultations/sent';

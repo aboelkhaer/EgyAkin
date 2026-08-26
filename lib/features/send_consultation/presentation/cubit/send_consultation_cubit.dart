@@ -51,7 +51,9 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
     ));
   }
 
-  getConsultationSearch() async {
+  /// [groupId] is passed while inviting into a group; leave it null for
+  /// consultation search.
+  getConsultationSearch({String? groupId}) async {
     if (searchController.text.trim().isNotEmpty) {
       emit(state.maybeMap(
         orElse: () => state,
@@ -69,8 +71,12 @@ class SendConsultationCubit extends Cubit<SendConsultationState> {
         ),
       ));
 
-      final result =
-          await _getConsultationSearchUsecase.execute(searchController.text);
+      final result = await _getConsultationSearchUsecase.execute(
+        GetConsultationSearchUsecaseInput(
+          searchContent: searchController.text,
+          groupId: groupId,
+        ),
+      );
       // searchController.clear();
       result.fold(
         (l) {
