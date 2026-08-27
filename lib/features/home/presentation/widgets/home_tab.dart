@@ -382,6 +382,14 @@ class _HomeTabState extends State<HomeTab> {
                             homeData.data?.currentPatients ?? const [],
                         allPatients:
                             homeData.data?.allPatients ?? const [],
+                        myPatientsCount: int.tryParse(
+                              homeData.doctorPatientCount ?? '',
+                            ) ??
+                            (homeData.data?.currentPatients?.length ?? 0),
+                        allPatientsCount: int.tryParse(
+                              homeData.allPatientCount ?? '',
+                            ) ??
+                            (homeData.data?.allPatients?.length ?? 0),
                         onSeeAll: () {
                           widget.cubit.jumpToPatientsTab();
                         },

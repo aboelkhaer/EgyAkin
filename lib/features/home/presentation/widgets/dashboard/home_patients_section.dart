@@ -8,6 +8,12 @@ class HomePatientsSection extends StatefulWidget {
   final bool isDark;
   final List<PatientHomeDataModel> myPatients;
   final List<PatientHomeDataModel> allPatients;
+
+  /// Real totals (doctor_patient_count / all_patient_count) — myPatients and
+  /// allPatients are only the newest-5 preview, so their .length under-counts
+  /// once a doctor has more than 5 patients.
+  final int myPatientsCount;
+  final int allPatientsCount;
   final VoidCallback? onSeeAll;
   final void Function(
     PatientHomeDataModel patient, {
@@ -27,6 +33,8 @@ class HomePatientsSection extends StatefulWidget {
     required this.isDark,
     required this.myPatients,
     required this.allPatients,
+    required this.myPatientsCount,
+    required this.allPatientsCount,
     this.onSeeAll,
     this.onPatientTap,
     this.onOutcomeTap,
@@ -55,15 +63,15 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
         HomeSectionHeader(
           title: context.tr(AppStrings.patients),
           isDark: widget.isDark,
-          actionLabel: context.tr(AppStrings.seeAllLower),
+          actionLabel: context.tr(AppStrings.viewAll),
           onAction: widget.onSeeAll,
         ),
         SizedBox(height: 12.h),
         HomePatientsToggle(
           isDark: widget.isDark,
           showMyPatients: showMyOnly,
-          myPatientsCount: widget.myPatients.length,
-          allPatientsCount: widget.allPatients.length,
+          myPatientsCount: widget.myPatientsCount,
+          allPatientsCount: widget.allPatientsCount,
           showAllPatientsTab: _canViewAllPatients,
           onChanged: _canViewAllPatients
               ? (value) => setState(() => _showMyPatients = value)
