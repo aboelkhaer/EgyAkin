@@ -31,6 +31,7 @@ class HomeModelResponse with _$HomeModelResponse {
     @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
     @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
     @JsonKey(name: 'draft_count') String? draftCount,
+    @JsonKey(name: 'pending_consultation_count') String? pendingConsultationCount,
     @JsonKey(name: 'research_insights') ResearchInsightsModel? researchInsights,
     HomeDataModelResponse? data,
   }) = _HomeModelResponse;
@@ -52,6 +53,8 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
     @JsonKey(name: 'pending_outcomes') List<PatientHomeDataModel>? pendingOutcomes,
     List<PatientHomeDataModel>? drafts,
+    @JsonKey(name: 'pending_consultations')
+    List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
     List<HomeActivityModel>? activity,
     @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
     @JsonKey(name: 'research_insights') ResearchInsightsModel? researchInsights,

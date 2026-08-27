@@ -368,12 +368,6 @@ class _HomeTabState extends State<HomeTab> {
                         isDark: isDarkMode,
                         currentDoctorModel: currentDoctor,
                         homeDataModel: homeData,
-                        reloadToken: state.maybeWhen(
-                          loaded: (_, __, ___, ____, _____, ______, _______,
-                                  ________, _________, changesCounter) =>
-                              changesCounter,
-                          orElse: () => 0,
-                        ),
                       ),
                       SizedBox(height: 8.h),
                       HomePatientsSection(

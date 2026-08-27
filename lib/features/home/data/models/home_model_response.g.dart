@@ -26,6 +26,7 @@ _$HomeModelResponseImpl _$$HomeModelResponseImplFromJson(
       markedPatientsCount: json['marked_patient_count'] as String?,
       pendingOutcomeCount: json['pending_outcome_count'] as String?,
       draftCount: json['draft_count'] as String?,
+      pendingConsultationCount: json['pending_consultation_count'] as String?,
       researchInsights: json['research_insights'] == null
           ? null
           : ResearchInsightsModel.fromJson(
@@ -56,6 +57,7 @@ Map<String, dynamic> _$$HomeModelResponseImplToJson(
       'marked_patient_count': instance.markedPatientsCount,
       'pending_outcome_count': instance.pendingOutcomeCount,
       'draft_count': instance.draftCount,
+      'pending_consultation_count': instance.pendingConsultationCount,
       'research_insights': instance.researchInsights,
       'data': instance.data,
     };
@@ -93,6 +95,10 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       drafts: (json['drafts'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      pendingConsultations: (json['pending_consultations'] as List<dynamic>?)
+          ?.map((e) => GetCurrentDoctorConsultationModelResponse.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
       activity: (json['activity'] as List<dynamic>?)
           ?.map((e) => HomeActivityModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -118,6 +124,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'latest_groups': instance.latestGroups,
       'pending_outcomes': instance.pendingOutcomes,
       'drafts': instance.drafts,
+      'pending_consultations': instance.pendingConsultations,
       'activity': instance.activity,
       'week_recap': instance.weekRecap,
       'research_insights': instance.researchInsights,

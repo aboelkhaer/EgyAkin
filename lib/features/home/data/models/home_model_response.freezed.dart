@@ -50,6 +50,8 @@ mixin _$HomeModelResponse {
   String? get pendingOutcomeCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'draft_count')
   String? get draftCount => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pending_consultation_count')
+  String? get pendingConsultationCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'research_insights')
   ResearchInsightsModel? get researchInsights =>
       throw _privateConstructorUsedError;
@@ -89,6 +91,8 @@ abstract class $HomeModelResponseCopyWith<$Res> {
       @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
       @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
       @JsonKey(name: 'draft_count') String? draftCount,
+      @JsonKey(name: 'pending_consultation_count')
+      String? pendingConsultationCount,
       @JsonKey(name: 'research_insights')
       ResearchInsightsModel? researchInsights,
       HomeDataModelResponse? data});
@@ -129,6 +133,7 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
     Object? markedPatientsCount = freezed,
     Object? pendingOutcomeCount = freezed,
     Object? draftCount = freezed,
+    Object? pendingConsultationCount = freezed,
     Object? researchInsights = freezed,
     Object? data = freezed,
   }) {
@@ -201,6 +206,10 @@ class _$HomeModelResponseCopyWithImpl<$Res, $Val extends HomeModelResponse>
           ? _value.draftCount
           : draftCount // ignore: cast_nullable_to_non_nullable
               as String?,
+      pendingConsultationCount: freezed == pendingConsultationCount
+          ? _value.pendingConsultationCount
+          : pendingConsultationCount // ignore: cast_nullable_to_non_nullable
+              as String?,
       researchInsights: freezed == researchInsights
           ? _value.researchInsights
           : researchInsights // ignore: cast_nullable_to_non_nullable
@@ -268,6 +277,8 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
       @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
       @JsonKey(name: 'draft_count') String? draftCount,
+      @JsonKey(name: 'pending_consultation_count')
+      String? pendingConsultationCount,
       @JsonKey(name: 'research_insights')
       ResearchInsightsModel? researchInsights,
       HomeDataModelResponse? data});
@@ -308,6 +319,7 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
     Object? markedPatientsCount = freezed,
     Object? pendingOutcomeCount = freezed,
     Object? draftCount = freezed,
+    Object? pendingConsultationCount = freezed,
     Object? researchInsights = freezed,
     Object? data = freezed,
   }) {
@@ -380,6 +392,10 @@ class __$$HomeModelResponseImplCopyWithImpl<$Res>
           ? _value.draftCount
           : draftCount // ignore: cast_nullable_to_non_nullable
               as String?,
+      pendingConsultationCount: freezed == pendingConsultationCount
+          ? _value.pendingConsultationCount
+          : pendingConsultationCount // ignore: cast_nullable_to_non_nullable
+              as String?,
       researchInsights: freezed == researchInsights
           ? _value.researchInsights
           : researchInsights // ignore: cast_nullable_to_non_nullable
@@ -413,6 +429,8 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
       @JsonKey(name: 'marked_patient_count') this.markedPatientsCount,
       @JsonKey(name: 'pending_outcome_count') this.pendingOutcomeCount,
       @JsonKey(name: 'draft_count') this.draftCount,
+      @JsonKey(name: 'pending_consultation_count')
+      this.pendingConsultationCount,
       @JsonKey(name: 'research_insights') this.researchInsights,
       this.data});
 
@@ -467,6 +485,9 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   @JsonKey(name: 'draft_count')
   final String? draftCount;
   @override
+  @JsonKey(name: 'pending_consultation_count')
+  final String? pendingConsultationCount;
+  @override
   @JsonKey(name: 'research_insights')
   final ResearchInsightsModel? researchInsights;
   @override
@@ -474,7 +495,7 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
 
   @override
   String toString() {
-    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, userType: $userType, permissionsChanged: $permissionsChanged, isUserBlocked: $isUserBlocked, postsCount: $postsCount, savedPosts: $savedPosts, markedPatientsCount: $markedPatientsCount, pendingOutcomeCount: $pendingOutcomeCount, draftCount: $draftCount, researchInsights: $researchInsights, data: $data)';
+    return 'HomeModelResponse(value: $value, verified: $verified, unreadCount: $unreadCount, isSyndicateCardRequired: $isSyndicateCardRequired, appUpdateMessage: $appUpdateMessage, doctorPatientCount: $doctorPatientCount, allPatientCount: $allPatientCount, scoreValue: $scoreValue, role: $role, userType: $userType, permissionsChanged: $permissionsChanged, isUserBlocked: $isUserBlocked, postsCount: $postsCount, savedPosts: $savedPosts, markedPatientsCount: $markedPatientsCount, pendingOutcomeCount: $pendingOutcomeCount, draftCount: $draftCount, pendingConsultationCount: $pendingConsultationCount, researchInsights: $researchInsights, data: $data)';
   }
 
   @override
@@ -515,6 +536,9 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
                 other.pendingOutcomeCount == pendingOutcomeCount) &&
             (identical(other.draftCount, draftCount) ||
                 other.draftCount == draftCount) &&
+            (identical(
+                    other.pendingConsultationCount, pendingConsultationCount) ||
+                other.pendingConsultationCount == pendingConsultationCount) &&
             (identical(other.researchInsights, researchInsights) ||
                 other.researchInsights == researchInsights) &&
             (identical(other.data, data) || other.data == data));
@@ -541,6 +565,7 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
         markedPatientsCount,
         pendingOutcomeCount,
         draftCount,
+        pendingConsultationCount,
         researchInsights,
         data
       ]);
@@ -581,6 +606,8 @@ abstract class _HomeModelResponse implements HomeModelResponse {
       @JsonKey(name: 'marked_patient_count') final String? markedPatientsCount,
       @JsonKey(name: 'pending_outcome_count') final String? pendingOutcomeCount,
       @JsonKey(name: 'draft_count') final String? draftCount,
+      @JsonKey(name: 'pending_consultation_count')
+      final String? pendingConsultationCount,
       @JsonKey(name: 'research_insights')
       final ResearchInsightsModel? researchInsights,
       final HomeDataModelResponse? data}) = _$HomeModelResponseImpl;
@@ -636,6 +663,9 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @JsonKey(name: 'draft_count')
   String? get draftCount;
   @override
+  @JsonKey(name: 'pending_consultation_count')
+  String? get pendingConsultationCount;
+  @override
   @JsonKey(name: 'research_insights')
   ResearchInsightsModel? get researchInsights;
   @override
@@ -676,6 +706,9 @@ mixin _$HomeDataModelResponse {
   List<PatientHomeDataModel>? get pendingOutcomes =>
       throw _privateConstructorUsedError;
   List<PatientHomeDataModel>? get drafts => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations =>
+      throw _privateConstructorUsedError;
   List<HomeActivityModel>? get activity => throw _privateConstructorUsedError;
   @JsonKey(name: 'week_recap')
   WeekRecapModel? get weekRecap => throw _privateConstructorUsedError;
@@ -712,6 +745,8 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
       List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -747,6 +782,7 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
     Object? drafts = freezed,
+    Object? pendingConsultations = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -792,6 +828,10 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
           ? _value.drafts
           : drafts // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      pendingConsultations: freezed == pendingConsultations
+          ? _value.pendingConsultations
+          : pendingConsultations // ignore: cast_nullable_to_non_nullable
+              as List<GetCurrentDoctorConsultationModelResponse>?,
       activity: freezed == activity
           ? _value.activity
           : activity // ignore: cast_nullable_to_non_nullable
@@ -859,6 +899,8 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
       List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -894,6 +936,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
     Object? drafts = freezed,
+    Object? pendingConsultations = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -939,6 +982,10 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
           ? _value._drafts
           : drafts // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      pendingConsultations: freezed == pendingConsultations
+          ? _value._pendingConsultations
+          : pendingConsultations // ignore: cast_nullable_to_non_nullable
+              as List<GetCurrentDoctorConsultationModelResponse>?,
       activity: freezed == activity
           ? _value._activity
           : activity // ignore: cast_nullable_to_non_nullable
@@ -973,6 +1020,9 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'pending_outcomes')
       final List<PatientHomeDataModel>? pendingOutcomes,
       final List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      final List<GetCurrentDoctorConsultationModelResponse>?
+          pendingConsultations,
       final List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') this.weekRecap,
       @JsonKey(name: 'research_insights') this.researchInsights})
@@ -986,6 +1036,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
         _latestGroups = latestGroups,
         _pendingOutcomes = pendingOutcomes,
         _drafts = drafts,
+        _pendingConsultations = pendingConsultations,
         _activity = activity;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -1098,6 +1149,18 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<GetCurrentDoctorConsultationModelResponse>? _pendingConsultations;
+  @override
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations {
+    final value = _pendingConsultations;
+    if (value == null) return null;
+    if (_pendingConsultations is EqualUnmodifiableListView)
+      return _pendingConsultations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<HomeActivityModel>? _activity;
   @override
   List<HomeActivityModel>? get activity {
@@ -1117,7 +1180,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, drafts: $drafts, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, drafts: $drafts, pendingConsultations: $pendingConsultations, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
   }
 
   @override
@@ -1142,6 +1205,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
             const DeepCollectionEquality()
                 .equals(other._pendingOutcomes, _pendingOutcomes) &&
             const DeepCollectionEquality().equals(other._drafts, _drafts) &&
+            const DeepCollectionEquality()
+                .equals(other._pendingConsultations, _pendingConsultations) &&
             const DeepCollectionEquality().equals(other._activity, _activity) &&
             (identical(other.weekRecap, weekRecap) ||
                 other.weekRecap == weekRecap) &&
@@ -1163,6 +1228,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_latestGroups),
       const DeepCollectionEquality().hash(_pendingOutcomes),
       const DeepCollectionEquality().hash(_drafts),
+      const DeepCollectionEquality().hash(_pendingConsultations),
       const DeepCollectionEquality().hash(_activity),
       weekRecap,
       researchInsights);
@@ -1200,6 +1266,9 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
           @JsonKey(name: 'pending_outcomes')
           final List<PatientHomeDataModel>? pendingOutcomes,
           final List<PatientHomeDataModel>? drafts,
+          @JsonKey(name: 'pending_consultations')
+          final List<GetCurrentDoctorConsultationModelResponse>?
+              pendingConsultations,
           final List<HomeActivityModel>? activity,
           @JsonKey(name: 'week_recap') final WeekRecapModel? weekRecap,
           @JsonKey(name: 'research_insights')
@@ -1235,6 +1304,9 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   List<PatientHomeDataModel>? get pendingOutcomes;
   @override
   List<PatientHomeDataModel>? get drafts;
+  @override
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations;
   @override
   List<HomeActivityModel>? get activity;
   @override
