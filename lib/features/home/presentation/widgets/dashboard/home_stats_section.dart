@@ -105,39 +105,34 @@ class _StatCard extends StatelessWidget {
             child: Icon(icon, size: 14.sp, color: iconColor),
           ),
           SizedBox(height: 8.h),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                child: Text(
-                  value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w800,
-                    height: 1.1,
-                    color: HomeDashboardColors.title(isDark),
-                  ),
-                ),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
+              color: HomeDashboardColors.title(isDark),
+            ),
+          ),
+          SizedBox(height: 4.h),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            decoration: BoxDecoration(
+              color: HomeDashboardColors.success.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              delta,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 8.sp,
+                fontWeight: FontWeight.w700,
+                color: HomeDashboardColors.success,
               ),
-              SizedBox(width: 4.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-                decoration: BoxDecoration(
-                  color: HomeDashboardColors.success.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Text(
-                  delta,
-                  style: TextStyle(
-                    fontSize: 8.sp,
-                    fontWeight: FontWeight.w700,
-                    color: HomeDashboardColors.success,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
           SizedBox(height: 3.h),
           Text(
