@@ -230,7 +230,20 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       HomeStatsSection(
                         isDark: isDarkMode,
-                        stats: HomeDashboardFakeData.stats,
+                        myPatientsCount: int.tryParse(
+                              homeData.doctorPatientCount ?? '',
+                            ) ??
+                            0,
+                        myPatientsDelta:
+                            homeData.data?.weekRecap?.patientsAdded ?? 0,
+                        allPatientsCount: int.tryParse(
+                              homeData.allPatientCount ?? '',
+                            ) ??
+                            0,
+                        allPatientsDelta:
+                            homeData.data?.weekRecap?.allPatientsAdded ?? 0,
+                        score: int.tryParse(homeData.scoreValue ?? '') ?? 0,
+                        scoreDelta: homeData.data?.weekRecap?.pointsEarned ?? 0,
                       ),
                       SizedBox(height: 10.h),
                       Builder(

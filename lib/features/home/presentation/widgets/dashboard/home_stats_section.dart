@@ -1,15 +1,24 @@
 import '../../../../../exports.dart';
-import '../../../data/models/home_dashboard_fake_data.dart';
 import 'home_dashboard_shared.dart';
 
 class HomeStatsSection extends StatelessWidget {
   final bool isDark;
-  final HomeStatsFake stats;
+  final int myPatientsCount;
+  final int myPatientsDelta;
+  final int allPatientsCount;
+  final int allPatientsDelta;
+  final int score;
+  final int scoreDelta;
 
   const HomeStatsSection({
     super.key,
     required this.isDark,
-    required this.stats,
+    required this.myPatientsCount,
+    required this.myPatientsDelta,
+    required this.allPatientsCount,
+    required this.allPatientsDelta,
+    required this.score,
+    required this.scoreDelta,
   });
 
   @override
@@ -22,8 +31,8 @@ class HomeStatsSection extends StatelessWidget {
             icon: Icons.groups_rounded,
             iconColor: HomeDashboardColors.primary(isDark),
             tint: HomeDashboardColors.primary(isDark),
-            value: '${stats.myPatientsCount}',
-            delta: '+${stats.myPatientsDelta}',
+            value: '$myPatientsCount',
+            delta: '+$myPatientsDelta',
             label: context.tr(AppStrings.myPatients),
           ),
         ),
@@ -34,8 +43,8 @@ class HomeStatsSection extends StatelessWidget {
             icon: Icons.apartment_rounded,
             iconColor: HomeDashboardColors.info,
             tint: HomeDashboardColors.info,
-            value: '${stats.allPatientsCount}',
-            delta: '+${stats.allPatientsDelta}',
+            value: '$allPatientsCount',
+            delta: '+$allPatientsDelta',
             label: context.tr(AppStrings.allPatients),
           ),
         ),
@@ -46,8 +55,8 @@ class HomeStatsSection extends StatelessWidget {
             icon: Icons.workspace_premium_rounded,
             iconColor: HomeDashboardColors.score,
             tint: HomeDashboardColors.score,
-            value: '${stats.score}',
-            delta: '↑${stats.scoreDelta}',
+            value: '$score',
+            delta: '↑$scoreDelta',
             label: context.tr(AppStrings.score),
           ),
         ),

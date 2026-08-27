@@ -4,16 +4,6 @@
 class HomeDashboardFakeData {
   HomeDashboardFakeData._();
 
-  static const HomeStatsFake stats = HomeStatsFake(
-    myPatientsCount: 24,
-    myPatientsDelta: 2,
-    allPatientsCount: 510,
-    allPatientsDelta: 18,
-    score: 92,
-    scoreDelta: 4,
-    updatedLabel: 'Updated just now',
-  );
-
   static const List<HomeConsultationFake> consultations = [
     HomeConsultationFake(
       doctorName: 'Dr. Sara Elhosary',
@@ -55,26 +45,6 @@ class HomeDashboardFakeData {
     avgEgfr: 38.4,
     avgEgfrNote: 'mL/min · stable',
   );
-}
-
-class HomeStatsFake {
-  final int myPatientsCount;
-  final int myPatientsDelta;
-  final int allPatientsCount;
-  final int allPatientsDelta;
-  final int score;
-  final int scoreDelta;
-  final String updatedLabel;
-
-  const HomeStatsFake({
-    required this.myPatientsCount,
-    required this.myPatientsDelta,
-    required this.allPatientsCount,
-    required this.allPatientsDelta,
-    required this.score,
-    required this.scoreDelta,
-    required this.updatedLabel,
-  });
 }
 
 class HomeConsultationFake {
