@@ -675,6 +675,7 @@ mixin _$HomeDataModelResponse {
   @JsonKey(name: 'pending_outcomes')
   List<PatientHomeDataModel>? get pendingOutcomes =>
       throw _privateConstructorUsedError;
+  List<PatientHomeDataModel>? get drafts => throw _privateConstructorUsedError;
   List<HomeActivityModel>? get activity => throw _privateConstructorUsedError;
   @JsonKey(name: 'week_recap')
   WeekRecapModel? get weekRecap => throw _privateConstructorUsedError;
@@ -710,6 +711,7 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
+      List<PatientHomeDataModel>? drafts,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -744,6 +746,7 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
+    Object? drafts = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -784,6 +787,10 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
       pendingOutcomes: freezed == pendingOutcomes
           ? _value.pendingOutcomes
           : pendingOutcomes // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
+      drafts: freezed == drafts
+          ? _value.drafts
+          : drafts // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
       activity: freezed == activity
           ? _value.activity
@@ -851,6 +858,7 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
+      List<PatientHomeDataModel>? drafts,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -885,6 +893,7 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
+    Object? drafts = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -926,6 +935,10 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
           ? _value._pendingOutcomes
           : pendingOutcomes // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      drafts: freezed == drafts
+          ? _value._drafts
+          : drafts // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
       activity: freezed == activity
           ? _value._activity
           : activity // ignore: cast_nullable_to_non_nullable
@@ -959,6 +972,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       final List<PatientHomeDataModel>? pendingOutcomes,
+      final List<PatientHomeDataModel>? drafts,
       final List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') this.weekRecap,
       @JsonKey(name: 'research_insights') this.researchInsights})
@@ -971,6 +985,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
         _trendsHashtags = trendsHashtags,
         _latestGroups = latestGroups,
         _pendingOutcomes = pendingOutcomes,
+        _drafts = drafts,
         _activity = activity;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -1073,6 +1088,16 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
+  final List<PatientHomeDataModel>? _drafts;
+  @override
+  List<PatientHomeDataModel>? get drafts {
+    final value = _drafts;
+    if (value == null) return null;
+    if (_drafts is EqualUnmodifiableListView) return _drafts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<HomeActivityModel>? _activity;
   @override
   List<HomeActivityModel>? get activity {
@@ -1092,7 +1117,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, drafts: $drafts, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
   }
 
   @override
@@ -1116,6 +1141,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
                 .equals(other._latestGroups, _latestGroups) &&
             const DeepCollectionEquality()
                 .equals(other._pendingOutcomes, _pendingOutcomes) &&
+            const DeepCollectionEquality().equals(other._drafts, _drafts) &&
             const DeepCollectionEquality().equals(other._activity, _activity) &&
             (identical(other.weekRecap, weekRecap) ||
                 other.weekRecap == weekRecap) &&
@@ -1136,6 +1162,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_trendsHashtags),
       const DeepCollectionEquality().hash(_latestGroups),
       const DeepCollectionEquality().hash(_pendingOutcomes),
+      const DeepCollectionEquality().hash(_drafts),
       const DeepCollectionEquality().hash(_activity),
       weekRecap,
       researchInsights);
@@ -1172,6 +1199,7 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
           @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
           @JsonKey(name: 'pending_outcomes')
           final List<PatientHomeDataModel>? pendingOutcomes,
+          final List<PatientHomeDataModel>? drafts,
           final List<HomeActivityModel>? activity,
           @JsonKey(name: 'week_recap') final WeekRecapModel? weekRecap,
           @JsonKey(name: 'research_insights')
@@ -1205,6 +1233,8 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   @override
   @JsonKey(name: 'pending_outcomes')
   List<PatientHomeDataModel>? get pendingOutcomes;
+  @override
+  List<PatientHomeDataModel>? get drafts;
   @override
   List<HomeActivityModel>? get activity;
   @override

@@ -90,6 +90,9 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       pendingOutcomes: (json['pending_outcomes'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      drafts: (json['drafts'] as List<dynamic>?)
+          ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       activity: (json['activity'] as List<dynamic>?)
           ?.map((e) => HomeActivityModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -114,6 +117,7 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'trending_hashtags': instance.trendsHashtags,
       'latest_groups': instance.latestGroups,
       'pending_outcomes': instance.pendingOutcomes,
+      'drafts': instance.drafts,
       'activity': instance.activity,
       'week_recap': instance.weekRecap,
       'research_insights': instance.researchInsights,

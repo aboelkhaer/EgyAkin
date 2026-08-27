@@ -248,21 +248,14 @@ class _HomeTabState extends State<HomeTab> {
                       SizedBox(height: 10.h),
                       Builder(
                         builder: (context) {
-                          final currentPatients =
-                              homeData.data?.currentPatients ??
-                                  const <PatientHomeDataModel>[];
-                          final drafts = currentPatients
-                              .where(
-                                (patient) =>
-                                    patient.sections?.submitStatus !=
-                                    true,
-                              )
-                              .toList();
+                          final drafts = homeData.data?.drafts ??
+                              const <PatientHomeDataModel>[];
                           final draftCount = int.tryParse(
                                 homeData.draftCount ?? '',
                               ) ??
                               0;
-                          final showDrafts = drafts.isNotEmpty;
+                          final showDrafts =
+                              drafts.isNotEmpty || draftCount > 0;
                           final outcomes =
                               homeData.data?.pendingOutcomes ??
                                   const <PatientHomeDataModel>[];

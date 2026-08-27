@@ -51,6 +51,7 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
     @JsonKey(name: 'pending_outcomes') List<PatientHomeDataModel>? pendingOutcomes,
+    List<PatientHomeDataModel>? drafts,
     List<HomeActivityModel>? activity,
     @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
     @JsonKey(name: 'research_insights') ResearchInsightsModel? researchInsights,
