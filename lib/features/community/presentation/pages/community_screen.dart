@@ -33,7 +33,15 @@ class _CommunityScreenState extends State<CommunityScreen>
   void initState() {
     super.initState();
     _communityCubit = context.read<CommunityCubit>();
-    _communityCubit.getAllFeeds();
+    // Only auto-load when cubit has never fetched — avoids a second
+    // getAllFeeds() if create-post already refreshed before opening this tab.
+    final shouldLoad = _communityCubit.state.maybeWhen(
+      initial: () => true,
+      orElse: () => false,
+    );
+    if (shouldLoad) {
+      _communityCubit.getAllFeeds();
+    }
 
     feedsScrollController = ScrollController();
     feedsScrollController.addListener(_handleFeedsScroll);

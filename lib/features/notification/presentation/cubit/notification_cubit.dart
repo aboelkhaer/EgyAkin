@@ -9,6 +9,25 @@ class NotificationCubit extends Cubit<NotificationState> {
   static NotificationCubit get(context) => BlocProvider.of(context);
   ScrollController? scrollController;
 
+  DateTime? _lastFetchedAt;
+  static const Duration _cacheTtl = Duration(minutes: 3);
+
+  bool get hasCachedNotifications => state.maybeWhen(
+        loaded: (_, __) => true,
+        orElse: () => false,
+      );
+
+  bool get _isCacheFresh =>
+      _lastFetchedAt != null &&
+      DateTime.now().difference(_lastFetchedAt!) < _cacheTtl;
+
+  /// Prefer cached list when opening the tab. Refetch only when empty,
+  /// stale, or [force] (e.g. unread badge / pull-to-refresh).
+  Future<void> ensureNotificationsLoaded({bool force = false}) async {
+    if (!force && hasCachedNotifications && _isCacheFresh) return;
+    await getAllNotifications(showLoading: !hasCachedNotifications);
+  }
+
   updateNotification() async {
     final result = await _updateNotificationUsecase.execute(NoParams());
 
@@ -28,16 +47,20 @@ class NotificationCubit extends Cubit<NotificationState> {
 
   int currentPage = 1;
 
-  getAllNotifications() async {
-    emit(const NotificationState.loading());
+  Future<void> getAllNotifications({bool showLoading = true}) async {
+    if (showLoading) {
+      emit(const NotificationState.loading());
+    }
     currentPage = 1;
+    isLastPage = false;
     final result = await _getAllNotificationUsecase.execute(currentPage);
 
-    result.fold(
-      (l) {
+    await result.fold<Future<void>>(
+      (l) async {
         emit(NotificationState.error(l.message));
       },
       (notificationData) async {
+        _lastFetchedAt = DateTime.now();
         emit(NotificationState.loaded(notificationData, false));
         // Mark all as read on the server so the home header badge stays cleared.
         await updateNotification();
@@ -80,7 +103,6 @@ class NotificationCubit extends Cubit<NotificationState> {
               isLastPage = false;
             }
             isLoadingMoreForScroll = false;
-            // emit(NotificationState.loaded(updatedData, false));
             emit(state.maybeMap(
               orElse: () => state,
               loaded: (value) => NotificationState.loaded(updatedData, false),

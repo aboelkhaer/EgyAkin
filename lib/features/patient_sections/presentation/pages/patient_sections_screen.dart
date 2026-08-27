@@ -1,9 +1,11 @@
 import 'dart:ui' as ui;
 
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/patient_sections/data/models/patient_sections_fake_data.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/consultation_button.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_bmi_card.dart';
+import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_sections_comments_preview.dart';
 import 'package:egy_akin/features/patient_sections/presentation/widgets/patient_sections_loading_shimmer.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 
@@ -330,11 +332,16 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
       return Container(
         height: 90.h,
         alignment: Alignment.center,
-        color: isDark ? AppColors.darkScaffoldBG : const Color(0xFFF5F5F7),
+        color: isDark
+            ? AppColors.darkScaffoldBG
+            : HomeDashboardColors.scaffold(false),
         child: SizedBox(
           height: 25.w,
           width: 25.w,
-          child: const CircularProgressIndicator(strokeWidth: 2.5),
+          child: CircularProgressIndicator(
+            strokeWidth: 2.5,
+            color: isDark ? AppColors.darkPrimary : AppColors.primary,
+          ),
         ),
       );
     }
@@ -367,16 +374,19 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
-        final scaffold =
-            isDark ? AppColors.darkScaffoldBG : const Color(0xFFF5F5F7);
+        final scaffold = HomeDashboardColors.scaffold(isDark);
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: isDark
               ? SystemUiOverlayStyle.light.copyWith(
                   statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.light,
+                  statusBarBrightness: Brightness.dark,
                 )
               : SystemUiOverlayStyle.dark.copyWith(
                   statusBarColor: Colors.transparent,
+                  statusBarIconBrightness: Brightness.dark,
+                  statusBarBrightness: Brightness.light,
                 ),
           child: Scaffold(
             backgroundColor: scaffold,
@@ -512,7 +522,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
       children: [
         Positioned.fill(
           child: ColoredBox(
-            color: isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F7),
+            color: HomeDashboardColors.scaffold(isDark),
           ),
         ),
         Column(
@@ -711,6 +721,20 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.only(top: 8.h),
+                      child: PatientSectionsCommentsPreview(
+                        isDark: isDark,
+                        patientId: widget.patientId,
+                        patientName: patientName,
+                        currentDoctorModel: widget.currentDoctorModel,
+                        currentDoctorRole: widget.currentDoctorRole,
+                        currentDoctorPoints: widget.currentDoctorPoints,
+                        homeDataModel: widget.homeDataModel,
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 8.h),
                       child: _SectionLabel(
                         isDark: isDark,
                         title: LocalizationService.instance
@@ -850,14 +874,30 @@ class _HeaderGlowBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final base = isDark ? const Color(0xFF16141C) : const Color(0xFFF8F7FB);
-    final glow = isDark ? const Color(0xFF5B3FA0) : const Color(0xFFC4B5FD);
+    final base = isDark
+        ? HomeDashboardColors.headerDark
+        : HomeDashboardColors.headerLight;
+    final glow = isDark ? const Color(0xFF5B3FA0) : AppColors.primary;
+    final scaffold = HomeDashboardColors.scaffold(isDark);
 
     return ClipRect(
       child: Stack(
         children: [
           Positioned.fill(
-            child: ColoredBox(color: base),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    base,
+                    Color.lerp(base, scaffold, isDark ? 0.35 : 0.55)!,
+                    scaffold,
+                  ],
+                  stops: const [0, 0.72, 1],
+                ),
+              ),
+            ),
           ),
           Positioned(
             top: -50.h,
@@ -870,8 +910,8 @@ class _HeaderGlowBackground extends StatelessWidget {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      glow.withOpacity(isDark ? 0.55 : 0.55),
-                      glow.withOpacity(isDark ? 0.18 : 0.22),
+                      glow.withOpacity(isDark ? 0.55 : 0.18),
+                      glow.withOpacity(isDark ? 0.18 : 0.08),
                       glow.withOpacity(0),
                     ],
                     stops: const [0, 0.45, 1],
@@ -893,6 +933,25 @@ class _HeaderGlowBackground extends StatelessWidget {
                       colors: [
                         const Color(0xFF6B47E6).withOpacity(0.22),
                         const Color(0xFF6B47E6).withOpacity(0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            )
+          else
+            Positioned(
+              top: -10.h,
+              left: 24.w,
+              right: 24.w,
+              child: IgnorePointer(
+                child: Container(
+                  height: 90.h,
+                  decoration: BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        AppColors.primary.withOpacity(0.1),
+                        AppColors.primary.withOpacity(0),
                       ],
                     ),
                   ),
@@ -931,13 +990,14 @@ class _CollapsingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleColor = isDark ? Colors.white : const Color(0xFF111827);
-    final subtitleColor =
-        isDark ? const Color(0xFFA7A3B3) : const Color(0xFF8B8B97);
-    final circleBg = isDark ? const Color(0xFF2A2733) : Colors.white;
-    final circleBorder =
-        isDark ? const Color(0xFF3A3645) : const Color(0xFFE6E2F0);
-    final iconColor = isDark ? Colors.white : const Color(0xFF1F2937);
+    final titleColor = HomeDashboardColors.title(isDark);
+    final subtitleColor = HomeDashboardColors.subtitle(isDark);
+    final circleBg = isDark
+        ? const Color(0xFF2A2733)
+        : Colors.white;
+    final circleBorder = HomeDashboardColors.border(isDark);
+    final iconColor = HomeDashboardColors.title(isDark);
+    final primary = HomeDashboardColors.primary(isDark);
     final nameSize = ui.lerpDouble(18.sp, 14.sp, progress)!;
     final subtitleOpacity = (1 - progress).clamp(0.0, 1.0);
     final subtitleHeight = ui.lerpDouble(18.h, 0, progress)!;
@@ -954,6 +1014,7 @@ class _CollapsingHeader extends StatelessWidget {
                 background: circleBg,
                 borderColor: circleBorder,
                 iconColor: iconColor,
+                isDark: isDark,
                 onTap: onBack,
               ),
               const Spacer(),
@@ -961,9 +1022,8 @@ class _CollapsingHeader extends StatelessWidget {
                 icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
                 background: circleBg,
                 borderColor: circleBorder,
-                iconColor: isBookmarked
-                    ? (isDark ? AppColors.darkPrimary : AppColors.primary)
-                    : iconColor,
+                iconColor: isBookmarked ? primary : iconColor,
+                isDark: isDark,
                 onTap: onBookmark,
               ),
             ],
@@ -990,19 +1050,18 @@ class _CollapsingHeader extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF2D2348)
-                      : const Color(0xFFEDE7FF),
+                  color: primary.withOpacity(isDark ? 0.22 : 0.12),
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: primary.withOpacity(isDark ? 0.28 : 0.18),
+                  ),
                 ),
                 child: Text(
                   '$percent%',
                   style: TextStyle(
                     fontSize: 10.sp,
                     fontWeight: FontWeight.w700,
-                    color: isDark
-                        ? const Color(0xFFB8A6FF)
-                        : AppColors.primary,
+                    color: primary,
                   ),
                 ),
               ),
@@ -1039,7 +1098,7 @@ class _CollapsingHeader extends StatelessWidget {
                           Icon(
                             Icons.check_circle_rounded,
                             size: 11.sp,
-                            color: const Color(0xFF22C55E),
+                            color: HomeDashboardColors.success,
                           ),
                           SizedBox(width: 3.w),
                           Flexible(
@@ -1074,6 +1133,7 @@ class _RoundIconButton extends StatelessWidget {
   final Color background;
   final Color borderColor;
   final Color iconColor;
+  final bool isDark;
   final VoidCallback onTap;
 
   const _RoundIconButton({
@@ -1081,6 +1141,7 @@ class _RoundIconButton extends StatelessWidget {
     required this.background,
     required this.borderColor,
     required this.iconColor,
+    required this.isDark,
     required this.onTap,
   });
 
@@ -1088,6 +1149,8 @@ class _RoundIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: background,
+      elevation: isDark ? 0 : 1.5,
+      shadowColor: Colors.black.withOpacity(0.12),
       shape: const CircleBorder(),
       child: InkWell(
         customBorder: const CircleBorder(),
@@ -1119,8 +1182,8 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isDark ? const Color(0xFF9A96A6) : const Color(0xFF9CA3AF);
-    final line = isDark ? const Color(0xFF2E2E36) : const Color(0xFFE5E7EB);
+    final color = HomeDashboardColors.subtitle(isDark);
+    final line = HomeDashboardColors.border(isDark);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 10.h),
@@ -1200,26 +1263,26 @@ class _ProgressSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardBg = isDark ? AppColors.darkCardBG : Colors.white;
-    final border = isDark ? AppColors.darkBorder : const Color(0xFFE8E4F5);
-    final titleColor = isDark ? AppColors.darkTitle : const Color(0xFF111827);
-    final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
-    const completed = Color(0xFF22C55E);
-    const pending = Color(0xFFF59E0B);
+    final cardBg = HomeDashboardColors.cardBg(isDark);
+    final border = HomeDashboardColors.border(isDark);
+    final titleColor = HomeDashboardColors.title(isDark);
+    final primary = HomeDashboardColors.primary(isDark);
+    const completed = HomeDashboardColors.success;
+    const pending = HomeDashboardColors.warning;
 
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: cardBg,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: border),
+        border: Border.all(color: border.withOpacity(isDark ? 1 : 0.85)),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.03),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
                 ),
               ],
       ),
@@ -1237,8 +1300,7 @@ class _ProgressSummaryCard extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: total == 0 ? 0 : doneCount / total,
                     strokeWidth: 5.5,
-                    backgroundColor:
-                        isDark ? AppColors.darkBorder : const Color(0xFFEDE7FF),
+                    backgroundColor: primary.withOpacity(isDark ? 0.18 : 0.12),
                     valueColor: AlwaysStoppedAnimation<Color>(primary),
                     strokeCap: StrokeCap.round,
                   ),
@@ -1337,7 +1399,7 @@ class _GroupHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleColor = isDark ? AppColors.darkTitle : const Color(0xFF111827);
+    final titleColor = HomeDashboardColors.title(isDark);
 
     return Row(
       children: [

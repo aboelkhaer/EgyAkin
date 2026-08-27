@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:egy_akin/app/shared/functions/animate_to_index.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -38,6 +37,7 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
   late final TabController _tabController;
   late final AnimationController _introController;
   final GlobalKey _tabBodyKey = GlobalKey();
+  bool _didAutoScrollToSyndicate = false;
 
   late final Animation<double> _heroFade;
   late final Animation<double> _bodyFade;
@@ -81,24 +81,22 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      final bodyContext = _tabBodyKey.currentContext;
-      if (bodyContext != null) {
-        Scrollable.ensureVisible(
-          bodyContext,
-          alignment: 0.02,
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-        );
-        return;
+      final cubit = context.read<DoctorInfoViewCubit>();
+      try {
+        final bodyContext = _tabBodyKey.currentContext;
+        if (bodyContext != null && bodyContext.mounted) {
+          Scrollable.ensureVisible(
+            bodyContext,
+            alignment: 0.02,
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+          );
+          return;
+        }
+      } catch (_) {
+        // Fall through to clamp.
       }
-
-      final scroll =
-          context.read<DoctorInfoViewCubit>().doctorInfoViewScrollController;
-      if (!scroll.hasClients) return;
-      final max = scroll.position.maxScrollExtent;
-      if (scroll.offset > max) {
-        scroll.jumpTo(max);
-      }
+      cubit.clampDoctorInfoScroll();
     });
   }
 
@@ -140,12 +138,20 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
                     achievements,
                     changesCounter,
                   ) {
-                    if (widget.isNavigateToTheButtonOfInformationTab) {
-                      animateToIndex(
-                        cubit.doctorInfoViewScrollController,
-                        7,
-                        100.h,
-                      );
+                    if (widget.isNavigateToTheButtonOfInformationTab &&
+                        !_didAutoScrollToSyndicate) {
+                      _didAutoScrollToSyndicate = true;
+                      if (_tabController.index != 0) {
+                        _tabController.animateTo(0);
+                      }
+                      Future.delayed(const Duration(milliseconds: 280), () {
+                        if (!mounted) return;
+                        cubit.scrollToSyndicateCardSection();
+                      });
+                    } else {
+                      // Keep scroll in range after content height changes
+                      // (e.g. syndicate card confirm/reject).
+                      cubit.clampDoctorInfoScroll();
                     }
                   },
                 );
@@ -208,17 +214,22 @@ class _DoctorInfoViewScreenState extends State<DoctorInfoViewScreen>
                         ),
                       ),
                     ),
-                    SliverPersistentHeader(
-                      pinned: true,
-                      delegate: _PinnedTabsHeader(
-                        isDark: isDark,
-                        primary: primary,
-                        scaffold: scaffold,
-                        controller: _tabController,
-                        labels: [
-                          context.tr(AppStrings.information),
-                          context.tr(AppStrings.achievements),
-                        ],
+                    // Keep tabs in the scroll flow so they never sit under the status bar.
+                    SliverToBoxAdapter(
+                      child: ColoredBox(
+                        color: scaffold,
+                        child: Padding(
+                          padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 8.h),
+                          child: _SegmentedTabs(
+                            controller: _tabController,
+                            isDark: isDark,
+                            primary: primary,
+                            labels: [
+                              context.tr(AppStrings.information),
+                              context.tr(AppStrings.achievements),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                     SliverToBoxAdapter(
@@ -1093,56 +1104,6 @@ class _MetricCard extends StatelessWidget {
 }
 
 // ── Segmented tabs ───────────────────────────────────────────────────────────
-
-class _PinnedTabsHeader extends SliverPersistentHeaderDelegate {
-  final bool isDark;
-  final Color primary;
-  final Color scaffold;
-  final TabController controller;
-  final List<String> labels;
-
-  _PinnedTabsHeader({
-    required this.isDark,
-    required this.primary,
-    required this.scaffold,
-    required this.controller,
-    required this.labels,
-  });
-
-  @override
-  double get minExtent => 58.h;
-
-  @override
-  double get maxExtent => 58.h;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    return ColoredBox(
-      color: scaffold,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 8.h),
-        child: _SegmentedTabs(
-          controller: controller,
-          isDark: isDark,
-          primary: primary,
-          labels: labels,
-        ),
-      ),
-    );
-  }
-
-  @override
-  bool shouldRebuild(covariant _PinnedTabsHeader oldDelegate) {
-    return isDark != oldDelegate.isDark ||
-        primary != oldDelegate.primary ||
-        scaffold != oldDelegate.scaffold ||
-        labels != oldDelegate.labels;
-  }
-}
 
 class _SegmentedTabs extends StatelessWidget {
   final TabController controller;

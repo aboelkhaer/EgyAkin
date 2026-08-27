@@ -191,11 +191,14 @@ class AdminSide extends StatelessWidget {
                         isDarkMode: isDark,
                         cubit: cubit,
                       ),
-                      VerifySyndicateCardForAdmin(
-                        homeDataModel: homeDataModel,
-                        doctorInfo: doctorInfo,
-                        isDarkMode: isDark,
-                        cubit: cubit,
+                      KeyedSubtree(
+                        key: cubit.syndicateCardSectionKey,
+                        child: VerifySyndicateCardForAdmin(
+                          homeDataModel: homeDataModel,
+                          doctorInfo: doctorInfo,
+                          isDarkMode: isDark,
+                          cubit: cubit,
+                        ),
                       ),
                       BlockUserForAdminSide(
                         homeDataModel: homeDataModel,

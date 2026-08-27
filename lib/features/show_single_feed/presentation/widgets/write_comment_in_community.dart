@@ -81,9 +81,10 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
     final text = _controller.text.trim();
     if (text.isEmpty) return;
 
-    // Clear the field immediately for snappy UX.
+    // Clear the field + dismiss keyboard immediately for a calm handoff.
     _controller.clear();
     cubit.commentContent.clear();
+    FocusManager.instance.primaryFocus?.unfocus();
     if (mounted) {
       setState(() {
         _hasText = false;
@@ -126,6 +127,25 @@ class _WriteCommentInCommunityState extends State<WriteCommentInCommunity> {
           final primary = HomeDashboardColors.primary(isDark);
 
           return BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+            buildWhen: (previous, current) {
+              bool sendingOf(ShowSingleFeedState s) => s.maybeWhen(
+                    loaded: (_, __, ___, isSendCommentLoading, ____, _____,
+                            ______, _______, ________, isSendReplyLoading,
+                            _________, __________) =>
+                        isSendCommentLoading || isSendReplyLoading,
+                    orElse: () => false,
+                  );
+              // Also rebuild when comments list identity changes (for submit payload).
+              List? commentsOf(ShowSingleFeedState s) => s.maybeWhen(
+                    loaded: (commentsResponse, _, __, ___, ____, _____, ______,
+                            _______, ________, _________, __________,
+                            ___________) =>
+                        commentsResponse.data?.data,
+                    orElse: () => null,
+                  );
+              return sendingOf(previous) != sendingOf(current) ||
+                  !identical(commentsOf(previous), commentsOf(current));
+            },
             builder: (context, state) {
               final isSending = state.maybeWhen(
                 loaded: (

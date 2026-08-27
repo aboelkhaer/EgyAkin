@@ -240,6 +240,7 @@ class AppRoutesArgs {
     required String currentDoctorRole,
     required int currentDoctorPoints,
     required HomeModelResponse homeDataModel,
+    bool initialShowMarked = false,
   }) {
     return {
       'doctorId': doctorId,
@@ -250,6 +251,7 @@ class AppRoutesArgs {
       'currentDoctorRole': currentDoctorRole,
       'currentDoctorPoints': currentDoctorPoints,
       'homeDataModel': homeDataModel,
+      'initialShowMarked': initialShowMarked,
     };
   }
 

@@ -1,5 +1,6 @@
 import 'package:egy_akin/exports.dart';
 import 'package:egy_akin/features/community/presentation/cubit/community_state.dart';
+import 'package:egy_akin/features/community/presentation/widgets/post_removal_animator.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import '../../../../../app/services/theme_bloc.dart';
 
@@ -181,13 +182,21 @@ class _PostsTabState extends State<PostsTab> {
                                     }
 
                                     final feed = feeds[feedIndex];
-                                    return PostCard(
-                                      feed: feed,
-                                      homeDataModel: widget.homeDataModel,
-                                      currentDoctorModel:
-                                          widget.currentDoctorModel,
-                                      showPostFrom:
-                                          ShowPostFromEnum.feedsTab.name,
+                                    final postId = feed.id.toString();
+                                    return PostRemovalAnimator(
+                                      key: ValueKey('feed_$postId'),
+                                      animateOut:
+                                          cubit.removingPostIds.contains(postId),
+                                      onExitComplete: () =>
+                                          cubit.finishRemovingPost(postId),
+                                      child: PostCard(
+                                        feed: feed,
+                                        homeDataModel: widget.homeDataModel,
+                                        currentDoctorModel:
+                                            widget.currentDoctorModel,
+                                        showPostFrom:
+                                            ShowPostFromEnum.feedsTab.name,
+                                      ),
                                     );
                                   },
                                 ),

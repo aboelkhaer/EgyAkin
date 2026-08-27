@@ -70,30 +70,6 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     return '$minutes:${seconds.toString().padLeft(2, '0')}';
   }
 
-  List<Step> getSteps() {
-    return [
-      Step(
-        state: currentStep > 0 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 0,
-        title: Text(LocalizationService.instance.translate(AppStrings.email)),
-        content: const FirstStep(),
-      ),
-      Step(
-        state: currentStep > 1 ? StepState.complete : StepState.indexed,
-        isActive: currentStep >= 1,
-        title: Text(LocalizationService.instance.translate(AppStrings.verify)),
-        content: const SecondStep(),
-      ),
-      Step(
-        state: StepState.complete,
-        isActive: currentStep >= 2,
-        title:
-            Text(LocalizationService.instance.translate(AppStrings.password)),
-        content: const ThirdStep(),
-      ),
-    ];
-  }
-
   void resendOtp(context) async {
     isResendBottonShow = false;
     countdown = AppStrings.resendTimer;

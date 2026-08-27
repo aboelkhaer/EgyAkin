@@ -1,6 +1,7 @@
 import 'package:egy_akin/app/shared/functions/show_answer_with_select_type.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/outcome/presentation/widgets/outcome_loading_shimmer.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/widgets/convert_list_to_string.dart';
 
 import '../../../../exports.dart';
@@ -103,7 +104,10 @@ class IfOutcomeSubmitted extends StatelessWidget {
           builder: (context, state) {
             return state.maybeWhen(
               orElse: () {
-                return const ShimmerLoadingPatientsCards(ishorizontal: false);
+                return OutcomeLoadingShimmer(isDark: isDark);
+              },
+              loading: () {
+                return OutcomeLoadingShimmer(isDark: isDark);
               },
               loaded: (
                 response,

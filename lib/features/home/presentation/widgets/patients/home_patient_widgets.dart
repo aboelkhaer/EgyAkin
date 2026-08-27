@@ -10,6 +10,7 @@ class HomePatientsToggle extends StatelessWidget {
   final int myPatientsCount;
   final int allPatientsCount;
   final ValueChanged<bool> onChanged;
+  final bool showAllPatientsTab;
 
   const HomePatientsToggle({
     super.key,
@@ -18,10 +19,18 @@ class HomePatientsToggle extends StatelessWidget {
     required this.myPatientsCount,
     required this.allPatientsCount,
     required this.onChanged,
+    this.showAllPatientsTab = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (!showAllPatientsTab) {
+      return _MyPatientsOnlyHeader(
+        isDark: isDark,
+        count: myPatientsCount,
+      );
+    }
+
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
@@ -46,6 +55,82 @@ class HomePatientsToggle extends StatelessWidget {
               isSelected: !showMyPatients,
               isDark: isDark,
               onTap: () => onChanged(false),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MyPatientsOnlyHeader extends StatelessWidget {
+  final bool isDark;
+  final int count;
+
+  const _MyPatientsOnlyHeader({
+    required this.isDark,
+    required this.count,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = HomeDashboardColors.primary(isDark);
+    final titleColor = HomeDashboardColors.title(isDark);
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+      decoration: BoxDecoration(
+        color: primary.withOpacity(isDark ? 0.14 : 0.08),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: primary.withOpacity(isDark ? 0.24 : 0.16),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32.r,
+            height: 32.r,
+            decoration: BoxDecoration(
+              color: primary.withOpacity(isDark ? 0.22 : 0.14),
+              borderRadius: BorderRadius.circular(10.r),
+            ),
+            child: Icon(
+              Icons.people_alt_rounded,
+              size: 16.sp,
+              color: primary,
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            child: Text(
+              context.tr(AppStrings.myPatients),
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w700,
+                color: titleColor,
+              ),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withOpacity(0.12)
+                  : Colors.white.withOpacity(0.9),
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(
+                color: primary.withOpacity(isDark ? 0.28 : 0.18),
+              ),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w800,
+                color: primary,
+              ),
             ),
           ),
         ],

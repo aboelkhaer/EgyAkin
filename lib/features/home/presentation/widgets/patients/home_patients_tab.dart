@@ -29,14 +29,24 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   int _lastHandledWithoutOutcomeSignal = 0;
   late final AllDoctorsPatientsCubit _filterCubit;
   late final CurrentDoctorPatientsCubit _myPatientsCubit;
-  late final ScrollController _scrollController;
+  late final ScrollController _myScrollController;
+  late final ScrollController _allScrollController;
+
+  bool get _canViewAllPatients =>
+      PermissionHelper.canPermission(AppPermissions.viewAllPatients);
+
+  bool get _showMyOnly => !_canViewAllPatients || _showMyPatients;
+
+  ScrollController get _activeScrollController =>
+      _showMyOnly ? _myScrollController : _allScrollController;
 
   @override
   void initState() {
     super.initState();
     _filterCubit = sl<AllDoctorsPatientsCubit>();
     _myPatientsCubit = sl<CurrentDoctorPatientsCubit>();
-    _scrollController = ScrollController()..addListener(_onScroll);
+    _myScrollController = ScrollController()..addListener(_onScroll);
+    _allScrollController = ScrollController()..addListener(_onScroll);
     widget.cubit.withoutOutcomeFilterSignal
         .addListener(_onWithoutOutcomeFilterRequested);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,8 +59,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   void dispose() {
     widget.cubit.withoutOutcomeFilterSignal
         .removeListener(_onWithoutOutcomeFilterRequested);
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
+    _myScrollController.removeListener(_onScroll);
+    _allScrollController.removeListener(_onScroll);
+    _myScrollController.dispose();
+    _allScrollController.dispose();
     _filterCubit.close();
     _myPatientsCubit.close();
     super.dispose();
@@ -89,12 +101,17 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   }
 
   void _onScroll() {
-    if (!_scrollController.hasClients) return;
+    final controller = _activeScrollController;
+    if (!controller.hasClients) return;
 
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.position.pixels;
+    final position = controller.position;
+    if (!position.hasContentDimensions) return;
+
+    // Pull-to-refresh / top overscroll must not trigger pagination.
+    if (position.pixels <= 0 || position.maxScrollExtent <= 0) return;
+
     const threshold = 200.0;
-    if (maxScroll - currentScroll > threshold) return;
+    if (position.maxScrollExtent - position.pixels > threshold) return;
 
     if (_usingFilteredResults) {
       if (_filterCubit.isClosed) return;
@@ -105,7 +122,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
       return;
     }
 
-    if (_showMyPatients) {
+    if (_showMyOnly) {
       if (_myPatientsCubit.isClosed) return;
       if (_myPatientsCubit.isLastPage) return;
       if (_myPatientsCubit.isLoadingMoreForScroll) return;
@@ -119,6 +136,36 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
     if (_filterCubit.isLoadingMoreForScroll) return;
     _filterCubit.isLoadingMoreForScroll = true;
     _filterCubit.loadMorePatients();
+  }
+
+  Future<void> _onRefreshMyPatients() async {
+    if (_usingFilteredResults && _showMyOnly) {
+      await _filterCubit.applyPatientFilters('true');
+      if (mounted) setState(() {});
+      return;
+    }
+    if (!_myPatientsCubit.isClosed) {
+      _myPatientsCubit.isLoadingMoreForScroll = false;
+    }
+    await _loadMyPatients(force: true, showLoading: true);
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _onRefreshAllPatients() async {
+    if (!_canViewAllPatients) {
+      await _onRefreshMyPatients();
+      return;
+    }
+    if (_usingFilteredResults && !_showMyOnly) {
+      await _filterCubit.applyPatientFilters('false');
+      if (mounted) setState(() {});
+      return;
+    }
+    if (!_filterCubit.isClosed) {
+      _filterCubit.isLoadingMoreForScroll = false;
+    }
+    await _loadAllPatients(force: true, showLoading: true);
+    if (mounted) setState(() {});
   }
 
   void _resetFilterFlags() {
@@ -178,26 +225,15 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
       _withoutOutcomeOnly = false;
     });
     if (!wasFiltered) return;
-    if (_showMyPatients) {
+    if (_showMyOnly) {
       _loadMyPatients(force: true);
     } else {
       _loadAllPatients(force: true);
     }
   }
 
-  Future<void> _onRefresh() async {
-    if (_usingFilteredResults) {
-      await _filterCubit.applyPatientFilters(_showMyPatients ? 'true' : 'false');
-      return;
-    }
-    if (_showMyPatients) {
-      await _loadMyPatients(force: true, showLoading: false);
-      return;
-    }
-    await _loadAllPatients(force: true, showLoading: false);
-  }
-
   void _onToggleChanged(bool showMyPatients) {
+    if (!_canViewAllPatients) return;
     if (showMyPatients == _showMyPatients) return;
     final wasFiltered = _usingFilteredResults || _withoutOutcomeOnly;
     _resetFilterFlags();
@@ -226,7 +262,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
         currentDoctorPoints: int.tryParse(homeData.scoreValue ?? '0') ?? 0,
         currentDoctorRole: homeData.role.toString(),
         homeDataModel: homeData,
-        isAllDataOpen: !_showMyPatients,
+        isAllDataOpen: _canViewAllPatients && !_showMyOnly,
       ),
     );
   }
@@ -361,7 +397,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
           child: BuildFilterWidget(
             filters: filters,
             cubit: _filterCubit,
-            isCurrentDoctor: _showMyPatients,
+            isCurrentDoctor: _showMyOnly,
           ),
         );
       },
@@ -395,7 +431,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
 
   void _downloadPatients() {
     if (_filterCubit.isClosed) return;
-    _filterCubit.exportFilteredPatients(_showMyPatients);
+    _filterCubit.exportFilteredPatients(_showMyOnly);
   }
 
   bool get _canExport {
@@ -521,7 +557,6 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                   final isDark =
                       themeState is ThemeLoaded && themeState.isDarkMode;
                   final primary = HomeDashboardColors.primary(isDark);
-                  final homeData = widget.cubit.homeDataModel;
 
                   final isApplyFilterLoading = filterState.maybeWhen(
                     loaded:
@@ -551,14 +586,15 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                     orElse: () => false,
                   );
 
-                  final isLoadingMyPatients = _showMyPatients &&
+                  final isLoadingMyPatients = _showMyOnly &&
                       !_usingFilteredResults &&
                       myState.maybeWhen(
                         loading: () => true,
                         orElse: () => false,
                       );
 
-                  final isLoadingAllPatients = !_showMyPatients &&
+                  final isLoadingAllPatients = _canViewAllPatients &&
+                      !_showMyOnly &&
                       !_usingFilteredResults &&
                       filterState.maybeWhen(
                         loading: () => true,
@@ -584,27 +620,22 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                     orElse: () => null,
                   );
 
-                  final homeMyCount =
-                      int.tryParse(homeData.doctorPatientCount ?? '') ??
-                          (homeData.data?.currentPatients?.length ?? 0);
-                  final homeAllCount =
-                      int.tryParse(homeData.allPatientCount ?? '') ??
-                          (homeData.data?.allPatients?.length ?? 0);
-
-                  final myCount = (_showMyPatients && myApiTotal != null)
-                      ? myApiTotal
-                      : homeMyCount;
-                  final allCount = (!_showMyPatients && allApiTotal != null)
-                      ? allApiTotal
-                      : homeAllCount;
+                  // While loading, show the current list length (not stale home
+                  // API totals). After load, prefer the API total when present.
+                  final myCount = isLoadingMyPatients
+                      ? myApiPatients.length
+                      : (myApiTotal ?? myApiPatients.length);
+                  final allCount = isLoadingAllPatients
+                      ? allApiPatients.length
+                      : (allApiTotal ?? allApiPatients.length);
 
                   final patients = _applyLocalFilters(
                     _usingFilteredResults
                         ? filteredPatients
-                        : (_showMyPatients ? myApiPatients : allApiPatients),
+                        : (_showMyOnly ? myApiPatients : allApiPatients),
                   );
 
-                  final selectedLabel = _showMyPatients
+                  final selectedLabel = _showMyOnly
                       ? context.tr(AppStrings.myPatients)
                       : context.tr(AppStrings.allPatients);
                   final isLocallyFiltered = _withoutOutcomeOnly;
@@ -612,21 +643,21 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                       ? (_filterCubit.totalPatientInFilter > 0
                           ? _filterCubit.totalPatientInFilter
                           : filteredPatients.length)
-                      : (isLocallyFiltered
+                      : (isLocallyFiltered ||
+                              (_showMyOnly
+                                  ? isLoadingMyPatients
+                                  : isLoadingAllPatients)
                           ? patients.length
-                          : (_showMyPatients ? myCount : allCount));
+                          : (_showMyOnly ? myCount : allCount));
 
                   final showLoadMoreFooter = _usingFilteredResults
                       ? filterSeeMore
-                      : (_showMyPatients ? mySeeMore : filterSeeMore);
-
-                  final isInitialLoading =
-                      isLoadingMyPatients || isLoadingAllPatients;
+                      : (_showMyOnly ? mySeeMore : filterSeeMore);
 
                   final showClearFilters =
                       _usingFilteredResults || _withoutOutcomeOnly;
 
-                  return Container(
+                  return Material(
                     color: HomeDashboardColors.scaffold(isDark),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -640,9 +671,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                               SizedBox(height: 12.h),
                               HomePatientsToggle(
                                 isDark: isDark,
-                                showMyPatients: _showMyPatients,
+                                showMyPatients: _showMyOnly,
                                 myPatientsCount: myCount,
                                 allPatientsCount: allCount,
+                                showAllPatientsTab: _canViewAllPatients,
                                 onChanged: _onToggleChanged,
                               ),
                               SizedBox(height: 12.h),
@@ -658,8 +690,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
-                                        color:
-                                            HomeDashboardColors.title(isDark),
+                                        color: HomeDashboardColors.title(
+                                            isDark),
                                       ),
                                     ),
                                   ),
@@ -693,7 +725,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                             SizedBox(
                                               width: 14.sp,
                                               height: 14.sp,
-                                              child: CircularProgressIndicator(
+                                              child:
+                                                  CircularProgressIndicator(
                                                 strokeWidth: 2,
                                                 color: primary,
                                               ),
@@ -760,67 +793,74 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                           ),
                         ),
                         Expanded(
-                          child: RefreshIndicator(
-                            onRefresh: _onRefresh,
-                            color: primary,
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              physics: const AlwaysScrollableScrollPhysics(
-                                parent: BouncingScrollPhysics(),
-                              ),
-                              padding:
-                                  EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
-                              itemCount: (patients.isEmpty ? 1 : patients.length) +
-                                  (showLoadMoreFooter ? 1 : 0),
-                              itemBuilder: (context, index) {
-                                if (patients.isEmpty && index == 0) {
-                                  if (isInitialLoading) {
-                                    return HomePatientsLoadingList(
-                                        isDark: isDark);
-                                  }
-                                  return Padding(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 40.h),
-                                    child: Center(
-                                      child: Text(
-                                        showClearFilters
-                                            ? context.tr(
-                                                AppStrings.noPatientsMatchThisFilter,
-                                              )
-                                            : context.tr(AppStrings.noPatientsYet),
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          color: HomeDashboardColors.subtitle(
-                                              isDark),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-
-                                if (index >= 0 && index < patients.length) {
-                                  final patient = patients[index];
-                                  return Padding(
-                                    padding: EdgeInsets.only(bottom: 12.h),
-                                    child: HomePatientCard(
+                          child: _canViewAllPatients
+                              ? IndexedStack(
+                                  index: _showMyOnly ? 0 : 1,
+                                  sizing: StackFit.expand,
+                                  children: [
+                                    _PatientsRefreshList(
+                                      key: const PageStorageKey(
+                                          'my_patients_list'),
                                       isDark: isDark,
-                                      patient: patient,
-                                      onTap: () =>
-                                          _openPatientSections(patient),
-                                      onOutcomeTap: () => _openOutcome(patient),
-                                      onAddCommentTap: () =>
-                                          _openComments(patient),
-                                      onDoctorTap: () =>
-                                          _openDoctorProfile(patient),
+                                      primary: primary,
+                                      scrollController: _myScrollController,
+                                      onRefresh: _onRefreshMyPatients,
+                                      isInitialLoading: isLoadingMyPatients,
+                                      patients: _showMyOnly
+                                          ? patients
+                                          : _applyLocalFilters(
+                                              _usingFilteredResults
+                                                  ? filteredPatients
+                                                  : myApiPatients,
+                                            ),
+                                      showLoadMoreFooter: _showMyOnly &&
+                                          showLoadMoreFooter,
+                                      showClearFilters: showClearFilters,
+                                      onOpenPatient: _openPatientSections,
+                                      onOpenOutcome: _openOutcome,
+                                      onOpenComments: _openComments,
+                                      onOpenDoctor: _openDoctorProfile,
                                     ),
-                                  );
-                                }
-
-                                return HomePatientsLoadMoreFooter(
-                                    isDark: isDark);
-                              },
-                            ),
-                          ),
+                                    _PatientsRefreshList(
+                                      key: const PageStorageKey(
+                                          'all_patients_list'),
+                                      isDark: isDark,
+                                      primary: primary,
+                                      scrollController: _allScrollController,
+                                      onRefresh: _onRefreshAllPatients,
+                                      isInitialLoading: isLoadingAllPatients,
+                                      patients: !_showMyOnly
+                                          ? patients
+                                          : _applyLocalFilters(
+                                              _usingFilteredResults
+                                                  ? filteredPatients
+                                                  : allApiPatients,
+                                            ),
+                                      showLoadMoreFooter: !_showMyOnly &&
+                                          showLoadMoreFooter,
+                                      showClearFilters: showClearFilters,
+                                      onOpenPatient: _openPatientSections,
+                                      onOpenOutcome: _openOutcome,
+                                      onOpenComments: _openComments,
+                                      onOpenDoctor: _openDoctorProfile,
+                                    ),
+                                  ],
+                                )
+                              : _PatientsRefreshList(
+                                  key: const PageStorageKey('my_patients_list'),
+                                  isDark: isDark,
+                                  primary: primary,
+                                  scrollController: _myScrollController,
+                                  onRefresh: _onRefreshMyPatients,
+                                  isInitialLoading: isLoadingMyPatients,
+                                  patients: patients,
+                                  showLoadMoreFooter: showLoadMoreFooter,
+                                  showClearFilters: showClearFilters,
+                                  onOpenPatient: _openPatientSections,
+                                  onOpenOutcome: _openOutcome,
+                                  onOpenComments: _openComments,
+                                  onOpenDoctor: _openDoctorProfile,
+                                ),
                         ),
                       ],
                     ),
@@ -829,6 +869,94 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
               );
             },
           );
+        },
+      ),
+    );
+  }
+}
+
+class _PatientsRefreshList extends StatelessWidget {
+  final bool isDark;
+  final Color primary;
+  final ScrollController scrollController;
+  final Future<void> Function() onRefresh;
+  final bool isInitialLoading;
+  final List<PatientHomeDataModel> patients;
+  final bool showLoadMoreFooter;
+  final bool showClearFilters;
+  final ValueChanged<PatientHomeDataModel> onOpenPatient;
+  final ValueChanged<PatientHomeDataModel> onOpenOutcome;
+  final ValueChanged<PatientHomeDataModel> onOpenComments;
+  final ValueChanged<PatientHomeDataModel> onOpenDoctor;
+
+  const _PatientsRefreshList({
+    super.key,
+    required this.isDark,
+    required this.primary,
+    required this.scrollController,
+    required this.onRefresh,
+    required this.isInitialLoading,
+    required this.patients,
+    required this.showLoadMoreFooter,
+    required this.showClearFilters,
+    required this.onOpenPatient,
+    required this.onOpenOutcome,
+    required this.onOpenComments,
+    required this.onOpenDoctor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: primary,
+      displacement: 40,
+      child: ListView.builder(
+        controller: scrollController,
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: BouncingScrollPhysics(),
+        ),
+        padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 100.h),
+        itemCount: (patients.isEmpty ? 1 : patients.length) +
+            (showLoadMoreFooter ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (patients.isEmpty && index == 0) {
+            if (isInitialLoading) {
+              return HomePatientsLoadingList(isDark: isDark);
+            }
+            return SizedBox(
+              height: MediaQuery.sizeOf(context).height * 0.5,
+              child: Center(
+                child: Text(
+                  showClearFilters
+                      ? context.tr(AppStrings.noPatientsMatchThisFilter)
+                      : context.tr(AppStrings.noPatientsYet),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: HomeDashboardColors.subtitle(isDark),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          if (index < patients.length) {
+            final patient = patients[index];
+            return Padding(
+              padding: EdgeInsets.only(bottom: 12.h),
+              child: HomePatientCard(
+                isDark: isDark,
+                patient: patient,
+                onTap: () => onOpenPatient(patient),
+                onOutcomeTap: () => onOpenOutcome(patient),
+                onAddCommentTap: () => onOpenComments(patient),
+                onDoctorTap: () => onOpenDoctor(patient),
+              ),
+            );
+          }
+
+          return HomePatientsLoadMoreFooter(isDark: isDark);
         },
       ),
     );

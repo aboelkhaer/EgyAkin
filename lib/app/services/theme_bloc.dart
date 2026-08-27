@@ -1,3 +1,4 @@
+import 'package:egy_akin/app/services/native_theme_sync.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -68,11 +69,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       }
 
       emit(ThemeLoaded(themeMode: themeMode, isDarkMode: isDarkMode));
+      NativeThemeSync.sync(themeMode);
     } catch (e) {
       emit(ThemeLoaded(
         themeMode: ThemeMode.system,
         isDarkMode: _isSystemDarkMode(),
       ));
+      NativeThemeSync.sync(ThemeMode.system);
     }
   }
 
@@ -111,6 +114,7 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
 
     await _saveThemeToPrefs(themeMode);
     emit(ThemeLoaded(themeMode: themeMode, isDarkMode: isDarkMode));
+    NativeThemeSync.sync(themeMode);
   }
 
   bool _isSystemDarkMode() {

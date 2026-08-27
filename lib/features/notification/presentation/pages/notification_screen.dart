@@ -10,6 +10,7 @@ class NotificationScreen extends StatefulWidget {
   final String currentDoctorRole;
   final int currentDoctorPoints;
   final HomeModelResponse homeDataModel;
+  final bool isEmbeddedInHomeTab;
 
   const NotificationScreen({
     super.key,
@@ -19,6 +20,7 @@ class NotificationScreen extends StatefulWidget {
     required this.currentDoctorRole,
     required this.currentDoctorPoints,
     required this.homeDataModel,
+    this.isEmbeddedInHomeTab = false,
   });
 
   @override
@@ -135,6 +137,7 @@ class _NotificationScreenState extends State<NotificationScreen>
                         accent: accent,
                         ink: ink,
                         muted: muted,
+                        showBack: !widget.isEmbeddedInHomeTab,
                         onBack: () => Navigator.of(context).maybePop(),
                         unreadBadge: BlocBuilder<NotificationCubit,
                             NotificationState>(
@@ -209,7 +212,9 @@ class _NotificationScreenState extends State<NotificationScreen>
                           child: RefreshIndicator(
                             onRefresh: () async {
                               animateToTopOfScreen(cubit.scrollController!);
-                              await _cubit.getAllNotifications();
+                              await _cubit.getAllNotifications(
+                                showLoading: false,
+                              );
                             },
                             color: accent,
                             child: SingleChildScrollView(
@@ -246,6 +251,17 @@ class _NotificationScreenState extends State<NotificationScreen>
                                             const Duration(milliseconds: 380),
                                         switchInCurve: Curves.easeOutCubic,
                                         switchOutCurve: Curves.easeInCubic,
+                                        layoutBuilder: (currentChild,
+                                            previousChildren) {
+                                          return Stack(
+                                            alignment: Alignment.topCenter,
+                                            children: <Widget>[
+                                              ...previousChildren,
+                                              if (currentChild != null)
+                                                currentChild,
+                                            ],
+                                          );
+                                        },
                                         child: state.maybeWhen(
                                           orElse: () => NotificationLoadingShimmer(
                                             key: const ValueKey('loading'),
@@ -470,6 +486,7 @@ class _NotificationHeader extends StatelessWidget {
   final Color accent;
   final Color ink;
   final Color muted;
+  final bool showBack;
   final VoidCallback onBack;
   final Widget unreadBadge;
 
@@ -479,6 +496,7 @@ class _NotificationHeader extends StatelessWidget {
     required this.accent,
     required this.ink,
     required this.muted,
+    this.showBack = true,
     required this.onBack,
     required this.unreadBadge,
   });
@@ -514,14 +532,15 @@ class _NotificationHeader extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Material(
-                    color: isDark ? const Color(0xFF2A2733) : Colors.white,
-                    shape: const CircleBorder(),
-                    child: InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: onBack,
-                      child: Container(
-                        width: 36.w,
+                  if (showBack)
+                    Material(
+                      color: isDark ? const Color(0xFF2A2733) : Colors.white,
+                      shape: const CircleBorder(),
+                      child: InkWell(
+                        customBorder: const CircleBorder(),
+                        onTap: onBack,
+                        child: Container(
+                          width: 36.w,
                         height: 36.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -540,7 +559,7 @@ class _NotificationHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10.w),
+                  if (showBack) SizedBox(width: 10.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

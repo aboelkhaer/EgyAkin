@@ -266,12 +266,67 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     );
   }
 
-  Future<void> _scrollToNewlyAddedItem(String itemId) async {
-    // Wait for highlight/entrance widgets to mount with their GlobalKey.
+  Future<void> _revealNewlyAddedItem(
+    String itemId, {
+    double alignment = 0.1,
+  }) async {
+    if (!commentFocusNode.hasFocus) {
+      // Already unfocused (preferred).
+    } else {
+      commentFocusNode.unfocus();
+    }
+
+    // Artificial top pad causes a visible jump — clear it before scrolling.
+    if (replyAnchorTopPadding != 0) {
+      replyAnchorTopPadding = 0;
+      refreshScreen();
+    }
+
+    // Let keyboard dismiss + new item mount before measuring.
     await WidgetsBinding.instance.endOfFrame;
-    await Future<void>.delayed(const Duration(milliseconds: 80));
+    await Future<void>.delayed(const Duration(milliseconds: 90));
     if (isClosed) return;
-    await scrollItemAboveComposer(itemId);
+    await WidgetsBinding.instance.endOfFrame;
+    if (isClosed) return;
+
+    final ctx = keyForComment(itemId).currentContext;
+    if (ctx == null || !ctx.mounted) return;
+
+    try {
+      await Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+        alignment: alignment,
+        alignmentPolicy: ScrollPositionAlignmentPolicy.explicit,
+      );
+    } catch (_) {
+      // Ignore if the item unmounted mid-animation.
+    }
+  }
+
+  Future<void> _clearHighlightSoon() async {
+    await Future<void>.delayed(const Duration(milliseconds: 700));
+    if (isClosed) return;
+    emit(
+      state.maybeMap(
+        orElse: () => state,
+        loaded: (value) => ShowSingleFeedState.loaded(
+          value.commentsResponse,
+          value.changeCounter,
+          value.feed,
+          false,
+          false,
+          '',
+          null,
+          value.isDeleteCommentLoading,
+          value.isDeleteCommentLoaded,
+          value.isSendReplyLoading,
+          value.isSendReplyLoaded,
+          value.isSeeMore,
+        ),
+      ),
+    );
   }
 
   @override
@@ -978,7 +1033,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
     DoctorModel currentDoctorModel,
   ) async {
     commentContent.clear();
-    replyAnchorTopPadding = 0;
+    commentFocusNode.unfocus();
 
     final baseFeed = state.maybeWhen(
       loaded: (_, __, stateFeed, ___, ____, _____, ______, _______, ________,
@@ -1092,28 +1147,9 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           ),
         );
 
-        await _scrollToNewlyAddedItem(r.data!.id.toString());
-
-        await Future.delayed(const Duration(milliseconds: 1200));
-        emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => ShowSingleFeedState.loaded(
-              value.commentsResponse,
-              value.changeCounter,
-              value.feed,
-              false,
-              false,
-              '',
-              null,
-              value.isDeleteCommentLoading,
-              value.isDeleteCommentLoaded,
-              value.isSendReplyLoading,
-              value.isSendReplyLoaded,
-              value.isSeeMore,
-            ),
-          ),
-        );
+        // Soft reveal near the top — no reply-padding jump.
+        await _revealNewlyAddedItem(r.data!.id.toString(), alignment: 0.06);
+        await _clearHighlightSoon();
       },
     );
   }
@@ -1325,8 +1361,8 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
   }) async {
     final replyText = (commentText ?? commentContent.text).trim();
     commentContent.clear();
-    commentToReply = null;
-    replyAnchorTopPadding = 0;
+    commentFocusNode.unfocus();
+    // Keep reply chip until success so composer height doesn't jump mid-send.
 
     // Start the loading state for sending a reply
     emit(
@@ -1437,14 +1473,7 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           ),
         );
 
-        // Animate the new reply into the list
-        if (listKeyForReplies[parentComment.id]?.currentState != null) {
-          final replyIndex = updatedParentComment.replies?.length ?? 0;
-          listKeyForReplies[parentComment.id]!.currentState!.insertItem(
-                replyIndex - 1,
-                duration: const Duration(milliseconds: 300),
-              );
-        }
+        commentToReply = null;
 
         emit(
           ShowSingleFeedState.loaded(
@@ -1463,30 +1492,11 @@ class ShowSingleFeedCubit extends Cubit<ShowSingleFeedState> {
           ),
         );
 
-        await _scrollToNewlyAddedItem(success.data!.id.toString());
-
-        await Future.delayed(const Duration(milliseconds: 1200));
-
-        // Remove highlight after delay
-        emit(
-          ShowSingleFeedState.loaded(
-            updatedCommentsResponse,
-            changeCounter + 2, // Increment again to trigger rebuild
-            updatedFeed,
-            false,
-            false,
-            '',
-            null, // Remove highlight
-            currentState.isDeleteCommentLoading,
-            currentState.isDeleteCommentLoaded,
-            false,
-            true,
-            currentState.isSeeMore,
-          ),
+        await _revealNewlyAddedItem(
+          success.data!.id.toString(),
+          alignment: 0.35,
         );
-
-        commentToReply = null;
-        replyAnchorTopPadding = 0;
+        await _clearHighlightSoon();
         commentContent.clear();
       },
     );

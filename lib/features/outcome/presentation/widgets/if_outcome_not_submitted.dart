@@ -6,6 +6,7 @@ import 'package:egy_akin/app/shared/functions/is_date.dart';
 import 'package:egy_akin/app/shared/functions/multiple_question_has_displayable_answer.dart';
 import 'package:egy_akin/app/shared/functions/select_question_has_displayable_answer.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/outcome/presentation/widgets/outcome_loading_shimmer.dart';
 import 'package:egy_akin/features/outcome/presentation/widgets/submit_button.dart';
 import 'package:egy_akin/features/patient_section_details/presentation/utils/patient_section_multiple_answer_utils.dart';
 import 'package:flutter/rendering.dart';
@@ -291,12 +292,13 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                     builder: (context, state) {
                       return state.maybeWhen(
                         orElse: () {
-                          return const Expanded(
-                            child: SingleChildScrollView(
-                              child: ShimmerLoadingPatientsCards(
-                                ishorizontal: false,
-                              ),
-                            ),
+                          return Expanded(
+                            child: OutcomeLoadingShimmer(isDark: isDarkMode),
+                          );
+                        },
+                        loading: () {
+                          return Expanded(
+                            child: OutcomeLoadingShimmer(isDark: isDarkMode),
                           );
                         },
                         loaded: (
@@ -308,15 +310,8 @@ class _IfOutcomeNotSubmittedState extends State<IfOutcomeNotSubmitted> {
                           submitterModel,
                         ) {
                           List<QuestionModel> questions = response;
-                          if (isSubmitedOutcomeLoading) {
-                            return const Expanded(
-                              child: SingleChildScrollView(
-                                child: ShimmerLoadingPatientsCards(
-                                  ishorizontal: false,
-                                ),
-                              ),
-                            );
-                          }
+                          // Keep the form visible while submitting — the
+                          // footer button already shows a loading state.
 
                           return Expanded(
                             child: Theme(

@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
 
 import '../../../../exports.dart';
 
@@ -46,7 +47,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
   void initState() {
     super.initState();
     _cubit = context.read<ShowSingleFeedCubit>();
-    _currentFeed = widget.feed;
+    _currentFeed = widget.isComeFromNotification ? null : widget.feed;
     _cubit.showPostFrom = widget.showPostFrom;
     log(_cubit.showPostFrom);
 
@@ -120,6 +121,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
       final newFeed =
           await _cubit.getPostByIdWhenComeFromNotification(widget.feedId!);
       if (!mounted) return;
+      if (newFeed.id == null) return;
       setState(() => _currentFeed = newFeed);
       if (_currentFeed != null) {
         _cubit.getCommentsInCommunity(
@@ -206,62 +208,17 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
         );
         break;
       case 'Delete':
-        _showDeleteDialog(feed, isDark);
+        _showDeleteDialog(feed);
         break;
     }
   }
 
-  void _showDeleteDialog(PostCommunityModel feed, bool isDark) {
-    showDialog(
+  void _showDeleteDialog(PostCommunityModel feed) {
+    showDeleteFeedPostDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: HomeDashboardColors.cardBg(isDark),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          title: Text(
-            context.tr(AppStrings.deletePost),
-            style: TextStyle(
-              color: HomeDashboardColors.title(isDark),
-              fontWeight: FontWeight.w800,
-              fontSize: 16.sp,
-            ),
-          ),
-          content: Text(
-            context.tr(AppStrings.areYouSureYouWantToDeleteThisPost),
-            style: TextStyle(
-              color: HomeDashboardColors.subtitle(isDark),
-              fontSize: 13.sp,
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                context.tr(AppStrings.cancel),
-                style: TextStyle(
-                  color: HomeDashboardColors.subtitle(isDark),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                sl<CommunityCubit>().deletePost(feed.id.toString());
-                Navigator.pop(context);
-                navigatorKey.currentState?.pop();
-              },
-              child: Text(
-                context.tr(AppStrings.delete),
-                style: const TextStyle(
-                  color: Colors.red,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        );
+      onConfirm: () {
+        sl<CommunityCubit>().deletePost(feed.id.toString());
+        navigatorKey.currentState?.pop();
       },
     );
   }
@@ -365,6 +322,7 @@ class _ShowSingleFeedScreenState extends State<ShowSingleFeedScreen>
                 ),
                 if (widget.isComeFromNotification)
                   BlocBuilder<ShowSingleFeedCubit, ShowSingleFeedState>(
+                    bloc: _cubit,
                     builder: (context, state) {
                       // Once the post is resolved, keep the feed UI mounted so
                       // comment loading doesn't flash a full-screen spinner.

@@ -40,7 +40,8 @@ class NotificationServices {
       debugPrint('fcmToken: $token');
       return token;
     } catch (e) {
-      debugPrint(e.toString());
+      // Common on iOS Simulator (no APNs) — not a real app failure.
+      debugPrint('FCM token unavailable: $e');
     }
     return 'No fcmToken';
   }

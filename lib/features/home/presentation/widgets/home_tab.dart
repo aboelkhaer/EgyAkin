@@ -2,6 +2,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:egy_akin/features/home/data/models/home_dashboard_fake_data.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_consultations_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_email_verification_banner.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_syndicate_card_banner.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_network_insights_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_outcomes_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_patients_section.dart';
@@ -27,11 +29,26 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   late final HomeCubit homeCubit;
+  bool _pinScrollAfterLoad = false;
+
+  void _pinHomeScrollToTop() {
+    void jump() {
+      if (!mounted) return;
+      widget.cubit.resetHomeTabScrollToTop();
+    }
+
+    jump();
+    WidgetsBinding.instance.addPostFrameCallback((_) => jump());
+  }
 
   @override
   void initState() {
     super.initState();
     homeCubit = context.read<HomeCubit>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _pinHomeScrollToTop();
+    });
   }
 
   @override
@@ -70,7 +87,29 @@ class _HomeTabState extends State<HomeTab> {
             listener: (context, state) {
               state.maybeWhen(
                 orElse: () {},
+                loading: (_) {
+                  _pinScrollAfterLoad = true;
+                  _pinHomeScrollToTop();
+                },
+                loaded: (
+                  _,
+                  __,
+                  ___,
+                  ____,
+                  _____,
+                  ______,
+                  _______,
+                  ________,
+                  _________,
+                  __________,
+                ) {
+                  if (_pinScrollAfterLoad) {
+                    _pinScrollAfterLoad = false;
+                    _pinHomeScrollToTop();
+                  }
+                },
                 error: (message) {
+                  _pinScrollAfterLoad = false;
                   customSnackBar(message: message, context: context);
 
                   if (message == 'Unauthenticated.') {
@@ -89,366 +128,401 @@ class _HomeTabState extends State<HomeTab> {
                 loading: (_) => true,
                 orElse: () => false,
               );
+              // Keep the previous dashboard mounted (invisible) while the
+              // skeleton shows so scroll extent does not jump mid-page.
+              final hasCachedDashboard =
+                  widget.cubit.homeDataModel.data != null;
+
+              final homeData = state.maybeWhen(
+                loaded: (data, _, __, ___, ____, _____, ______, _______,
+                        ________, _________) =>
+                    data,
+                orElse: () => widget.cubit.homeDataModel,
+              );
+              final currentDoctor = state.maybeWhen(
+                loaded: (_, doctor, __, ___, ____, _____, ______, _______,
+                        ________, _________) =>
+                    doctor,
+                orElse: () => widget.cubit.currentDoctorModel,
+              );
+
+              final dashboard = Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w) +
+                      EdgeInsets.only(top: 6.h, bottom: 16.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      HomeSearchField(
+                        isDark: isDarkMode,
+                        onTap: () {
+                          _openSearch(
+                            currentDoctorModel: currentDoctor,
+                            homeData: homeData,
+                          );
+                        },
+                      ),
+                      SizedBox(height: 12.h),
+                      Builder(
+                        builder: (context) {
+                          final emailVerified = isDoctorEmailVerified(
+                            doctor: currentDoctor,
+                            homeData: homeData,
+                          );
+                          final bannerDismissed =
+                              homeCubit.isExistVerificationBanner ==
+                                  true;
+
+                          if (!emailVerified && !bannerDismissed) {
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: HomeEmailVerificationBanner(
+                                isDark: isDarkMode,
+                                currentDoctorModel: currentDoctor,
+                                onDismiss: () {
+                                  homeCubit.setVerifyBanner();
+                                },
+                                onVerify: () {
+                                  navigatorKey.currentState?.pushNamed(
+                                    AppRoutes.emailVerification,
+                                    arguments: AppRoutesArgs
+                                        .emailVerificationRouteArgs(
+                                      currentDoctorModel:
+                                          currentDoctor,
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+
+                          final showSyndicate =
+                              needsSyndicateCardVerification(
+                            doctor: currentDoctor,
+                            homeData: homeData,
+                          );
+                          if (!showSyndicate) {
+                            return const SizedBox.shrink();
+                          }
+
+                          final isUploadingSyndicate =
+                              state.maybeWhen(
+                            loaded: (_, __, ___, ____, uploading, _____,
+                                    ______, _______, ________,
+                                    _________) =>
+                                uploading,
+                            orElse: () => false,
+                          );
+
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: HomeSyndicateCardBanner(
+                              isDark: isDarkMode,
+                              isPending:
+                                  isSyndicateCardPending(homeData),
+                              isUploading: isUploadingSyndicate,
+                              onDismiss: null,
+                              onUpload: () {
+                                homeCubit.uploadSyndicateCard();
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                      HomeStatsSection(
+                        isDark: isDarkMode,
+                        stats: HomeDashboardFakeData.stats,
+                      ),
+                      SizedBox(height: 10.h),
+                      Builder(
+                        builder: (context) {
+                          final currentPatients =
+                              homeData.data?.currentPatients ??
+                                  const <PatientHomeDataModel>[];
+                          final drafts = currentPatients
+                              .where(
+                                (patient) =>
+                                    patient.sections?.submitStatus !=
+                                    true,
+                              )
+                              .toList();
+                          final draftCount = int.tryParse(
+                                homeData.draftCount ?? '',
+                              ) ??
+                              0;
+                          final showDrafts = drafts.isNotEmpty;
+                          final outcomes =
+                              homeData.data?.pendingOutcomes ??
+                                  const <PatientHomeDataModel>[];
+                          final outcomeCount = int.tryParse(
+                                homeData.pendingOutcomeCount ?? '',
+                              ) ??
+                              0;
+                          final showOutcomes =
+                              outcomes.isNotEmpty || outcomeCount > 0;
+
+                          return Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.stretch,
+                            children: [
+                              DoctorsActivation(isDark: isDarkMode),
+                              if (showDrafts) ...[
+                                SizedBox(height: 12.h),
+                                HomeResumeDraftsSection(
+                                  isDark: isDarkMode,
+                                  drafts: drafts,
+                                  draftCount: draftCount > 0
+                                      ? draftCount
+                                      : drafts.length,
+                                  onResume: (patient) {
+                                    navigatorKey.currentState
+                                        ?.pushNamed(
+                                      AppRoutes.patientSections,
+                                      arguments: AppRoutesArgs
+                                          .patientSectionsRouteArguments(
+                                        patientId:
+                                            patient.id.toString(),
+                                        currentDoctorModel:
+                                            currentDoctor,
+                                        currentDoctorPoints:
+                                            int.tryParse(
+                                                  homeData.scoreValue ??
+                                                      '0',
+                                                ) ??
+                                                0,
+                                        currentDoctorRole:
+                                            homeData.role.toString(),
+                                        homeDataModel: homeData,
+                                        isAllDataOpen: false,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                              if (showOutcomes) ...[
+                                SizedBox(height: 14.h),
+                                HomeOutcomesSection(
+                                  isDark: isDarkMode,
+                                  outcomes: outcomes,
+                                  badgeCount: outcomeCount,
+                                  onViewAll: () {
+                                    widget.cubit
+                                        .openMyPatientsWithoutOutcome();
+                                  },
+                                  onAddOutcome: (patient) {
+                                    final patientId =
+                                        patient.id?.toString();
+                                    if (patientId == null ||
+                                        patientId.isEmpty) {
+                                      return;
+                                    }
+                                    navigatorKey.currentState
+                                        ?.pushNamed(
+                                      AppRoutes.outcome,
+                                      arguments: AppRoutesArgs
+                                          .outcomeRouteArgs(
+                                        verified:
+                                            homeData.verified ?? false,
+                                        outcomeStatus: false,
+                                        patientName:
+                                            patient.name?.toString() ??
+                                                '',
+                                        patientId: patientId,
+                                        currentDoctorModel:
+                                            currentDoctor,
+                                        doctorId: patient.doctor?.id
+                                                ?.toString() ??
+                                            currentDoctor.id
+                                                .toString(),
+                                        isSyndicateCardRequired:
+                                            homeData
+                                                    .isSyndicateCardRequired ??
+                                                '',
+                                        homeDataModel: homeData,
+                                        currentDoctorPoints:
+                                            int.tryParse(
+                                                  homeData.scoreValue ??
+                                                      '0',
+                                                ) ??
+                                                0,
+                                        currentDoctorRole:
+                                            homeData.role.toString(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ],
+                          );
+                        },
+                      ),
+                      HomeConsultationsSection(
+                        isDark: isDarkMode,
+                        currentDoctorModel: currentDoctor,
+                        homeDataModel: homeData,
+                        reloadToken: state.maybeWhen(
+                          loaded: (_, __, ___, ____, _____, ______, _______,
+                                  ________, _________, changesCounter) =>
+                              changesCounter,
+                          orElse: () => 0,
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                      HomePatientsSection(
+                        isDark: isDarkMode,
+                        myPatients:
+                            homeData.data?.currentPatients ?? const [],
+                        allPatients:
+                            homeData.data?.allPatients ?? const [],
+                        onSeeAll: () {
+                          widget.cubit.jumpToPatientsTab();
+                        },
+                        onPatientTap:
+                            (patient, {required isAllDataOpen}) {
+                          final patientId = patient.id?.toString();
+                          if (patientId == null || patientId.isEmpty) {
+                            return;
+                          }
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.patientSections,
+                            arguments: AppRoutesArgs
+                                .patientSectionsRouteArguments(
+                              patientId: patientId,
+                              currentDoctorModel: currentDoctor,
+                              currentDoctorPoints: int.tryParse(
+                                    homeData.scoreValue ?? '0',
+                                  ) ??
+                                  0,
+                              currentDoctorRole:
+                                  homeData.role.toString(),
+                              homeDataModel: homeData,
+                              isAllDataOpen: isAllDataOpen,
+                            ),
+                          );
+                        },
+                        onOutcomeTap:
+                            (patient, {required isAllDataOpen}) {
+                          final patientId = patient.id?.toString();
+                          if (patientId == null || patientId.isEmpty) {
+                            return;
+                          }
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.outcome,
+                            arguments: AppRoutesArgs.outcomeRouteArgs(
+                              verified: homeData.verified ?? false,
+                              outcomeStatus: patient
+                                      .sections?.outcomeStatus ??
+                                  false,
+                              patientName:
+                                  patient.name?.toString() ?? '',
+                              patientId: patientId,
+                              currentDoctorModel: currentDoctor,
+                              doctorId: patient.doctor?.id
+                                      ?.toString() ??
+                                  currentDoctor.id.toString(),
+                              isSyndicateCardRequired: homeData
+                                      .isSyndicateCardRequired ??
+                                  '',
+                              homeDataModel: homeData,
+                              currentDoctorPoints: int.tryParse(
+                                    homeData.scoreValue ?? '0',
+                                  ) ??
+                                  0,
+                              currentDoctorRole:
+                                  homeData.role.toString(),
+                            ),
+                          );
+                        },
+                        onAddCommentTap:
+                            (patient, {required isAllDataOpen}) {
+                          final patientId = patient.id?.toString();
+                          if (patientId == null || patientId.isEmpty) {
+                            return;
+                          }
+                          navigatorKey.currentState?.pushNamed(
+                            AppRoutes.comments,
+                            arguments: AppRoutesArgs
+                                .patientCommentsRouteArgs(
+                              patientId: patientId,
+                              currentDoctorModel: currentDoctor,
+                              verified: homeData.verified ?? false,
+                              patientName:
+                                  patient.name?.toString() ?? '',
+                              currentDoctorPoints: int.tryParse(
+                                    homeData.scoreValue ?? '0',
+                                  ) ??
+                                  0,
+                              homeDataModel: homeData,
+                              isSyndicateCardRequired: homeData
+                                      .isSyndicateCardRequired ??
+                                  '',
+                              currentDoctorRole:
+                                  homeData.role.toString(),
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 8.h),
+                      HomeToolsSection(
+                        isDark: isDarkMode,
+                        tools: HomeDashboardFakeData.tools,
+                        currentDoctorModel: currentDoctor,
+                        homeDataModel: homeData,
+                      ),
+                      if (homeData.data?.weekRecap != null) ...[
+                        SizedBox(height: 14.h),
+                        HomeWeekSummarySection(
+                          isDark: isDarkMode,
+                          summary: homeData.data!.weekRecap!,
+                        ),
+                      ],
+                      if ((homeData.data?.researchInsights ??
+                              homeData.researchInsights) !=
+                          null) ...[
+                        SizedBox(height: 14.h),
+                        HomeNetworkInsightsSection(
+                          isDark: isDarkMode,
+                          insights: homeData.data?.researchInsights ??
+                              homeData.researchInsights!,
+                        ),
+                      ],
+                    ],
+                  ),
+                )
+;
 
               return RefreshIndicator(
                 color: primary,
                 displacement: 40,
                 onRefresh: () async {
-                  final scroll = widget.cubit.homeTabScrollController;
-                  if (scroll.hasClients) {
-                    scroll.jumpTo(0);
-                  }
-
+                  _pinHomeScrollToTop();
                   if (widget.cubit.isUnreadNotification) {
                     context.read<NotificationCubit>().getAllNotifications();
                   }
                   await widget.cubit.getHome(showLoading: true);
-
-                  // Content height changes after reload; pin back to top.
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    if (!mounted) return;
-                    final c = widget.cubit.homeTabScrollController;
-                    if (c.hasClients && c.offset != 0) {
-                      c.jumpTo(0);
-                    }
-                  });
                 },
                 child: SingleChildScrollView(
-                  key: const PageStorageKey('home_tab_scroll'),
+                  key: ValueKey(
+                    'home_tab_scroll_${widget.cubit.homeScrollEpoch}',
+                  ),
                   controller: widget.cubit.homeTabScrollController,
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
                   ),
-                  child: showLoadingSkeleton
-                      ? HomeTabLoading(isDark: isDarkMode)
-                      : Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w) +
-                              EdgeInsets.only(top: 6.h, bottom: 16.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              HomeSearchField(
-                                isDark: isDarkMode,
-                                onTap: () {
-                                  state.maybeWhen(
-                                    loaded: (
-                                      homeData,
-                                      currentDoctorModel,
-                                      _,
-                                      __,
-                                      ___,
-                                      ____,
-                                      _____,
-                                      ______,
-                                      _______,
-                                      ________,
-                                    ) {
-                                      _openSearch(
-                                        currentDoctorModel: currentDoctorModel,
-                                        homeData: homeData,
-                                      );
-                                    },
-                                    orElse: () {},
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 12.h),
-                              HomeStatsSection(
-                                isDark: isDarkMode,
-                                stats: HomeDashboardFakeData.stats,
-                              ),
-                              SizedBox(height: 10.h),
-                              HomeUpdatedLabel(
-                                isDark: isDarkMode,
-                                label: context.tr(AppStrings.updatedJustNow),
-                              ),
-                              Builder(
-                                builder: (context) {
-                                  final homeData = widget.cubit.homeDataModel;
-                                  final currentPatients =
-                                      homeData.data?.currentPatients ??
-                                          const <PatientHomeDataModel>[];
-                                  final drafts = currentPatients
-                                      .where(
-                                        (patient) =>
-                                            patient.sections?.submitStatus !=
-                                            true,
-                                      )
-                                      .toList();
-                                  final draftCount = int.tryParse(
-                                        homeData.draftCount ?? '',
-                                      ) ??
-                                      0;
-                                  final showDrafts = drafts.isNotEmpty;
-                                  final outcomes =
-                                      homeData.data?.pendingOutcomes ??
-                                          const <PatientHomeDataModel>[];
-                                  final outcomeCount = int.tryParse(
-                                        homeData.pendingOutcomeCount ?? '',
-                                      ) ??
-                                      0;
-                                  final showOutcomes =
-                                      outcomes.isNotEmpty || outcomeCount > 0;
-
-                                  return Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (showDrafts) ...[
-                                        SizedBox(height: 12.h),
-                                        HomeResumeDraftsSection(
-                                          isDark: isDarkMode,
-                                          drafts: drafts,
-                                          draftCount: draftCount > 0
-                                              ? draftCount
-                                              : drafts.length,
-                                          onResume: (patient) {
-                                            navigatorKey.currentState
-                                                ?.pushNamed(
-                                              AppRoutes.patientSections,
-                                              arguments: AppRoutesArgs
-                                                  .patientSectionsRouteArguments(
-                                                patientId:
-                                                    patient.id.toString(),
-                                                currentDoctorModel: widget
-                                                    .cubit.currentDoctorModel,
-                                                currentDoctorPoints:
-                                                    int.tryParse(
-                                                          homeData.scoreValue ??
-                                                              '0',
-                                                        ) ??
-                                                        0,
-                                                currentDoctorRole:
-                                                    homeData.role.toString(),
-                                                homeDataModel: homeData,
-                                                isAllDataOpen: false,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                      if (showOutcomes) ...[
-                                        SizedBox(height: 14.h),
-                                        HomeOutcomesSection(
-                                          isDark: isDarkMode,
-                                          outcomes: outcomes,
-                                          badgeCount: outcomeCount,
-                                          onViewAll: () {
-                                            widget.cubit
-                                                .openMyPatientsWithoutOutcome();
-                                          },
-                                          onAddOutcome: (patient) {
-                                            final patientId =
-                                                patient.id?.toString();
-                                            if (patientId == null ||
-                                                patientId.isEmpty) {
-                                              return;
-                                            }
-                                            navigatorKey.currentState
-                                                ?.pushNamed(
-                                              AppRoutes.outcome,
-                                              arguments: AppRoutesArgs
-                                                  .outcomeRouteArgs(
-                                                verified:
-                                                    homeData.verified ?? false,
-                                                // Pending outcomes → fill form.
-                                                outcomeStatus: false,
-                                                patientName:
-                                                    patient.name?.toString() ??
-                                                        '',
-                                                patientId: patientId,
-                                                currentDoctorModel: widget
-                                                    .cubit.currentDoctorModel,
-                                                doctorId: patient.doctor?.id
-                                                        ?.toString() ??
-                                                    widget.cubit
-                                                        .currentDoctorModel.id
-                                                        .toString(),
-                                                isSyndicateCardRequired:
-                                                    homeData
-                                                            .isSyndicateCardRequired ??
-                                                        '',
-                                                homeDataModel: homeData,
-                                                currentDoctorPoints:
-                                                    int.tryParse(
-                                                          homeData.scoreValue ??
-                                                              '0',
-                                                        ) ??
-                                                        0,
-                                                currentDoctorRole:
-                                                    homeData.role.toString(),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                      SizedBox(height: 14.h),
-                                    ],
-                                  );
-                                },
-                              ),
-                              HomeConsultationsSection(
-                                isDark: isDarkMode,
-                                consultations:
-                                    HomeDashboardFakeData.consultations,
-                              ),
-                              SizedBox(height: 8.h),
-                              HomePatientsSection(
-                                isDark: isDarkMode,
-                                myPatients: widget.cubit.homeDataModel.data
-                                        ?.currentPatients ??
-                                    const [],
-                                allPatients: widget.cubit.homeDataModel.data
-                                        ?.allPatients ??
-                                    const [],
-                                myPatientsCount: int.tryParse(
-                                      widget.cubit.homeDataModel
-                                              .doctorPatientCount ??
-                                          '',
-                                    ) ??
-                                    (widget.cubit.homeDataModel.data
-                                            ?.currentPatients?.length ??
-                                        0),
-                                allPatientsCount: int.tryParse(
-                                      widget
-                                              .cubit
-                                              .homeDataModel
-                                              .allPatientCount ??
-                                          '',
-                                    ) ??
-                                    (widget.cubit.homeDataModel.data
-                                            ?.allPatients?.length ??
-                                        0),
-                                onSeeAll: () {
-                                  widget.cubit.tabsController.jumpToTab(1);
-                                  widget.cubit.hideHomeHeader(1);
-                                },
-                                onPatientTap:
-                                    (patient, {required isAllDataOpen}) {
-                                  final homeData = widget.cubit.homeDataModel;
-                                  final patientId = patient.id?.toString();
-                                  if (patientId == null || patientId.isEmpty) {
-                                    return;
-                                  }
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.patientSections,
-                                    arguments: AppRoutesArgs
-                                        .patientSectionsRouteArguments(
-                                      patientId: patientId,
-                                      currentDoctorModel:
-                                          widget.cubit.currentDoctorModel,
-                                      currentDoctorPoints: int.tryParse(
-                                            homeData.scoreValue ?? '0',
-                                          ) ??
-                                          0,
-                                      currentDoctorRole:
-                                          homeData.role.toString(),
-                                      homeDataModel: homeData,
-                                      isAllDataOpen: isAllDataOpen,
-                                    ),
-                                  );
-                                },
-                                onOutcomeTap:
-                                    (patient, {required isAllDataOpen}) {
-                                  final homeData = widget.cubit.homeDataModel;
-                                  final patientId = patient.id?.toString();
-                                  if (patientId == null || patientId.isEmpty) {
-                                    return;
-                                  }
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.outcome,
-                                    arguments: AppRoutesArgs.outcomeRouteArgs(
-                                      verified: homeData.verified ?? false,
-                                      outcomeStatus: patient
-                                              .sections?.outcomeStatus ??
-                                          false,
-                                      patientName:
-                                          patient.name?.toString() ?? '',
-                                      patientId: patientId,
-                                      currentDoctorModel:
-                                          widget.cubit.currentDoctorModel,
-                                      doctorId: patient.doctor?.id
-                                              ?.toString() ??
-                                          widget.cubit.currentDoctorModel.id
-                                              .toString(),
-                                      isSyndicateCardRequired: homeData
-                                              .isSyndicateCardRequired ??
-                                          '',
-                                      homeDataModel: homeData,
-                                      currentDoctorPoints: int.tryParse(
-                                            homeData.scoreValue ?? '0',
-                                          ) ??
-                                          0,
-                                      currentDoctorRole:
-                                          homeData.role.toString(),
-                                    ),
-                                  );
-                                },
-                                onAddCommentTap:
-                                    (patient, {required isAllDataOpen}) {
-                                  final homeData = widget.cubit.homeDataModel;
-                                  final patientId = patient.id?.toString();
-                                  if (patientId == null || patientId.isEmpty) {
-                                    return;
-                                  }
-                                  navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.comments,
-                                    arguments: AppRoutesArgs
-                                        .patientCommentsRouteArgs(
-                                      patientId: patientId,
-                                      currentDoctorModel:
-                                          widget.cubit.currentDoctorModel,
-                                      verified: homeData.verified ?? false,
-                                      patientName:
-                                          patient.name?.toString() ?? '',
-                                      currentDoctorPoints: int.tryParse(
-                                            homeData.scoreValue ?? '0',
-                                          ) ??
-                                          0,
-                                      homeDataModel: homeData,
-                                      isSyndicateCardRequired: homeData
-                                              .isSyndicateCardRequired ??
-                                          '',
-                                      currentDoctorRole:
-                                          homeData.role.toString(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              SizedBox(height: 8.h),
-                              HomeToolsSection(
-                                isDark: isDarkMode,
-                                tools: HomeDashboardFakeData.tools,
-                                currentDoctorModel:
-                                    widget.cubit.currentDoctorModel,
-                                homeDataModel: widget.cubit.homeDataModel,
-                              ),
-                              if (widget.cubit.homeDataModel.data?.weekRecap !=
-                                  null) ...[
-                                SizedBox(height: 14.h),
-                                HomeWeekSummarySection(
-                                  isDark: isDarkMode,
-                                  summary: widget
-                                      .cubit.homeDataModel.data!.weekRecap!,
-                                ),
-                              ],
-                              if ((widget.cubit.homeDataModel.data
-                                          ?.researchInsights ??
-                                      widget.cubit.homeDataModel
-                                          .researchInsights) !=
-                                  null) ...[
-                                SizedBox(height: 14.h),
-                                HomeNetworkInsightsSection(
-                                  isDark: isDarkMode,
-                                  insights: widget.cubit.homeDataModel.data
-                                          ?.researchInsights ??
-                                      widget.cubit.homeDataModel
-                                          .researchInsights!,
-                                ),
-                              ],
-                            ],
+                  child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      if (!showLoadingSkeleton || hasCachedDashboard)
+                        Opacity(
+                          opacity: showLoadingSkeleton ? 0 : 1,
+                          child: IgnorePointer(
+                            ignoring: showLoadingSkeleton,
+                            child: dashboard,
                           ),
                         ),
+                      if (showLoadingSkeleton)
+                        HomeTabLoading(isDark: isDarkMode),
+                    ],
+                  ),
                 ),
               );
             },

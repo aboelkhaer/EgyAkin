@@ -15,7 +15,7 @@ Future<void> showDeleteFeedCommentDialog({
   return showGeneralDialog<void>(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Dismiss',
+    barrierLabel: context.tr(AppStrings.dismiss),
     barrierColor: Colors.black.withOpacity(0.55),
     transitionDuration: const Duration(milliseconds: 260),
     pageBuilder: (context, animation, secondaryAnimation) {
@@ -62,9 +62,11 @@ class _DeleteFeedCommentDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const danger = HomeDashboardColors.danger;
-    final title = isReply ? 'Delete reply?' : 'Delete comment?';
+    final title = context.tr(
+      isReply ? AppStrings.deleteReplyQuestion : AppStrings.deleteCommentQuestion,
+    );
     final description = isReply
-        ? 'This reply will be permanently removed from the thread.'
+        ? context.tr(AppStrings.thisReplyWillBePermanentlyRemoved)
         : context.tr(AppStrings.areYouSureToDeleteComment);
 
     return Material(
@@ -203,7 +205,7 @@ class _DeleteFeedCommentDialog extends StatelessWidget {
                           SizedBox(width: 8.w),
                           Expanded(
                             child: Text(
-                              'This action cannot be undone',
+                              context.tr(AppStrings.thisActionCannotBeUndone),
                               style: TextStyle(
                                 fontSize: 11.sp,
                                 fontWeight: FontWeight.w700,

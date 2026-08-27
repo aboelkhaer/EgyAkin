@@ -2,6 +2,7 @@ import 'package:egy_akin/features/chat_room/presentation/cubit/chat_room_cubit.d
 import 'package:egy_akin/features/chat_room/presentation/pages/chat_room_screen.dart';
 import 'package:egy_akin/features/marked_patients/presentation/cubit/marked_patients_cubit.dart';
 import 'package:egy_akin/features/marked_patients/presentation/pages/marked_patients_screen.dart';
+import 'package:flutter/cupertino.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
@@ -153,11 +154,11 @@ class RouteGenerator {
               providers: [
                 // BlocProvider<HomeCubit>(
                 //     create: (context) => di.sl<HomeCubit>()..getHome()),
-                BlocProvider.value(value: di.sl<HomeCubit>()),
+                BlocProvider.value(value: di.resolveHomeCubit()),
 
                 BlocProvider<NotificationCubit>(
                   create: (context) =>
-                      di.sl<NotificationCubit>()..getAllNotifications(),
+                      di.sl<NotificationCubit>()..ensureNotificationsLoaded(),
                 ),
                 BlocProvider<ProfileCubit>(
                   create: (context) => di.sl<ProfileCubit>(),
@@ -506,9 +507,7 @@ class RouteGenerator {
               BlocProvider<ProfileCubit>(
                 create: (context) => di.sl<ProfileCubit>(),
               ),
-              BlocProvider<HomeCubit>(
-                create: (context) => di.sl<HomeCubit>(),
-              ),
+              BlocProvider.value(value: di.resolveHomeCubit()),
             ],
             child: const DoctorProfileViewScreen(),
           ),
@@ -534,8 +533,7 @@ class RouteGenerator {
                 providers: [
                   BlocProvider<DoctorInfoViewCubit>(
                       create: (context) => di.sl<DoctorInfoViewCubit>()),
-                  BlocProvider<HomeCubit>(
-                      create: (context) => di.sl<HomeCubit>()),
+                  BlocProvider.value(value: di.resolveHomeCubit()),
                 ],
                 child: DoctorInfoViewScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -609,8 +607,16 @@ class RouteGenerator {
               args.containsKey('currentDoctorPoints') &&
               args.containsKey('homeDataModel')) {
             return MaterialPageRoute(
-              builder: (_) => BlocProvider<ProfilePatientsCubit>(
-                create: (context) => di.sl<ProfilePatientsCubit>(),
+              builder: (_) => MultiBlocProvider(
+                providers: [
+                  BlocProvider<ProfilePatientsCubit>(
+                    create: (context) => di.sl<ProfilePatientsCubit>(),
+                  ),
+                  BlocProvider<MarkedPatientsCubit>(
+                    create: (context) => di.sl<MarkedPatientsCubit>(),
+                  ),
+                  BlocProvider.value(value: di.resolveHomeCubit()),
+                ],
                 child: ProfilePatientsScreen(
                   doctorId: args['doctorId'] as String,
                   accountVerification: args['accountVerification'] as bool,
@@ -621,6 +627,8 @@ class RouteGenerator {
                   currentDoctorRole: args['currentDoctorRole'] as String,
                   currentDoctorPoints: args['currentDoctorPoints'] as int,
                   homeDataModel: args['homeDataModel'] as HomeModelResponse,
+                  initialShowMarked:
+                      args['initialShowMarked'] as bool? ?? false,
                 ),
               ),
             );
@@ -692,7 +700,7 @@ class RouteGenerator {
                     create: (context) =>
                         di.sl<NotificationCubit>()..getAllNotifications(),
                   ),
-                  BlocProvider.value(value: di.sl<HomeCubit>()),
+                  BlocProvider.value(value: di.resolveHomeCubit()),
                 ],
                 child: NotificationScreen(
                   currentDoctorModel: args['currentDoctorModel'] as DoctorModel,
@@ -805,15 +813,13 @@ class RouteGenerator {
               settings.arguments as Map<String, dynamic>;
           if (args.containsKey('currentDoctorModel') &&
               args.containsKey('homeDataModel')) {
-            return PageRouteBuilder(
+            return CupertinoPageRoute(
               settings: settings,
-              transitionDuration: const Duration(milliseconds: 380),
-              reverseTransitionDuration: const Duration(milliseconds: 280),
-              pageBuilder: (context, animation, secondaryAnimation) {
+              builder: (context) {
                 return MultiBlocProvider(
                   providers: [
-                    BlocProvider.value(
-                      value: di.sl<ShowSingleFeedCubit>(),
+                    BlocProvider<ShowSingleFeedCubit>.value(
+                      value: di.resolveShowSingleFeedCubit(),
                     ),
                     BlocProvider<CommunityCubit>(
                       create: (context) => di.sl<CommunityCubit>(),
@@ -828,40 +834,6 @@ class RouteGenerator {
                         args['isComeFromNotification'] as bool,
                     feedId: args['feedId'] as String?,
                     showPostFrom: args['showPostFrom'] as String,
-                  ),
-                );
-              },
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                final curved = CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                  reverseCurve: Curves.easeInCubic,
-                );
-                final fade = Tween<double>(begin: 0.0, end: 1.0).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: const Interval(0.0, 0.85, curve: Curves.easeOut),
-                    reverseCurve: Curves.easeIn,
-                  ),
-                );
-                final slide = Tween<Offset>(
-                  begin: const Offset(0.0, 0.06),
-                  end: Offset.zero,
-                ).animate(curved);
-                final scale = Tween<double>(begin: 0.985, end: 1.0).animate(
-                  curved,
-                );
-
-                return FadeTransition(
-                  opacity: fade,
-                  child: SlideTransition(
-                    position: slide,
-                    child: ScaleTransition(
-                      scale: scale,
-                      alignment: Alignment.bottomCenter,
-                      child: child,
-                    ),
                   ),
                 );
               },
@@ -1190,7 +1162,7 @@ class RouteGenerator {
             return MaterialPageRoute(
               builder: (_) => MultiBlocProvider(
                 providers: [
-                  BlocProvider.value(value: di.sl<HomeCubit>()),
+                  BlocProvider.value(value: di.resolveHomeCubit()),
                   BlocProvider<MarkedPatientsCubit>(
                     create: (context) => di.sl<MarkedPatientsCubit>(),
                   ),

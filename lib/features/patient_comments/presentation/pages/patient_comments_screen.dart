@@ -48,6 +48,20 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
     super.dispose();
   }
 
+  void _openPatientSections() {
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.patientSections,
+      arguments: AppRoutesArgs.patientSectionsRouteArguments(
+        patientId: widget.patientId,
+        currentDoctorModel: widget.currentDoctorModel,
+        currentDoctorPoints: widget.currentDoctorPoints,
+        currentDoctorRole: widget.currentDoctorRole,
+        homeDataModel: widget.homeDataModel,
+        isAllDataOpen: false,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = PatientCommentsCubit.get(context);
@@ -125,9 +139,11 @@ class _PatientCommentsScreenState extends State<PatientCommentsScreen> {
                                 isDark: isDark,
                                 title: context.tr(AppStrings.patientComments),
                                 subtitle: patientLabel,
+                                patientNameTooltip: widget.patientName,
                                 commentCount: commentCount,
                                 onBack: () =>
                                     Navigator.of(context).maybePop(),
+                                onPatientNameTap: _openPatientSections,
                               ),
                               Expanded(
                                 child: PatientComments(

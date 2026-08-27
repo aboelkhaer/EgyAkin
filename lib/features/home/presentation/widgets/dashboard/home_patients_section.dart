@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patient_widgets.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 
 import '../../../../../exports.dart';
 import 'home_dashboard_shared.dart';
@@ -7,8 +8,6 @@ class HomePatientsSection extends StatefulWidget {
   final bool isDark;
   final List<PatientHomeDataModel> myPatients;
   final List<PatientHomeDataModel> allPatients;
-  final int myPatientsCount;
-  final int allPatientsCount;
   final VoidCallback? onSeeAll;
   final void Function(
     PatientHomeDataModel patient, {
@@ -28,8 +27,6 @@ class HomePatientsSection extends StatefulWidget {
     required this.isDark,
     required this.myPatients,
     required this.allPatients,
-    required this.myPatientsCount,
-    required this.allPatientsCount,
     this.onSeeAll,
     this.onPatientTap,
     this.onOutcomeTap,
@@ -43,10 +40,13 @@ class HomePatientsSection extends StatefulWidget {
 class _HomePatientsSectionState extends State<HomePatientsSection> {
   bool _showMyPatients = true;
 
+  bool get _canViewAllPatients =>
+      PermissionHelper.canPermission(AppPermissions.viewAllPatients);
+
   @override
   Widget build(BuildContext context) {
-    final patients =
-        _showMyPatients ? widget.myPatients : widget.allPatients;
+    final showMyOnly = !_canViewAllPatients || _showMyPatients;
+    final patients = showMyOnly ? widget.myPatients : widget.allPatients;
     final preview = patients.take(5).toList();
 
     return Column(
@@ -61,10 +61,13 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
         SizedBox(height: 12.h),
         HomePatientsToggle(
           isDark: widget.isDark,
-          showMyPatients: _showMyPatients,
-          myPatientsCount: widget.myPatientsCount,
-          allPatientsCount: widget.allPatientsCount,
-          onChanged: (value) => setState(() => _showMyPatients = value),
+          showMyPatients: showMyOnly,
+          myPatientsCount: widget.myPatients.length,
+          allPatientsCount: widget.allPatients.length,
+          showAllPatientsTab: _canViewAllPatients,
+          onChanged: _canViewAllPatients
+              ? (value) => setState(() => _showMyPatients = value)
+              : (_) {},
         ),
         SizedBox(height: 12.h),
         if (preview.isEmpty)
@@ -90,19 +93,19 @@ class _HomePatientsSectionState extends State<HomePatientsSection> {
                     ? null
                     : () => widget.onPatientTap!(
                           patient,
-                          isAllDataOpen: !_showMyPatients,
+                          isAllDataOpen: !showMyOnly,
                         ),
                 onOutcomeTap: widget.onOutcomeTap == null
                     ? null
                     : () => widget.onOutcomeTap!(
                           patient,
-                          isAllDataOpen: !_showMyPatients,
+                          isAllDataOpen: !showMyOnly,
                         ),
                 onAddCommentTap: widget.onAddCommentTap == null
                     ? null
                     : () => widget.onAddCommentTap!(
                           patient,
-                          isAllDataOpen: !_showMyPatients,
+                          isAllDataOpen: !showMyOnly,
                         ),
               ),
             ),

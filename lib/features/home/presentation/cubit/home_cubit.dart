@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -12,6 +13,7 @@ import 'package:egy_akin/app/shared/functions/app_routes_args.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
 import 'package:egy_akin/app/shared/functions/app_update_message_utils.dart';
+import 'package:egy_akin/app/shared/functions/local_profile_image_helper.dart';
 import 'package:egy_akin/app/shared/functions/reduce_image_resolution.dart';
 import 'package:egy_akin/app/utilities/base_usecase.dart';
 import 'dart:convert';
@@ -41,7 +43,158 @@ class HomeCubit extends Cubit<HomeState> {
   PersistentTabController tabsController =
       PersistentTabController(initialIndex: 0);
   CarouselSliderController carouselController = CarouselSliderController();
-  ScrollController homeTabScrollController = ScrollController();
+  // keepScrollOffset: false — HomeCubit is a singleton. After route rebuilds,
+  // restoring the old offset puts the dashboard/skeleton mid-page.
+  ScrollController homeTabScrollController =
+      ScrollController(keepScrollOffset: false);
+
+  /// Bumped whenever home reload shows the skeleton so the scroll view remounts at 0.
+  int homeScrollEpoch = 0;
+
+  void resetHomeTabScrollToTop() {
+    final controller = homeTabScrollController;
+    if (!controller.hasClients) return;
+    for (final position in List<ScrollPosition>.from(controller.positions)) {
+      if (position.pixels != 0) {
+        position.jumpTo(0);
+      }
+    }
+  }
+
+  void prepareHomeTabScrollForReload() {
+    homeScrollEpoch++;
+    resetHomeTabScrollToTop();
+  }
+
+  /// `user_type == normal` → no Home / Patients tabs; Community is the root.
+  /// Prefer local doctor type so loading UI matches before home API returns.
+  bool get hideClinicalTabs {
+    final type =
+        (currentDoctorModel.userType ?? homeDataModel.userType ?? '')
+            .trim()
+            .toLowerCase();
+    return type == 'normal';
+  }
+
+  bool get showClinicalTabs => !hideClinicalTabs;
+
+  /// Clinical: Home(0) Patients(1) Community(2) Profile(3)
+  /// Normal:   Community(0) Notifications(1) Profile(2)
+  int get communityTabIndex => hideClinicalTabs ? 0 : 2;
+  int get notificationsTabIndex => 1; // only used when hideClinicalTabs
+  int get profileTabIndex => hideClinicalTabs ? 2 : 3;
+  int get patientsTabIndex => 1;
+  int get homeTabIndex => 0;
+
+  /// Maps legacy full-nav indices (routes still use 0..4 with old Inbox at 3)
+  /// onto the active bar (Inbox removed for all users).
+  int mapNavPage(int page) {
+    if (showClinicalTabs) {
+      switch (page) {
+        case 0:
+          return homeTabIndex;
+        case 1:
+          return patientsTabIndex;
+        case 2:
+          return communityTabIndex;
+        case 3:
+          // Legacy inbox → community (inbox tab removed).
+          return communityTabIndex;
+        case 4:
+          return profileTabIndex;
+        default:
+          if (page < 0) return 0;
+          return profileTabIndex;
+      }
+    }
+    switch (page) {
+      case 3:
+        return notificationsTabIndex;
+      case 4:
+        return profileTabIndex;
+      case 0:
+      case 1:
+      case 2:
+      default:
+        return communityTabIndex;
+    }
+  }
+
+  void jumpToCommunityTab() {
+    jumpToTabSafe(communityTabIndex);
+  }
+
+  void jumpToProfileTab() {
+    jumpToTabSafe(profileTabIndex);
+  }
+
+  void jumpToNotificationsTab() {
+    if (!hideClinicalTabs) return;
+    jumpToTabSafe(notificationsTabIndex);
+  }
+
+  void jumpToPatientsTab() {
+    if (hideClinicalTabs) {
+      jumpToCommunityTab();
+      return;
+    }
+    jumpToTabSafe(patientsTabIndex);
+  }
+
+  int get _maxTabIndex => hideClinicalTabs ? 2 : 3;
+
+  /// Keeps PersistentTabController inside the active nav length (avoids
+  /// RangeError when switching medical_statistics → normal).
+  void jumpToTabSafe(int index) {
+    if (isClosed) return;
+    final safe = index.clamp(0, _maxTabIndex);
+    if (tabsController.index != safe) {
+      tabsController.jumpToTab(safe);
+    }
+    hideHomeHeader(safe);
+  }
+
+  /// Remaps a leftover full-nav index after the tab set changes.
+  void clampTabIndexToCurrentNav({int? preferLegacyPage}) {
+    if (isClosed) return;
+    if (preferLegacyPage != null) {
+      jumpToTabSafe(mapNavPage(preferLegacyPage));
+      return;
+    }
+    if (tabsController.index > _maxTabIndex) {
+      jumpToTabSafe(mapNavPage(tabsController.index));
+    }
+  }
+
+  /// After profile role change, sync type and land on Profile safely.
+  Future<void> applyProfileUpdateAndOpenProfile() async {
+    await getDoctorDataFromLocal(emitState: false);
+    final type = currentDoctorModel.userType;
+    if (type != null && type.isNotEmpty) {
+      homeDataModel = homeDataModel.copyWith(userType: type);
+    }
+    // Jump while still remapping — profile is legacy page 4 → index 2 for normal.
+    jumpToTabSafe(profileTabIndex);
+    if (isClosed) return;
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) => HomeState.loaded(
+        homeDataModel,
+        currentDoctorModel,
+        value.dotsPosition,
+        tabsController.index.clamp(0, _maxTabIndex),
+        value.isUploadingSyndicateCard,
+        value.isUploadedSyndicateCard,
+        '',
+        checkUpdateMessageCounter,
+        value.isUserBlocked,
+        value.changesCounter + 1,
+      ),
+      loading: (_) => HomeState.loading(
+        tabsController.index.clamp(0, _maxTabIndex),
+      ),
+    ));
+  }
 
   /// Bumped when home "Add outcomes → View all" should open Patients tab
   /// filtered to the current doctor's patients without an outcome.
@@ -158,11 +311,17 @@ class HomeCubit extends Cubit<HomeState> {
     await AppUpdateMessageUtils.markDismissed(sl<AppPreferences>());
   }
 
-  getDoctorDataFromLocal() async {
-    currentDoctorModel = (await sl<AppPreferences>().getDoctorData())!;
+  getDoctorDataFromLocal({bool emitState = true}) async {
+    final localDoctor = await sl<AppPreferences>().getDoctorData();
+    if (localDoctor == null) return;
+    currentDoctorModel = localDoctor;
+    unawaited(
+      LocalProfileImageHelper.ensureCached(currentDoctorModel.image),
+    );
     if (getCurrentUserVersion == false) {
       currentUserVersion = (await sl<AppPreferences>()
-          .getString(AppLocalStrings.userAppVersion))!;
+              .getString(AppLocalStrings.userAppVersion)) ??
+          '';
 
       // Get build number from package info
       try {
@@ -175,6 +334,8 @@ class HomeCubit extends Cubit<HomeState> {
 
       getCurrentUserVersion = true;
     }
+
+    if (!emitState || isClosed) return;
 
     // Safely emit state only if the Cubit is not closed
     emit(state.maybeMap(
@@ -189,7 +350,7 @@ class HomeCubit extends Cubit<HomeState> {
         '',
         checkUpdateMessageCounter,
         false,
-        value.changesCounter,
+        value.changesCounter + 1,
       ),
     ));
   }
@@ -225,14 +386,19 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   hideHomeHeader(int tabIndex) {
+    if (isClosed) return;
+    final safeIndex = tabIndex.clamp(0, _maxTabIndex);
+    if (tabIndex == 0) {
+      resetHomeTabScrollToTop();
+    }
     emit(state.maybeMap(
       orElse: () => state,
-      loading: (value) => HomeState.loading(tabIndex),
+      loading: (value) => HomeState.loading(safeIndex),
       loaded: (value) => HomeState.loaded(
         value.homeData,
         value.currentDoctorModel,
         value.dotsPosition,
-        tabsController.index,
+        safeIndex,
         value.isUploadingSyndicateCard,
         value.isUploadedSyndicateCard,
         '',
@@ -245,8 +411,8 @@ class HomeCubit extends Cubit<HomeState> {
 
   /// Patients tab (index 1) + my patients missing an outcome.
   void openMyPatientsWithoutOutcome() {
-    tabsController.jumpToTab(1);
-    hideHomeHeader(1);
+    if (hideClinicalTabs) return;
+    jumpToPatientsTab();
     withoutOutcomeFilterSignal.value++;
   }
 
@@ -279,18 +445,22 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> getHome({bool showLoading = false}) async {
-    if (isClosed) return; // Prevents further execution
+  Future<void> getHome({bool showLoading = true}) async {
+    if (isClosed) return;
 
-    // Clear cached network images every 5 calls
     _cacheClearCounter++;
     if (_cacheClearCounter >= 5) {
       clearCacheForNetworkImages();
-      _cacheClearCounter = 0; // Reset counter
+      _cacheClearCounter = 0;
       debugPrint('Cache cleared after 5 calls');
     }
 
     dotsPosition = 0;
+
+    // Resolve user_type before emitting loading so normal users never see
+    // Home / Patients tabs during the skeleton state.
+    await getDoctorDataFromLocal(emitState: false);
+
     final alreadyLoaded = state.maybeWhen(
       loaded: (
         _,
@@ -307,88 +477,123 @@ class HomeCubit extends Cubit<HomeState> {
           true,
       orElse: () => false,
     );
-    // Show skeleton on first load and when pull-to-refresh requests it.
+
+    // Skeleton on every fetch (first load + pull-to-refresh).
     if (!alreadyLoaded || showLoading) {
-      emit(HomeState.loading(tabsController.index));
+      prepareHomeTabScrollForReload();
+      // Don't force Community on reload — only clamp out-of-range indices
+      // (e.g. profile was 4 before switching to the 3-tab normal nav).
+      clampTabIndexToCurrentNav();
+      emit(HomeState.loading(tabsController.index.clamp(0, _maxTabIndex)));
     }
 
-    // Get doctor data from local storage and update messages
-    getDoctorDataFromLocal();
-    getUpdateMessageStatusFromLocal();
+    try {
+      await getUpdateMessageStatusFromLocal();
 
-    // Fetch home data from the use case
-    final result = await _getHomeUsecase.execute(NoParams());
+      final result = await _getHomeUsecase.execute(NoParams());
 
-    await result.fold<Future<void>>(
-      (l) async {
-        if (!isClosed) {
-          emit(HomeState.error(l.message));
-        }
-      },
-      (homeData) async {
-        // Update the relevant data
-        accountVerification = homeData.verified!;
-        isUnreadNotification = int.parse(homeData.unreadCount!) > 0;
-        doctorPatientCount = homeData.doctorPatientCount.toString();
-        doctorScore = homeData.scoreValue.toString();
-        isSyndicateCardRequired = homeData.isSyndicateCardRequired.toString();
-        currentDoctorRole = homeData.role.toString();
-        homeDataModel = homeData;
-
-        // Keep local doctor userType in sync with the latest value from home
-        if (homeData.userType != null && homeData.userType!.isNotEmpty) {
-          final localDoctor = await sl<AppPreferences>().getDoctorData();
-          if (localDoctor != null &&
-              localDoctor.userType != homeData.userType) {
-            final updatedDoctor =
-                localDoctor.copyWith(userType: homeData.userType);
-            await sl<AppPreferences>().setDoctorData(updatedDoctor);
+      await result.fold<Future<void>>(
+        (l) async {
+          if (isClosed) return;
+          // Keep previous dashboard visible on refresh failure.
+          if (alreadyLoaded) {
+            _emitLoaded(
+              homeData: homeDataModel,
+              message: l.message,
+            );
+          } else {
+            emit(HomeState.error(l.message));
           }
-        }
+        },
+        (homeData) async {
+          if (isClosed) return;
 
-        checkVerifyBanner();
+          accountVerification = homeData.verified ?? accountVerification;
+          final unreadRaw = homeData.unreadCount;
+          isUnreadNotification =
+              unreadRaw != null && (int.tryParse(unreadRaw) ?? 0) > 0;
+          doctorPatientCount = homeData.doctorPatientCount?.toString();
+          doctorScore = homeData.scoreValue?.toString();
+          isSyndicateCardRequired =
+              homeData.isSyndicateCardRequired?.toString() ??
+                  isSyndicateCardRequired;
+          currentDoctorRole =
+              homeData.role?.toString() ?? currentDoctorRole;
+          homeDataModel = homeData;
 
-        // Fetch and save permissions when missing (e.g. after register) or when backend says they changed
-        final permissionsJson =
-            await sl<AppPreferences>().getString(AppLocalStrings.permissions);
-        final hasNoPermissions =
-            permissionsJson == null || permissionsJson.isEmpty;
-        if (hasNoPermissions || homeData.permissionsChanged == true) {
-          await _updatePermissions();
-        }
+          if (homeData.userType != null && homeData.userType!.isNotEmpty) {
+            final localDoctor = await sl<AppPreferences>().getDoctorData();
+            if (localDoctor != null &&
+                localDoctor.userType != homeData.userType) {
+              final updatedDoctor =
+                  localDoctor.copyWith(userType: homeData.userType);
+              await sl<AppPreferences>().setDoctorData(updatedDoctor);
+              currentDoctorModel = updatedDoctor;
+            }
+          }
 
-        // Only emit new state if the Cubit is still active
-        if (!isClosed) {
-          emit(
-            HomeState.loaded(
-              homeData,
-              currentDoctorModel,
-              dotsPosition,
-              tabsController.index,
-              false,
-              false,
-              '',
-              checkUpdateMessageCounter,
-              false,
-              changesCounter,
-            ),
-          );
-        }
-      },
-    );
-    // Check if user has accessHome permission
-    final hasAccessHome =
-        await PermissionHelper.hasPermission(AppPermissions.accessHome);
-    if (!hasAccessHome) {
-      navigatorKey.currentState?.pushNamed(
-        AppRoutes.community,
-        arguments: AppRoutesArgs.communityRouteArgs(
-          homeDataModel: homeDataModel,
-          currentDoctorModel: currentDoctorModel,
-          initialTab: 0,
-        ),
+          await checkVerifyBanner();
+
+          final permissionsJson =
+              await sl<AppPreferences>().getString(AppLocalStrings.permissions);
+          final hasNoPermissions =
+              permissionsJson == null || permissionsJson.isEmpty;
+          if (hasNoPermissions || homeData.permissionsChanged == true) {
+            await _updatePermissions();
+          }
+
+          if (!isClosed) {
+            _emitLoaded(homeData: homeData);
+          }
+        },
       );
+    } catch (e, st) {
+      debugPrint('getHome failed: $e\n$st');
+      if (isClosed) return;
+      if (alreadyLoaded) {
+        _emitLoaded(homeData: homeDataModel);
+      } else {
+        emit(HomeState.error(e.toString()));
+      }
     }
+
+    // Only redirect once when home cannot be accessed — not on every refresh.
+    if (!alreadyLoaded) {
+      final hasAccessHome =
+          await PermissionHelper.hasPermission(AppPermissions.accessHome);
+      if (!hasAccessHome) {
+        navigatorKey.currentState?.pushNamed(
+          AppRoutes.community,
+          arguments: AppRoutesArgs.communityRouteArgs(
+            homeDataModel: homeDataModel,
+            currentDoctorModel: currentDoctorModel,
+            initialTab: 0,
+          ),
+        );
+      }
+    }
+  }
+
+  void _emitLoaded({
+    required HomeModelResponse homeData,
+    String message = '',
+  }) {
+    changesCounter += 1;
+    resetHomeTabScrollToTop();
+    emit(
+      HomeState.loaded(
+        homeData,
+        currentDoctorModel,
+        dotsPosition,
+        tabsController.index,
+        false,
+        false,
+        message,
+        checkUpdateMessageCounter,
+        false,
+        changesCounter,
+      ),
+    );
   }
 
   File? imagePicked;
@@ -571,37 +776,78 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   signOut() async {
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => HomeState.loaded(
-          value.homeData,
-          value.currentDoctorModel,
-          value.dotsPosition,
-          tabsController.index,
-          value.isUploadingSyndicateCard,
-          value.isUploadedSyndicateCard,
-          '',
-          checkUpdateMessageCounter,
-          true,
-          value.changesCounter,
-        ),
+    final isBlockedAccount = state.maybeWhen(
+      loaded: (
+        homeData,
+        _,
+        __,
+        ___,
+        ____,
+        _____,
+        ______,
+        _______,
+        ________,
+        _________,
+      ) =>
+          homeData.isUserBlocked == true,
+      orElse: () => false,
+    );
+
+    // Blocked accounts often get 403 on /logout — skip the call and
+    // clear the local session so sign-in does not keep firing auth errors.
+    if (!isBlockedAccount) {
+      final result = await _signOutUsecase.execute(NoParams());
+      result.fold(
+        (l) => debugPrint('Logout failed: ${l.message}'),
+        (_) {},
+      );
+    }
+
+    await _clearSignedInSession();
+
+    // Drop stale home payload (e.g. isUserBlocked: true) from this singleton
+    // cubit so the next login does not reopen the blocked dialog.
+    currentDoctorModel = const DoctorModel();
+    homeDataModel = const HomeModelResponse(
+      data: HomeDataModelResponse(
+        allPatients: [],
+        currentPatients: [],
+        topDoctors: [],
+        pendingSyndicateCard: [],
+        posts: [],
       ),
     );
-    final result = await _signOutUsecase.execute(NoParams());
+    accountVerification = null;
+    isSyndicateCardRequired = '';
+    currentDoctorRole = '';
+    isUnreadNotification = false;
+    emit(const HomeState.initial());
 
-    result.fold(
-      (l) {
-        debugPrint(l.message);
-      },
-      (r) async {
-        await sl<AppPreferences>().removeDoctorData();
-      },
-    );
+    navigatorKey.currentState?.pushReplacementNamed(AppRoutes.signIn);
+  }
+
+  Future<void> _clearSignedInSession() async {
+    await sl<AppPreferences>().removeDoctorData();
+    await sl<AppPreferences>().removeData(AppLocalStrings.permissions);
+    PermissionHelper.clearCache();
+    try {
+      await LocalProfileImageHelper.clear();
+    } catch (_) {}
   }
 
   signOutForUnUnauthenticated() async {
-    await sl<AppPreferences>().removeDoctorData();
+    await _clearSignedInSession();
+    currentDoctorModel = const DoctorModel();
+    homeDataModel = const HomeModelResponse(
+      data: HomeDataModelResponse(
+        allPatients: [],
+        currentPatients: [],
+        topDoctors: [],
+        pendingSyndicateCard: [],
+        posts: [],
+      ),
+    );
+    emit(const HomeState.initial());
   }
 
   removeNotificationCount() {

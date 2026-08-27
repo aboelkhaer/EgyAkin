@@ -1,6 +1,7 @@
 import 'package:egy_akin/features/profile/data/models/profile_screens.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_syndicate_card_banner.dart';
 
 import '../../../../exports.dart';
 
@@ -339,6 +340,7 @@ class _ProfileFeaturesState extends State<ProfileFeatures> {
 
   List<ProfileScreens> _profileScreensData(
       context, HomeModelResponse homeDataModel) {
+    final showResearchFeatures = isResearchMember(homeDataModel);
     final List<ProfileScreens?> screens = [
       ProfileScreens(
         icon: Icons.person_outline,
@@ -349,8 +351,9 @@ class _ProfileFeaturesState extends State<ProfileFeatures> {
           navigatorKey.currentState?.pushNamed(AppRoutes.doctorProfile);
         },
       ),
-      PermissionHelper.canPermission(
-              AppPermissions.viewConsultationInHomeProfile)
+      showResearchFeatures &&
+              PermissionHelper.canPermission(
+                  AppPermissions.viewConsultationInHomeProfile)
           ? ProfileScreens(
               icon: Icons.chat_bubble_outline,
               title: LocalizationService.instance
@@ -370,8 +373,9 @@ class _ProfileFeaturesState extends State<ProfileFeatures> {
             )
           : null,
       // Check if user has viewAchievementsInHomeProfile permission
-      PermissionHelper.canPermission(
-              AppPermissions.viewAchievementsInHomeProfile)
+      showResearchFeatures &&
+              PermissionHelper.canPermission(
+                  AppPermissions.viewAchievementsInHomeProfile)
           ? ProfileScreens(
               icon: Icons.emoji_events_outlined,
               title: LocalizationService.instance

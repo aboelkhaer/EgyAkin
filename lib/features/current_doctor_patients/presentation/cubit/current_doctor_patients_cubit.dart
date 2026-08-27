@@ -23,7 +23,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
   int currentPageInFilter = 1;
   int totalPatientInFilter = 0;
 
-  getCurrentDoctorPatients({bool showLoading = true}) async {
+  Future<void> getCurrentDoctorPatients({bool showLoading = true}) async {
     if (isClosed) return;
     if (showLoading) {
       emit(const CurrentDoctorPatientsState.loading());
@@ -58,7 +58,7 @@ class CurrentDoctorPatientsCubit extends Cubit<CurrentDoctorPatientsState> {
           ),
         ));
       },
-      (r) async {
+      (r) {
         if (isClosed) return;
         filtersOptions = GetFiltersOptionsModelResponse(data: r.filters ?? []);
         final lastPage = r.data?.lastPage ?? 1;

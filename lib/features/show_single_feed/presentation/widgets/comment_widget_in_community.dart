@@ -199,36 +199,28 @@ class CommentWidgetInCommunity extends StatelessWidget {
                     commentModel.id.toString() == cubit.deleteCommentId;
 
                 return AnimatedContainer(
-                  duration: const Duration(milliseconds: 320),
+                  duration: const Duration(milliseconds: 280),
                   curve: Curves.easeOutCubic,
                   decoration: BoxDecoration(
                     color: isHighlighted
-                        ? primary.withOpacity(isDark ? 0.18 : 0.1)
+                        ? primary.withOpacity(isDark ? 0.14 : 0.08)
                         : HomeDashboardColors.cardBg(isDark),
                     borderRadius: BorderRadius.circular(16.r),
                     border: Border.all(
                       color: isHighlighted
-                          ? primary.withOpacity(0.45)
+                          ? primary.withOpacity(0.35)
                           : HomeDashboardColors.border(isDark)
                               .withOpacity(0.7),
-                      width: isHighlighted ? 1.4 : 1,
+                      width: isHighlighted ? 1.2 : 1,
                     ),
                     boxShadow: isDark
-                        ? (isHighlighted
-                            ? [
-                                BoxShadow(
-                                  color: primary.withOpacity(0.22),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ]
-                            : null)
+                        ? null
                         : [
                             BoxShadow(
                               color: isHighlighted
-                                  ? primary.withOpacity(0.14)
+                                  ? primary.withOpacity(0.1)
                                   : Colors.black.withOpacity(0.03),
-                              blurRadius: isHighlighted ? 16 : 10,
+                              blurRadius: isHighlighted ? 12 : 10,
                               offset: const Offset(0, 3),
                             ),
                           ],

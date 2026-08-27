@@ -10,6 +10,7 @@ import Firebase
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    applySavedThemeStyle()
     FirebaseApp.configure()
 
     // [START set_messaging_delegate]
@@ -35,7 +36,61 @@ import Firebase
 
     application.registerForRemoteNotifications()
     GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    let launched = super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    applySavedThemeStyle()
+    setupNativeThemeChannel()
+    return launched
+  }
+
+  private func applySavedThemeStyle() {
+    let theme = UserDefaults.standard.string(forKey: "flutter.theme_mode") ?? "system"
+    applyInterfaceStyle(theme)
+  }
+
+  private func applyInterfaceStyle(_ mode: String?) {
+    if #available(iOS 13.0, *) {
+      let style: UIUserInterfaceStyle
+      switch mode {
+      case "dark":
+        style = .dark
+      case "light":
+        style = .light
+      default:
+        style = .unspecified
+      }
+      // Apply as early as possible so launch + system UI match app theme.
+      if let window = window {
+        window.overrideUserInterfaceStyle = style
+      }
+      UIApplication.shared.connectedScenes
+        .compactMap { $0 as? UIWindowScene }
+        .flatMap { $0.windows }
+        .forEach { $0.overrideUserInterfaceStyle = style }
+    }
+  }
+
+  private func setupNativeThemeChannel() {
+    guard let controller = window?.rootViewController as? FlutterViewController else {
+      return
+    }
+
+    let channel = FlutterMethodChannel(
+      name: "com.incode.EgyAkin/theme",
+      binaryMessenger: controller.binaryMessenger
+    )
+
+    channel.setMethodCallHandler { [weak self] call, result in
+      guard call.method == "setBrightness" else {
+        result(FlutterMethodNotImplemented)
+        return
+      }
+
+      let mode = call.arguments as? String
+      DispatchQueue.main.async {
+        self?.applyInterfaceStyle(mode)
+        result(nil)
+      }
+    }
   }
 
   // [START receive_message]

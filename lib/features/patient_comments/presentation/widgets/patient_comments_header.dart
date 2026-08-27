@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -6,22 +8,32 @@ class PatientCommentsHeader extends StatelessWidget {
   final bool isDark;
   final String title;
   final String subtitle;
+  final String? patientNameTooltip;
   final int commentCount;
   final VoidCallback onBack;
+  final VoidCallback? onPatientNameTap;
 
   const PatientCommentsHeader({
     super.key,
     required this.isDark,
     required this.title,
     required this.subtitle,
+    this.patientNameTooltip,
     required this.commentCount,
     required this.onBack,
+    this.onPatientNameTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final primary = HomeDashboardColors.primary(isDark);
+    final titleColor = HomeDashboardColors.title(isDark);
     final top = MediaQuery.paddingOf(context).top;
+    final isArabicName =
+        RegExp(r'[\u0600-\u06FF]').hasMatch(patientNameTooltip ?? subtitle);
+    final canOpenPatient = onPatientNameTap != null &&
+        subtitle.trim().isNotEmpty &&
+        subtitle != context.tr(AppStrings.clinicalDiscussion);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
@@ -56,7 +68,7 @@ class PatientCommentsHeader extends StatelessWidget {
                   icon: Icon(
                     Icons.arrow_back_ios_new_rounded,
                     size: 18.sp,
-                    color: HomeDashboardColors.title(isDark),
+                    color: titleColor,
                   ),
                 ),
                 Expanded(
@@ -68,7 +80,7 @@ class PatientCommentsHeader extends StatelessWidget {
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.3,
-                      color: HomeDashboardColors.title(isDark),
+                      color: titleColor,
                     ),
                   ),
                 ),
@@ -110,16 +122,104 @@ class PatientCommentsHeader extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          subtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w700,
-                            color: HomeDashboardColors.title(isDark),
+                        if (canOpenPatient)
+                          Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: onPatientNameTap,
+                              borderRadius: BorderRadius.circular(99),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(99),
+                                  color: isDark
+                                      ? Colors.white.withOpacity(0.12)
+                                      : Colors.white.withOpacity(0.75),
+                                  border: Border.all(
+                                    color: isDark
+                                        ? Colors.white.withOpacity(0.14)
+                                        : primary.withOpacity(0.18),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    8.w,
+                                    4.h,
+                                    6.w,
+                                    4.h,
+                                  ),
+                                  child: Directionality(
+                                    textDirection: TextDirection.ltr,
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Container(
+                                          width: 18.r,
+                                          height: 18.r,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isDark
+                                                ? primary.withOpacity(0.35)
+                                                : primary.withOpacity(0.12),
+                                          ),
+                                          child: Icon(
+                                            Icons.person_rounded,
+                                            size: 12.sp,
+                                            color: isDark
+                                                ? Colors.white
+                                                : primary,
+                                          ),
+                                        ),
+                                        SizedBox(width: 6.w),
+                                        Flexible(
+                                          child: Tooltip(
+                                            message:
+                                                patientNameTooltip ?? subtitle,
+                                            child: Text(
+                                              subtitle,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              textDirection: isArabicName
+                                                  ? ui.TextDirection.rtl
+                                                  : ui.TextDirection.ltr,
+                                              style: TextStyle(
+                                                fontSize: 12.sp,
+                                                fontWeight: FontWeight.w700,
+                                                color: isDark
+                                                    ? Colors.white
+                                                        .withOpacity(0.92)
+                                                    : titleColor,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 2.w),
+                                        Icon(
+                                          Icons.chevron_right_rounded,
+                                          size: 16.sp,
+                                          color: isDark
+                                              ? Colors.white.withOpacity(0.7)
+                                              : primary.withOpacity(0.8),
+                                          textDirection:
+                                              Directionality.of(context),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        else
+                          Text(
+                            subtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w700,
+                              color: titleColor,
+                            ),
                           ),
-                        ),
                         SizedBox(height: 4.h),
                         Row(
                           children: [
@@ -129,7 +229,8 @@ class PatientCommentsHeader extends StatelessWidget {
                                 vertical: 3.h,
                               ),
                               decoration: BoxDecoration(
-                                color: primary.withOpacity(isDark ? 0.22 : 0.12),
+                                color:
+                                    primary.withOpacity(isDark ? 0.22 : 0.12),
                                 borderRadius: BorderRadius.circular(20.r),
                               ),
                               child: Text(

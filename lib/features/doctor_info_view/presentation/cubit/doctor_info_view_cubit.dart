@@ -21,6 +21,51 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
   bool doctorBlocked = false;
   bool doctorVerifiedEmail = false;
   ScrollController doctorInfoViewScrollController = ScrollController();
+  final GlobalKey syndicateCardSectionKey =
+      GlobalKey(debugLabel: 'syndicateCardSection');
+
+  void scrollToSyndicateCardSection({int attempt = 0}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isClosed) return;
+      try {
+        final target = syndicateCardSectionKey.currentContext;
+        if (target != null && target.mounted) {
+          Scrollable.ensureVisible(
+            target,
+            alignment: 0.12,
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.easeOutCubic,
+          );
+          return;
+        }
+      } catch (e, st) {
+        debugPrint('scrollToSyndicateCardSection failed: $e\n$st');
+      }
+      if (attempt >= 6) return;
+      Future.delayed(const Duration(milliseconds: 120), () {
+        if (isClosed) return;
+        scrollToSyndicateCardSection(attempt: attempt + 1);
+      });
+    });
+  }
+
+  void clampDoctorInfoScroll() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isClosed) return;
+      final scroll = doctorInfoViewScrollController;
+      if (!scroll.hasClients) return;
+      final position = scroll.position;
+      if (!position.hasContentDimensions) return;
+      final max = position.maxScrollExtent;
+      final min = position.minScrollExtent;
+      final offset = position.pixels;
+      if (offset > max) {
+        scroll.jumpTo(max);
+      } else if (offset < min) {
+        scroll.jumpTo(min);
+      }
+    });
+  }
 
   DoctorInfoViewModelResponse updatedDoctor =
       const DoctorInfoViewModelResponse();
@@ -145,6 +190,7 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
 
     // Update the reference to maintain consistent state
     updatedDoctor = updatedDoctorInfo;
+    clampDoctorInfoScroll();
 
     // Execute your use case to change syndicate card status
     final result = await _changeSyndicateCardStatusUsecase.execute(
@@ -157,7 +203,7 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     }, (response) async {
       // Remove the doctor from HomeCubit's data
       await _homeCubit.removeDoctorInDoctorsActivation(doctorId);
-
+      clampDoctorInfoScroll();
       debugPrint(response.message);
     });
   }
@@ -195,6 +241,7 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
 
     // Update the reference to maintain consistent state
     updatedDoctor = updatedDoctorInfo;
+    clampDoctorInfoScroll();
 
     String syndicateCardChangedValue =
         isSyndicateCardVerified ? 'Verified' : 'Required';
@@ -206,6 +253,10 @@ class DoctorInfoViewCubit extends Cubit<DoctorInfoViewState> {
     result.fold((l) {
       debugPrint(l.message);
     }, (response) async {
+      if (isSyndicateCardVerified) {
+        await _homeCubit.removeDoctorInDoctorsActivation(doctorId);
+      }
+      clampDoctorInfoScroll();
       debugPrint(response.message);
     });
   }

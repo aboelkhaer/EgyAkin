@@ -100,7 +100,17 @@ class CommentsInCommunity extends StatelessWidget {
               }
 
               final comments = commentsResponse.data!.data ?? [];
-              final total = commentsResponse.data!.total ?? comments.length;
+              // Match the post bar: include top-level comments + replies.
+              final total = updatedFeed.commentsCount ??
+                  comments.fold<int>(
+                    0,
+                    (sum, comment) =>
+                        sum +
+                        1 +
+                        (comment.repliesCount ??
+                            comment.replies?.length ??
+                            0),
+                  );
 
               return Padding(
                 padding: EdgeInsets.fromLTRB(12.w, 4.h, 12.w, 8.h),
@@ -222,7 +232,7 @@ class _CommentEntranceState extends State<_CommentEntrance>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 480),
+      duration: const Duration(milliseconds: 320),
     );
     final curved = CurvedAnimation(
       parent: _controller,
@@ -231,10 +241,10 @@ class _CommentEntranceState extends State<_CommentEntrance>
     );
     _fade = curved;
     _slide = Tween<Offset>(
-      begin: const Offset(0, -0.18),
+      begin: const Offset(0, -0.06),
       end: Offset.zero,
     ).animate(curved);
-    _scale = Tween<double>(begin: 0.94, end: 1).animate(curved);
+    _scale = Tween<double>(begin: 0.98, end: 1).animate(curved);
 
     if (widget.animate) {
       _controller.forward();

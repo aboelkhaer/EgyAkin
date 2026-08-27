@@ -67,7 +67,7 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen> {
                 state.maybeWhen(
                   orElse: () {},
                   loaded: (currentDoctorModel, isProfileHasChanged, message,
-                      isUpdating, isSubmit, isMedicalStatistics) {
+                      isUpdating, isSubmit, isMedicalStatistics) async {
                     if (message.isNotEmpty) {
                       customSnackBar(
                         context: context,
@@ -75,18 +75,19 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen> {
                       );
                     }
                     if (isSubmit) {
-                      navigatorKey.currentState
-                          ?.pushReplacementNamed(AppRoutes.home, arguments: 4)
-                          .then((_) {
-                        if (!context.read<DoctorProfileViewCubit>().isClosed) {
-                          navigatorKey.currentState
-                              ?.pushReplacementNamed(AppRoutes.doctorProfile);
-                          customSnackBar(
-                            context: context,
-                            message: context.tr(message),
-                          );
-                        }
-                      });
+                      // Sync role + land on Profile before nav shrinks to 3 tabs
+                      // (avoids RangeError on index 4 and Community redirect).
+                      final homeCubit = context.read<HomeCubit>();
+                      await homeCubit.applyProfileUpdateAndOpenProfile();
+                      final nav = navigatorKey.currentState;
+                      if (nav != null && nav.canPop()) {
+                        nav.pop();
+                      } else {
+                        nav?.pushReplacementNamed(
+                          AppRoutes.home,
+                          arguments: 4,
+                        );
+                      }
                     }
                   },
                 );

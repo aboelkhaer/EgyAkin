@@ -109,6 +109,8 @@ class AppPreferences implements LocalStorageProcess {
     await _sharedPreferences.remove(AppLocalStrings.keyToken);
     await _sharedPreferences.remove(AppLocalStrings.doctorData);
     await _sharedPreferences.remove(AppLocalStrings.isExistVerificationBanner);
+    await _sharedPreferences.remove(AppLocalStrings.localProfileImageUrl);
+    await _sharedPreferences.remove(AppLocalStrings.localProfileImagePath);
   }
 
   @override

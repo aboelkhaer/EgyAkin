@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 
 import '../../../../exports.dart';
 import '../../../../app/services/deep_link_handler.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -37,6 +38,11 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     debugPrint('=== SPLASH SCREEN: initState called ===');
+
+    // Drop the native splash once Flutter splash is on screen.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FlutterNativeSplash.remove();
+    });
 
     _introController = AnimationController(
       vsync: this,

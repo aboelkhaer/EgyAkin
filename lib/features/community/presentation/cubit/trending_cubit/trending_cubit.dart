@@ -14,16 +14,27 @@ class TrendingCubit extends Cubit<TrendingState> {
 
   int _currentPage = 1;
 
-  getTrendingPostsInCommunity() async {
+  Future<void> getTrendingPostsInCommunity() async {
+    if (isClosed) return;
     emit(const TrendingState.loading());
     _currentPage = 1;
+    isLastPage = false;
+    isLoadingMoreForScroll = false;
     final result =
         await _getTrendingPostsInCommunityUsecase.execute(_currentPage);
+    if (isClosed) return;
     result.fold(
       (l) {
+        if (isClosed) return;
         emit(TrendingState.error(l.message));
       },
-      (response) async {
+      (response) {
+        if (isClosed) return;
+        final lastPage = response.lastPage ?? 1;
+        final currentPage = response.currentPage ?? 1;
+        isLastPage = currentPage >= lastPage ||
+            response.nextPageUrl == null ||
+            (response.data?.isEmpty ?? true);
         emit(TrendingState.loaded(
           '',
           '',
@@ -32,6 +43,12 @@ class TrendingCubit extends Cubit<TrendingState> {
         ));
       },
     );
+  }
+
+  /// Force-reload trends (e.g. after creating a post with hashtags).
+  Future<void> refreshTrends() async {
+    callTrendsTabTimes = 1;
+    await getTrendingPostsInCommunity();
   }
 
   void loadMoreTrends() async {

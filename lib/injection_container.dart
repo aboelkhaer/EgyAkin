@@ -47,6 +47,38 @@ import 'exports.dart';
 
 GetIt sl = GetIt.instance;
 
+/// App-wide HomeCubit. Recreates if a route used `BlocProvider(create:)` and
+/// incorrectly closed the lazy singleton on dispose.
+HomeCubit resolveHomeCubit() {
+  if (!sl.isRegistered<HomeCubit>()) {
+    sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
+  }
+  final current = sl<HomeCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<HomeCubit>();
+  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
+  return sl<HomeCubit>();
+}
+
+/// App-wide ShowSingleFeedCubit. Recreates if a route used `BlocProvider(create:)`
+/// and incorrectly closed the lazy singleton on dispose.
+ShowSingleFeedCubit resolveShowSingleFeedCubit() {
+  if (!sl.isRegistered<ShowSingleFeedCubit>()) {
+    sl.registerLazySingleton(
+      () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+    );
+  }
+  final current = sl<ShowSingleFeedCubit>();
+  if (!current.isClosed) return current;
+
+  sl.unregister<ShowSingleFeedCubit>();
+  sl.registerLazySingleton(
+    () => ShowSingleFeedCubit(sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()),
+  );
+  return sl<ShowSingleFeedCubit>();
+}
+
 Future<void> diInit() async {
   //! Core
   final sharedPrefs = await SharedPreferences.getInstance();

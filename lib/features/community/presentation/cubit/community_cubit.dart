@@ -213,14 +213,15 @@ class CommunityCubit extends Cubit<CommunityState> {
   }
 
   String postIdDeleted = '';
-  
+  final Set<String> removingPostIds = {};
+
   // Reset pagination state
   void resetPaginationState() {
     isLastPage = false;
     isLoadingMoreForScroll = false;
     _currentPage = 1;
   }
-  
+
   // make delete post function
   deletePost(
     String postId,
@@ -245,6 +246,7 @@ class CommunityCubit extends Cubit<CommunityState> {
     );
     deleteResult.fold(
       (failure) {
+        postIdDeleted = '';
         emit(
           state.maybeMap(
             orElse: () => state,
@@ -260,32 +262,49 @@ class CommunityCubit extends Cubit<CommunityState> {
         );
       },
       (success) {
-        // delete post from the list
-
+        // Keep post in list briefly so the feed can animate it out.
+        removingPostIds.add(postId);
+        postIdDeleted = '';
         emit(state.maybeMap(
           orElse: () => state,
-          loaded: (value) {
-            final currentPosts = value.feedsResponse.data?.data ?? [];
-            // Final cleanup - ensure post is removed
-            return CommunityState.loaded(
-              value.feedsResponse.copyWith(
-                data: value.feedsResponse.data?.copyWith(
-                  data: currentPosts
-                      .where((post) => post.id.toString() != postId)
-                      .toList(),
-                ),
-              ),
-              false, // isDeletePostLoading
-              true, // isDeletePostLoaded
-              success.message.toString(),
-              value.isSeeMore,
-              value.changeCounter + 1,
-            );
-          },
+          loaded: (value) => CommunityState.loaded(
+            value.feedsResponse,
+            false,
+            true,
+            success.message.toString(),
+            value.isSeeMore,
+            value.changeCounter + 1,
+          ),
         ));
       },
     );
-    postIdDeleted = '';
+  }
+
+  /// Drops the post from the list after the exit animation completes.
+  void finishRemovingPost(String postId) {
+    if (isClosed) return;
+    if (!removingPostIds.remove(postId)) return;
+
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final currentPosts = value.feedsResponse.data?.data ?? [];
+        return CommunityState.loaded(
+          value.feedsResponse.copyWith(
+            data: value.feedsResponse.data?.copyWith(
+              data: currentPosts
+                  .where((post) => post.id.toString() != postId)
+                  .toList(),
+            ),
+          ),
+          false,
+          false,
+          '',
+          value.isSeeMore,
+          value.changeCounter + 1,
+        );
+      },
+    ));
   }
 
   final Set<String> _updatingPostIds = {};

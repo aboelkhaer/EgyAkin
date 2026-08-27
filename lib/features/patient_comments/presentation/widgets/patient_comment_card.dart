@@ -26,13 +26,19 @@ class PatientCommentCard extends StatelessWidget {
     this.showConnector = true,
   });
 
-  bool _isArabic(String text) {
-    if (text.isEmpty) return false;
-    return RegExp(r'[\u0600-\u06FF]').hasMatch(text.trim());
-  }
+  static final _arabicChar = RegExp(r'[\u0600-\u06FF]');
+  static final _latinChar = RegExp(r'[A-Za-z]');
+  static final _strongChar = RegExp(r'[A-Za-z\u0600-\u06FF]');
 
   TextDirection _getTextDirection(String text) {
-    return _isArabic(text) ? TextDirection.rtl : TextDirection.ltr;
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return TextDirection.ltr;
+    for (final match in _strongChar.allMatches(trimmed)) {
+      final ch = match.group(0)!;
+      if (_arabicChar.hasMatch(ch)) return TextDirection.rtl;
+      if (_latinChar.hasMatch(ch)) return TextDirection.ltr;
+    }
+    return TextDirection.ltr;
   }
 
   Future<void> _onLongPress(BuildContext context) async {
@@ -240,17 +246,20 @@ class PatientCommentCard extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 8.h),
-                      Text(
-                        content,
+                      Directionality(
                         textDirection: _getTextDirection(content),
-                        textAlign: _isArabic(content)
-                            ? TextAlign.right
-                            : TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          height: 1.45,
-                          fontWeight: FontWeight.w500,
-                          color: HomeDashboardColors.title(isDark),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            content,
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              height: 1.45,
+                              fontWeight: FontWeight.w500,
+                              color: HomeDashboardColors.title(isDark),
+                            ),
+                          ),
                         ),
                       ),
                     ],

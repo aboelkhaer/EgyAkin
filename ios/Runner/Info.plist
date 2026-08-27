@@ -1,103 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>$(DEVELOPMENT_LANGUAGE)</string>
-	<key>CFBundleDisplayName</key>
-	<string>EgyAkin</string>
-	<key>CFBundleExecutable</key>
-	<string>$(EXECUTABLE_NAME)</string>
-	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>egy_akin</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0.17</string>
-	<key>CFBundleVersion</key>
-	<string>4</string> 
-	<key>CFBundleSignature</key>
-	<string>????</string>
-	<key>FirebaseAppDelegateProxyEnabled</key>
-	<false/>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>https</string>
-		<string>http</string>
-		<string>tel</string>
-		<string>mailto</string>
-	</array>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
+		<key>CADisableMinimumFrameDurationOnPhone</key>
 		<true/>
-	</dict>
-	
-
-	<key>NSCameraUsageDescription</key>
-    <string>EgyAkin would like to use your camera.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-    <string>EgyAkin requires access to the photo library to upload your profile photo.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>EgyAkin needs microphone access to record your answers and fill form fields.</string>
-	<key>GIDClientID</key>
-	<string>520481338319-h83lk4s9rlcn1pp19nd1dj7rgr2n5g3d.apps.googleusercontent.com</string>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>remote-notification</string>
-	</array>
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIMainStoryboardFile</key>
-	<string>Main</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-
-<key>FlutterDeepLinkingEnabled</key>
-	<true/>
-	<key>CFBundleURLTypes</key>
-	
-	<array>
-	<dict>
-		<key>CFBundleURLName</key>
-		<string>com.incode.EgyAkin</string>
-		<key>CFBundleURLSchemes</key>
+		<key>CFBundleDevelopmentRegion</key>
+		<string>$(DEVELOPMENT_LANGUAGE)</string>
+		<key>CFBundleDisplayName</key>
+		<string>EgyAkin</string>
+		<key>CFBundleExecutable</key>
+		<string>$(EXECUTABLE_NAME)</string>
+		<key>CFBundleIdentifier</key>
+		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+		<key>CFBundleInfoDictionaryVersion</key>
+		<string>6.0</string>
+		<key>CFBundleName</key>
+		<string>egy_akin</string>
+		<key>CFBundlePackageType</key>
+		<string>APPL</string>
+		<key>CFBundleShortVersionString</key>
+		<string>1.0.17</string>
+		<key>CFBundleVersion</key>
+		<string>8</string>
+		<key>CFBundleSignature</key>
+		<string>????</string>
+		<key>FirebaseAppDelegateProxyEnabled</key>
+		<false/>
+		<key>LSApplicationQueriesSchemes</key>
 		<array>
-			<string>egyakin</string>
-			<string>com.googleusercontent.apps.520481338319-h83lk4s9rlcn1pp19nd1dj7rgr2n5g3d</string>
+			<string>https</string>
+			<string>http</string>
+			<string>tel</string>
+			<string>mailto</string>
 		</array>
-		
+		<key>LSRequiresIPhoneOS</key>
+		<true/>
+		<key>NSAppTransportSecurity</key>
+		<dict>
+			<key>NSAllowsArbitraryLoads</key>
+			<true/>
+		</dict>
+		<key>NSCameraUsageDescription</key>
+		<string>EgyAkin would like to use your camera.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>EgyAkin requires access to the photo library to upload your profile photo.</string>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>EgyAkin needs microphone access to record your answers and fill form fields.</string>
+		<key>GIDClientID</key>
+		<string>520481338319-h83lk4s9rlcn1pp19nd1dj7rgr2n5g3d.apps.googleusercontent.com</string>
+		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<true/>
+		<key>UIBackgroundModes</key>
+		<array>
+			<string>fetch</string>
+			<string>remote-notification</string>
+		</array>
+		<key>UILaunchStoryboardName</key>
+		<string>LaunchScreen</string>
+		<key>UIMainStoryboardFile</key>
+		<string>Main</string>
+		<key>UISupportedInterfaceOrientations</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>FlutterDeepLinkingEnabled</key>
+		<true/>
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleURLName</key>
+				<string>com.incode.EgyAkin</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>egyakin</string>
+					<string>com.googleusercontent.apps.520481338319-h83lk4s9rlcn1pp19nd1dj7rgr2n5g3d</string>
+				</array>
+			</dict>
+		</array>
+		<!-- Note: Update the associated domains below to match your API base URL -->
+		<key>com.apple.developer.associated-domains</key>
+		<array>
+			<string>applinks:test.egyakin.com</string>
+			<string>applinks:api.egyakin.com</string>
+		</array>
+		<key>UISupportedInterfaceOrientations~ipad</key>
+		<array>
+			<string>UIInterfaceOrientationPortrait</string>
+			<string>UIInterfaceOrientationPortraitUpsideDown</string>
+			<string>UIInterfaceOrientationLandscapeLeft</string>
+			<string>UIInterfaceOrientationLandscapeRight</string>
+		</array>
+		<key>UIStatusBarHidden</key>
+		<false/>
 	</dict>
-	</array>
-	
-	<!-- Note: Update the associated domains below to match your API base URL -->
-	<key>com.apple.developer.associated-domains</key>
-	<array>
-		<string>applinks:test.egyakin.com</string>
-		<string>applinks:api.egyakin.com</string>
-	</array>
-
-	<key>UISupportedInterfaceOrientations~ipad</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-</dict>
 </plist>

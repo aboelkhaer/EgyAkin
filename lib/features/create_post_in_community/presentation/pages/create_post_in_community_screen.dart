@@ -165,26 +165,30 @@ class _CreatePostInCommunityScreenState
   }
 
   void _handleUploadSuccess() {
+    final cubit = CreatePostInCommunityCubit.get(context);
+    final hasHashtags = RegExp(
+      r'#[a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+',
+    ).hasMatch(cubit.postContent);
+
+    // Only refresh trends when a new post includes hashtags.
+    if (widget.feed == null && hasHashtags) {
+      sl<TrendingCubit>().refreshTrends();
+    }
+
     navigatorKey.currentState?.pop();
+
     if (widget.groupId != null) {
       widget.onPostUploaded?.call();
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushReplacementNamed(
-          AppRoutes.home,
-          arguments: 0,
-        );
-      });
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        navigatorKey.currentState?.pushNamed(
-          AppRoutes.community,
-          arguments: AppRoutesArgs.communityRouteArgs(
-            homeDataModel: widget.homeDataModel,
-            currentDoctorModel: widget.currentDoctorModel,
-            initialTab: 0,
-          ),
-        );
-      });
+      return;
+    }
+
+    // Refresh feeds once — avoid pushReplacement(home) + push(community),
+    // which created two CommunityScreens and called getAllFeeds twice.
+    sl<CommunityCubit>().getAllFeeds();
+
+    final homeCubit = sl<HomeCubit>();
+    if (!homeCubit.isClosed) {
+      homeCubit.jumpToCommunityTab();
     }
   }
 
@@ -985,7 +989,90 @@ class _IdentityPill extends StatelessWidget {
   }
 }
 
-class _WritingSheet extends StatelessWidget {
+class _HashtagTextEditingController extends TextEditingController {
+  _HashtagTextEditingController({
+    String? text,
+    required this.hashtagStyle,
+  }) : super(text: text);
+
+  TextStyle hashtagStyle;
+
+  static final RegExp _patternRegex = RegExp(
+    r'(#[a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+)|(\*[^*]+\*)',
+  );
+
+  @override
+  TextSpan buildTextSpan({
+    required BuildContext context,
+    TextStyle? style,
+    required bool withComposing,
+  }) {
+    // Keep default composing underline behavior for IME input.
+    if (withComposing && value.composing.isValid && value.isComposingRangeValid) {
+      return super.buildTextSpan(
+        context: context,
+        style: style,
+        withComposing: withComposing,
+      );
+    }
+
+    final text = value.text;
+    if (text.isEmpty || !_patternRegex.hasMatch(text)) {
+      return TextSpan(style: style, text: text);
+    }
+
+    final boldStyle = (style ?? const TextStyle()).merge(
+      const TextStyle(fontWeight: FontWeight.w800),
+    );
+    final starStyle = (style ?? const TextStyle()).merge(
+      TextStyle(
+        fontWeight: FontWeight.w500,
+        color: (style?.color ?? Colors.grey).withOpacity(0.45),
+      ),
+    );
+
+    final children = <InlineSpan>[];
+    var start = 0;
+    for (final match in _patternRegex.allMatches(text)) {
+      if (match.start > start) {
+        children.add(TextSpan(
+          text: text.substring(start, match.start),
+          style: style,
+        ));
+      }
+
+      final matched = match.group(0)!;
+      if (matched.startsWith('#')) {
+        // Use the exact controller text — no extra Unicode isolates,
+        // or the caret lags behind by the injected character count.
+        children.add(TextSpan(
+          text: matched,
+          style: style?.merge(hashtagStyle) ?? hashtagStyle,
+        ));
+      } else if (matched.startsWith('*') && matched.endsWith('*')) {
+        // Keep '*' visible for editing; emphasize the word between them.
+        children.add(TextSpan(text: '*', style: starStyle));
+        children.add(TextSpan(
+          text: matched.substring(1, matched.length - 1),
+          style: boldStyle,
+        ));
+        children.add(TextSpan(text: '*', style: starStyle));
+      }
+
+      start = match.end;
+    }
+    if (start < text.length) {
+      children.add(TextSpan(
+        text: text.substring(start),
+        style: style,
+      ));
+    }
+
+    return TextSpan(style: style, children: children);
+  }
+}
+
+class _WritingSheet extends StatefulWidget {
   final _StudioPalette palette;
   final ValueNotifier<TextDirection> textDirectionNotifier;
   final String? initialValue;
@@ -1001,7 +1088,45 @@ class _WritingSheet extends StatelessWidget {
   });
 
   @override
+  State<_WritingSheet> createState() => _WritingSheetState();
+}
+
+class _WritingSheetState extends State<_WritingSheet> {
+  late final _HashtagTextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = _HashtagTextEditingController(
+      text: widget.initialValue,
+      hashtagStyle: TextStyle(
+        color: widget.palette.accent,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _WritingSheet oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.palette.accent != widget.palette.accent) {
+      _controller.hashtagStyle = TextStyle(
+        color: widget.palette.accent,
+        fontWeight: FontWeight.w700,
+      );
+      _controller.notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final palette = widget.palette;
     return Material(
       color: Colors.transparent,
       clipBehavior: Clip.antiAlias,
@@ -1044,9 +1169,10 @@ class _WritingSheet extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(14.w, 16.h, 16.w, 14.h),
                   child: ValueListenableBuilder<TextDirection>(
-                    valueListenable: textDirectionNotifier,
+                    valueListenable: widget.textDirectionNotifier,
                     builder: (context, textDirection, _) {
-                      return TextFormField(
+                      return TextField(
+                        controller: _controller,
                         style: TextStyle(
                           color: palette.ink,
                           fontSize: 13.sp,
@@ -1054,10 +1180,9 @@ class _WritingSheet extends StatelessWidget {
                           height: 1.55,
                           letterSpacing: -0.15,
                         ),
-                        initialValue: initialValue,
                         onTapOutside: (_) => FocusScope.of(context).unfocus(),
                         decoration: InputDecoration(
-                          hintText: hint,
+                          hintText: widget.hint,
                           hintStyle: TextStyle(
                             color: palette.muted.withOpacity(0.85),
                             fontSize: 13.sp,
@@ -1079,7 +1204,7 @@ class _WritingSheet extends StatelessWidget {
                         minLines: 7,
                         maxLength: 3000,
                         textDirection: textDirection,
-                        onChanged: onChanged,
+                        onChanged: widget.onChanged,
                       );
                     },
                   ),

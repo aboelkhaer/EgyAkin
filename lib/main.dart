@@ -4,6 +4,7 @@ import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/app/services/deep_link_navigation_service.dart';
 import 'package:egy_akin/app/services/theme_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -11,7 +12,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  // Keep the native splash up until Flutter splash is ready (avoids white flash).
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Set up global error handlers to prevent app crashes
   FlutterError.onError = (FlutterErrorDetails details) {

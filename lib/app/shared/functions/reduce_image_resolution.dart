@@ -7,7 +7,10 @@ import '../../../exports.dart';
 
 Future<File> optimizeImage(File imageFile) async {
   final tempDir = await getTemporaryDirectory();
-  final optimizedImagePath = '${tempDir.path}/optimized_image.jpg';
+  // Unique path so Image.file / providers don't keep showing a previous pick
+  // that wrote to the same fixed filename.
+  final optimizedImagePath =
+      '${tempDir.path}/optimized_image_${DateTime.now().microsecondsSinceEpoch}.jpg';
 
   // Use compute to process the image in a background thread
   final optimizedImageFile = await compute(_processImage, {

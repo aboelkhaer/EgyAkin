@@ -4,6 +4,7 @@ import 'package:egy_akin/app/shared/widgets/admin_only_badge.dart';
 import 'package:egy_akin/features/community/presentation/widgets/share_button.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/app/shared/permissions/app_permissions.dart';
+import 'package:egy_akin/features/show_single_feed/presentation/widgets/delete_feed_post_dialog.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../../exports.dart';
 import '../../../../app/services/theme_bloc.dart';
@@ -442,135 +443,22 @@ class PostCard extends StatelessWidget {
                                                           case 'Delete':
                                                             if (isGroupPosts ||
                                                                 isCommunitySearch) {
-                                                              showDialog(
+                                                              showDeleteFeedPostDialog(
                                                                 context:
                                                                     context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return AlertDialog(
-                                                                    title: Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .deletePost),
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: isDarkMode
-                                                                            ? AppColors.darkTitle
-                                                                            : AppColors.title,
-                                                                      ),
-                                                                    ),
-                                                                    content:
-                                                                        Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .areYouSureYouWantToDeleteThisPost),
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: isDarkMode
-                                                                            ? AppColors.darkDescription
-                                                                            : AppColors.description,
-                                                                      ),
-                                                                    ),
-                                                                    actions: [
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          Navigator.pop(
-                                                                              context); // Close the dialog
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          context
-                                                                              .tr(AppStrings.cancel),
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: isDarkMode
-                                                                                ? AppColors.darkDescription
-                                                                                : Colors.grey.shade600,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          // Perform the deletion logic here
-                                                                          // For example, update the state or call a callback
-
-                                                                          Navigator.pop(
-                                                                              context); // Close the dialog
-                                                                          onDeleteAdditional!();
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          context
-                                                                              .tr(AppStrings.delete),
-                                                                          style:
-                                                                              const TextStyle(color: Colors.red),
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  );
+                                                                onConfirm: () {
+                                                                  onDeleteAdditional!();
                                                                 },
                                                               );
                                                             } else {
-                                                              showDialog(
+                                                              showDeleteFeedPostDialog(
                                                                 context:
                                                                     context,
-                                                                builder:
-                                                                    (context) {
-                                                                  return AlertDialog(
-                                                                    title: Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .deletePost),
-                                                                    ),
-                                                                    content:
-                                                                        Text(
-                                                                      context.tr(
-                                                                          AppStrings
-                                                                              .areYouSureYouWantToDeleteThisPost),
-                                                                    ),
-                                                                    actions: [
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          Navigator.pop(
-                                                                              context); // Close the dialog
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          context
-                                                                              .tr(AppStrings.cancel),
-                                                                          style:
-                                                                              TextStyle(
-                                                                            color: isDarkMode
-                                                                                ? AppColors.darkDescription
-                                                                                : Colors.grey.shade600,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      TextButton(
-                                                                        onPressed:
-                                                                            () {
-                                                                          // Perform the deletion logic here
-                                                                          // For example, update the state or call a callback
-
-                                                                          Navigator.pop(
-                                                                              context); // Close the dialog
-                                                                          cubit
-                                                                              .deletePost(
-                                                                            feed.id.toString(),
-                                                                          );
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          context
-                                                                              .tr(AppStrings.delete),
-                                                                          style:
-                                                                              const TextStyle(color: Colors.red),
-                                                                        ),
-                                                                      ),
-                                                                    ],
+                                                                onConfirm: () {
+                                                                  cubit
+                                                                      .deletePost(
+                                                                    feed.id
+                                                                        .toString(),
                                                                   );
                                                                 },
                                                               );

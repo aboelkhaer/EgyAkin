@@ -77,6 +77,24 @@ class HomeToolsSection extends StatelessWidget {
           ),
         );
         break;
+      case 'bookmark':
+        navigatorKey.currentState?.pushNamed(
+          AppRoutes.profilePatients,
+          arguments: AppRoutesArgs.profilePatientsRouteArgs(
+            doctorId: currentDoctorModel.id.toString(),
+            currentDoctorModel: currentDoctorModel,
+            accountVerification: homeDataModel.verified ?? false,
+            isSyndicateCardRequired:
+                homeDataModel.isSyndicateCardRequired.toString(),
+            doctorFirstName: currentDoctorModel.firstName.toString(),
+            currentDoctorRole: homeDataModel.role.toString(),
+            currentDoctorPoints:
+                int.tryParse(homeDataModel.scoreValue ?? '') ?? 0,
+            homeDataModel: homeDataModel,
+            initialShowMarked: true,
+          ),
+        );
+        break;
       default:
         break;
     }

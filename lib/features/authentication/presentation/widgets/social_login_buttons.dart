@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:egy_akin/app/services/native_theme_sync.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../exports.dart';
@@ -55,8 +56,13 @@ class SocialLoginButtons extends StatelessWidget {
                       child: _SocialButton(
                         isDark: isDark,
                         label: context.tr(AppStrings.google),
-                        onTap: () {
+                        onTap: () async {
                           try {
+                            // Keep Google account picker in sync with app theme.
+                            await NativeThemeSync.sync(
+                              isDark ? ThemeMode.dark : ThemeMode.light,
+                            );
+                            if (!context.mounted) return;
                             AuthenticationCubit.get(context)
                                 .signInWithGoogle();
                           } catch (e) {

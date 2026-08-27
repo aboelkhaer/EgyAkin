@@ -2,29 +2,60 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class FullScreenImage extends StatefulWidget {
-  final String imageUrl;
+  final List<String> imageUrls;
+  final int initialIndex;
   final bool isLocal;
+  final String? heroTagBase;
 
   const FullScreenImage({
     super.key,
-    required this.imageUrl,
+    required this.imageUrls,
+    this.initialIndex = 0,
     this.isLocal = false,
+    this.heroTagBase,
   });
 
+  /// Opens a single image, or a gallery when [imageUrls] is provided.
+  /// [initialIndex] is used so tapping image N opens that image first,
+  /// while still allowing swipe through the full ordered list.
   static Route<void> route({
-    required String imageUrl,
+    String? imageUrl,
+    List<String>? imageUrls,
+    int initialIndex = 0,
     bool isLocal = false,
+    String? heroTagBase,
   }) {
+    final rawUrls =
+        imageUrls ?? (imageUrl != null ? [imageUrl] : const <String>[]);
+    final tappedUrl = (initialIndex >= 0 && initialIndex < rawUrls.length)
+        ? rawUrls[initialIndex].trim()
+        : '';
+
+    final urls = rawUrls
+        .map((url) => url.trim())
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false);
+
+    var startIndex = 0;
+    if (urls.isNotEmpty) {
+      final matched = tappedUrl.isEmpty ? -1 : urls.indexOf(tappedUrl);
+      startIndex =
+          matched >= 0 ? matched : initialIndex.clamp(0, urls.length - 1);
+    }
+
     return PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 280),
       reverseTransitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (_, __, ___) => FullScreenImage(
-        imageUrl: imageUrl,
+        imageUrls: urls,
+        initialIndex: startIndex,
         isLocal: isLocal,
+        heroTagBase: heroTagBase,
       ),
       transitionsBuilder: (_, animation, __, child) {
         final curved = CurvedAnimation(
@@ -52,12 +83,16 @@ class _FullScreenImageState extends State<FullScreenImage>
   static const _dismissDistance = 140.0;
   static const _dismissVelocity = 800.0;
 
+  late final PageController _pageController;
+  late int _currentIndex;
+
   Offset _drag = Offset.zero;
   int _pointers = 0;
   Offset _lastMoveDelta = Offset.zero;
   Duration _moveDt = const Duration(milliseconds: 16);
   Duration? _prevMoveStamp;
   bool _closing = false;
+  bool _horizontalGesture = false;
   PhotoViewScaleState _scaleState = PhotoViewScaleState.initial;
   late final AnimationController _snap;
   Animation<Offset>? _snapAnim;
@@ -68,16 +103,20 @@ class _FullScreenImageState extends State<FullScreenImage>
 
   bool get _canDismiss => !_zoomed && !_closing;
 
-  ImageProvider get _provider {
+  bool get _isGallery => widget.imageUrls.length > 1;
+
+  ImageProvider _providerFor(String url) {
     if (widget.isLocal) {
-      return AssetImage(widget.imageUrl);
+      return AssetImage(url);
     }
-    return CachedNetworkImageProvider(widget.imageUrl);
+    return CachedNetworkImageProvider(url);
   }
 
   @override
   void initState() {
     super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
     _snap = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 240),
@@ -87,17 +126,27 @@ class _FullScreenImageState extends State<FullScreenImage>
   @override
   void dispose() {
     _snap.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
   void _onPointerUp() {
     _pointers = (_pointers - 1).clamp(0, 10);
-    if (_pointers != 0 || !_canDismiss) return;
+    if (_pointers != 0) return;
+
+    final wasHorizontal = _horizontalGesture;
+    _horizontalGesture = false;
+
+    if (!_canDismiss || wasHorizontal) {
+      if (_drag != Offset.zero) _snapBack();
+      _lastMoveDelta = Offset.zero;
+      return;
+    }
 
     final dtMs = _moveDt.inMilliseconds.clamp(8, 40);
-    final velocity = _lastMoveDelta.distance / (dtMs / 1000);
+    final velocity = _lastMoveDelta.dy.abs() / (dtMs / 1000);
 
-    if (_drag.distance > _dismissDistance || velocity > _dismissVelocity) {
+    if (_drag.dy.abs() > _dismissDistance || velocity > _dismissVelocity) {
       _close();
       return;
     }
@@ -130,9 +179,10 @@ class _FullScreenImageState extends State<FullScreenImage>
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final progress = (_drag.distance / size.height).clamp(0.0, 1.0);
+    final progress = (_drag.dy.abs() / size.height).clamp(0.0, 1.0);
     final bgOpacity = (1 - progress * 1.15).clamp(0.0, 1.0);
     final scale = (1 - progress * 0.28).clamp(0.72, 1.0);
+    final urls = widget.imageUrls;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -146,18 +196,30 @@ class _FullScreenImageState extends State<FullScreenImage>
           onPointerDown: (_) {
             _pointers++;
             _prevMoveStamp = null;
+            _horizontalGesture = false;
           },
           onPointerCancel: (_) => _onPointerUp(),
           onPointerUp: (_) => _onPointerUp(),
           onPointerMove: (event) {
             if (!_canDismiss || _pointers != 1) return;
+
+            // Gallery: let mostly-horizontal moves change pages, not dismiss.
+            if (_isGallery &&
+                _drag == Offset.zero &&
+                event.delta.dx.abs() > event.delta.dy.abs()) {
+              _horizontalGesture = true;
+              return;
+            }
+            if (_horizontalGesture) return;
+
             _snap.stop();
             if (_prevMoveStamp != null) {
               _moveDt = event.timeStamp - _prevMoveStamp!;
             }
             _prevMoveStamp = event.timeStamp;
             _lastMoveDelta = event.delta;
-            setState(() => _drag += event.delta);
+            // Vertical-only dismiss so it doesn't fight gallery paging.
+            setState(() => _drag += Offset(0, event.delta.dy));
           },
           child: GestureDetector(
             onTap: _canDismiss ? _close : null,
@@ -171,21 +233,41 @@ class _FullScreenImageState extends State<FullScreenImage>
                   offset: _drag,
                   child: Transform.scale(
                     scale: scale,
-                    child: PhotoView(
-                      imageProvider: _provider,
-                      backgroundDecoration: const BoxDecoration(
-                        color: Colors.transparent,
-                      ),
-                      minScale: PhotoViewComputedScale.contained,
-                      maxScale: PhotoViewComputedScale.covered * 3,
-                      initialScale: PhotoViewComputedScale.contained,
-                      scaleStateChangedCallback: (state) {
-                        setState(() => _scaleState = state);
-                      },
-                      onTapUp: (_, __, ___) {
-                        if (_canDismiss) _close();
-                      },
-                    ),
+                    child: urls.isEmpty
+                        ? const SizedBox.shrink()
+                        : PhotoViewGallery.builder(
+                            pageController: _pageController,
+                            itemCount: urls.length,
+                            backgroundDecoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentIndex = index;
+                                _scaleState = PhotoViewScaleState.initial;
+                              });
+                            },
+                            scaleStateChangedCallback: (state) {
+                              setState(() => _scaleState = state);
+                            },
+                            builder: (context, index) {
+                              final heroBase = widget.heroTagBase;
+                              return PhotoViewGalleryPageOptions(
+                                imageProvider: _providerFor(urls[index]),
+                                minScale: PhotoViewComputedScale.contained,
+                                maxScale: PhotoViewComputedScale.covered * 3,
+                                initialScale: PhotoViewComputedScale.contained,
+                                heroAttributes: heroBase == null
+                                    ? null
+                                    : PhotoViewHeroAttributes(
+                                        tag: '${heroBase}_${urls[index]}',
+                                      ),
+                                onTapUp: (_, __, ___) {
+                                  if (_canDismiss) _close();
+                                },
+                              );
+                            },
+                          ),
                   ),
                 ),
                 Positioned(
@@ -203,6 +285,32 @@ class _FullScreenImageState extends State<FullScreenImage>
                     ),
                   ),
                 ),
+                if (_isGallery)
+                  Positioned(
+                    top: MediaQuery.paddingOf(context).top + 16,
+                    left: 0,
+                    right: 0,
+                    child: Opacity(
+                      opacity: bgOpacity,
+                      child: IgnorePointer(
+                        child: Text(
+                          '${_currentIndex + 1} / ${urls.length}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black54,
+                                blurRadius: 8,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

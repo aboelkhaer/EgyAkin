@@ -1,5 +1,6 @@
 import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/shared/widgets/local_profile_avatar_image.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:intl/intl.dart';
 
@@ -80,10 +81,7 @@ class _HomeHeaderState extends State<HomeHeader> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      if (widget.cubit.tabsController.index != 4) {
-                        widget.cubit.tabsController.jumpToTab(4);
-                        widget.cubit.hideHomeHeader(4);
-                      }
+                      widget.cubit.jumpToProfileTab();
                     },
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -256,22 +254,23 @@ class _HomeHeaderState extends State<HomeHeader> {
             return CircleAvatar(
               radius: 18.r,
               backgroundColor: primary.withOpacity(0.15),
-              child: image == null
-                  ? Text(
+              child: ClipOval(
+                child: LocalProfileAvatarImage(
+                  imageUrl: image,
+                  width: 36.w,
+                  height: 36.h,
+                  fallback: Center(
+                    child: Text(
                       _initials().isEmpty ? 'DR' : _initials(),
                       style: TextStyle(
                         fontWeight: FontWeight.w800,
                         fontSize: 11.sp,
                         color: primary,
                       ),
-                    )
-                  : ClipOval(
-                      child: CustomCachedNetworkImage(
-                        imageUrl: image.toString(),
-                        height: 36.h,
-                        width: 36.w,
-                      ),
                     ),
+                  ),
+                ),
+              ),
             );
           },
         ),

@@ -4,7 +4,6 @@ import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/home_patients_tab.dart';
 import 'package:egy_akin/features/home/presentation/widgets/patients/patients_header.dart';
-import 'package:egy_akin/features/inbox/presentation/pages/inbox_screen.dart';
 
 import '../../../../exports.dart';
 
@@ -20,11 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   HomeCubit? cubit;
   int _deepLinkRetryCount = 0;
 
-  static const int _profileTabIndex = 4;
-  static const int _patientsTabIndex = 1;
-  static const int _communityTabIndex = 2;
-  static const int _inboxTabIndex = 3;
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -35,12 +29,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     cubit = context.read<HomeCubit>();
-    cubit!.getHome();
+    // Load local user_type first, then home — so loading nav is already correct.
+    () async {
+      await cubit!.getDoctorDataFromLocal(emitState: false);
+      if (!mounted) return;
+      cubit!.tabsController.jumpToTab(cubit!.mapNavPage(widget.page));
+      // Rebuild nav from local user_type before getHome emits loading.
+      setState(() {});
+      await cubit!.getHome();
+    }();
+  }
 
+  void _clampTabForNormalNav(HomeCubit homeCubit) {
+    if (!homeCubit.hideClinicalTabs) return;
+    if (homeCubit.tabsController.index <= 2) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        cubit!.tabsController.jumpToTab(widget.page);
-      }
+      if (!mounted) return;
+      homeCubit.clampTabIndexToCurrentNav();
     });
   }
 
@@ -83,27 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
         final headerColor = HomeDashboardColors.header(isDarkMode);
 
         return BlocBuilder<HomeCubit, HomeState>(
-          buildWhen: (previous, current) {
-            int indexOf(HomeState state) => state.maybeWhen(
-                  loaded: (
-                    _,
-                    __,
-                    ___,
-                    homeIndex,
-                    ____,
-                    _____,
-                    ______,
-                    _______,
-                    ________,
-                    __________,
-                  ) =>
-                      homeIndex,
-                  loading: (index) => index,
-                  orElse: () => cubit?.tabsController.index ?? 0,
-                );
-            return indexOf(previous) != indexOf(current);
-          },
           builder: (context, homeState) {
+            final homeCubit = cubit!;
+            final hideClinical = homeCubit.hideClinicalTabs;
+
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: SystemUiOverlayStyle(
                 // Transparent so Community (and home) gradients paint into the status bar.
@@ -122,6 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       listener: (context, state) {
                         state.maybeWhen(
                           orElse: () {},
+                          loading: (_) {
+                            _clampTabForNormalNav(homeCubit);
+                          },
                           loaded: (
                             homeData,
                             currentDoctorModel,
@@ -134,11 +125,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             isUserBlocked,
                             changesCounter,
                           ) {
-                            if (cubit!.shouldShowUpdateMessage) {
+                            _clampTabForNormalNav(homeCubit);
+
+                            if (homeCubit.shouldShowUpdateMessage) {
                               showUpdateDialog(
                                 context: context,
                                 onDismissed: () {
-                                  cubit!.setUpdateMessageStatusToLocal();
+                                  homeCubit.setUpdateMessageStatusToLocal();
                                 },
                               );
                             }
@@ -147,14 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               showBlockedDialog(
                                 context: context,
                                 onDismissed: () {
-                                  cubit!.signOut();
+                                  homeCubit.signOut();
                                 },
                               );
-                            }
-
-                            if (isUserBlocked) {
-                              navigatorKey.currentState
-                                  ?.pushReplacementNamed(AppRoutes.signIn);
                             }
 
                             Future.delayed(const Duration(seconds: 1), () {
@@ -180,14 +168,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             ) =>
                                 homeIndex,
                             loading: (index) => index,
-                            orElse: () => cubit!.tabsController.index,
+                            orElse: () => homeCubit.tabsController.index,
                           );
                         }
 
                         Widget header(int index) {
-                          if (index == _profileTabIndex ||
-                              index == _communityTabIndex ||
-                              index == _inboxTabIndex) {
+                          if (hideClinical) {
+                            return const SizedBox.shrink();
+                          }
+                          if (index == homeCubit.profileTabIndex ||
+                              index == homeCubit.communityTabIndex) {
                             return const SizedBox.shrink();
                           }
 
@@ -214,9 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 padding:
                                     EdgeInsets.fromLTRB(16.w, 6.h, 16.w, 10.h),
-                                child: index == _patientsTabIndex
-                                    ? PatientsHeader(cubit: cubit!)
-                                    : HomeHeader(cubit: cubit!),
+                                child: index == homeCubit.patientsTabIndex
+                                    ? PatientsHeader(cubit: homeCubit)
+                                    : HomeHeader(cubit: homeCubit),
                               ),
                             ),
                           );
@@ -245,11 +235,39 @@ class _HomeScreenState extends State<HomeScreen> {
                     Expanded(
                       child: PersistentTabView(
                         context,
-                        controller: cubit!.tabsController,
-                        items: _navBarsItems(context, isDarkMode),
-                        screens: _buildScreens(cubit!),
+                        key: ValueKey(
+                          hideClinical ? 'nav_normal' : 'nav_clinical',
+                        ),
+                        controller: homeCubit.tabsController,
+                        items: _navBarsItems(
+                          context,
+                          isDarkMode,
+                          hideClinical: hideClinical,
+                        ),
+                        screens: _buildScreens(
+                          homeCubit,
+                          hideClinical: hideClinical,
+                        ),
                         onItemSelected: (value) {
-                          cubit!.hideHomeHeader(value);
+                          homeCubit.hideHomeHeader(value);
+                          if (hideClinical &&
+                              value == homeCubit.notificationsTabIndex) {
+                            homeCubit.removeNotificationCount();
+                            final notifCubit =
+                                context.read<NotificationCubit>();
+                            // Avoid full reload on every tab open — use cache
+                            // unless there are unread items (or never loaded).
+                            final hasUnread = homeCubit.isUnreadNotification ||
+                                (int.tryParse(
+                                      homeCubit.homeDataModel.unreadCount ??
+                                          '0',
+                                    ) ??
+                                    0) >
+                                    0;
+                            notifCubit.ensureNotificationsLoaded(
+                              force: hasUnread,
+                            );
+                          }
                         },
                         // Keep safe-area padding OUT of the floating pill so
                         // there is no empty gap under the icons.
@@ -315,61 +333,80 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  List<Widget> _buildScreens(HomeCubit cubit) {
+  List<Widget> _buildScreens(
+    HomeCubit cubit, {
+    required bool hideClinical,
+  }) {
+    final community = CommunityScreen(
+      currentDoctorModel: cubit.currentDoctorModel,
+      homeDataModel: cubit.homeDataModel,
+      initialTab: 0,
+      isEmbeddedInHomeTab: true,
+    );
+    final notifications = NotificationScreen(
+      currentDoctorModel: cubit.currentDoctorModel,
+      accountVerification: cubit.accountVerification ?? false,
+      isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+      currentDoctorRole: cubit.currentDoctorRole,
+      currentDoctorPoints: cubit.doctorScore == null
+          ? 0
+          : int.tryParse(cubit.doctorScore!) ?? 0,
+      homeDataModel: cubit.homeDataModel,
+      isEmbeddedInHomeTab: true,
+    );
+    final profile = BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        return state.maybeWhen(
+          orElse: () {
+            return ProfileScreen(
+              isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+              accountVerification: false,
+              currentDoctorRole: cubit.currentDoctorRole,
+              currentDoctorModel: cubit.currentDoctorModel,
+              homeDataModel: cubit.homeDataModel,
+              currentDoctorPoints: cubit.doctorScore == null
+                  ? 0
+                  : int.parse(cubit.doctorScore!),
+            );
+          },
+          loaded: (
+            homeData,
+            currentDoctorModel,
+            dotsPosition,
+            homeIndex,
+            isUploadingSyndicateCard,
+            isUploadedSyndicateCard,
+            message,
+            checkUpdateMessageCounter,
+            isUserBlocked,
+            changesCounter,
+          ) {
+            return ProfileScreen(
+              isSyndicateCardRequired: cubit.isSyndicateCardRequired,
+              accountVerification: cubit.accountVerification ?? false,
+              homeDataModel: homeData,
+              currentDoctorModel: cubit.currentDoctorModel,
+              currentDoctorPoints: cubit.doctorScore == null
+                  ? 0
+                  : int.parse(cubit.doctorScore!),
+              currentDoctorRole: homeData.role.toString(),
+            );
+          },
+        );
+      },
+    );
+
+    if (hideClinical) {
+      // Community · Notifications · Profile
+      return [community, notifications, profile];
+    }
+
+    // Home · Patients · Community · Profile (inbox removed)
     return [
       HomeTab(cubit: cubit),
       HomePatientsTab(cubit: cubit),
-      CommunityScreen(
-        currentDoctorModel: cubit.currentDoctorModel,
-        homeDataModel: cubit.homeDataModel,
-        initialTab: 0,
-        isEmbeddedInHomeTab: true,
-      ),
-      InboxScreen(
-        currentDoctorModel: cubit.currentDoctorModel,
-        homeDataModel: cubit.homeDataModel,
-      ),
-      BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          return state.maybeWhen(
-            orElse: () {
-              return ProfileScreen(
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
-                accountVerification: false,
-                currentDoctorRole: cubit.currentDoctorRole,
-                currentDoctorModel: cubit.currentDoctorModel,
-                homeDataModel: cubit.homeDataModel,
-                currentDoctorPoints: cubit.doctorScore == null
-                    ? 0
-                    : int.parse(cubit.doctorScore!),
-              );
-            },
-            loaded: (
-              homeData,
-              currentDoctorModel,
-              dotsPosition,
-              homeIndex,
-              isUploadingSyndicateCard,
-              isUploadedSyndicateCard,
-              message,
-              checkUpdateMessageCounter,
-              isUserBlocked,
-              changesCounter,
-            ) {
-              return ProfileScreen(
-                isSyndicateCardRequired: cubit.isSyndicateCardRequired,
-                accountVerification: cubit.accountVerification ?? false,
-                homeDataModel: homeData,
-                currentDoctorModel: cubit.currentDoctorModel,
-                currentDoctorPoints: cubit.doctorScore == null
-                    ? 0
-                    : int.parse(cubit.doctorScore!),
-                currentDoctorRole: homeData.role.toString(),
-              );
-            },
-          );
-        },
-      ),
+      community,
+      profile,
     ];
   }
 
@@ -409,8 +446,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<PersistentBottomNavBarItem> _navBarsItems(
     BuildContext context,
-    bool isDarkMode,
-  ) {
+    bool isDarkMode, {
+    required bool hideClinical,
+  }) {
     final activeColor = isDarkMode ? AppColors.darkPrimary : AppColors.primary;
     final inactiveColor =
         isDarkMode ? AppColors.darkDescription : const Color(0xFF9CA3AF);
@@ -419,6 +457,65 @@ class _HomeScreenState extends State<HomeScreen> {
       fontWeight: FontWeight.w600,
       fontSize: 11.sp,
     );
+
+    final communityItem = PersistentBottomNavBarItem(
+      icon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
+      inactiveIcon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
+      title: context.tr(AppStrings.community),
+      textStyle: titleStyle,
+      activeColorPrimary: activeColor,
+      inactiveColorPrimary: inactiveColor,
+      activeColorSecondary: Colors.white,
+    );
+    final notificationsItem = PersistentBottomNavBarItem(
+      icon: _badgeIcon(icon: Icons.notifications_outlined, count: unread),
+      inactiveIcon:
+          _badgeIcon(icon: Icons.notifications_outlined, count: unread),
+      title: context.tr(AppStrings.notification),
+      textStyle: titleStyle,
+      activeColorPrimary: activeColor,
+      inactiveColorPrimary: inactiveColor,
+      activeColorSecondary: Colors.white,
+    );
+    final profileItem = PersistentBottomNavBarItem(
+      // Selected style7 pill shows avatar + "Profile" (matches mockup).
+      icon: CircleAvatar(
+        radius: 11.r,
+        backgroundColor: Colors.white.withOpacity(0.28),
+        child: Text(
+          _doctorInitials(),
+          style: TextStyle(
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      inactiveIcon: CircleAvatar(
+        radius: 11.r,
+        backgroundColor: inactiveColor.withOpacity(0.16),
+        child: Text(
+          _doctorInitials(),
+          style: TextStyle(
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w800,
+            color: inactiveColor,
+          ),
+        ),
+      ),
+      title: context.tr(AppStrings.profile),
+      textStyle: TextStyle(
+        fontWeight: FontWeight.w700,
+        fontSize: 11.sp,
+      ),
+      activeColorPrimary: activeColor,
+      inactiveColorPrimary: inactiveColor,
+      activeColorSecondary: Colors.white,
+    );
+
+    if (hideClinical) {
+      return [communityItem, notificationsItem, profileItem];
+    }
 
     return [
       PersistentBottomNavBarItem(
@@ -437,60 +534,8 @@ class _HomeScreenState extends State<HomeScreen> {
         inactiveColorPrimary: inactiveColor,
         activeColorSecondary: Colors.white,
       ),
-      PersistentBottomNavBarItem(
-        icon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
-        inactiveIcon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
-        title: context.tr(AppStrings.community),
-        textStyle: titleStyle,
-        activeColorPrimary: activeColor,
-        inactiveColorPrimary: inactiveColor,
-        activeColorSecondary: Colors.white,
-      ),
-      PersistentBottomNavBarItem(
-        icon: _badgeIcon(icon: Icons.mail_outline_rounded, count: unread),
-        inactiveIcon:
-            _badgeIcon(icon: Icons.mail_outline_rounded, count: unread),
-        title: context.tr(AppStrings.inbox),
-        textStyle: titleStyle,
-        activeColorPrimary: activeColor,
-        inactiveColorPrimary: inactiveColor,
-        activeColorSecondary: Colors.white,
-      ),
-      PersistentBottomNavBarItem(
-        // Selected style7 pill shows avatar + "Profile" (matches mockup).
-        icon: CircleAvatar(
-          radius: 11.r,
-          backgroundColor: Colors.white.withOpacity(0.28),
-          child: Text(
-            _doctorInitials(),
-            style: TextStyle(
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        inactiveIcon: CircleAvatar(
-          radius: 11.r,
-          backgroundColor: inactiveColor.withOpacity(0.16),
-          child: Text(
-            _doctorInitials(),
-            style: TextStyle(
-              fontSize: 9.sp,
-              fontWeight: FontWeight.w800,
-              color: inactiveColor,
-            ),
-          ),
-        ),
-        title: context.tr(AppStrings.profile),
-        textStyle: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 11.sp,
-        ),
-        activeColorPrimary: activeColor,
-        inactiveColorPrimary: inactiveColor,
-        activeColorSecondary: Colors.white,
-      ),
+      communityItem,
+      profileItem,
     ];
   }
 }

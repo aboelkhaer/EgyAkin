@@ -1,7 +1,6 @@
 import 'package:egy_akin/app/shared/widgets/link_preview_widget.dart';
 import 'package:flutter/gestures.dart';
 import '../../../exports.dart';
-import '../../services/theme_bloc.dart';
 
 class HashtagText extends StatefulWidget {
   final String content;
@@ -31,12 +30,6 @@ class HashtagText extends StatefulWidget {
 
 class _HashtagTextState extends State<HashtagText> {
   bool isExpanded = false;
-
-  bool _isArabic(String text) {
-    final arabicPattern = RegExp(
-        r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]');
-    return arabicPattern.hasMatch(text);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +93,7 @@ class _HashtagTextState extends State<HashtagText> {
 
     final hashtagStyle = defaultTextStyle.copyWith(
       color: isDarkMode ? AppColors.darkPrimary : Colors.blue,
+      fontWeight: FontWeight.w700,
     );
 
     final boldStyle = defaultTextStyle.copyWith(
@@ -109,34 +103,28 @@ class _HashtagTextState extends State<HashtagText> {
     final spans = <TextSpan>[];
     final text = widget.content;
 
-    // Updated regex to include asterisk patterns
     final patternRegex = RegExp(
       r'(#[a-zA-Z0-9_\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]+)|(https?://[^\s]+)|(\*[^*]+\*)',
     );
 
     int currentIndex = 0;
     for (final match in patternRegex.allMatches(text)) {
-      // Add text before the match
       if (match.start > currentIndex) {
         spans.add(_buildNormalTextSpan(
             text.substring(currentIndex, match.start), isDarkMode));
       }
 
-      // Handle the matched content
       final matchedText = match.group(0)!;
       if (matchedText.startsWith('http')) {
-        // Skip URLs (they'll be handled by link preview)
         spans.add(const TextSpan(text: ' '));
       } else if (matchedText.startsWith('#')) {
-        // Handle hashtags
         spans.add(TextSpan(
-          text: matchedText,
+          text: _directionalHashtag(matchedText),
           style: hashtagStyle,
           recognizer: TapGestureRecognizer()
             ..onTap = () => _onHashtagTap(matchedText),
         ));
       } else if (matchedText.startsWith('*') && matchedText.endsWith('*')) {
-        // Handle bold text between asterisks
         final boldText = matchedText.substring(1, matchedText.length - 1);
         spans.add(TextSpan(
           text: boldText,
@@ -147,12 +135,11 @@ class _HashtagTextState extends State<HashtagText> {
       currentIndex = match.end;
     }
 
-    // Add remaining text after last match
     if (currentIndex < text.length) {
       spans.add(_buildNormalTextSpan(text.substring(currentIndex), isDarkMode));
     }
 
-    return TextSpan(children: spans);
+    return TextSpan(style: defaultTextStyle, children: spans);
   }
 
   TextSpan _buildNormalTextSpan(String text, bool isDarkMode) {
@@ -216,11 +203,30 @@ class _HashtagTextState extends State<HashtagText> {
     );
   }
 
+  /// EN: '#' on the left (LTR isolate). AR: '#' on the right (RTL isolate).
+  String _directionalHashtag(String hashtag) {
+    final isArabic = RegExp(
+      r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]',
+    ).hasMatch(hashtag);
+    if (isArabic) {
+      return '\u2067$hashtag\u2069'; // RLI … PDI
+    }
+    return '\u2066$hashtag\u2069'; // LRI … PDI
+  }
+
   TextDirection _getTextDirection(String text) {
-    if (_isArabic(text)) return TextDirection.rtl;
-    final hasArabic = _isArabic(text);
-    final hasEnglish = RegExp(r'[a-zA-Z]').hasMatch(text);
-    if (hasArabic && hasEnglish) return TextDirection.rtl;
+    // Match create-post: direction from the first strong letter, not "any Arabic".
+    // Otherwise mixed EN/AR hashtags get reordered and '#' jumps after words.
+    for (final rune in text.trimLeft().runes) {
+      final ch = String.fromCharCode(rune);
+      if (RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]')
+          .hasMatch(ch)) {
+        return TextDirection.rtl;
+      }
+      if (RegExp(r'[A-Za-z]').hasMatch(ch)) {
+        return TextDirection.ltr;
+      }
+    }
     return TextDirection.ltr;
   }
 

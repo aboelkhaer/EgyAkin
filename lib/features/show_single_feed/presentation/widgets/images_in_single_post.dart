@@ -105,11 +105,15 @@ class _ImagesInSinglePostState extends State<ImagesInSinglePost> {
                     return GestureDetector(
                       onTap: () {
                         navigatorKey.currentState?.push(
-                          FullScreenImage.route(imageUrl: imageUrl),
+                          FullScreenImage.route(
+                            imageUrls: widget.mediaPaths,
+                            initialIndex: index,
+                            heroTagBase: widget.heroTag,
+                          ),
                         );
                       },
                       child: Hero(
-                        tag: widget.heroTag,
+                        tag: '${widget.heroTag}_$imageUrl',
                         child: ColoredBox(
                           color: Colors.black,
                           child: CustomCachedNetworkImage(

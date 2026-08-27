@@ -339,29 +339,40 @@ class _PrivacyAgreementRow extends StatelessWidget {
     return BlocBuilder<AuthenticationCubit, AuthenticationState>(
       builder: (context, state) {
         return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 22.r,
-              height: 22.r,
-              child: Checkbox(
-                value: cubit.isConfirmationChecked,
-                onChanged: (value) {
-                  cubit.isConfirmationChecked = value ?? false;
-                  cubit.refreshScreen();
-                },
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                visualDensity: VisualDensity.compact,
-                activeColor: primary,
-                side: BorderSide(
-                  color: HomeDashboardColors.border(isDark),
+            GestureDetector(
+              onTap: () {
+                cubit.isConfirmationChecked = !cubit.isConfirmationChecked;
+                cubit.refreshScreen();
+              },
+              behavior: HitTestBehavior.opaque,
+              child: Container(
+                width: 16,
+                height: 16,
+                margin: EdgeInsetsDirectional.only(end: 8.w),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: cubit.isConfirmationChecked
+                      ? primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(3.5),
+                  border: Border.all(
+                    color: cubit.isConfirmationChecked
+                        ? primary
+                        : HomeDashboardColors.border(isDark),
+                    width: 1.5,
+                  ),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4.r),
-                ),
+                child: cubit.isConfirmationChecked
+                    ? const Icon(
+                        Icons.check_rounded,
+                        size: 12,
+                        color: Colors.white,
+                      )
+                    : null,
               ),
             ),
-            SizedBox(width: 8.w),
             Expanded(
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -370,12 +381,13 @@ class _PrivacyAgreementRow extends StatelessWidget {
                     '${context.tr(AppStrings.iHaveReadAndAgreeToThe)} ',
                     style: TextStyle(
                       fontSize: 10.sp,
+                      height: 1.2,
                       fontWeight: FontWeight.w500,
                       color: HomeDashboardColors.subtitle(isDark),
                     ),
                   ),
                   GestureDetector(
-                    onTap: () async {
+                    onTap: () {
                       launchURL(
                         url: 'https://egyakin.com/policy',
                         onError: (error) {
@@ -388,6 +400,7 @@ class _PrivacyAgreementRow extends StatelessWidget {
                       style: TextStyle(
                         color: primary,
                         fontSize: 10.sp,
+                        height: 1.2,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

@@ -127,18 +127,10 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: isDark
-                          ? [
-                              const Color(0xFF4A2F7A),
-                              const Color(0xFF2B1A52),
-                              scaffold,
-                            ]
-                          : [
-                              primary.withOpacity(0.28),
-                              primary.withOpacity(0.14),
-                              scaffold,
-                            ],
-                      stops: const [0.0, 0.55, 1.0],
+                      colors: [
+                        HomeDashboardColors.header(isDark),
+                        scaffold,
+                      ],
                     ),
                   ),
                   child: SafeArea(
@@ -165,7 +157,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                   style: TextStyle(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w800,
-                                    color: isDark ? Colors.white : titleColor,
+                                    color: titleColor,
                                     letterSpacing: -0.2,
                                   ),
                                 ),
@@ -180,7 +172,7 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                         borderRadius: BorderRadius.circular(99),
                                         color: isDark
                                             ? Colors.white.withOpacity(0.12)
-                                            : Colors.white.withOpacity(0.72),
+                                            : Colors.white.withOpacity(0.75),
                                         border: Border.all(
                                           color: isDark
                                               ? Colors.white.withOpacity(0.14)
@@ -248,6 +240,8 @@ class _OutcomeScreenState extends State<OutcomeScreen> {
                                                     ? Colors.white
                                                         .withOpacity(0.7)
                                                     : primary.withOpacity(0.8),
+                                                textDirection:
+                                                    Directionality.of(context),
                                               ),
                                             ],
                                           ),
@@ -354,6 +348,7 @@ class _OutcomeRoundIconButton extends StatelessWidget {
           icon,
           size: 15.sp,
           color: HomeDashboardColors.title(isDark),
+          textDirection: Directionality.of(context),
         ),
       ),
     );

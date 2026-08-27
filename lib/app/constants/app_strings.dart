@@ -149,6 +149,12 @@ class AppStrings {
   static const String outcome = 'Outcome';
 
   static const String resetPassword = 'Reset Password';
+  static const String resetPasswordEnterEmailTitle = 'Enter your email';
+  static const String resetPasswordEnterEmailSubtitle =
+      'We\'ll send a verification code to reset your password.';
+  static const String resetPasswordSetNewTitle = 'Create new password';
+  static const String resetPasswordSetNewSubtitle =
+      'Choose a strong password to secure your account.';
   static const String continueText = 'Continue';
   static const String back = 'Back';
   static const String content = 'Content';
@@ -204,6 +210,14 @@ class AppStrings {
   static const String insightsAndReports = 'Insights and reports';
   static const String accountSecurity = 'Account security';
   static const String verifyYourEmail = 'Verify your email';
+  static const String verifyNow = 'Verify now';
+  static const String emailVerified = 'Email verified';
+  static const String emailNotVerified = 'Email not verified';
+  static const String yourEmailIsVerified = 'Your email address is verified';
+  static const String tapToVerifyYourEmail = 'Tap to verify your email';
+  static const String verifyYourSyndicateCard = 'Verify your syndicate card';
+  static const String tapToUploadSyndicateCard =
+      'Tap to upload your syndicate card';
   static const String legalInformation = 'Legal information';
   static const String getInTouch = 'Get in touch';
   static const String aboutEgyAkin = 'About EgyAkin';
@@ -220,6 +234,8 @@ class AppStrings {
   static const String score = 'Score';
   static const String savedPosts = 'Saved Posts';
   static const String allPosts = 'All Posts';
+  static const String browseYourPublishedPosts =
+      'Browse your published posts.';
   static const String editProfile = 'Edit Profile';
   static const String firstName = 'First name';
   static const String lastName = 'Last name';
@@ -364,6 +380,7 @@ class AppStrings {
   static const String edit = 'Edit';
   static const String delete = 'Delete';
   static const String deletePost = 'Delete Post';
+  static const String deletePostQuestion = 'Delete post?';
   static const String areYouSureYouWantToDeleteThisPost =
       'Are you sure you want to delete this post?';
   static const String joinGroup = 'Join Group';
@@ -430,6 +447,10 @@ class AppStrings {
   static const String attention = 'Attention';
   static const String areYouSureToDeleteComment =
       'Are you sure to delete comment?';
+  static const String deleteCommentQuestion = 'Delete comment?';
+  static const String deleteReplyQuestion = 'Delete reply?';
+  static const String thisReplyWillBePermanentlyRemoved =
+      'This reply will be permanently removed from the thread.';
   static const String areYouSureYouWantToDelete =
       'Are you sure you want to delete';
   static const String requestReport = 'Request report';
@@ -588,6 +609,8 @@ class AppStrings {
       'Attention: Files will upload directly.\nTotals should be maximum 5MB.\nSingle file size maximum 2MB.';
   static const String joinOurGroups = 'JOIN OUR GROUPS';
   static const String verificationCode = 'Verification code';
+  static const String enterThe4DigitCode = 'Enter the 4-digit code';
+  static const String sendingVerificationCode = 'Sending verification code…';
   static const String weHaveSentTheCodeVerificationTo =
       'We have sent the code verification to';
   static const String changeYourEmail = 'Change your email?';
@@ -619,6 +642,8 @@ class AppStrings {
   static const String pleaseContactSupportIfYouThinkThisIsAMistake =
       'Please contact support if you think this is a mistake.';
   static const String couldNotOpenEmailClient = 'Could not open email client';
+  static const String supportEmailCopied =
+      'No email app available. Support email copied to clipboard.';
   static const String chooseDegree = 'Choose Degree';
   static const String passwordNotMatch = 'Password not match';
   static const String provideThisFieldPlease = 'Provide this field, please';
@@ -777,6 +802,9 @@ class AppStrings {
   static const String avgEgfrAtAdmission = 'Avg eGFR at admission';
   static const String vsPriorPeriod = 'vs prior period';
   static const String doctorsActivation = 'Doctors activation';
+  static const String reviewSyndicateCard = 'Review card';
+  static const String pendingSyndicateApprovals =
+      'Doctors awaiting syndicate verification';
   static const String done = 'Done';
   static const String noMatchingPatients = 'No matching patients';
   static const String noPatientsMatchThisFilter =
@@ -1104,6 +1132,7 @@ class AppStrings {
 
   static const String clinicalDiscussion = 'Clinical discussion';
   static const String clinicalThread = 'Clinical thread';
+  static const String viewAllComments = 'View all comments';
   static const String thisCannotBeUndone = 'This cannot be undone';
   static const String dismiss = 'Dismiss';
   static const String youInParentheses = '(You)';
@@ -1163,4 +1192,7 @@ class AppStrings {
       '30 days to delete your account.';
   static const String profileUpdatedSuccessfully =
       'Profile updated successfully';
+  static const String updateProfilePhoto = 'Update profile photo';
+  static const String useThisPhotoAsYourProfilePicture =
+      'Use this photo as your profile picture?';
 }

@@ -27,4 +27,6 @@ class AppLocalStrings {
   static const String isExistVerificationBanner = 'isExistVerificationBanner';
   static const String permissions = 'permissions';
   static const String gfrCalculatorHistory = 'gfrCalculatorHistory';
+  static const String localProfileImageUrl = 'localProfileImageUrl';
+  static const String localProfileImagePath = 'localProfileImagePath';
 }

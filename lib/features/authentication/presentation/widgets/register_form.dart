@@ -278,79 +278,21 @@ class RegisterForm extends StatelessWidget {
                               ),
                               SizedBox(width: 10.w),
                               Expanded(
-                                child: Container(
-                                  height: 40.h,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: HomeDashboardColors.surfaceBg(
-                                      isDark,
-                                    ),
-                                    borderRadius: BorderRadius.circular(10.r),
-                                    border: Border.all(
-                                      color: HomeDashboardColors.border(isDark),
-                                    ),
-                                  ),
-                                  child: DropdownButtonFormField<String>(
-                                    hint: Text(
+                                child: _RegisterDropdownField(
+                                  hint:
                                       '${context.tr(AppStrings.chooseDegree)} *',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: HomeDashboardColors.subtitle(
-                                          isDark,
-                                        ),
-                                      ),
-                                    ),
-                                    items: highestDegreeList.map((value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(
-                                          value,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            color: HomeDashboardColors.title(
-                                              isDark,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      cubit.registerHighestDegree =
-                                          value.toString();
-                                    },
-                                    validator: (value) =>
-                                        AppValidators.fieldsIsEmptyValidation(
-                                      value ?? '',
-                                    ),
-                                    decoration: InputDecoration(
-                                      filled: true,
-                                      fillColor: HomeDashboardColors.surfaceBg(
-                                        isDark,
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderSide: BorderSide.none,
-                                        borderRadius:
-                                            BorderRadius.circular(10.r),
-                                      ),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 8,
-                                      ),
-                                    ),
-                                    icon: Icon(
-                                      Icons.arrow_drop_down_rounded,
-                                      color: HomeDashboardColors.subtitle(
-                                        isDark,
-                                      ),
-                                    ),
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      color: HomeDashboardColors.title(isDark),
-                                    ),
-                                    dropdownColor:
-                                        HomeDashboardColors.cardBg(isDark),
-                                    menuMaxHeight: 200,
+                                  value: cubit.registerHighestDegree,
+                                  options: highestDegreeList,
+                                  isDark: isDark,
+                                  primary: primary,
+                                  titleStyle: titleStyle,
+                                  onSelected: (value) {
+                                    cubit.registerHighestDegree = value;
+                                    cubit.refreshScreen();
+                                  },
+                                  validator: (_) =>
+                                      AppValidators.fieldsIsEmptyValidation(
+                                    cubit.registerHighestDegree,
                                   ),
                                 ),
                               ),
@@ -364,6 +306,158 @@ class RegisterForm extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _RegisterDropdownField extends StatefulWidget {
+  final String hint;
+  final String value;
+  final List<String> options;
+  final bool isDark;
+  final Color primary;
+  final TextStyle titleStyle;
+  final ValueChanged<String> onSelected;
+  final String? Function(String?) validator;
+
+  const _RegisterDropdownField({
+    required this.hint,
+    required this.value,
+    required this.options,
+    required this.isDark,
+    required this.primary,
+    required this.titleStyle,
+    required this.onSelected,
+    required this.validator,
+  });
+
+  @override
+  State<_RegisterDropdownField> createState() => _RegisterDropdownFieldState();
+}
+
+class _RegisterDropdownFieldState extends State<_RegisterDropdownField> {
+  final GlobalKey _fieldKey = GlobalKey();
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _RegisterDropdownField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_controller.text != widget.value) {
+      _controller.text = widget.value;
+    }
+  }
+
+  Future<void> _openDropdown() async {
+    final box = _fieldKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) return;
+
+    final offset = box.localToGlobal(Offset.zero);
+    final size = box.size;
+    final selected = await showMenu<String>(
+      context: context,
+      color: HomeDashboardColors.cardBg(widget.isDark),
+      elevation: 8,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.r),
+        side: BorderSide(
+          color: HomeDashboardColors.border(widget.isDark).withOpacity(0.7),
+        ),
+      ),
+      constraints: BoxConstraints(
+        minWidth: size.width,
+        maxWidth: size.width,
+      ),
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height + 4,
+        offset.dx + size.width,
+        offset.dy,
+      ),
+      items: widget.options.map((option) {
+        final isSelected = option == widget.value;
+        return PopupMenuItem<String>(
+          value: option,
+          height: 40.h,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  option,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight:
+                        isSelected ? FontWeight.w700 : FontWeight.w500,
+                    color: isSelected
+                        ? widget.primary
+                        : HomeDashboardColors.title(widget.isDark),
+                  ),
+                ),
+              ),
+              if (isSelected)
+                Icon(
+                  Icons.check_rounded,
+                  size: 16.sp,
+                  color: widget.primary,
+                ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+
+    if (selected == null || !mounted) return;
+    _controller.text = selected;
+    widget.onSelected(selected);
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      key: _fieldKey,
+      alignment: AlignmentDirectional.centerEnd,
+      children: [
+        CustomTextFormField(
+          title: widget.hint,
+          textFormFieldController: _controller,
+          style: widget.titleStyle,
+          readOnly: true,
+          onTextClick: _openDropdown,
+          contentPadding: const EdgeInsets.only(
+            left: 11,
+            right: 28,
+            top: 14,
+            bottom: 14,
+          ),
+          textInputType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          validator: widget.validator,
+        ),
+        IgnorePointer(
+          child: Padding(
+            padding: EdgeInsetsDirectional.only(end: 6.w),
+            child: Icon(
+              Icons.arrow_drop_down_rounded,
+              size: 22.sp,
+              color: HomeDashboardColors.subtitle(widget.isDark),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

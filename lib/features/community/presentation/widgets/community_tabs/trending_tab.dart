@@ -1,9 +1,10 @@
 import 'package:egy_akin/features/community/data/models/trending_fake_data.dart';
+import 'package:egy_akin/features/community/presentation/cubit/trending_cubit/trending_state.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
 
 import '../../../../../exports.dart';
 
-class TrendingTab extends StatelessWidget {
+class TrendingTab extends StatefulWidget {
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
 
@@ -13,12 +14,61 @@ class TrendingTab extends StatelessWidget {
     required this.homeDataModel,
   });
 
+  @override
+  State<TrendingTab> createState() => _TrendingTabState();
+}
+
+class _TrendingTabState extends State<TrendingTab>
+    with AutomaticKeepAliveClientMixin {
+  late final TrendingCubit _cubit;
+  late final ScrollController _scrollController;
+
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _cubit = context.read<TrendingCubit>();
+    _scrollController = ScrollController()..addListener(_onScroll);
+
+    if (_cubit.callTrendsTabTimes == 0) {
+      _cubit.callTrendsTabTimes = 1;
+      _cubit.getTrendingPostsInCommunity();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    if (_cubit.isLastPage || _cubit.isLoadingMoreForScroll) return;
+
+    final position = _scrollController.position;
+    if (!position.hasContentDimensions) return;
+    if (position.pixels <= 0 || position.maxScrollExtent <= 0) return;
+
+    const threshold = 200.0;
+    if (position.maxScrollExtent - position.pixels <= threshold) {
+      _cubit.loadMoreTrends();
+    }
+  }
+
+  Future<void> _onRefresh() async {
+    await _cubit.getTrendingPostsInCommunity();
+  }
+
   void _openSearch(String query) {
     navigatorKey.currentState?.pushNamed(
       AppRoutes.communitySearch,
       arguments: AppRoutesArgs.communitySearchRouteArgs(
-        currentDoctorModel: currentDoctorModel,
-        homeDataModel: homeDataModel,
+        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: widget.homeDataModel,
         initialValueInSearch: query,
       ),
     );
@@ -26,62 +76,159 @@ class TrendingTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
-        const topics = TrendingFakeData.topics;
-        final featured = topics.first;
-        final rest = topics.skip(1).toList();
-
-        final cardBg = isDark ? const Color(0xFF161B22) : Colors.white;
-        final border = isDark
-            ? Colors.white.withOpacity(0.06)
-            : const Color(0xFFE5E7EB);
-        final muted = isDark ? Colors.white54 : const Color(0xFF6B7280);
-        final title = isDark ? Colors.white : const Color(0xFF111827);
+        final primary = HomeDashboardColors.primary(isDark);
 
         return ColoredBox(
           color: HomeDashboardColors.scaffold(isDark),
-          child: ListView(
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 100.h),
-            children: [
-              _FeaturedRow(
-                topic: featured,
-                isDark: isDark,
-                onTap: () => _openSearch(featured.searchQuery),
-              ),
-              SizedBox(height: 10.h),
-              Container(
-                decoration: BoxDecoration(
-                  color: cardBg,
-                  borderRadius: BorderRadius.circular(18.r),
-                  border: Border.all(color: border),
+          child: BlocConsumer<TrendingCubit, TrendingState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                orElse: () {},
+                error: (message) {
+                  if (message.isNotEmpty) {
+                    customSnackBar(context: context, message: message);
+                  }
+                },
+              );
+            },
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () => const SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                    child: LoadingForGroupRow(
+                      count: 12,
+                      isTrends: true,
+                    ),
+                  ),
                 ),
-                child: Column(
-                  children: [
-                    for (var i = 0; i < rest.length; i++) ...[
-                      if (i > 0)
-                        Divider(
-                          height: 1,
-                          thickness: 1,
-                          indent: 56.w,
-                          color: border,
+                error: (_) => RefreshIndicator(
+                  onRefresh: _onRefresh,
+                  color: primary,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics(),
+                    ),
+                    children: [
+                      SizedBox(height: 120.h),
+                      Center(
+                        child: Image.asset(
+                          AppImages.notFound,
+                          width: 150.w,
+                          height: 150.h,
                         ),
-                      _RankedListRow(
-                        topic: rest[i],
-                        isDark: isDark,
-                        titleColor: title,
-                        mutedColor: muted,
-                        onTap: () => _openSearch(rest[i].searchQuery),
                       ),
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                loaded: (_, __, response, isSeeMore) {
+                  final trends = response.data ?? const <TrendModel>[];
+                  if (trends.isEmpty) {
+                    return RefreshIndicator(
+                      onRefresh: _onRefresh,
+                      color: primary,
+                      child: ListView(
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        children: [
+                          SizedBox(height: 120.h),
+                          Center(
+                            child: Image.asset(
+                              AppImages.notFound,
+                              width: 150.w,
+                              height: 150.h,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  final topics = TrendingTopicUi.fromTrends(trends);
+                  final featured = topics.first;
+                  final rest = topics.skip(1).toList();
+
+                  final cardBg =
+                      isDark ? const Color(0xFF161B22) : Colors.white;
+                  final border = isDark
+                      ? Colors.white.withOpacity(0.06)
+                      : const Color(0xFFE5E7EB);
+                  final muted =
+                      isDark ? Colors.white54 : const Color(0xFF6B7280);
+                  final title =
+                      isDark ? Colors.white : const Color(0xFF111827);
+
+                  return RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    color: primary,
+                    child: ListView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(
+                        parent: BouncingScrollPhysics(),
+                      ),
+                      padding: EdgeInsets.fromLTRB(14.w, 6.h, 14.w, 100.h),
+                      children: [
+                        _FeaturedRow(
+                          topic: featured,
+                          isDark: isDark,
+                          onTap: () => _openSearch(featured.searchQuery),
+                        ),
+                        if (rest.isNotEmpty) ...[
+                          SizedBox(height: 10.h),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: cardBg,
+                              borderRadius: BorderRadius.circular(18.r),
+                              border: Border.all(color: border),
+                            ),
+                            child: Column(
+                              children: [
+                                for (var i = 0; i < rest.length; i++) ...[
+                                  if (i > 0)
+                                    Divider(
+                                      height: 1,
+                                      thickness: 1,
+                                      indent: 56.w,
+                                      color: border,
+                                    ),
+                                  _RankedListRow(
+                                    topic: rest[i],
+                                    isDark: isDark,
+                                    titleColor: title,
+                                    mutedColor: muted,
+                                    onTap: () =>
+                                        _openSearch(rest[i].searchQuery),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                        if (isSeeMore) ...[
+                          SizedBox(height: 16.h),
+                          Center(
+                            child: SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                color: primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
           ),
         );
       },
@@ -90,7 +237,7 @@ class TrendingTab extends StatelessWidget {
 }
 
 class _FeaturedRow extends StatelessWidget {
-  final TrendingTopicFake topic;
+  final TrendingTopicUi topic;
   final bool isDark;
   final VoidCallback onTap;
 
@@ -202,25 +349,27 @@ class _FeaturedRow extends StatelessWidget {
                         color: Colors.white.withOpacity(0.85),
                       ),
                     ),
-                    SizedBox(height: 4.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 7.w,
-                        vertical: 3.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.16),
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        '+${topic.growthPercent}%',
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                    if (topic.growthPercent != null) ...[
+                      SizedBox(height: 4.h),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 7.w,
+                          vertical: 3.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.16),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Text(
+                          '+${topic.growthPercent}%',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
               ],
@@ -233,7 +382,7 @@ class _FeaturedRow extends StatelessWidget {
 }
 
 class _RankedListRow extends StatelessWidget {
-  final TrendingTopicFake topic;
+  final TrendingTopicUi topic;
   final bool isDark;
   final Color titleColor;
   final Color mutedColor;
@@ -249,6 +398,7 @@ class _RankedListRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final growth = topic.growthPercent;
     final growthColor = topic.isRising
         ? const Color(0xFF22C55E)
         : const Color(0xFFEF4444);
@@ -319,37 +469,40 @@ class _RankedListRow extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
-                decoration: BoxDecoration(
-                  color: growthColor.withOpacity(isDark ? 0.16 : 0.10),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      topic.isRising
-                          ? Icons.arrow_upward_rounded
-                          : Icons.arrow_downward_rounded,
-                      size: 11.sp,
-                      color: growthColor,
-                    ),
-                    SizedBox(width: 2.w),
-                    Text(
-                      topic.isRising
-                          ? '${topic.growthPercent}%'
-                          : '${topic.growthPercent.abs()}%',
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        fontWeight: FontWeight.w800,
+              if (growth != null) ...[
+                SizedBox(width: 8.w),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+                  decoration: BoxDecoration(
+                    color: growthColor.withOpacity(isDark ? 0.16 : 0.10),
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        topic.isRising
+                            ? Icons.arrow_upward_rounded
+                            : Icons.arrow_downward_rounded,
+                        size: 11.sp,
                         color: growthColor,
                       ),
-                    ),
-                  ],
+                      SizedBox(width: 2.w),
+                      Text(
+                        topic.isRising
+                            ? '$growth%'
+                            : '${growth.abs()}%',
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w800,
+                          color: growthColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),

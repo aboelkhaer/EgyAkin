@@ -60,7 +60,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     return result;
   }
 
-  getCurrentDoctorPatients({bool showLoading = true}) async {
+  Future<void> getCurrentDoctorPatients({bool showLoading = true}) async {
     if (isClosed) return;
     if (showLoading) {
       emit(const AllDoctorsPatientsState.loading());
@@ -93,7 +93,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
           ),
         ));
       },
-      (r) async {
+      (r) {
         if (isClosed) return;
         filtersOptions =
             GetFiltersOptionsModelResponse(data: r.filters ?? []);

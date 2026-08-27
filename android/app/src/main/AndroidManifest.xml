@@ -38,7 +38,7 @@
     </queries>
     <application
         android:label="EgyAkin"
-        android:name="${applicationName}"
+        android:name=".EgyAkinApplication"
         android:icon="@mipmap/launcher_icon">
         <!-- notification -->
          <service android:name="com.google.firebase.messaging.FirebaseMessagingService"/>

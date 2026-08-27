@@ -32,8 +32,10 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
 
   // Helper method to check if buttons should be shown
   bool _shouldShowButtons(HomeModelResponse homeDataModel) {
+    final type = (homeDataModel.userType ?? '').trim().toLowerCase();
+    if (type == 'normal') return false;
     return isVerifiedUser(homeDataModel.isSyndicateCardRequired) ||
-        homeDataModel.userType == 'medical_statistics';
+        type == 'medical_statistics';
   }
 
   @override
@@ -218,11 +220,23 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                       _preservedDoctorModel ??
                                           widget.currentDoctorModel;
                                   navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.markedPatients,
+                                    AppRoutes.profilePatients,
                                     arguments:
-                                        AppRoutesArgs.markedPatientsRouteArgs(
+                                        AppRoutesArgs.profilePatientsRouteArgs(
+                                      doctorId: preservedDoctor.id.toString(),
                                       currentDoctorModel: preservedDoctor,
+                                      accountVerification:
+                                          widget.accountVerification,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      isSyndicateCardRequired:
+                                          widget.isSyndicateCardRequired,
+                                      doctorFirstName:
+                                          preservedDoctor.firstName.toString(),
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
                                       homeDataModel: effectiveHomeDataModel,
+                                      initialShowMarked: true,
                                     ),
                                   );
                                 },
@@ -406,12 +420,26 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                 label: context.tr(AppStrings.markedPatients),
                                 onTap: () {
                                   navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.markedPatients,
+                                    AppRoutes.profilePatients,
                                     arguments:
-                                        AppRoutesArgs.markedPatientsRouteArgs(
+                                        AppRoutesArgs.profilePatientsRouteArgs(
+                                      doctorId: widget.cubit.currentDoctor.id
+                                          .toString(),
                                       currentDoctorModel:
                                           widget.cubit.currentDoctor,
+                                      accountVerification:
+                                          widget.accountVerification,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      isSyndicateCardRequired:
+                                          widget.isSyndicateCardRequired,
+                                      doctorFirstName: widget
+                                          .cubit.currentDoctor.firstName
+                                          .toString(),
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
                                       homeDataModel: effectiveHomeDataModel,
+                                      initialShowMarked: true,
                                     ),
                                   );
                                 },
@@ -661,12 +689,26 @@ class _ProfileNameAndJobState extends State<ProfileNameAndJob> {
                                 label: context.tr(AppStrings.markedPatients),
                                 onTap: () {
                                   navigatorKey.currentState?.pushNamed(
-                                    AppRoutes.markedPatients,
+                                    AppRoutes.profilePatients,
                                     arguments:
-                                        AppRoutesArgs.markedPatientsRouteArgs(
+                                        AppRoutesArgs.profilePatientsRouteArgs(
+                                      doctorId: widget.cubit.currentDoctor.id
+                                          .toString(),
                                       currentDoctorModel:
                                           widget.cubit.currentDoctor,
+                                      accountVerification:
+                                          widget.accountVerification,
+                                      currentDoctorPoints:
+                                          widget.currentDoctorPoints,
+                                      isSyndicateCardRequired:
+                                          widget.isSyndicateCardRequired,
+                                      doctorFirstName: widget
+                                          .cubit.currentDoctor.firstName
+                                          .toString(),
+                                      currentDoctorRole:
+                                          widget.currentDoctorRole,
                                       homeDataModel: effectiveHomeDataModel,
+                                      initialShowMarked: true,
                                     ),
                                   );
                                 },
