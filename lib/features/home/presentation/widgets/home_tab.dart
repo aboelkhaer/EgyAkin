@@ -279,6 +279,9 @@ class _HomeTabState extends State<HomeTab> {
                                   draftCount: draftCount > 0
                                       ? draftCount
                                       : drafts.length,
+                                  onViewAll: () {
+                                    widget.cubit.openMyPatientsDrafts();
+                                  },
                                   onResume: (patient) {
                                     navigatorKey.currentState
                                         ?.pushNamed(

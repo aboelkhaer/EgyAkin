@@ -6,6 +6,7 @@ class HomeResumeDraftsSection extends StatelessWidget {
   final List<PatientHomeDataModel> drafts;
   final int draftCount;
   final ValueChanged<PatientHomeDataModel>? onResume;
+  final VoidCallback? onViewAll;
 
   const HomeResumeDraftsSection({
     super.key,
@@ -13,6 +14,7 @@ class HomeResumeDraftsSection extends StatelessWidget {
     required this.drafts,
     this.draftCount = 0,
     this.onResume,
+    this.onViewAll,
   });
 
   @override
@@ -41,6 +43,8 @@ class HomeResumeDraftsSection extends StatelessWidget {
             leadingIcon: Icons.assignment_outlined,
             badgeText:
                 '$countLabel ${context.tr(AppStrings.inProgress)}',
+            actionLabel: context.tr(AppStrings.viewAll),
+            onAction: onViewAll,
           ),
           if (primaryDraft != null) ...[
             SizedBox(height: 10.h),

@@ -199,6 +199,10 @@ class HomeCubit extends Cubit<HomeState> {
   /// Bumped when home "Add outcomes → View all" should open Patients tab
   /// filtered to the current doctor's patients without an outcome.
   final ValueNotifier<int> withoutOutcomeFilterSignal = ValueNotifier(0);
+
+  /// Bumped when home "Resume drafts → View all" should open Patients tab
+  /// filtered to the current doctor's not-yet-submitted patients.
+  final ValueNotifier<int> draftsFilterSignal = ValueNotifier(0);
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   final SignOutUsecase _signOutUsecase;
@@ -414,6 +418,13 @@ class HomeCubit extends Cubit<HomeState> {
     if (hideClinicalTabs) return;
     jumpToPatientsTab();
     withoutOutcomeFilterSignal.value++;
+  }
+
+  /// Patients tab (index 1) + my patients not yet finally submitted.
+  void openMyPatientsDrafts() {
+    if (hideClinicalTabs) return;
+    jumpToPatientsTab();
+    draftsFilterSignal.value++;
   }
 
   void changeDotsPositions() {

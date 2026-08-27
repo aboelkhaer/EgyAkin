@@ -27,6 +27,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   bool _allPatientsLoaded = false;
   bool _myPatientsLoaded = false;
   int _lastHandledWithoutOutcomeSignal = 0;
+  int _lastHandledDraftsSignal = 0;
   late final AllDoctorsPatientsCubit _filterCubit;
   late final CurrentDoctorPatientsCubit _myPatientsCubit;
   late final ScrollController _myScrollController;
@@ -49,9 +50,11 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
     _allScrollController = ScrollController()..addListener(_onScroll);
     widget.cubit.withoutOutcomeFilterSignal
         .addListener(_onWithoutOutcomeFilterRequested);
+    widget.cubit.draftsFilterSignal.addListener(_onDraftsFilterRequested);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadMyPatients();
       _onWithoutOutcomeFilterRequested();
+      _onDraftsFilterRequested();
     });
   }
 
@@ -59,6 +62,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   void dispose() {
     widget.cubit.withoutOutcomeFilterSignal
         .removeListener(_onWithoutOutcomeFilterRequested);
+    widget.cubit.draftsFilterSignal.removeListener(_onDraftsFilterRequested);
     _myScrollController.removeListener(_onScroll);
     _allScrollController.removeListener(_onScroll);
     _myScrollController.dispose();
@@ -73,18 +77,43 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
     final signal = widget.cubit.withoutOutcomeFilterSignal.value;
     if (signal <= 0 || signal == _lastHandledWithoutOutcomeSignal) return;
     _lastHandledWithoutOutcomeSignal = signal;
-    _applyWithoutOutcomeFilter();
+    _applyStatusFilter({'9901': 'Yes', '9902': 'No'});
   }
 
-  void _applyWithoutOutcomeFilter() {
+  void _onDraftsFilterRequested() {
+    if (!mounted) return;
+    final signal = widget.cubit.draftsFilterSignal.value;
+    if (signal <= 0 || signal == _lastHandledDraftsSignal) return;
+    _lastHandledDraftsSignal = signal;
+    _applyStatusFilter({'9901': 'No'});
+  }
+
+  /// Home's "View all" on pending outcomes / resume drafts: apply the real
+  /// backend filter (submit_status / outcome_status, scoped to my patients)
+  /// instead of paging through the plain patient list and filtering
+  /// client-side — the same request /api/v3/patientFilters the manual
+  /// filter sheet sends.
+  Future<void> _applyStatusFilter(Map<String, String> filterValues) async {
     _resetFilterFlags();
+    filterValues.forEach((key, value) => _filterCubit.formData[key] = value);
     setState(() {
       _showMyPatients = true;
       _usingFilteredResults = false;
-      _withoutOutcomeOnly = true;
+      _withoutOutcomeOnly = false;
     });
-    // Reload my patients from API, then keep only pending-outcome rows.
-    _loadMyPatients(force: true);
+
+    // applyPatientFilters() only rebuilds a `loaded` state by copying the
+    // cubit's *existing* loaded response — on a cubit that has never loaded
+    // (this screen never calls getCurrentDoctorPatients() on it for the "my
+    // patients" scope), that copyWith has nothing to copy onto and the
+    // filtered result is silently dropped. The manual filter sheet avoids
+    // this because opening it calls prefetchFilterOptions() first, which
+    // seeds a real `loaded` state; do the same here before applying.
+    if (_filterCubit.isClosed) return;
+    await _filterCubit.prefetchFilterOptions();
+    if (!mounted || _filterCubit.isClosed) return;
+
+    await _filterCubit.applyPatientFilters('true');
   }
 
   /// Final submit done (`submit_status`) and outcome not filled yet.
