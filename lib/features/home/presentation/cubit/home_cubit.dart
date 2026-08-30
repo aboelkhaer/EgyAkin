@@ -21,7 +21,9 @@ import 'package:egy_akin/features/authentication/data/models/authentication_mode
 import 'package:egy_akin/features/home/data/models/home_model_response.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_home_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_role_permissions_usecase.dart';
+import 'package:egy_akin/features/home/domain/usecases/get_user_me_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/upload_syndicate_card_usecase.dart';
+import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 import 'package:egy_akin/features/home/presentation/cubit/home_state.dart';
 import 'package:egy_akin/features/profile/domain/usecases/sign_out_usecase.dart';
 import 'package:egy_akin/injection_container.dart';
@@ -38,6 +40,7 @@ class HomeCubit extends Cubit<HomeState> {
     this._uploadSyndicateCardUsecase,
     this._signOutUsecase,
     this._getRolePermissionsUsecase,
+    this._getUserMeUsecase,
   ) : super(const HomeState.initial());
   static HomeCubit get(context) => BlocProvider.of(context);
   PersistentTabController tabsController =
@@ -166,15 +169,45 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  /// After profile role change, sync type and land on Profile safely.
-  Future<void> applyProfileUpdateAndOpenProfile() async {
+  /// After profile save, sync local doctor into HomeCubit and land on Profile.
+  /// When [emailChanged] is true, mark email as unverified so the profile
+  /// banner shows the new address as not verified.
+  /// When [userTypeChanged] is true, refresh home (nav + dashboard data).
+  Future<void> applyProfileUpdateAndOpenProfile({
+    bool emailChanged = false,
+    bool userTypeChanged = false,
+  }) async {
+    // Capture nav mode before local doctor reload — user_type may flip
+    // between normal (3 tabs) and medical_statistics (4 tabs).
+    final wasHidingClinical = hideClinicalTabs;
+
     await getDoctorDataFromLocal(emitState: false);
     final type = currentDoctorModel.userType;
     if (type != null && type.isNotEmpty) {
       homeDataModel = homeDataModel.copyWith(userType: type);
     }
-    // Jump while still remapping — profile is legacy page 4 → index 2 for normal.
-    jumpToTabSafe(profileTabIndex);
+    if (emailChanged) {
+      accountVerification = false;
+      isExistVerificationBanner = false;
+      homeDataModel = homeDataModel.copyWith(verified: false);
+      currentDoctorModel =
+          currentDoctorModel.copyWith(emailVerifiedAt: null);
+    }
+
+    final nowHidingClinical = hideClinicalTabs;
+    final targetProfile = profileTabIndex;
+    // Expanding 3 → 4 tabs: do NOT jump to index 3 while PersistentTabView
+    // still has 3 items (throws). Keep index ≤ 2, emit, then jump after frame.
+    // Shrinking 4 → 3: jump to profile (2) before emit so rebuild is safe.
+    final expandingNav = wasHidingClinical && !nowHidingClinical;
+    if (expandingNav) {
+      if (tabsController.index > 2) {
+        tabsController.jumpToTab(2);
+      }
+    } else {
+      jumpToTabSafe(targetProfile);
+    }
+
     if (isClosed) return;
     emit(state.maybeMap(
       orElse: () => state,
@@ -194,15 +227,38 @@ class HomeCubit extends Cubit<HomeState> {
         tabsController.index.clamp(0, _maxTabIndex),
       ),
     ));
+
+    void finishAfterNavReady() {
+      if (isClosed) return;
+      if (expandingNav) {
+        jumpToTabSafe(targetProfile);
+      }
+      if (userTypeChanged) {
+        // Reload /user/me + /homeNew (skipped for normal) so Home/Patients
+        // match the new user_type.
+        getHome();
+      }
+    }
+
+    if (expandingNav || userTypeChanged) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        finishAfterNavReady();
+      });
+    }
   }
 
   /// Bumped when home "Add outcomes → View all" should open Patients tab
-  /// filtered to the current doctor's patients without an outcome.
+  /// with My patients filtered: final submit Yes + outcome No.
   final ValueNotifier<int> withoutOutcomeFilterSignal = ValueNotifier(0);
+
+  /// Bumped when home "Resume drafts → View all" should open Patients tab
+  /// with My patients filtered: final submit No (unfinished / drafts).
+  final ValueNotifier<int> draftsFilterSignal = ValueNotifier(0);
   final GetHomeUsecase _getHomeUsecase;
   final UploadSyndicateCardUsecase _uploadSyndicateCardUsecase;
   final SignOutUsecase _signOutUsecase;
   final GetRolePermissionsUsecase _getRolePermissionsUsecase;
+  final GetUserMeUsecase _getUserMeUsecase;
   DoctorModel currentDoctorModel = const DoctorModel();
   int dotsPosition = 0;
   int _cacheClearCounter = 0;
@@ -409,11 +465,18 @@ class HomeCubit extends Cubit<HomeState> {
     ));
   }
 
-  /// Patients tab (index 1) + my patients missing an outcome.
+  /// Patients tab + My patients + pending-outcome filter API.
   void openMyPatientsWithoutOutcome() {
     if (hideClinicalTabs) return;
     jumpToPatientsTab();
     withoutOutcomeFilterSignal.value++;
+  }
+
+  /// Patients tab + My patients + drafts filter (final submit = No).
+  void openMyPatientsDrafts() {
+    if (hideClinicalTabs) return;
+    jumpToPatientsTab();
+    draftsFilterSignal.value++;
   }
 
   void changeDotsPositions() {
@@ -490,13 +553,34 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       await getUpdateMessageStatusFromLocal();
 
+      // Always refresh account state via /user/me (works for normal + clinical,
+      // and still works when the account is blocked).
+      final meOk = await _fetchAndApplyUserMe();
+      if (isClosed) return;
+
+      // Normal users never open Home — skip the heavy /homeNew dashboard call.
+      if (hideClinicalTabs) {
+        if (meOk) {
+          _emitLoaded(homeData: homeDataModel);
+        } else if (alreadyLoaded) {
+          _emitLoaded(
+            homeData: homeDataModel,
+            message: 'Could not refresh account',
+          );
+        } else {
+          emit(const HomeState.error('Could not load account'));
+        }
+        return;
+      }
+
       final result = await _getHomeUsecase.execute(NoParams());
 
       await result.fold<Future<void>>(
         (l) async {
           if (isClosed) return;
           // Keep previous dashboard visible on refresh failure.
-          if (alreadyLoaded) {
+          // If /user/me already succeeded, still emit loaded for clinical shell.
+          if (alreadyLoaded || meOk) {
             _emitLoaded(
               homeData: homeDataModel,
               message: l.message,
@@ -508,10 +592,9 @@ class HomeCubit extends Cubit<HomeState> {
         (homeData) async {
           if (isClosed) return;
 
-          accountVerification = homeData.verified ?? accountVerification;
           final unreadRaw = homeData.unreadCount;
           isUnreadNotification =
-              unreadRaw != null && (int.tryParse(unreadRaw) ?? 0) > 0;
+              unreadRaw != null && (num.tryParse(unreadRaw)?.toInt() ?? 0) > 0;
           doctorPatientCount = homeData.doctorPatientCount?.toString();
           doctorScore = homeData.scoreValue?.toString();
           isSyndicateCardRequired =
@@ -519,7 +602,48 @@ class HomeCubit extends Cubit<HomeState> {
                   isSyndicateCardRequired;
           currentDoctorRole =
               homeData.role?.toString() ?? currentDoctorRole;
-          homeDataModel = homeData;
+          // Keep account fields from /user/me when home omits them; prefer home
+          // for dashboard `data` and any non-null account overrides.
+          // Never resurrect verified after a local email change cleared
+          // emailVerifiedAt.
+          final localEmailVerifiedAt =
+              currentDoctorModel.emailVerifiedAt?.trim();
+          final hasLocalEmailVerifiedAt =
+              localEmailVerifiedAt != null && localEmailVerifiedAt.isNotEmpty;
+          final mergedVerified = hasLocalEmailVerifiedAt
+              ? (homeData.verified ?? homeDataModel.verified)
+              : false;
+          accountVerification = mergedVerified ?? accountVerification;
+          homeDataModel = homeDataModel.copyWith(
+            value: homeData.value ?? homeDataModel.value,
+            verified: mergedVerified,
+            unreadCount: homeData.unreadCount ?? homeDataModel.unreadCount,
+            isSyndicateCardRequired: homeData.isSyndicateCardRequired ??
+                homeDataModel.isSyndicateCardRequired,
+            appUpdateMessage:
+                homeData.appUpdateMessage ?? homeDataModel.appUpdateMessage,
+            doctorPatientCount: homeData.doctorPatientCount ??
+                homeDataModel.doctorPatientCount,
+            allPatientCount:
+                homeData.allPatientCount ?? homeDataModel.allPatientCount,
+            scoreValue: homeData.scoreValue ?? homeDataModel.scoreValue,
+            role: homeData.role ?? homeDataModel.role,
+            userType: homeData.userType ?? homeDataModel.userType,
+            permissionsChanged: homeData.permissionsChanged ??
+                homeDataModel.permissionsChanged,
+            isUserBlocked:
+                homeData.isUserBlocked ?? homeDataModel.isUserBlocked,
+            postsCount: homeData.postsCount ?? homeDataModel.postsCount,
+            savedPosts: homeData.savedPosts ?? homeDataModel.savedPosts,
+            markedPatientsCount: homeData.markedPatientsCount ??
+                homeDataModel.markedPatientsCount,
+            pendingOutcomeCount: homeData.pendingOutcomeCount ??
+                homeDataModel.pendingOutcomeCount,
+            draftCount: homeData.draftCount ?? homeDataModel.draftCount,
+            researchInsights:
+                homeData.researchInsights ?? homeDataModel.researchInsights,
+            data: homeData.data ?? homeDataModel.data,
+          );
 
           if (homeData.userType != null && homeData.userType!.isNotEmpty) {
             final localDoctor = await sl<AppPreferences>().getDoctorData();
@@ -543,7 +667,7 @@ class HomeCubit extends Cubit<HomeState> {
           }
 
           if (!isClosed) {
-            _emitLoaded(homeData: homeData);
+            _emitLoaded(homeData: homeDataModel);
           }
         },
       );
@@ -558,7 +682,8 @@ class HomeCubit extends Cubit<HomeState> {
     }
 
     // Only redirect once when home cannot be accessed — not on every refresh.
-    if (!alreadyLoaded) {
+    // Normal users already live on Community inside this shell — don't push.
+    if (!alreadyLoaded && !hideClinicalTabs) {
       final hasAccessHome =
           await PermissionHelper.hasPermission(AppPermissions.accessHome);
       if (!hasAccessHome) {
@@ -572,6 +697,148 @@ class HomeCubit extends Cubit<HomeState> {
         );
       }
     }
+  }
+
+  /// Lightweight account refresh for app resume — no home skeleton.
+  Future<void> refreshAccountState() async {
+    if (isClosed) return;
+    await getDoctorDataFromLocal(emitState: false);
+    final ok = await _fetchAndApplyUserMe();
+    if (!isClosed && ok) {
+      _emitLoaded(homeData: homeDataModel);
+    }
+  }
+
+  /// Applies `/user/me` into [homeDataModel] / local doctor / permissions.
+  /// Returns `true` on success.
+  Future<bool> _fetchAndApplyUserMe() async {
+    final result = await _getUserMeUsecase.execute(NoParams());
+    return await result.fold<Future<bool>>(
+      (l) async {
+        debugPrint('getUserMe failed: ${l.message}');
+        return false;
+      },
+      (me) async {
+        if (isClosed) return false;
+        await _applyUserMe(me);
+        return true;
+      },
+    );
+  }
+
+  Future<void> _applyUserMe(UserMeResponse me) async {
+    final unreadRaw = me.unreadCount;
+    isUnreadNotification =
+        unreadRaw != null && (num.tryParse(unreadRaw)?.toInt() ?? 0) > 0;
+    doctorPatientCount =
+        me.doctorPatientCount?.toString() ?? doctorPatientCount;
+    doctorScore = me.scoreValue?.toString() ?? doctorScore;
+    isSyndicateCardRequired =
+        me.isSyndicateCardRequired?.toString() ?? isSyndicateCardRequired;
+    currentDoctorRole = me.role?.toString() ?? currentDoctorRole;
+
+    // Sync profile + user_type into local doctor storage.
+    final localDoctor =
+        await sl<AppPreferences>().getDoctorData() ?? currentDoctorModel;
+    final profile = me.profile;
+
+    // Prefer API `email_verified_at` when profile is present (null = unverified).
+    // Do not fall back to a stale local timestamp after an email change.
+    final resolvedEmailVerifiedAt = profile != null
+        ? profile.emailVerifiedAt
+        : localDoctor.emailVerifiedAt;
+    final hasEmailVerifiedAt = resolvedEmailVerifiedAt != null &&
+        resolvedEmailVerifiedAt.trim().isNotEmpty;
+    final resolvedVerified = hasEmailVerifiedAt
+        ? (me.verified ?? homeDataModel.verified)
+        : false;
+    accountVerification = resolvedVerified ?? accountVerification;
+
+    homeDataModel = homeDataModel.copyWith(
+      value: me.value ?? homeDataModel.value,
+      verified: resolvedVerified,
+      unreadCount: me.unreadCount ?? homeDataModel.unreadCount,
+      isSyndicateCardRequired:
+          me.isSyndicateCardRequired ?? homeDataModel.isSyndicateCardRequired,
+      appUpdateMessage: me.appUpdateMessage ?? homeDataModel.appUpdateMessage,
+      doctorPatientCount:
+          me.doctorPatientCount ?? homeDataModel.doctorPatientCount,
+      allPatientCount: me.allPatientCount ?? homeDataModel.allPatientCount,
+      scoreValue: me.scoreValue ?? homeDataModel.scoreValue,
+      role: me.role ?? homeDataModel.role,
+      userType: me.userType ?? homeDataModel.userType,
+      permissionsChanged:
+          me.permissionsChanged ?? homeDataModel.permissionsChanged,
+      isUserBlocked: me.isUserBlocked ?? homeDataModel.isUserBlocked,
+      postsCount: me.postsCount ?? homeDataModel.postsCount,
+      savedPosts: me.savedPostsCount ?? homeDataModel.savedPosts,
+      markedPatientsCount:
+          me.markedPatientCount ?? homeDataModel.markedPatientsCount,
+    );
+
+    DoctorModel updatedDoctor = localDoctor;
+    if (profile != null) {
+      updatedDoctor = localDoctor.copyWith(
+        id: profile.id ?? localDoctor.id,
+        firstName: profile.name ?? localDoctor.firstName,
+        lastName: profile.lname ?? localDoctor.lastName,
+        email: profile.email ?? localDoctor.email,
+        image: profile.image ?? profile.avatar ?? localDoctor.image,
+        age: profile.age ?? localDoctor.age,
+        gender: profile.gender ?? localDoctor.gender,
+        phone: profile.phone ?? localDoctor.phone,
+        specialty: profile.specialty ?? localDoctor.specialty,
+        workingplace: profile.workingplace ?? localDoctor.workingplace,
+        job: profile.job ?? localDoctor.job,
+        highestdegree: profile.highestdegree ?? localDoctor.highestdegree,
+        registrationNumber:
+            profile.registrationNumber ?? localDoctor.registrationNumber,
+        syndicateCard: profile.syndicateCard ?? localDoctor.syndicateCard,
+        emailVerifiedAt: resolvedEmailVerifiedAt,
+        phoneVerifiedAt:
+            profile.phoneVerifiedAt ?? localDoctor.phoneVerifiedAt,
+        userType: me.userType ?? localDoctor.userType,
+        isSyndicateCardRequired: me.isSyndicateCardRequired ??
+            localDoctor.isSyndicateCardRequired,
+      );
+    } else if (me.userType != null &&
+        me.userType!.isNotEmpty &&
+        me.userType != localDoctor.userType) {
+      updatedDoctor = localDoctor.copyWith(userType: me.userType);
+    }
+
+    if (updatedDoctor != localDoctor ||
+        updatedDoctor.userType != currentDoctorModel.userType) {
+      await sl<AppPreferences>().setDoctorData(updatedDoctor);
+      currentDoctorModel = updatedDoctor;
+    } else {
+      currentDoctorModel = updatedDoctor;
+    }
+
+    await checkVerifyBanner();
+
+    // Seed permissions from /user/me when local cache is empty.
+    final permissionsJson =
+        await sl<AppPreferences>().getString(AppLocalStrings.permissions);
+    final hasNoPermissions =
+        permissionsJson == null || permissionsJson.isEmpty;
+    if (hasNoPermissions &&
+        me.permissions != null &&
+        me.permissions!.isNotEmpty) {
+      await sl<AppPreferences>().setData(
+        AppLocalStrings.permissions,
+        jsonEncode(me.permissions!),
+      );
+      await PermissionHelper.refreshPermissions();
+    }
+
+    // Flag is reported but never cleared by /user/me — role-permissions clears it.
+    if (hasNoPermissions || me.permissionsChanged == true) {
+      await _updatePermissions();
+    }
+
+    // Nav length may change when user_type flips — keep controller in range.
+    clampTabIndexToCurrentNav();
   }
 
   void _emitLoaded({
@@ -590,7 +857,7 @@ class HomeCubit extends Cubit<HomeState> {
         false,
         message,
         checkUpdateMessageCounter,
-        false,
+        homeData.isUserBlocked == true,
         changesCounter,
       ),
     );

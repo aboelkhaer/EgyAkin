@@ -158,13 +158,15 @@ class ProfileTabContent extends StatelessWidget {
                     child: ProfileEmailVerificationStatus(
                       isDark: isDark,
                       isVerified: emailVerified,
-                      email: doctorFromCubit.email ?? currentDoctorModel.email,
+                      email: effectiveDoctor.email ??
+                          doctorFromCubit.email ??
+                          currentDoctorModel.email,
                       onTap: () {
                         navigatorKey.currentState?.pushNamed(
                           AppRoutes.emailVerification,
                           arguments:
                               AppRoutesArgs.emailVerificationRouteArgs(
-                            currentDoctorModel: doctorFromCubit,
+                            currentDoctorModel: effectiveDoctor,
                           ),
                         );
                       },

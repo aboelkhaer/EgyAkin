@@ -57,6 +57,72 @@ class PatientSectionsCubit extends Cubit<PatientSectionsState> {
     );
   }
 
+  /// Refresh sections without a full-screen loading flash.
+  Future<void> refreshPatientSections(String patientId) async {
+    final result = await _getPatientSectionsUsecase.execute(patientId);
+    result.fold(
+      (_) {},
+      (response) {
+        sectionsDataList = response.data;
+        emit(state.maybeMap(
+          orElse: () => PatientSectionsState.loaded(
+            response,
+            false,
+            false,
+            '',
+            false,
+            0.0,
+            '',
+            false,
+            false,
+            counterChanges,
+          ),
+          loaded: (value) => PatientSectionsState.loaded(
+            response,
+            value.isDelete,
+            value.isFinalSubmit,
+            '',
+            false,
+            value.reportProgress,
+            value.filePath,
+            value.isDownloadingReport,
+            value.isDownloadedReport,
+            counterChanges + 1,
+          ),
+        ));
+      },
+    );
+  }
+
+  /// Optimistically mark a section as completed on the list screen.
+  void markSectionCompleted(String sectionId) {
+    emit(state.maybeMap(
+      orElse: () => state,
+      loaded: (value) {
+        final current = value.response.data ?? sectionsDataList ?? const [];
+        final updated = current.map((section) {
+          if (section.sectionId?.toString() == sectionId) {
+            return section.copyWith(sectionStatus: true);
+          }
+          return section;
+        }).toList();
+        sectionsDataList = updated;
+        return PatientSectionsState.loaded(
+          value.response.copyWith(data: updated),
+          value.isDelete,
+          value.isFinalSubmit,
+          '',
+          value.isLoading,
+          value.reportProgress,
+          value.filePath,
+          value.isDownloadingReport,
+          value.isDownloadedReport,
+          counterChanges + 1,
+        );
+      },
+    ));
+  }
+
   deletePatient(String patientId) async {
     emit(state.maybeMap(
       orElse: () => state,

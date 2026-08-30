@@ -4,33 +4,76 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'home_model_response.freezed.dart';
 part 'home_model_response.g.dart';
 
-num? flexibleNumFromJson(Object? value) {
+num? _flexibleNumFromJson(Object? value) {
   if (value == null) return null;
   if (value is num) return value;
   if (value is String) return num.tryParse(value.trim());
   return null;
 }
 
+String? _flexibleStringFromJson(Object? value) {
+  if (value == null) return null;
+  if (value is String) return value;
+  if (value is num) return value.toString();
+  return value.toString();
+}
+
+int? _flexibleIntFromJson(Object? value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value.trim());
+  return null;
+}
+
+bool? _flexibleBoolFromJson(Object? value) {
+  if (value == null) return null;
+  if (value is bool) return value;
+  if (value is num) return value != 0;
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1' || normalized == 'yes') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0' || normalized == 'no') {
+      return false;
+    }
+  }
+  return null;
+}
+
+Object? _readPointsEarned(Map json, String key) =>
+    json['points_earned'] ?? json['point_earned'];
+
 @freezed
 class HomeModelResponse with _$HomeModelResponse {
   const factory HomeModelResponse({
     bool? value,
     bool? verified,
-    String? unreadCount,
+    @JsonKey(fromJson: _flexibleStringFromJson) String? unreadCount,
+    @JsonKey(fromJson: _flexibleStringFromJson)
     String? isSyndicateCardRequired,
     @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
-    @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
-    @JsonKey(name: 'all_patient_count') String? allPatientCount,
-    @JsonKey(name: 'score_value') String? scoreValue,
+    @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
+    String? doctorPatientCount,
+    @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
+    String? allPatientCount,
+    @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
+    String? scoreValue,
     @JsonKey(name: 'role') String? role,
     @JsonKey(name: 'user_type') String? userType,
     @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
     @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
-    @JsonKey(name: 'posts_count') String? postsCount,
-    @JsonKey(name: 'saved_posts_count') String? savedPosts,
-    @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
-    @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
-    @JsonKey(name: 'draft_count') String? draftCount,
+    @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
+    String? postsCount,
+    @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
+    String? savedPosts,
+    @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
+    String? markedPatientsCount,
+    @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
+    String? pendingOutcomeCount,
+    @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
+    String? draftCount,
     @JsonKey(name: 'research_insights') ResearchInsightsModel? researchInsights,
     HomeDataModelResponse? data,
   }) = _HomeModelResponse;
@@ -51,6 +94,11 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
     @JsonKey(name: 'trending_hashtags') List<TrendModel>? trendsHashtags,
     @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
     @JsonKey(name: 'pending_outcomes') List<PatientHomeDataModel>? pendingOutcomes,
+    /// Dedicated draft patients when the API provides them; otherwise derive
+    /// from [currentPatients] where submit_status is not true.
+    @JsonKey(name: 'drafts') List<PatientHomeDataModel>? drafts,
+    @JsonKey(name: 'pending_consultations')
+    List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
     List<HomeActivityModel>? activity,
     @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
     @JsonKey(name: 'research_insights') ResearchInsightsModel? researchInsights,
@@ -63,16 +111,16 @@ class HomeDataModelResponse with _$HomeDataModelResponse {
 class ResearchInsightsModel with _$ResearchInsightsModel {
   const factory ResearchInsightsModel({
     ResearchPopulationModel? population,
-    @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
     num? akiIncidencePct,
-    @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
     num? akiIncidenceDeltaPct,
     @JsonKey(name: 'most_common_cause') String? mostCommonCause,
-    @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
     num? mostCommonCausePct,
-    @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
     num? avgEgfrAtAdmission,
-    @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
     num? avgEgfrAtAdmissionDelta,
     @JsonKey(name: 'computed_at') String? computedAt,
   }) = _ResearchInsightsModel;
@@ -84,9 +132,9 @@ class ResearchInsightsModel with _$ResearchInsightsModel {
 @freezed
 class ResearchPopulationModel with _$ResearchPopulationModel {
   const factory ResearchPopulationModel({
-    @JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
     num? patientCount,
-    @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+    @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
     num? hospitalCount,
   }) = _ResearchPopulationModel;
 
@@ -99,10 +147,18 @@ class WeekRecapModel with _$WeekRecapModel {
   const factory WeekRecapModel({
     String? from,
     String? to,
-    @JsonKey(name: 'patients_added') int? patientsAdded,
-    @JsonKey(name: 'all_patients_added') int? allPatientsAdded,
-    @JsonKey(name: 'outcomes_submitted') int? outcomesSubmitted,
-    @JsonKey(name: 'points_earned') int? pointsEarned,
+    @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
+    int? patientsAdded,
+    @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
+    int? allPatientsAdded,
+    @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
+    int? outcomesSubmitted,
+    @JsonKey(
+      name: 'points_earned',
+      readValue: _readPointsEarned,
+      fromJson: _flexibleIntFromJson,
+    )
+    int? pointsEarned,
   }) = _WeekRecapModel;
 
   factory WeekRecapModel.fromJson(Map<String, dynamic> json) =>
@@ -115,11 +171,11 @@ class PatientHomeDataModel with _$PatientHomeDataModel {
     int? id,
     String? name,
     String? hospital,
-    @JsonKey(fromJson: flexibleNumFromJson) num? age,
-    @JsonKey(fromJson: flexibleNumFromJson) num? egfr,
-    @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+    @JsonKey(fromJson: _flexibleNumFromJson) num? age,
+    @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
+    @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
     num? egfrPrevious,
-    @JsonKey(fromJson: flexibleNumFromJson) num? bmi,
+    @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
     @JsonKey(name: 'updated_at') String? updatedAt,
     DoctorModel? doctor,
     SectionHomeDataModel? sections,
@@ -147,8 +203,10 @@ class NextSectionModel with _$NextSectionModel {
 class SectionHomeDataModel with _$SectionHomeDataModel {
   const factory SectionHomeDataModel({
     @JsonKey(name: 'patient_id') int? patientId,
-    @JsonKey(name: 'submit_status') bool? submitStatus,
-    @JsonKey(name: 'outcome_status') bool? outcomeStatus,
+    @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
+    bool? submitStatus,
+    @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
+    bool? outcomeStatus,
   }) = _SectionHomeDataModel;
   factory SectionHomeDataModel.fromJson(Map<String, dynamic> json) =>
       _$SectionHomeDataModelFromJson(json);

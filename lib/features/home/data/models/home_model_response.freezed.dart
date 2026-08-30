@@ -22,15 +22,17 @@ HomeModelResponse _$HomeModelResponseFromJson(Map<String, dynamic> json) {
 mixin _$HomeModelResponse {
   bool? get value => throw _privateConstructorUsedError;
   bool? get verified => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _flexibleStringFromJson)
   String? get unreadCount => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _flexibleStringFromJson)
   String? get isSyndicateCardRequired => throw _privateConstructorUsedError;
   @JsonKey(name: 'app_update_message')
   dynamic get appUpdateMessage => throw _privateConstructorUsedError;
-  @JsonKey(name: 'doctor_patient_count')
+  @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
   String? get doctorPatientCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'all_patient_count')
+  @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
   String? get allPatientCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'score_value')
+  @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
   String? get scoreValue => throw _privateConstructorUsedError;
   @JsonKey(name: 'role')
   String? get role => throw _privateConstructorUsedError;
@@ -40,15 +42,15 @@ mixin _$HomeModelResponse {
   bool? get permissionsChanged => throw _privateConstructorUsedError;
   @JsonKey(name: 'isUserBlocked')
   bool? get isUserBlocked => throw _privateConstructorUsedError;
-  @JsonKey(name: 'posts_count')
+  @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
   String? get postsCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'saved_posts_count')
+  @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
   String? get savedPosts => throw _privateConstructorUsedError;
-  @JsonKey(name: 'marked_patient_count')
+  @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
   String? get markedPatientsCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'pending_outcome_count')
+  @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
   String? get pendingOutcomeCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'draft_count')
+  @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
   String? get draftCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'research_insights')
   ResearchInsightsModel? get researchInsights =>
@@ -74,21 +76,30 @@ abstract class $HomeModelResponseCopyWith<$Res> {
   $Res call(
       {bool? value,
       bool? verified,
-      String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson) String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson)
       String? isSyndicateCardRequired,
       @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
-      @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
-      @JsonKey(name: 'all_patient_count') String? allPatientCount,
-      @JsonKey(name: 'score_value') String? scoreValue,
+      @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
+      String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
+      String? allPatientCount,
+      @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
+      String? scoreValue,
       @JsonKey(name: 'role') String? role,
       @JsonKey(name: 'user_type') String? userType,
       @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
-      @JsonKey(name: 'posts_count') String? postsCount,
-      @JsonKey(name: 'saved_posts_count') String? savedPosts,
-      @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
-      @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
-      @JsonKey(name: 'draft_count') String? draftCount,
+      @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
+      String? postsCount,
+      @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
+      String? savedPosts,
+      @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
+      String? markedPatientsCount,
+      @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
+      String? pendingOutcomeCount,
+      @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
+      String? draftCount,
       @JsonKey(name: 'research_insights')
       ResearchInsightsModel? researchInsights,
       HomeDataModelResponse? data});
@@ -253,21 +264,30 @@ abstract class _$$HomeModelResponseImplCopyWith<$Res>
   $Res call(
       {bool? value,
       bool? verified,
-      String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson) String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson)
       String? isSyndicateCardRequired,
       @JsonKey(name: 'app_update_message') dynamic appUpdateMessage,
-      @JsonKey(name: 'doctor_patient_count') String? doctorPatientCount,
-      @JsonKey(name: 'all_patient_count') String? allPatientCount,
-      @JsonKey(name: 'score_value') String? scoreValue,
+      @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
+      String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
+      String? allPatientCount,
+      @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
+      String? scoreValue,
       @JsonKey(name: 'role') String? role,
       @JsonKey(name: 'user_type') String? userType,
       @JsonKey(name: 'permissions_changed') bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') bool? isUserBlocked,
-      @JsonKey(name: 'posts_count') String? postsCount,
-      @JsonKey(name: 'saved_posts_count') String? savedPosts,
-      @JsonKey(name: 'marked_patient_count') String? markedPatientsCount,
-      @JsonKey(name: 'pending_outcome_count') String? pendingOutcomeCount,
-      @JsonKey(name: 'draft_count') String? draftCount,
+      @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
+      String? postsCount,
+      @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
+      String? savedPosts,
+      @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
+      String? markedPatientsCount,
+      @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
+      String? pendingOutcomeCount,
+      @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
+      String? draftCount,
       @JsonKey(name: 'research_insights')
       ResearchInsightsModel? researchInsights,
       HomeDataModelResponse? data});
@@ -398,21 +418,29 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   const _$HomeModelResponseImpl(
       {this.value,
       this.verified,
-      this.unreadCount,
-      this.isSyndicateCardRequired,
+      @JsonKey(fromJson: _flexibleStringFromJson) this.unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson) this.isSyndicateCardRequired,
       @JsonKey(name: 'app_update_message') this.appUpdateMessage,
-      @JsonKey(name: 'doctor_patient_count') this.doctorPatientCount,
-      @JsonKey(name: 'all_patient_count') this.allPatientCount,
-      @JsonKey(name: 'score_value') this.scoreValue,
+      @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
+      this.doctorPatientCount,
+      @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
+      this.allPatientCount,
+      @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
+      this.scoreValue,
       @JsonKey(name: 'role') this.role,
       @JsonKey(name: 'user_type') this.userType,
       @JsonKey(name: 'permissions_changed') this.permissionsChanged,
       @JsonKey(name: 'isUserBlocked') this.isUserBlocked,
-      @JsonKey(name: 'posts_count') this.postsCount,
-      @JsonKey(name: 'saved_posts_count') this.savedPosts,
-      @JsonKey(name: 'marked_patient_count') this.markedPatientsCount,
-      @JsonKey(name: 'pending_outcome_count') this.pendingOutcomeCount,
-      @JsonKey(name: 'draft_count') this.draftCount,
+      @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
+      this.postsCount,
+      @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
+      this.savedPosts,
+      @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
+      this.markedPatientsCount,
+      @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
+      this.pendingOutcomeCount,
+      @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
+      this.draftCount,
       @JsonKey(name: 'research_insights') this.researchInsights,
       this.data});
 
@@ -424,20 +452,22 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   @override
   final bool? verified;
   @override
+  @JsonKey(fromJson: _flexibleStringFromJson)
   final String? unreadCount;
   @override
+  @JsonKey(fromJson: _flexibleStringFromJson)
   final String? isSyndicateCardRequired;
   @override
   @JsonKey(name: 'app_update_message')
   final dynamic appUpdateMessage;
   @override
-  @JsonKey(name: 'doctor_patient_count')
+  @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
   final String? doctorPatientCount;
   @override
-  @JsonKey(name: 'all_patient_count')
+  @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
   final String? allPatientCount;
   @override
-  @JsonKey(name: 'score_value')
+  @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
   final String? scoreValue;
   @override
   @JsonKey(name: 'role')
@@ -452,19 +482,19 @@ class _$HomeModelResponseImpl implements _HomeModelResponse {
   @JsonKey(name: 'isUserBlocked')
   final bool? isUserBlocked;
   @override
-  @JsonKey(name: 'posts_count')
+  @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
   final String? postsCount;
   @override
-  @JsonKey(name: 'saved_posts_count')
+  @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
   final String? savedPosts;
   @override
-  @JsonKey(name: 'marked_patient_count')
+  @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
   final String? markedPatientsCount;
   @override
-  @JsonKey(name: 'pending_outcome_count')
+  @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
   final String? pendingOutcomeCount;
   @override
-  @JsonKey(name: 'draft_count')
+  @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
   final String? draftCount;
   @override
   @JsonKey(name: 'research_insights')
@@ -566,21 +596,30 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   const factory _HomeModelResponse(
       {final bool? value,
       final bool? verified,
-      final String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson) final String? unreadCount,
+      @JsonKey(fromJson: _flexibleStringFromJson)
       final String? isSyndicateCardRequired,
       @JsonKey(name: 'app_update_message') final dynamic appUpdateMessage,
-      @JsonKey(name: 'doctor_patient_count') final String? doctorPatientCount,
-      @JsonKey(name: 'all_patient_count') final String? allPatientCount,
-      @JsonKey(name: 'score_value') final String? scoreValue,
+      @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
+      final String? doctorPatientCount,
+      @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
+      final String? allPatientCount,
+      @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
+      final String? scoreValue,
       @JsonKey(name: 'role') final String? role,
       @JsonKey(name: 'user_type') final String? userType,
       @JsonKey(name: 'permissions_changed') final bool? permissionsChanged,
       @JsonKey(name: 'isUserBlocked') final bool? isUserBlocked,
-      @JsonKey(name: 'posts_count') final String? postsCount,
-      @JsonKey(name: 'saved_posts_count') final String? savedPosts,
-      @JsonKey(name: 'marked_patient_count') final String? markedPatientsCount,
-      @JsonKey(name: 'pending_outcome_count') final String? pendingOutcomeCount,
-      @JsonKey(name: 'draft_count') final String? draftCount,
+      @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
+      final String? postsCount,
+      @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
+      final String? savedPosts,
+      @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
+      final String? markedPatientsCount,
+      @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
+      final String? pendingOutcomeCount,
+      @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
+      final String? draftCount,
       @JsonKey(name: 'research_insights')
       final ResearchInsightsModel? researchInsights,
       final HomeDataModelResponse? data}) = _$HomeModelResponseImpl;
@@ -593,20 +632,22 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @override
   bool? get verified;
   @override
+  @JsonKey(fromJson: _flexibleStringFromJson)
   String? get unreadCount;
   @override
+  @JsonKey(fromJson: _flexibleStringFromJson)
   String? get isSyndicateCardRequired;
   @override
   @JsonKey(name: 'app_update_message')
   dynamic get appUpdateMessage;
   @override
-  @JsonKey(name: 'doctor_patient_count')
+  @JsonKey(name: 'doctor_patient_count', fromJson: _flexibleStringFromJson)
   String? get doctorPatientCount;
   @override
-  @JsonKey(name: 'all_patient_count')
+  @JsonKey(name: 'all_patient_count', fromJson: _flexibleStringFromJson)
   String? get allPatientCount;
   @override
-  @JsonKey(name: 'score_value')
+  @JsonKey(name: 'score_value', fromJson: _flexibleStringFromJson)
   String? get scoreValue;
   @override
   @JsonKey(name: 'role')
@@ -621,19 +662,19 @@ abstract class _HomeModelResponse implements HomeModelResponse {
   @JsonKey(name: 'isUserBlocked')
   bool? get isUserBlocked;
   @override
-  @JsonKey(name: 'posts_count')
+  @JsonKey(name: 'posts_count', fromJson: _flexibleStringFromJson)
   String? get postsCount;
   @override
-  @JsonKey(name: 'saved_posts_count')
+  @JsonKey(name: 'saved_posts_count', fromJson: _flexibleStringFromJson)
   String? get savedPosts;
   @override
-  @JsonKey(name: 'marked_patient_count')
+  @JsonKey(name: 'marked_patient_count', fromJson: _flexibleStringFromJson)
   String? get markedPatientsCount;
   @override
-  @JsonKey(name: 'pending_outcome_count')
+  @JsonKey(name: 'pending_outcome_count', fromJson: _flexibleStringFromJson)
   String? get pendingOutcomeCount;
   @override
-  @JsonKey(name: 'draft_count')
+  @JsonKey(name: 'draft_count', fromJson: _flexibleStringFromJson)
   String? get draftCount;
   @override
   @JsonKey(name: 'research_insights')
@@ -675,6 +716,14 @@ mixin _$HomeDataModelResponse {
   @JsonKey(name: 'pending_outcomes')
   List<PatientHomeDataModel>? get pendingOutcomes =>
       throw _privateConstructorUsedError;
+
+  /// Dedicated draft patients when the API provides them; otherwise derive
+  /// from [currentPatients] where submit_status is not true.
+  @JsonKey(name: 'drafts')
+  List<PatientHomeDataModel>? get drafts => throw _privateConstructorUsedError;
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations =>
+      throw _privateConstructorUsedError;
   List<HomeActivityModel>? get activity => throw _privateConstructorUsedError;
   @JsonKey(name: 'week_recap')
   WeekRecapModel? get weekRecap => throw _privateConstructorUsedError;
@@ -710,6 +759,9 @@ abstract class $HomeDataModelResponseCopyWith<$Res> {
       @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
+      @JsonKey(name: 'drafts') List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -744,6 +796,8 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
+    Object? drafts = freezed,
+    Object? pendingConsultations = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -785,6 +839,14 @@ class _$HomeDataModelResponseCopyWithImpl<$Res,
           ? _value.pendingOutcomes
           : pendingOutcomes // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      drafts: freezed == drafts
+          ? _value.drafts
+          : drafts // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
+      pendingConsultations: freezed == pendingConsultations
+          ? _value.pendingConsultations
+          : pendingConsultations // ignore: cast_nullable_to_non_nullable
+              as List<GetCurrentDoctorConsultationModelResponse>?,
       activity: freezed == activity
           ? _value.activity
           : activity // ignore: cast_nullable_to_non_nullable
@@ -851,6 +913,9 @@ abstract class _$$HomeDataModelResponseImplCopyWith<$Res>
       @JsonKey(name: 'latest_groups') List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       List<PatientHomeDataModel>? pendingOutcomes,
+      @JsonKey(name: 'drafts') List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      List<GetCurrentDoctorConsultationModelResponse>? pendingConsultations,
       List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') WeekRecapModel? weekRecap,
       @JsonKey(name: 'research_insights')
@@ -885,6 +950,8 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
     Object? trendsHashtags = freezed,
     Object? latestGroups = freezed,
     Object? pendingOutcomes = freezed,
+    Object? drafts = freezed,
+    Object? pendingConsultations = freezed,
     Object? activity = freezed,
     Object? weekRecap = freezed,
     Object? researchInsights = freezed,
@@ -926,6 +993,14 @@ class __$$HomeDataModelResponseImplCopyWithImpl<$Res>
           ? _value._pendingOutcomes
           : pendingOutcomes // ignore: cast_nullable_to_non_nullable
               as List<PatientHomeDataModel>?,
+      drafts: freezed == drafts
+          ? _value._drafts
+          : drafts // ignore: cast_nullable_to_non_nullable
+              as List<PatientHomeDataModel>?,
+      pendingConsultations: freezed == pendingConsultations
+          ? _value._pendingConsultations
+          : pendingConsultations // ignore: cast_nullable_to_non_nullable
+              as List<GetCurrentDoctorConsultationModelResponse>?,
       activity: freezed == activity
           ? _value._activity
           : activity // ignore: cast_nullable_to_non_nullable
@@ -959,6 +1034,10 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
       @JsonKey(name: 'pending_outcomes')
       final List<PatientHomeDataModel>? pendingOutcomes,
+      @JsonKey(name: 'drafts') final List<PatientHomeDataModel>? drafts,
+      @JsonKey(name: 'pending_consultations')
+      final List<GetCurrentDoctorConsultationModelResponse>?
+          pendingConsultations,
       final List<HomeActivityModel>? activity,
       @JsonKey(name: 'week_recap') this.weekRecap,
       @JsonKey(name: 'research_insights') this.researchInsights})
@@ -971,6 +1050,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
         _trendsHashtags = trendsHashtags,
         _latestGroups = latestGroups,
         _pendingOutcomes = pendingOutcomes,
+        _drafts = drafts,
+        _pendingConsultations = pendingConsultations,
         _activity = activity;
 
   factory _$HomeDataModelResponseImpl.fromJson(Map<String, dynamic> json) =>
@@ -1073,6 +1154,34 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
     return EqualUnmodifiableListView(value);
   }
 
+  /// Dedicated draft patients when the API provides them; otherwise derive
+  /// from [currentPatients] where submit_status is not true.
+  final List<PatientHomeDataModel>? _drafts;
+
+  /// Dedicated draft patients when the API provides them; otherwise derive
+  /// from [currentPatients] where submit_status is not true.
+  @override
+  @JsonKey(name: 'drafts')
+  List<PatientHomeDataModel>? get drafts {
+    final value = _drafts;
+    if (value == null) return null;
+    if (_drafts is EqualUnmodifiableListView) return _drafts;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  final List<GetCurrentDoctorConsultationModelResponse>? _pendingConsultations;
+  @override
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations {
+    final value = _pendingConsultations;
+    if (value == null) return null;
+    if (_pendingConsultations is EqualUnmodifiableListView)
+      return _pendingConsultations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
   final List<HomeActivityModel>? _activity;
   @override
   List<HomeActivityModel>? get activity {
@@ -1092,7 +1201,7 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
 
   @override
   String toString() {
-    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
+    return 'HomeDataModelResponse(allPatients: $allPatients, currentPatients: $currentPatients, topDoctors: $topDoctors, pendingSyndicateCard: $pendingSyndicateCard, posts: $posts, feeds: $feeds, trendsHashtags: $trendsHashtags, latestGroups: $latestGroups, pendingOutcomes: $pendingOutcomes, drafts: $drafts, pendingConsultations: $pendingConsultations, activity: $activity, weekRecap: $weekRecap, researchInsights: $researchInsights)';
   }
 
   @override
@@ -1116,6 +1225,9 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
                 .equals(other._latestGroups, _latestGroups) &&
             const DeepCollectionEquality()
                 .equals(other._pendingOutcomes, _pendingOutcomes) &&
+            const DeepCollectionEquality().equals(other._drafts, _drafts) &&
+            const DeepCollectionEquality()
+                .equals(other._pendingConsultations, _pendingConsultations) &&
             const DeepCollectionEquality().equals(other._activity, _activity) &&
             (identical(other.weekRecap, weekRecap) ||
                 other.weekRecap == weekRecap) &&
@@ -1136,6 +1248,8 @@ class _$HomeDataModelResponseImpl implements _HomeDataModelResponse {
       const DeepCollectionEquality().hash(_trendsHashtags),
       const DeepCollectionEquality().hash(_latestGroups),
       const DeepCollectionEquality().hash(_pendingOutcomes),
+      const DeepCollectionEquality().hash(_drafts),
+      const DeepCollectionEquality().hash(_pendingConsultations),
       const DeepCollectionEquality().hash(_activity),
       weekRecap,
       researchInsights);
@@ -1172,6 +1286,10 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
           @JsonKey(name: 'latest_groups') final List<GroupModel>? latestGroups,
           @JsonKey(name: 'pending_outcomes')
           final List<PatientHomeDataModel>? pendingOutcomes,
+          @JsonKey(name: 'drafts') final List<PatientHomeDataModel>? drafts,
+          @JsonKey(name: 'pending_consultations')
+          final List<GetCurrentDoctorConsultationModelResponse>?
+              pendingConsultations,
           final List<HomeActivityModel>? activity,
           @JsonKey(name: 'week_recap') final WeekRecapModel? weekRecap,
           @JsonKey(name: 'research_insights')
@@ -1205,6 +1323,15 @@ abstract class _HomeDataModelResponse implements HomeDataModelResponse {
   @override
   @JsonKey(name: 'pending_outcomes')
   List<PatientHomeDataModel>? get pendingOutcomes;
+
+  /// Dedicated draft patients when the API provides them; otherwise derive
+  /// from [currentPatients] where submit_status is not true.
+  @override
+  @JsonKey(name: 'drafts')
+  List<PatientHomeDataModel>? get drafts;
+  @override
+  @JsonKey(name: 'pending_consultations')
+  List<GetCurrentDoctorConsultationModelResponse>? get pendingConsultations;
   @override
   List<HomeActivityModel>? get activity;
   @override
@@ -1230,17 +1357,17 @@ ResearchInsightsModel _$ResearchInsightsModelFromJson(
 /// @nodoc
 mixin _$ResearchInsightsModel {
   ResearchPopulationModel? get population => throw _privateConstructorUsedError;
-  @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
   num? get akiIncidencePct => throw _privateConstructorUsedError;
-  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
   num? get akiIncidenceDeltaPct => throw _privateConstructorUsedError;
   @JsonKey(name: 'most_common_cause')
   String? get mostCommonCause => throw _privateConstructorUsedError;
-  @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
   num? get mostCommonCausePct => throw _privateConstructorUsedError;
-  @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
   num? get avgEgfrAtAdmission => throw _privateConstructorUsedError;
-  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
   num? get avgEgfrAtAdmissionDelta => throw _privateConstructorUsedError;
   @JsonKey(name: 'computed_at')
   String? get computedAt => throw _privateConstructorUsedError;
@@ -1263,17 +1390,17 @@ abstract class $ResearchInsightsModelCopyWith<$Res> {
   @useResult
   $Res call(
       {ResearchPopulationModel? population,
-      @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
       num? akiIncidencePct,
-      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
       num? akiIncidenceDeltaPct,
       @JsonKey(name: 'most_common_cause') String? mostCommonCause,
-      @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
       num? mostCommonCausePct,
-      @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
       num? avgEgfrAtAdmission,
       @JsonKey(
-          name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+          name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
       num? avgEgfrAtAdmissionDelta,
       @JsonKey(name: 'computed_at') String? computedAt});
 
@@ -1367,17 +1494,17 @@ abstract class _$$ResearchInsightsModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {ResearchPopulationModel? population,
-      @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
       num? akiIncidencePct,
-      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
       num? akiIncidenceDeltaPct,
       @JsonKey(name: 'most_common_cause') String? mostCommonCause,
-      @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
       num? mostCommonCausePct,
-      @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
       num? avgEgfrAtAdmission,
       @JsonKey(
-          name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+          name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
       num? avgEgfrAtAdmissionDelta,
       @JsonKey(name: 'computed_at') String? computedAt});
 
@@ -1450,17 +1577,17 @@ class __$$ResearchInsightsModelImplCopyWithImpl<$Res>
 class _$ResearchInsightsModelImpl implements _ResearchInsightsModel {
   const _$ResearchInsightsModelImpl(
       {this.population,
-      @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
       this.akiIncidencePct,
-      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
       this.akiIncidenceDeltaPct,
       @JsonKey(name: 'most_common_cause') this.mostCommonCause,
-      @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
       this.mostCommonCausePct,
-      @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
       this.avgEgfrAtAdmission,
       @JsonKey(
-          name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+          name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
       this.avgEgfrAtAdmissionDelta,
       @JsonKey(name: 'computed_at') this.computedAt});
 
@@ -1470,22 +1597,22 @@ class _$ResearchInsightsModelImpl implements _ResearchInsightsModel {
   @override
   final ResearchPopulationModel? population;
   @override
-  @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
   final num? akiIncidencePct;
   @override
-  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
   final num? akiIncidenceDeltaPct;
   @override
   @JsonKey(name: 'most_common_cause')
   final String? mostCommonCause;
   @override
-  @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
   final num? mostCommonCausePct;
   @override
-  @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
   final num? avgEgfrAtAdmission;
   @override
-  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
   final num? avgEgfrAtAdmissionDelta;
   @override
   @JsonKey(name: 'computed_at')
@@ -1553,17 +1680,17 @@ class _$ResearchInsightsModelImpl implements _ResearchInsightsModel {
 abstract class _ResearchInsightsModel implements ResearchInsightsModel {
   const factory _ResearchInsightsModel(
       {final ResearchPopulationModel? population,
-      @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
       final num? akiIncidencePct,
-      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
       final num? akiIncidenceDeltaPct,
       @JsonKey(name: 'most_common_cause') final String? mostCommonCause,
-      @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
       final num? mostCommonCausePct,
-      @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
       final num? avgEgfrAtAdmission,
       @JsonKey(
-          name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+          name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
       final num? avgEgfrAtAdmissionDelta,
       @JsonKey(name: 'computed_at')
       final String? computedAt}) = _$ResearchInsightsModelImpl;
@@ -1574,22 +1701,22 @@ abstract class _ResearchInsightsModel implements ResearchInsightsModel {
   @override
   ResearchPopulationModel? get population;
   @override
-  @JsonKey(name: 'aki_incidence_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_pct', fromJson: _flexibleNumFromJson)
   num? get akiIncidencePct;
   @override
-  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'aki_incidence_delta_pct', fromJson: _flexibleNumFromJson)
   num? get akiIncidenceDeltaPct;
   @override
   @JsonKey(name: 'most_common_cause')
   String? get mostCommonCause;
   @override
-  @JsonKey(name: 'most_common_cause_pct', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'most_common_cause_pct', fromJson: _flexibleNumFromJson)
   num? get mostCommonCausePct;
   @override
-  @JsonKey(name: 'avg_egfr_at_admission', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission', fromJson: _flexibleNumFromJson)
   num? get avgEgfrAtAdmission;
   @override
-  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'avg_egfr_at_admission_delta', fromJson: _flexibleNumFromJson)
   num? get avgEgfrAtAdmissionDelta;
   @override
   @JsonKey(name: 'computed_at')
@@ -1610,9 +1737,9 @@ ResearchPopulationModel _$ResearchPopulationModelFromJson(
 
 /// @nodoc
 mixin _$ResearchPopulationModel {
-  @JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
   num? get patientCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
   num? get hospitalCount => throw _privateConstructorUsedError;
 
   /// Serializes this ResearchPopulationModel to a JSON map.
@@ -1632,9 +1759,9 @@ abstract class $ResearchPopulationModelCopyWith<$Res> {
       _$ResearchPopulationModelCopyWithImpl<$Res, ResearchPopulationModel>;
   @useResult
   $Res call(
-      {@JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+      {@JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
       num? patientCount,
-      @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
       num? hospitalCount});
 }
 
@@ -1680,9 +1807,9 @@ abstract class _$$ResearchPopulationModelImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+      {@JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
       num? patientCount,
-      @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
       num? hospitalCount});
 }
 
@@ -1721,19 +1848,19 @@ class __$$ResearchPopulationModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$ResearchPopulationModelImpl implements _ResearchPopulationModel {
   const _$ResearchPopulationModelImpl(
-      {@JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+      {@JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
       this.patientCount,
-      @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
       this.hospitalCount});
 
   factory _$ResearchPopulationModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ResearchPopulationModelImplFromJson(json);
 
   @override
-  @JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
   final num? patientCount;
   @override
-  @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
   final num? hospitalCount;
 
   @override
@@ -1775,19 +1902,19 @@ class _$ResearchPopulationModelImpl implements _ResearchPopulationModel {
 
 abstract class _ResearchPopulationModel implements ResearchPopulationModel {
   const factory _ResearchPopulationModel(
-      {@JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+      {@JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
       final num? patientCount,
-      @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+      @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
       final num? hospitalCount}) = _$ResearchPopulationModelImpl;
 
   factory _ResearchPopulationModel.fromJson(Map<String, dynamic> json) =
       _$ResearchPopulationModelImpl.fromJson;
 
   @override
-  @JsonKey(name: 'patient_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'patient_count', fromJson: _flexibleNumFromJson)
   num? get patientCount;
   @override
-  @JsonKey(name: 'hospital_count', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'hospital_count', fromJson: _flexibleNumFromJson)
   num? get hospitalCount;
 
   /// Create a copy of ResearchPopulationModel
@@ -1806,13 +1933,16 @@ WeekRecapModel _$WeekRecapModelFromJson(Map<String, dynamic> json) {
 mixin _$WeekRecapModel {
   String? get from => throw _privateConstructorUsedError;
   String? get to => throw _privateConstructorUsedError;
-  @JsonKey(name: 'patients_added')
+  @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
   int? get patientsAdded => throw _privateConstructorUsedError;
-  @JsonKey(name: 'all_patients_added')
+  @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
   int? get allPatientsAdded => throw _privateConstructorUsedError;
-  @JsonKey(name: 'outcomes_submitted')
+  @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
   int? get outcomesSubmitted => throw _privateConstructorUsedError;
-  @JsonKey(name: 'points_earned')
+  @JsonKey(
+      name: 'points_earned',
+      readValue: _readPointsEarned,
+      fromJson: _flexibleIntFromJson)
   int? get pointsEarned => throw _privateConstructorUsedError;
 
   /// Serializes this WeekRecapModel to a JSON map.
@@ -1834,10 +1964,17 @@ abstract class $WeekRecapModelCopyWith<$Res> {
   $Res call(
       {String? from,
       String? to,
-      @JsonKey(name: 'patients_added') int? patientsAdded,
-      @JsonKey(name: 'all_patients_added') int? allPatientsAdded,
-      @JsonKey(name: 'outcomes_submitted') int? outcomesSubmitted,
-      @JsonKey(name: 'points_earned') int? pointsEarned});
+      @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
+      int? patientsAdded,
+      @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
+      int? allPatientsAdded,
+      @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
+      int? outcomesSubmitted,
+      @JsonKey(
+          name: 'points_earned',
+          readValue: _readPointsEarned,
+          fromJson: _flexibleIntFromJson)
+      int? pointsEarned});
 }
 
 /// @nodoc
@@ -1902,10 +2039,17 @@ abstract class _$$WeekRecapModelImplCopyWith<$Res>
   $Res call(
       {String? from,
       String? to,
-      @JsonKey(name: 'patients_added') int? patientsAdded,
-      @JsonKey(name: 'all_patients_added') int? allPatientsAdded,
-      @JsonKey(name: 'outcomes_submitted') int? outcomesSubmitted,
-      @JsonKey(name: 'points_earned') int? pointsEarned});
+      @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
+      int? patientsAdded,
+      @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
+      int? allPatientsAdded,
+      @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
+      int? outcomesSubmitted,
+      @JsonKey(
+          name: 'points_earned',
+          readValue: _readPointsEarned,
+          fromJson: _flexibleIntFromJson)
+      int? pointsEarned});
 }
 
 /// @nodoc
@@ -1963,10 +2107,17 @@ class _$WeekRecapModelImpl implements _WeekRecapModel {
   const _$WeekRecapModelImpl(
       {this.from,
       this.to,
-      @JsonKey(name: 'patients_added') this.patientsAdded,
-      @JsonKey(name: 'all_patients_added') this.allPatientsAdded,
-      @JsonKey(name: 'outcomes_submitted') this.outcomesSubmitted,
-      @JsonKey(name: 'points_earned') this.pointsEarned});
+      @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
+      this.patientsAdded,
+      @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
+      this.allPatientsAdded,
+      @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
+      this.outcomesSubmitted,
+      @JsonKey(
+          name: 'points_earned',
+          readValue: _readPointsEarned,
+          fromJson: _flexibleIntFromJson)
+      this.pointsEarned});
 
   factory _$WeekRecapModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$WeekRecapModelImplFromJson(json);
@@ -1976,16 +2127,19 @@ class _$WeekRecapModelImpl implements _WeekRecapModel {
   @override
   final String? to;
   @override
-  @JsonKey(name: 'patients_added')
+  @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
   final int? patientsAdded;
   @override
-  @JsonKey(name: 'all_patients_added')
+  @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
   final int? allPatientsAdded;
   @override
-  @JsonKey(name: 'outcomes_submitted')
+  @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
   final int? outcomesSubmitted;
   @override
-  @JsonKey(name: 'points_earned')
+  @JsonKey(
+      name: 'points_earned',
+      readValue: _readPointsEarned,
+      fromJson: _flexibleIntFromJson)
   final int? pointsEarned;
 
   @override
@@ -2034,13 +2188,19 @@ class _$WeekRecapModelImpl implements _WeekRecapModel {
 
 abstract class _WeekRecapModel implements WeekRecapModel {
   const factory _WeekRecapModel(
-          {final String? from,
-          final String? to,
-          @JsonKey(name: 'patients_added') final int? patientsAdded,
-          @JsonKey(name: 'all_patients_added') final int? allPatientsAdded,
-          @JsonKey(name: 'outcomes_submitted') final int? outcomesSubmitted,
-          @JsonKey(name: 'points_earned') final int? pointsEarned}) =
-      _$WeekRecapModelImpl;
+      {final String? from,
+      final String? to,
+      @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
+      final int? patientsAdded,
+      @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
+      final int? allPatientsAdded,
+      @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
+      final int? outcomesSubmitted,
+      @JsonKey(
+          name: 'points_earned',
+          readValue: _readPointsEarned,
+          fromJson: _flexibleIntFromJson)
+      final int? pointsEarned}) = _$WeekRecapModelImpl;
 
   factory _WeekRecapModel.fromJson(Map<String, dynamic> json) =
       _$WeekRecapModelImpl.fromJson;
@@ -2050,16 +2210,19 @@ abstract class _WeekRecapModel implements WeekRecapModel {
   @override
   String? get to;
   @override
-  @JsonKey(name: 'patients_added')
+  @JsonKey(name: 'patients_added', fromJson: _flexibleIntFromJson)
   int? get patientsAdded;
   @override
-  @JsonKey(name: 'all_patients_added')
+  @JsonKey(name: 'all_patients_added', fromJson: _flexibleIntFromJson)
   int? get allPatientsAdded;
   @override
-  @JsonKey(name: 'outcomes_submitted')
+  @JsonKey(name: 'outcomes_submitted', fromJson: _flexibleIntFromJson)
   int? get outcomesSubmitted;
   @override
-  @JsonKey(name: 'points_earned')
+  @JsonKey(
+      name: 'points_earned',
+      readValue: _readPointsEarned,
+      fromJson: _flexibleIntFromJson)
   int? get pointsEarned;
 
   /// Create a copy of WeekRecapModel
@@ -2079,13 +2242,13 @@ mixin _$PatientHomeDataModel {
   int? get id => throw _privateConstructorUsedError;
   String? get name => throw _privateConstructorUsedError;
   String? get hospital => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get age => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get egfr => throw _privateConstructorUsedError;
-  @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   num? get egfrPrevious => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get bmi => throw _privateConstructorUsedError;
   @JsonKey(name: 'updated_at')
   String? get updatedAt => throw _privateConstructorUsedError;
@@ -2120,11 +2283,11 @@ abstract class $PatientHomeDataModelCopyWith<$Res> {
       {int? id,
       String? name,
       String? hospital,
-      @JsonKey(fromJson: flexibleNumFromJson) num? age,
-      @JsonKey(fromJson: flexibleNumFromJson) num? egfr,
-      @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+      @JsonKey(fromJson: _flexibleNumFromJson) num? age,
+      @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
+      @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       num? egfrPrevious,
-      @JsonKey(fromJson: flexibleNumFromJson) num? bmi,
+      @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
       @JsonKey(name: 'updated_at') String? updatedAt,
       DoctorModel? doctor,
       SectionHomeDataModel? sections,
@@ -2284,11 +2447,11 @@ abstract class _$$PatientHomeDataModelImplCopyWith<$Res>
       {int? id,
       String? name,
       String? hospital,
-      @JsonKey(fromJson: flexibleNumFromJson) num? age,
-      @JsonKey(fromJson: flexibleNumFromJson) num? egfr,
-      @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+      @JsonKey(fromJson: _flexibleNumFromJson) num? age,
+      @JsonKey(fromJson: _flexibleNumFromJson) num? egfr,
+      @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       num? egfrPrevious,
-      @JsonKey(fromJson: flexibleNumFromJson) num? bmi,
+      @JsonKey(fromJson: _flexibleNumFromJson) num? bmi,
       @JsonKey(name: 'updated_at') String? updatedAt,
       DoctorModel? doctor,
       SectionHomeDataModel? sections,
@@ -2401,11 +2564,11 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
       {this.id,
       this.name,
       this.hospital,
-      @JsonKey(fromJson: flexibleNumFromJson) this.age,
-      @JsonKey(fromJson: flexibleNumFromJson) this.egfr,
-      @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+      @JsonKey(fromJson: _flexibleNumFromJson) this.age,
+      @JsonKey(fromJson: _flexibleNumFromJson) this.egfr,
+      @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
       this.egfrPrevious,
-      @JsonKey(fromJson: flexibleNumFromJson) this.bmi,
+      @JsonKey(fromJson: _flexibleNumFromJson) this.bmi,
       @JsonKey(name: 'updated_at') this.updatedAt,
       this.doctor,
       this.sections,
@@ -2424,16 +2587,16 @@ class _$PatientHomeDataModelImpl implements _PatientHomeDataModel {
   @override
   final String? hospital;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   final num? age;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   final num? egfr;
   @override
-  @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   final num? egfrPrevious;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   final num? bmi;
   @override
   @JsonKey(name: 'updated_at')
@@ -2531,11 +2694,11 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
           {final int? id,
           final String? name,
           final String? hospital,
-          @JsonKey(fromJson: flexibleNumFromJson) final num? age,
-          @JsonKey(fromJson: flexibleNumFromJson) final num? egfr,
-          @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+          @JsonKey(fromJson: _flexibleNumFromJson) final num? age,
+          @JsonKey(fromJson: _flexibleNumFromJson) final num? egfr,
+          @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
           final num? egfrPrevious,
-          @JsonKey(fromJson: flexibleNumFromJson) final num? bmi,
+          @JsonKey(fromJson: _flexibleNumFromJson) final num? bmi,
           @JsonKey(name: 'updated_at') final String? updatedAt,
           final DoctorModel? doctor,
           final SectionHomeDataModel? sections,
@@ -2556,16 +2719,16 @@ abstract class _PatientHomeDataModel implements PatientHomeDataModel {
   @override
   String? get hospital;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get age;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get egfr;
   @override
-  @JsonKey(name: 'egfr_previous', fromJson: flexibleNumFromJson)
+  @JsonKey(name: 'egfr_previous', fromJson: _flexibleNumFromJson)
   num? get egfrPrevious;
   @override
-  @JsonKey(fromJson: flexibleNumFromJson)
+  @JsonKey(fromJson: _flexibleNumFromJson)
   num? get bmi;
   @override
   @JsonKey(name: 'updated_at')
@@ -2770,9 +2933,9 @@ SectionHomeDataModel _$SectionHomeDataModelFromJson(Map<String, dynamic> json) {
 mixin _$SectionHomeDataModel {
   @JsonKey(name: 'patient_id')
   int? get patientId => throw _privateConstructorUsedError;
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
   bool? get submitStatus => throw _privateConstructorUsedError;
-  @JsonKey(name: 'outcome_status')
+  @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
   bool? get outcomeStatus => throw _privateConstructorUsedError;
 
   /// Serializes this SectionHomeDataModel to a JSON map.
@@ -2793,8 +2956,10 @@ abstract class $SectionHomeDataModelCopyWith<$Res> {
   @useResult
   $Res call(
       {@JsonKey(name: 'patient_id') int? patientId,
-      @JsonKey(name: 'submit_status') bool? submitStatus,
-      @JsonKey(name: 'outcome_status') bool? outcomeStatus});
+      @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
+      bool? submitStatus,
+      @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
+      bool? outcomeStatus});
 }
 
 /// @nodoc
@@ -2844,8 +3009,10 @@ abstract class _$$SectionHomeDataModelImplCopyWith<$Res>
   @useResult
   $Res call(
       {@JsonKey(name: 'patient_id') int? patientId,
-      @JsonKey(name: 'submit_status') bool? submitStatus,
-      @JsonKey(name: 'outcome_status') bool? outcomeStatus});
+      @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
+      bool? submitStatus,
+      @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
+      bool? outcomeStatus});
 }
 
 /// @nodoc
@@ -2887,8 +3054,10 @@ class __$$SectionHomeDataModelImplCopyWithImpl<$Res>
 class _$SectionHomeDataModelImpl implements _SectionHomeDataModel {
   const _$SectionHomeDataModelImpl(
       {@JsonKey(name: 'patient_id') this.patientId,
-      @JsonKey(name: 'submit_status') this.submitStatus,
-      @JsonKey(name: 'outcome_status') this.outcomeStatus});
+      @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
+      this.submitStatus,
+      @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
+      this.outcomeStatus});
 
   factory _$SectionHomeDataModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SectionHomeDataModelImplFromJson(json);
@@ -2897,10 +3066,10 @@ class _$SectionHomeDataModelImpl implements _SectionHomeDataModel {
   @JsonKey(name: 'patient_id')
   final int? patientId;
   @override
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
   final bool? submitStatus;
   @override
-  @JsonKey(name: 'outcome_status')
+  @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
   final bool? outcomeStatus;
 
   @override
@@ -2946,10 +3115,11 @@ class _$SectionHomeDataModelImpl implements _SectionHomeDataModel {
 
 abstract class _SectionHomeDataModel implements SectionHomeDataModel {
   const factory _SectionHomeDataModel(
-          {@JsonKey(name: 'patient_id') final int? patientId,
-          @JsonKey(name: 'submit_status') final bool? submitStatus,
-          @JsonKey(name: 'outcome_status') final bool? outcomeStatus}) =
-      _$SectionHomeDataModelImpl;
+      {@JsonKey(name: 'patient_id') final int? patientId,
+      @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
+      final bool? submitStatus,
+      @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
+      final bool? outcomeStatus}) = _$SectionHomeDataModelImpl;
 
   factory _SectionHomeDataModel.fromJson(Map<String, dynamic> json) =
       _$SectionHomeDataModelImpl.fromJson;
@@ -2958,10 +3128,10 @@ abstract class _SectionHomeDataModel implements SectionHomeDataModel {
   @JsonKey(name: 'patient_id')
   int? get patientId;
   @override
-  @JsonKey(name: 'submit_status')
+  @JsonKey(name: 'submit_status', fromJson: _flexibleBoolFromJson)
   bool? get submitStatus;
   @override
-  @JsonKey(name: 'outcome_status')
+  @JsonKey(name: 'outcome_status', fromJson: _flexibleBoolFromJson)
   bool? get outcomeStatus;
 
   /// Create a copy of SectionHomeDataModel

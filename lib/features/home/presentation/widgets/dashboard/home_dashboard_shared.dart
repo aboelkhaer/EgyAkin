@@ -121,6 +121,9 @@ class HomeSectionHeader extends StatelessWidget {
   final IconData? leadingIcon;
   final bool isDark;
 
+  /// When true (and [onAction] is set), shows only a chevron — no label.
+  final bool actionIconOnly;
+
   const HomeSectionHeader({
     super.key,
     required this.title,
@@ -130,13 +133,17 @@ class HomeSectionHeader extends StatelessWidget {
     this.actionLabel,
     this.onAction,
     this.leadingIcon,
+    this.actionIconOnly = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final primary = HomeDashboardColors.primary(isDark);
+    final showAction = onAction != null &&
+        (actionIconOnly || (actionLabel != null && actionLabel!.isNotEmpty));
 
-    return Row(
+    final row = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (leadingIcon != null) ...[
           Icon(leadingIcon, size: 15.sp, color: primary),
@@ -147,6 +154,7 @@ class HomeSectionHeader extends StatelessWidget {
           style: TextStyle(
             fontSize: 13.sp,
             fontWeight: FontWeight.w700,
+            height: 1.2,
             color: HomeDashboardColors.title(isDark),
           ),
         ),
@@ -166,31 +174,63 @@ class HomeSectionHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 9.sp,
                 fontWeight: FontWeight.w700,
+                height: 1.2,
                 color: primary,
               ),
             ),
           ),
         ],
         const Spacer(),
-        if (actionLabel != null)
-          GestureDetector(
-            onTap: onAction,
-            child: Row(
-              children: [
-                Text(
-                  actionLabel!,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w600,
+        if (showAction)
+          actionIconOnly
+              ? SizedBox(
+                  width: 28.w,
+                  height: 28.w,
+                  child: Icon(
+                    Icons.chevron_right_rounded,
+                    size: 22.sp,
                     color: primary,
                   ),
+                )
+              : GestureDetector(
+                  onTap: onAction,
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        actionLabel!,
+                        style: TextStyle(
+                          fontSize: 11.sp,
+                          fontWeight: FontWeight.w600,
+                          height: 1.2,
+                          color: primary,
+                        ),
+                      ),
+                      Icon(Icons.chevron_right, size: 15.sp, color: primary),
+                    ],
+                  ),
                 ),
-                Icon(Icons.chevron_right, size: 15.sp, color: primary),
-              ],
-            ),
-          ),
       ],
     );
+
+    // Icon-only headers (e.g. Resume drafts): tap anywhere on the row.
+    if (showAction && actionIconOnly) {
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onAction,
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 4.h),
+            child: row,
+          ),
+        ),
+      );
+    }
+
+    return row;
   }
 }
 

@@ -287,11 +287,11 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
     return '';
   }
 
-  void _openSection(
+  Future<void> _openSection(
     SectionModel section,
     GetPatientSectionsModelResponse response,
-  ) {
-    navigatorKey.currentState?.pushNamed(
+  ) async {
+    final result = await navigatorKey.currentState?.pushNamed(
       AppRoutes.patientSectionDetails,
       arguments: AppRoutesArgs.patientSectionDetailsRouteArgs(
         sectionModel: section,
@@ -305,6 +305,13 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
         isAllDataOpen: widget.isAllDataOpen,
       ),
     );
+    if (!mounted) return;
+
+    final sectionsCubit = context.read<PatientSectionsCubit>();
+    if (result == true) {
+      sectionsCubit.markSectionCompleted(section.sectionId.toString());
+    }
+    await sectionsCubit.refreshPatientSections(widget.patientId);
   }
 
   Widget? _buildFooter({
@@ -575,7 +582,7 @@ class _PatientSectionsScreenState extends State<PatientSectionsScreen> {
                   if (hasInsights)
                     SliverToBoxAdapter(
                       child: SizedBox(
-                        height: 104.h,
+                        height: 120.h,
                         child: ListView(
                           scrollDirection: Axis.horizontal,
                           padding: EdgeInsets.fromLTRB(

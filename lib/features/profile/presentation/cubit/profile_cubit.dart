@@ -190,7 +190,7 @@ class ProfileCubit extends Cubit<ProfileState> {
         () => CommunitySearchCubit(sl(), sl(), sl(), sl(), sl()));
     _resetCubit<ConsultationCubit>(
         () => ConsultationCubit(sl(), sl()));
-    _resetCubit<HomeCubit>(() => HomeCubit(sl(), sl(), sl(), sl()));
+    _resetCubit<HomeCubit>(() => HomeCubit(sl(), sl(), sl(), sl(), sl()));
 
     final result = await _signOutUsecase.execute(NoParams());
     // Always clear local session — logout can 403 for blocked accounts.

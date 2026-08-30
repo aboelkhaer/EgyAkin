@@ -178,6 +178,13 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
         ));
       }, (r) async {
         if (r.value == true) {
+          final emailChanged = email.trim().toLowerCase() !=
+              originalEmail.trim().toLowerCase();
+          final previousDoctor = state.maybeWhen(
+            loaded: (model, _, __, ___, ____, _____) => model,
+            orElse: () => const DoctorModel(),
+          );
+
           await sl<AppPreferences>().updateDoctorProfile(
             firstName: firstName,
             lastName: lastName,
@@ -192,6 +199,12 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
             userType: isMedicalStatistics ? 'medical_statistics' : 'normal',
           );
 
+          // Stash for the screen listener so HomeCubit can invalidate verify
+          // and refresh home when user_type flips.
+          lastEmailChanged = emailChanged;
+          lastUserTypeChanged =
+              isMedicalStatistics != originalIsMedicalStatistics;
+
           // Update original values after successful update
           originalFirstName = firstName;
           originalLastName = lastName;
@@ -204,19 +217,50 @@ class DoctorProfileViewCubit extends Cubit<DoctorProfileViewState> {
           originalSpecialty = specialty;
           originalHighestDegree = highestDegree;
           originalIsMedicalStatistics = isMedicalStatistics;
+
+          final updatedDoctor = previousDoctor.copyWith(
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            age: age,
+            job: job,
+            workingplace: workplace,
+            registrationNumber: registrationNumber,
+            specialty: specialty,
+            highestdegree: highestDegree,
+            userType:
+                isMedicalStatistics ? 'medical_statistics' : 'normal',
+            emailVerifiedAt:
+                emailChanged ? null : previousDoctor.emailVerifiedAt,
+          );
+
+          emit(DoctorProfileViewState.loaded(
+            updatedDoctor,
+            false,
+            AppStrings.profileUpdatedSuccessfully,
+            false,
+            true,
+            isMedicalStatistics,
+          ));
+          return;
         }
 
-          emit(state.maybeMap(
-            orElse: () => state,
-            loaded: (value) => DoctorProfileViewState.loaded(
-                value.currentDoctorModel,
-                false,
-                AppStrings.profileUpdatedSuccessfully,
-                false,
-                true,
-                isMedicalStatistics),
-          ));
+        emit(state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => DoctorProfileViewState.loaded(
+            value.currentDoctorModel,
+            false,
+            AppStrings.profileUpdatedSuccessfully,
+            false,
+            true,
+            isMedicalStatistics,
+          ),
+        ));
       });
     }
   }
+
+  bool lastEmailChanged = false;
+  bool lastUserTypeChanged = false;
 }

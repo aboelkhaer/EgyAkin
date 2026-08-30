@@ -1,4 +1,5 @@
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
+import 'package:egy_akin/app/services/deep_link_handler.dart';
 
 import '../../../../exports.dart';
 
@@ -58,6 +59,14 @@ class _RegisterScreenState extends State<RegisterScreen>
     );
 
     _introController.forward();
+    _consumePendingInviteToken();
+  }
+
+  Future<void> _consumePendingInviteToken() async {
+    final token = await DeepLinkHandler().getPendingInviteToken(clear: false);
+    if (!mounted || token == null || token.isEmpty) return;
+    final cubit = context.read<AuthenticationCubit>();
+    cubit.applyInviteToken(token);
   }
 
   @override

@@ -5,8 +5,11 @@ bool isDoctorEmailVerified({
   required DoctorModel doctor,
   HomeModelResponse? homeData,
 }) {
-  // Home API `verified` is the source of truth for email verification status.
-  return homeData?.verified == true;
+  final verifiedAt = doctor.emailVerifiedAt?.trim();
+  final hasVerifiedAt = verifiedAt != null && verifiedAt.isNotEmpty;
+  // Require both the account flag and a local verified-at timestamp so a
+  // stale `/user/me` `verified: true` cannot resurrect after an email change.
+  return homeData?.verified == true && hasVerifiedAt;
 }
 
 /// Eye-catching home banner prompting email verification.

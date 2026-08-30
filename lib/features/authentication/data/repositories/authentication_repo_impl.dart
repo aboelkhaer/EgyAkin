@@ -39,11 +39,15 @@ class AuthenticationRepositoryImpl extends AuthenticationRepository {
   @override
   Future<Either<Failure, AuthenticationModelResponse>> register({
     required DoctorModel doctorModel,
+    String? inviteCode,
+    String? inviteToken,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final response = await authenticationRemoteDataSource.register(
           doctorModel: doctorModel,
+          inviteCode: inviteCode,
+          inviteToken: inviteToken,
         );
         await sl<AppPreferences>()
             .setData(AppLocalStrings.keyToken, response.token ?? '');

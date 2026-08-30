@@ -1,5 +1,3 @@
-import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
-
 import '../../../../exports.dart';
 
 class CheckIfVerified extends StatelessWidget {

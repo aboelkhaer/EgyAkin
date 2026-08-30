@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 
@@ -25,7 +26,8 @@ abstract class SendConsultationDataSource {
   Future<GetMembersForConsultationModelResponse> getMembersForConsultation({
     required String consultationId,
   });
-  Future<RemoveMemberFromConsultationModelResponse> removeMemberFromConsultation({
+  Future<RemoveMemberFromConsultationModelResponse>
+      removeMemberFromConsultation({
     required String consultationId,
     required String doctorId,
   });
@@ -34,10 +36,11 @@ abstract class SendConsultationDataSource {
     required String message,
     required List<String> doctorsIDS,
   });
-
-
-
-
+  Future<InviteExternalModelResponse> inviteExternalConsultation({
+    required String consultationId,
+    required String email,
+    String? inviteMessage,
+  });
 }
 
 class SendConsultationDataSourceImpl implements SendConsultationDataSource {
@@ -69,20 +72,50 @@ class SendConsultationDataSourceImpl implements SendConsultationDataSource {
       required List<String> doctorsIDS}) async {
     return await _apiServices.sendGroupInvitation(groupId, message, doctorsIDS);
   }
+
   @override
-  Future<GetMembersForConsultationModelResponse> getMembersForConsultation({required String consultationId}) async {
+  Future<GetMembersForConsultationModelResponse> getMembersForConsultation(
+      {required String consultationId}) async {
     return await _apiServices.getMembersForConsultation(consultationId);
   }
 
   @override
-  Future<RemoveMemberFromConsultationModelResponse> removeMemberFromConsultation({required String consultationId, required String doctorId}) async {
-    return await _apiServices.removeMemberFromConsultation(consultationId, doctorId);
+  Future<RemoveMemberFromConsultationModelResponse>
+      removeMemberFromConsultation(
+          {required String consultationId, required String doctorId}) async {
+    return await _apiServices.removeMemberFromConsultation(
+        consultationId, doctorId);
   }
 
   @override
-  Future<AddDoctorsForConsultationModelResponse> addDoctorsForConsultation({required String consultationId, required String message, required List<String> doctorsIDS}) async {
-    return await _apiServices.addDoctorsForConsultation(consultationId, message, doctorsIDS);
+  Future<AddDoctorsForConsultationModelResponse> addDoctorsForConsultation({
+    required String consultationId,
+    required String message,
+    required List<String> doctorsIDS,
+  }) async {
+    return await _apiServices.addDoctorsForConsultation(
+      consultationId,
+      message,
+      doctorsIDS,
+    );
   }
 
-
+  @override
+  Future<InviteExternalModelResponse> inviteExternalConsultation({
+    required String consultationId,
+    required String email,
+    String? inviteMessage,
+  }) async {
+    final body = <String, dynamic>{
+      'email': email.trim().toLowerCase(),
+    };
+    final trimmed = inviteMessage?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      body['invite_message'] = trimmed;
+    }
+    return await _apiServices.inviteExternalConsultation(
+      consultationId,
+      body,
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 
@@ -120,6 +121,29 @@ class SendConsultationRepositoryImpl extends SendConsultationRepository {
     return Left(DataSource.noInternetConnection.getFailure());
   }
 
-
-
+  @override
+  Future<Either<Failure, InviteExternalModelResponse>>
+      inviteExternalConsultation({
+    required String consultationId,
+    required String email,
+    String? inviteMessage,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await Future.delayed(const Duration(
+            milliseconds: AppStrings.delayForAPIRequestInMilliseconds));
+        final response =
+            await sendConsultationDataSource.inviteExternalConsultation(
+          consultationId: consultationId,
+          email: email,
+          inviteMessage: inviteMessage,
+        );
+        return Right(response);
+      } catch (error) {
+        debugPrint(error.toString());
+        return Left(ErrorHandler.handle(error).failure);
+      }
+    }
+    return Left(DataSource.noInternetConnection.getFailure());
+  }
 }

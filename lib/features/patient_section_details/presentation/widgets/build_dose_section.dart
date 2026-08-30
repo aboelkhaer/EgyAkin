@@ -34,6 +34,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
   late TextEditingController routeController;
   late TextEditingController frequencyController;
   late TextEditingController durationController;
+  late FocusNode _searchFocusNode;
   String searchText = '';
   final GlobalKey _searchFieldKey = GlobalKey();
   OverlayEntry? _overlayEntry;
@@ -58,6 +59,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
   void initState() {
     super.initState();
     searchContentController = TextEditingController();
+    _searchFocusNode = FocusNode();
     doseController = TextEditingController();
     routeController = TextEditingController();
     frequencyController = TextEditingController();
@@ -71,6 +73,7 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     _removeOverlay();
     _debounceTimer?.cancel();
     searchContentController.dispose();
+    _searchFocusNode.dispose();
     doseController.dispose();
     routeController.dispose();
     frequencyController.dispose();
@@ -1890,6 +1893,130 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
     });
   }
 
+  void _handleSearchChanged(String value) {
+    _debounceTimer?.cancel();
+
+    setState(() {
+      searchText = value;
+      if (value.isNotEmpty) {
+        _isSearching = true;
+        _hasSearched = true;
+      }
+    });
+
+    if (value.isEmpty) {
+      _removeOverlay();
+      _hasSearched = false;
+      _isSearching = false;
+      cubit.currentPageInSearch = 1;
+      cubit.isLastPageInSearch = false;
+      cubit.isLoadingMoreForScrollInSearch = false;
+      return;
+    }
+
+    if (!_isOverlayVisible) {
+      _showSearchOverlay();
+    }
+
+    final currentValue = value;
+    _debounceTimer = Timer(const Duration(milliseconds: 300), () {
+      if (currentValue == searchContentController.text) {
+        cubit.searchForDoseInMedicationSection(currentValue).then((_) {
+          if (mounted) {
+            setState(() => _isSearching = false);
+          }
+        }).catchError((_) {
+          if (mounted) {
+            setState(() => _isSearching = false);
+          }
+        });
+      }
+      _updateOverlay();
+    });
+  }
+
+  Widget _buildMedicationSearchField(bool isDark) {
+    final primary = isDark ? AppColors.darkPrimary : AppColors.primary;
+    final fill = isDark ? const Color(0xFF1C1C1E) : Colors.white;
+    const fieldHeight = 48.0;
+
+    return SizedBox(
+      key: _searchFieldKey,
+      height: fieldHeight.h,
+      width: double.infinity,
+      child: Listener(
+        behavior: HitTestBehavior.opaque,
+        onPointerDown: (_) {
+          if (!_searchFocusNode.hasFocus) {
+            _searchFocusNode.requestFocus();
+          }
+          if (searchText.isNotEmpty && !_isOverlayVisible) {
+            _showSearchOverlay();
+          }
+        },
+        child: TextField(
+          controller: searchContentController,
+          focusNode: _searchFocusNode,
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.search,
+          textAlignVertical: TextAlignVertical.center,
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: isDark ? AppColors.darkTitle : Colors.black87,
+            decoration: TextDecoration.none,
+          ),
+          cursorColor: primary,
+          onChanged: _handleSearchChanged,
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: fill,
+            hintText: context.tr(AppStrings.searchWithMedication),
+            hintStyle: TextStyle(
+              fontSize: 13.sp,
+              color: isDark ? AppColors.darkDescription : Colors.grey,
+            ),
+            prefixIcon: Icon(Icons.search_rounded, color: primary, size: 20.sp),
+            prefixIconConstraints: BoxConstraints(
+              minWidth: 44.w,
+              minHeight: fieldHeight.h,
+            ),
+            suffixIcon: searchText.isEmpty
+                ? null
+                : IconButton(
+                    onPressed: () {
+                      searchContentController.clear();
+                      _handleSearchChanged('');
+                    },
+                    icon: Icon(
+                      Icons.close_rounded,
+                      size: 18.sp,
+                      color: isDark ? AppColors.darkDescription : Colors.grey,
+                    ),
+                  ),
+            contentPadding: EdgeInsets.symmetric(horizontal: 12.w),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                color: isDark ? AppColors.darkBorder : Colors.grey.shade300,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(
+                color: isDark ? AppColors.darkBorder : Colors.grey.shade300,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: BorderSide(color: primary),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildInfoRow(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -1921,129 +2048,24 @@ class _BuildDoseSectionState extends State<BuildDoseSection> {
           backgroundColor: Colors.transparent,
           resizeToAvoidBottomInset: false,
           body: GestureDetector(
+            behavior: HitTestBehavior.deferToChild,
             onTap: () {
-              // Hide overlay when tapping outside
               _removeOverlay();
-              FocusScope.of(context).unfocus();
+              _searchFocusNode.unfocus();
             },
             child: Stack(
               fit: StackFit.expand,
               children: [
                 SingleChildScrollView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
                       children: [
                         // Search Bar - Only show if finalSubmitStatus is false
                         if (!widget.finalSubmitStatus) ...[
-                          SizedBox(
-                            key: _searchFieldKey,
-                            height: 55,
-                            child: CustomTextFormField(
-                              textFormFieldController: searchContentController,
-                              prefixIcon: const Icon(
-                                Icons.search,
-                                color: AppColors.primary,
-                              ),
-                              showClearButton: true,
-                              onClear: () {
-                                setState(() {
-                                  searchText = '';
-                                  _hasSearched = false;
-                                });
-                                _removeOverlay();
-                                // Reset pagination when search is cleared
-                                cubit.currentPageInSearch = 1;
-                                cubit.isLastPageInSearch = false;
-                                cubit.isLoadingMoreForScrollInSearch = false;
-                              },
-                              onChanged: (value) {
-                                // Cancel previous timer
-                                _debounceTimer?.cancel();
-
-                                // Update search text immediately for UI
-                                setState(() {
-                                  searchText = value;
-                                  // Set searching state immediately when typing starts
-                                  if (value.isNotEmpty) {
-                                    _isSearching = true;
-                                    _hasSearched = true;
-                                  }
-                                });
-
-                                // Remove overlay if search is cleared
-                                if (value.isEmpty) {
-                                  _removeOverlay();
-                                  _hasSearched = false;
-                                  _isSearching = false;
-                                  // Reset pagination when search is cleared
-                                  cubit.currentPageInSearch = 1;
-                                  cubit.isLastPageInSearch = false;
-                                  cubit.isLoadingMoreForScrollInSearch = false;
-                                  return;
-                                }
-
-                                // Show overlay immediately when typing
-                                if (!_isOverlayVisible) {
-                                  _showSearchOverlay();
-                                }
-
-                                // Store the current value in a local variable
-                                final currentValue = value;
-
-                                // Perform search after a short delay
-                                _debounceTimer = Timer(
-                                    const Duration(milliseconds: 300), () {
-                                  // Verify the value hasn't changed during the delay
-                                  if (currentValue ==
-                                      searchContentController.text) {
-                                    // Call cubit to search with the current value
-                                    cubit
-                                        .searchForDoseInMedicationSection(
-                                            currentValue)
-                                        .then((_) {
-                                      if (mounted) {
-                                        setState(() {
-                                          _isSearching = false;
-                                        });
-                                      }
-                                    }).catchError((_) {
-                                      if (mounted) {
-                                        setState(() {
-                                          _isSearching = false;
-                                        });
-                                      }
-                                    });
-                                  }
-
-                                  _updateOverlay();
-                                });
-                              },
-                              onTextClick: () {
-                                if (searchText.isNotEmpty &&
-                                    !_isOverlayVisible) {
-                                  _showSearchOverlay();
-                                }
-                              },
-                              title:
-                                  context.tr(AppStrings.searchWithMedication),
-                              textInputType: TextInputType.text,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return context.tr(
-                                      AppStrings.pleaseEnterAMedicationName);
-                                }
-                                return null;
-                              },
-                              contentPadding: const EdgeInsets.only(
-                                  left: 11, right: 11, top: 14, bottom: 14),
-                              style: TextStyle(
-                                decoration: TextDecoration.none,
-                                decorationThickness: 0,
-                                fontSize: 12.sp,
-                              ),
-                            ),
-                          ),
+                          _buildMedicationSearchField(isDarkMode),
                           const SizedBox(height: 20),
                         ],
                         // Medications List

@@ -12,6 +12,8 @@ abstract class AuthenticationRepository {
   });
   Future<Either<Failure, AuthenticationModelResponse>> register({
     required DoctorModel doctorModel,
+    String? inviteCode,
+    String? inviteToken,
   });
   Future<Either<Failure, SendFCMTokenModelResponse>> sendFCMToken({
     required String? fcmToken,

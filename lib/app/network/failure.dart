@@ -1,5 +1,7 @@
 class Failure {
   int code;
   String message;
-  Failure(this.code, this.message);
+  Map<String, dynamic>? data;
+
+  Failure(this.code, this.message, {this.data});
 }

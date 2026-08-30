@@ -11,6 +11,8 @@ abstract class AuthenticationDataSource {
   });
   Future<AuthenticationModelResponse> register({
     required DoctorModel doctorModel,
+    String? inviteCode,
+    String? inviteToken,
   });
   Future<SendFCMTokenModelResponse> sendFCMToken({
     required String? fcmToken,
@@ -46,10 +48,19 @@ class AuthenticationDataSourceImpl implements AuthenticationDataSource {
   @override
   Future<AuthenticationModelResponse> register({
     required DoctorModel doctorModel,
+    String? inviteCode,
+    String? inviteToken,
   }) async {
-    return await _apiServices.register(
-      doctorModel.toJson(),
-    );
+    final body = Map<String, dynamic>.from(doctorModel.toJson());
+    final code = inviteCode?.trim();
+    final token = inviteToken?.trim();
+    if (code != null && code.isNotEmpty) {
+      body['invite_code'] = code;
+    }
+    if (token != null && token.isNotEmpty) {
+      body['invite_token'] = token;
+    }
+    return await _apiServices.register(body);
   }
 
   @override

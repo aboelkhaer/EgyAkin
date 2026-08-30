@@ -78,7 +78,10 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
       final key = entry.key.toString();
       if (key.contains('_from') || key.contains('_to')) continue;
       final value = entry.value?.toString().trim() ?? '';
-      if (value.isNotEmpty && value != '{}' && value != '{from:}' && value != '{to:}') {
+      if (value.isNotEmpty &&
+          value != '{}' &&
+          value != '{from:}' &&
+          value != '{to:}') {
         count++;
       }
     }
@@ -186,25 +189,34 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
         final isDark = themeState is ThemeLoaded && themeState.isDarkMode;
         final primary = HomeDashboardColors.primary(isDark);
         final scaffold = HomeDashboardColors.scaffold(isDark);
-        final filters = widget.filters ?? const <GetFiltersOptionsDataModelResponse>[];
+        final filters =
+            widget.filters ?? const <GetFiltersOptionsDataModelResponse>[];
         final activeCount = _activeFilterCount;
-        final footerGap = 8.h;
+        // Keyboard open: pad by inset (that space sits under the keyboard).
+        // Keyboard closed: keep a safe-area gap under the actions.
+        final keyboard = MediaQuery.viewInsetsOf(context).bottom;
+        final safeBottom = MediaQuery.viewPaddingOf(context).bottom;
+        final footerGap =
+            keyboard > 0 ? keyboard + 20 : (safeBottom > 0 ? safeBottom : 12.h);
 
         return ColoredBox(
           color: scaffold,
           child: Stack(
+            fit: StackFit.expand,
             children: [
               Positioned(
                 top: -28.h,
                 right: -24.w,
-                child: ImageFiltered(
-                  imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                  child: Container(
-                    width: 110.r,
-                    height: 110.r,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: primary.withOpacity(isDark ? 0.14 : 0.08),
+                child: IgnorePointer(
+                  child: ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                    child: Container(
+                      width: 110.r,
+                      height: 110.r,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: primary.withOpacity(isDark ? 0.14 : 0.08),
+                      ),
                     ),
                   ),
                 ),
@@ -240,11 +252,13 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
                             )
                           : ListView.builder(
                               physics: const BouncingScrollPhysics(),
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
                               padding: EdgeInsets.fromLTRB(
                                 12.w,
                                 4.h,
                                 12.w,
-                                52.h,
+                                12.h,
                               ),
                               itemCount: filters.length,
                               itemBuilder: (context, index) {
@@ -285,35 +299,30 @@ class _BuildFilterWidgetState extends State<BuildFilterWidget>
                             ),
                     ),
                   ),
+                  _FilterFooter(
+                    isDark: isDark,
+                    primary: primary,
+                    bottomInset: footerGap,
+                    onReset: () {
+                      try {
+                        widget.cubit.resetFormData();
+                        setState(() {});
+                      } catch (e) {
+                        log('resetFormData not available: $e');
+                      }
+                    },
+                    onApply: () {
+                      Navigator.of(context).pop();
+                      try {
+                        widget.cubit.applyPatientFilters(
+                          widget.isCurrentDoctor ? 'true' : 'false',
+                        );
+                      } catch (e) {
+                        log('applyPatientFilters not available: $e');
+                      }
+                    },
+                  ),
                 ],
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: _FilterFooter(
-                  isDark: isDark,
-                  primary: primary,
-                  bottomInset: footerGap,
-                  onReset: () {
-                    try {
-                      widget.cubit.resetFormData();
-                      setState(() {});
-                    } catch (e) {
-                      log('resetFormData not available: $e');
-                    }
-                  },
-                  onApply: () {
-                    Navigator.of(context).pop();
-                    try {
-                      widget.cubit.applyPatientFilters(
-                        widget.isCurrentDoctor ? 'true' : 'false',
-                      );
-                    } catch (e) {
-                      log('applyPatientFilters not available: $e');
-                    }
-                  },
-                ),
               ),
             ],
           ),
@@ -655,7 +664,10 @@ class _FilterHeader extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: isDark
               ? const [Color(0xFF0F172A), Color(0xFF1A1035)]
-              : [primary.withOpacity(0.1), HomeDashboardColors.scaffold(isDark)],
+              : [
+                  primary.withOpacity(0.1),
+                  HomeDashboardColors.scaffold(isDark)
+                ],
         ),
       ),
       child: Column(
@@ -721,8 +733,7 @@ class _FilterHeader extends StatelessWidget {
               if (activeCount > 0)
                 Container(
                   margin: EdgeInsets.only(right: 4.w),
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
+                  padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
                   decoration: BoxDecoration(
                     color: primary.withOpacity(isDark ? 0.28 : 0.14),
                     borderRadius: BorderRadius.circular(99),
@@ -967,7 +978,8 @@ class _DateTile extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.calendar_month_rounded, size: 13.sp, color: accent),
+                  Icon(Icons.calendar_month_rounded,
+                      size: 13.sp, color: accent),
                   SizedBox(width: 5.w),
                   Expanded(
                     child: Text(

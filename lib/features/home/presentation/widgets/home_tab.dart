@@ -1,4 +1,6 @@
 import 'package:flutter/scheduler.dart';
+import 'package:egy_akin/app/shared/functions/blocked_dialog.dart';
+import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
 import 'package:egy_akin/features/home/data/models/home_dashboard_fake_data.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_consultations_section.dart';
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_dashboard_shared.dart';
@@ -15,6 +17,11 @@ import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_tools
 import 'package:egy_akin/features/home/presentation/widgets/dashboard/home_week_summary_section.dart';
 
 import '../../../../exports.dart';
+
+int _parseHomeInt(String? raw) {
+  if (raw == null || raw.trim().isEmpty) return 0;
+  return num.tryParse(raw.trim())?.toInt() ?? 0;
+}
 
 class HomeTab extends StatefulWidget {
   final HomeCubit cubit;
@@ -67,7 +74,62 @@ class _HomeTabState extends State<HomeTab> {
         verified: homeData.verified ?? false,
         isSyndicateCardRequired: homeData.isSyndicateCardRequired ?? '',
         currentDoctorRole: homeData.role.toString(),
-        currentDoctorPoints: int.tryParse(homeData.scoreValue ?? '0') ?? 0,
+        currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
+        homeDataModel: homeData,
+      ),
+    );
+  }
+
+  void _openAddPatient({
+    required BuildContext context,
+    required DoctorModel currentDoctorModel,
+    required HomeModelResponse homeData,
+  }) {
+    if (!isVerifiedUser(homeData.isSyndicateCardRequired)) {
+      return;
+    }
+    if (!PermissionHelper.canPermission(AppPermissions.addPatientInHome)) {
+      return;
+    }
+    if (homeData.isUserBlocked == true) {
+      showBlockedDialog(
+        context: context,
+        onDismissed: () {
+          homeCubit.signOut();
+          navigatorKey.currentState?.pushReplacementNamed(AppRoutes.signIn);
+        },
+      );
+      return;
+    }
+    if (homeData.verified != true) {
+      showCustomDialog(
+        context: context,
+        title: context.tr(AppStrings.emailVerification),
+        description: context.tr(
+          AppStrings.youMustVerifyYourEmailAddressToEnjoyAllFeatures,
+        ),
+        noColoredButtonOnTap: () => Navigator.of(context).pop(),
+        coloredButtonText: context.tr(AppStrings.verify),
+        noColoredButtonText: context.tr(AppStrings.cancel),
+        coloredButtonOnTap: () {
+          Navigator.of(context).pop();
+          navigatorKey.currentState?.pushNamed(
+            AppRoutes.emailVerification,
+            arguments: AppRoutesArgs.emailVerificationRouteArgs(
+              currentDoctorModel: currentDoctorModel,
+            ),
+          );
+        },
+      );
+      return;
+    }
+
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.addPatient,
+      arguments: AppRoutesArgs.addPatientRouteArgs(
+        currentDoctorModel: homeCubit.currentDoctorModel,
+        currentDoctorRole: homeData.role.toString(),
+        currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
         homeDataModel: homeData,
       ),
     );
@@ -230,7 +292,19 @@ class _HomeTabState extends State<HomeTab> {
                       ),
                       HomeStatsSection(
                         isDark: isDarkMode,
-                        stats: HomeDashboardFakeData.stats,
+                        // Main counts from root home payload.
+                        myPatientsCount:
+                            _parseHomeInt(homeData.doctorPatientCount),
+                        allPatientsCount:
+                            _parseHomeInt(homeData.allPatientCount),
+                        score: _parseHomeInt(homeData.scoreValue),
+                        // Green deltas from data.week_recap.
+                        myPatientsDelta:
+                            homeData.data?.weekRecap?.patientsAdded ?? 0,
+                        allPatientsDelta:
+                            homeData.data?.weekRecap?.allPatientsAdded ?? 0,
+                        scoreDelta:
+                            homeData.data?.weekRecap?.pointsEarned ?? 0,
                       ),
                       SizedBox(height: 10.h),
                       Builder(
@@ -238,25 +312,28 @@ class _HomeTabState extends State<HomeTab> {
                           final currentPatients =
                               homeData.data?.currentPatients ??
                                   const <PatientHomeDataModel>[];
-                          final drafts = currentPatients
-                              .where(
-                                (patient) =>
-                                    patient.sections?.submitStatus !=
-                                    true,
-                              )
-                              .toList();
-                          final draftCount = int.tryParse(
-                                homeData.draftCount ?? '',
-                              ) ??
-                              0;
+                          // Prefer dedicated `data.drafts` when present; else
+                          // unfinished patients from `current_patient`.
+                          final apiDrafts = homeData.data?.drafts;
+                          final drafts = (apiDrafts != null &&
+                                  apiDrafts.isNotEmpty)
+                              ? apiDrafts
+                              : currentPatients
+                                  .where(
+                                    (patient) =>
+                                        patient.sections?.submitStatus !=
+                                        true,
+                                  )
+                                  .toList();
+                          final draftCount =
+                              _parseHomeInt(homeData.draftCount);
+                          // Only show when we have draft cards to render.
                           final showDrafts = drafts.isNotEmpty;
                           final outcomes =
                               homeData.data?.pendingOutcomes ??
                                   const <PatientHomeDataModel>[];
-                          final outcomeCount = int.tryParse(
-                                homeData.pendingOutcomeCount ?? '',
-                              ) ??
-                              0;
+                          final outcomeCount =
+                              _parseHomeInt(homeData.pendingOutcomeCount);
                           final showOutcomes =
                               outcomes.isNotEmpty || outcomeCount > 0;
 
@@ -273,6 +350,9 @@ class _HomeTabState extends State<HomeTab> {
                                   draftCount: draftCount > 0
                                       ? draftCount
                                       : drafts.length,
+                                  onViewAll: () {
+                                    widget.cubit.openMyPatientsDrafts();
+                                  },
                                   onResume: (patient) {
                                     navigatorKey.currentState
                                         ?.pushNamed(
@@ -284,11 +364,7 @@ class _HomeTabState extends State<HomeTab> {
                                         currentDoctorModel:
                                             currentDoctor,
                                         currentDoctorPoints:
-                                            int.tryParse(
-                                                  homeData.scoreValue ??
-                                                      '0',
-                                                ) ??
-                                                0,
+                                            _parseHomeInt(homeData.scoreValue),
                                         currentDoctorRole:
                                             homeData.role.toString(),
                                         homeDataModel: homeData,
@@ -339,11 +415,7 @@ class _HomeTabState extends State<HomeTab> {
                                                 '',
                                         homeDataModel: homeData,
                                         currentDoctorPoints:
-                                            int.tryParse(
-                                                  homeData.scoreValue ??
-                                                      '0',
-                                                ) ??
-                                                0,
+                                            _parseHomeInt(homeData.scoreValue),
                                         currentDoctorRole:
                                             homeData.role.toString(),
                                       ),
@@ -359,23 +431,35 @@ class _HomeTabState extends State<HomeTab> {
                         isDark: isDarkMode,
                         currentDoctorModel: currentDoctor,
                         homeDataModel: homeData,
-                        reloadToken: state.maybeWhen(
-                          loaded: (_, __, ___, ____, _____, ______, _______,
-                                  ________, _________, changesCounter) =>
-                              changesCounter,
-                          orElse: () => 0,
-                        ),
+                        consultations:
+                            homeData.data?.pendingConsultations ?? const [],
                       ),
-                      SizedBox(height: 8.h),
+                      SizedBox(height: 20.h),
                       HomePatientsSection(
                         isDark: isDarkMode,
                         myPatients:
                             homeData.data?.currentPatients ?? const [],
                         allPatients:
                             homeData.data?.allPatients ?? const [],
+                        myPatientsCount:
+                            _parseHomeInt(homeData.doctorPatientCount),
+                        allPatientsCount:
+                            _parseHomeInt(homeData.allPatientCount),
                         onSeeAll: () {
                           widget.cubit.jumpToPatientsTab();
                         },
+                        onAddPatient: isVerifiedUser(
+                                      homeData.isSyndicateCardRequired,
+                                    ) &&
+                                PermissionHelper.canPermission(
+                                  AppPermissions.addPatientInHome,
+                                )
+                            ? () => _openAddPatient(
+                                  context: context,
+                                  currentDoctorModel: currentDoctor,
+                                  homeData: homeData,
+                                )
+                            : null,
                         onPatientTap:
                             (patient, {required isAllDataOpen}) {
                           final patientId = patient.id?.toString();
@@ -388,10 +472,7 @@ class _HomeTabState extends State<HomeTab> {
                                 .patientSectionsRouteArguments(
                               patientId: patientId,
                               currentDoctorModel: currentDoctor,
-                              currentDoctorPoints: int.tryParse(
-                                    homeData.scoreValue ?? '0',
-                                  ) ??
-                                  0,
+                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
                               currentDoctorRole:
                                   homeData.role.toString(),
                               homeDataModel: homeData,
@@ -423,10 +504,7 @@ class _HomeTabState extends State<HomeTab> {
                                       .isSyndicateCardRequired ??
                                   '',
                               homeDataModel: homeData,
-                              currentDoctorPoints: int.tryParse(
-                                    homeData.scoreValue ?? '0',
-                                  ) ??
-                                  0,
+                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
                               currentDoctorRole:
                                   homeData.role.toString(),
                             ),
@@ -447,10 +525,7 @@ class _HomeTabState extends State<HomeTab> {
                               verified: homeData.verified ?? false,
                               patientName:
                                   patient.name?.toString() ?? '',
-                              currentDoctorPoints: int.tryParse(
-                                    homeData.scoreValue ?? '0',
-                                  ) ??
-                                  0,
+                              currentDoctorPoints: _parseHomeInt(homeData.scoreValue),
                               homeDataModel: homeData,
                               isSyndicateCardRequired: homeData
                                       .isSyndicateCardRequired ??

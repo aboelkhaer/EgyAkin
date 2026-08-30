@@ -4,6 +4,7 @@ import 'package:egy_akin/features/send_consultation/data/models/get_members_for_
 import 'package:egy_akin/features/send_consultation/presentation/cubit/send_consultation_state.dart';
 import 'package:egy_akin/features/send_consultation/presentation/widgets/consultation_doctor_card.dart';
 import 'package:egy_akin/features/send_consultation/presentation/widgets/selected_doctors_strip.dart';
+import 'package:egy_akin/features/send_consultation/presentation/widgets/invite_external_doctor_dialog.dart';
 import 'package:egy_akin/features/send_consultation/presentation/widgets/send_consultation_bottom_cta.dart';
 import 'package:egy_akin/features/send_consultation/presentation/widgets/send_consultation_confirm_dialog.dart';
 import 'package:egy_akin/features/send_consultation/presentation/widgets/send_consultation_header.dart';
@@ -58,6 +59,32 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
 
   bool get _isOwner =>
       widget.ownerOfConsultationId == widget.currentDoctorModel.id.toString();
+
+  /// First-time create, or owner adding doctors to an existing consultation.
+  bool get _showInviteByEmail =>
+      widget.isSendConsultation &&
+      (!widget.isForAddNewDoctors || _isOwner);
+
+  void _addEmailToInviteList({
+    required BuildContext context,
+    required SendConsultationCubit cubit,
+    required String email,
+  }) {
+    final added = cubit.queuePendingExternalInvite(email: email);
+    if (!added) {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.emailInviteAlreadyAdded),
+      );
+      return;
+    }
+
+    animateToRightEndOfScreen(cubit.horizontalScrollController);
+    customSnackBar(
+      context: context,
+      message: context.tr(AppStrings.emailAddedToInviteList),
+    );
+  }
 
   String _title(BuildContext context) {
     if (widget.isSendConsultation) {
@@ -192,7 +219,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
   }
 
   void _showSendDialog(BuildContext context, SendConsultationCubit cubit) {
-    if (cubit.doctorsChecked.isEmpty) {
+    if (cubit.doctorsChecked.isEmpty && cubit.pendingExternalInvites.isEmpty) {
       customSnackBar(
         context: context,
         message: context.tr(AppStrings.pleaseSelectAtLeastOneDoctorToProceed),
@@ -207,7 +234,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
       context: context,
       isDark: isDark,
       isConsultation: widget.isSendConsultation,
-      selectedCount: cubit.doctorsChecked.length,
+      selectedCount: cubit.totalInviteCount,
       confirmLabel: widget.isSendConsultation
           ? (widget.isForAddNewDoctors
               ? context.tr(AppStrings.add)
@@ -243,6 +270,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
 
         return Scaffold(
           backgroundColor: HomeDashboardColors.scaffold(isDark),
+          resizeToAvoidBottomInset: true,
           body: BlocConsumer<SendConsultationCubit, SendConsultationState>(
             listener: (context, state) {
               state.maybeWhen(
@@ -271,7 +299,9 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
               );
             },
             builder: (context, state) {
-              final selectedCount = cubit.doctorsChecked.length;
+              final selectedCount = cubit.totalInviteCount;
+              final keyboardOpen =
+                  MediaQuery.viewInsetsOf(context).bottom > 0;
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -328,7 +358,8 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                 child: SendConsultationSearchField(
                                   isDark: isDark,
                                   controller: cubit.searchController,
-                                  onSubmit: () => cubit.getConsultationSearch(
+                                  onSubmit: () =>
+                                      cubit.getConsultationSearch(
                                     groupId: widget.isSendConsultation
                                         ? null
                                         : widget.groupId,
@@ -339,13 +370,15 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                   },
                                 ),
                               ),
-                            if (merged.isNotEmpty)
+                            if (!_isInviteeViewOnly)
                               Padding(
-                                padding:
-                                    EdgeInsets.fromLTRB(16.w, 0, 16.w, 12.h),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 child: SelectedDoctorsStrip(
                                   isDark: isDark,
                                   doctors: merged,
+                                  emailInvites: _showInviteByEmail
+                                      ? cubit.pendingExternalInvites
+                                      : const [],
                                   scrollController:
                                       cubit.horizontalScrollController,
                                   canRemove: (doctor) {
@@ -367,6 +400,8 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                                     membersForConsultation:
                                         membersForConsultation,
                                   ),
+                                  onRemoveEmail:
+                                      cubit.removePendingExternalInvite,
                                   onTap: _openDoctorProfile,
                                 ),
                               ),
@@ -386,7 +421,7 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
                       },
                     ),
                   ),
-                  if (!_isInviteeViewOnly)
+                  if (!_isInviteeViewOnly && !keyboardOpen)
                     state.maybeWhen(
                       loaded: (
                         _,
@@ -472,6 +507,19 @@ class _SendConsultationScreenState extends State<SendConsultationScreen> {
     if (isSearched) {
       final doctors = response?.data ?? const [];
       if (doctors.isEmpty) {
+        final query = cubit.searchController.text.trim();
+        if (_showInviteByEmail && isValidDoctorEmail(query)) {
+          return InviteFromSearchPanel(
+            isDark: isDark,
+            email: query,
+            onInvite: () => _addEmailToInviteList(
+              context: context,
+              cubit: cubit,
+              email: query,
+            ),
+          );
+        }
+
         return SendConsultationEmptyState(
           isDark: isDark,
           icon: Icons.person_search_rounded,

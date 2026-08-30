@@ -22,15 +22,18 @@ class HomePatientsTab extends StatefulWidget {
 class _HomePatientsTabState extends State<HomePatientsTab> {
   bool _showMyPatients = true;
   bool _usingFilteredResults = false;
-  bool _withoutOutcomeOnly = false;
   bool _preparingFilters = false;
   bool _allPatientsLoaded = false;
   bool _myPatientsLoaded = false;
   int _lastHandledWithoutOutcomeSignal = 0;
+  int _lastHandledDraftsSignal = 0;
   late final AllDoctorsPatientsCubit _filterCubit;
   late final CurrentDoctorPatientsCubit _myPatientsCubit;
   late final ScrollController _myScrollController;
   late final ScrollController _allScrollController;
+
+  static const String _finalSubmitFilterId = '9901';
+  static const String _outcomeFilterId = '9902';
 
   bool get _canViewAllPatients =>
       PermissionHelper.canPermission(AppPermissions.viewAllPatients);
@@ -49,9 +52,19 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
     _allScrollController = ScrollController()..addListener(_onScroll);
     widget.cubit.withoutOutcomeFilterSignal
         .addListener(_onWithoutOutcomeFilterRequested);
+    widget.cubit.draftsFilterSignal.addListener(_onDraftsFilterRequested);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadMyPatients();
-      _onWithoutOutcomeFilterRequested();
+      // Prefer an explicit home-section filter request over a normal load.
+      final draftsSignal = widget.cubit.draftsFilterSignal.value;
+      final outcomeSignal = widget.cubit.withoutOutcomeFilterSignal.value;
+      if (draftsSignal > 0 && draftsSignal != _lastHandledDraftsSignal) {
+        _onDraftsFilterRequested();
+      } else if (outcomeSignal > 0 &&
+          outcomeSignal != _lastHandledWithoutOutcomeSignal) {
+        _onWithoutOutcomeFilterRequested();
+      } else {
+        _loadMyPatients();
+      }
     });
   }
 
@@ -59,6 +72,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   void dispose() {
     widget.cubit.withoutOutcomeFilterSignal
         .removeListener(_onWithoutOutcomeFilterRequested);
+    widget.cubit.draftsFilterSignal.removeListener(_onDraftsFilterRequested);
     _myScrollController.removeListener(_onScroll);
     _allScrollController.removeListener(_onScroll);
     _myScrollController.dispose();
@@ -73,31 +87,57 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
     final signal = widget.cubit.withoutOutcomeFilterSignal.value;
     if (signal <= 0 || signal == _lastHandledWithoutOutcomeSignal) return;
     _lastHandledWithoutOutcomeSignal = signal;
-    _applyWithoutOutcomeFilter();
+    _applyPendingOutcomeFilter();
   }
 
-  void _applyWithoutOutcomeFilter() {
-    _resetFilterFlags();
+  void _onDraftsFilterRequested() {
+    if (!mounted) return;
+    final signal = widget.cubit.draftsFilterSignal.value;
+    if (signal <= 0 || signal == _lastHandledDraftsSignal) return;
+    _lastHandledDraftsSignal = signal;
+    _applyDraftsFilter();
+  }
+
+  /// Body: {"9901":"Yes","9902":"No","only_my_patients":"true","page":"1"}
+  Future<void> _applyPendingOutcomeFilter() async {
+    if (_filterCubit.isClosed) return;
+
+    _filterCubit.resetFormData();
+    _filterCubit.isApplyFilterDone = false;
+    _filterCubit.totalPatientInFilter = 0;
+    _filterCubit.isLastPageFilter = false;
+    _filterCubit.currentPageInFilter = 1;
+    _filterCubit.isLoadingMoreForScrollForFilter = false;
+    _filterCubit.formData[_finalSubmitFilterId] = 'Yes';
+    _filterCubit.formData[_outcomeFilterId] = 'No';
+
     setState(() {
       _showMyPatients = true;
-      _usingFilteredResults = false;
-      _withoutOutcomeOnly = true;
+      _usingFilteredResults = true;
     });
-    // Reload my patients from API, then keep only pending-outcome rows.
-    _loadMyPatients(force: true);
+
+    await _filterCubit.applyPatientFilters('true');
   }
 
-  /// Final submit done (`submit_status`) and outcome not filled yet.
-  bool _isPendingOutcomePatient(PatientHomeDataModel patient) {
-    return patient.sections?.submitStatus == true &&
-        patient.sections?.outcomeStatus != true;
-  }
+  /// Body: {"9901":"No","only_my_patients":"true","page":"1"}
+  /// Drafts = unfinished patients (final submit is No).
+  Future<void> _applyDraftsFilter() async {
+    if (_filterCubit.isClosed) return;
 
-  List<PatientHomeDataModel> _applyLocalFilters(
-    List<PatientHomeDataModel> patients,
-  ) {
-    if (!_withoutOutcomeOnly) return patients;
-    return patients.where(_isPendingOutcomePatient).toList();
+    _filterCubit.resetFormData();
+    _filterCubit.isApplyFilterDone = false;
+    _filterCubit.totalPatientInFilter = 0;
+    _filterCubit.isLastPageFilter = false;
+    _filterCubit.currentPageInFilter = 1;
+    _filterCubit.isLoadingMoreForScrollForFilter = false;
+    _filterCubit.formData[_finalSubmitFilterId] = 'No';
+
+    setState(() {
+      _showMyPatients = true;
+      _usingFilteredResults = true;
+    });
+
+    await _filterCubit.applyPatientFilters('true');
   }
 
   void _onScroll() {
@@ -218,11 +258,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   }
 
   void _clearFilters() {
-    final wasFiltered = _usingFilteredResults || _withoutOutcomeOnly;
+    final wasFiltered = _usingFilteredResults;
     _resetFilterFlags();
     setState(() {
       _usingFilteredResults = false;
-      _withoutOutcomeOnly = false;
     });
     if (!wasFiltered) return;
     if (_showMyOnly) {
@@ -235,11 +274,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
   void _onToggleChanged(bool showMyPatients) {
     if (!_canViewAllPatients) return;
     if (showMyPatients == _showMyPatients) return;
-    final wasFiltered = _usingFilteredResults || _withoutOutcomeOnly;
+    final wasFiltered = _usingFilteredResults;
     _resetFilterFlags();
     setState(() {
       _usingFilteredResults = false;
-      _withoutOutcomeOnly = false;
       _showMyPatients = showMyPatients;
     });
     if (showMyPatients) {
@@ -492,7 +530,6 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
               if (isApplyFilterLoaded && _filterCubit.isApplyFilterDone) {
                 setState(() {
                   _usingFilteredResults = true;
-                  _withoutOutcomeOnly = false;
                 });
               }
               if (!_showMyPatients && !_filterCubit.isApplyFilterDone) {
@@ -533,21 +570,6 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                   if (_showMyPatients && !_usingFilteredResults) {
                     _myPatientsLoaded = true;
                   }
-                  // Keep paging while pending-outcome filter is on and this
-                  // page had no matching rows (final submit + no outcome).
-                  if (_withoutOutcomeOnly &&
-                      _showMyPatients &&
-                      !_usingFilteredResults &&
-                      !_myPatientsCubit.isClosed &&
-                      !_myPatientsCubit.isLastPage &&
-                      !_myPatientsCubit.isLoadingMoreForScroll) {
-                    final visibleCount =
-                        _applyLocalFilters(_patientsFromMyState()).length;
-                    if (visibleCount == 0) {
-                      _myPatientsCubit.isLoadingMoreForScroll = true;
-                      _myPatientsCubit.loadMorePatients();
-                    }
-                  }
                 },
               );
             },
@@ -559,6 +581,7 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                   final primary = HomeDashboardColors.primary(isDark);
 
                   final isApplyFilterLoading = filterState.maybeWhen(
+                    loading: () => true,
                     loaded:
                         (_, __, ___, loading, ____, _____, ______, _______) =>
                             loading,
@@ -593,6 +616,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                         orElse: () => false,
                       );
 
+                  final isLoadingFilteredMyPatients = _showMyOnly &&
+                      _usingFilteredResults &&
+                      isApplyFilterLoading;
+
                   final isLoadingAllPatients = _canViewAllPatients &&
                       !_showMyOnly &&
                       !_usingFilteredResults &&
@@ -604,6 +631,15 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                   final filteredPatients = _patientsFromFilterState();
                   final myApiPatients = _patientsFromMyState();
                   final allApiPatients = filteredPatients;
+
+                  final homeMyCount = int.tryParse(
+                        widget.cubit.homeDataModel.doctorPatientCount ?? '',
+                      ) ??
+                      0;
+                  final homeAllCount = int.tryParse(
+                        widget.cubit.homeDataModel.allPatientCount ?? '',
+                      ) ??
+                      0;
 
                   final myApiTotal = myState.maybeWhen(
                     loaded: (response, _, __, ___, ____, _____, ______, _______,
@@ -620,42 +656,67 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                     orElse: () => null,
                   );
 
-                  // While loading, show the current list length (not stale home
-                  // API totals). After load, prefer the API total when present.
-                  final myCount = isLoadingMyPatients
-                      ? myApiPatients.length
-                      : (myApiTotal ?? myApiPatients.length);
-                  final allCount = isLoadingAllPatients
-                      ? allApiPatients.length
+                  // Toggle badges prefer home totals; list header can use
+                  // filter/API totals when a filter is active.
+                  final myCount =
+                      homeMyCount > 0 ? homeMyCount : (myApiTotal ?? myApiPatients.length);
+                  final allCount = homeAllCount > 0
+                      ? homeAllCount
                       : (allApiTotal ?? allApiPatients.length);
 
-                  final patients = _applyLocalFilters(
-                    _usingFilteredResults
-                        ? filteredPatients
-                        : (_showMyOnly ? myApiPatients : allApiPatients),
-                  );
+                  final patients = _usingFilteredResults
+                      ? filteredPatients
+                      : (_showMyOnly ? myApiPatients : allApiPatients);
 
                   final selectedLabel = _showMyOnly
                       ? context.tr(AppStrings.myPatients)
                       : context.tr(AppStrings.allPatients);
-                  final isLocallyFiltered = _withoutOutcomeOnly;
-                  final selectedCount = _usingFilteredResults
-                      ? (_filterCubit.totalPatientInFilter > 0
-                          ? _filterCubit.totalPatientInFilter
-                          : filteredPatients.length)
-                      : (isLocallyFiltered ||
-                              (_showMyOnly
-                                  ? isLoadingMyPatients
-                                  : isLoadingAllPatients)
-                          ? patients.length
-                          : (_showMyOnly ? myCount : allCount));
+
+                  final showClearFilters = _usingFilteredResults;
+                  final isPendingOutcomeFilter =
+                      _usingFilteredResults &&
+                      _filterCubit.formData[_finalSubmitFilterId] == 'Yes' &&
+                      _filterCubit.formData[_outcomeFilterId] == 'No';
+                  final isDraftsFilter = _usingFilteredResults &&
+                      _filterCubit.formData[_finalSubmitFilterId] == 'No' &&
+                      (_filterCubit.formData[_outcomeFilterId] == null ||
+                          _filterCubit.formData[_outcomeFilterId]!
+                              .toString()
+                              .isEmpty);
+                  final pendingOutcomeHomeCount = int.tryParse(
+                        widget.cubit.homeDataModel.pendingOutcomeCount ?? '',
+                      ) ??
+                      0;
+                  final draftsHomeCount = int.tryParse(
+                        widget.cubit.homeDataModel.draftCount ?? '',
+                      ) ??
+                      0;
+
+                  // Prefer filter total when ready. For pending-outcomes / drafts,
+                  // use home counts until then — never flash page size.
+                  final int? selectedCount;
+                  if (_usingFilteredResults) {
+                    if (_filterCubit.totalPatientInFilter > 0) {
+                      selectedCount = _filterCubit.totalPatientInFilter;
+                    } else if (isPendingOutcomeFilter &&
+                        pendingOutcomeHomeCount > 0) {
+                      selectedCount = pendingOutcomeHomeCount;
+                    } else if (isDraftsFilter && draftsHomeCount > 0) {
+                      selectedCount = draftsHomeCount;
+                    } else if (isApplyFilterLoading) {
+                      selectedCount = null;
+                    } else {
+                      selectedCount = filteredPatients.length;
+                    }
+                  } else {
+                    selectedCount = _showMyOnly ? myCount : allCount;
+                  }
+                  final selectedCountLabel =
+                      selectedCount == null ? '' : ' ($selectedCount)';
 
                   final showLoadMoreFooter = _usingFilteredResults
                       ? filterSeeMore
                       : (_showMyOnly ? mySeeMore : filterSeeMore);
-
-                  final showClearFilters =
-                      _usingFilteredResults || _withoutOutcomeOnly;
 
                   return Material(
                     color: HomeDashboardColors.scaffold(isDark),
@@ -683,10 +744,10 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                   Expanded(
                                     child: Text(
                                       showClearFilters
-                                          ? (isLocallyFiltered
-                                              ? '${context.tr(AppStrings.pendingOutcomesLabel)} · $selectedLabel ($selectedCount)'
-                                              : '${context.tr(AppStrings.filteredLabel)} · $selectedLabel ($selectedCount)')
-                                          : '$selectedLabel ($selectedCount)',
+                                          ? (isPendingOutcomeFilter
+                                              ? '${context.tr(AppStrings.pendingOutcomesLabel)} · $selectedLabel$selectedCountLabel'
+                                              : '${context.tr(AppStrings.filteredLabel)} · $selectedLabel$selectedCountLabel')
+                                          : '$selectedLabel$selectedCountLabel',
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w700,
@@ -805,14 +866,13 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       primary: primary,
                                       scrollController: _myScrollController,
                                       onRefresh: _onRefreshMyPatients,
-                                      isInitialLoading: isLoadingMyPatients,
+                                      isInitialLoading: isLoadingMyPatients ||
+                                          isLoadingFilteredMyPatients,
                                       patients: _showMyOnly
                                           ? patients
-                                          : _applyLocalFilters(
-                                              _usingFilteredResults
-                                                  ? filteredPatients
-                                                  : myApiPatients,
-                                            ),
+                                          : (_usingFilteredResults
+                                              ? filteredPatients
+                                              : myApiPatients),
                                       showLoadMoreFooter: _showMyOnly &&
                                           showLoadMoreFooter,
                                       showClearFilters: showClearFilters,
@@ -831,11 +891,9 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                       isInitialLoading: isLoadingAllPatients,
                                       patients: !_showMyOnly
                                           ? patients
-                                          : _applyLocalFilters(
-                                              _usingFilteredResults
-                                                  ? filteredPatients
-                                                  : allApiPatients,
-                                            ),
+                                          : (_usingFilteredResults
+                                              ? filteredPatients
+                                              : allApiPatients),
                                       showLoadMoreFooter: !_showMyOnly &&
                                           showLoadMoreFooter,
                                       showClearFilters: showClearFilters,
@@ -852,7 +910,8 @@ class _HomePatientsTabState extends State<HomePatientsTab> {
                                   primary: primary,
                                   scrollController: _myScrollController,
                                   onRefresh: _onRefreshMyPatients,
-                                  isInitialLoading: isLoadingMyPatients,
+                                  isInitialLoading: isLoadingMyPatients ||
+                                      isLoadingFilteredMyPatients,
                                   patients: patients,
                                   showLoadMoreFooter: showLoadMoreFooter,
                                   showClearFilters: showClearFilters,

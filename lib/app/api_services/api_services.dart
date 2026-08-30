@@ -6,6 +6,7 @@ import 'package:egy_akin/features/authentication/data/models/authentication_with
 import 'package:egy_akin/features/consultation_details/data/models/lock_or_unlock_consultation_model_response.dart';
 import 'package:egy_akin/features/group_members/data/models/get_post_likes_model_response.dart';
 import 'package:egy_akin/features/home/data/models/get_permissions_model_response.dart';
+import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 import 'package:egy_akin/features/marked_patients/data/models/get_marked_patients_model_response.dart';
 import 'package:egy_akin/features/more/data/models/change_language_model_response.dart';
 import 'package:egy_akin/features/patient_section_details/data/models/create_new_medicine_model_response.dart';
@@ -18,6 +19,7 @@ import 'package:egy_akin/features/patient_sections/data/models/make_mark_patient
 import 'package:egy_akin/features/patient_sections/data/models/make_unmark_patient_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/show_single_feed/data/models/get_post_by_id_model_response.dart';
 import 'package:retrofit/retrofit.dart';
@@ -201,6 +203,10 @@ abstract class ApiServices {
 
   @GET(ApiEndPoint.home)
   Future<HomeModelResponse> getHome();
+
+  /// Account flags/counts without dashboard data. Safe for blocked users.
+  @GET(ApiEndPoint.userMe)
+  Future<UserMeResponse> getUserMe();
 
   @POST(ApiEndPoint.uploadProfileImage)
   @MultiPart()
@@ -657,6 +663,13 @@ abstract class ApiServices {
     @Path('consultationId') String consultationId,
     @Field('consult_message') String message,
     @Field('consult_doctor_ids') List<String> doctorsIDS,
+  );
+
+  @POST(
+      '${ApiEndPoint.inviteExternalConsultation}/{consultationId}/invite-external')
+  Future<InviteExternalModelResponse> inviteExternalConsultation(
+    @Path('consultationId') String consultationId,
+    @Body() Map<String, dynamic> body,
   );
 
   @POST(ApiEndPoint.changeLanguage)

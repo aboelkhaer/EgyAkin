@@ -168,8 +168,7 @@ class AppStrings {
       'Keep your account secure with a strong new password.';
   static const String changePasswordFormHint =
       'Enter your current password, then choose a new one that meets the requirements below.';
-  static const String changePasswordRequirementsTitle =
-      'Password requirements';
+  static const String changePasswordRequirementsTitle = 'Password requirements';
   static const String changePasswordSecurityTip =
       'Never share your password. Use a unique password you don\'t use elsewhere.';
   static const String emailVerification = 'Email Verification';
@@ -234,8 +233,7 @@ class AppStrings {
   static const String score = 'Score';
   static const String savedPosts = 'Saved Posts';
   static const String allPosts = 'All Posts';
-  static const String browseYourPublishedPosts =
-      'Browse your published posts.';
+  static const String browseYourPublishedPosts = 'Browse your published posts.';
   static const String editProfile = 'Edit Profile';
   static const String firstName = 'First name';
   static const String lastName = 'Last name';
@@ -267,7 +265,8 @@ class AppStrings {
       'Please enter creatinine level';
   static const String pleaseEnterCreatinineOrCystatin =
       'Enter creatinine and/or cystatin C';
-  static const String pleaseEnterCystatinLevel = 'Please enter cystatin C level';
+  static const String pleaseEnterCystatinLevel =
+      'Please enter cystatin C level';
   static const String nkfEgfrCalculator = 'CKD-EPI';
   static const String nkfBiomarker = 'Biomarker';
   static const String nkfUseCreatinine = 'Creatinine';
@@ -277,7 +276,8 @@ class AppStrings {
       'CKD-EPI creatinine equation (2021)';
   static const String ckdEpiCreatinineCystatin2021 =
       'CKD-EPI creatinine-cystatin equation (2021)';
-  static const String ckdEpiCystatinC2012 = 'CKD-EPI cystatin C equation (2012)';
+  static const String ckdEpiCystatinC2012 =
+      'CKD-EPI cystatin C equation (2012)';
   static const String egfrUnitIndexed = 'mL/min/1.73m²';
   static const String gender = 'Gender';
   static const String male = 'Male';
@@ -777,6 +777,9 @@ class AppStrings {
   static const String openChat = 'Open chat';
   static const String seeAllLower = 'See all';
   static const String noPatientsYet = 'No patients yet';
+  static const String addYourFirstPatient = 'Add your first patient';
+  static const String addFirstPatientSubtitle =
+      'Create your first patient to start tracking cases, outcomes, and consultations.';
   static const String addOutcomes = 'Add outcomes';
   static const String viewAll = 'View all';
   static const String pendingUpper = 'PENDING';
@@ -834,8 +837,7 @@ class AppStrings {
       'Share an update with the community...';
   static const String post = 'Post';
   static const String noPostsYet = 'No posts yet';
-  static const String pullDownToRefreshFeed =
-      'Pull down to refresh the feed';
+  static const String pullDownToRefreshFeed = 'Pull down to refresh the feed';
   static const String yourGroups = 'Your groups';
   static const String discoverGroups = 'Discover groups';
   static const String joinGroupToSeeHere = 'Join a group to see it here';
@@ -857,8 +859,7 @@ class AppStrings {
   static const String youHaveEarnedNewAchievement =
       'You have earned a new achievement!';
   static const String keepUpTheGreatWork = 'Keep up the great work!';
-  static const String hasEarnedNewAchievement =
-      'has earned a new achievement!';
+  static const String hasEarnedNewAchievement = 'has earned a new achievement!';
   static const String unread = 'unread';
   static const String unreadOverflow = '99+ unread';
 
@@ -924,8 +925,7 @@ class AppStrings {
   static const String sendCaseToColleague = 'Send this case to a colleague';
   static const String askAi = 'Ask AI';
   static const String instantAiSecondOpinion = 'Instant AI second opinion';
-  static const String generatePatientPdfReport =
-      'Generate patient PDF report';
+  static const String generatePatientPdfReport = 'Generate patient PDF report';
   static const String submitCompletedRecord = 'Submit the completed record';
   static const String deletePatientQuestion = 'Delete patient?';
   static const String deletePatientDescription =
@@ -1045,8 +1045,7 @@ class AppStrings {
   static const String loadingLikes = 'Loading likes…';
   static const String loadingMembers = 'Loading members…';
   static const String couldntLoadMembers = 'Couldn’t load members';
-  static const String closeAndOpenMembersAgain =
-      'Close and open members again';
+  static const String closeAndOpenMembersAgain = 'Close and open members again';
   static const String checkConnectionAndRetry =
       'Check your connection and retry';
   static const String likedThisPost = 'Liked this post';
@@ -1125,8 +1124,7 @@ class AppStrings {
       'No images or files selected yet.';
 
   static const String badges = 'Badges';
-  static const String restrictedModerationTools =
-      'Restricted moderation tools';
+  static const String restrictedModerationTools = 'Restricted moderation tools';
   static const String view = 'View';
   static const String adminBadge = 'ADMIN';
 
@@ -1182,8 +1180,7 @@ class AppStrings {
   static const String research = 'Research';
   static const String updateYourAccountDetailsAndProfessionalInformation =
       'Update your account details and professional information.';
-  static const String saveChangesToYourProfile =
-      'Save changes to your profile';
+  static const String saveChangesToYourProfile = 'Save changes to your profile';
   static const String savingProfile = 'Saving profile…';
   static const String loadingProfile = 'Loading profile…';
   static const String deleteAccount = 'Delete Account';
@@ -1195,4 +1192,50 @@ class AppStrings {
   static const String updateProfilePhoto = 'Update profile photo';
   static const String useThisPhotoAsYourProfilePicture =
       'Use this photo as your profile picture?';
+
+  // External consultation invites
+  static const String inviteByEmail = 'Invite by email';
+  static const String inviteExternalDoctor = 'Invite external doctor';
+  static const String inviteExternalDoctorSubtitle =
+      'Send an email invitation to a doctor who is not on EGYAKIN yet.';
+  static const String inviteEmailPrivacyNote =
+      'No patient data is shared in the email. They only see the case after registering.';
+  static const String inviteWillSendAfterCreate =
+      'We will email them right after you create the consultation.';
+  static const String doctorEmail = 'Doctor email';
+  static const String optionalInviteMessage = 'Message (optional)';
+  static const String optionalInviteMessageHint =
+      'Add a short note they will see in the invite email';
+  static const String sendInvite = 'Send invite';
+  static const String addEmailInvite = 'Add email invite';
+  static const String emailInviteAdded =
+      'Email invite added. It will be sent when you create the consultation.';
+  static const String pendingEmailInvites = 'Pending email invites';
+  static const String noAccountForEmailInvite =
+      'No doctor on EGYAKIN with this email. Invite them to join.';
+  static const String inviteThisEmail = 'Invite this email';
+  static const String addEmailToInviteList = 'Add to invite list';
+  static const String emailAddedToInviteList =
+      'Email added to your invite list.';
+  static const String invitationSentSuccessfully =
+      'Invitation sent successfully.';
+  static const String inviteEmailAlreadyRegistered =
+      'This email already has an account — adding them to the consultation.';
+  static const String inviteDailyLimitReached =
+      'Daily invite limit reached. Try again tomorrow.';
+  static const String inviteEmailFailed =
+      'Could not send the invitation email. Please try again.';
+  static const String inviteAlreadyAccepted =
+      'This doctor already joined via an earlier invite.';
+  static const String cannotInviteClosedConsultation =
+      'This consultation is closed. Reopen it to invite doctors.';
+  static const String inviteCodeOptional = 'Invitation code (optional)';
+  static const String inviteCodeHint = '4-digit code from your email';
+  static const String inviteLinkForNewAccountOnly =
+      'This invitation is for creating a new account. Please sign out and register with the invited email.';
+  static const String enterValidEmail = 'Enter a valid email address';
+  static const String emailInviteAlreadyAdded =
+      'This email is already in your invite list.';
+  static const String emailInvitesCouldNotAutoSend =
+      'Consultation created, but email invites could not be sent automatically. Open the consultation and invite again from search.';
 }

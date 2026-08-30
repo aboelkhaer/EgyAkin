@@ -145,48 +145,55 @@ class SendConsultationEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 64.r,
-              height: 64.r,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: HomeDashboardColors.primary(isDark)
-                    .withOpacity(isDark ? 0.18 : 0.1),
-              ),
-              child: Icon(
-                icon,
-                size: 28.sp,
-                color: HomeDashboardColors.primary(isDark),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 12.h),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 64.r,
+                    height: 64.r,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: HomeDashboardColors.primary(isDark)
+                          .withOpacity(isDark ? 0.18 : 0.1),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 28.sp,
+                      color: HomeDashboardColors.primary(isDark),
+                    ),
+                  ),
+                  SizedBox(height: 14.h),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w700,
+                      color: HomeDashboardColors.title(isDark),
+                    ),
+                  ),
+                  SizedBox(height: 6.h),
+                  Text(
+                    subtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: HomeDashboardColors.subtitle(isDark),
+                    ),
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 14.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w700,
-                color: HomeDashboardColors.title(isDark),
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: HomeDashboardColors.subtitle(isDark),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

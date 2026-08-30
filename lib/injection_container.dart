@@ -38,9 +38,11 @@ import 'package:egy_akin/features/patient_sections/domain/usecases/make_mark_pat
 import 'package:egy_akin/features/patient_sections/domain/usecases/make_unmark_patient_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/add_doctors_for_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/get_members_for_consultation_usecase.dart';
+import 'package:egy_akin/features/send_consultation/domain/usecases/invite_external_consultation_usecase.dart';
 import 'package:egy_akin/features/send_consultation/domain/usecases/remove_member_from_consultation_usecase.dart';
 import 'package:egy_akin/features/show_single_feed/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:egy_akin/features/home/domain/usecases/get_role_permissions_usecase.dart';
+import 'package:egy_akin/features/home/domain/usecases/get_user_me_usecase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get_it/get_it.dart';
 import 'exports.dart';
@@ -51,13 +53,13 @@ GetIt sl = GetIt.instance;
 /// incorrectly closed the lazy singleton on dispose.
 HomeCubit resolveHomeCubit() {
   if (!sl.isRegistered<HomeCubit>()) {
-    sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
+    sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl(), sl()));
   }
   final current = sl<HomeCubit>();
   if (!current.isClosed) return current;
 
   sl.unregister<HomeCubit>();
-  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl(), sl()));
   return sl<HomeCubit>();
 }
 
@@ -99,7 +101,7 @@ Future<void> diInit() async {
   sl.registerFactory(() => OnboardingCubit());
   sl.registerFactory(() => ResetPasswordCubit(sl(), sl(), sl()));
   // sl.registerFactory(() => HomeCubit(sl(), sl(), sl()));
-  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl()));
+  sl.registerLazySingleton(() => HomeCubit(sl(), sl(), sl(), sl(), sl()));
 
   sl.registerFactory(() => EmailVerificationCubit(sl(), sl()));
   sl.registerFactory(() => NotificationCubit(sl(), sl()));
@@ -347,6 +349,9 @@ Future<void> diInit() async {
   }
   if (!GetIt.I.isRegistered<GetHomeUsecase>()) {
     sl.registerFactory<GetHomeUsecase>(() => GetHomeUsecase(sl()));
+  }
+  if (!GetIt.I.isRegistered<GetUserMeUsecase>()) {
+    sl.registerFactory<GetUserMeUsecase>(() => GetUserMeUsecase(sl()));
   }
   if (!GetIt.I.isRegistered<GetRolePermissionsUsecase>()) {
     sl.registerFactory<GetRolePermissionsUsecase>(
@@ -731,6 +736,10 @@ Future<void> diInit() async {
     sl.registerFactory<AddDoctorsForConsultationUsecase>(
         () => AddDoctorsForConsultationUsecase(sl()));
   }
+  if (!GetIt.I.isRegistered<InviteExternalConsultationUsecase>()) {
+    sl.registerFactory<InviteExternalConsultationUsecase>(
+        () => InviteExternalConsultationUsecase(sl()));
+  }
 
   // Register SendConsultationCubit after all its dependencies
   if (!GetIt.I.isRegistered<SendConsultationCubit>()) {
@@ -741,6 +750,7 @@ Future<void> diInit() async {
           sl<GetMembersForConsultationUsecase>(),
           sl<RemoveMemberFromConsultationUsecase>(),
           sl<AddDoctorsForConsultationUsecase>(),
+          sl<InviteExternalConsultationUsecase>(),
         ));
   }
 

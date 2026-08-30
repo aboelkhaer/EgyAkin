@@ -32,43 +32,48 @@ class BuildMultipleValueQuestion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showOtherField =
+        !isOldAnswer && listContainOther.contains(AppStrings.others);
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (showAiFilledBanner) const AiFilledFieldBanner(),
         Wrap(
-          spacing: 8,
-          runSpacing: 0,
+          spacing: 8.w,
+          runSpacing: 6.h,
           alignment: WrapAlignment.start,
           children: children,
         ),
-        const SizedBox(height: 16),
-        isOldAnswer == false
-            ? listContainOther.contains(AppStrings.others)
-                ? MultipleQuestionOtherField(
-                    key: ValueKey('multiple_other_${questionList[index].id}'),
-                    initialValue: initialValue,
-                    validator: validator,
-                    onClearAiFilledMark: onClearAiFilledMark,
-                    onChanged: onChanged,
-                  )
-                : const SizedBox.shrink()
-            : const SizedBox.shrink(),
-        isOldAnswer
-            ? Row(
-                children: [
-                  Text('${context.tr(AppStrings.oldAnswer)}:'),
-                  const SizedBox(width: 5),
-                  Flexible(
-                    child: Text(
-                      context.tr(oldAnswer ?? ''),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+        if (showOtherField) ...[
+          SizedBox(height: 10.h),
+          MultipleQuestionOtherField(
+            key: ValueKey('multiple_other_${questionList[index].id}'),
+            initialValue: initialValue,
+            validator: validator,
+            onClearAiFilledMark: onClearAiFilledMark,
+            onChanged: onChanged,
+          ),
+        ],
+        if (isOldAnswer)
+          Padding(
+            padding: EdgeInsets.only(top: 8.h),
+            child: Row(
+              children: [
+                Text('${context.tr(AppStrings.oldAnswer)}:'),
+                SizedBox(width: 5.w),
+                Flexible(
+                  child: Text(
+                    context.tr(oldAnswer ?? ''),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              )
-            : const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

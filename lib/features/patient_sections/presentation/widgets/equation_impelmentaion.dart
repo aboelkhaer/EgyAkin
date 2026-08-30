@@ -36,7 +36,7 @@ class EquationImplementation extends StatelessWidget {
 
         return Container(
           width: 190.w,
-          margin: EdgeInsets.only(right: 10.w),
+          margin: EdgeInsetsDirectional.only(end: 10.w),
           decoration: BoxDecoration(
             color: cardBg,
             borderRadius: BorderRadius.circular(14.r),
@@ -53,7 +53,6 @@ class EquationImplementation extends StatelessWidget {
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
@@ -71,35 +70,40 @@ class EquationImplementation extends StatelessWidget {
                   ),
                 ),
               ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(12.w, 8.h, 12.w, 8.h),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _EqRow(
-                      label: currentCreatinineLocalization ??
-                          context.tr(AppStrings.currentGfr),
-                      value: currentCreatinineValue ?? '—',
-                      labelColor: labelColor,
-                      valueColor: titleColor,
-                    ),
-                    SizedBox(height: 5.h),
-                    _EqRow(
-                      label: basalCreatinineLocalization ??
-                          context.tr(AppStrings.basalCrGfr),
-                      value: basalCreatinineValue ?? '—',
-                      labelColor: labelColor,
-                      valueColor: titleColor,
-                    ),
-                    SizedBox(height: 5.h),
-                    _EqRow(
-                      label: creatinineOnDischargeLocalization ??
-                          context.tr(AppStrings.dischargeGfr),
-                      value: creatinineOnDischargeValue ?? '—',
-                      labelColor: labelColor,
-                      valueColor: titleColor,
-                    ),
-                  ],
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10.w, 6.h, 10.w, 6.h),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: _EqRow(
+                          label: currentCreatinineLocalization ??
+                              context.tr(AppStrings.currentGfr),
+                          value: currentCreatinineValue ?? '—',
+                          labelColor: labelColor,
+                          valueColor: titleColor,
+                        ),
+                      ),
+                      Expanded(
+                        child: _EqRow(
+                          label: basalCreatinineLocalization ??
+                              context.tr(AppStrings.basalCrGfr),
+                          value: basalCreatinineValue ?? '—',
+                          labelColor: labelColor,
+                          valueColor: titleColor,
+                        ),
+                      ),
+                      Expanded(
+                        child: _EqRow(
+                          label: creatinineOnDischargeLocalization ??
+                              context.tr(AppStrings.dischargeGfr),
+                          value: creatinineOnDischargeValue ?? '—',
+                          labelColor: labelColor,
+                          valueColor: titleColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -126,21 +130,29 @@ class _EqRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Text(
             label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
-              fontSize: 10.sp,
+              fontSize: 9.5.sp,
+              height: 1.15,
               fontWeight: FontWeight.w500,
               color: labelColor,
             ),
           ),
         ),
+        SizedBox(width: 6.w),
         Text(
           value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontSize: 10.5.sp,
+            height: 1.1,
             fontWeight: FontWeight.w700,
             color: valueColor,
           ),

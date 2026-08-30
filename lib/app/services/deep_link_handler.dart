@@ -144,6 +144,15 @@ class DeepLinkHandler {
     debugPrint('Path segments: ${uri.pathSegments}');
     debugPrint('App initialized: $_isAppInitialized');
 
+    final inviteToken = extractInviteToken(uri);
+    if (inviteToken != null && inviteToken.isNotEmpty) {
+      debugPrint('Extracted invite token for later: $inviteToken');
+      storePendingInviteToken(inviteToken);
+      _isProcessingDeepLink = false;
+      debugPrint('=== END STORING INVITE DEEP LINK ===');
+      return;
+    }
+
     // Extract post ID and store it for later processing
     String? postId;
 
@@ -165,9 +174,6 @@ class DeepLinkHandler {
           uri.pathSegments.length >= 2) {
         // Format: egyakin:///post/48 (path segments are ['post', '48'])
         postId = uri.pathSegments[1];
-      } else if (uri.pathSegments.isNotEmpty) {
-        // Fallback: just get the first path segment
-        postId = uri.pathSegments[0];
       }
     }
 
@@ -183,6 +189,48 @@ class DeepLinkHandler {
       _isProcessingDeepLink = false;
       debugPrint('=== END STORING DEEP LINK ===');
     }
+  }
+
+  /// `egyakin://invite/{token}` or `https://test.egyakin.com/invite/{token}`
+  static String? extractInviteToken(Uri uri) {
+    if (uri.scheme == 'https' || uri.scheme == 'http') {
+      if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'invite') {
+        return uri.pathSegments[1];
+      }
+      return null;
+    }
+    if (uri.scheme == 'egyakin') {
+      if (uri.host == 'invite') {
+        if (uri.pathSegments.isNotEmpty) {
+          return uri.pathSegments.first;
+        }
+        final path = uri.path.replaceFirst(RegExp(r'^/'), '');
+        return path.isEmpty ? null : path;
+      }
+      if (uri.pathSegments.length >= 2 && uri.pathSegments[0] == 'invite') {
+        return uri.pathSegments[1];
+      }
+    }
+    return null;
+  }
+
+  Future<void> storePendingInviteToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(AppLocalStrings.pendingInviteToken, token);
+  }
+
+  Future<String?> getPendingInviteToken({bool clear = false}) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppLocalStrings.pendingInviteToken);
+    if (clear && token != null) {
+      await prefs.remove(AppLocalStrings.pendingInviteToken);
+    }
+    return token;
+  }
+
+  Future<void> clearPendingInviteToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(AppLocalStrings.pendingInviteToken);
   }
 
   void _storePendingPostId(String postId) {

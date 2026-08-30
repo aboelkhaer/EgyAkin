@@ -18,6 +18,9 @@ _$AuthenticationModelResponseImpl _$$AuthenticationModelResponseImplFromJson(
       permissions: (json['permissions'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
+      invite: json['invite'] == null
+          ? null
+          : RegisterInviteInfo.fromJson(json['invite'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AuthenticationModelResponseImplToJson(
@@ -28,6 +31,27 @@ Map<String, dynamic> _$$AuthenticationModelResponseImplToJson(
       'data': instance.doctorModel,
       'provider': instance.provider,
       'permissions': instance.permissions,
+      'invite': instance.invite,
+    };
+
+_$RegisterInviteInfoImpl _$$RegisterInviteInfoImplFromJson(
+        Map<String, dynamic> json) =>
+    _$RegisterInviteInfoImpl(
+      accepted: json['accepted'] as bool?,
+      trusted: json['trusted'] as bool?,
+      syndicateVerified: json['syndicate_verified'] as bool?,
+      consultationIds: (json['consultation_ids'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
+    );
+
+Map<String, dynamic> _$$RegisterInviteInfoImplToJson(
+        _$RegisterInviteInfoImpl instance) =>
+    <String, dynamic>{
+      'accepted': instance.accepted,
+      'trusted': instance.trusted,
+      'syndicate_verified': instance.syndicateVerified,
+      'consultation_ids': instance.consultationIds,
     };
 
 _$DoctorModelImpl _$$DoctorModelImplFromJson(Map<String, dynamic> json) =>

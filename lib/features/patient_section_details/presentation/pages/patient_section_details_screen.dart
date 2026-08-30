@@ -384,6 +384,11 @@ class _PatientSectionDetailsScreenState
     }
   }
 
+  void _popSectionDetails(BuildContext context) {
+    final cubit = PatientSectionDetailsCubit.get(context);
+    Navigator.of(context).pop(cubit.markSectionCompletedOnPop);
+  }
+
   @override
   Widget build(BuildContext context) {
     PatientSectionDetailsCubit cubit = PatientSectionDetailsCubit.get(context);
@@ -407,121 +412,195 @@ class _PatientSectionDetailsScreenState
                   statusBarIconBrightness: Brightness.dark,
                   statusBarBrightness: Brightness.light,
                 ),
-          child: Scaffold(
-            backgroundColor: scaffold,
-            body: Column(
-              children: [
-                AnimatedContainer(
-                  duration: Duration.zero,
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: isDark
-                          ? [
-                              const Color(0xFF4A2F7A),
-                              const Color(0xFF2B1A52),
-                              scaffold,
-                            ]
-                          : [
-                              primary.withOpacity(0.28),
-                              primary.withOpacity(0.14),
-                              scaffold,
-                            ],
-                      stops: const [0.0, 0.55, 1.0],
+          child: PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, _) {
+              if (didPop) return;
+              _popSectionDetails(context);
+            },
+            child: Scaffold(
+              backgroundColor: scaffold,
+              body: Column(
+                children: [
+                  AnimatedContainer(
+                    duration: Duration.zero,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: isDark
+                            ? [
+                                const Color(0xFF4A2F7A),
+                                const Color(0xFF2B1A52),
+                                scaffold,
+                              ]
+                            : [
+                                primary.withOpacity(0.28),
+                                primary.withOpacity(0.14),
+                                scaffold,
+                              ],
+                        stops: const [0.0, 0.55, 1.0],
+                      ),
                     ),
-                  ),
-                  child: SafeArea(
-                    bottom: false,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 8.h),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          _SectionRoundIconButton(
-                            isDark: isDark,
-                            icon: Icons.arrow_back_ios_new_rounded,
-                            onTap: () => Navigator.of(context).maybePop(),
-                          ),
-                          SizedBox(width: 10.w),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                animateToTopOfScreen(
-                                  cubit.patientSectionDetailsScrollController,
-                                );
-                              },
-                              child: Text(
-                                widget.sectionModel.sectionName.toString(),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w800,
-                                  color: isDark ? Colors.white : titleColor,
-                                  letterSpacing: -0.2,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(14.w, 4.h, 14.w, 8.h),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            _SectionRoundIconButton(
+                              isDark: isDark,
+                              icon: Icons.arrow_back_ios_new_rounded,
+                              onTap: () => _popSectionDetails(context),
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  animateToTopOfScreen(
+                                    cubit.patientSectionDetailsScrollController,
+                                  );
+                                },
+                                child: Text(
+                                  widget.sectionModel.sectionName.toString(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w800,
+                                    color: isDark ? Colors.white : titleColor,
+                                    letterSpacing: -0.2,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          BlocBuilder<PatientSectionDetailsCubit,
-                              PatientSectionDetailsState>(
-                            builder: (context, _) {
-                              final currentAiMode =
-                                  PatientSectionDetailsCubit.get(context)
-                                      .sectionAiMode;
-                              final canShowAiActions =
-                                  !(widget.sectionModel.sectionStatus ??
-                                          false) &&
-                                      !_isEditingLocked;
-                              return Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (canShowAiActions &&
-                                      currentAiMode == 'voice') ...[
-                                    SizedBox(width: 8.w),
-                                    _SectionAiActionButton(
-                                      primary: primary,
-                                      icon: Icons.mic_rounded,
-                                      onTap: () => _openVoice(cubit),
-                                    ),
+                            BlocBuilder<PatientSectionDetailsCubit,
+                                PatientSectionDetailsState>(
+                              builder: (context, _) {
+                                final currentAiMode =
+                                    PatientSectionDetailsCubit.get(context)
+                                        .sectionAiMode;
+                                final canShowAiActions =
+                                    !(widget.sectionModel.sectionStatus ??
+                                            false) &&
+                                        !_isEditingLocked;
+                                return Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (canShowAiActions &&
+                                        currentAiMode == 'voice') ...[
+                                      SizedBox(width: 8.w),
+                                      _SectionAiActionButton(
+                                        primary: primary,
+                                        icon: Icons.mic_rounded,
+                                        onTap: () => _openVoice(cubit),
+                                      ),
+                                    ],
+                                    if (canShowAiActions &&
+                                        currentAiMode == 'image') ...[
+                                      SizedBox(width: 8.w),
+                                      _SectionAiActionButton(
+                                        primary: primary,
+                                        icon: Icons.image_outlined,
+                                        onTap: () => _openImageAi(cubit),
+                                      ),
+                                    ],
+                                    if (widget.sectionModel.sectionId == 12 &&
+                                        !_isEditingLocked) ...[
+                                      SizedBox(width: 8.w),
+                                      _SectionRoundIconButton(
+                                        isDark: isDark,
+                                        icon: Icons.add_rounded,
+                                        onTap: _onAddRecommendation,
+                                      ),
+                                    ],
                                   ],
-                                  if (canShowAiActions &&
-                                      currentAiMode == 'image') ...[
-                                    SizedBox(width: 8.w),
-                                    _SectionAiActionButton(
-                                      primary: primary,
-                                      icon: Icons.image_outlined,
-                                      onTap: () => _openImageAi(cubit),
-                                    ),
-                                  ],
-                                  if (widget.sectionModel.sectionId == 12 &&
-                                      !_isEditingLocked) ...[
-                                    SizedBox(width: 8.w),
-                                    _SectionRoundIconButton(
-                                      isDark: isDark,
-                                      icon: Icons.add_rounded,
-                                      onTap: _onAddRecommendation,
-                                    ),
-                                  ],
-                                ],
-                              );
-                            },
-                          ),
-                        ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: BlocConsumer<PatientSectionDetailsCubit,
-                      PatientSectionDetailsState>(
-                    listener: (context, state) {
-                      state.maybeWhen(
-                          orElse: () {},
-                          error: (message) {
-                            customSnackBar(context: context, message: message);
+                  Expanded(
+                    child: BlocConsumer<PatientSectionDetailsCubit,
+                        PatientSectionDetailsState>(
+                      listener: (context, state) {
+                        state.maybeWhen(
+                            orElse: () {},
+                            error: (message) {
+                              customSnackBar(
+                                  context: context, message: message);
+                            },
+                            medicationSectionLoaded: (
+                              response,
+                              changesCounter,
+                              snackBarMessage,
+                              dialogMessage,
+                              isSubmitLoading,
+                              isSubmitLoaded,
+                              isSearchMedicationLoading,
+                              searchForDoseInMedicationSectionResponse,
+                              isDeletePatientRecommendationLoading,
+                              isSeeMore,
+                            ) {
+                              if (snackBarMessage.isNotEmpty) {
+                                customSnackBar(
+                                    context: context, message: snackBarMessage);
+                              }
+                            });
+                      },
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          orElse: () {
+                            return _SectionDetailsLoadingView(
+                              isDark: isDark,
+                              primary: primary,
+                            );
+                          },
+                          loaded: (
+                            questions,
+                            isSubmitLoading,
+                            isSubmitted,
+                            message,
+                            snackbarErrorCounter,
+                            isChooseFilesLoading,
+                            isChooseFilesLoaded,
+                            uploadFilesProgress,
+                            isGetMedicationsLoading,
+                            isGetMedicationsLoaded,
+                            isSearchMedicationLoading,
+                            counterChanges,
+                            isCreateMedicationLoading,
+                            isCreateMedicationLoaded,
+                            dialogMessage,
+                          ) {
+                            // finalSubmit=false → editable
+                            // finalSubmit=true + always_open → editable
+                            // finalSubmit=true + !always_open → read-only
+                            if (_canEditSection) {
+                              return BuildSectionDetailsIfFinalSubmitFalse(
+                                questions: questions,
+                                patientId: widget.patientId,
+                                doctorId: widget.doctorId,
+                                sectionModel: widget.sectionModel,
+                                homeDataModel: widget.homeDataModel,
+                                currentDoctorModel: widget.currentDoctorModel,
+                                finalSubmitStatus: widget.finalSubmitStatus,
+                                isAllDataOpen: widget.isAllDataOpen,
+                              );
+                            }
+
+                            return BuildSectionDetailsIfFinalSubmitTrue(
+                              questionList: cubit.questionModelList,
+                              doctorId: widget.doctorId,
+                              isAllDataOpen: widget.isAllDataOpen,
+                              currentDoctorId:
+                                  widget.currentDoctorModel.id.toString(),
+                            );
                           },
                           medicationSectionLoaded: (
                             response,
@@ -535,90 +614,25 @@ class _PatientSectionDetailsScreenState
                             isDeletePatientRecommendationLoading,
                             isSeeMore,
                           ) {
-                            if (snackBarMessage.isNotEmpty) {
-                              customSnackBar(
-                                  context: context, message: snackBarMessage);
-                            }
-                          });
-                    },
-                    builder: (context, state) {
-                      return state.maybeWhen(
-                        orElse: () {
-                          return _SectionDetailsLoadingView(
-                            isDark: isDark,
-                            primary: primary,
-                          );
-                        },
-                        loaded: (
-                          questions,
-                          isSubmitLoading,
-                          isSubmitted,
-                          message,
-                          snackbarErrorCounter,
-                          isChooseFilesLoading,
-                          isChooseFilesLoaded,
-                          uploadFilesProgress,
-                          isGetMedicationsLoading,
-                          isGetMedicationsLoaded,
-                          isSearchMedicationLoading,
-                          counterChanges,
-                          isCreateMedicationLoading,
-                          isCreateMedicationLoaded,
-                          dialogMessage,
-                        ) {
-                          // finalSubmit=false → editable
-                          // finalSubmit=true + always_open → editable
-                          // finalSubmit=true + !always_open → read-only
-                          if (_canEditSection) {
-                            return BuildSectionDetailsIfFinalSubmitFalse(
-                              questions: questions,
-                              patientId: widget.patientId,
-                              doctorId: widget.doctorId,
-                              sectionModel: widget.sectionModel,
-                              homeDataModel: widget.homeDataModel,
-                              currentDoctorModel: widget.currentDoctorModel,
-                              finalSubmitStatus: widget.finalSubmitStatus,
-                              isAllDataOpen: widget.isAllDataOpen,
+                            return BlocProvider<
+                                PatientSectionDetailsCubit>.value(
+                              value: cubit,
+                              child: BuildDoseSection(
+                                currentDoctorModel: widget.currentDoctorModel,
+                                patientId: widget.patientId,
+                                doctorId: widget.doctorId,
+                                sectionModel: widget.sectionModel,
+                                homeDataModel: widget.homeDataModel,
+                                finalSubmitStatus: _isEditingLocked,
+                              ),
                             );
-                          }
-
-                          return BuildSectionDetailsIfFinalSubmitTrue(
-                            questionList: cubit.questionModelList,
-                            doctorId: widget.doctorId,
-                            isAllDataOpen: widget.isAllDataOpen,
-                            currentDoctorId:
-                                widget.currentDoctorModel.id.toString(),
-                          );
-                        },
-                        medicationSectionLoaded: (
-                          response,
-                          changesCounter,
-                          snackBarMessage,
-                          dialogMessage,
-                          isSubmitLoading,
-                          isSubmitLoaded,
-                          isSearchMedicationLoading,
-                          searchForDoseInMedicationSectionResponse,
-                          isDeletePatientRecommendationLoading,
-                          isSeeMore,
-                        ) {
-                          return BlocProvider<PatientSectionDetailsCubit>.value(
-                            value: cubit,
-                            child: BuildDoseSection(
-                              currentDoctorModel: widget.currentDoctorModel,
-                              patientId: widget.patientId,
-                              doctorId: widget.doctorId,
-                              sectionModel: widget.sectionModel,
-                              homeDataModel: widget.homeDataModel,
-                              finalSubmitStatus: _isEditingLocked,
-                            ),
-                          );
-                        },
-                      );
-                    },
+                          },
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         );

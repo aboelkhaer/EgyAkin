@@ -1,5 +1,6 @@
 import 'package:egy_akin/features/send_consultation/data/models/add_doctors_for_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/get_members_for_consultation_model_response.dart';
+import 'package:egy_akin/features/send_consultation/data/models/invite_external_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/remove_member_from_consultation_model_response.dart';
 import 'package:egy_akin/features/send_consultation/data/models/send_invitation_model_response.dart';
 
@@ -24,19 +25,28 @@ abstract class SendConsultationRepository {
     required String message,
     required List<String> doctorsIDS,
   });
-  Future<Either<Failure, GetMembersForConsultationModelResponse>> getMembersForConsultation({
+  Future<Either<Failure, GetMembersForConsultationModelResponse>>
+      getMembersForConsultation({
     required String consultationId,
   });
 
-  Future<Either<Failure, RemoveMemberFromConsultationModelResponse>> removeMemberFromConsultation({
+  Future<Either<Failure, RemoveMemberFromConsultationModelResponse>>
+      removeMemberFromConsultation({
     required String consultationId,
     required String doctorId,
   });
 
-  Future<Either<Failure, AddDoctorsForConsultationModelResponse>> addDoctorsForConsultation({
+  Future<Either<Failure, AddDoctorsForConsultationModelResponse>>
+      addDoctorsForConsultation({
     required String consultationId,
     required String message,
     required List<String> doctorsIDS,
   });
 
+  Future<Either<Failure, InviteExternalModelResponse>>
+      inviteExternalConsultation({
+    required String consultationId,
+    required String email,
+    String? inviteMessage,
+  });
 }

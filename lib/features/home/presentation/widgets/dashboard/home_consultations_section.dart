@@ -1,80 +1,28 @@
 import '../../../../../exports.dart';
 import 'home_dashboard_shared.dart';
 
-class HomeConsultationsSection extends StatefulWidget {
+class HomeConsultationsSection extends StatelessWidget {
   final bool isDark;
   final DoctorModel currentDoctorModel;
   final HomeModelResponse homeDataModel;
-  /// Bumps on home reload so this section refetches.
-  final int reloadToken;
+  final List<GetCurrentDoctorConsultationModelResponse> consultations;
+
+  static const int _maxVisible = 3;
 
   const HomeConsultationsSection({
     super.key,
     required this.isDark,
     required this.currentDoctorModel,
     required this.homeDataModel,
-    required this.reloadToken,
+    required this.consultations,
   });
-
-  @override
-  State<HomeConsultationsSection> createState() =>
-      _HomeConsultationsSectionState();
-}
-
-class _HomeConsultationsSectionState extends State<HomeConsultationsSection> {
-  static const int _maxVisible = 3;
-
-  bool _loading = true;
-  List<GetCurrentDoctorConsultationModelResponse> _pending = const [];
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  @override
-  void didUpdateWidget(covariant HomeConsultationsSection oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.reloadToken != widget.reloadToken) {
-      _load();
-    }
-  }
-
-  Future<void> _load() async {
-    if (mounted) {
-      setState(() => _loading = true);
-    }
-
-    final result =
-        await sl<GetReceivedConsultationUsecase>().execute(NoParams());
-    if (!mounted) return;
-
-    result.fold(
-      (_) {
-        setState(() {
-          _loading = false;
-          _pending = const [];
-        });
-      },
-      (consultations) {
-        final pending = consultations
-            .where((c) => c.isOpen == true)
-            .toList(growable: false);
-        setState(() {
-          _loading = false;
-          _pending = pending;
-        });
-      },
-    );
-  }
 
   void _openConsultationList() {
     navigatorKey.currentState?.pushNamed(
       AppRoutes.consultation,
       arguments: AppRoutesArgs.consultationRouteArgs(
-        homeDataModel: widget.homeDataModel,
-        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: homeDataModel,
+        currentDoctorModel: currentDoctorModel,
         initialTab: 1, // Received
       ),
     );
@@ -86,8 +34,8 @@ class _HomeConsultationsSectionState extends State<HomeConsultationsSection> {
     navigatorKey.currentState?.pushNamed(
       AppRoutes.consultationDetails,
       arguments: AppRoutesArgs.consultationDetailsRouteArgs(
-        homeDataModel: widget.homeDataModel,
-        currentDoctorModel: widget.currentDoctorModel,
+        homeDataModel: homeDataModel,
+        currentDoctorModel: currentDoctorModel,
         patientName: consult.patientName?.toString() ?? '',
         consultationId: consult.id?.toString() ?? '',
         isReceivedConsultation: true,
@@ -98,14 +46,11 @@ class _HomeConsultationsSectionState extends State<HomeConsultationsSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading && _pending.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    if (_pending.isEmpty) {
+    if (consultations.isEmpty) {
       return const SizedBox.shrink();
     }
 
-    final visible = _pending.take(_maxVisible).toList(growable: false);
+    final visible = consultations.take(_maxVisible).toList(growable: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -113,8 +58,8 @@ class _HomeConsultationsSectionState extends State<HomeConsultationsSection> {
         SizedBox(height: 8.h),
         HomeSectionHeader(
           title: context.tr(AppStrings.pendingConsultations),
-          isDark: widget.isDark,
-          badgeCount: _pending.length,
+          isDark: isDark,
+          badgeCount: consultations.length,
           actionLabel: context.tr(AppStrings.viewAll),
           onAction: _openConsultationList,
         ),
@@ -123,7 +68,7 @@ class _HomeConsultationsSectionState extends State<HomeConsultationsSection> {
           (item) => Padding(
             padding: EdgeInsets.only(bottom: 8.h),
             child: _ConsultationCard(
-              isDark: widget.isDark,
+              isDark: isDark,
               item: item,
               onTap: () => _openConsultationDetails(item),
             ),

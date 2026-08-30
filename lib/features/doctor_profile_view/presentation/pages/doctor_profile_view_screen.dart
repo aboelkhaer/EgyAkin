@@ -78,7 +78,17 @@ class _DoctorProfileViewScreenState extends State<DoctorProfileViewScreen> {
                       // Sync role + land on Profile before nav shrinks to 3 tabs
                       // (avoids RangeError on index 4 and Community redirect).
                       final homeCubit = context.read<HomeCubit>();
-                      await homeCubit.applyProfileUpdateAndOpenProfile();
+                      final emailChanged = cubit.lastEmailChanged;
+                      final userTypeChanged = cubit.lastUserTypeChanged;
+                      cubit.lastEmailChanged = false;
+                      cubit.lastUserTypeChanged = false;
+                      await homeCubit.applyProfileUpdateAndOpenProfile(
+                        emailChanged: emailChanged,
+                        userTypeChanged: userTypeChanged,
+                      );
+                      if (context.mounted) {
+                        context.read<ProfileCubit>().getDoctorDataFromLocal();
+                      }
                       final nav = navigatorKey.currentState;
                       if (nav != null && nav.canPop()) {
                         nav.pop();

@@ -242,7 +242,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     final cubit = SplashCubit.get(context);
     cubit.state.maybeWhen(
-      loaded: (isAuth, isWelcomed, isAppFreeze, isForceUpdate) {
+      loaded: (isAuth, isWelcomed, isAppFreeze, isForceUpdate) async {
         if (isAppFreeze) {
           _showErrorDialog(
             context.tr(AppStrings.appIsCurrentlyUnavailablePleaseTryLater),
@@ -254,10 +254,34 @@ class _SplashScreenState extends State<SplashScreen>
 
         final deepLinkHandler = DeepLinkHandler();
         final hasPendingDeepLink = deepLinkHandler.hasPendingDeepLink();
+        final inviteToken =
+            await deepLinkHandler.getPendingInviteToken(clear: false);
 
         if (hasPendingDeepLink) {
           debugPrint(
               'Splash screen: Found pending deep link, navigating to home to process it');
+        }
+
+        if (inviteToken != null && inviteToken.isNotEmpty) {
+          if (isAuth) {
+            // Invite is redeemed only at registration.
+            debugPrint(
+                'Splash: invite link while logged in — show message on home');
+            await sl<AppPreferences>().setData(
+              AppLocalStrings.pendingInviteConsultationId,
+              '__logged_in_invite__',
+            );
+            if (!mounted) return;
+            Navigator.pushReplacementNamed(
+              context,
+              AppRoutes.home,
+              arguments: 0,
+            );
+            return;
+          }
+          if (!mounted) return;
+          Navigator.pushReplacementNamed(context, AppRoutes.register);
+          return;
         }
 
         if (isAuth && isWelcomed) {

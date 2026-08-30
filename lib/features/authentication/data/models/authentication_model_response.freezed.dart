@@ -28,6 +28,9 @@ mixin _$AuthenticationModelResponse {
   String? get provider => throw _privateConstructorUsedError;
   List<String>? get permissions => throw _privateConstructorUsedError;
 
+  /// Present when registration redeemed an external consultation invite.
+  RegisterInviteInfo? get invite => throw _privateConstructorUsedError;
+
   /// Serializes this AuthenticationModelResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -51,9 +54,11 @@ abstract class $AuthenticationModelResponseCopyWith<$Res> {
       String? token,
       @JsonKey(name: 'data') DoctorModel? doctorModel,
       String? provider,
-      List<String>? permissions});
+      List<String>? permissions,
+      RegisterInviteInfo? invite});
 
   $DoctorModelCopyWith<$Res>? get doctorModel;
+  $RegisterInviteInfoCopyWith<$Res>? get invite;
 }
 
 /// @nodoc
@@ -77,6 +82,7 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
     Object? doctorModel = freezed,
     Object? provider = freezed,
     Object? permissions = freezed,
+    Object? invite = freezed,
   }) {
     return _then(_value.copyWith(
       value: freezed == value
@@ -99,6 +105,10 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
           ? _value.permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      invite: freezed == invite
+          ? _value.invite
+          : invite // ignore: cast_nullable_to_non_nullable
+              as RegisterInviteInfo?,
     ) as $Val);
   }
 
@@ -113,6 +123,20 @@ class _$AuthenticationModelResponseCopyWithImpl<$Res,
 
     return $DoctorModelCopyWith<$Res>(_value.doctorModel!, (value) {
       return _then(_value.copyWith(doctorModel: value) as $Val);
+    });
+  }
+
+  /// Create a copy of AuthenticationModelResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $RegisterInviteInfoCopyWith<$Res>? get invite {
+    if (_value.invite == null) {
+      return null;
+    }
+
+    return $RegisterInviteInfoCopyWith<$Res>(_value.invite!, (value) {
+      return _then(_value.copyWith(invite: value) as $Val);
     });
   }
 }
@@ -131,10 +155,13 @@ abstract class _$$AuthenticationModelResponseImplCopyWith<$Res>
       String? token,
       @JsonKey(name: 'data') DoctorModel? doctorModel,
       String? provider,
-      List<String>? permissions});
+      List<String>? permissions,
+      RegisterInviteInfo? invite});
 
   @override
   $DoctorModelCopyWith<$Res>? get doctorModel;
+  @override
+  $RegisterInviteInfoCopyWith<$Res>? get invite;
 }
 
 /// @nodoc
@@ -157,6 +184,7 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
     Object? doctorModel = freezed,
     Object? provider = freezed,
     Object? permissions = freezed,
+    Object? invite = freezed,
   }) {
     return _then(_$AuthenticationModelResponseImpl(
       value: freezed == value
@@ -179,6 +207,10 @@ class __$$AuthenticationModelResponseImplCopyWithImpl<$Res>
           ? _value._permissions
           : permissions // ignore: cast_nullable_to_non_nullable
               as List<String>?,
+      invite: freezed == invite
+          ? _value.invite
+          : invite // ignore: cast_nullable_to_non_nullable
+              as RegisterInviteInfo?,
     ));
   }
 }
@@ -192,7 +224,8 @@ class _$AuthenticationModelResponseImpl
       this.token,
       @JsonKey(name: 'data') this.doctorModel,
       this.provider,
-      final List<String>? permissions})
+      final List<String>? permissions,
+      this.invite})
       : _permissions = permissions;
 
   factory _$AuthenticationModelResponseImpl.fromJson(
@@ -218,9 +251,13 @@ class _$AuthenticationModelResponseImpl
     return EqualUnmodifiableListView(value);
   }
 
+  /// Present when registration redeemed an external consultation invite.
+  @override
+  final RegisterInviteInfo? invite;
+
   @override
   String toString() {
-    return 'AuthenticationModelResponse(value: $value, token: $token, doctorModel: $doctorModel, provider: $provider, permissions: $permissions)';
+    return 'AuthenticationModelResponse(value: $value, token: $token, doctorModel: $doctorModel, provider: $provider, permissions: $permissions, invite: $invite)';
   }
 
   @override
@@ -235,13 +272,14 @@ class _$AuthenticationModelResponseImpl
             (identical(other.provider, provider) ||
                 other.provider == provider) &&
             const DeepCollectionEquality()
-                .equals(other._permissions, _permissions));
+                .equals(other._permissions, _permissions) &&
+            (identical(other.invite, invite) || other.invite == invite));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, value, token, doctorModel,
-      provider, const DeepCollectionEquality().hash(_permissions));
+      provider, const DeepCollectionEquality().hash(_permissions), invite);
 
   /// Create a copy of AuthenticationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -267,7 +305,8 @@ abstract class _AuthenticationModelResponse
       final String? token,
       @JsonKey(name: 'data') final DoctorModel? doctorModel,
       final String? provider,
-      final List<String>? permissions}) = _$AuthenticationModelResponseImpl;
+      final List<String>? permissions,
+      final RegisterInviteInfo? invite}) = _$AuthenticationModelResponseImpl;
 
   factory _AuthenticationModelResponse.fromJson(Map<String, dynamic> json) =
       _$AuthenticationModelResponseImpl.fromJson;
@@ -284,12 +323,249 @@ abstract class _AuthenticationModelResponse
   @override
   List<String>? get permissions;
 
+  /// Present when registration redeemed an external consultation invite.
+  @override
+  RegisterInviteInfo? get invite;
+
   /// Create a copy of AuthenticationModelResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthenticationModelResponseImplCopyWith<_$AuthenticationModelResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
+}
+
+RegisterInviteInfo _$RegisterInviteInfoFromJson(Map<String, dynamic> json) {
+  return _RegisterInviteInfo.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RegisterInviteInfo {
+  bool? get accepted => throw _privateConstructorUsedError;
+  bool? get trusted => throw _privateConstructorUsedError;
+  @JsonKey(name: 'syndicate_verified')
+  bool? get syndicateVerified => throw _privateConstructorUsedError;
+  @JsonKey(name: 'consultation_ids')
+  List<int>? get consultationIds => throw _privateConstructorUsedError;
+
+  /// Serializes this RegisterInviteInfo to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of RegisterInviteInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $RegisterInviteInfoCopyWith<RegisterInviteInfo> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RegisterInviteInfoCopyWith<$Res> {
+  factory $RegisterInviteInfoCopyWith(
+          RegisterInviteInfo value, $Res Function(RegisterInviteInfo) then) =
+      _$RegisterInviteInfoCopyWithImpl<$Res, RegisterInviteInfo>;
+  @useResult
+  $Res call(
+      {bool? accepted,
+      bool? trusted,
+      @JsonKey(name: 'syndicate_verified') bool? syndicateVerified,
+      @JsonKey(name: 'consultation_ids') List<int>? consultationIds});
+}
+
+/// @nodoc
+class _$RegisterInviteInfoCopyWithImpl<$Res, $Val extends RegisterInviteInfo>
+    implements $RegisterInviteInfoCopyWith<$Res> {
+  _$RegisterInviteInfoCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of RegisterInviteInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? accepted = freezed,
+    Object? trusted = freezed,
+    Object? syndicateVerified = freezed,
+    Object? consultationIds = freezed,
+  }) {
+    return _then(_value.copyWith(
+      accepted: freezed == accepted
+          ? _value.accepted
+          : accepted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      trusted: freezed == trusted
+          ? _value.trusted
+          : trusted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      syndicateVerified: freezed == syndicateVerified
+          ? _value.syndicateVerified
+          : syndicateVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      consultationIds: freezed == consultationIds
+          ? _value.consultationIds
+          : consultationIds // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RegisterInviteInfoImplCopyWith<$Res>
+    implements $RegisterInviteInfoCopyWith<$Res> {
+  factory _$$RegisterInviteInfoImplCopyWith(_$RegisterInviteInfoImpl value,
+          $Res Function(_$RegisterInviteInfoImpl) then) =
+      __$$RegisterInviteInfoImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {bool? accepted,
+      bool? trusted,
+      @JsonKey(name: 'syndicate_verified') bool? syndicateVerified,
+      @JsonKey(name: 'consultation_ids') List<int>? consultationIds});
+}
+
+/// @nodoc
+class __$$RegisterInviteInfoImplCopyWithImpl<$Res>
+    extends _$RegisterInviteInfoCopyWithImpl<$Res, _$RegisterInviteInfoImpl>
+    implements _$$RegisterInviteInfoImplCopyWith<$Res> {
+  __$$RegisterInviteInfoImplCopyWithImpl(_$RegisterInviteInfoImpl _value,
+      $Res Function(_$RegisterInviteInfoImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of RegisterInviteInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? accepted = freezed,
+    Object? trusted = freezed,
+    Object? syndicateVerified = freezed,
+    Object? consultationIds = freezed,
+  }) {
+    return _then(_$RegisterInviteInfoImpl(
+      accepted: freezed == accepted
+          ? _value.accepted
+          : accepted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      trusted: freezed == trusted
+          ? _value.trusted
+          : trusted // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      syndicateVerified: freezed == syndicateVerified
+          ? _value.syndicateVerified
+          : syndicateVerified // ignore: cast_nullable_to_non_nullable
+              as bool?,
+      consultationIds: freezed == consultationIds
+          ? _value._consultationIds
+          : consultationIds // ignore: cast_nullable_to_non_nullable
+              as List<int>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RegisterInviteInfoImpl implements _RegisterInviteInfo {
+  const _$RegisterInviteInfoImpl(
+      {this.accepted,
+      this.trusted,
+      @JsonKey(name: 'syndicate_verified') this.syndicateVerified,
+      @JsonKey(name: 'consultation_ids') final List<int>? consultationIds})
+      : _consultationIds = consultationIds;
+
+  factory _$RegisterInviteInfoImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RegisterInviteInfoImplFromJson(json);
+
+  @override
+  final bool? accepted;
+  @override
+  final bool? trusted;
+  @override
+  @JsonKey(name: 'syndicate_verified')
+  final bool? syndicateVerified;
+  final List<int>? _consultationIds;
+  @override
+  @JsonKey(name: 'consultation_ids')
+  List<int>? get consultationIds {
+    final value = _consultationIds;
+    if (value == null) return null;
+    if (_consultationIds is EqualUnmodifiableListView) return _consultationIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+  @override
+  String toString() {
+    return 'RegisterInviteInfo(accepted: $accepted, trusted: $trusted, syndicateVerified: $syndicateVerified, consultationIds: $consultationIds)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RegisterInviteInfoImpl &&
+            (identical(other.accepted, accepted) ||
+                other.accepted == accepted) &&
+            (identical(other.trusted, trusted) || other.trusted == trusted) &&
+            (identical(other.syndicateVerified, syndicateVerified) ||
+                other.syndicateVerified == syndicateVerified) &&
+            const DeepCollectionEquality()
+                .equals(other._consultationIds, _consultationIds));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, accepted, trusted,
+      syndicateVerified, const DeepCollectionEquality().hash(_consultationIds));
+
+  /// Create a copy of RegisterInviteInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RegisterInviteInfoImplCopyWith<_$RegisterInviteInfoImpl> get copyWith =>
+      __$$RegisterInviteInfoImplCopyWithImpl<_$RegisterInviteInfoImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RegisterInviteInfoImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RegisterInviteInfo implements RegisterInviteInfo {
+  const factory _RegisterInviteInfo(
+      {final bool? accepted,
+      final bool? trusted,
+      @JsonKey(name: 'syndicate_verified') final bool? syndicateVerified,
+      @JsonKey(name: 'consultation_ids')
+      final List<int>? consultationIds}) = _$RegisterInviteInfoImpl;
+
+  factory _RegisterInviteInfo.fromJson(Map<String, dynamic> json) =
+      _$RegisterInviteInfoImpl.fromJson;
+
+  @override
+  bool? get accepted;
+  @override
+  bool? get trusted;
+  @override
+  @JsonKey(name: 'syndicate_verified')
+  bool? get syndicateVerified;
+  @override
+  @JsonKey(name: 'consultation_ids')
+  List<int>? get consultationIds;
+
+  /// Create a copy of RegisterInviteInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$RegisterInviteInfoImplCopyWith<_$RegisterInviteInfoImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 DoctorModel _$DoctorModelFromJson(Map<String, dynamic> json) {

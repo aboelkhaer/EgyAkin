@@ -16,11 +16,17 @@ class SendConsultationSearchField extends StatelessWidget {
     required this.onClear,
   });
 
+  void _submit() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    onSubmit();
+  }
+
   @override
   Widget build(BuildContext context) {
     final primary = HomeDashboardColors.primary(isDark);
     final border = HomeDashboardColors.border(isDark);
     final fill = HomeDashboardColors.cardBg(isDark);
+    final subtitle = HomeDashboardColors.subtitle(isDark);
     final radius = BorderRadius.circular(14.r);
 
     OutlineInputBorder outline(Color color, {double width = 1}) {
@@ -40,8 +46,9 @@ class SendConsultationSearchField extends StatelessWidget {
           color: HomeDashboardColors.title(isDark),
           fontWeight: FontWeight.w500,
         ),
+        keyboardType: TextInputType.text,
         textInputAction: TextInputAction.search,
-        onSubmitted: (_) => onSubmit(),
+        onSubmitted: (_) => _submit(),
         onTapOutside: (_) => FocusManager.instance.primaryFocus?.unfocus(),
         decoration: InputDecoration(
           isDense: true,
@@ -50,7 +57,7 @@ class SendConsultationSearchField extends StatelessWidget {
           hintText: context.tr(AppStrings.searchByDoctorNameOrEmail),
           hintStyle: TextStyle(
             fontSize: 12.sp,
-            color: HomeDashboardColors.subtitle(isDark),
+            color: subtitle,
           ),
           contentPadding: EdgeInsets.symmetric(
             horizontal: 4.w,
@@ -59,14 +66,19 @@ class SendConsultationSearchField extends StatelessWidget {
           prefixIcon: Icon(
             Icons.search_rounded,
             size: 20.sp,
-            color: HomeDashboardColors.subtitle(isDark),
+            color: subtitle,
+          ),
+          suffixIconConstraints: BoxConstraints(
+            minHeight: 46.h,
+            minWidth: 46.w,
           ),
           suffixIcon: ValueListenableBuilder<TextEditingValue>(
             valueListenable: controller,
             builder: (context, value, _) {
               if (value.text.isEmpty) {
                 return IconButton(
-                  onPressed: onSubmit,
+                  tooltip: context.tr(AppStrings.search),
+                  onPressed: _submit,
                   visualDensity: VisualDensity.compact,
                   icon: Icon(
                     Icons.arrow_forward_rounded,
@@ -76,14 +88,31 @@ class SendConsultationSearchField extends StatelessWidget {
                   ),
                 );
               }
-              return IconButton(
-                onPressed: onClear,
-                visualDensity: VisualDensity.compact,
-                icon: Icon(
-                  Icons.close_rounded,
-                  size: 18.sp,
-                  color: HomeDashboardColors.subtitle(isDark),
-                ),
+
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    tooltip: context.tr(AppStrings.clear),
+                    onPressed: onClear,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      Icons.close_rounded,
+                      size: 18.sp,
+                      color: subtitle,
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: context.tr(AppStrings.search),
+                    onPressed: _submit,
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(
+                      Icons.search_rounded,
+                      size: 20.sp,
+                      color: primary,
+                    ),
+                  ),
+                ],
               );
             },
           ),

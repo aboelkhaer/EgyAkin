@@ -23,6 +23,19 @@ class CommentsInCommunity extends StatelessWidget {
 
     return PermissionGuard(
       permission: AppPermissions.viewFeedComments,
+      loading: Padding(
+        padding: EdgeInsets.symmetric(vertical: 36.h),
+        child: Center(
+          child: SizedBox(
+            width: 22.r,
+            height: 22.r,
+            child: CircularProgressIndicator(
+              strokeWidth: 2.2,
+              color: primary,
+            ),
+          ),
+        ),
+      ),
       fallback: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 24.h),
         child: _EmptyCommentsState(

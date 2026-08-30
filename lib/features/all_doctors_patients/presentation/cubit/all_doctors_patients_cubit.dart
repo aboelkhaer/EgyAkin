@@ -262,20 +262,30 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
     isLoadingMoreForScrollForFilter = false;
 
     if (isClosed) return;
-    emit(
-      state.maybeMap(
-        orElse: () => state,
-        loaded: (value) => AllDoctorsPatientsState.loaded(
-            value.response,
-            value.isSeeMore,
-            '',
-            true,
-            false,
-            value.isExportLoading,
-            value.isExportLoaded,
-            null),
-      ),
+
+    final alreadyLoaded = state.maybeWhen(
+      loaded: (_, __, ___, ____, _____, ______, _______, ________) => true,
+      orElse: () => false,
     );
+    if (alreadyLoaded) {
+      emit(
+        state.maybeMap(
+          orElse: () => state,
+          loaded: (value) => AllDoctorsPatientsState.loaded(
+              value.response,
+              value.isSeeMore,
+              '',
+              true,
+              false,
+              value.isExportLoading,
+              value.isExportLoaded,
+              null),
+        ),
+      );
+    } else {
+      emit(const AllDoctorsPatientsState.loading());
+    }
+
     formData['only_my_patients'] = isOnlyMyPatients;
 
     final result = await _applyPatientsFiltersUsecase.execute(
@@ -289,7 +299,7 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
         if (isClosed) return;
         emit(
           state.maybeMap(
-            orElse: () => state,
+            orElse: () => AllDoctorsPatientsState.error(l.message),
             loaded: (value) => AllDoctorsPatientsState.loaded(
                 value.response,
                 value.isSeeMore,
@@ -304,27 +314,39 @@ class AllDoctorsPatientsCubit extends Cubit<AllDoctorsPatientsState> {
       },
       (r) async {
         if (isClosed) return;
-        totalPatientInFilter = r.pagination!.total!;
+        totalPatientInFilter = r.pagination?.total ?? r.data?.length ?? 0;
+        final lastPage = r.pagination?.lastPage ?? 1;
+        isLastPageFilter = currentPageInFilter >= lastPage;
         isApplyFilterDone = true;
+
+        final existing = state.maybeWhen(
+          loaded: (response, _, __, ___, ____, _____, ______, _______) =>
+              response,
+          orElse: () => null,
+        );
+        final base = existing ?? const GetAllDoctorsPatientsModelResponse();
+        final updatedData = (base.data ?? const GetAllDoctorsPatientDataModelResponse())
+            .copyWith(
+          data: r.data ?? const <PatientHomeDataModel>[],
+          total: r.pagination?.total ?? r.data?.length ?? 0,
+          lastPage: lastPage,
+          currentPage: currentPageInFilter,
+        );
+        final updatedResponse = base.copyWith(
+          data: updatedData,
+          patientCount: '$totalPatientInFilter',
+        );
+
         emit(
-          state.maybeMap(
-            orElse: () => state,
-            loaded: (value) {
-              var updatedData = value.response.copyWith(
-                data: value.response.data!.copyWith(
-                  data: r.data,
-                ),
-              );
-              return AllDoctorsPatientsState.loaded(
-                  updatedData,
-                  value.isSeeMore,
-                  '',
-                  false,
-                  true,
-                  value.isExportLoading,
-                  value.isExportLoaded,
-                  null);
-            },
+          AllDoctorsPatientsState.loaded(
+            updatedResponse,
+            false,
+            '',
+            false,
+            true,
+            false,
+            false,
+            null,
           ),
         );
       },

@@ -106,11 +106,34 @@ class RegisterForm extends StatelessWidget {
                 title: '${context.tr(AppStrings.email)} *',
                 style: titleStyle,
                 enableSuggestions: true,
-                onChanged: (value) {
-                  cubit.registerEmail = value;
-                },
+                initialValue: cubit.registerEmail.isEmpty
+                    ? null
+                    : cubit.registerEmail,
+                readOnly: cubit.inviteEmailLocked,
+                enabled: !cubit.inviteEmailLocked,
+                onChanged: cubit.inviteEmailLocked
+                    ? null
+                    : (value) {
+                        cubit.registerEmail = value;
+                      },
                 textInputType: TextInputType.emailAddress,
-                validator: (value) => AppValidators.emailValidator(value),
+                validator: (value) => AppValidators.emailValidator(
+                  (value == null || value.isEmpty)
+                      ? cubit.registerEmail
+                      : value,
+                ),
+                textInputAction: TextInputAction.next,
+              ),
+              SizedBox(height: 8.h),
+              CustomTextFormField(
+                title: context.tr(AppStrings.inviteCodeOptional),
+                style: titleStyle,
+                enableSuggestions: false,
+                onChanged: (value) {
+                  cubit.registerInviteCode = value;
+                },
+                textInputType: TextInputType.number,
+                validator: (_) => null,
                 textInputAction: TextInputAction.next,
               ),
               SizedBox(height: 8.h),

@@ -13,9 +13,24 @@ class AuthenticationModelResponse with _$AuthenticationModelResponse {
     @JsonKey(name: 'data') DoctorModel? doctorModel,
     String? provider,
     List<String>? permissions,
+    /// Present when registration redeemed an external consultation invite.
+    RegisterInviteInfo? invite,
   }) = _AuthenticationModelResponse;
   factory AuthenticationModelResponse.fromJson(Map<String, dynamic> json) =>
       _$AuthenticationModelResponseFromJson(json);
+}
+
+@freezed
+class RegisterInviteInfo with _$RegisterInviteInfo {
+  const factory RegisterInviteInfo({
+    bool? accepted,
+    bool? trusted,
+    @JsonKey(name: 'syndicate_verified') bool? syndicateVerified,
+    @JsonKey(name: 'consultation_ids') List<int>? consultationIds,
+  }) = _RegisterInviteInfo;
+
+  factory RegisterInviteInfo.fromJson(Map<String, dynamic> json) =>
+      _$RegisterInviteInfoFromJson(json);
 }
 
 @freezed

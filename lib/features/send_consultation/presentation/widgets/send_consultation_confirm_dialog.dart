@@ -205,37 +205,50 @@ class _SendConsultationConfirmDialogState
                     ),
                     if (widget.isConsultation) ...[
                       SizedBox(height: 12.h),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                          vertical: 4.h,
+                      TextField(
+                        controller: _noteController,
+                        autofocus: true,
+                        maxLines: 4,
+                        minLines: keyboardInset > 0 ? 2 : 3,
+                        cursorColor: primary,
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: HomeDashboardColors.title(isDark),
                         ),
-                        decoration: BoxDecoration(
-                          color: HomeDashboardColors.surfaceBg(isDark),
-                          borderRadius: BorderRadius.circular(14.r),
-                          border: Border.all(
-                            color: HomeDashboardColors.border(isDark),
+                        onChanged: widget.onNoteChanged,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: isDark
+                              ? Colors.white.withOpacity(0.04)
+                              : Colors.black.withOpacity(0.03),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 12.h,
                           ),
-                        ),
-                        child: TextField(
-                          controller: _noteController,
-                          autofocus: true,
-                          maxLines: 4,
-                          minLines: keyboardInset > 0 ? 2 : 3,
-                          cursorColor: primary,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: HomeDashboardColors.title(isDark),
+                          hintText: context.tr(
+                            AppStrings.addShortClinicalNoteOptional,
                           ),
-                          onChanged: widget.onNoteChanged,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: context.tr(
-                              AppStrings.addShortClinicalNoteOptional,
+                          hintStyle: TextStyle(
+                            fontSize: 12.sp,
+                            color: HomeDashboardColors.subtitle(isDark),
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide(
+                              color: HomeDashboardColors.border(isDark),
                             ),
-                            hintStyle: TextStyle(
-                              fontSize: 12.sp,
-                              color: HomeDashboardColors.subtitle(isDark),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide(
+                              color: HomeDashboardColors.border(isDark),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide(
+                              color: primary,
+                              width: 1.4,
                             ),
                           ),
                         ),

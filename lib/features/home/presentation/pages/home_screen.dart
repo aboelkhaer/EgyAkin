@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   HomeCubit? cubit;
   int _deepLinkRetryCount = 0;
 
@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     cubit = context.read<HomeCubit>();
     // Load local user_type first, then home — so loading nav is already correct.
     () async {
@@ -40,9 +41,23 @@ class _HomeScreenState extends State<HomeScreen> {
     }();
   }
 
-  void _clampTabForNormalNav(HomeCubit homeCubit) {
-    if (!homeCubit.hideClinicalTabs) return;
-    if (homeCubit.tabsController.index <= 2) return;
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state != AppLifecycleState.resumed) return;
+    // Guide: refresh /user/me on resume (no polling / no full home reload).
+    cubit?.refreshAccountState();
+  }
+
+  void _clampTabForCurrentNav(HomeCubit homeCubit) {
+    final maxIndex = homeCubit.hideClinicalTabs ? 2 : 3;
+    if (homeCubit.tabsController.index <= maxIndex) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       homeCubit.clampTabIndexToCurrentNav();
@@ -59,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (hasHomeData && hasDoctorData) {
           final deepLinkHandler = DeepLinkHandler();
           deepLinkHandler.checkAndProcessPendingDeepLinks(context);
+          _checkPendingInviteConsultation();
         } else if (_deepLinkRetryCount < 5) {
           _deepLinkRetryCount++;
           Future.delayed(const Duration(seconds: 2), () {
@@ -69,6 +85,38 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     });
+  }
+
+  Future<void> _checkPendingInviteConsultation() async {
+    final raw = await sl<AppPreferences>().getString(
+          AppLocalStrings.pendingInviteConsultationId,
+        ) ??
+        '';
+    if (raw.isEmpty || !mounted) return;
+    await sl<AppPreferences>()
+        .removeData(AppLocalStrings.pendingInviteConsultationId);
+    await DeepLinkHandler().clearPendingInviteToken();
+
+    if (raw == '__logged_in_invite__') {
+      customSnackBar(
+        context: context,
+        message: context.tr(AppStrings.inviteLinkForNewAccountOnly),
+      );
+      return;
+    }
+
+    final homeCubit = context.read<HomeCubit>();
+    navigatorKey.currentState?.pushNamed(
+      AppRoutes.consultationDetails,
+      arguments: AppRoutesArgs.consultationDetailsRouteArgs(
+        homeDataModel: homeCubit.homeDataModel,
+        currentDoctorModel: homeCubit.currentDoctorModel,
+        consultationId: raw,
+        patientName: '',
+        isReceivedConsultation: true,
+        isOpen: true,
+      ),
+    );
   }
 
   String _doctorInitials() {
@@ -111,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         state.maybeWhen(
                           orElse: () {},
                           loading: (_) {
-                            _clampTabForNormalNav(homeCubit);
+                            _clampTabForCurrentNav(homeCubit);
                           },
                           loaded: (
                             homeData,
@@ -125,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             isUserBlocked,
                             changesCounter,
                           ) {
-                            _clampTabForNormalNav(homeCubit);
+                            _clampTabForCurrentNav(homeCubit);
 
                             if (homeCubit.shouldShowUpdateMessage) {
                               showUpdateDialog(
@@ -259,10 +307,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             // unless there are unread items (or never loaded).
                             final hasUnread = homeCubit.isUnreadNotification ||
                                 (int.tryParse(
-                                      homeCubit.homeDataModel.unreadCount ??
-                                          '0',
-                                    ) ??
-                                    0) >
+                                          homeCubit.homeDataModel.unreadCount ??
+                                              '0',
+                                        ) ??
+                                        0) >
                                     0;
                             notifCubit.ensureNotificationsLoaded(
                               force: hasUnread,
@@ -348,9 +396,8 @@ class _HomeScreenState extends State<HomeScreen> {
       accountVerification: cubit.accountVerification ?? false,
       isSyndicateCardRequired: cubit.isSyndicateCardRequired,
       currentDoctorRole: cubit.currentDoctorRole,
-      currentDoctorPoints: cubit.doctorScore == null
-          ? 0
-          : int.tryParse(cubit.doctorScore!) ?? 0,
+      currentDoctorPoints:
+          cubit.doctorScore == null ? 0 : int.tryParse(cubit.doctorScore!) ?? 0,
       homeDataModel: cubit.homeDataModel,
       isEmbeddedInHomeTab: true,
     );
@@ -364,9 +411,8 @@ class _HomeScreenState extends State<HomeScreen> {
               currentDoctorRole: cubit.currentDoctorRole,
               currentDoctorModel: cubit.currentDoctorModel,
               homeDataModel: cubit.homeDataModel,
-              currentDoctorPoints: cubit.doctorScore == null
-                  ? 0
-                  : int.parse(cubit.doctorScore!),
+              currentDoctorPoints:
+                  cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
             );
           },
           loaded: (
@@ -386,9 +432,8 @@ class _HomeScreenState extends State<HomeScreen> {
               accountVerification: cubit.accountVerification ?? false,
               homeDataModel: homeData,
               currentDoctorModel: cubit.currentDoctorModel,
-              currentDoctorPoints: cubit.doctorScore == null
-                  ? 0
-                  : int.parse(cubit.doctorScore!),
+              currentDoctorPoints:
+                  cubit.doctorScore == null ? 0 : int.parse(cubit.doctorScore!),
               currentDoctorRole: homeData.role.toString(),
             );
           },
@@ -459,8 +504,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     final communityItem = PersistentBottomNavBarItem(
-      icon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
-      inactiveIcon: _badgeIcon(icon: Icons.explore_outlined, count: '4'),
+      icon: Icon(Icons.explore_outlined, size: 22.sp),
+      inactiveIcon: Icon(Icons.explore_outlined, size: 22.sp),
       title: context.tr(AppStrings.community),
       textStyle: titleStyle,
       activeColorPrimary: activeColor,

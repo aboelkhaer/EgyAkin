@@ -69,7 +69,7 @@ class PatientBmiCard extends StatelessWidget {
 
         return Container(
           width: 168.w,
-          margin: EdgeInsets.only(right: 10.w),
+          margin: EdgeInsetsDirectional.only(end: 10.w),
           decoration: BoxDecoration(
             color: cardBg,
             borderRadius: BorderRadius.circular(14.r),

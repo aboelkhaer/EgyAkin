@@ -11,21 +11,24 @@ _$HomeModelResponseImpl _$$HomeModelResponseImplFromJson(
     _$HomeModelResponseImpl(
       value: json['value'] as bool?,
       verified: json['verified'] as bool?,
-      unreadCount: json['unreadCount'] as String?,
-      isSyndicateCardRequired: json['isSyndicateCardRequired'] as String?,
+      unreadCount: _flexibleStringFromJson(json['unreadCount']),
+      isSyndicateCardRequired:
+          _flexibleStringFromJson(json['isSyndicateCardRequired']),
       appUpdateMessage: json['app_update_message'],
-      doctorPatientCount: json['doctor_patient_count'] as String?,
-      allPatientCount: json['all_patient_count'] as String?,
-      scoreValue: json['score_value'] as String?,
+      doctorPatientCount: _flexibleStringFromJson(json['doctor_patient_count']),
+      allPatientCount: _flexibleStringFromJson(json['all_patient_count']),
+      scoreValue: _flexibleStringFromJson(json['score_value']),
       role: json['role'] as String?,
       userType: json['user_type'] as String?,
       permissionsChanged: json['permissions_changed'] as bool?,
       isUserBlocked: json['isUserBlocked'] as bool?,
-      postsCount: json['posts_count'] as String?,
-      savedPosts: json['saved_posts_count'] as String?,
-      markedPatientsCount: json['marked_patient_count'] as String?,
-      pendingOutcomeCount: json['pending_outcome_count'] as String?,
-      draftCount: json['draft_count'] as String?,
+      postsCount: _flexibleStringFromJson(json['posts_count']),
+      savedPosts: _flexibleStringFromJson(json['saved_posts_count']),
+      markedPatientsCount:
+          _flexibleStringFromJson(json['marked_patient_count']),
+      pendingOutcomeCount:
+          _flexibleStringFromJson(json['pending_outcome_count']),
+      draftCount: _flexibleStringFromJson(json['draft_count']),
       researchInsights: json['research_insights'] == null
           ? null
           : ResearchInsightsModel.fromJson(
@@ -90,6 +93,13 @@ _$HomeDataModelResponseImpl _$$HomeDataModelResponseImplFromJson(
       pendingOutcomes: (json['pending_outcomes'] as List<dynamic>?)
           ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      drafts: (json['drafts'] as List<dynamic>?)
+          ?.map((e) => PatientHomeDataModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      pendingConsultations: (json['pending_consultations'] as List<dynamic>?)
+          ?.map((e) => GetCurrentDoctorConsultationModelResponse.fromJson(
+              e as Map<String, dynamic>))
+          .toList(),
       activity: (json['activity'] as List<dynamic>?)
           ?.map((e) => HomeActivityModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -114,6 +124,8 @@ Map<String, dynamic> _$$HomeDataModelResponseImplToJson(
       'trending_hashtags': instance.trendsHashtags,
       'latest_groups': instance.latestGroups,
       'pending_outcomes': instance.pendingOutcomes,
+      'drafts': instance.drafts,
+      'pending_consultations': instance.pendingConsultations,
       'activity': instance.activity,
       'week_recap': instance.weekRecap,
       'research_insights': instance.researchInsights,
@@ -126,14 +138,14 @@ _$ResearchInsightsModelImpl _$$ResearchInsightsModelImplFromJson(
           ? null
           : ResearchPopulationModel.fromJson(
               json['population'] as Map<String, dynamic>),
-      akiIncidencePct: flexibleNumFromJson(json['aki_incidence_pct']),
+      akiIncidencePct: _flexibleNumFromJson(json['aki_incidence_pct']),
       akiIncidenceDeltaPct:
-          flexibleNumFromJson(json['aki_incidence_delta_pct']),
+          _flexibleNumFromJson(json['aki_incidence_delta_pct']),
       mostCommonCause: json['most_common_cause'] as String?,
-      mostCommonCausePct: flexibleNumFromJson(json['most_common_cause_pct']),
-      avgEgfrAtAdmission: flexibleNumFromJson(json['avg_egfr_at_admission']),
+      mostCommonCausePct: _flexibleNumFromJson(json['most_common_cause_pct']),
+      avgEgfrAtAdmission: _flexibleNumFromJson(json['avg_egfr_at_admission']),
       avgEgfrAtAdmissionDelta:
-          flexibleNumFromJson(json['avg_egfr_at_admission_delta']),
+          _flexibleNumFromJson(json['avg_egfr_at_admission_delta']),
       computedAt: json['computed_at'] as String?,
     );
 
@@ -153,8 +165,8 @@ Map<String, dynamic> _$$ResearchInsightsModelImplToJson(
 _$ResearchPopulationModelImpl _$$ResearchPopulationModelImplFromJson(
         Map<String, dynamic> json) =>
     _$ResearchPopulationModelImpl(
-      patientCount: flexibleNumFromJson(json['patient_count']),
-      hospitalCount: flexibleNumFromJson(json['hospital_count']),
+      patientCount: _flexibleNumFromJson(json['patient_count']),
+      hospitalCount: _flexibleNumFromJson(json['hospital_count']),
     );
 
 Map<String, dynamic> _$$ResearchPopulationModelImplToJson(
@@ -168,10 +180,11 @@ _$WeekRecapModelImpl _$$WeekRecapModelImplFromJson(Map<String, dynamic> json) =>
     _$WeekRecapModelImpl(
       from: json['from'] as String?,
       to: json['to'] as String?,
-      patientsAdded: (json['patients_added'] as num?)?.toInt(),
-      allPatientsAdded: (json['all_patients_added'] as num?)?.toInt(),
-      outcomesSubmitted: (json['outcomes_submitted'] as num?)?.toInt(),
-      pointsEarned: (json['points_earned'] as num?)?.toInt(),
+      patientsAdded: _flexibleIntFromJson(json['patients_added']),
+      allPatientsAdded: _flexibleIntFromJson(json['all_patients_added']),
+      outcomesSubmitted: _flexibleIntFromJson(json['outcomes_submitted']),
+      pointsEarned:
+          _flexibleIntFromJson(_readPointsEarned(json, 'points_earned')),
     );
 
 Map<String, dynamic> _$$WeekRecapModelImplToJson(
@@ -191,10 +204,10 @@ _$PatientHomeDataModelImpl _$$PatientHomeDataModelImplFromJson(
       id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String?,
       hospital: json['hospital'] as String?,
-      age: flexibleNumFromJson(json['age']),
-      egfr: flexibleNumFromJson(json['egfr']),
-      egfrPrevious: flexibleNumFromJson(json['egfr_previous']),
-      bmi: flexibleNumFromJson(json['bmi']),
+      age: _flexibleNumFromJson(json['age']),
+      egfr: _flexibleNumFromJson(json['egfr']),
+      egfrPrevious: _flexibleNumFromJson(json['egfr_previous']),
+      bmi: _flexibleNumFromJson(json['bmi']),
       updatedAt: json['updated_at'] as String?,
       doctor: json['doctor'] == null
           ? null
@@ -249,8 +262,8 @@ _$SectionHomeDataModelImpl _$$SectionHomeDataModelImplFromJson(
         Map<String, dynamic> json) =>
     _$SectionHomeDataModelImpl(
       patientId: (json['patient_id'] as num?)?.toInt(),
-      submitStatus: json['submit_status'] as bool?,
-      outcomeStatus: json['outcome_status'] as bool?,
+      submitStatus: _flexibleBoolFromJson(json['submit_status']),
+      outcomeStatus: _flexibleBoolFromJson(json['outcome_status']),
     );
 
 Map<String, dynamic> _$$SectionHomeDataModelImplToJson(

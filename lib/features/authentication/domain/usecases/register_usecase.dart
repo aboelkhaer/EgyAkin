@@ -12,12 +12,20 @@ class RegisterUsecase
       RegisterUsecaseInput input) async {
     return await repository.register(
       doctorModel: input.doctorModel,
+      inviteCode: input.inviteCode,
+      inviteToken: input.inviteToken,
     );
   }
 }
 
 class RegisterUsecaseInput {
   final DoctorModel doctorModel;
+  final String? inviteCode;
+  final String? inviteToken;
 
-  RegisterUsecaseInput({required this.doctorModel,});
+  RegisterUsecaseInput({
+    required this.doctorModel,
+    this.inviteCode,
+    this.inviteToken,
+  });
 }

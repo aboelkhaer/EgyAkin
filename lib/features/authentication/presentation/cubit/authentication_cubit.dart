@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:egy_akin/app/shared/functions/device_info_helper.dart';
 import 'package:egy_akin/app/shared/functions/permissions_helper.dart';
+import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_google_usecase.dart';
 import 'package:egy_akin/features/authentication/domain/usecases/sign_in_with_apple_usecase.dart';
 
@@ -105,11 +106,26 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       registerRegistrationNumber = '',
       registerSpecialty = '',
       registerHighestDegree = '';
+  /// Manual 4-digit code from the invitation email.
+  String registerInviteCode = '';
+  /// Deep-link token (`egyakin://invite/{token}`) — no typing needed.
+  String? registerInviteToken;
+  bool inviteEmailLocked = false;
   bool isMedicalStatistics = false;
   int registerErrorValid = 0;
 
   void toggleMedicalStatistics(bool value) {
     isMedicalStatistics = value;
+    refreshScreen();
+  }
+
+  /// Prefill invite credentials from a deep link (`egyakin://invite/{token}`).
+  void applyInviteToken(String token, {String? email}) {
+    registerInviteToken = token.trim();
+    if (email != null && email.trim().isNotEmpty) {
+      registerEmail = email.trim();
+      inviteEmailLocked = true;
+    }
     refreshScreen();
   }
 
@@ -141,6 +157,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
               deviceId: deviceId,
               userType: isMedicalStatistics ? 'medical_statistics' : 'normal',
             ),
+            inviteCode:
+                registerInviteCode.trim().isEmpty ? null : registerInviteCode.trim(),
+            inviteToken: registerInviteToken?.trim().isEmpty == true
+                ? null
+                : registerInviteToken?.trim(),
           ),
         );
         result.fold(
@@ -156,6 +177,22 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
                   .setData(AppLocalStrings.permissions, permissionsJson);
               await PermissionHelper.refreshPermissions();
             }
+
+            final invite = response.invite;
+            if (invite?.accepted == true &&
+                invite?.consultationIds != null &&
+                invite!.consultationIds!.isNotEmpty) {
+              await sl<AppPreferences>().setData(
+                AppLocalStrings.pendingInviteConsultationId,
+                invite.consultationIds!.first.toString(),
+              );
+            }
+            // Clear one-time invite credentials after a successful register.
+            registerInviteToken = null;
+            registerInviteCode = '';
+            inviteEmailLocked = false;
+            await DeepLinkHandler().clearPendingInviteToken();
+
             emit(AuthenticationState.loaded(response, false, true));
           },
         );

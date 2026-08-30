@@ -58,6 +58,14 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
   int counterChanges = 0;
   String? sectionAiMode;
 
+  /// When true, popping this screen should mark the section completed
+  /// on the patients-sections list (e.g. after file upload or adding a dose).
+  bool markSectionCompletedOnPop = false;
+
+  void markSectionProgressForBackScreen() {
+    markSectionCompletedOnPop = true;
+  }
+
   /// Question id to scroll to after validation failure (UI reads this).
   String? firstInvalidQuestionId;
 
@@ -1097,6 +1105,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
           Navigator.pop(context);
           customSnackBar(
               context: context, message: response.message.toString());
+          markSectionProgressForBackScreen();
           await _refreshFileQuestionAfterUpload(
             questionIndex: questionIndex,
             sectionId: sectionId,
@@ -1336,6 +1345,7 @@ class PatientSectionDetailsCubit extends Cubit<PatientSectionDetailsState> {
       },
       (response) {
         // Handle success
+        markSectionProgressForBackScreen();
         emit(state.maybeMap(
           orElse: () => state,
           medicationSectionLoaded: (value) {

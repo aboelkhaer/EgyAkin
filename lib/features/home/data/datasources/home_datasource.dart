@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import '../../../../exports.dart';
+import 'package:egy_akin/features/home/data/models/user_me_response.dart';
 
 abstract class HomeDataSource {
   Future<HomeModelResponse> getHome();
+  Future<UserMeResponse> getUserMe();
   Future<UploadSyndicateCardModelResponse> uploadSyndicateCard(
       {required File image});
   Future<GetPermissionsModelResponse> getRolePermissions();
@@ -17,6 +19,11 @@ class HomeDataSourceImpl implements HomeDataSource {
   @override
   Future<HomeModelResponse> getHome() async {
     return await _apiServices.getHome();
+  }
+
+  @override
+  Future<UserMeResponse> getUserMe() async {
+    return await _apiServices.getUserMe();
   }
 
   @override

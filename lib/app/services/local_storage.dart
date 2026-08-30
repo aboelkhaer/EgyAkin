@@ -150,8 +150,9 @@ class AppPreferences implements LocalStorageProcess {
     if (doctorModelString != null) {
       final doctorMap = jsonDecode(doctorModelString) as Map<String, dynamic>;
       final doctorModel = DoctorModel.fromJson(doctorMap);
+      final emailChanged = (email.trim().toLowerCase()) !=
+          (doctorModel.email ?? '').trim().toLowerCase();
 
-      // Update the image parameter in the doctor model
       final updatedDoctorModel = doctorModel.copyWith(
         firstName: firstName,
         lastName: lastName,
@@ -164,10 +165,17 @@ class AppPreferences implements LocalStorageProcess {
         specialty: specialty,
         highestdegree: highestDegree,
         userType: userType,
+        // Changing email requires re-verification.
+        emailVerifiedAt: emailChanged ? null : doctorModel.emailVerifiedAt,
       );
 
-      // Save the updated doctor model back to shared preferences
       await setDoctorData(updatedDoctorModel);
+
+      if (emailChanged) {
+        // Show the verify banner again for the new address.
+        await _sharedPreferences
+            .remove(AppLocalStrings.isExistVerificationBanner);
+      }
     }
   }
 }

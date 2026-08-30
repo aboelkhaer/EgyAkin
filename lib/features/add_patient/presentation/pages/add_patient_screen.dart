@@ -1244,7 +1244,6 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 140),
-                margin: EdgeInsets.only(bottom: 6.h),
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 7.h),
                 decoration: BoxDecoration(
                   color: isSelected

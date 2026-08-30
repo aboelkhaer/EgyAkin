@@ -7,11 +7,16 @@ class PermissionGuard extends StatefulWidget {
   final Widget child;
   final Widget? fallback;
 
+  /// Shown only while the permission check is still in progress.
+  /// Defaults to an empty box so denied fallbacks never flash briefly.
+  final Widget? loading;
+
   const PermissionGuard({
     super.key,
     required this.permission,
     required this.child,
     this.fallback,
+    this.loading,
   });
 
   @override
@@ -24,27 +29,43 @@ class _PermissionGuardState extends State<PermissionGuard> {
   @override
   void initState() {
     super.initState();
+    // Avoid a denied-message flash when the cache is already warm.
+    if (PermissionHelper.isReady) {
+      _cachedResult = PermissionHelper.canPermission(widget.permission);
+    }
     _checkPermission();
+  }
+
+  @override
+  void didUpdateWidget(covariant PermissionGuard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.permission != widget.permission) {
+      if (PermissionHelper.isReady) {
+        _cachedResult = PermissionHelper.canPermission(widget.permission);
+      } else {
+        _cachedResult = null;
+      }
+      _checkPermission();
+    }
   }
 
   Future<void> _checkPermission() async {
     final hasPermission =
         await PermissionHelper.hasPermission(widget.permission);
-    if (mounted) {
-      setState(() {
-        _cachedResult = hasPermission;
-      });
-    }
+    if (!mounted) return;
+    if (_cachedResult == hasPermission) return;
+    setState(() {
+      _cachedResult = hasPermission;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Show fallback while checking or if no permission
+    // Still resolving — never show the denied fallback here.
     if (_cachedResult == null) {
-      return widget.fallback ?? const SizedBox();
+      return widget.loading ?? const SizedBox.shrink();
     }
 
-    // Show child if has permission, otherwise show fallback
     return _cachedResult! ? widget.child : widget.fallback ?? const SizedBox();
   }
 }

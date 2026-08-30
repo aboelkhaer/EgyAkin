@@ -138,10 +138,12 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen>
               );
               final canResend = state.maybeWhen(
                 countDownInProgress: (_) => false,
-                orElse: () => !isLoading,
+                orElse: () => !isLoading && !cubit.isConfirmingOtp,
               );
-              final isSubmittingOtp = isLoading && cubit.isOTPDone;
-              final isSendingCode = isLoading && !cubit.isOTPDone;
+              final isSubmittingOtp = cubit.isConfirmingOtp ||
+                  (isLoading && cubit.isOTPDone);
+              final isSendingCode =
+                  isLoading && !cubit.isConfirmingOtp && !cubit.isOTPDone;
               final keyboardOpen =
                   MediaQuery.viewInsetsOf(context).bottom > 0;
               final email = widget.currentDoctorModel.email ?? '';
@@ -195,29 +197,50 @@ class _EmailVerifciationScreenState extends State<EmailVerifciationScreen>
                               SizedBox(height: 14.h),
                               SizedBox(
                                 height: 40.h,
-                                child: isSubmittingOtp
-                                    ? Center(
-                                        child: SizedBox(
-                                          width: 22.w,
-                                          height: 22.w,
-                                          child: CircularProgressIndicator(
+                                child: ElevatedButton(
+                                  onPressed: isSubmittingOtp
+                                      ? null
+                                      : () => cubit
+                                          .sendOTPForEmailVerification(),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: isDark
+                                        ? AppColors.darkPrimary
+                                            .withOpacity(0.7)
+                                        : AppColors.primary.withOpacity(0.7),
+                                    disabledBackgroundColor: isDark
+                                        ? AppColors.darkPrimary
+                                            .withOpacity(0.45)
+                                        : AppColors.primary.withOpacity(0.45),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: isSubmittingOtp
+                                      ? SizedBox(
+                                          width: 20.w,
+                                          height: 20.w,
+                                          child:
+                                              const CircularProgressIndicator(
                                             strokeWidth: 2.2,
-                                            color: primary,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : Text(
+                                          context.tr(AppStrings.confirm),
+                                          style: TextStyle(
+                                            fontSize: 11.sp,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
                                           ),
                                         ),
-                                      )
-                                    : CustomElevatedButton(
-                                        onPressed: () => cubit
-                                            .sendOTPForEmailVerification(),
-                                        title: context.tr(AppStrings.confirm),
-                                      ),
+                                ),
                               ),
                               SizedBox(height: 12.h),
                               _ResendRow(
                                 isDark: isDark,
                                 primary: primary,
                                 canResend: canResend,
-                                isLoading: isLoading,
+                                isLoading: isLoading || cubit.isConfirmingOtp,
                                 formattedTime: cubit
                                     .getFormattedTime(remainingSeconds),
                                 onResend: () => cubit.resendOtp(),

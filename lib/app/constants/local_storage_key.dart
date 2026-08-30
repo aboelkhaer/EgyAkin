@@ -29,4 +29,7 @@ class AppLocalStrings {
   static const String gfrCalculatorHistory = 'gfrCalculatorHistory';
   static const String localProfileImageUrl = 'localProfileImageUrl';
   static const String localProfileImagePath = 'localProfileImagePath';
+  static const String pendingInviteToken = 'pending_invite_token';
+  static const String pendingInviteConsultationId =
+      'pending_invite_consultation_id';
 }

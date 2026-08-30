@@ -17,6 +17,8 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState>
   Timer? _timer;
   int countdown = AppStrings.resendTimer;
   bool isOTPDone = false;
+  /// True while Confirm is waiting on the verify-OTP API.
+  bool isConfirmingOtp = false;
   DateTime? _backgroundTime;
   bool _isTimerActive = false;
 
@@ -66,17 +68,23 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState>
 
   void startCountdown() {
     _isTimerActive = true;
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       countdown--;
       if (countdown <= 0) {
         _timer!.cancel();
         _isTimerActive = false;
-        emit(const EmailVerificationState.countDowncompleted());
-      } else {
+        if (!isConfirmingOtp) {
+          emit(const EmailVerificationState.countDowncompleted());
+        }
+      } else if (!isConfirmingOtp) {
+        // Don't wipe Confirm loading while OTP is in flight.
         emit(EmailVerificationState.countDownInProgress(countdown));
       }
     });
-    emit(EmailVerificationState.countDownInProgress(countdown));
+    if (!isConfirmingOtp) {
+      emit(EmailVerificationState.countDownInProgress(countdown));
+    }
   }
 
   String getFormattedTime(int countDownState) {
@@ -111,12 +119,15 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState>
   }
 
   sendOTPForEmailVerification() async {
+    if (isConfirmingOtp) return;
+    isConfirmingOtp = true;
     emit(const EmailVerificationState.loading());
 
     final result = await _sendOTPForEmailVerificationUsecase
-        .execute('$pin1$pin2$pin3$pin4');
+        .execute('${pin1 ?? ''}${pin2 ?? ''}${pin3 ?? ''}${pin4 ?? ''}');
     result.fold(
       (l) {
+        isConfirmingOtp = false;
         // Show error snackbar and return to previous state
         emit(EmailVerificationState.error(l.message));
         // Restore the previous countdown state
@@ -127,13 +138,8 @@ class EmailVerificationCubit extends Cubit<EmailVerificationState>
         }
       },
       (r) {
-        // Success - show success message and navigate
-        // emit(const EmailVerificationState.emailVerificationSuccess());
-        // Navigate after a short delay to show success message
+        isConfirmingOtp = false;
         emit(const EmailVerificationState.emailVerificationComplete());
-        // Future.delayed(const Duration(milliseconds: 0), () {
-        //   emit(const EmailVerificationState.emailVerificationComplete());
-        // });
       },
     );
   }

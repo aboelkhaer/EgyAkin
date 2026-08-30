@@ -9,70 +9,44 @@ void showCustomBottomSheet({
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
-    isScrollControlled: true, // Allow full height control
+    isScrollControlled: true,
+    useSafeArea: false,
+    // Sit above the tab bar / nested navigators so MediaQuery is clean.
+    useRootNavigator: true,
     builder: (context) {
-      final mediaQuery = MediaQuery.of(context);
-      final screenHeight = mediaQuery.size.height;
-      final desiredHeight = heightFactor != null
-          ? screenHeight * heightFactor.clamp(0.35, 0.92)
+      final factor = heightFactor != null
+          ? heightFactor.clamp(0.35, 0.92)
           : isFilter
-              ? screenHeight * 0.72
-              : screenHeight * 0.5;
+              ? 0.92
+              : 0.5;
 
       return BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDarkMode = themeState is ThemeLoaded && themeState.isDarkMode;
+          final sheetColor = isDarkMode
+              ? AppColors.darkScaffoldBG
+              : const Color(0xFFF5F5F7);
 
-          return GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Container(
-                  color: Colors.transparent,
-                  child: GestureDetector(
-                    onTap:
-                        () {}, // Prevents the bottom sheet from closing when tapping inside it
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(24.0),
-                          topRight: Radius.circular(24.0),
-                        ),
-                        child: Container(
-                          width: double.infinity,
-                          height: desiredHeight,
-                          decoration: BoxDecoration(
-                            color: isDarkMode
-                                ? AppColors.darkScaffoldBG
-                                : const Color(0xFFF5F5F7),
-                            border: Border(
-                              top: BorderSide(
-                                color: isDarkMode
-                                    ? Colors.white.withOpacity(0.06)
-                                    : const Color(0xFFE8E8EE),
-                              ),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(
-                                  isDarkMode ? 0.35 : 0.08,
-                                ),
-                                blurRadius: 24,
-                                offset: const Offset(0, -4),
-                              ),
-                            ],
-                          ),
-                          child: builder(context),
-                        ),
-                      ),
-                    ),
-                  ),
+          // Keep the sheet pinned to the physical bottom of the screen.
+          // Keyboard avoidance is handled inside the sheet content (footer),
+          // so we do NOT pad/lift the whole sheet — that was leaving a dark
+          // empty band between the actions and the keyboard.
+          final sheetHeight = MediaQuery.sizeOf(context).height * factor;
+
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Material(
+                color: sheetColor,
+                child: SizedBox(
+                  width: double.infinity,
+                  height: sheetHeight,
+                  child: builder(context),
                 ),
-              ],
+              ),
             ),
           );
         },

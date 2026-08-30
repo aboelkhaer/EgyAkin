@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 
 import '../../exports.dart';
 import 'package:egy_akin/injection_container.dart' as di;
+import 'package:egy_akin/app/services/deep_link_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../features/webview/presentation/pages/webview_screen.dart';
 
@@ -69,6 +70,20 @@ class RouteGenerator {
     // Check if this is a deep link pattern (just a number or /post/number)
     final routeName = settings.name;
     if (routeName != null) {
+      // External consultation invite: /invite/{token} or egyakin://invite/{token}
+      final inviteMatch = RegExp(r'^/invite/([^/]+)/?$').firstMatch(routeName);
+      if (inviteMatch != null) {
+        final token = inviteMatch.group(1)!;
+        DeepLinkHandler().storePendingInviteToken(token);
+        debugPrint(
+            '=== ROUTE GENERATOR: Invite deep link stored, redirecting to splash ===');
+        return MaterialPageRoute(
+          builder: (_) => BlocProvider<SplashCubit>(
+            create: (context) => di.sl<SplashCubit>()..loadData(),
+            child: const SplashScreen(),
+          ),
+        );
+      }
       // Check if it's just a number (like /46 from egyakin://post/46)
       if (RegExp(r'^/\d+$').hasMatch(routeName)) {
         debugPrint(

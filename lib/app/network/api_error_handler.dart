@@ -105,14 +105,20 @@ Failure _handleError(DioException error) {
     case DioExceptionType.receiveTimeout:
       return DataSource.recieveTimeOut.getFailure();
     case DioExceptionType.badResponse:
-      if (error.response != null &&
-          error.response?.statusCode != null &&
-          error.response?.statusMessage != null) {
-        // return Failure(error.response?.statusCode ?? 0,
-        //     error.response?.statusMessage ?? "");
+      if (error.response != null && error.response?.statusCode != null) {
+        final raw = error.response!.data;
+        Map<String, dynamic>? data;
+        String message = error.response?.statusMessage ?? '';
+        if (raw is Map) {
+          data = Map<String, dynamic>.from(raw);
+          message = data['message']?.toString() ?? message;
+        } else if (raw != null) {
+          message = raw.toString();
+        }
         return Failure(
           error.response?.statusCode ?? 0,
-          error.response!.data['message'],
+          message,
+          data: data,
         );
       } else {
         return DataSource.defaultError.getFailure();

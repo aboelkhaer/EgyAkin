@@ -14,17 +14,13 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
-SendConsultationModelResponse _$SendConsultationModelResponseFromJson(
-    Map<String, dynamic> json) {
-  return _SendConsultationModelResponse.fromJson(json);
-}
-
 /// @nodoc
 mixin _$SendConsultationModelResponse {
   String? get message => throw _privateConstructorUsedError;
-
-  /// Serializes this SendConsultationModelResponse to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
+  @JsonKey(name: 'consultation_id')
+  int? get consultationId => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get data => throw _privateConstructorUsedError;
 
   /// Create a copy of SendConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -41,7 +37,11 @@ abstract class $SendConsultationModelResponseCopyWith<$Res> {
       _$SendConsultationModelResponseCopyWithImpl<$Res,
           SendConsultationModelResponse>;
   @useResult
-  $Res call({String? message});
+  $Res call(
+      {String? message,
+      int? id,
+      @JsonKey(name: 'consultation_id') int? consultationId,
+      Map<String, dynamic>? data});
 }
 
 /// @nodoc
@@ -61,12 +61,27 @@ class _$SendConsultationModelResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? message = freezed,
+    Object? id = freezed,
+    Object? consultationId = freezed,
+    Object? data = freezed,
   }) {
     return _then(_value.copyWith(
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      consultationId: freezed == consultationId
+          ? _value.consultationId
+          : consultationId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      data: freezed == data
+          ? _value.data
+          : data // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ) as $Val);
   }
 }
@@ -80,7 +95,11 @@ abstract class _$$SendConsultationModelResponseImplCopyWith<$Res>
       __$$SendConsultationModelResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? message});
+  $Res call(
+      {String? message,
+      int? id,
+      @JsonKey(name: 'consultation_id') int? consultationId,
+      Map<String, dynamic>? data});
 }
 
 /// @nodoc
@@ -99,32 +118,63 @@ class __$$SendConsultationModelResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? message = freezed,
+    Object? id = freezed,
+    Object? consultationId = freezed,
+    Object? data = freezed,
   }) {
     return _then(_$SendConsultationModelResponseImpl(
       message: freezed == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
               as String?,
+      id: freezed == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int?,
+      consultationId: freezed == consultationId
+          ? _value.consultationId
+          : consultationId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      data: freezed == data
+          ? _value._data
+          : data // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
     ));
   }
 }
 
 /// @nodoc
-@JsonSerializable()
-class _$SendConsultationModelResponseImpl
-    implements _SendConsultationModelResponse {
-  const _$SendConsultationModelResponseImpl({this.message});
 
-  factory _$SendConsultationModelResponseImpl.fromJson(
-          Map<String, dynamic> json) =>
-      _$$SendConsultationModelResponseImplFromJson(json);
+class _$SendConsultationModelResponseImpl
+    extends _SendConsultationModelResponse {
+  const _$SendConsultationModelResponseImpl(
+      {this.message,
+      this.id,
+      @JsonKey(name: 'consultation_id') this.consultationId,
+      final Map<String, dynamic>? data})
+      : _data = data,
+        super._();
 
   @override
   final String? message;
+  @override
+  final int? id;
+  @override
+  @JsonKey(name: 'consultation_id')
+  final int? consultationId;
+  final Map<String, dynamic>? _data;
+  @override
+  Map<String, dynamic>? get data {
+    final value = _data;
+    if (value == null) return null;
+    if (_data is EqualUnmodifiableMapView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
 
   @override
   String toString() {
-    return 'SendConsultationModelResponse(message: $message)';
+    return 'SendConsultationModelResponse(message: $message, id: $id, consultationId: $consultationId, data: $data)';
   }
 
   @override
@@ -132,12 +182,16 @@ class _$SendConsultationModelResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SendConsultationModelResponseImpl &&
-            (identical(other.message, message) || other.message == message));
+            (identical(other.message, message) || other.message == message) &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.consultationId, consultationId) ||
+                other.consultationId == consultationId) &&
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(runtimeType, message, id, consultationId,
+      const DeepCollectionEquality().hash(_data));
 
   /// Create a copy of SendConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -148,25 +202,26 @@ class _$SendConsultationModelResponseImpl
           _$SendConsultationModelResponseImpl>
       get copyWith => __$$SendConsultationModelResponseImplCopyWithImpl<
           _$SendConsultationModelResponseImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SendConsultationModelResponseImplToJson(
-      this,
-    );
-  }
 }
 
 abstract class _SendConsultationModelResponse
-    implements SendConsultationModelResponse {
-  const factory _SendConsultationModelResponse({final String? message}) =
-      _$SendConsultationModelResponseImpl;
-
-  factory _SendConsultationModelResponse.fromJson(Map<String, dynamic> json) =
-      _$SendConsultationModelResponseImpl.fromJson;
+    extends SendConsultationModelResponse {
+  const factory _SendConsultationModelResponse(
+      {final String? message,
+      final int? id,
+      @JsonKey(name: 'consultation_id') final int? consultationId,
+      final Map<String, dynamic>? data}) = _$SendConsultationModelResponseImpl;
+  const _SendConsultationModelResponse._() : super._();
 
   @override
   String? get message;
+  @override
+  int? get id;
+  @override
+  @JsonKey(name: 'consultation_id')
+  int? get consultationId;
+  @override
+  Map<String, dynamic>? get data;
 
   /// Create a copy of SendConsultationModelResponse
   /// with the given fields replaced by the non-null parameter values.

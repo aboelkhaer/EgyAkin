@@ -1,9 +1,9 @@
 class ApiEndPoint {
   //! test url
-  static const baseUrl = 'https://test.egyakin.com';
+  // static const baseUrl = 'https://test.egyakin.com';
 
   //! production url
-  // static const baseUrl = 'https://api.egyakin.com';
+  static const baseUrl = 'https://api.egyakin.com';
 
   // versioning
   static const versioning = 'v3';
@@ -146,6 +146,10 @@ class ApiEndPoint {
       '$baseUrl/api/$versioning/consultations';
   static const addDoctorsForConsultation =
       '$baseUrl/api/$versioning/consultations';
+
+  /// Invite a doctor with no EGYAKIN account by email.
+  static const inviteExternalConsultation =
+      '$baseUrl/api/$versioning/consultations';
   static const changeLanguage = '$baseUrl/api/$versioning/user/locale';
   static const exportFilteredPatients =
       '$baseUrl/api/$versioning/exportFilteredPatients';
@@ -156,6 +160,9 @@ class ApiEndPoint {
   static const getMarkedPatients = '$baseUrl/api/$versioning/markedPatients';
   static const getRolePermissions =
       '$baseUrl/api/$versioning/user/role-permissions';
+
+  /// Account state without the home dashboard (needed for `normal` users).
+  static const userMe = '$baseUrl/api/$versioning/user/me';
   static const processSection =
       '$baseUrl/api/$versioning/ai-form/process-section';
 }

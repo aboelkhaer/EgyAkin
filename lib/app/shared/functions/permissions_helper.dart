@@ -66,6 +66,9 @@ class PermissionHelper {
     return _permissionCache[permission] ?? false;
   }
 
+  /// Whether permissions have been loaded into the sync cache at least once.
+  static bool get isReady => _isInitialized;
+
   /// Synchronously check permission (uses cache, may return false if not initialized)
   static bool canPermission(AppPermissions permission) {
     return _permissionCache[permission] ?? false;
